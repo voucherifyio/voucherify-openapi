@@ -1,0 +1,1509 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Voucherify API - Referrals",
+    "version": "v2018-08-01",
+    "description": "Voucherify promotion engine REST API. Please see https://docs.voucherify.io/docs for more details. - Endpoints tagged with 'Referrals'",
+    "contact": {
+      "name": "Voucherify Team",
+      "url": "https://www.voucherify.io/contact-support",
+      "email": "support@voucherify.io"
+    },
+    "termsOfService": "https://www.voucherify.io/legal/subscription-agreement",
+    "license": {
+      "name": "MIT",
+      "url": "https://github.com/voucherifyio/voucherify-js-sdk/blob/main/LICENSE"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://{cluster}.voucherify.io",
+      "description": "Base URL",
+      "variables": {
+        "cluster": {
+          "default": "api",
+          "enum": [
+            "api",
+            "us1.api",
+            "as1.api",
+            "download",
+            "us1.download",
+            "as1.download"
+          ]
+        }
+      }
+    }
+  ],
+  "paths": {
+    "/v1/referrals/{campaignId}/members/{memberId}/holders": {
+      "post": {
+        "operationId": "referrals-add-holders-1",
+        "tags": [
+          "Referrals"
+        ],
+        "summary": "Add Referral Code Holders",
+        "description": "Adds new holders to a referral code as **referees**. The data sent in the request is upserted into the customer data.\n\nIf the request returns an error even for one customer, you have to resend the whole request. Customer data is upserted if the data for all customers is correct.\n\nTo use this endpoint, you must have the following permissions:\n- Create and modify Customers and Segments (`customers.modify`)\n- Publish Voucher (`vouchers.publish`)\n\n> 👍\n>To add a holder as a referer, use the [Create Publication](ref:create-publication) endpoint.",
+        "parameters": [],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": [],
+            "X-Voucherify-OAuth": [
+              "api",
+              "referrals"
+            ]
+          }
+        ],
+        "requestBody": {
+          "description": "Specify the customer data to be upserted as redeemable holders.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReferralsMembersHoldersCreateInBulkRequestBody"
+              },
+              "examples": {
+                "Example": {
+                  "value": {
+                    "holders": [
+                      {
+                        "source_id": "cst-prsn01",
+                        "name": "Alex Doe",
+                        "email": "alex-doe@your.domain.com",
+                        "country": "England"
+                      },
+                      {
+                        "source_id": "cst-prsn02",
+                        "name": "Alex Joe",
+                        "email": "alex-joe@your.domain.com",
+                        "country": "Wales"
+                      }
+                    ],
+                    "metadata": {
+                      "influencer_code": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Returns a list of redeemable holder objects.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReferralsMembersHoldersCreateInBulkResponseBody"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "holders": [
+                        {
+                          "id": "rh_0f198761748966ffab",
+                          "created_at": "2024-07-23T10:40:48.579Z",
+                          "redeemable_id": "v_uOrG9tQresN9X51gbAoo0a2vY4MLV9lS",
+                          "redeemable_object": "voucher",
+                          "campaign_id": "camp_vVk4unz3k4gA023fk9XoSiTh",
+                          "campaign_type": "REFERRAL_PROGRAM",
+                          "voucher_type": "DISCOUNT_VOUCHER",
+                          "customer_id": "cust_r8yoJtgAAF2pqU1yuICtk9bv",
+                          "holder_role": "REFEREE",
+                          "object": "redeemable_holder",
+                          "metadata": {
+                            "influencer_code": true
+                          }
+                        },
+                        {
+                          "id": "rh_0f198761748966ffac",
+                          "created_at": "2024-07-23T10:40:48.579Z",
+                          "redeemable_id": "v_uOrG9tQresN9X51gbAoo0a2vY4MLV9lS",
+                          "redeemable_object": "voucher",
+                          "campaign_id": "camp_vVk4unz3k4gA023fk9XoSiTh",
+                          "campaign_type": "REFERRAL_PROGRAM",
+                          "voucher_type": "DISCOUNT_VOUCHER",
+                          "customer_id": "cust_uCLPtbQkQayw6t40O9IMPQzV",
+                          "holder_role": "REFEREE",
+                          "object": "redeemable_holder",
+                          "metadata": {
+                            "influencer_code": true
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Returns an error if the payload is incorrect or the referral card has not been published yet.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Invalid Payload": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_payload",
+                      "message": "Invalid payload",
+                      "details": "Property .holders must NOT have fewer than 1 items",
+                      "request_id": "v-0f19a8ee60d0ae80a6"
+                    }
+                  },
+                  "Voucher Not Published Yet": {
+                    "value": {
+                      "code": 400,
+                      "key": "not_published",
+                      "message": "Voucher is not published",
+                      "details": "Referral code must be first published to Referrer before assigning it to Referee",
+                      "request_id": "v-0f19a97f5d50ae817c"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Returns an error if the user is missing permissions.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Missing Permissions": {
+                    "value": {
+                      "code": 403,
+                      "message": "Missing permission",
+                      "details": "User does not have a required permission to perform this operation.",
+                      "key": "missing_required_permission"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Returns an error indicating that the referral code with a given ID or the campaign with a given ID was not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Voucher Not Found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find voucher with id REFAPI-mk",
+                      "request_id": "v-0f19a95d5610ae8144",
+                      "resource_id": "REFAPI-mk",
+                      "resource_type": "voucher"
+                    }
+                  },
+                  "Campaign Not Found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find campaign with id camp_v1mxc6sGDlXzQygz8wBc8HVU",
+                      "request_id": "v-0f1ab4f0f1425cd8dc",
+                      "resource_id": "camp_v1mxc6sGDlXzQygz8wBc8HVU",
+                      "resource_type": "campaign"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Returns an error if a voucher code already exists, the customer has been already assigned as a referrer or referee, or the `source_id` and `id` of the same customer has been used in two different objects in the request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Duplicate Customer ID or Source ID": {
+                    "value": {
+                      "code": 409,
+                      "key": "duplicate_found",
+                      "message": "Duplicated resource found",
+                      "details": "Duplicated customer exists with id tst-prsn10",
+                      "request_id": "v-0f19adcc3c50ae87a4",
+                      "resource_id": "tst-prsn10",
+                      "resource_type": "customer"
+                    }
+                  },
+                  "Customer Already Assigned": {
+                    "value": {
+                      "code": 409,
+                      "key": "holder_assignement_duplication",
+                      "message": "Customer is already assigned to given redeemable",
+                      "request_id": "v-0f19ae50d750ae886b"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "operationId": "referrals-code-holders",
+        "tags": [
+          "Referrals"
+        ],
+        "summary": "List Referral Code Holders",
+        "description": "Retrieves all the redeemables that have been assigned to the customer.\n\nTo use this endpoint, you must have the following permissions:\n\n- Read Customers (`customers.details.read`)",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/limit"
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterOrderListRedeemables"
+            },
+            "in": "query",
+            "name": "order",
+            "description": "Sorts the results using one of the filtering options, where the dash `-` preceding a sorting option means sorting in a descending order."
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterString"
+            },
+            "in": "query",
+            "name": "starting_after_id",
+            "description": "A cursor for pagination. It retrieves the events starting after an event with the given ID."
+          },
+          {
+            "name": "filters",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/ParameterFiltersListReferralsRedeemableHolders"
+            },
+            "description": "Filters for listing customer redeemables.",
+            "style": "deepObject",
+            "explode": true
+          }
+        ],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": [],
+            "X-Voucherify-OAuth": [
+              "api",
+              "referrals"
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns the holders of the redeemable that is assigned to the referral campaign.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReferralsMembersHoldersListResponseBody"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "object": "list",
+                      "data_ref": "data",
+                      "data": [
+                        {
+                          "id": "rh_0e7213a6bc407b8639",
+                          "created_at": "2024-03-15T09:08:50.529Z",
+                          "redeemable_id": "v_jFVcN1f5ofg707z2G3GYWtMyKJ4usss4",
+                          "redeemable_object": "voucher",
+                          "campaign_id": "camp_td1gcD4feTAjUKQYfg40kWhN",
+                          "campaign_type": "REFERRAL_PROGRAM",
+                          "voucher_type": "DISCOUNT_VOUCHER",
+                          "customer_id": "cust_XDwHXVBSZZAJgjpHvrgUHx3J",
+                          "holder_role": "REFERRER",
+                          "object": "redeemable_holder"
+                        },
+                        {
+                          "id": "rh_0e6d0b84960f447f52",
+                          "created_at": "2024-03-11T11:20:54.093Z",
+                          "redeemable_id": "v_jFVcN1f5ofg707z2G3GYWtMyKJ4usss4",
+                          "redeemable_object": "voucher",
+                          "campaign_id": "camp_td1gcD4feTAjUKQYfg40kWhN",
+                          "campaign_type": "REFERRAL_PROGRAM",
+                          "voucher_type": "DISCOUNT_VOUCHER",
+                          "customer_id": "cust_1B9wkAcSz5O1Y4Zn8JPfKQm6",
+                          "holder_role": "REFEREE",
+                          "object": "redeemable_holder"
+                        }
+                      ],
+                      "total": 2,
+                      "has_more": false
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Returns an error if a resource is not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Resource not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find voucher with id v_wnd4fslUpkLnZH0KthYDxouBSgn24Yr",
+                      "request_id": "v-0eed8b989da91a1622",
+                      "resource_id": "v_wnd4fslUpkLnZH0KthYDxouBSgn24Yr",
+                      "resource_type": "voucher"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/referrals/{campaignId}/members/{memberId}/holders/{holderId}": {
+      "delete": {
+        "operationId": "referrals-remove-holder-1",
+        "tags": [
+          "Referrals"
+        ],
+        "summary": "Remove Referral Card Holder",
+        "description": "Removes the holder from a referral card. You can remove a referee only.\n\nTo use this endpoint, you must have the following permissions:\n- Create and modify Customers and Segments (`customers.modify`)\n- Publish Voucher (`vouchers.publish`)",
+        "parameters": [],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": [],
+            "X-Voucherify-OAuth": [
+              "api",
+              "referrals"
+            ]
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Returns no content if removal is successful."
+          },
+          "403": {
+            "description": "Returns an error if the user is missing permissions or is trying to remove the referrer.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Missing Permissions": {
+                    "value": {
+                      "code": 403,
+                      "message": "Missing permission",
+                      "details": "User does not have a required permission to perform this operation.",
+                      "key": "missing_required_permission"
+                    }
+                  },
+                  "Removing the Referrer": {
+                    "value": {
+                      "code": 403,
+                      "key": "forbidden",
+                      "message": "Can not remove assignment",
+                      "details": "You can not remove Referrer assignment",
+                      "request_id": "v-0f1ab7abf6d2a9d353"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Returns an error if a resource cannot be found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Campaign Not Found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find campaign with id camp_vVk4unz3k4gA023fk9XoSiT",
+                      "request_id": "v-0f1ac3876112a9bd5e",
+                      "resource_id": "camp_vVk4unz3k4gA023fk9XoSiT",
+                      "resource_type": "campaign"
+                    }
+                  },
+                  "Redeemable Holder Not Found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find redeemable_holder with id rh_0f1ab744ce8277d0dc",
+                      "request_id": "v-0f1abf8769d2a9b8be",
+                      "resource_id": "rh_0f1ab744ce8277d0dc",
+                      "resource_type": "redeemable_holder"
+                    }
+                  },
+                  "Referral Card Not Found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find voucher with id v_uOrG9tQresN9X51gbAoo0a2vY4MLV9l",
+                      "request_id": "v-0f1ac03b4cc25cca6b",
+                      "resource_id": "v_uOrG9tQresN9X51gbAoo0a2vY4MLV9l",
+                      "resource_type": "voucher"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/referrals/members/{memberId}/holders": {
+      "post": {
+        "operationId": "referrals-add-holders",
+        "tags": [
+          "Referrals"
+        ],
+        "summary": "Add Referral Code Holders",
+        "description": "Adds new holders to a referral code as **referees**. The data sent in the request is upserted into the customer data.\n\nIf the request returns an error even for one customer, you have to resend the whole request. Customer data is upserted if the data for all customers is correct.\n\nTo use this endpoint, you must have the following permissions:\n- Create and modify Customers and Segments (`customers.modify`)\n- Publish Voucher (`vouchers.publish`)\n\n> 👍\n>To add a holder as a referer, use the [Create Publication](ref:create-publication) endpoint.\n\n> 📘 Alternative endpoint\n>\n>This endpoint is an alternative to the [Add Referral Code Holders endpoint](ref:referrals-add-holders-1). The URL was re-designed to retrieve the referral member holders without providing the `campaignId` as a path paremeter.",
+        "parameters": [],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": [],
+            "X-Voucherify-OAuth": [
+              "api",
+              "referrals"
+            ]
+          }
+        ],
+        "requestBody": {
+          "description": "Specify the customer data to be upserted as redeemable holders.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReferralsMembersHoldersCreateInBulkRequestBody"
+              },
+              "examples": {
+                "Example": {
+                  "value": {
+                    "holders": [
+                      {
+                        "source_id": "cst-prsn01",
+                        "name": "Alex Doe",
+                        "email": "alex-doe@your.domain.com",
+                        "country": "England"
+                      },
+                      {
+                        "source_id": "cst-prsn02",
+                        "name": "Alex Joe",
+                        "email": "alex-joe@your.domain.com",
+                        "country": "Wales"
+                      }
+                    ],
+                    "metadata": {
+                      "influencer_code": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Returns a list of redeemable holder objects.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReferralsMembersHoldersCreateInBulkResponseBody"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "holders": [
+                        {
+                          "id": "rh_0f198761748966ffab",
+                          "created_at": "2024-07-23T10:40:48.579Z",
+                          "redeemable_id": "v_uOrG9tQresN9X51gbAoo0a2vY4MLV9lS",
+                          "redeemable_object": "voucher",
+                          "campaign_id": "camp_vVk4unz3k4gA023fk9XoSiTh",
+                          "campaign_type": "REFERRAL_PROGRAM",
+                          "voucher_type": "DISCOUNT_VOUCHER",
+                          "customer_id": "cust_r8yoJtgAAF2pqU1yuICtk9bv",
+                          "holder_role": "REFEREE",
+                          "object": "redeemable_holder",
+                          "metadata": {
+                            "influencer_code": true
+                          }
+                        },
+                        {
+                          "id": "rh_0f198761748966ffac",
+                          "created_at": "2024-07-23T10:40:48.579Z",
+                          "redeemable_id": "v_uOrG9tQresN9X51gbAoo0a2vY4MLV9lS",
+                          "redeemable_object": "voucher",
+                          "campaign_id": "camp_vVk4unz3k4gA023fk9XoSiTh",
+                          "campaign_type": "REFERRAL_PROGRAM",
+                          "voucher_type": "DISCOUNT_VOUCHER",
+                          "customer_id": "cust_uCLPtbQkQayw6t40O9IMPQzV",
+                          "holder_role": "REFEREE",
+                          "object": "redeemable_holder",
+                          "metadata": {
+                            "influencer_code": true
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Returns an error if the payload is incorrect or the referral card has not been published yet.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Invalid Payload": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_payload",
+                      "message": "Invalid payload",
+                      "details": "Property .holders must NOT have fewer than 1 items",
+                      "request_id": "v-0f19a8ee60d0ae80a6"
+                    }
+                  },
+                  "Voucher Not Published Yet": {
+                    "value": {
+                      "code": 400,
+                      "key": "not_published",
+                      "message": "Voucher is not published",
+                      "details": "Referral code must be first published to Referrer before assigning it to Referee",
+                      "request_id": "v-0f19a97f5d50ae817c"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Returns an error if the user is missing permissions.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Missing Permissions": {
+                    "value": {
+                      "code": 403,
+                      "message": "Missing permission",
+                      "details": "User does not have a required permission to perform this operation.",
+                      "key": "missing_required_permission"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Returns an error indicating that the referral code with a given ID was not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Voucher Not Found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find voucher with id REFAPI-mk",
+                      "request_id": "v-0f19a95d5610ae8144",
+                      "resource_id": "REFAPI-mk",
+                      "resource_type": "voucher"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Returns an error if a voucher code already exists, the customer has been already assigned as a referrer or referee, or the `source_id` and `id` of the same customer has been used in two different objects in the request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Duplicate Customer ID or Source ID": {
+                    "value": {
+                      "code": 409,
+                      "key": "duplicate_found",
+                      "message": "Duplicated resource found",
+                      "details": "Duplicated customer exists with id tst-prsn10",
+                      "request_id": "v-0f19adcc3c50ae87a4",
+                      "resource_id": "tst-prsn10",
+                      "resource_type": "customer"
+                    }
+                  },
+                  "Customer Already Assigned": {
+                    "value": {
+                      "code": 409,
+                      "key": "holder_assignement_duplication",
+                      "message": "Customer is already assigned to given redeemable",
+                      "request_id": "v-0f19ae50d750ae886b"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "operationId": "referrals-code-holders-1",
+        "tags": [
+          "Referrals"
+        ],
+        "summary": "List Referral Code Holders",
+        "description": "Retrieves the holders of the referral code from a referral campaign.\n\nTo use this endpoint, you must have the following permissions:\n\n- Read Customers (`customers.details.read`)\n\n> 📘 Alternative endpoint\n>\n>This endpoint is an alternative to the [List Member Holders endpoint](ref:referrals-member-holders). The URL was re-designed to retrieve the referral member holders without providing the `campaignId` as a path paremeter.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/limit"
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterOrderListRedeemables"
+            },
+            "in": "query",
+            "name": "order",
+            "description": "Sorts the results using one of the filtering options, where the dash - preceding a sorting option means sorting in a descending order."
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterString"
+            },
+            "in": "query",
+            "name": "starting_after_id",
+            "description": "A cursor for pagination. It retrieves the events starting after an event with the given ID."
+          },
+          {
+            "name": "filters",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/ParameterFiltersListReferralsRedeemableHolders"
+            },
+            "description": "Filters for listing customer redeemables.",
+            "style": "deepObject",
+            "explode": true
+          }
+        ],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": [],
+            "X-Voucherify-OAuth": [
+              "api",
+              "referrals"
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns the holders of the redeemable that is assigned to the referral campaign.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReferralsMembersHoldersListResponseBody"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "object": "list",
+                      "data_ref": "data",
+                      "data": [
+                        {
+                          "id": "rh_0e7213a6bc407b8639",
+                          "created_at": "2024-03-15T09:08:50.529Z",
+                          "redeemable_id": "v_jFVcN1f5ofg707z2G3GYWtMyKJ4usss4",
+                          "redeemable_object": "voucher",
+                          "campaign_id": "camp_td1gcD4feTAjUKQYfg40kWhN",
+                          "campaign_type": "REFERRAL_PROGRAM",
+                          "voucher_type": "DISCOUNT_VOUCHER",
+                          "customer_id": "cust_XDwHXVBSZZAJgjpHvrgUHx3J",
+                          "holder_role": "REFERRER",
+                          "object": "redeemable_holder"
+                        },
+                        {
+                          "id": "rh_0e6d0b84960f447f52",
+                          "created_at": "2024-03-11T11:20:54.093Z",
+                          "redeemable_id": "v_jFVcN1f5ofg707z2G3GYWtMyKJ4usss4",
+                          "redeemable_object": "voucher",
+                          "campaign_id": "camp_td1gcD4feTAjUKQYfg40kWhN",
+                          "campaign_type": null,
+                          "voucher_type": "DISCOUNT_VOUCHER",
+                          "customer_id": "cust_1B9wkAcSz5O1Y4Zn8JPfKQm6",
+                          "holder_role": "OWNER",
+                          "object": "redeemable_holder"
+                        }
+                      ],
+                      "total": 2,
+                      "has_more": false
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Returns an error if a resource is not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Resource not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find voucher with id v_wnd4fslUpkLnZH0KthYDxouBSgn24Yr",
+                      "request_id": "v-0eed8b989da91a1622",
+                      "resource_id": "v_wnd4fslUpkLnZH0KthYDxouBSgn24Yr",
+                      "resource_type": "voucher"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/referrals/members/{memberId}/holders/{holderId}": {
+      "delete": {
+        "operationId": "referrals-remove-holder",
+        "tags": [
+          "Referrals"
+        ],
+        "summary": "Remove Referral Card Holder",
+        "description": "Removes the holder from a referral card. You can remove a referee only.\n\nTo use this endpoint, you must have the following permissions:\n- Create and modify Customers and Segments (`customers.modify`)\n- Publish Voucher (`vouchers.publish`)\n\n> 📘 Alternative endpoint\n>\n>This endpoint is an alternative to the [Remove Referral Card Holder endpoint](ref:referrals-remove-holder-1). The URL was re-designed to retrieve the referral member holders without providing the `campaignId` as a path paremeter.",
+        "parameters": [],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": [],
+            "X-Voucherify-OAuth": [
+              "api",
+              "referrals"
+            ]
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Returns no content if removal is successful."
+          },
+          "403": {
+            "description": "Returns an error if the user is missing permissions or is trying to remove the referrer.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Missing Permissions": {
+                    "value": {
+                      "code": 403,
+                      "message": "Missing permission",
+                      "details": "User does not have a required permission to perform this operation.",
+                      "key": "missing_required_permission"
+                    }
+                  },
+                  "Removing the Referrer": {
+                    "value": {
+                      "code": 403,
+                      "key": "forbidden",
+                      "message": "Can not remove assignment",
+                      "details": "You can not remove Referrer assignment",
+                      "request_id": "v-0f1ab7abf6d2a9d353"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Returns an error if a resource cannot be found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Redeemable Holder Not Found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find redeemable_holder with id rh_0f1ab744ce8277d0dc",
+                      "request_id": "v-0f1abf8769d2a9b8be",
+                      "resource_id": "rh_0f1ab744ce8277d0dc",
+                      "resource_type": "redeemable_holder"
+                    }
+                  },
+                  "Referral Card Not Found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find voucher with id v_uOrG9tQresN9X51gbAoo0a2vY4MLV9l",
+                      "request_id": "v-0f1ac03b4cc25cca6b",
+                      "resource_id": "v_uOrG9tQresN9X51gbAoo0a2vY4MLV9l",
+                      "resource_type": "voucher"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ReferralsMembersHoldersCreateInBulkRequestBody": {
+        "type": "object",
+        "title": "Add Referral Card Holders",
+        "description": "Request body schema for **POST** `v1/referrals/{campaignId}/members/{memberId}/holders` and **POST** `v1/referrals/members/{memberId}/holders`.",
+        "properties": {
+          "holders": {
+            "type": "array",
+            "title": "Holder Array",
+            "description": "Array of holders to be added to a referral card as referees. You have to send at least one object in the array up to a maximum of 100 objects. You can send either a `source_id` or `id`, or both; however, at least one of them is required. If both are sent, Voucherify checks `id` to upsert that customer's data.",
+            "items": {
+              "$ref": "#/components/schemas/Customer"
+            }
+          },
+          "metadata": {
+            "type": "object",
+            "description": "A set of custom key/value pairs that you can attach to the redeemable holders sent in the array. The value can be a string, number, boolean, date, datetime, image URL, or object. The metadata must meet the metadata schema for publications. The metadata object stores all custom attributes assigned to the redeemable holder."
+          }
+        },
+        "required": [
+          "holders"
+        ]
+      },
+      "ReferralsMembersHoldersCreateInBulkResponseBody": {
+        "type": "object",
+        "title": "Add Referral Code Holder Response Body",
+        "description": "Response body schema for **POST** `v1/referrals/{campaignId}/members/{memberId}/holders` and **POST** `v1/referrals/members/{memberId}/holders`.",
+        "properties": {
+          "holders": {
+            "type": "array",
+            "description": "Contains an array of referral card holders who are the customers sent in the request.",
+            "items": {
+              "$ref": "#/components/schemas/RedeemableHolder"
+            }
+          }
+        },
+        "required": [
+          "holders"
+        ]
+      },
+      "Error": {
+        "title": "Error Object",
+        "type": "object",
+        "description": "Error details",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "Error's HTTP status code."
+          },
+          "key": {
+            "type": "string",
+            "description": "Short string describing the kind of error which occurred."
+          },
+          "message": {
+            "type": "string",
+            "description": "A human-readable message providing a short description of the error."
+          },
+          "details": {
+            "type": "string",
+            "description": "A human-readable message providing more details about the error."
+          },
+          "request_id": {
+            "type": "string",
+            "example": "v-0a885062c80375740f",
+            "description": "This ID is useful when troubleshooting and/or finding the root cause of an error response by our support team."
+          },
+          "resource_id": {
+            "type": "string",
+            "description": "Unique resource ID that can be used in another endpoint to get more details.",
+            "example": "rf_0c5d710a87c8a31f86"
+          },
+          "resource_type": {
+            "type": "string",
+            "description": "The resource type.",
+            "example": "voucher"
+          },
+          "error": {
+            "type": "object",
+            "description": "Includes additional information about the error.",
+            "properties": {
+              "message": {
+                "type": "string",
+                "description": "The message configured by the user in a validation rule."
+              }
+            }
+          }
+        },
+        "required": [
+          "code",
+          "message"
+        ]
+      },
+      "ParameterOrderListRedeemables": {
+        "type": "string",
+        "enum": [
+          "id",
+          "-id"
+        ]
+      },
+      "ParameterString": {
+        "type": "string"
+      },
+      "ParameterFiltersListReferralsRedeemableHolders": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "object",
+            "description": "Unique redeemable holder ID, i.e. `rh_0e77502f84f0f4a6a8`.",
+            "properties": {
+              "conditions": {
+                "$ref": "#/components/schemas/FilterConditionsString"
+              }
+            }
+          },
+          "created_at": {
+            "description": "Timestamp representing the date and time when the redeemable was added to the holder. The value is shown in the ISO 8601 format.",
+            "type": "object",
+            "properties": {
+              "conditions": {
+                "$ref": "#/components/schemas/FilterConditionsDateTime"
+              }
+            }
+          },
+          "holder_role": {
+            "type": "object",
+            "description": "Holder role of the redeemable. Allowed values:\n`REFEREE`,\n`REFERRER`",
+            "properties": {
+              "conditions": {
+                "properties": {
+                  "$in": {
+                    "type": "array",
+                    "description": "Array of resource values that should be included in the results (multiple values).",
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "REFEREE",
+                        "REFERRER"
+                      ]
+                    }
+                  },
+                  "$not_in": {
+                    "type": "array",
+                    "description": "Array of resource values that should be included in the results (multiple values).",
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "REFEREE",
+                        "REFERRER"
+                      ]
+                    }
+                  },
+                  "$is": {
+                    "type": "string",
+                    "description": "Value is exactly this value (single value).",
+                    "enum": [
+                      "REFEREE",
+                      "REFERRER"
+                    ]
+                  },
+                  "$is_not": {
+                    "type": "string",
+                    "description": "Results omit this value (single value).",
+                    "enum": [
+                      "REFEREE",
+                      "REFERRER"
+                    ]
+                  },
+                  "$has_value": {
+                    "type": "string",
+                    "description": "Value is NOT null. The value for this parameter is an empty string."
+                  },
+                  "$is_unknown": {
+                    "type": "string",
+                    "description": "Value is null. The value for this parameter is an empty string."
+                  },
+                  "$starts_with": {
+                    "type": "string",
+                    "description": "Value starts with the specified string."
+                  },
+                  "$ends_with": {
+                    "type": "string",
+                    "description": "Value ends with the specified string."
+                  }
+                }
+              }
+            }
+          },
+          "customer_id": {
+            "type": "object",
+            "description": "Unique customer ID, i.e. `cust_sehkNIi8Uq2qQuRqSr7xn4Zi`.",
+            "properties": {
+              "conditions": {
+                "$ref": "#/components/schemas/FilterConditionsString"
+              }
+            }
+          },
+          "junction": {
+            "$ref": "#/components/schemas/Junction"
+          }
+        }
+      },
+      "ReferralsMembersHoldersListResponseBody": {
+        "type": "object",
+        "title": "Referrals Redeemable Holders List Response Body",
+        "description": "Response body schema for **GET** `v1/referrals/{campaignId}/members/{memberId}/holders` and for **GET** `v1/referrals/members/{memberId}/holders`",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/RedeemableHoldersList"
+          }
+        ]
+      },
+      "Customer": {
+        "title": "Customer",
+        "allOf": [
+          {
+            "type": "object",
+            "title": "Customer Id And Source Id",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "The ID of an existing customer."
+              },
+              "source_id": {
+                "type": "string",
+                "description": "A unique identifier of the customer who validates a voucher. It can be a customer ID or email from a CRM system, database, or a third-party service. If you also pass a customer ID (unique ID assigned by Voucherify), the source ID will be ignored."
+              }
+            }
+          },
+          {
+            "$ref": "#/components/schemas/CustomerBase"
+          }
+        ]
+      },
+      "RedeemableHolder": {
+        "type": "object",
+        "title": "Customer Redeemable",
+        "description": "Single customer's redeemable",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier of the redeemable holder.",
+            "example": "rh_0e7b8db4700106a852"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp representing the date and time when the redeemable was assigned. The value is shown in the ISO 8601 format.",
+            "example": "2024-03-22T17:48:25.910Z"
+          },
+          "redeemable_id": {
+            "type": "string",
+            "description": "Identifier of the redeemable item.",
+            "example": "v_GXVguPhq2khgFxH7GrRXWA91gDr1LiA1"
+          },
+          "redeemable_object": {
+            "type": "string",
+            "description": "Type of the redeemable.",
+            "example": "voucher"
+          },
+          "customer_id": {
+            "type": "string",
+            "description": "Unique identifier of the customer.",
+            "example": "cust_p1ufreYbVbwZ1x70nFkH9rF9"
+          },
+          "holder_role": {
+            "type": "string",
+            "description": "Role of the holder.",
+            "enum": [
+              "OWNER",
+              "REFERRER",
+              "REFEREE"
+            ],
+            "example": "OWNER"
+          },
+          "campaign_id": {
+            "type": "string",
+            "description": "Unique identifier of the campaign as assigned by Voucherify.",
+            "example": "camp_weer1c3p5ZgktqfW56RfoNaG"
+          },
+          "campaign_type": {
+            "type": "string",
+            "description": "Defines the type of the campaign.",
+            "default": "REFERRAL_PROGRAM",
+            "enum": [
+              "REFERRAL_PROGRAM"
+            ],
+            "example": "REFERRAL_PROGRAM"
+          },
+          "voucher_type": {
+            "type": "string",
+            "description": "Defines the type of the voucher.",
+            "enum": [
+              "GIFT_VOUCHER",
+              "DISCOUNT_VOUCHER",
+              "LOYALTY_CARD"
+            ],
+            "example": "DISCOUNT_VOUCHER"
+          },
+          "metadata": {
+            "type": "object",
+            "description": "A set of custom key/value pairs that you can attach to a redeemable holder. The metadata object stores all custom attributes assigned to the `redeemable_holder` object."
+          },
+          "object": {
+            "type": "string",
+            "description": "The type of the object represented by JSON.",
+            "default": "redeemable_holder",
+            "enum": [
+              "redeemable_holder"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "redeemable_id",
+          "redeemable_object",
+          "customer_id",
+          "holder_role",
+          "campaign_id",
+          "campaign_type",
+          "voucher_type",
+          "object"
+        ]
+      },
+      "ParameterLimit": {
+        "type": "integer",
+        "maximum": 100,
+        "minimum": 1
+      },
+      "FilterConditionsString": {
+        "title": "Filter by conditions",
+        "type": "object",
+        "description": "Data filters used to narrow down the data records to be returned in the result.",
+        "properties": {
+          "$in": {
+            "type": "array",
+            "description": "Array of resource values that should be included in the results (multiple values).",
+            "items": {
+              "type": "string"
+            }
+          },
+          "$not_in": {
+            "type": "array",
+            "description": "Array of resource values that should be included in the results (multiple values).",
+            "items": {
+              "type": "string"
+            }
+          },
+          "$is": {
+            "type": "string",
+            "description": "Value is exactly this value (single value)."
+          },
+          "$is_not": {
+            "type": "string",
+            "description": "Results omit this value (single value)."
+          },
+          "$has_value": {
+            "type": "string",
+            "description": "Value is NOT null. The value for this parameter is an empty string."
+          },
+          "$is_unknown": {
+            "type": "string",
+            "description": "Value is null. The value for this parameter is an empty string."
+          },
+          "$starts_with": {
+            "type": "string",
+            "description": "Value starts with the specified string."
+          },
+          "$ends_with": {
+            "type": "string",
+            "description": "Value ends with the specified string."
+          },
+          "$contains": {
+            "type": "string",
+            "description": "Value includes the specified string."
+          },
+          "$not_contain": {
+            "type": "string",
+            "description": "Value does NOT include the specified string."
+          }
+        }
+      },
+      "FilterConditionsDateTime": {
+        "title": "Filter by conditions",
+        "type": "object",
+        "description": "Data filters used to narrow down the data records to be returned in the result.",
+        "properties": {
+          "$after": {
+            "type": "string",
+            "description": "Value is after this date. The value for this parameter is shown in the ISO 8601 format.",
+            "format": "date-time",
+            "example": "2024-01-01T00:00:00.000Z"
+          },
+          "$before": {
+            "type": "string",
+            "description": "Value is before this date. The value for this parameter is shown in the ISO 8601 format.",
+            "format": "date-time",
+            "example": "2024-01-01T00:00:00.000Z"
+          },
+          "$has_value": {
+            "type": "string",
+            "description": "Value is NOT null. The value for this parameter is an empty string."
+          },
+          "$is_unknown": {
+            "type": "string",
+            "description": "Value is null. The value for this parameter is an empty string."
+          },
+          "$more_than": {
+            "type": "integer",
+            "description": "Value is more days ago before the current date and time, e.g. more than `10` days ago."
+          },
+          "$less_than": {
+            "type": "integer",
+            "description": "Value is less days before the current date and time, e.g. less than `10` days ago."
+          }
+        }
+      },
+      "Junction": {
+        "title": "Junction",
+        "description": "Logical Operator Between Filters. Filter by conditions set on the `junction` parameter indicating how the `conditions` should be accounted for in the query. An `AND` is an all-inclusive logical operator, meaning the `AND` operator displays a record if **ALL** the conditions separated by AND are TRUE, while  an `OR` operator displays a record if **ANY** of the conditions separated by OR is TRUE.",
+        "enum": [
+          "and",
+          "or"
+        ],
+        "type": "string"
+      },
+      "RedeemableHoldersList": {
+        "type": "object",
+        "title": "Redeemable Holders List",
+        "description": "List of Holder's Redeemables",
+        "properties": {
+          "object": {
+            "type": "string",
+            "description": "The type of the object represented by JSON. This object stores information about redeemables holders",
+            "default": "list"
+          },
+          "data_ref": {
+            "type": "string",
+            "description": "Identifies the name of the JSON property that contains the array of holders.",
+            "default": "data"
+          },
+          "data": {
+            "type": "array",
+            "description": "A dictionary that contains an array of holders.",
+            "items": {
+              "$ref": "#/components/schemas/RedeemableHolder"
+            }
+          },
+          "total": {
+            "type": "integer",
+            "description": "Total number of holders assigned to the redeemable."
+          },
+          "has_more": {
+            "type": "boolean",
+            "description": "As query results are always limited (by the limit parameter), the `has_more` flag indicates if there are more records for given filter parameters. This lets you know if you can run another request with a `starting_after_id` query or a different limit to get more records returned in the results."
+          },
+          "more_starting_after": {
+            "type": "string",
+            "description": "Returns an ID that can be used to return another page of results. Use the ID in the `starting_after_id` query parameter to display another page of the results occuring after the field with that ID."
+          }
+        },
+        "required": [
+          "object",
+          "data_ref",
+          "data",
+          "total",
+          "has_more"
+        ]
+      },
+      "CustomerBase": {
+        "title": "Customer Base",
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Customer's first and last name."
+          },
+          "description": {
+            "type": "string",
+            "description": "An arbitrary string that you can attach to a customer object."
+          },
+          "email": {
+            "type": "string",
+            "description": "Customer's email address."
+          },
+          "phone": {
+            "type": "string",
+            "description": "Customer's phone number. This parameter is mandatory when you try to send out codes to customers via an SMS channel."
+          },
+          "birthday": {
+            "type": "string",
+            "description": "`Deprecated`. ~~Customer's birthdate; format YYYY-MM-DD~~.",
+            "format": "date"
+          },
+          "birthdate": {
+            "type": "string",
+            "description": "Customer's birthdate; format YYYY-MM-DD.",
+            "format": "date"
+          },
+          "address": {
+            "type": "object",
+            "nullable": true,
+            "description": "Customer's address.",
+            "properties": {
+              "city": {
+                "type": "string",
+                "description": "City"
+              },
+              "state": {
+                "type": "string",
+                "description": "State"
+              },
+              "line_1": {
+                "type": "string",
+                "description": "First line of address."
+              },
+              "line_2": {
+                "type": "string",
+                "description": "Second line of address."
+              },
+              "country": {
+                "type": "string",
+                "description": "Country."
+              },
+              "postal_code": {
+                "type": "string",
+                "description": "Postal code."
+              }
+            }
+          },
+          "metadata": {
+            "type": "object",
+            "description": "A set of custom key/value pairs that you can attach to a customer. The metadata object stores all custom attributes assigned to the customer. It can be useful for storing additional information about the customer in a structured format. This metadata can be used for validating whether the customer qualifies for a discount or it can be used in building customer segments."
+          }
+        }
+      }
+    },
+    "parameters": {
+      "limit": {
+        "name": "limit",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "$ref": "#/components/schemas/ParameterLimit"
+        },
+        "description": "Limits the number of objects to be returned. The limit can range between 1 and 100 items. If no limit is set, it returns 10 items."
+      }
+    },
+    "securitySchemes": {
+      "X-App-Id": {
+        "type": "apiKey",
+        "name": "X-App-Id",
+        "in": "header"
+      },
+      "X-App-Token": {
+        "type": "apiKey",
+        "name": "X-App-Token",
+        "in": "header"
+      },
+      "X-Voucherify-OAuth": {
+        "type": "oauth2",
+        "flows": {
+          "implicit": {
+            "authorizationUrl": "https://api.voucherify.io/v1/oauth/token",
+            "scopes": {
+              "api": "Gives access to whole server-side API.",
+              "vouchers": "Gives access to all endpoints and methods starting with `v1/vouchers`.",
+              "client_api": "Gives access to whole client-side API.",
+              "client_vouchers": "Gives access to all endpoints and methods starting with `/client/v1/vouchers`.",
+              "promotions": "Gives access to all endpoints and methods starting with `/v1/promotions`.",
+              "client_promotions": "Gives access to all endpoints and methods starting with `/client/v1/promotions`",
+              "campaigns": "Gives access to all endpoints and methods starting with `v1/campaigns`.",
+              "client_publish": "Gives access to all endpoints and methods starting with `/client/v1/publish`.",
+              "exports": "Gives access to all endpoints and methods starting with `/v1/exports`.",
+              "publications": "Gives access to all endpoints and methods starting with `/v1/publications`.",
+              "client_validate": "Gives access to all endpoints and methods starting with `/client/v1/validate`.",
+              "validations": "Gives access to all endpoints and methods starting with `/v1/validations`.",
+              "client_validations": "Gives access to all endpoints and methods starting with `/client/v1/validations`.",
+              "qualifications": "Gives access to all endpoints and methods starting with `/v1/qualifications`.",
+              "client_qualifications": "Gives access to all endpoints and methods starting with `/client/v1/qualifications`.",
+              "client_redeem": "Gives access to all endpoints and methods starting with `/client/v1/redeem",
+              "redemptions": "Gives access to all endpoints and methods starting with `/v1/redemptions`.",
+              "client_redemptions": "Gives access to all endpoints and methods starting with `/client/v1/redemptions`",
+              "customers": "Gives access to all endpoints and methods starting with `/v1/customers`.",
+              "client_customers": "Gives access to all endpoints and methods starting with `/client/v1/customers`.",
+              "orders": "Gives access to all endpoints and methods starting with `/v1/orders`.",
+              "products": "Gives access to all endpoints and methods starting with `/v1/products`.",
+              "skus": "Gives access to all endpoints and methods starting with `/v1/skus`.",
+              "validation-rules": "Gives access to all endpoints and methods starting with `/v1/validation-rules`.",
+              "validation-rules-assignments": "Gives access to all endpoints and methods starting with `/v1/validation-rules-assignments",
+              "segments": "Gives access to all endpoints and methods starting with `/v1/segments`.",
+              "events": "Gives access to all endpoints and methods starting with `/v1/events`.",
+              "client_events": "Gives access to all endpoints and methods starting with `client/v1/events`.",
+              "rewards": "Gives access to all endpoints and methods starting with `/v1/rewards`.",
+              "assets": "Gives access to all endpoints and methods starting with `/v1/assets`.",
+              "task-results": "Gives access to all endpoints and methods starting with `/v1/task-results`.",
+              "loyalties": "Gives access to all endpoints and methods starting with `/v1/loyalties`.",
+              "client_consents": "Gives access to all endpoints and methods starting with `client/v1/consents`.",
+              "consents": "Gives access to all endpoints and methods starting with `/v1/consents`.",
+              "async-actions": "Gives access to all endpoints and methods starting with `/v1/async-actions`.",
+              "product-collections": "Gives access to all endpoints and methods starting with `/v1/product-collections`.",
+              "categories": "Gives access to all endpoints and methods starting with `/v1/categories`.",
+              "metadata-schemas": "Gives access to all endpoints and methods starting with `/v1/metadata-schemas`.",
+              "locations": "Gives access to all endpoints and methods starting with `/v1/locations`.",
+              "referrals": "Gives access to all endpoints and methods starting with `/v1/referrals`.",
+              "trash-bin": "Gives access to all endpoints and methods starting with `/v1/trash-bin`.",
+              "templates": "Gives access to all endpoints and methods starting with `/v1/templates`."
+            }
+          }
+        }
+      }
+    }
+  }
+}

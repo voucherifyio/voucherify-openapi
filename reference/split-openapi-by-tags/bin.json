@@ -1,0 +1,637 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Voucherify API - Bin",
+    "version": "v2018-08-01",
+    "description": "Voucherify promotion engine REST API. Please see https://docs.voucherify.io/docs for more details. - Endpoints tagged with 'Bin'",
+    "contact": {
+      "name": "Voucherify Team",
+      "url": "https://www.voucherify.io/contact-support",
+      "email": "support@voucherify.io"
+    },
+    "termsOfService": "https://www.voucherify.io/legal/subscription-agreement",
+    "license": {
+      "name": "MIT",
+      "url": "https://github.com/voucherifyio/voucherify-js-sdk/blob/main/LICENSE"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://{cluster}.voucherify.io",
+      "description": "Base URL",
+      "variables": {
+        "cluster": {
+          "default": "api",
+          "enum": [
+            "api",
+            "us1.api",
+            "as1.api",
+            "download",
+            "us1.download",
+            "as1.download"
+          ]
+        }
+      }
+    }
+  ],
+  "paths": {
+    "/v1/trash-bin": {
+      "get": {
+        "operationId": "list-bin-entries",
+        "tags": [
+          "Bin"
+        ],
+        "summary": "List Bin Entries",
+        "description": "Retrieves a list of resources moved to the bin. The following resources can be moved to the bin:\n- campaigns\n- vouchers\n- products\n- SKUs\n\nTo use this endpoint, you must have the following permissions:\n- `vouchers.read`\n- `campaigns.read`\n- `products.read`",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/limit"
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterOrderListBin"
+            },
+            "in": "query",
+            "name": "order",
+            "description": "Orders the bin entries according to the bin entry ID. The dash `-` preceding a sorting option means sorting in a descending order."
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterString"
+            },
+            "in": "query",
+            "name": "starting_after_id",
+            "description": "A cursor for pagination. It retrieves the results starting after a result with the given ID."
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterFiltersListBin"
+            },
+            "in": "query",
+            "name": "filters",
+            "description": "Filters for listing bin entries.",
+            "style": "deepObject",
+            "explode": true
+          }
+        ],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": [],
+            "X-Voucherify-OAuth": [
+              "api",
+              "trash-bin"
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns the list of all the bin entries matching the query parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrashBinListResponseBody"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "object": "list",
+                      "data_ref": "data",
+                      "data": [
+                        {
+                          "id": "tbe_0eb6515f758ae37126",
+                          "created_at": "2024-05-07T09:15:13.218Z",
+                          "deleted_by_user_id": "user_JjB45t4Rpl4t1n0oMRlj6trzXKsh7FGX7",
+                          "resource_id": "v_JPfnb5ChY1HdNnaMkA0ikra4gIg0dja6",
+                          "resource_type": "voucher",
+                          "resource_name": "Trash-Discount-123",
+                          "resource_parent_id": "camp_ITQtKkrPOxL1a55uSU7tqbCL",
+                          "object": "voucher"
+                        },
+                        {
+                          "id": "tbe_0eb651ca7b8ae37184",
+                          "created_at": "2024-05-07T09:17:02.827Z",
+                          "deleted_by_user_id": "user_JjB45t4Rpl4t1n0oMRlj6trzXKsh7FGX7",
+                          "resource_id": "sku_0eb651c09e0ae37178",
+                          "resource_type": "sku",
+                          "resource_name": "Trash container icy blue",
+                          "resource_parent_id": "prod_0eb651c04395147085",
+                          "object": "sku"
+                        }
+                      ],
+                      "total": 2,
+                      "has_more": true,
+                      "more_starting_after": "tbe_0eb651ca7b8ae37184"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Returns an error if the user is missing required permissions.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "code": 403,
+                      "message": "Missing permission",
+                      "details": "User does not have a required permission to perform this operation.",
+                      "key": "missing_required_permission"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/trash-bin/{binEntryId}": {
+      "delete": {
+        "operationId": "delete-bin-entry",
+        "tags": [
+          "Bin"
+        ],
+        "summary": "Delete Bin Entry",
+        "description": "Deletes permanently a bin entry with a given ID.The following resources can be moved to the bin and permanently deleted:\n- campaigns\n- vouchers\n- products\n- SKUs\n\n\n\nTo use this endpoint and delete a given resource type, you must have the following permissions:\n- `vouchers.delete` to delete a voucher,\n- `campaigns.delete` to delete a campaign,\n- `products.delete` to delete a product or SKU.",
+        "parameters": [],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": [],
+            "X-Voucherify-OAuth": [
+              "api",
+              "trash-bin"
+            ]
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Returns no content if deletion is successful."
+          },
+          "403": {
+            "description": "Returns an error if the user is missing required permissions.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "code": 403,
+                      "message": "Missing permission",
+                      "details": "User does not have a required permission to perform this operation.",
+                      "key": "missing_required_permission"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "parameters": {
+      "limit": {
+        "name": "limit",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "$ref": "#/components/schemas/ParameterLimit"
+        },
+        "description": "Limits the number of objects to be returned. The limit can range between 1 and 100 items. If no limit is set, it returns 10 items."
+      }
+    },
+    "schemas": {
+      "ParameterOrderListBin": {
+        "type": "string",
+        "enum": [
+          "id",
+          "-id"
+        ]
+      },
+      "ParameterString": {
+        "type": "string"
+      },
+      "ParameterFiltersListBin": {
+        "type": "object",
+        "properties": {
+          "junction": {
+            "$ref": "#/components/schemas/Junction"
+          },
+          "id": {
+            "type": "object",
+            "description": "Unique identifier of the bin entry.",
+            "properties": {
+              "conditions": {
+                "$ref": "#/components/schemas/FilterConditionsString"
+              }
+            }
+          },
+          "resource_type": {
+            "type": "object",
+            "description": "Resource type of the resource moved to the bin.",
+            "properties": {
+              "conditions": {
+                "properties": {
+                  "$in": {
+                    "type": "array",
+                    "description": "Array of resource values that should be included in the results (multiple values).",
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "campaign",
+                        "product",
+                        "sku",
+                        "voucher"
+                      ]
+                    }
+                  },
+                  "$not_in": {
+                    "type": "array",
+                    "description": "Array of resource values that should be included in the results (multiple values).",
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "campaign",
+                        "product",
+                        "sku",
+                        "voucher"
+                      ]
+                    }
+                  },
+                  "$is": {
+                    "type": "string",
+                    "description": "Value is exactly this value (single value).",
+                    "enum": [
+                      "campaign",
+                      "product",
+                      "sku",
+                      "voucher"
+                    ]
+                  },
+                  "$is_not": {
+                    "type": "string",
+                    "description": "Results omit this value (single value).",
+                    "enum": [
+                      "campaign",
+                      "product",
+                      "sku",
+                      "voucher"
+                    ]
+                  },
+                  "$has_value": {
+                    "type": "string",
+                    "description": "Value is NOT null. The value for this parameter is an empty string."
+                  },
+                  "$is_unknown": {
+                    "type": "string",
+                    "description": "Value is null. The value for this parameter is an empty string."
+                  },
+                  "$starts_with": {
+                    "type": "string",
+                    "description": "Value starts with the specified string."
+                  },
+                  "$ends_with": {
+                    "type": "string",
+                    "description": "Value ends with the specified string."
+                  }
+                }
+              }
+            }
+          },
+          "resource_name": {
+            "type": "object",
+            "description": "Name of the resource moved to the bin: the name of the campaign, voucher, product, or SKU.",
+            "properties": {
+              "conditions": {
+                "$ref": "#/components/schemas/FilterConditionsString"
+              }
+            }
+          },
+          "resource_id": {
+            "type": "object",
+            "description": "Unique identifier of the resource moved to the bin.",
+            "properties": {
+              "conditions": {
+                "$ref": "#/components/schemas/FilterConditionsString"
+              }
+            }
+          }
+        }
+      },
+      "TrashBinListResponseBody": {
+        "type": "object",
+        "title": "List Bin Entities",
+        "description": "Retrieves a list of the resources moved the bin.",
+        "properties": {
+          "object": {
+            "type": "string",
+            "default": "list",
+            "description": "The type of the object represented by JSON. This object stores information about the bin entries in a dictionary.",
+            "enum": [
+              "list"
+            ]
+          },
+          "data_ref": {
+            "type": "string",
+            "default": "data",
+            "description": "Identifies the name of the attribute that contains the array of bin entry objects.",
+            "enum": [
+              "data"
+            ]
+          },
+          "data": {
+            "type": "array",
+            "description": "Array of bin entry objects.",
+            "items": {
+              "$ref": "#/components/schemas/TrashBinItem"
+            }
+          },
+          "total": {
+            "type": "integer",
+            "description": "The total number of bin entries. This is the number of the entries returned in the array, not the number of all matching results or all resources currently moved to the bin."
+          },
+          "has_more": {
+            "type": "boolean",
+            "description": "As query results are always limited (by the limit parameter), the `has_more` flag indicates if there are more records for given filter parameters. This lets you know if you can run another request with a `starting_after_id` query or a different limit to get more records returned in the results."
+          },
+          "more_starting_after": {
+            "type": "string",
+            "description": "If `has_more` is `true`, it returns an ID that can be used to return another page of results. Use the ID in the `starting_after_id` query parameter to display another page of the results occuring after the field with that ID."
+          }
+        },
+        "required": [
+          "object",
+          "data_ref",
+          "data",
+          "total",
+          "has_more"
+        ]
+      },
+      "Error": {
+        "title": "Error Object",
+        "type": "object",
+        "description": "Error details",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "Error's HTTP status code."
+          },
+          "key": {
+            "type": "string",
+            "description": "Short string describing the kind of error which occurred."
+          },
+          "message": {
+            "type": "string",
+            "description": "A human-readable message providing a short description of the error."
+          },
+          "details": {
+            "type": "string",
+            "description": "A human-readable message providing more details about the error."
+          },
+          "request_id": {
+            "type": "string",
+            "example": "v-0a885062c80375740f",
+            "description": "This ID is useful when troubleshooting and/or finding the root cause of an error response by our support team."
+          },
+          "resource_id": {
+            "type": "string",
+            "description": "Unique resource ID that can be used in another endpoint to get more details.",
+            "example": "rf_0c5d710a87c8a31f86"
+          },
+          "resource_type": {
+            "type": "string",
+            "description": "The resource type.",
+            "example": "voucher"
+          },
+          "error": {
+            "type": "object",
+            "description": "Includes additional information about the error.",
+            "properties": {
+              "message": {
+                "type": "string",
+                "description": "The message configured by the user in a validation rule."
+              }
+            }
+          }
+        },
+        "required": [
+          "code",
+          "message"
+        ]
+      },
+      "ParameterLimit": {
+        "type": "integer",
+        "maximum": 100,
+        "minimum": 1
+      },
+      "Junction": {
+        "title": "Junction",
+        "description": "Logical Operator Between Filters. Filter by conditions set on the `junction` parameter indicating how the `conditions` should be accounted for in the query. An `AND` is an all-inclusive logical operator, meaning the `AND` operator displays a record if **ALL** the conditions separated by AND are TRUE, while  an `OR` operator displays a record if **ANY** of the conditions separated by OR is TRUE.",
+        "enum": [
+          "and",
+          "or"
+        ],
+        "type": "string"
+      },
+      "FilterConditionsString": {
+        "title": "Filter by conditions",
+        "type": "object",
+        "description": "Data filters used to narrow down the data records to be returned in the result.",
+        "properties": {
+          "$in": {
+            "type": "array",
+            "description": "Array of resource values that should be included in the results (multiple values).",
+            "items": {
+              "type": "string"
+            }
+          },
+          "$not_in": {
+            "type": "array",
+            "description": "Array of resource values that should be included in the results (multiple values).",
+            "items": {
+              "type": "string"
+            }
+          },
+          "$is": {
+            "type": "string",
+            "description": "Value is exactly this value (single value)."
+          },
+          "$is_not": {
+            "type": "string",
+            "description": "Results omit this value (single value)."
+          },
+          "$has_value": {
+            "type": "string",
+            "description": "Value is NOT null. The value for this parameter is an empty string."
+          },
+          "$is_unknown": {
+            "type": "string",
+            "description": "Value is null. The value for this parameter is an empty string."
+          },
+          "$starts_with": {
+            "type": "string",
+            "description": "Value starts with the specified string."
+          },
+          "$ends_with": {
+            "type": "string",
+            "description": "Value ends with the specified string."
+          },
+          "$contains": {
+            "type": "string",
+            "description": "Value includes the specified string."
+          },
+          "$not_contain": {
+            "type": "string",
+            "description": "Value does NOT include the specified string."
+          }
+        }
+      },
+      "TrashBinItem": {
+        "type": "object",
+        "title": "Trash Bin Item",
+        "description": "Resource moved to the bin, i.e. a campaign, product, SKU, or voucher.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier of the trash bin entry. It should not be confused with the ID of the resource moved to the bin.",
+            "example": "tbe_0e8213a0a78020ec64"
+          },
+          "created_at": {
+            "type": "string",
+            "description": "Timestamp representing the date and time when the resource was moved to the bin. The value for this parameter is shown in the ISO 8601 format.",
+            "example": "2024-03-27T19:24:26.142Z",
+            "format": "date-time"
+          },
+          "deleted_by_user_id": {
+            "type": "string",
+            "nullable": true,
+            "description": "Unique identifier of the user who moved the resource to the bin. It returns a user ID if the resource was moved to the bin through an action in the website. It returns a `null` if the resource was deleted through the API.",
+            "example": "user_lNTg47u7Ip0Smgcm1k3ShHuUdH4qToNc"
+          },
+          "resource_id": {
+            "type": "string",
+            "description": "Unique identifier of the resource moved to the bin, i.e. an ID of a campaign, product, SKU, or voucher.",
+            "example": "v_ZUFwkglCEWaEfXqkJYd3uogTEEHEEU8S"
+          },
+          "resource_type": {
+            "type": "string",
+            "description": "Type of the resource moved to the bin.",
+            "enum": [
+              "campaign",
+              "product",
+              "sku",
+              "voucher"
+            ],
+            "example": "voucher"
+          },
+          "resource_name": {
+            "type": "string",
+            "description": "Name of the resouce moved to the bin. It is the name of the campaign, product or SKU, or the voucher code.",
+            "example": "BLCKFRIDAY_2024"
+          },
+          "resource_parent_id": {
+            "type": "string",
+            "nullable": true,
+            "description": "Unique identifier of the parent resource. For a voucher, it is a campaign ID, except for generic (standalone) voucherss. For an SKU, it is the product ID. It returns `null` for campaigns and base products.",
+            "example": "camp_snn0eQL0PYWl5b6lY6HQNPfb"
+          },
+          "object": {
+            "type": "string",
+            "description": "The type of the object represented by JSON. It is equal to the `resource_type`.",
+            "example": "voucher",
+            "enum": [
+              "campaign",
+              "product",
+              "sku",
+              "voucher"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "deleted_by_user_id",
+          "resource_id",
+          "resource_type",
+          "resource_name",
+          "resource_parent_id",
+          "object"
+        ]
+      }
+    },
+    "securitySchemes": {
+      "X-App-Id": {
+        "type": "apiKey",
+        "name": "X-App-Id",
+        "in": "header"
+      },
+      "X-App-Token": {
+        "type": "apiKey",
+        "name": "X-App-Token",
+        "in": "header"
+      },
+      "X-Voucherify-OAuth": {
+        "type": "oauth2",
+        "flows": {
+          "implicit": {
+            "authorizationUrl": "https://api.voucherify.io/v1/oauth/token",
+            "scopes": {
+              "api": "Gives access to whole server-side API.",
+              "vouchers": "Gives access to all endpoints and methods starting with `v1/vouchers`.",
+              "client_api": "Gives access to whole client-side API.",
+              "client_vouchers": "Gives access to all endpoints and methods starting with `/client/v1/vouchers`.",
+              "promotions": "Gives access to all endpoints and methods starting with `/v1/promotions`.",
+              "client_promotions": "Gives access to all endpoints and methods starting with `/client/v1/promotions`",
+              "campaigns": "Gives access to all endpoints and methods starting with `v1/campaigns`.",
+              "client_publish": "Gives access to all endpoints and methods starting with `/client/v1/publish`.",
+              "exports": "Gives access to all endpoints and methods starting with `/v1/exports`.",
+              "publications": "Gives access to all endpoints and methods starting with `/v1/publications`.",
+              "client_validate": "Gives access to all endpoints and methods starting with `/client/v1/validate`.",
+              "validations": "Gives access to all endpoints and methods starting with `/v1/validations`.",
+              "client_validations": "Gives access to all endpoints and methods starting with `/client/v1/validations`.",
+              "qualifications": "Gives access to all endpoints and methods starting with `/v1/qualifications`.",
+              "client_qualifications": "Gives access to all endpoints and methods starting with `/client/v1/qualifications`.",
+              "client_redeem": "Gives access to all endpoints and methods starting with `/client/v1/redeem",
+              "redemptions": "Gives access to all endpoints and methods starting with `/v1/redemptions`.",
+              "client_redemptions": "Gives access to all endpoints and methods starting with `/client/v1/redemptions`",
+              "customers": "Gives access to all endpoints and methods starting with `/v1/customers`.",
+              "client_customers": "Gives access to all endpoints and methods starting with `/client/v1/customers`.",
+              "orders": "Gives access to all endpoints and methods starting with `/v1/orders`.",
+              "products": "Gives access to all endpoints and methods starting with `/v1/products`.",
+              "skus": "Gives access to all endpoints and methods starting with `/v1/skus`.",
+              "validation-rules": "Gives access to all endpoints and methods starting with `/v1/validation-rules`.",
+              "validation-rules-assignments": "Gives access to all endpoints and methods starting with `/v1/validation-rules-assignments",
+              "segments": "Gives access to all endpoints and methods starting with `/v1/segments`.",
+              "events": "Gives access to all endpoints and methods starting with `/v1/events`.",
+              "client_events": "Gives access to all endpoints and methods starting with `client/v1/events`.",
+              "rewards": "Gives access to all endpoints and methods starting with `/v1/rewards`.",
+              "assets": "Gives access to all endpoints and methods starting with `/v1/assets`.",
+              "task-results": "Gives access to all endpoints and methods starting with `/v1/task-results`.",
+              "loyalties": "Gives access to all endpoints and methods starting with `/v1/loyalties`.",
+              "client_consents": "Gives access to all endpoints and methods starting with `client/v1/consents`.",
+              "consents": "Gives access to all endpoints and methods starting with `/v1/consents`.",
+              "async-actions": "Gives access to all endpoints and methods starting with `/v1/async-actions`.",
+              "product-collections": "Gives access to all endpoints and methods starting with `/v1/product-collections`.",
+              "categories": "Gives access to all endpoints and methods starting with `/v1/categories`.",
+              "metadata-schemas": "Gives access to all endpoints and methods starting with `/v1/metadata-schemas`.",
+              "locations": "Gives access to all endpoints and methods starting with `/v1/locations`.",
+              "referrals": "Gives access to all endpoints and methods starting with `/v1/referrals`.",
+              "trash-bin": "Gives access to all endpoints and methods starting with `/v1/trash-bin`.",
+              "templates": "Gives access to all endpoints and methods starting with `/v1/templates`."
+            }
+          }
+        }
+      }
+    }
+  }
+}

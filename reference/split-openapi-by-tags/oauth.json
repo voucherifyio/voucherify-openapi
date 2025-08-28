@@ -1,0 +1,453 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Voucherify API - OAuth",
+    "version": "v2018-08-01",
+    "description": "Voucherify promotion engine REST API. Please see https://docs.voucherify.io/docs for more details. - Endpoints tagged with 'OAuth'",
+    "contact": {
+      "name": "Voucherify Team",
+      "url": "https://www.voucherify.io/contact-support",
+      "email": "support@voucherify.io"
+    },
+    "termsOfService": "https://www.voucherify.io/legal/subscription-agreement",
+    "license": {
+      "name": "MIT",
+      "url": "https://github.com/voucherifyio/voucherify-js-sdk/blob/main/LICENSE"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://{cluster}.voucherify.io",
+      "description": "Base URL",
+      "variables": {
+        "cluster": {
+          "default": "api",
+          "enum": [
+            "api",
+            "us1.api",
+            "as1.api",
+            "download",
+            "us1.download",
+            "as1.download"
+          ]
+        }
+      }
+    }
+  ],
+  "paths": {
+    "/v1/oauth/token": {
+      "post": {
+        "operationId": "generate-oauth-token",
+        "tags": [
+          "OAuth"
+        ],
+        "summary": "Generate OAuth 2.0 Token",
+        "description": "Generate an OAuth 2.0 token for an API client. The token can be used to authorize access to the Voucherify API. The token inherits the permissions and IP whitelists of the API key that is used to generate the OAuth token. You can define the scope that limits its usage. You can generate up to 1000 OAuth tokens per project. The token expires in 900 seconds (15 minutes).\n\nIf the API key that is used to generate the OAuth token is deleted or blocked, you cannot generate new OAuth tokens and the existing ones will stop working within one minute.\n\nIf the API key used to generate an OAuth token is regenerated, the OAuth token can still be used.\n\n>🚧 Format of scope values\n>\n>Separate the values of the `scope` property with spaces.",
+        "parameters": [],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": []
+          }
+        ],
+        "requestBody": {
+          "description": "Send the request as `x-www-form-urlencoded`. Separate `scope` values with spaces, not commas.",
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/OAuthTokenGenerateRequestBody"
+              },
+              "examples": {
+                "Request example": {
+                  "value": {
+                    "grant_type": "client_credentials",
+                    "scope": "qualifications validations redemptions"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Returns details about the token to be used and its expiration times.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OAuthTokenGenerateResponseBody"
+                },
+                "examples": {
+                  "OAuth response": {
+                    "value": {
+                      "access_token": "1ABCde2FGHijKl3m4NO5pqR6STUv7wxYzAbc8dE90FgH1IJkLm",
+                      "client_id": "a1Bcdefg2HI3Jkl4m5nOP",
+                      "expires_at": 1738945086,
+                      "expires_in": 900,
+                      "scope": "api",
+                      "token_type": "Bearer"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Returns an error if an invalid request body is provided.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Invalid scope": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_scope",
+                      "message": "Invalid scope: vouchers,campaigns"
+                    }
+                  },
+                  "Invalid grant type": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_grant_type",
+                      "message": "Invalid grant_type"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/oauth/introspect": {
+      "post": {
+        "operationId": "introspect-oauth-token",
+        "tags": [
+          "OAuth"
+        ],
+        "summary": "Introspect OAuth 2.0 Token",
+        "description": "Introspect an OAuth 2.0 token for an API client.",
+        "parameters": [],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": []
+          }
+        ],
+        "requestBody": {
+          "description": "Send the request as `x-www-form-urlencoded`.",
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/OAuthTokenIntrospectRequestBody"
+              },
+              "examples": {
+                "Request example": {
+                  "value": {
+                    "access_token": "1ABCde2FGHijKl3m4NO5pqR6STUv7wxYzAbc8dE90FgH1IJkLm"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Returns details about an existing token and its expiration times. If an nonexistent token is sent in the request, the response returns that it is inactive.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OAuthTokenIntrospectResponseBody"
+                },
+                "examples": {
+                  "OAuth active token": {
+                    "value": {
+                      "access_token": "1ABCde2FGHijKl3m4NO5pqR6STUv7wxYzAbc8dE90FgH1IJkLm",
+                      "client_id": "a1Bcdefg2HI3Jkl4m5nOP",
+                      "expires_at": 1738945086,
+                      "expires_in": 555,
+                      "scope": "api",
+                      "token_type": "Bearer",
+                      "active": true
+                    }
+                  },
+                  "OAuth inactive token": {
+                    "value": {
+                      "active": false
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Returns an error if an invalid request body is provided.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Missing parameters": {
+                    "value": {
+                      "code": 400,
+                      "key": "missing_parameters",
+                      "message": "Missing parameters"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/oauth/token/revoke": {
+      "post": {
+        "operationId": "revoke-oauth-token",
+        "tags": [
+          "OAuth"
+        ],
+        "summary": "Revoke OAuth 2.0 Token",
+        "description": "Revoke an OAuth 2.0 token for an API client. Once revoked, the token cannot be used anymore.",
+        "parameters": [],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": []
+          }
+        ],
+        "requestBody": {
+          "description": "Send the request as `x-www-form-urlencoded`.",
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/OAuthTokenRevokeRequestBody"
+              },
+              "examples": {
+                "Request example": {
+                  "value": {
+                    "access_token": "1ABCde2FGHijKl3m4NO5pqR6STUv7wxYzAbc8dE90FgH1IJkLm"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Returns no content if the OAuth 2.0 token is revoked successfully."
+          },
+          "404": {
+            "description": "Returns an empty error if a token was not found or it was inactive."
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "OAuthTokenGenerateRequestBody": {
+        "title": "OAuth Token Generate Request Body",
+        "type": "object",
+        "description": "Request body schema for **POST** `/oauth/token`.",
+        "properties": {
+          "grant_type": {
+            "type": "string",
+            "description": "Gives an access token outside of the context of a user.",
+            "enum": [
+              "client_credentials"
+            ],
+            "required": [
+              "client_credentials"
+            ]
+          },
+          "scope": {
+            "type": "string",
+            "description": "Defines the scope of possible actions that can be done with the OAuth token. The `api` scope allows using the server-side API. The `client_api` scope allows using the whole client-side API. The values are space-delimited; do **not** use commas to separate the values.\n\nAllowed values: `api`, `assets`, `async-actions`, `campaigns`, `categories`, `client_api`, `client_consents`, `client_customers`, `client_events`, `client_promotions`, `client_publish`, `client_qualifications`, `client_redeem`, `client_redemptions`, `client_validate`, `client_validations`, `client_vouchers`, `consents`, `customers`, `events`, `exports`, `locations`, `loyalties`, `metadata-schemas`, `orders`, `product-collections`, `products`, `promotions`, `publications`, `qualifications`, `redemptions`, `referrals`, `rewards`, `segments`, `skus`, `task-results`, `templates`, `trash-bin`, `validation-rules-assignments`, `validation-rules`, `validations`, `vouchers`."
+          }
+        },
+        "required": [
+          "grant_type",
+          "scope"
+        ]
+      },
+      "OAuthTokenGenerateResponseBody": {
+        "title": "OAuth Token Generate Response Body",
+        "type": "object",
+        "description": "Response body schema for **POST** `/oauth/token`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/OAuthToken"
+          }
+        ],
+        "required": [
+          "access_token",
+          "client_id",
+          "expires_at",
+          "expires_in",
+          "scope",
+          "token_type"
+        ]
+      },
+      "Error": {
+        "title": "Error Object",
+        "type": "object",
+        "description": "Error details",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "Error's HTTP status code."
+          },
+          "key": {
+            "type": "string",
+            "description": "Short string describing the kind of error which occurred."
+          },
+          "message": {
+            "type": "string",
+            "description": "A human-readable message providing a short description of the error."
+          },
+          "details": {
+            "type": "string",
+            "description": "A human-readable message providing more details about the error."
+          },
+          "request_id": {
+            "type": "string",
+            "example": "v-0a885062c80375740f",
+            "description": "This ID is useful when troubleshooting and/or finding the root cause of an error response by our support team."
+          },
+          "resource_id": {
+            "type": "string",
+            "description": "Unique resource ID that can be used in another endpoint to get more details.",
+            "example": "rf_0c5d710a87c8a31f86"
+          },
+          "resource_type": {
+            "type": "string",
+            "description": "The resource type.",
+            "example": "voucher"
+          },
+          "error": {
+            "type": "object",
+            "description": "Includes additional information about the error.",
+            "properties": {
+              "message": {
+                "type": "string",
+                "description": "The message configured by the user in a validation rule."
+              }
+            }
+          }
+        },
+        "required": [
+          "code",
+          "message"
+        ]
+      },
+      "OAuthTokenIntrospectRequestBody": {
+        "title": "OAuth Token Introspect Request Body",
+        "type": "object",
+        "description": "Request body schema for **POST** `/oauth/introspect`.",
+        "properties": {
+          "access_token": {
+            "type": "string",
+            "description": "An OAuth 2.0 token generated with the API token and key.",
+            "example": "1ABCde2FGHijKl3m4NO5pqR6STUv7wxYzAbc8dE90FgH1IJkLm"
+          }
+        },
+        "required": [
+          "access_token"
+        ]
+      },
+      "OAuthTokenIntrospectResponseBody": {
+        "title": "OAuth Token Introspect Response Body",
+        "type": "object",
+        "description": "Response body schema for **POST** `/oauth/introspect`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/OAuthToken"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "active": {
+                "type": "boolean",
+                "description": "Determines if the token is active. Nonexistent tokens are also marked as inactive."
+              }
+            }
+          }
+        ],
+        "required": [
+          "access_token",
+          "client_id",
+          "expires_at",
+          "expires_in",
+          "scope",
+          "token_type",
+          "active"
+        ]
+      },
+      "OAuthTokenRevokeRequestBody": {
+        "title": "OAuth Token Revoke Request Body",
+        "type": "object",
+        "description": "Request body schema for **POST** `/oauth/token/revoke`.",
+        "properties": {
+          "access_token": {
+            "type": "string",
+            "description": "An OAuth 2.0 token generated with the API token and key.",
+            "example": "1ABCde2FGHijKl3m4NO5pqR6STUv7wxYzAbc8dE90FgH1IJkLm"
+          }
+        },
+        "required": [
+          "access_token"
+        ]
+      },
+      "OAuthToken": {
+        "title": "OAuth Token Details",
+        "type": "object",
+        "description": "Details about the OAuth token.",
+        "properties": {
+          "access_token": {
+            "type": "string",
+            "description": "The access token used to authorize access to the Voucherify API."
+          },
+          "client_id": {
+            "type": "string",
+            "description": "Unique client identifier, assigned by Voucherify, for OAuth."
+          },
+          "expires_at": {
+            "type": "integer",
+            "description": "Timestamp in seconds in the Unix format indicating when the token expires."
+          },
+          "expires_in": {
+            "type": "integer",
+            "description": "Number of seconds left until the token expires."
+          },
+          "scope": {
+            "type": "string",
+            "description": "Defines the scope of possible actions that can be done with the OAuth token. The `api` scope allows using the server-side API. The `client_api` scope allows using the whole client-side API.\nPossible values: `api`, `assets`, `async-actions`, `campaigns`, `categories`, `client_api`, `client_consents`, `client_customers`, `client_events`, `client_promotions`, `client_publish`, `client_qualifications`, `client_redeem`, `client_redemptions`, `client_validate`, `client_validations`, `client_vouchers`, `consents`, `customers`, `events`, `exports`, `locations`, `loyalties`, `metadata-schemas`, `orders`, `product-collections`, `products`, `promotions`, `publications`, `qualifications`, `redemptions`, `referrals`, `rewards`, `segments`, `skus`, `task-results`, `templates`, `trash-bin`, `validation-rules-assignments`, `validation-rules`, `validations`, `vouchers`."
+          },
+          "token_type": {
+            "type": "string",
+            "description": "Type of the token. Use the value as the header prefix for authorization.",
+            "default": "Bearer",
+            "enum": [
+              "Bearer"
+            ]
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "X-App-Id": {
+        "type": "apiKey",
+        "name": "X-App-Id",
+        "in": "header"
+      },
+      "X-App-Token": {
+        "type": "apiKey",
+        "name": "X-App-Token",
+        "in": "header"
+      }
+    }
+  }
+}

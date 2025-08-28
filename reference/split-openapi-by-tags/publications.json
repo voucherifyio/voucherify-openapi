@@ -1,0 +1,3062 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Voucherify API - Publications",
+    "version": "v2018-08-01",
+    "description": "Voucherify promotion engine REST API. Please see https://docs.voucherify.io/docs for more details. - Endpoints tagged with 'Publications'",
+    "contact": {
+      "name": "Voucherify Team",
+      "url": "https://www.voucherify.io/contact-support",
+      "email": "support@voucherify.io"
+    },
+    "termsOfService": "https://www.voucherify.io/legal/subscription-agreement",
+    "license": {
+      "name": "MIT",
+      "url": "https://github.com/voucherifyio/voucherify-js-sdk/blob/main/LICENSE"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://{cluster}.voucherify.io",
+      "description": "Base URL",
+      "variables": {
+        "cluster": {
+          "default": "api",
+          "enum": [
+            "api",
+            "us1.api",
+            "as1.api",
+            "download",
+            "us1.download",
+            "as1.download"
+          ]
+        }
+      }
+    }
+  ],
+  "paths": {
+    "/v1/publications/create": {
+      "get": {
+        "operationId": "create-publication-1",
+        "tags": [
+          "Publications"
+        ],
+        "summary": "Create Publication",
+        "description": "This method selects vouchers that are suitable for publication, adds a publish entry and returns the publication.\n\nA voucher is suitable for publication when it's active and hasn't been published yet.\n> ❗️ Limited access\n>\n> Access to this endpoint is limited. This endpoint is designed for specific integrations and the API keys need to be configured to access this endpoint. Navigate to the **Dashboard** &rarr; **Project Settings** &rarr; **General** &rarr; **Integration Keys** to set up a pair of API keys and use them to send the request.  \n\n<!-- theme: warning -->\n> 🚧 Clearly define the source of the voucher\n>\n> You must clearly define which source you want to publish the voucher code from. It can either be a code from a campaign or a specific voucher identified by a code.  \n<!-- theme: warning -->\n> 🚧 Publish multiple vouchers\n> This endpoint does not support the publishing of multiple vouchers from a single campaign. In case you want to publish multiple vouchers within a single publication, you need to use a [dedicated endpoint](ref:create-publication).  \n\n<!-- theme: info -->\n\n> 📘 Auto-update campaign\n>\n> In case you want to ensure the number of publishable codes increases automatically with the number of customers, you should use an **auto-update** campaign.  \n\n## Example Request \n```markdown Publication Query \n/publications/create?campaign[name]=BlackFriday&customer[source_id]=Customer_Source_ID \n```  \n\n<!-- theme: danger -->\n> ❗️ Required  \n>\n> Query param `voucher` OR `campaign` MUST be filled out. If you provide both, `campaign` param will be skipped.",
+        "parameters": [
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterBoolean"
+            },
+            "in": "query",
+            "name": "join_once",
+            "description": "Through this flag, you can control if a particular person gets only one and always the same code even if the app sends multiple publication requests. It means that if you have a referral program, a referrer is assigned only to one code if an integration sends publication requests more than once for the same customer."
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterCode"
+            },
+            "in": "query",
+            "name": "voucher",
+            "description": "Code of voucher being published."
+          },
+          {
+            "name": "campaign",
+            "in": "query",
+            "description": "Create publication with campaign.",
+            "style": "deepObject",
+            "explode": true,
+            "schema": {
+              "$ref": "#/components/schemas/CreatePublicationCampaign"
+            }
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterString"
+            },
+            "in": "query",
+            "name": "source_id",
+            "description": "The merchant's publication ID if it is different from the Voucherify publication ID. It's an optional tracking identifier of a publication. It is really useful in case of an integration between multiple systems. It can be a publication ID from a CRM system, database or 3rd-party service.\nIf `source_id` is provided only 1 voucher can be published per request."
+          },
+          {
+            "name": "customer",
+            "in": "query",
+            "required": true,
+            "description": "Contains information about the customer to whom the publication was directed.",
+            "style": "deepObject",
+            "explode": true,
+            "schema": {
+              "$ref": "#/components/schemas/Customer"
+            }
+          },
+          {
+            "name": "metadata",
+            "in": "query",
+            "description": "The metadata object stores all custom attributes assigned to the publication. A set of key/value pairs that you can attach to a publication object. It can be useful for storing additional information about the publication in a structured format.",
+            "style": "deepObject",
+            "explode": true,
+            "schema": {
+              "$ref": "#/components/schemas/ParameterObject"
+            }
+          }
+        ],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": [],
+            "X-Voucherify-OAuth": [
+              "api",
+              "publications"
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns a publication object.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicationsCreateResponseBody"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "id": "pub_ocaXCa023ayJ3WL1ARxUeKgIvg3JcEGh",
+                      "object": "publication",
+                      "created_at": "2022-09-30T16:30:32.924Z",
+                      "customer_id": "cust_BB6F97yf0XqCe7hxVUV7M4sS",
+                      "tracking_id": "pub_source_customer_5",
+                      "metadata": {
+                        "year": 2022
+                      },
+                      "channel": "myown",
+                      "source_id": "publication_source_ID_10",
+                      "result": "SUCCESS",
+                      "customer": {
+                        "id": "cust_BB6F97yf0XqCe7hxVUV7M4sS",
+                        "name": "Bob Jones",
+                        "email": "bob.smith@email.com",
+                        "source_id": "pub_source_customer_5",
+                        "metadata": {
+                          "lang": "en",
+                          "test": true
+                        },
+                        "object": "customer"
+                      },
+                      "voucher": {
+                        "id": "v_6Hy5FdNlu3dP65fJu5BgXma31Sl3rgkf",
+                        "code": "cEsMn0uA",
+                        "campaign": "Test - Discount Effect - Amount - Items",
+                        "campaign_id": "camp_dphuwqH7BOVkgh4JmpDtS32l",
+                        "category": null,
+                        "category_id": null,
+                        "type": "DISCOUNT_VOUCHER",
+                        "discount": {
+                          "type": "AMOUNT",
+                          "amount_off": 300,
+                          "effect": "APPLY_TO_ITEMS"
+                        },
+                        "gift": null,
+                        "loyalty_card": null,
+                        "start_date": null,
+                        "expiration_date": null,
+                        "validity_timeframe": null,
+                        "validity_day_of_week": null,
+                        "active": true,
+                        "additional_info": null,
+                        "metadata": {},
+                        "assets": {
+                          "qr": {
+                            "id": "U2FsdGVkX188XVmOotyCyR2j3G8sJR8HzS3DQ+6J1OElPWSmjlEnthuJc7rkc7WIVxjT4pTl1JVVkHEuGXNXdzRik11H8S18HQeQFJFiuwLZ2mzEC2zZitEinyUxtZwhnEHoi0eGAgYCG7iVMNuOQA==",
+                            "url": "{{internalVoucherifyURL}}"
+                          },
+                          "barcode": {
+                            "id": "U2FsdGVkX18wDd9CcLM0Ef7aBfUSXZUoCQpuNpk4CHGOipbn+wFkfzcIZGBtUlxrI2KsXciCqF+c93AKzsymq5Yw8eEAFF/FK5f94z4/sgzaLDvyBmPCXHuS11Ew9S4ZEMjdTkUJftER2IlxWaCARA==",
+                            "url": "{{internalVoucherifyURL}}"
+                          }
+                        },
+                        "is_referral_code": false,
+                        "created_at": "2022-09-30T16:30:32.956Z",
+                        "updated_at": null,
+                        "holder_id": "cust_BB6F97yf0XqCe7hxVUV7M4sS",
+                        "redemption": {
+                          "quantity": 1,
+                          "redeemed_quantity": 0,
+                          "object": "list",
+                          "url": "/v1/vouchers/cEsMn0uA/redemptions?page=1&limit=10"
+                        },
+                        "publish": {
+                          "object": "list",
+                          "count": 1,
+                          "url": "/v1/vouchers/cEsMn0uA/publications?page=1&limit=10"
+                        },
+                        "object": "voucher"
+                      },
+                      "vouchers_id": [
+                        "v_6Hy5FdNlu3dP65fJu5BgXma31Sl3rgkf"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Returns an error if the query parameters are incomplete.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Missing customer": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Query should have required property 'customer'",
+                      "request_id": "v-0c8b6423f3c80ed3e4"
+                    }
+                  },
+                  "Missing vouchers": {
+                    "value": {
+                      "code": 400,
+                      "key": "missing_vouchers",
+                      "message": "Missing vouchers",
+                      "details": "Either Campaign or Voucher is required"
+                    }
+                  },
+                  "Voucher cannot be published": {
+                    "value": {
+                      "code": 400,
+                      "key": "voucher_cannot_be_published",
+                      "message": "Voucher cannot be published",
+                      "details": "Voucher cannot be published. Customer already joined program.",
+                      "request_id": "v-0c8b763544080efed2"
+                    }
+                  },
+                  "Voucher already published": {
+                    "value": {
+                      "code": 400,
+                      "key": "voucher_already_published",
+                      "message": "Voucher already published",
+                      "details": "Voucher 'v_vM7vQZmgV86k0wuz05cFAOfarj4s8BQE' has already been published",
+                      "request_id": "v-0c8baebc67c80e97a0"
+                    }
+                  },
+                  "Duplicate source ID": {
+                    "value": {
+                      "code": 400,
+                      "key": "duplicate_source_id",
+                      "message": "Duplicate source_id",
+                      "details": "Publication with source_id: 'test_publication_source_id_test_voucher' already exists",
+                      "request_id": "v-0c8b7e8f78c80e94a2"
+                    }
+                  },
+                  "Too many vouchers requested": {
+                    "value": {
+                      "code": 400,
+                      "key": "too_many_vouchers_requested",
+                      "message": "Too many vouchers requested",
+                      "details": "Only up to 1 can be published",
+                      "request_id": "v-0c8bac9a25c80e912d"
+                    }
+                  },
+                  "Metadata validation failed": {
+                    "value": {
+                      "code": 400,
+                      "key": "metadata_validation_failed",
+                      "message": "Metadata validation failed",
+                      "details": "ImageURL: must be a URL pointing to JPG/JPEG or PNG resource (actual value is 'http.com')",
+                      "request_id": "v-0c8bcbd742080ee807"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Returns an error if you don't have a specific credentials set up. Navigate to the **Dashboard** &rarr; **Project Settings** &rarr; **General** &rarr; **Integration Keys** to set up a pair of API keys and use them to send the request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/e_integration_key"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "code": 403,
+                      "message": "Forbidden",
+                      "key": "integration_api_key_required"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Returns an error if a resource is not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Resource not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find customer with id cust_xqA7DGj5eYPHg6PHVKwYRWiA",
+                      "request_id": "v-0c8b6b35294af6f192",
+                      "resource_id": "cust_xqA7DGj5eYPHg6PHVKwYRWiA",
+                      "resource_type": "customer"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/publications": {
+      "get": {
+        "operationId": "list-publications",
+        "tags": [
+          "Publications"
+        ],
+        "summary": "List Publications",
+        "description": "Retrieve a list of publications. To return a **particular** publication, you can use the `source_id` query parameter and provide the `source_id` of the publication you are looking for specifically.\n\n## Pagination\n\n<!-- theme: warning -->\n> 🚧 Important!\n>\n> If you want to scroll through a huge set of records, it is recommended to use the <!-- [Exports API](OpenAPI.json/components/schemas/16_obj_export_object) -->[Exports API](ref:create-export). This API will return an error `page_over_limit` if you reach a page above 1000.\n\n## Filter Query\n\nThe `filters` query parameter allows for joining multiple parameters with logical operators. The syntax looks as follows:\n\n<!--\ntitle: \"Filter template\"\n-->\n```url\nfilters[<field_name>][conditions][<operator>][<index>]=<value>\n```\n\n### Operators:\n\n<!--\ntitle: \"Operators\"\n-->\n```\n    \"$in\"\n    \"$not_in\"\n    \"$is\"\n    \"$is_not\"\n    \"$has_value\"\n    \"$is_unknown\"\n    \"$contains\"\n    \"$starts_with\"\n    \"$ends_with\"\n    \"$more_than\"\n    \"$less_than\"\n    \"$more_than_equal\"\n    \"$less_than_equal\"\n```\n\n### Examples\n\n<!--\ntitle: \"Example 1 - List publications of a given customer\"\n-->\n```url\nGET /v1/publications?filters[customer_id][conditions][$is][0]=cust_lUET6gRpO5Wxlg5p2j2gRCgL\n```\n<!--\ntitle: \"Example 2 - List publications of 2 customers\"\n-->\n```url\nGET /v1/publications?filters[customer_id][conditions][$in][0]=cust_lUET6gRpO5Wxlg5p2j2gRCgL&filters[customer_id][conditions][$in][1]=cust_aR7NfHusxT7PdTMAKMfWDXnc\n```\n<!--\ntitle: \"Example 3 - List publications of 2 customers using junction operator\"\n-->\n```url\nGET /v1/publications?filters[customer_id][conditions][$is][0]=cust_lUET6gRpO5Wxlg5p2j2gRCgL&filters[customer_id][conditions][$is][1]=cust_aR7NfHusxT7PdTMAKMfWDXnc&filters[junction]=OR\n```",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/limit"
+          },
+          {
+            "$ref": "#/components/parameters/page"
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterOrderListPublications"
+            },
+            "in": "query",
+            "name": "order",
+            "description": "Sorts the results using one of the filtering options, where the dash `-` preceding a sorting option means sorting in a descending order."
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterString"
+            },
+            "in": "query",
+            "name": "campaign",
+            "description": "Filters by a given campaign name."
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterCustomerId"
+            },
+            "in": "query",
+            "name": "customer",
+            "description": "Filters by a unique customer ID."
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterCode"
+            },
+            "in": "query",
+            "name": "voucher",
+            "description": "Filters by a given voucher code."
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterResultListPublications"
+            },
+            "in": "query",
+            "name": "result",
+            "description": "Filters by a publication result."
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterVoucherTypeListPublications"
+            },
+            "in": "query",
+            "name": "voucher_type",
+            "description": "Filters by a voucher type."
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterBoolean"
+            },
+            "in": "query",
+            "name": "is_referral_code",
+            "description": "This filter works only for the `true` option. If set to `true`, the query returns only publications of codes from referral campaigns. "
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterFiltersListPublications"
+            },
+            "in": "query",
+            "name": "filters",
+            "description": "Filters for listing publications.",
+            "style": "deepObject",
+            "explode": true
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterString"
+            },
+            "in": "query",
+            "name": "source_id",
+            "description": "Using this endpoint with a particular publication `source_id`, which was sent with the original request to create a publication, returns in the response, exactly the same code published initially because the code was assigned to the given publication. As a result, you can use this endpoint as a reference and return a code that was assigned in a publication by using a particular `source_id`."
+          }
+        ],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": [],
+            "X-Voucherify-OAuth": [
+              "api",
+              "publications"
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns a list of publications you've previously created with <!-- [create publication](OpenAPI.json/paths/~1publications/post) -->[create publication](ref:create-publication) or implicitly by the distribution manager. The publications are returned in sorted order, with the most recent ones appearing first.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicationsListResponseBody"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "object": "list",
+                      "data_ref": "publications",
+                      "publications": [
+                        {
+                          "id": "pub_QzQT50e5i2y3bRoEVvhFgrKbZ7t6BRwu",
+                          "object": "publication",
+                          "created_at": "2022-09-28T13:31:23.522Z",
+                          "customer_id": "cust_tAED42tFhLM9v7GmZUaklJFd",
+                          "tracking_id": "cindy.jones@email.com",
+                          "metadata": {
+                            "distribution_id": "distr_WXm0CBttar2ug2hBx3EdPtS8Ei",
+                            "source_type": "distribution",
+                            "source_id": "distr_WXm0CBttar2ug2hBx3EdPtS8Ei"
+                          },
+                          "channel": "Automation",
+                          "source_id": null,
+                          "result": "SUCCESS",
+                          "customer": {
+                            "id": "cust_tAED42tFhLM9v7GmZUaklJFd",
+                            "name": "Cindy Jones",
+                            "email": "cindy.jones@email.com",
+                            "source_id": "cindy.jones@email.com",
+                            "metadata": {
+                              "acquisition_channel": "Facebook"
+                            },
+                            "object": "customer"
+                          },
+                          "voucher": {
+                            "code": "FNV5IrtY",
+                            "object": "voucher",
+                            "campaign": "Loyalty Campaign",
+                            "loyalty_card": {
+                              "points": 0,
+                              "balance": 0
+                            },
+                            "is_referral_code": false
+                          },
+                          "vouchers_id": [
+                            "v_i3HOzVClfJUDia0qCu7TSuGfDj7c0dgD"
+                          ]
+                        },
+                        {
+                          "id": "pub_8KOKHObAjuemuI0b6225emIhmWDL1ZoX",
+                          "object": "publication",
+                          "created_at": "2022-09-28T13:31:02.766Z",
+                          "customer_id": "cust_tAED42tFhLM9v7GmZUaklJFd",
+                          "tracking_id": "sandy.jones@email.com",
+                          "metadata": {},
+                          "channel": "voucherify-website",
+                          "source_id": null,
+                          "result": "SUCCESS",
+                          "customer": {
+                            "id": "cust_tAED42tFhLM9v7GmZUaklJFd",
+                            "name": "Sandy Jones",
+                            "email": "sandy.jones@email.com",
+                            "source_id": "sandy.jones@email.com",
+                            "metadata": {
+                              "acquisition_channel": "Facebook"
+                            },
+                            "object": "customer"
+                          },
+                          "voucher": {
+                            "code": "Voucher-1",
+                            "object": "voucher",
+                            "campaign": null,
+                            "discount": {
+                              "type": "AMOUNT",
+                              "amount_off": 200,
+                              "amount_off_formula": "IF(VOUCHER_PUBLISH_COUNT = 1;25;5)",
+                              "effect": "APPLY_TO_ORDER"
+                            },
+                            "is_referral_code": false
+                          },
+                          "vouchers_id": [
+                            "v_1iEL92K634EIOqeYJw6AHrnjEhGPEdpu"
+                          ]
+                        },
+                        {
+                          "id": "pub_DcQPfyVYzomtkQGXFW7dcdyNoJ6vQ4NV",
+                          "object": "publication",
+                          "created_at": "2022-09-13T06:15:08.249Z",
+                          "customer_id": "cust_ur1hIPGflbaAe14mLlLdon3G",
+                          "tracking_id": "1",
+                          "metadata": {},
+                          "channel": "voucherify-website",
+                          "source_id": null,
+                          "result": "SUCCESS",
+                          "customer": {
+                            "id": "cust_ur1hIPGflbaAe14mLlLdon3G",
+                            "name": "Bob Jones",
+                            "email": "bob.jones@email.com",
+                            "source_id": "1",
+                            "metadata": {
+                              "accepts_marketing": false
+                            },
+                            "object": "customer"
+                          },
+                          "voucher": {
+                            "code": "GIFT-WOZaK5YF1Fs87tAX",
+                            "object": "voucher",
+                            "campaign": "Gift Cards",
+                            "gift": {
+                              "amount": 0,
+                              "balance": 0
+                            },
+                            "is_referral_code": false
+                          },
+                          "vouchers_id": [
+                            "v_yzOeb7vw63vbPfA30215dFm7aRXa8Xoc"
+                          ]
+                        }
+                      ],
+                      "total": 3
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Returns an error if you request a page higher than 1000.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "code": 400,
+                      "key": "page_over_limit",
+                      "message": "Listing resource above 1000 page is not supported",
+                      "details": "Property .page cannot be higher than 1000",
+                      "request_id": "v-0bc2a39574c61362af"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "create-publication",
+        "tags": [
+          "Publications"
+        ],
+        "summary": "Create Publication",
+        "description": "This method selects vouchers that are suitable for publication, adds a publish entry and returns the publication.\n\nA voucher is suitable for publication when it's active and hasn't been published yet.  \n\n<!-- theme: warning -->\n> 🚧 Clearly define the source of the voucher\n>\n> You must clearly define which source you want to publish the voucher code from. It can either be a code from a campaign or a specific voucher identified by a code.  \n<!-- theme: warning -->\n> 🚧 Publish multiple vouchers\n> In case you want to publish multiple vouchers within a single publication, you need to specify the campaign name and number of vouchers you want to publish.  \n<!-- theme: info -->\n\n> 📘 Auto-update campaign\n>\n> In case you want to ensure the number of publishable codes increases automatically with the number of customers, you should use an **auto-update** campaign.",
+        "parameters": [
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterBoolean"
+            },
+            "in": "query",
+            "name": "join_once",
+            "description": "Through this flag, you can control if a particular person gets only one and always the same code even if the app sends multiple publication requests. It means that if you have a referral program, a referrer is assigned only to one code if an integration sends publication requests more than once for the same customer."
+          }
+        ],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": [],
+            "X-Voucherify-OAuth": [
+              "api",
+              "publications"
+            ]
+          }
+        ],
+        "requestBody": {
+          "description": "Specify the publication parameters.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PublicationsCreateRequestBody"
+              },
+              "examples": {
+                "Example - Specific Voucher": {
+                  "value": {
+                    "campaign": {
+                      "name": "campaign-name"
+                    },
+                    "customer": {
+                      "source_id": "source-id",
+                      "Name": "Customer Name",
+                      "email": "customer email"
+                    },
+                    "voucher": "voucher-code",
+                    "metadata": {
+                      "key": "value"
+                    }
+                  }
+                },
+                "Example - Random Voucher": {
+                  "value": {
+                    "campaign": {
+                      "name": "campaign-name",
+                      "count": 1
+                    },
+                    "customer": {
+                      "source_id": "source-id",
+                      "Name": "Customer Name",
+                      "email": "customer email"
+                    },
+                    "voucher": "voucher-code",
+                    "metadata": {
+                      "key": "value"
+                    }
+                  }
+                },
+                "Example 3": {
+                  "value": {
+                    "source_id": "publication_source_ID_10",
+                    "campaign": "Test - Discount Effect - Amount - Items",
+                    "channel": "myown",
+                    "customer": {
+                      "source_id": "pub_source_customer_5",
+                      "name": "Bob Jones",
+                      "description": "A frequent customer",
+                      "email": "bob.smith@email.com",
+                      "phone": "+1 933 222 3333",
+                      "address": {
+                        "city": "New York",
+                        "country": "United States",
+                        "line_1": "123 Main St.",
+                        "line_2": "APT 3 BLG 5",
+                        "postal_code": "10001",
+                        "state": "NY"
+                      },
+                      "metadata": {
+                        "lang": "en",
+                        "test": true
+                      },
+                      "birthday": "1901-12-01"
+                    },
+                    "metadata": {
+                      "year": 2022
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Returns a publication object if a valid identifier was provided.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicationsCreateResponseBody"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "id": "pub_ocaXCa023ayJ3WL1ARxUeKgIvg3JcEGh",
+                      "object": "publication",
+                      "created_at": "2022-09-30T16:30:32.924Z",
+                      "customer_id": "cust_BB6F97yf0XqCe7hxVUV7M4sS",
+                      "tracking_id": "pub_source_customer_5",
+                      "metadata": {
+                        "year": 2022
+                      },
+                      "channel": "myown",
+                      "source_id": "publication_source_ID_10",
+                      "result": "SUCCESS",
+                      "customer": {
+                        "id": "cust_BB6F97yf0XqCe7hxVUV7M4sS",
+                        "name": "Bob Jones",
+                        "email": "bob.smith@email.com",
+                        "source_id": "pub_source_customer_5",
+                        "metadata": {
+                          "lang": "en",
+                          "test": true
+                        },
+                        "object": "customer"
+                      },
+                      "voucher": {
+                        "id": "v_6Hy5FdNlu3dP65fJu5BgXma31Sl3rgkf",
+                        "code": "cEsMn0uA",
+                        "campaign": "Test - Discount Effect - Amount - Items",
+                        "campaign_id": "camp_dphuwqH7BOVkgh4JmpDtS32l",
+                        "category": null,
+                        "category_id": null,
+                        "type": "DISCOUNT_VOUCHER",
+                        "discount": {
+                          "type": "AMOUNT",
+                          "amount_off": 300,
+                          "effect": "APPLY_TO_ITEMS"
+                        },
+                        "gift": null,
+                        "loyalty_card": null,
+                        "start_date": null,
+                        "expiration_date": null,
+                        "validity_timeframe": null,
+                        "validity_day_of_week": null,
+                        "active": true,
+                        "additional_info": null,
+                        "metadata": {},
+                        "assets": {
+                          "qr": {
+                            "id": "U2FsdGVkX188XVmOotyCyR2j3G8sJR8HzS3DQ+6J1OElPWSmjlEnthuJc7rkc7WIVxjT4pTl1JVVkHEuGXNXdzRik11H8S18HQeQFJFiuwLZ2mzEC2zZitEinyUxtZwhnEHoi0eGAgYCG7iVMNuOQA==",
+                            "url": "{{internalVoucherifyURL}}"
+                          },
+                          "barcode": {
+                            "id": "U2FsdGVkX18wDd9CcLM0Ef7aBfUSXZUoCQpuNpk4CHGOipbn+wFkfzcIZGBtUlxrI2KsXciCqF+c93AKzsymq5Yw8eEAFF/FK5f94z4/sgzaLDvyBmPCXHuS11Ew9S4ZEMjdTkUJftER2IlxWaCARA==",
+                            "url": "{{internalVoucherifyURL}}"
+                          }
+                        },
+                        "is_referral_code": false,
+                        "created_at": "2022-09-30T16:30:32.956Z",
+                        "updated_at": null,
+                        "holder_id": "cust_BB6F97yf0XqCe7hxVUV7M4sS",
+                        "redemption": {
+                          "quantity": 1,
+                          "redeemed_quantity": 0,
+                          "object": "list",
+                          "url": "/v1/vouchers/cEsMn0uA/redemptions?page=1&limit=10"
+                        },
+                        "publish": {
+                          "object": "list",
+                          "count": 1,
+                          "url": "/v1/vouchers/cEsMn0uA/publications?page=1&limit=10"
+                        },
+                        "object": "voucher"
+                      },
+                      "vouchers_id": [
+                        "v_6Hy5FdNlu3dP65fJu5BgXma31Sl3rgkf"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Returns an error if a publication with the same source ID already exists in the system or some request body parameter is missing.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Missing Parameters": {
+                    "value": {
+                      "code": 400,
+                      "key": "missing_vouchers",
+                      "message": "Missing vouchers",
+                      "details": "Either Campaign or Voucher is required"
+                    }
+                  },
+                  "Already published": {
+                    "value": {
+                      "code": 400,
+                      "key": "voucher_already_published",
+                      "message": "Voucher already published",
+                      "details": "Voucher 'v_Y5P4UZ1yilkiYOIJmAAgWazUi1wfkNwF' has already been published",
+                      "request_id": "v-0bc40bb800d5651137"
+                    }
+                  },
+                  "Duplicate Source ID": {
+                    "value": {
+                      "code": 400,
+                      "key": "duplicate_source_id",
+                      "message": "Duplicate source_id",
+                      "details": "Publication with source_id: 'publication_source_ID_1' already exists",
+                      "request_id": "v-0bc40bf81555651191"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Returns an error if a resource is not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Campaign Not Found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find campaign with id 1",
+                      "request_id": "v-0bc40546e5d56508e5",
+                      "resource_id": "1",
+                      "resource_type": "campaign"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ParameterBoolean": {
+        "type": "boolean"
+      },
+      "ParameterCode": {
+        "type": "string",
+        "example": "2CpRCE2c"
+      },
+      "CreatePublicationCampaign": {
+        "title": "Create Publication Campaign",
+        "type": "object",
+        "description": "Create publication with campaign.",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of voucher's parent campaign or unique campaign ID that was assigned by Voucherify.",
+            "example": "camp_dphuwqH7BOVkgh4JmpDtS32l"
+          },
+          "count": {
+            "type": "integer",
+            "description": "Number of vouchers to be published to customer.",
+            "minimum": 1,
+            "maximum": 20
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "ParameterString": {
+        "type": "string"
+      },
+      "Customer": {
+        "title": "Customer",
+        "allOf": [
+          {
+            "type": "object",
+            "title": "Customer Id And Source Id",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "The ID of an existing customer."
+              },
+              "source_id": {
+                "type": "string",
+                "description": "A unique identifier of the customer who validates a voucher. It can be a customer ID or email from a CRM system, database, or a third-party service. If you also pass a customer ID (unique ID assigned by Voucherify), the source ID will be ignored."
+              }
+            }
+          },
+          {
+            "$ref": "#/components/schemas/CustomerBase"
+          }
+        ]
+      },
+      "ParameterObject": {
+        "type": "object"
+      },
+      "PublicationsCreateResponseBody": {
+        "title": "Publications Create Response Body",
+        "type": "object",
+        "description": "Response body schema for **POST** `v1/publication` and **GET** `v1/publications/create`.",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/PublicationsCreateVoucherResponseBody"
+          },
+          {
+            "$ref": "#/components/schemas/PublicationsCreateVouchersResponseBody"
+          }
+        ]
+      },
+      "Error": {
+        "title": "Error Object",
+        "type": "object",
+        "description": "Error details",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "Error's HTTP status code."
+          },
+          "key": {
+            "type": "string",
+            "description": "Short string describing the kind of error which occurred."
+          },
+          "message": {
+            "type": "string",
+            "description": "A human-readable message providing a short description of the error."
+          },
+          "details": {
+            "type": "string",
+            "description": "A human-readable message providing more details about the error."
+          },
+          "request_id": {
+            "type": "string",
+            "example": "v-0a885062c80375740f",
+            "description": "This ID is useful when troubleshooting and/or finding the root cause of an error response by our support team."
+          },
+          "resource_id": {
+            "type": "string",
+            "description": "Unique resource ID that can be used in another endpoint to get more details.",
+            "example": "rf_0c5d710a87c8a31f86"
+          },
+          "resource_type": {
+            "type": "string",
+            "description": "The resource type.",
+            "example": "voucher"
+          },
+          "error": {
+            "type": "object",
+            "description": "Includes additional information about the error.",
+            "properties": {
+              "message": {
+                "type": "string",
+                "description": "The message configured by the user in a validation rule."
+              }
+            }
+          }
+        },
+        "required": [
+          "code",
+          "message"
+        ]
+      },
+      "e_integration_key": {
+        "title": "Error Object",
+        "type": "object",
+        "description": "Error details",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "Error's HTTP status code."
+          },
+          "message": {
+            "type": "string",
+            "description": "A human-readable message providing a short description of the error."
+          },
+          "key": {
+            "type": "string",
+            "description": "Short string describing the kind of error which occurred."
+          }
+        }
+      },
+      "ParameterOrderListPublications": {
+        "type": "string",
+        "enum": [
+          "id",
+          "-id",
+          "voucher_code",
+          "-voucher_code",
+          "tracking_id",
+          "-tracking_id",
+          "customer_id",
+          "-customer_id",
+          "created_at",
+          "-created_at",
+          "channel",
+          "-channel"
+        ]
+      },
+      "ParameterCustomerId": {
+        "type": "string",
+        "example": "cust_nk0N1uNQ1YnupAoJGOgvsODC"
+      },
+      "ParameterResultListPublications": {
+        "type": "string",
+        "enum": [
+          "SUCCESS",
+          "FAILURE"
+        ]
+      },
+      "ParameterVoucherTypeListPublications": {
+        "type": "string",
+        "enum": [
+          "discount",
+          "loyalty"
+        ]
+      },
+      "ParameterFiltersListPublications": {
+        "type": "object",
+        "properties": {
+          "junction": {
+            "$ref": "#/components/schemas/Junction"
+          },
+          "failure_code": {
+            "type": "object",
+            "description": "Filter publications by ids.",
+            "properties": {
+              "conditions": {
+                "$ref": "#/components/schemas/FilterConditionsString"
+              }
+            }
+          },
+          "result": {
+            "type": "object",
+            "description": "Filter publications by names.",
+            "properties": {
+              "conditions": {
+                "$ref": "#/components/schemas/FilterConditionsString"
+              }
+            }
+          },
+          "customer_id": {
+            "type": "object",
+            "description": "Filter publications by customer ids.",
+            "properties": {
+              "conditions": {
+                "$ref": "#/components/schemas/FilterConditionsString"
+              }
+            }
+          },
+          "campaign_name": {
+            "type": "object",
+            "description": "Filter publications by campaign names.",
+            "properties": {
+              "conditions": {
+                "$ref": "#/components/schemas/FilterConditionsString"
+              }
+            }
+          },
+          "voucher_type": {
+            "type": "object",
+            "description": "Filter publications by voucher types.",
+            "properties": {
+              "conditions": {
+                "$ref": "#/components/schemas/FilterConditionsString"
+              }
+            }
+          },
+          "is_referral_code": {
+            "type": "object",
+            "description": "Filter publications by is referall code.",
+            "properties": {
+              "conditions": {
+                "$ref": "#/components/schemas/FilterConditionsString"
+              }
+            }
+          },
+          "parent_object_id": {
+            "type": "object",
+            "description": "Filter publications by parent object id.",
+            "properties": {
+              "conditions": {
+                "$ref": "#/components/schemas/FilterConditionsString"
+              }
+            }
+          },
+          "related_object_id": {
+            "type": "object",
+            "description": "Filter publications by related object id.",
+            "properties": {
+              "conditions": {
+                "$ref": "#/components/schemas/FilterConditionsString"
+              }
+            }
+          },
+          "source_id": {
+            "type": "object",
+            "description": "Filter publications by source id.",
+            "properties": {
+              "conditions": {
+                "$ref": "#/components/schemas/FilterConditionsString"
+              }
+            }
+          }
+        }
+      },
+      "PublicationsListResponseBody": {
+        "type": "object",
+        "description": "Response body schema for listing publications using **GET** `v1/publications`.",
+        "title": "Publications List Response Body",
+        "properties": {
+          "object": {
+            "type": "string",
+            "default": "list",
+            "description": "The type of the object represented by JSON. This object stores information about publications in a dictionary."
+          },
+          "data_ref": {
+            "type": "string",
+            "default": "publications",
+            "description": "Identifies the name of the attribute that contains the array of publications."
+          },
+          "publications": {
+            "type": "array",
+            "description": "Contains array of publication objects, voucher object will be simplified.",
+            "items": {
+              "title": "Publications List Response Body Publications Item",
+              "description": "Response schema model for publishing vouchers to a specific customer.",
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/ListPublicationsItemValidSingleVoucher"
+                },
+                {
+                  "$ref": "#/components/schemas/ListPublicationsItemValidMultipleVouchers"
+                },
+                {
+                  "$ref": "#/components/schemas/ListPublicationsItemInvalid"
+                }
+              ]
+            }
+          },
+          "total": {
+            "type": "integer",
+            "description": "Total number of publications."
+          }
+        },
+        "required": [
+          "object",
+          "data_ref",
+          "publications",
+          "total"
+        ]
+      },
+      "PublicationsCreateRequestBody": {
+        "title": "Publications Create Request Body",
+        "description": "Request body schema for **POST** `v1/publications`.",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/CreatePublicationWithSpecificVoucher"
+          },
+          {
+            "$ref": "#/components/schemas/CreatePublicationWithCampaign"
+          }
+        ]
+      },
+      "CustomerBase": {
+        "title": "Customer Base",
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Customer's first and last name."
+          },
+          "description": {
+            "type": "string",
+            "description": "An arbitrary string that you can attach to a customer object."
+          },
+          "email": {
+            "type": "string",
+            "description": "Customer's email address."
+          },
+          "phone": {
+            "type": "string",
+            "description": "Customer's phone number. This parameter is mandatory when you try to send out codes to customers via an SMS channel."
+          },
+          "birthday": {
+            "type": "string",
+            "description": "`Deprecated`. ~~Customer's birthdate; format YYYY-MM-DD~~.",
+            "format": "date"
+          },
+          "birthdate": {
+            "type": "string",
+            "description": "Customer's birthdate; format YYYY-MM-DD.",
+            "format": "date"
+          },
+          "address": {
+            "type": "object",
+            "nullable": true,
+            "description": "Customer's address.",
+            "properties": {
+              "city": {
+                "type": "string",
+                "description": "City"
+              },
+              "state": {
+                "type": "string",
+                "description": "State"
+              },
+              "line_1": {
+                "type": "string",
+                "description": "First line of address."
+              },
+              "line_2": {
+                "type": "string",
+                "description": "Second line of address."
+              },
+              "country": {
+                "type": "string",
+                "description": "Country."
+              },
+              "postal_code": {
+                "type": "string",
+                "description": "Postal code."
+              }
+            }
+          },
+          "metadata": {
+            "type": "object",
+            "description": "A set of custom key/value pairs that you can attach to a customer. The metadata object stores all custom attributes assigned to the customer. It can be useful for storing additional information about the customer in a structured format. This metadata can be used for validating whether the customer qualifies for a discount or it can be used in building customer segments."
+          }
+        }
+      },
+      "PublicationsCreateVoucherResponseBody": {
+        "title": "Publications Create Voucher Response Body",
+        "type": "object",
+        "description": "Response body schema for **POST** `v1/publication` and **GET** `v1/publications/create`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/PublicationsCreateBaseResponseBody"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "voucher": {
+                "$ref": "#/components/schemas/Voucher"
+              }
+            },
+            "required": [
+              "voucher"
+            ]
+          }
+        ]
+      },
+      "PublicationsCreateVouchersResponseBody": {
+        "title": "Publications Create Vouchers Response Body",
+        "description": "Response body schema for **POST** `v1/publication` and **GET** `v1/publications/create`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/PublicationsCreateBaseResponseBody"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "vouchers": {
+                "type": "array",
+                "description": "Contains the unique voucher codes that was assigned by Voucherify.",
+                "items": {
+                  "type": "string",
+                  "example": "Q1K4XT5S"
+                }
+              }
+            },
+            "required": [
+              "vouchers"
+            ]
+          }
+        ]
+      },
+      "ParameterLimit": {
+        "type": "integer",
+        "maximum": 100,
+        "minimum": 1
+      },
+      "ParameterPage": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 100
+      },
+      "Junction": {
+        "title": "Junction",
+        "description": "Logical Operator Between Filters. Filter by conditions set on the `junction` parameter indicating how the `conditions` should be accounted for in the query. An `AND` is an all-inclusive logical operator, meaning the `AND` operator displays a record if **ALL** the conditions separated by AND are TRUE, while  an `OR` operator displays a record if **ANY** of the conditions separated by OR is TRUE.",
+        "enum": [
+          "and",
+          "or"
+        ],
+        "type": "string"
+      },
+      "FilterConditionsString": {
+        "title": "Filter by conditions",
+        "type": "object",
+        "description": "Data filters used to narrow down the data records to be returned in the result.",
+        "properties": {
+          "$in": {
+            "type": "array",
+            "description": "Array of resource values that should be included in the results (multiple values).",
+            "items": {
+              "type": "string"
+            }
+          },
+          "$not_in": {
+            "type": "array",
+            "description": "Array of resource values that should be included in the results (multiple values).",
+            "items": {
+              "type": "string"
+            }
+          },
+          "$is": {
+            "type": "string",
+            "description": "Value is exactly this value (single value)."
+          },
+          "$is_not": {
+            "type": "string",
+            "description": "Results omit this value (single value)."
+          },
+          "$has_value": {
+            "type": "string",
+            "description": "Value is NOT null. The value for this parameter is an empty string."
+          },
+          "$is_unknown": {
+            "type": "string",
+            "description": "Value is null. The value for this parameter is an empty string."
+          },
+          "$starts_with": {
+            "type": "string",
+            "description": "Value starts with the specified string."
+          },
+          "$ends_with": {
+            "type": "string",
+            "description": "Value ends with the specified string."
+          },
+          "$contains": {
+            "type": "string",
+            "description": "Value includes the specified string."
+          },
+          "$not_contain": {
+            "type": "string",
+            "description": "Value does NOT include the specified string."
+          }
+        }
+      },
+      "ListPublicationsItemValidSingleVoucher": {
+        "title": "Valid Single Voucher",
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ListPublicationsItemBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "result": {
+                "type": "string",
+                "default": "SUCCESS",
+                "enum": [
+                  "SUCCESS"
+                ],
+                "description": "Status of the publication attempt."
+              },
+              "voucher": {
+                "$ref": "#/components/schemas/ListPublicationsItemVoucher"
+              }
+            },
+            "required": [
+              "result",
+              "voucher"
+            ]
+          }
+        ]
+      },
+      "ListPublicationsItemValidMultipleVouchers": {
+        "title": "Valid Multiple Vouchers",
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ListPublicationsItemBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "result": {
+                "type": "string",
+                "default": "SUCCESS",
+                "enum": [
+                  "SUCCESS"
+                ],
+                "description": "Status of the publication attempt."
+              },
+              "vouchers": {
+                "type": "array",
+                "description": "Contains the unique voucher codes that was assigned by Voucherify.",
+                "items": {
+                  "type": "string",
+                  "example": "Q1K4XT5S"
+                }
+              }
+            },
+            "required": [
+              "result",
+              "vouchers"
+            ]
+          }
+        ]
+      },
+      "ListPublicationsItemInvalid": {
+        "title": "Invalid",
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ListPublicationsItemBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "result": {
+                "type": "string",
+                "default": "FAILURE",
+                "enum": [
+                  "FAILURE"
+                ],
+                "description": "Status of the publication attempt."
+              },
+              "failure_code": {
+                "type": "string",
+                "description": "Generic reason as to why the create publication operation failed."
+              },
+              "failure_message": {
+                "type": "string",
+                "description": "This parameter will provide more expanded reason as to why the create publication operation failed."
+              }
+            },
+            "required": [
+              "result",
+              "vouchers"
+            ]
+          }
+        ]
+      },
+      "CreatePublicationWithSpecificVoucher": {
+        "title": "Create Publication With Specific Voucher",
+        "type": "object",
+        "description": "Create publication with specific voucher.",
+        "allOf": [
+          {
+            "title": "Voucher code",
+            "type": "object",
+            "properties": {
+              "voucher": {
+                "description": "Code of the voucher being published.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "voucher"
+            ]
+          },
+          {
+            "$ref": "#/components/schemas/CreatePublicationBase"
+          }
+        ]
+      },
+      "CreatePublicationWithCampaign": {
+        "title": "Create Publication With Campaign",
+        "type": "object",
+        "description": "Create publication with campaign.",
+        "allOf": [
+          {
+            "title": "Campaign",
+            "type": "object",
+            "properties": {
+              "campaign": {
+                "$ref": "#/components/schemas/CreatePublicationCampaign"
+              }
+            },
+            "required": [
+              "campaign"
+            ]
+          },
+          {
+            "$ref": "#/components/schemas/CreatePublicationBase"
+          }
+        ]
+      },
+      "PublicationsCreateBaseResponseBody": {
+        "title": "Publications Create Base Response Body",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "pub_BbjAXnmm8e0SIm3zG8qvvFCP0KuLywtp",
+            "description": "Unique publication ID, assigned by Voucherify."
+          },
+          "object": {
+            "type": "string",
+            "default": "publication",
+            "enum": [
+              "publication"
+            ],
+            "description": "The type of the object represented by the JSON. This object stores information about the `publication`."
+          },
+          "created_at": {
+            "type": "string",
+            "example": "2022-09-23T09:57:00.434Z",
+            "description": "Timestamp representing the date and time when the publication was created. The value is shown in the ISO 8601 format.",
+            "format": "date-time"
+          },
+          "customer_id": {
+            "type": "string",
+            "example": "cust_eWgXlBBiY6THFRJwX45Iakv4",
+            "description": "Unique customer ID of the customer receiving the publication."
+          },
+          "tracking_id": {
+            "type": "string",
+            "description": "Customer's `source_id`."
+          },
+          "metadata": {
+            "type": "object",
+            "description": "The metadata object stores all custom attributes assigned to the publication. A set of key/value pairs that you can attach to a publication object. It can be useful for storing additional information about the publication in a structured format."
+          },
+          "channel": {
+            "type": "string",
+            "description": "How the publication was originated. It can be your own custom channel or an example value provided here.",
+            "default": "API",
+            "enum": [
+              "API"
+            ]
+          },
+          "source_id": {
+            "type": "string",
+            "nullable": true,
+            "description": "The merchant's publication ID if it is different from the Voucherify publication ID. It's an optional tracking identifier of a publication. It is really useful in case of an integration between multiple systems. It can be a publication ID from a CRM system, database or 3rd-party service. "
+          },
+          "result": {
+            "type": "string",
+            "default": "SUCCESS",
+            "enum": [
+              "SUCCESS"
+            ],
+            "description": "Status of the publication attempt."
+          },
+          "customer": {
+            "$ref": "#/components/schemas/CustomerWithSummaryLoyaltyReferrals"
+          },
+          "vouchers_id": {
+            "type": "array",
+            "description": "Contains the unique internal voucher ID that was assigned by Voucherify.",
+            "items": {
+              "type": "string",
+              "example": "v_Bw3qWZWv47yb1Onra8F2LlFI1enLakfA"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "object",
+          "created_at",
+          "customer_id",
+          "metadata",
+          "channel",
+          "source_id",
+          "result",
+          "customer",
+          "vouchers_id"
+        ]
+      },
+      "Voucher": {
+        "title": "Voucher",
+        "description": "This is an object representing a voucher with categories and validation rules assignments.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/VoucherBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "categories": {
+                "type": "array",
+                "description": "Contains details about the category.",
+                "items": {
+                  "$ref": "#/components/schemas/Category"
+                }
+              },
+              "validation_rules_assignments": {
+                "$ref": "#/components/schemas/ValidationRulesAssignmentsList"
+              }
+            }
+          }
+        ]
+      },
+      "ListPublicationsItemBase": {
+        "title": "List Publications Item Base",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "pub_BbjAXnmm8e0SIm3zG8qvvFCP0KuLywtp",
+            "description": "Unique publication ID, assigned by Voucherify."
+          },
+          "object": {
+            "type": "string",
+            "default": "publication",
+            "enum": [
+              "publication"
+            ],
+            "description": "The type of the object represented by the JSON. This object stores information about the `publication`."
+          },
+          "created_at": {
+            "type": "string",
+            "example": "2022-09-23T09:57:00.434Z",
+            "description": "Timestamp representing the date and time when the publication was created. The value is shown in the ISO 8601 format.",
+            "format": "date-time"
+          },
+          "customer_id": {
+            "type": "string",
+            "example": "cust_eWgXlBBiY6THFRJwX45Iakv4",
+            "description": "Unique customer ID of the customer receiving the publication."
+          },
+          "tracking_id": {
+            "type": "string",
+            "description": "Customer's `source_id`."
+          },
+          "metadata": {
+            "type": "object",
+            "description": "The metadata object stores all custom attributes assigned to the publication. A set of key/value pairs that you can attach to a publication object. It can be useful for storing additional information about the publication in a structured format.",
+            "properties": {
+              "source_type": {
+                "type": "string",
+                "description": "Defines the type of the distribution source."
+              },
+              "source_id": {
+                "type": "string",
+                "description": "Unique identifier of the distribution source."
+              },
+              "distribution_id": {
+                "type": "string",
+                "description": "Unique identifier of the distribution."
+              }
+            }
+          },
+          "channel": {
+            "type": "string",
+            "description": "How the publication was originated. It can be your own custom channel or an example value provided here."
+          },
+          "source_id": {
+            "type": "string",
+            "nullable": true,
+            "description": "The merchant's publication ID if it is different from the Voucherify publication ID. It's an optional tracking identifier of a publication. It is really useful in case of an integration between multiple systems. It can be a publication ID from a CRM system, database or 3rd-party service. "
+          },
+          "customer": {
+            "$ref": "#/components/schemas/CustomerWithSummaryLoyaltyReferrals"
+          },
+          "vouchers": {
+            "type": "array",
+            "description": "Contains the voucher IDs that was assigned by Voucherify.",
+            "items": {
+              "type": "string",
+              "example": "ZFMKNAEK"
+            }
+          },
+          "vouchers_id": {
+            "type": "array",
+            "description": "Contains the unique internal voucher IDs that was assigned by Voucherify.",
+            "items": {
+              "type": "string",
+              "example": "v_Bw3qWZWv47yb1Onra8F2LlFI1enLakfA"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "object",
+          "created_at",
+          "customer_id",
+          "metadata",
+          "channel",
+          "source_id",
+          "customer",
+          "vouchers_id"
+        ]
+      },
+      "ListPublicationsItemVoucher": {
+        "type": "object",
+        "title": "List Publications Item Voucher",
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "Voucher code."
+          },
+          "object": {
+            "type": "string",
+            "description": "The type of the object represented by JSON.",
+            "default": "voucher",
+            "enum": [
+              "voucher"
+            ]
+          },
+          "campaign": {
+            "description": "Campaign name",
+            "type": "string"
+          },
+          "gift": {
+            "description": "Gift object response",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Gift"
+              }
+            ]
+          },
+          "loyalty_card": {
+            "description": "Defines the loyalty card details.",
+            "type": "object"
+          },
+          "discount": {
+            "$ref": "#/components/schemas/Discount"
+          },
+          "is_referral_code": {
+            "type": "boolean",
+            "description": "Flag indicating whether this voucher is a referral code; `true` for campaign type `REFERRAL_PROGRAM`."
+          }
+        },
+        "required": [
+          "code",
+          "object",
+          "campaign"
+        ]
+      },
+      "CreatePublicationBase": {
+        "title": "Create Publication Base",
+        "type": "object",
+        "description": "Create publication",
+        "properties": {
+          "source_id": {
+            "type": "string",
+            "description": "The merchant's publication ID if it is different from the Voucherify publication ID. It's an optional tracking identifier of a publication. It is really useful in case of an integration between multiple systems. It can be a publication ID from a CRM system, database or 3rd-party service.\nIf `source_id` is provided only 1 voucher can be published per request."
+          },
+          "customer": {
+            "description": "Contains information about the customer to whom the publication was directed.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Customer"
+              }
+            ]
+          },
+          "metadata": {
+            "type": "object",
+            "description": "The metadata object stores all custom attributes assigned to the publication. A set of key/value pairs that you can attach to a publication object. It can be useful for storing additional information about the publication in a structured format."
+          },
+          "channel": {
+            "type": "string",
+            "description": "Specify the distribution channel."
+          }
+        },
+        "required": [
+          "customer"
+        ]
+      },
+      "CustomerWithSummaryLoyaltyReferrals": {
+        "title": "Customer With Summary Loyalty Referrals",
+        "allOf": [
+          {
+            "type": "object",
+            "title": "Customer Response Data",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "The ID of an existing customer that will be linked to redemption in this request."
+              },
+              "source_id": {
+                "type": "string",
+                "description": "A unique identifier of the customer who validates a voucher. It can be a customer ID or email from a CRM system, database, or a third-party service. If you also pass a customer ID (unique ID assigned by Voucherify), the source ID will be ignored."
+              },
+              "summary": {
+                "nullable": true,
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/CustomerSummary"
+                  }
+                ]
+              },
+              "loyalty": {
+                "nullable": true,
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/CustomerLoyalty"
+                  }
+                ]
+              },
+              "referrals": {
+                "nullable": true,
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/CustomerReferrals"
+                  }
+                ]
+              },
+              "system_metadata": {
+                "type": "object",
+                "description": "Object used to store system metadata information."
+              },
+              "created_at": {
+                "type": "string",
+                "description": "Timestamp representing the date and time when the customer was created. The value is shown in the ISO 8601 format.",
+                "example": "2022-08-30T06:32:07.380Z",
+                "format": "date-time"
+              },
+              "updated_at": {
+                "type": "string",
+                "description": "Timestamp representing the date and time when the customer was updated. The value is shown in the ISO 8601 format.",
+                "example": "2022-08-31T06:32:07.380Z",
+                "format": "date-time"
+              },
+              "assets": {
+                "type": "object",
+                "description": "Contains information about the customer's cockpit.",
+                "properties": {
+                  "cockpit_url": {
+                    "type": "string",
+                    "description": "Customer's cockpit URL address."
+                  }
+                }
+              },
+              "object": {
+                "type": "string",
+                "description": "The type of the object represented by JSON.",
+                "default": "customer",
+                "enum": [
+                  "customer"
+                ]
+              }
+            },
+            "required": [
+              "summary",
+              "loyalty",
+              "referrals",
+              "object"
+            ]
+          },
+          {
+            "$ref": "#/components/schemas/CustomerBase"
+          }
+        ]
+      },
+      "VoucherBase": {
+        "title": "Voucher Base",
+        "description": "This is an object representing a voucher.",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "v_mkZN9v7vjYUadXnHrMza8W5c34fE5KiV",
+            "description": "Assigned by the Voucherify API, identifies the voucher."
+          },
+          "code": {
+            "type": "string",
+            "example": "WVPblOYX",
+            "description": "A code that identifies a voucher. Pattern can use all letters of the English alphabet, Arabic numerals, and special characters."
+          },
+          "campaign": {
+            "type": "string",
+            "example": "Gift Card Campaign",
+            "description": "A unique campaign name, identifies the voucher's parent campaign."
+          },
+          "campaign_id": {
+            "type": "string",
+            "example": "camp_FNYR4jhqZBM9xTptxDGgeNBV",
+            "description": "Assigned by the Voucherify API, identifies the voucher's parent campaign."
+          },
+          "category": {
+            "type": "string",
+            "description": "Tag defining the category that this voucher belongs to. Useful when listing vouchers using the List Vouchers endpoint."
+          },
+          "category_id": {
+            "type": "string",
+            "description": "Unique category ID assigned by Voucherify.",
+            "example": "cat_0bb343dee3cdb5ec0c"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "GIFT_VOUCHER",
+              "DISCOUNT_VOUCHER",
+              "LOYALTY_CARD"
+            ],
+            "description": "Defines the type of the voucher. "
+          },
+          "discount": {
+            "$ref": "#/components/schemas/Discount"
+          },
+          "gift": {
+            "type": "object",
+            "description": "Object representing gift parameters. Child attributes are present only if `type` is `GIFT_VOUCHER`. Defaults to `null`.",
+            "properties": {
+              "amount": {
+                "type": "integer",
+                "example": 10000,
+                "description": "Total gift card income over the lifetime of the card. The value is multiplied by 100 to represent 2 decimal places. For example `10000 cents` for `$100.00`."
+              },
+              "subtracted_amount": {
+                "type": "integer",
+                "description": "Total amount of subtracted credits over the gift card lifetime. The value is multiplied by 100 to represent 2 decimal places. For example `10000 cents` for `$100.00`."
+              },
+              "balance": {
+                "type": "integer",
+                "example": 500,
+                "description": "Available funds. The value is multiplied by 100 to represent 2 decimal places. For example `10000 cents` for `$100.00`."
+              },
+              "effect": {
+                "type": "string",
+                "enum": [
+                  "APPLY_TO_ORDER",
+                  "APPLY_TO_ITEMS"
+                ],
+                "description": "Defines how the credits are applied to the customer's order."
+              }
+            }
+          },
+          "loyalty_card": {
+            "type": "object",
+            "description": "Object representing loyalty card parameters. Child attributes are present only if `type` is `LOYALTY_CARD`. Defaults to `null`.",
+            "properties": {
+              "points": {
+                "type": "integer",
+                "example": 7000,
+                "description": "Total number of points added to the loyalty card over its lifespan."
+              },
+              "balance": {
+                "type": "integer",
+                "example": 6970,
+                "description": "Points available for reward redemption. This is calculated as follows: `balance` = `points` - `expired_points` - `subtracted_points` - `redemption.redeemed_points`."
+              },
+              "next_expiration_date": {
+                "type": "string",
+                "format": "date",
+                "example": "2023-05-30",
+                "description": "The next closest date when the next set of points are due to expire."
+              },
+              "next_expiration_points": {
+                "type": "integer",
+                "description": "The amount of points that are set to expire next."
+              },
+              "pending_points": {
+                "type": "integer",
+                "description": "Shows the number of pending points that will be added to the loyalty card when they are activated automatically or manually."
+              },
+              "expired_points": {
+                "type": "integer",
+                "description": "Shows the total number of expired points over the lifetime of the loyalty card."
+              },
+              "subtracted_points": {
+                "type": "integer",
+                "description": "Shows the total number of subtracted points over the lifetime of the loyalty card."
+              }
+            }
+          },
+          "start_date": {
+            "type": "string",
+            "example": "2021-12-01T00:00:00.000Z",
+            "format": "date-time",
+            "description": "Activation timestamp defines when the code starts to be active in ISO 8601 format. Voucher is *inactive before* this date. "
+          },
+          "expiration_date": {
+            "type": "string",
+            "example": "2021-12-31T00:00:00.000Z",
+            "format": "date-time",
+            "description": "Expiration timestamp defines when the code expires in ISO 8601 format.  Voucher is *inactive after* this date."
+          },
+          "validity_timeframe": {
+            "$ref": "#/components/schemas/ValidityTimeframe"
+          },
+          "validity_day_of_week": {
+            "$ref": "#/components/schemas/ValidityDayOfWeek"
+          },
+          "validity_hours": {
+            "$ref": "#/components/schemas/ValidityHours"
+          },
+          "active": {
+            "type": "boolean",
+            "nullable": true,
+            "description": "A flag to toggle the voucher on or off. You can disable a voucher even though it's within the active period defined by the `start_date` and `expiration_date`.  \n\n- `true` indicates an *active* voucher\n- `false` indicates an *inactive* voucher"
+          },
+          "additional_info": {
+            "type": "string",
+            "description": "An optional field to keep any extra textual information about the code such as a code description and details."
+          },
+          "metadata": {
+            "type": "object",
+            "description": "The metadata object stores all custom attributes assigned to the code. A set of key/value pairs that you can attach to a voucher object. It can be useful for storing additional information about the voucher in a structured format."
+          },
+          "assets": {
+            "$ref": "#/components/schemas/VoucherAssets"
+          },
+          "is_referral_code": {
+            "type": "boolean",
+            "nullable": true,
+            "description": "Flag indicating whether this voucher is a referral code; `true` for campaign type `REFERRAL_PROGRAM`."
+          },
+          "created_at": {
+            "type": "string",
+            "example": "2021-12-22T10:13:06.487Z",
+            "description": "Timestamp representing the date and time when the voucher was created. The value is shown in the ISO 8601 format.",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "example": "2021-12-22T10:14:45.316Z",
+            "format": "date-time",
+            "description": "Timestamp representing the date and time when the voucher was last updated in ISO 8601 format."
+          },
+          "holder_id": {
+            "type": "string",
+            "example": "cust_eWgXlBBiY6THFRJwX45Iakv4",
+            "description": "Unique customer identifier of the redeemable holder. It equals to the customer ID assigned by Voucherify."
+          },
+          "referrer_id": {
+            "type": "string",
+            "description": "Unique identifier of the referring person.",
+            "example": "cust_Vzck5i8U3OhcEUFY6MKhN9Rv"
+          },
+          "object": {
+            "type": "string",
+            "description": "The type of the object represented by JSON. Default is `voucher`.",
+            "default": "voucher"
+          },
+          "publish": {
+            "type": "object",
+            "description": "Stores a summary of publication events: an event counter and endpoint to return details of each event. Publication is an assignment of a code to a customer, e.g. through a distribution.",
+            "properties": {
+              "object": {
+                "type": "string",
+                "default": "list",
+                "description": "The type of the object represented is by default `list`. To get this list, you need to make a call to the endpoint returned in the `url` attribute."
+              },
+              "count": {
+                "type": "integer",
+                "example": 0,
+                "description": "Publication events counter."
+              },
+              "url": {
+                "type": "string",
+                "example": "/v1/vouchers/WVPblOYX/publications?page=1&limit=10",
+                "description": "The endpoint where this list of publications can be accessed using a **GET** method. `/v1/vouchers/{voucher_code}/publications`"
+              }
+            }
+          },
+          "redemption": {
+            "type": "object",
+            "description": "Stores a summary of redemptions that have been applied to the voucher.",
+            "properties": {
+              "quantity": {
+                "type": "integer",
+                "description": "How many times a voucher can be redeemed. A `null` value means unlimited."
+              },
+              "redeemed_quantity": {
+                "type": "integer",
+                "example": 1,
+                "description": "How many times a voucher has already been redeemed."
+              },
+              "redeemed_points": {
+                "type": "integer",
+                "example": 100000,
+                "description": "Total loyalty points redeemed."
+              },
+              "object": {
+                "type": "string",
+                "default": "list",
+                "description": "The type of the object represented is by default `list`. To get this list, you need to make a call to the endpoint returned in the url attribute."
+              },
+              "url": {
+                "type": "string",
+                "example": "/v1/vouchers/WVPblOYX/redemptions?page=1&limit=10",
+                "description": "The endpoint where this list of redemptions can be accessed using a **GET** method. `/v1/vouchers/{voucher_code}/redemptions`"
+              }
+            }
+          }
+        }
+      },
+      "Category": {
+        "title": "Category",
+        "description": "This is an object representing a category.",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique category ID assigned by Voucherify."
+          },
+          "name": {
+            "type": "string",
+            "description": "Category name."
+          },
+          "hierarchy": {
+            "type": "integer",
+            "description": "Category hierarchy. Categories with lower hierarchy are processed before categories with higher hierarchy value.",
+            "minimum": 0
+          },
+          "object": {
+            "type": "string",
+            "default": "category",
+            "enum": [
+              "category"
+            ],
+            "description": "The type of the object represented by the JSON. This object stores information about the category."
+          },
+          "created_at": {
+            "type": "string",
+            "description": "Timestamp representing the date and time when the category was created. The value is shown in the ISO 8601 format.",
+            "example": "2022-07-14T10:45:13.156Z",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "example": "2022-08-16T10:52:08.094Z",
+            "description": "Timestamp representing the date and time when the category was updated. The value is shown in the ISO 8601 format.",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "hierarchy",
+          "created_at",
+          "object"
+        ]
+      },
+      "ValidationRulesAssignmentsList": {
+        "title": "Validation Rules Assignments List",
+        "description": "List of Validation Rules Assignments",
+        "type": "object",
+        "properties": {
+          "object": {
+            "type": "string",
+            "default": "list",
+            "enum": [
+              "list"
+            ],
+            "description": "The type of the object represented by JSON. This object stores information about validation rules assignments."
+          },
+          "data_ref": {
+            "type": "string",
+            "default": "data",
+            "enum": [
+              "data"
+            ],
+            "description": "Identifies the name of the attribute that contains the array of validation rules assignments."
+          },
+          "data": {
+            "type": "array",
+            "description": "Contains array of validation rules assignments.",
+            "items": {
+              "$ref": "#/components/schemas/BusValRuleAssignment"
+            }
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Total number of validation rules assignments."
+          }
+        },
+        "required": [
+          "object",
+          "data_ref",
+          "data",
+          "total"
+        ]
+      },
+      "Gift": {
+        "title": "Gift",
+        "type": "object",
+        "description": "Contains current gift card balance information.",
+        "properties": {
+          "amount": {
+            "type": "number",
+            "description": "Total gift card income over the lifetime of the card. The value is multiplied by 100 to represent 2 decimal places. For example `10000 cents` for `$100.00`."
+          },
+          "subtracted_amount": {
+            "type": "integer",
+            "description": "Total amount of subtracted credits over the gift card lifetime."
+          },
+          "balance": {
+            "type": "number",
+            "description": "Available funds. The value is multiplied by 100 to represent 2 decimal places. For example `10000 cents` for `$100.00`. `balance` = `amount` - `subtracted_amount` - `redemption.redeemed_amount`."
+          },
+          "effect": {
+            "type": "string",
+            "description": "Defines how the credits are applied to the customer's order.",
+            "enum": [
+              "APPLY_TO_ORDER",
+              "APPLY_TO_ITEMS"
+            ]
+          }
+        },
+        "required": [
+          "amount",
+          "balance"
+        ]
+      },
+      "Discount": {
+        "title": "Discount",
+        "type": "object",
+        "description": "Contains information about discount.",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/DiscountAmount"
+          },
+          {
+            "$ref": "#/components/schemas/DiscountUnit"
+          },
+          {
+            "$ref": "#/components/schemas/DiscountUnitMultiple"
+          },
+          {
+            "$ref": "#/components/schemas/DiscountPercent"
+          },
+          {
+            "$ref": "#/components/schemas/DiscountFixed"
+          }
+        ]
+      },
+      "CustomerSummary": {
+        "title": "Customer Summary",
+        "type": "object",
+        "properties": {
+          "redemptions": {
+            "$ref": "#/components/schemas/CustomerSummaryRedemptions"
+          },
+          "orders": {
+            "$ref": "#/components/schemas/CustomerSummaryOrders"
+          }
+        },
+        "required": [
+          "redemptions",
+          "orders"
+        ]
+      },
+      "CustomerLoyalty": {
+        "title": "Customer Loyalty",
+        "type": "object",
+        "properties": {
+          "points": {
+            "type": "integer",
+            "description": "Customer's loyalty points minus expired for all loyalty cards which the customer has."
+          },
+          "referred_customers": {
+            "type": "integer",
+            "description": "Total number of customers referred by the customer."
+          },
+          "campaigns": {
+            "type": "object",
+            "description": "Contains campaigns with details about point balances and how many customers were referred by the customer.",
+            "additionalProperties": {
+              "type": "object",
+              "description": "Contains details about the point balances left on loyalty cards and the number of referred customers in each campaign.",
+              "properties": {
+                "points": {
+                  "type": "integer",
+                  "description": "Remaining point balance in campaign."
+                },
+                "loyalty_tier": {
+                  "type": "string",
+                  "example": "ltr_UJ5Q54Q0OvEhua87Qfv2Ki5x",
+                  "description": "Customer's loyalty tier within the campaign."
+                },
+                "referred_customers": {
+                  "type": "integer",
+                  "description": "Number of customers referred by the customer in campaign."
+                }
+              }
+            }
+          }
+        },
+        "required": [
+          "points",
+          "referred_customers",
+          "campaigns"
+        ]
+      },
+      "CustomerReferrals": {
+        "title": "Customer Referrals",
+        "type": "object",
+        "description": "Summary of customer's referrals, in this case, the customer being the referee, i.e. information about the source of referrals and number of times the customer was referred by other customers.",
+        "properties": {
+          "total": {
+            "type": "integer",
+            "description": "Total number of times this customer received a referral, i.e. was referred by another customer."
+          },
+          "campaigns": {
+            "type": "array",
+            "description": "Contains an array of campaigns that served as the source of a referral for the customer.",
+            "items": {
+              "title": "Customer Referrals Campaigns Item",
+              "type": "object",
+              "description": "Contains information about the source of the referral.",
+              "properties": {
+                "campaign_id": {
+                  "type": "string",
+                  "description": "Unique campaign ID, assigned by Voucherify.",
+                  "example": "camp_rRsfatlwN7unSeUIJDCYedal"
+                },
+                "referrer_id": {
+                  "type": "string",
+                  "example": "cust_sehkNIi8Uq2qQuRqSr7xn4Zi",
+                  "description": "Unique referrer ID, assigned by Voucherify. This is the customer ID of a customer that is referring this customer."
+                },
+                "related_object_id": {
+                  "type": "string",
+                  "description": "Related object id",
+                  "example": "r_0b9d4cc4aa164dd073"
+                },
+                "related_object_type": {
+                  "type": "string",
+                  "description": "Related object type, i.e. `redemption`."
+                },
+                "date": {
+                  "type": "string",
+                  "format": "date-time",
+                  "example": "2022-08-30T10:19:39.196Z",
+                  "description": "Timestamp representing the date and time when the customer was referred in ISO 8601 format."
+                }
+              },
+              "required": [
+                "campaign_id",
+                "referrer_id",
+                "related_object_id",
+                "related_object_type",
+                "date"
+              ]
+            }
+          }
+        },
+        "required": [
+          "total",
+          "campaigns"
+        ]
+      },
+      "ValidityTimeframe": {
+        "title": "Validity Timeframe",
+        "type": "object",
+        "description": "Set recurrent time periods when the earning rule is valid. For example, valid for 1 hour every other day.`start_date` **required** when including the `validity_timeframe`.",
+        "properties": {
+          "duration": {
+            "type": "string",
+            "description": "Defines the amount of time an earning rule will be active in ISO 8601 format. For example, an earning rule with a `duration` of `PT1H` will be valid for a duration of one hour.",
+            "example": "PT1H"
+          },
+          "interval": {
+            "type": "string",
+            "description": "Defines the intervening time between two time points in ISO 8601 format, expressed as a duration. For example, an earning rule with an `interval` of `P2D` will be valid every other day.",
+            "example": "P2D"
+          }
+        }
+      },
+      "ValidityDayOfWeek": {
+        "title": "Validity Day Of Week",
+        "type": "array",
+        "description": "Integer array corresponding to the particular days of the week in which the voucher is valid.\n\n- `0` Sunday\n- `1` Monday\n- `2` Tuesday\n- `3` Wednesday\n- `4` Thursday\n- `5` Friday\n- `6` Saturday",
+        "items": {
+          "type": "integer",
+          "enum": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ]
+        }
+      },
+      "ValidityHours": {
+        "title": "Validity Hours",
+        "type": "object",
+        "description": "Determines the hours of validity, e.g. to create a happy hours scenario.",
+        "properties": {
+          "daily": {
+            "type": "array",
+            "description": "Defines the reccuring period(s) when the resource is active. The periods should not overlap.",
+            "items": {
+              "type": "object",
+              "description": "Defines the reccuring period(s) when the resource will be active.",
+              "properties": {
+                "start_time": {
+                  "type": "string",
+                  "format": "time",
+                  "description": "Defines the starting hour of validity in the HH:mm format. The resource is *inactive before* this time.",
+                  "example": "12:00"
+                },
+                "days_of_week": {
+                  "type": "array",
+                  "description": "Integer array corresponding to the particular days of the week in which the resource is valid.\n\n- `0` Sunday\n- `1` Monday\n- `2` Tuesday\n- `3`  Wednesday\n- `4` Thursday\n- `5` Friday\n- `6` Saturday",
+                  "items": {
+                    "type": "integer",
+                    "enum": [
+                      0,
+                      1,
+                      2,
+                      3,
+                      4,
+                      5,
+                      6
+                    ]
+                  }
+                },
+                "expiration_time": {
+                  "type": "string",
+                  "format": "time",
+                  "description": "Defines the ending hour of validity in the HH:mm format. The resource is *inactive after* this time.",
+                  "example": "14:00"
+                }
+              }
+            }
+          }
+        }
+      },
+      "VoucherAssets": {
+        "title": "Voucher Assets",
+        "type": "object",
+        "description": "Stores links to images of QR and barcode that correspond to an encrypted voucher code.",
+        "properties": {
+          "qr": {
+            "type": "object",
+            "description": "Stores Quick Response (QR) representation of encrypted code.",
+            "properties": {
+              "id": {
+                "type": "string",
+                "example": "U2FsdGVkX19ucFhvVmBVpVYG5KoswTsjSIaqoKg5L9ie4BK+t4pp7U7oFzjGJzj9q/bmuMOj9mEFiVKDMIkSaruKedMvHbKoPX5Sg+BaZk5QwXMf8k/OzSlOEVybpwSq+AiqPoNtjeuqtIgkDyvT6Q==",
+                "description": "Encrypted voucher code ID."
+              },
+              "url": {
+                "type": "string",
+                "example": "https://dev.dl.voucherify.io/api/v1/assets/qr/U2FsdGVkX19ucFhvVmBVpVYG5KoswTsjSIaqoKg5L9ie4BK%2Bt4pp7U7oFzjGJzj9q%2FbmuMOj9mEFiVKDMIkSaruKedMvHbKoPX5Sg%2BBaZk5QwXMf8k%2FOzSlOEVybpwSq%2BAiqPoNtjeuqtIgkDyvT6Q%3D%3D",
+                "description": "URL to QR code  \n\n*Optional:* Attach query parameters to base URL to customize the image of the encrypted voucher code.  \n\n- `size`: integer value from `1` to `100`  \n- `format`: string, either `png` (default) or `svg`"
+              }
+            }
+          },
+          "barcode": {
+            "type": "object",
+            "description": "Stores barcode representation of encrypted code.",
+            "properties": {
+              "id": {
+                "type": "string",
+                "example": "U2FsdGVkX19eJhGfWwUrH9+tulBkON+AnMktic+N6CVWzZ9+fHVxuVx22WakrzxiWXy0skuvvEHSeZIw9HlgyIJ+kJ1iPdUKpyENuNYJKzoZlO0mmTf6WQM6/pFs61apEn9SJx32ttCF6d3oxKISQQ==",
+                "description": "Encrypted voucher code ID."
+              },
+              "url": {
+                "type": "string",
+                "example": "https://dev.dl.voucherify.io/api/v1/assets/barcode/U2FsdGVkX19eJhGfWwUrH9%2BtulBkON%2BAnMktic%2BN6CVWzZ9%2BfHVxuVx22WakrzxiWXy0skuvvEHSeZIw9HlgyIJ%2BkJ1iPdUKpyENuNYJKzoZlO0mmTf6WQM6%2FpFs61apEn9SJx32ttCF6d3oxKISQQ%3D%3D",
+                "description": "URL to barcode  \n\n*Optional:* Attach query parameters to base URL to customize the image of the encrypted voucher code.  \n\n- `size`: integer value from `1` to `100`  \n- `format`: string, either `png` (default) or `svg`"
+              }
+            }
+          }
+        }
+      },
+      "BusValRuleAssignment": {
+        "title": "Business Validation Rule Assignment",
+        "description": "Assignments of business validation rule",
+        "example": {
+          "id": "asgm_LnY1g7UNFA9KyDrD",
+          "rule_id": "val_3gPNA6SnH4ae",
+          "related_object_id": "camp_CZOnEGiZfwIKWmSjhIoIT7Ol",
+          "related_object_type": "campaign",
+          "object": "validation_rules_assignment",
+          "validation_status": "PARTIALLY_VALID",
+          "validation_omitted_rules": [
+            "1"
+          ]
+        },
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The unique identifier for a assignment"
+          },
+          "rule_id": {
+            "type": "string",
+            "description": "The unique identifier for a rule"
+          },
+          "related_object_id": {
+            "type": "string",
+            "description": "The unique identifier for a related object"
+          },
+          "related_object_type": {
+            "type": "string",
+            "description": "The type of related object"
+          },
+          "created_at": {
+            "type": "string",
+            "description": "Timestamp representing the date and time when the object was created. The value is shown in the ISO 8601 format.",
+            "example": "2022-03-09T11:19:04.819Z",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "description": "Timestamp representing the date and time when the object was last updated in ISO 8601 format.",
+            "example": "2022-03-09T11:19:04.819Z",
+            "format": "date-time"
+          },
+          "object": {
+            "type": "string",
+            "description": "The type of the object represented by JSON.",
+            "default": "validation_rules_assignment",
+            "enum": [
+              "validation_rules_assignment"
+            ]
+          },
+          "validation_status": {
+            "type": "string",
+            "description": "The validation status of the assignment",
+            "enum": [
+              "VALID",
+              "PARTIALLY_VALID",
+              "INVALID"
+            ]
+          },
+          "validation_omitted_rules": {
+            "type": "array",
+            "description": "The list of omitted rules",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "rule_id",
+          "related_object_id",
+          "related_object_type",
+          "object"
+        ]
+      },
+      "DiscountAmount": {
+        "type": "object",
+        "title": "Amount",
+        "properties": {
+          "type": {
+            "type": "string",
+            "default": "AMOUNT",
+            "enum": [
+              "AMOUNT"
+            ],
+            "description": "Defines the type of the voucher."
+          },
+          "amount_off": {
+            "type": "number",
+            "description": "Amount taken off the subtotal of a price. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $10 discount is written as 1000."
+          },
+          "amount_off_formula": {
+            "type": "string"
+          },
+          "aggregated_amount_limit": {
+            "type": "integer",
+            "description": "Maximum discount amount per order."
+          },
+          "effect": {
+            "description": "Defines how the discount is applied to the customer's order.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/DiscountAmountVouchersEffectTypes"
+              }
+            ]
+          },
+          "is_dynamic": {
+            "type": "boolean",
+            "description": "Flag indicating whether the discount was calculated using a formula."
+          }
+        },
+        "required": [
+          "type",
+          "amount_off"
+        ]
+      },
+      "DiscountUnit": {
+        "type": "object",
+        "title": "Unit",
+        "properties": {
+          "type": {
+            "type": "string",
+            "default": "UNIT",
+            "enum": [
+              "UNIT"
+            ],
+            "description": "Discount type."
+          },
+          "unit_off": {
+            "type": "integer",
+            "description": "Number of units to be granted a full value discount."
+          },
+          "unit_off_formula": {
+            "type": "string",
+            "description": "Formula used to calculate the number of units."
+          },
+          "effect": {
+            "description": "Defines how the unit is added to the customer's order.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/DiscountUnitVouchersEffectTypes"
+              }
+            ]
+          },
+          "unit_type": {
+            "type": "string",
+            "description": "The product deemed as free, chosen from product inventory (e.g. time, items)."
+          },
+          "product": {
+            "description": "Contains information about the product.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SimpleProductDiscountUnit"
+              }
+            ]
+          },
+          "sku": {
+            "$ref": "#/components/schemas/SimpleSkuDiscountUnit"
+          },
+          "is_dynamic": {
+            "type": "boolean",
+            "description": "Flag indicating whether the discount was calculated using a formula."
+          }
+        },
+        "required": [
+          "type",
+          "unit_type"
+        ]
+      },
+      "DiscountUnitMultiple": {
+        "type": "object",
+        "title": "Unit Multiple",
+        "properties": {
+          "type": {
+            "type": "string",
+            "default": "UNIT",
+            "enum": [
+              "UNIT"
+            ],
+            "description": "Discount type."
+          },
+          "effect": {
+            "type": "string",
+            "default": "ADD_MANY_ITEMS",
+            "enum": [
+              "ADD_MANY_ITEMS"
+            ],
+            "description": "Defines how the discount is applied to the customer's order."
+          },
+          "units": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DiscountUnitMultipleOneUnit"
+            }
+          }
+        },
+        "required": [
+          "type",
+          "units"
+        ]
+      },
+      "DiscountPercent": {
+        "type": "object",
+        "title": "Percent",
+        "properties": {
+          "type": {
+            "type": "string",
+            "default": "PERCENT",
+            "enum": [
+              "PERCENT"
+            ],
+            "description": "Defines the type of the voucher."
+          },
+          "percent_off": {
+            "type": "number",
+            "description": "The percent discount that the customer will receive."
+          },
+          "percent_off_formula": {
+            "type": "string"
+          },
+          "amount_limit": {
+            "type": "number",
+            "description": "Upper limit allowed to be applied as a discount. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $6 maximum discount is written as 600."
+          },
+          "aggregated_amount_limit": {
+            "type": "integer",
+            "description": "Maximum discount amount per order."
+          },
+          "effect": {
+            "description": "Defines how the discount is applied to the customer's order.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/DiscountPercentVouchersEffectTypes"
+              }
+            ]
+          },
+          "is_dynamic": {
+            "type": "boolean",
+            "description": "Flag indicating whether the discount was calculated using a formula."
+          }
+        },
+        "required": [
+          "type",
+          "percent_off"
+        ]
+      },
+      "DiscountFixed": {
+        "title": "Fixed",
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "default": "FIXED",
+            "enum": [
+              "FIXED"
+            ],
+            "description": "Defines the type of the voucher."
+          },
+          "fixed_amount": {
+            "type": "number",
+            "description": "Sets a fixed value for an order total or the item price. The value is multiplied by 100 to precisely represent 2 decimal places. For example, a $10 discount is written as 1000. If the fixed amount is calculated by the formula, i.e. the `fixed_amount_formula` parameter is present in the fixed amount definition, this value becomes the **fallback value**. As a result, if the formula cannot be calculated due to missing metadata, for example, this value will be used as the fixed value."
+          },
+          "fixed_amount_formula": {
+            "type": "string"
+          },
+          "effect": {
+            "description": "Defines how the discount is applied to the customer's order.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/DiscountFixedVouchersEffectTypes"
+              }
+            ]
+          },
+          "is_dynamic": {
+            "type": "boolean",
+            "description": "Flag indicating whether the discount was calculated using a formula."
+          }
+        },
+        "required": [
+          "type",
+          "fixed_amount"
+        ]
+      },
+      "CustomerSummaryRedemptions": {
+        "title": "Customer Summary Redemptions",
+        "type": "object",
+        "properties": {
+          "total_redeemed": {
+            "type": "integer",
+            "description": "Total number of redemptions made by the customer."
+          },
+          "total_failed": {
+            "type": "integer",
+            "description": "Total number of redemptions that failed."
+          },
+          "total_succeeded": {
+            "type": "integer",
+            "description": "Total number of redemptions that succeeded."
+          },
+          "total_rolled_back": {
+            "type": "integer",
+            "description": "Total number of redemptions that were rolled back for the customer."
+          },
+          "total_rollback_failed": {
+            "type": "integer",
+            "description": "Total number of redemption rollbacks that failed."
+          },
+          "total_rollback_succeeded": {
+            "type": "integer",
+            "description": "Total number of redemption rollbacks that succeeded."
+          },
+          "gift": {
+            "type": "object",
+            "description": "Summary of gift card credits.",
+            "required": [
+              "redeemed_amount",
+              "amount_to_go"
+            ],
+            "properties": {
+              "redeemed_amount": {
+                "type": "integer",
+                "description": "Total amount of gift card credits redeemed by customer. The value is multiplied by 100 to represent 2 decimal places. For example `10000 cents` for `$100.00`.",
+                "default": 0
+              },
+              "amount_to_go": {
+                "type": "integer",
+                "description": "Remaining gift card balance across all gift cards. The value is multiplied by 100 to represent 2 decimal places. For example `10000 cents` for `$100.00`.",
+                "default": 0
+              }
+            }
+          },
+          "loyalty_card": {
+            "type": "object",
+            "description": "Summary of loyalty points.",
+            "required": [
+              "redeemed_points",
+              "points_to_go"
+            ],
+            "properties": {
+              "redeemed_points": {
+                "type": "integer",
+                "description": "Total number of loyalty points redeemed by the customer."
+              },
+              "points_to_go": {
+                "type": "integer",
+                "description": "Sum of remaining available point balance across all loyalty cards."
+              }
+            }
+          }
+        },
+        "required": [
+          "total_redeemed",
+          "total_failed",
+          "total_succeeded",
+          "total_rolled_back",
+          "total_rollback_failed",
+          "total_rollback_succeeded",
+          "gift",
+          "loyalty_card"
+        ]
+      },
+      "CustomerSummaryOrders": {
+        "title": "Customer Summary Orders",
+        "description": "Lists details about orders related to the customer. Lists only data for orders with the `PAID` or `FULFILLED` status. Data from orders with a `CREATED` or `CANCELED` status are not included. The data is updated also when an order changes status.",
+        "type": "object",
+        "properties": {
+          "total_amount": {
+            "type": "integer",
+            "description": "The total amount spent by the customer. The value is multiplied by 100 to represent 2 decimal places. For example `10000 cents` for `$100.00`."
+          },
+          "total_count": {
+            "type": "integer",
+            "description": "Total number of orders made by the customer."
+          },
+          "average_amount": {
+            "type": "integer",
+            "description": "Average amount spent on orders. `total_amount` &divide; `total_count`. The value is multiplied by 100 to represent 2 decimal places. For example `10000 cents` for `$100.00`."
+          },
+          "last_order_amount": {
+            "type": "integer",
+            "description": "Amount spent on last order. The value is multiplied by 100 to represent 2 decimal places. For example `10000 cents` for `$100.00`."
+          },
+          "last_order_date": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2022-08-30T11:51:08.029Z",
+            "description": "Timestamp representing the date and time of the customer's last order in ISO 8601 format."
+          }
+        },
+        "required": [
+          "total_amount",
+          "total_count",
+          "average_amount",
+          "last_order_amount"
+        ]
+      },
+      "DiscountAmountVouchersEffectTypes": {
+        "title": "Discount Amount Vouchers Effect Types",
+        "enum": [
+          "APPLY_TO_ORDER",
+          "APPLY_TO_ITEMS",
+          "APPLY_TO_ITEMS_PROPORTIONALLY",
+          "APPLY_TO_ITEMS_PROPORTIONALLY_BY_QUANTITY",
+          "APPLY_TO_ITEMS_BY_QUANTITY"
+        ],
+        "type": "string"
+      },
+      "DiscountUnitVouchersEffectTypes": {
+        "title": "Discount Unit Vouchers Effect Types",
+        "enum": [
+          "ADD_MISSING_ITEMS",
+          "ADD_NEW_ITEMS",
+          "ADD_MANY_ITEMS"
+        ],
+        "type": "string"
+      },
+      "SimpleProductDiscountUnit": {
+        "type": "object",
+        "title": "Simple Product Discount Unit",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique product ID, assigned by Voucherify."
+          },
+          "source_id": {
+            "type": "string",
+            "description": "Product's source ID."
+          },
+          "name": {
+            "type": "string",
+            "description": "Product name."
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ]
+      },
+      "SimpleSkuDiscountUnit": {
+        "type": "object",
+        "title": "Simple Sku Discount Unit",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique SKU ID, assigned by Voucherify."
+          },
+          "source_id": {
+            "type": "string",
+            "description": "Product variant's source ID."
+          },
+          "name": {
+            "type": "string",
+            "description": "Sku name"
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ]
+      },
+      "DiscountUnitMultipleOneUnit": {
+        "type": "object",
+        "title": "One Unit",
+        "properties": {
+          "unit_off": {
+            "type": "number",
+            "description": "Number of units to be granted a full value discount."
+          },
+          "unit_off_formula": {
+            "type": "string",
+            "description": "Formula used to calculate the number of units."
+          },
+          "effect": {
+            "type": "string",
+            "enum": [
+              "ADD_NEW_ITEMS",
+              "ADD_MISSING_ITEMS"
+            ],
+            "description": "Defines how the unit is added to the customer's order.\n\n"
+          },
+          "unit_type": {
+            "type": "string",
+            "description": "The product deemed as free, chosen from product inventory (e.g. time, items)."
+          },
+          "product": {
+            "description": "Contains information about the product.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SimpleProductDiscountUnit"
+              }
+            ]
+          },
+          "sku": {
+            "description": "Contains information about the sku.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SimpleSkuDiscountUnit"
+              }
+            ]
+          }
+        },
+        "required": [
+          "effect",
+          "unit_type"
+        ]
+      },
+      "DiscountPercentVouchersEffectTypes": {
+        "title": "Discount Percent Vouchers Effect Types",
+        "enum": [
+          "APPLY_TO_ORDER",
+          "APPLY_TO_ITEMS"
+        ],
+        "type": "string"
+      },
+      "DiscountFixedVouchersEffectTypes": {
+        "title": "Discount Fixed Vouchers Effect Types",
+        "enum": [
+          "APPLY_TO_ORDER",
+          "APPLY_TO_ITEMS"
+        ],
+        "type": "string"
+      }
+    },
+    "parameters": {
+      "limit": {
+        "name": "limit",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "$ref": "#/components/schemas/ParameterLimit"
+        },
+        "description": "Limits the number of objects to be returned. The limit can range between 1 and 100 items. If no limit is set, it returns 10 items."
+      },
+      "page": {
+        "name": "page",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "$ref": "#/components/schemas/ParameterPage"
+        },
+        "description": "Which page of results to return. The lowest value is `1`."
+      }
+    },
+    "securitySchemes": {
+      "X-App-Id": {
+        "type": "apiKey",
+        "name": "X-App-Id",
+        "in": "header"
+      },
+      "X-App-Token": {
+        "type": "apiKey",
+        "name": "X-App-Token",
+        "in": "header"
+      },
+      "X-Voucherify-OAuth": {
+        "type": "oauth2",
+        "flows": {
+          "implicit": {
+            "authorizationUrl": "https://api.voucherify.io/v1/oauth/token",
+            "scopes": {
+              "api": "Gives access to whole server-side API.",
+              "vouchers": "Gives access to all endpoints and methods starting with `v1/vouchers`.",
+              "client_api": "Gives access to whole client-side API.",
+              "client_vouchers": "Gives access to all endpoints and methods starting with `/client/v1/vouchers`.",
+              "promotions": "Gives access to all endpoints and methods starting with `/v1/promotions`.",
+              "client_promotions": "Gives access to all endpoints and methods starting with `/client/v1/promotions`",
+              "campaigns": "Gives access to all endpoints and methods starting with `v1/campaigns`.",
+              "client_publish": "Gives access to all endpoints and methods starting with `/client/v1/publish`.",
+              "exports": "Gives access to all endpoints and methods starting with `/v1/exports`.",
+              "publications": "Gives access to all endpoints and methods starting with `/v1/publications`.",
+              "client_validate": "Gives access to all endpoints and methods starting with `/client/v1/validate`.",
+              "validations": "Gives access to all endpoints and methods starting with `/v1/validations`.",
+              "client_validations": "Gives access to all endpoints and methods starting with `/client/v1/validations`.",
+              "qualifications": "Gives access to all endpoints and methods starting with `/v1/qualifications`.",
+              "client_qualifications": "Gives access to all endpoints and methods starting with `/client/v1/qualifications`.",
+              "client_redeem": "Gives access to all endpoints and methods starting with `/client/v1/redeem",
+              "redemptions": "Gives access to all endpoints and methods starting with `/v1/redemptions`.",
+              "client_redemptions": "Gives access to all endpoints and methods starting with `/client/v1/redemptions`",
+              "customers": "Gives access to all endpoints and methods starting with `/v1/customers`.",
+              "client_customers": "Gives access to all endpoints and methods starting with `/client/v1/customers`.",
+              "orders": "Gives access to all endpoints and methods starting with `/v1/orders`.",
+              "products": "Gives access to all endpoints and methods starting with `/v1/products`.",
+              "skus": "Gives access to all endpoints and methods starting with `/v1/skus`.",
+              "validation-rules": "Gives access to all endpoints and methods starting with `/v1/validation-rules`.",
+              "validation-rules-assignments": "Gives access to all endpoints and methods starting with `/v1/validation-rules-assignments",
+              "segments": "Gives access to all endpoints and methods starting with `/v1/segments`.",
+              "events": "Gives access to all endpoints and methods starting with `/v1/events`.",
+              "client_events": "Gives access to all endpoints and methods starting with `client/v1/events`.",
+              "rewards": "Gives access to all endpoints and methods starting with `/v1/rewards`.",
+              "assets": "Gives access to all endpoints and methods starting with `/v1/assets`.",
+              "task-results": "Gives access to all endpoints and methods starting with `/v1/task-results`.",
+              "loyalties": "Gives access to all endpoints and methods starting with `/v1/loyalties`.",
+              "client_consents": "Gives access to all endpoints and methods starting with `client/v1/consents`.",
+              "consents": "Gives access to all endpoints and methods starting with `/v1/consents`.",
+              "async-actions": "Gives access to all endpoints and methods starting with `/v1/async-actions`.",
+              "product-collections": "Gives access to all endpoints and methods starting with `/v1/product-collections`.",
+              "categories": "Gives access to all endpoints and methods starting with `/v1/categories`.",
+              "metadata-schemas": "Gives access to all endpoints and methods starting with `/v1/metadata-schemas`.",
+              "locations": "Gives access to all endpoints and methods starting with `/v1/locations`.",
+              "referrals": "Gives access to all endpoints and methods starting with `/v1/referrals`.",
+              "trash-bin": "Gives access to all endpoints and methods starting with `/v1/trash-bin`.",
+              "templates": "Gives access to all endpoints and methods starting with `/v1/templates`."
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,546 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Voucherify API - Segments",
+    "version": "v2018-08-01",
+    "description": "Voucherify promotion engine REST API. Please see https://docs.voucherify.io/docs for more details. - Endpoints tagged with 'Segments'",
+    "contact": {
+      "name": "Voucherify Team",
+      "url": "https://www.voucherify.io/contact-support",
+      "email": "support@voucherify.io"
+    },
+    "termsOfService": "https://www.voucherify.io/legal/subscription-agreement",
+    "license": {
+      "name": "MIT",
+      "url": "https://github.com/voucherifyio/voucherify-js-sdk/blob/main/LICENSE"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://{cluster}.voucherify.io",
+      "description": "Base URL",
+      "variables": {
+        "cluster": {
+          "default": "api",
+          "enum": [
+            "api",
+            "us1.api",
+            "as1.api",
+            "download",
+            "us1.download",
+            "as1.download"
+          ]
+        }
+      }
+    }
+  ],
+  "paths": {
+    "/v1/segments/{segmentId}": {
+      "get": {
+        "operationId": "get-segment",
+        "tags": [
+          "Segments"
+        ],
+        "summary": "Get Segment",
+        "description": "Retrieves the segment with given segment ID.",
+        "parameters": [],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": [],
+            "X-Voucherify-OAuth": [
+              "api",
+              "segments"
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns segment object.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SegmentsGetResponseBody"
+                },
+                "examples": {
+                  "Tier Segment": {
+                    "value": {
+                      "id": "seg_Mv5w1b2FIEbiCCO5ioT8TfI2",
+                      "name": "Tiers 2 - Senior",
+                      "created_at": "2022-06-09T13:21:26.656Z",
+                      "type": "auto-update",
+                      "filter": {
+                        "junction": "and",
+                        "loyalty_points.campaigns.Tiers 2.points": {
+                          "conditions": {
+                            "$more_than_equal": [
+                              41
+                            ]
+                          }
+                        }
+                      },
+                      "initial_sync_status": "DONE",
+                      "object": "segment"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Returns an error when requesting a segment that has been deleted or does not exist.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Not Found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find segment with id seg_Mv5w1b2FIEbiCCO5ioT8TfI",
+                      "request_id": "v-0b4d7a37a105797650",
+                      "resource_id": "seg_Mv5w1b2FIEbiCCO5ioT8TfI",
+                      "resource_type": "segment"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "delete-segment",
+        "tags": [
+          "Segments"
+        ],
+        "summary": "Delete Segment",
+        "description": "This method deletes a customer segment.",
+        "parameters": [],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": [],
+            "X-Voucherify-OAuth": [
+              "api",
+              "segments"
+            ]
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Returns no content if deletion is successful."
+          },
+          "404": {
+            "description": "Returns an error indicating that the customer segment with given ID was not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Customer Segment Not Found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find segment with id seg_DNAOhUtJffvX0f57ajLMFBY",
+                      "request_id": "v-0ae3bb40409027cb63",
+                      "resource_id": "seg_DNAOhUtJffvX0f57ajLMFBY",
+                      "resource_type": "segment"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/segments": {
+      "post": {
+        "operationId": "create-segment",
+        "tags": [
+          "Segments"
+        ],
+        "summary": "Create Segment",
+        "description": "Create a customer segment.\n\n> 🚧 Limit on Static Segments\n>\n> There is a cap on the number of customers that you can assign to a static segment: **20,000**. If you would like to create a bigger segment, then you can use the unlimited auto-update segment instead and use some customer metadata to build this segment.",
+        "parameters": [],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": [],
+            "X-Voucherify-OAuth": [
+              "api",
+              "segments"
+            ]
+          }
+        ],
+        "requestBody": {
+          "description": "Specify the boundary conditions for the customer segment.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SegmentsCreateRequestBody"
+              },
+              "examples": {
+                "Static Segment": {
+                  "value": {
+                    "name": "Customers in a new Segment",
+                    "type": "static",
+                    "customers": [
+                      "cust_iajsExT2QB4sGWzABY85WRqV",
+                      "cust_sehkNIi8Uq2qQuRqSr7xn4Zi"
+                    ]
+                  }
+                },
+                "Dynamic - customers created after a specific date": {
+                  "value": {
+                    "name": "Customers in a new Dynamic Segment",
+                    "type": "auto-update",
+                    "filter": {
+                      "junction": "and",
+                      "created_at": {
+                        "conditions": {
+                          "$after": [
+                            "2021-12-01T00:00:00.000Z"
+                          ]
+                        }
+                      }
+                    }
+                  }
+                },
+                "Dynamic - customers with birthday next month": {
+                  "value": {
+                    "name": "Customers in a new Dynamic Segment",
+                    "type": "auto-update",
+                    "filter": {
+                      "junction": "and",
+                      "birthdate": {
+                        "conditions": {
+                          "$next_month": [
+                            true
+                          ]
+                        }
+                      },
+                      "address.country": {
+                        "conditions": {
+                          "$is": "Poland"
+                        }
+                      },
+                      "metadata.club_level": {
+                        "conditions": {
+                          "$in": [
+                            "Gold",
+                            "Silver"
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Returns a customer segment object.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SegmentsCreateResponseBody"
+                },
+                "examples": {
+                  "Static": {
+                    "value": {
+                      "id": "seg_vC8iOSCqUG02EsPzsHynLv8i",
+                      "name": "Customers in a new Segment",
+                      "created_at": "2022-09-13T08:57:15.801Z",
+                      "type": "static",
+                      "filter": null,
+                      "initial_sync_status": "DONE",
+                      "object": "segment"
+                    }
+                  },
+                  "Dynamic": {
+                    "value": {
+                      "id": "seg_nZULMFHhVWIFm9vQ0dytg83Q",
+                      "name": "Customers in a new Dynamic Segment",
+                      "created_at": "2022-09-13T09:03:32.764Z",
+                      "type": "auto-update",
+                      "filter": {
+                        "junction": "and",
+                        "created_at": {
+                          "conditions": {
+                            "$after": [
+                              "2021-12-01T00:00:00.000Z"
+                            ]
+                          }
+                        }
+                      },
+                      "initial_sync_status": "IN_PROGRESS",
+                      "object": "segment"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "SegmentsGetResponseBody": {
+        "title": "Create Customer Segment Response Body",
+        "description": "Response body schema for **GET** `v1/v1/segments/{segmentId}`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Segment"
+          }
+        ]
+      },
+      "Error": {
+        "title": "Error Object",
+        "type": "object",
+        "description": "Error details",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "Error's HTTP status code."
+          },
+          "key": {
+            "type": "string",
+            "description": "Short string describing the kind of error which occurred."
+          },
+          "message": {
+            "type": "string",
+            "description": "A human-readable message providing a short description of the error."
+          },
+          "details": {
+            "type": "string",
+            "description": "A human-readable message providing more details about the error."
+          },
+          "request_id": {
+            "type": "string",
+            "example": "v-0a885062c80375740f",
+            "description": "This ID is useful when troubleshooting and/or finding the root cause of an error response by our support team."
+          },
+          "resource_id": {
+            "type": "string",
+            "description": "Unique resource ID that can be used in another endpoint to get more details.",
+            "example": "rf_0c5d710a87c8a31f86"
+          },
+          "resource_type": {
+            "type": "string",
+            "description": "The resource type.",
+            "example": "voucher"
+          },
+          "error": {
+            "type": "object",
+            "description": "Includes additional information about the error.",
+            "properties": {
+              "message": {
+                "type": "string",
+                "description": "The message configured by the user in a validation rule."
+              }
+            }
+          }
+        },
+        "required": [
+          "code",
+          "message"
+        ]
+      },
+      "SegmentsCreateRequestBody": {
+        "title": "Create Customer Segment Request Body",
+        "description": "Request body schema for **POST** `v1/segments`.",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/SegmentsCreateRequestBodyStatic"
+          },
+          {
+            "$ref": "#/components/schemas/SegmentsCreateRequestBodyDynamic"
+          }
+        ]
+      },
+      "SegmentsCreateResponseBody": {
+        "title": "Create Customer Segment Response Body",
+        "description": "Response body schema for **POST** `v1/segments`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Segment"
+          }
+        ]
+      },
+      "Segment": {
+        "title": "Segment",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "seg_1wc52c5z6r1kQ81brO8j9Hk2",
+            "description": "Unique segment ID."
+          },
+          "name": {
+            "type": "string",
+            "description": "Segment name."
+          },
+          "created_at": {
+            "type": "string",
+            "example": "2022-05-12T13:01:56.896Z",
+            "description": "Timestamp representing the date and time when the segment was created. The value is shown in the ISO 8601 format.",
+            "format": "date-time"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "auto-update",
+              "static"
+            ],
+            "description": "Describes whether the segment is dynamic (customers come in and leave based on set criteria) or static (manually selected customers)."
+          },
+          "filter": {
+            "type": "object",
+            "nullable": true,
+            "description": "Defines a set of criteria for an `auto-update` segment type.  "
+          },
+          "initial_sync_status": {
+            "type": "string",
+            "enum": [
+              "IN_PROGRESS",
+              "DONE"
+            ]
+          },
+          "object": {
+            "type": "string",
+            "default": "segment",
+            "description": "The type of the object represented by JSON. This object stores information about the customer segment.",
+            "enum": [
+              "segment"
+            ]
+          }
+        },
+        "description": "This is an object representing a customer segment."
+      },
+      "SegmentsCreateRequestBodyStatic": {
+        "title": "Static Customer Segment",
+        "type": "object",
+        "description": "Request body schema for creating a static customer segment in **POST** `v1/segments`.",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Segment name."
+          },
+          "type": {
+            "type": "string",
+            "description": "Describes whether the segment is dynamic (customers come in and leave based on set criteria) or static (manually selected customers).",
+            "default": "static",
+            "enum": [
+              "static"
+            ]
+          },
+          "customers": {
+            "type": "array",
+            "description": "Array of customer IDs.",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "SegmentsCreateRequestBodyDynamic": {
+        "title": "Dynamic Customer Segment",
+        "type": "object",
+        "description": "Request body schema for creating a dynamic customer segment in **POST** `v1/segments`.",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Segment name."
+          },
+          "type": {
+            "type": "string",
+            "description": "Describes whether the segment is dynamic (customers come in and leave based on set criteria) or static (manually selected customers).",
+            "default": "auto-update",
+            "enum": [
+              "auto-update"
+            ]
+          },
+          "filter": {
+            "type": "object",
+            "description": "Defines a set of criteria for an `auto-update` segment type."
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "X-App-Id": {
+        "type": "apiKey",
+        "name": "X-App-Id",
+        "in": "header"
+      },
+      "X-App-Token": {
+        "type": "apiKey",
+        "name": "X-App-Token",
+        "in": "header"
+      },
+      "X-Voucherify-OAuth": {
+        "type": "oauth2",
+        "flows": {
+          "implicit": {
+            "authorizationUrl": "https://api.voucherify.io/v1/oauth/token",
+            "scopes": {
+              "api": "Gives access to whole server-side API.",
+              "vouchers": "Gives access to all endpoints and methods starting with `v1/vouchers`.",
+              "client_api": "Gives access to whole client-side API.",
+              "client_vouchers": "Gives access to all endpoints and methods starting with `/client/v1/vouchers`.",
+              "promotions": "Gives access to all endpoints and methods starting with `/v1/promotions`.",
+              "client_promotions": "Gives access to all endpoints and methods starting with `/client/v1/promotions`",
+              "campaigns": "Gives access to all endpoints and methods starting with `v1/campaigns`.",
+              "client_publish": "Gives access to all endpoints and methods starting with `/client/v1/publish`.",
+              "exports": "Gives access to all endpoints and methods starting with `/v1/exports`.",
+              "publications": "Gives access to all endpoints and methods starting with `/v1/publications`.",
+              "client_validate": "Gives access to all endpoints and methods starting with `/client/v1/validate`.",
+              "validations": "Gives access to all endpoints and methods starting with `/v1/validations`.",
+              "client_validations": "Gives access to all endpoints and methods starting with `/client/v1/validations`.",
+              "qualifications": "Gives access to all endpoints and methods starting with `/v1/qualifications`.",
+              "client_qualifications": "Gives access to all endpoints and methods starting with `/client/v1/qualifications`.",
+              "client_redeem": "Gives access to all endpoints and methods starting with `/client/v1/redeem",
+              "redemptions": "Gives access to all endpoints and methods starting with `/v1/redemptions`.",
+              "client_redemptions": "Gives access to all endpoints and methods starting with `/client/v1/redemptions`",
+              "customers": "Gives access to all endpoints and methods starting with `/v1/customers`.",
+              "client_customers": "Gives access to all endpoints and methods starting with `/client/v1/customers`.",
+              "orders": "Gives access to all endpoints and methods starting with `/v1/orders`.",
+              "products": "Gives access to all endpoints and methods starting with `/v1/products`.",
+              "skus": "Gives access to all endpoints and methods starting with `/v1/skus`.",
+              "validation-rules": "Gives access to all endpoints and methods starting with `/v1/validation-rules`.",
+              "validation-rules-assignments": "Gives access to all endpoints and methods starting with `/v1/validation-rules-assignments",
+              "segments": "Gives access to all endpoints and methods starting with `/v1/segments`.",
+              "events": "Gives access to all endpoints and methods starting with `/v1/events`.",
+              "client_events": "Gives access to all endpoints and methods starting with `client/v1/events`.",
+              "rewards": "Gives access to all endpoints and methods starting with `/v1/rewards`.",
+              "assets": "Gives access to all endpoints and methods starting with `/v1/assets`.",
+              "task-results": "Gives access to all endpoints and methods starting with `/v1/task-results`.",
+              "loyalties": "Gives access to all endpoints and methods starting with `/v1/loyalties`.",
+              "client_consents": "Gives access to all endpoints and methods starting with `client/v1/consents`.",
+              "consents": "Gives access to all endpoints and methods starting with `/v1/consents`.",
+              "async-actions": "Gives access to all endpoints and methods starting with `/v1/async-actions`.",
+              "product-collections": "Gives access to all endpoints and methods starting with `/v1/product-collections`.",
+              "categories": "Gives access to all endpoints and methods starting with `/v1/categories`.",
+              "metadata-schemas": "Gives access to all endpoints and methods starting with `/v1/metadata-schemas`.",
+              "locations": "Gives access to all endpoints and methods starting with `/v1/locations`.",
+              "referrals": "Gives access to all endpoints and methods starting with `/v1/referrals`.",
+              "trash-bin": "Gives access to all endpoints and methods starting with `/v1/trash-bin`.",
+              "templates": "Gives access to all endpoints and methods starting with `/v1/templates`."
+            }
+          }
+        }
+      }
+    }
+  }
+}

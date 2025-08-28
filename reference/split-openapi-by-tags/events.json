@@ -1,0 +1,530 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Voucherify API - Events",
+    "version": "v2018-08-01",
+    "description": "Voucherify promotion engine REST API. Please see https://docs.voucherify.io/docs for more details. - Endpoints tagged with 'Events'",
+    "contact": {
+      "name": "Voucherify Team",
+      "url": "https://www.voucherify.io/contact-support",
+      "email": "support@voucherify.io"
+    },
+    "termsOfService": "https://www.voucherify.io/legal/subscription-agreement",
+    "license": {
+      "name": "MIT",
+      "url": "https://github.com/voucherifyio/voucherify-js-sdk/blob/main/LICENSE"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://{cluster}.voucherify.io",
+      "description": "Base URL",
+      "variables": {
+        "cluster": {
+          "default": "api",
+          "enum": [
+            "api",
+            "us1.api",
+            "as1.api",
+            "download",
+            "us1.download",
+            "as1.download"
+          ]
+        }
+      }
+    }
+  ],
+  "paths": {
+    "/v1/events": {
+      "post": {
+        "operationId": "track-custom-event",
+        "tags": [
+          "Events"
+        ],
+        "summary": "Track Custom Event",
+        "description": "To track a custom event, you create an event object.  \n\nThe event object must be linked to the customer who performs the action. If a customer doesn't exist in Voucherify, the customer will be created.",
+        "parameters": [],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": [],
+            "X-Voucherify-OAuth": [
+              "api",
+              "events"
+            ]
+          }
+        ],
+        "requestBody": {
+          "description": "Specify the details of the custom event.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EventsCreateRequestBody"
+              },
+              "examples": {
+                "Example": {
+                  "value": {
+                    "event": "event-name",
+                    "customer": {
+                      "source_id": "referee-source_id"
+                    },
+                    "referral": {
+                      "code": "voucher-code",
+                      "referrer_id": "referrer-source_id"
+                    }
+                  }
+                },
+                "Referral triggered by custom event": {
+                  "value": {
+                    "event": "user_subscribed",
+                    "customer": {
+                      "source_id": "source_customer_event"
+                    },
+                    "referral": {
+                      "code": "46jL0kYI",
+                      "referrer_id": "cust_Vzck5i8U3OhcEUFY6MKhN9Rv"
+                    },
+                    "metadata": {
+                      "login": "bob",
+                      "pricing_plan": "PP1",
+                      "volume_number": 4
+                    }
+                  }
+                },
+                "Earning rule triggered by custom event": {
+                  "value": {
+                    "event": "cart_abandoned",
+                    "customer": {
+                      "source_id": "source_customer_event"
+                    },
+                    "loyalty": {
+                      "code": "6CB4KDAu"
+                    },
+                    "metadata": {
+                      "date": "2022-12-01",
+                      "flag": true,
+                      "text": "Cart abandoned event",
+                      "date_time": "2022-12-01T09:24:33.061Z",
+                      "number": 1
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Returns the event type if the event was received by the application.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EventsCreateResponseBody"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "object": "event",
+                      "type": "cart_abandoned",
+                      "customer": {
+                        "id": "cust_ypePCF6IU6fnUvec6RMXZuH4",
+                        "name": "John Doe",
+                        "email": "john@voucherify.io",
+                        "source_id": "source_customer_event",
+                        "metadata": {
+                          "prop": "value"
+                        },
+                        "object": "customer"
+                      },
+                      "referral": null,
+                      "loyalty": null
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Returns an error if the request payload is incomplete.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Invalid payload": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find customer with id registered_10055",
+                      "request_id": "v-0dc6ead2680056a15a",
+                      "resource_id": "registered_10055",
+                      "resource_type": "customer"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "EventsCreateRequestBody": {
+        "title": "Events Create Request Body",
+        "type": "object",
+        "description": "Request body schema for **POST** `v1/events`.",
+        "properties": {
+          "event": {
+            "type": "string",
+            "description": "Event name. This is the same name that you used to define a custom event in the **Dashboard** > **Project Settings** > **Event Schema**.",
+            "minLength": 1,
+            "maxLength": 300
+          },
+          "customer": {
+            "description": "Customer's information.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Customer"
+              }
+            ]
+          },
+          "referral": {
+            "type": "object",
+            "description": "If a **conversion event** for a referral program is set to a custom event, then you need to send the referral code in the payload to make a record of the conversion event. ",
+            "properties": {
+              "code": {
+                "type": "string",
+                "description": "A code through which a new visitor has been referred to a service."
+              },
+              "referrer_id": {
+                "type": "string",
+                "description": "Unique ID of the referring person - it is optional and not required if the referral **code** is provided.",
+                "example": "cust_Vzck5i8U3OhcEUFY6MKhN9Rv"
+              }
+            },
+            "required": [
+              "code"
+            ]
+          },
+          "loyalty": {
+            "type": "object",
+            "description": "If an earning rule in a loyalty program is based on a custom event. This objects let's you specify the loyalty card to which the custom event should be attributed to.",
+            "properties": {
+              "code": {
+                "type": "string",
+                "description": "Code of the loyalty card to receive points based on the calculation method defined in the related earning rule. An earning rule is triggered for the loyalty card when the event passed in the `event` parameter of the request payload gets sent along with this loyalty card code.",
+                "example": "L-CARD-BUHuH6g"
+              }
+            },
+            "required": [
+              "code"
+            ]
+          },
+          "metadata": {
+            "type": "object",
+            "description": "The metadata object stores all custom attributes assigned to the event. A set of key/value pairs that you can attach to an event object. It can be useful for storing additional information about the event in a structured format. Event metadata schema is defined in the **Dashboard** > **Project Settings** > **Event Schema** > **Edit particular event** > **Metadata property definition**."
+          }
+        },
+        "required": [
+          "event",
+          "customer"
+        ]
+      },
+      "EventsCreateResponseBody": {
+        "title": "Events Create Response Body",
+        "type": "object",
+        "description": "Response body schema for **POST** `v1/events`.",
+        "properties": {
+          "object": {
+            "type": "string",
+            "default": "event",
+            "description": "The object represented is an `event`.",
+            "enum": [
+              "event"
+            ]
+          },
+          "type": {
+            "type": "string",
+            "description": "The event name."
+          },
+          "customer": {
+            "description": "A simple customer object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SimpleCustomerRequiredObjectType"
+              }
+            ]
+          },
+          "referral": {
+            "type": "object",
+            "nullable": true,
+            "default": null,
+            "description": "A `null` referral object."
+          },
+          "loyalty": {
+            "type": "object",
+            "nullable": true,
+            "default": null,
+            "description": "A `null` loyalty object."
+          },
+          "metadata": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "object",
+          "type",
+          "customer",
+          "referral",
+          "loyalty",
+          "metadata"
+        ]
+      },
+      "Error": {
+        "title": "Error Object",
+        "type": "object",
+        "description": "Error details",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "Error's HTTP status code."
+          },
+          "key": {
+            "type": "string",
+            "description": "Short string describing the kind of error which occurred."
+          },
+          "message": {
+            "type": "string",
+            "description": "A human-readable message providing a short description of the error."
+          },
+          "details": {
+            "type": "string",
+            "description": "A human-readable message providing more details about the error."
+          },
+          "request_id": {
+            "type": "string",
+            "example": "v-0a885062c80375740f",
+            "description": "This ID is useful when troubleshooting and/or finding the root cause of an error response by our support team."
+          },
+          "resource_id": {
+            "type": "string",
+            "description": "Unique resource ID that can be used in another endpoint to get more details.",
+            "example": "rf_0c5d710a87c8a31f86"
+          },
+          "resource_type": {
+            "type": "string",
+            "description": "The resource type.",
+            "example": "voucher"
+          },
+          "error": {
+            "type": "object",
+            "description": "Includes additional information about the error.",
+            "properties": {
+              "message": {
+                "type": "string",
+                "description": "The message configured by the user in a validation rule."
+              }
+            }
+          }
+        },
+        "required": [
+          "code",
+          "message"
+        ]
+      },
+      "Customer": {
+        "title": "Customer",
+        "allOf": [
+          {
+            "type": "object",
+            "title": "Customer Id And Source Id",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "The ID of an existing customer."
+              },
+              "source_id": {
+                "type": "string",
+                "description": "A unique identifier of the customer who validates a voucher. It can be a customer ID or email from a CRM system, database, or a third-party service. If you also pass a customer ID (unique ID assigned by Voucherify), the source ID will be ignored."
+              }
+            }
+          },
+          {
+            "$ref": "#/components/schemas/CustomerBase"
+          }
+        ]
+      },
+      "SimpleCustomerRequiredObjectType": {
+        "type": "object",
+        "description": "This is an object representing a customer with limited properties used in Event Tracking endpoints.",
+        "title": "Customer Object Required Object Type",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The unique ID of a customer that is assigned by Voucherify.",
+            "example": "cust_CSnYd37MXmrbS19XCrghjBsv"
+          },
+          "source_id": {
+            "type": "string",
+            "description": "The merchant's customer ID if it is different from the Voucherify customer ID. It is really useful in case of an integration between multiple systems. It can be a customer ID from a CRM system, database or 3rd-party service."
+          },
+          "name": {
+            "type": "string",
+            "description": "Customer's first and last name."
+          },
+          "email": {
+            "type": "string",
+            "description": "Customer's email address."
+          },
+          "metadata": {
+            "type": "object",
+            "description": "A set of custom key/value pairs that you can attach to a customer. The metadata object stores all custom attributes assigned to the customer. It can be useful for storing additional information about the customer in a structured format. This metadata can be used for validating whether the customer qualifies for a discount or it can be used in building customer segments. "
+          },
+          "object": {
+            "type": "string",
+            "description": "The type of the object represented by the JSON. This object stores information about the customer.",
+            "default": "customer"
+          }
+        },
+        "required": [
+          "object"
+        ]
+      },
+      "CustomerBase": {
+        "title": "Customer Base",
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Customer's first and last name."
+          },
+          "description": {
+            "type": "string",
+            "description": "An arbitrary string that you can attach to a customer object."
+          },
+          "email": {
+            "type": "string",
+            "description": "Customer's email address."
+          },
+          "phone": {
+            "type": "string",
+            "description": "Customer's phone number. This parameter is mandatory when you try to send out codes to customers via an SMS channel."
+          },
+          "birthday": {
+            "type": "string",
+            "description": "`Deprecated`. ~~Customer's birthdate; format YYYY-MM-DD~~.",
+            "format": "date"
+          },
+          "birthdate": {
+            "type": "string",
+            "description": "Customer's birthdate; format YYYY-MM-DD.",
+            "format": "date"
+          },
+          "address": {
+            "type": "object",
+            "nullable": true,
+            "description": "Customer's address.",
+            "properties": {
+              "city": {
+                "type": "string",
+                "description": "City"
+              },
+              "state": {
+                "type": "string",
+                "description": "State"
+              },
+              "line_1": {
+                "type": "string",
+                "description": "First line of address."
+              },
+              "line_2": {
+                "type": "string",
+                "description": "Second line of address."
+              },
+              "country": {
+                "type": "string",
+                "description": "Country."
+              },
+              "postal_code": {
+                "type": "string",
+                "description": "Postal code."
+              }
+            }
+          },
+          "metadata": {
+            "type": "object",
+            "description": "A set of custom key/value pairs that you can attach to a customer. The metadata object stores all custom attributes assigned to the customer. It can be useful for storing additional information about the customer in a structured format. This metadata can be used for validating whether the customer qualifies for a discount or it can be used in building customer segments."
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "X-App-Id": {
+        "type": "apiKey",
+        "name": "X-App-Id",
+        "in": "header"
+      },
+      "X-App-Token": {
+        "type": "apiKey",
+        "name": "X-App-Token",
+        "in": "header"
+      },
+      "X-Voucherify-OAuth": {
+        "type": "oauth2",
+        "flows": {
+          "implicit": {
+            "authorizationUrl": "https://api.voucherify.io/v1/oauth/token",
+            "scopes": {
+              "api": "Gives access to whole server-side API.",
+              "vouchers": "Gives access to all endpoints and methods starting with `v1/vouchers`.",
+              "client_api": "Gives access to whole client-side API.",
+              "client_vouchers": "Gives access to all endpoints and methods starting with `/client/v1/vouchers`.",
+              "promotions": "Gives access to all endpoints and methods starting with `/v1/promotions`.",
+              "client_promotions": "Gives access to all endpoints and methods starting with `/client/v1/promotions`",
+              "campaigns": "Gives access to all endpoints and methods starting with `v1/campaigns`.",
+              "client_publish": "Gives access to all endpoints and methods starting with `/client/v1/publish`.",
+              "exports": "Gives access to all endpoints and methods starting with `/v1/exports`.",
+              "publications": "Gives access to all endpoints and methods starting with `/v1/publications`.",
+              "client_validate": "Gives access to all endpoints and methods starting with `/client/v1/validate`.",
+              "validations": "Gives access to all endpoints and methods starting with `/v1/validations`.",
+              "client_validations": "Gives access to all endpoints and methods starting with `/client/v1/validations`.",
+              "qualifications": "Gives access to all endpoints and methods starting with `/v1/qualifications`.",
+              "client_qualifications": "Gives access to all endpoints and methods starting with `/client/v1/qualifications`.",
+              "client_redeem": "Gives access to all endpoints and methods starting with `/client/v1/redeem",
+              "redemptions": "Gives access to all endpoints and methods starting with `/v1/redemptions`.",
+              "client_redemptions": "Gives access to all endpoints and methods starting with `/client/v1/redemptions`",
+              "customers": "Gives access to all endpoints and methods starting with `/v1/customers`.",
+              "client_customers": "Gives access to all endpoints and methods starting with `/client/v1/customers`.",
+              "orders": "Gives access to all endpoints and methods starting with `/v1/orders`.",
+              "products": "Gives access to all endpoints and methods starting with `/v1/products`.",
+              "skus": "Gives access to all endpoints and methods starting with `/v1/skus`.",
+              "validation-rules": "Gives access to all endpoints and methods starting with `/v1/validation-rules`.",
+              "validation-rules-assignments": "Gives access to all endpoints and methods starting with `/v1/validation-rules-assignments",
+              "segments": "Gives access to all endpoints and methods starting with `/v1/segments`.",
+              "events": "Gives access to all endpoints and methods starting with `/v1/events`.",
+              "client_events": "Gives access to all endpoints and methods starting with `client/v1/events`.",
+              "rewards": "Gives access to all endpoints and methods starting with `/v1/rewards`.",
+              "assets": "Gives access to all endpoints and methods starting with `/v1/assets`.",
+              "task-results": "Gives access to all endpoints and methods starting with `/v1/task-results`.",
+              "loyalties": "Gives access to all endpoints and methods starting with `/v1/loyalties`.",
+              "client_consents": "Gives access to all endpoints and methods starting with `client/v1/consents`.",
+              "consents": "Gives access to all endpoints and methods starting with `/v1/consents`.",
+              "async-actions": "Gives access to all endpoints and methods starting with `/v1/async-actions`.",
+              "product-collections": "Gives access to all endpoints and methods starting with `/v1/product-collections`.",
+              "categories": "Gives access to all endpoints and methods starting with `/v1/categories`.",
+              "metadata-schemas": "Gives access to all endpoints and methods starting with `/v1/metadata-schemas`.",
+              "locations": "Gives access to all endpoints and methods starting with `/v1/locations`.",
+              "referrals": "Gives access to all endpoints and methods starting with `/v1/referrals`.",
+              "trash-bin": "Gives access to all endpoints and methods starting with `/v1/trash-bin`.",
+              "templates": "Gives access to all endpoints and methods starting with `/v1/templates`."
+            }
+          }
+        }
+      }
+    }
+  }
+}
