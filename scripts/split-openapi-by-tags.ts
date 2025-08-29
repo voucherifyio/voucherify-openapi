@@ -7,7 +7,7 @@ interface OpenAPISpec {
   info: any;
   servers?: any[];
   paths: Record<string, Record<string, any>>;
-  webhooks?: Record<string, Record<string, any>>; // Dodane webhooks
+  webhooks?: Record<string, Record<string, any>>;
   components?: {
     schemas?: Record<string, any>;
     parameters?: Record<string, any>;
@@ -29,6 +29,7 @@ interface EndpointInfo {
   operationId: string;
   operation: any;
   tags: string[];
+  pathLevelParameters?: any[];
 }
 
 interface WebhookInfo {
@@ -42,7 +43,7 @@ interface WebhookInfo {
 interface TagGroup {
   tag: string;
   endpoints: EndpointInfo[];
-  webhooks: WebhookInfo[]; // Dodane webhooks do grupy tagów
+  webhooks: WebhookInfo[];
 }
 
 const OUTPUT_FOLDER = path.join(
@@ -239,8 +240,11 @@ function extractEndpointsByTags(
   const tagGroups = new Map<string, EndpointInfo[]>();
 
   for (const [pathName, pathItem] of Object.entries(openApiSpec.paths)) {
+    // Wyciągnij parametry na poziomie ścieżki
+    const pathLevelParameters = pathItem.parameters || [];
+
     for (const [method, operation] of Object.entries(pathItem)) {
-      // Skip non-HTTP method properties
+      // Skip non-HTTP method properties and 'parameters'
       if (
         ![
           "get",
@@ -262,7 +266,8 @@ function extractEndpointsByTags(
           method: method.toLowerCase(),
           operationId: operation.operationId,
           operation,
-          tags: operation.tags || ["untagged"], // Use 'untagged' for endpoints without tags
+          tags: operation.tags || ["untagged"],
+          pathLevelParameters,
         };
 
         // Add this endpoint to each of its tags
@@ -318,7 +323,7 @@ function extractWebhooksByTags(
           method: method.toLowerCase(),
           operationId: operation.operationId,
           operation,
-          tags: operation.tags || ["untagged"], // Use 'untagged' for webhooks without tags
+          tags: operation.tags || ["untagged"],
         };
 
         // Add this webhook to each of its tags
@@ -350,6 +355,15 @@ function createTagOpenApiSpec(
   endpoints.forEach((endpoint) => {
     const endpointRefs = findAllReferences(endpoint.operation);
     endpointRefs.forEach((ref) => allRefs.add(ref));
+
+    // Dodaj referencje z parametrów na poziomie ścieżki
+    if (
+      endpoint.pathLevelParameters &&
+      endpoint.pathLevelParameters.length > 0
+    ) {
+      const pathParamRefs = findAllReferences(endpoint.pathLevelParameters);
+      pathParamRefs.forEach((ref) => allRefs.add(ref));
+    }
   });
 
   webhooks.forEach((webhook) => {
@@ -383,6 +397,14 @@ function createTagOpenApiSpec(
   endpoints.forEach((endpoint) => {
     if (!paths[endpoint.path]) {
       paths[endpoint.path] = {};
+
+      // Dodaj parametry na poziomie ścieżki jeśli istnieją
+      if (
+        endpoint.pathLevelParameters &&
+        endpoint.pathLevelParameters.length > 0
+      ) {
+        paths[endpoint.path].parameters = endpoint.pathLevelParameters;
+      }
     }
     paths[endpoint.path][endpoint.method] = endpoint.operation;
   });
