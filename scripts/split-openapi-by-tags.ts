@@ -240,7 +240,7 @@ function extractEndpointsByTags(
   const tagGroups = new Map<string, EndpointInfo[]>();
 
   for (const [pathName, pathItem] of Object.entries(openApiSpec.paths)) {
-    // Wyciągnij parametry na poziomie ścieżki
+    // Extract path-level parameters
     const pathLevelParameters = pathItem.parameters || [];
 
     for (const [method, operation] of Object.entries(pathItem)) {
@@ -356,7 +356,7 @@ function createTagOpenApiSpec(
     const endpointRefs = findAllReferences(endpoint.operation);
     endpointRefs.forEach((ref) => allRefs.add(ref));
 
-    // Dodaj referencje z parametrów na poziomie ścieżki
+    // Add references from path-level parameters
     if (
       endpoint.pathLevelParameters &&
       endpoint.pathLevelParameters.length > 0
@@ -398,7 +398,7 @@ function createTagOpenApiSpec(
     if (!paths[endpoint.path]) {
       paths[endpoint.path] = {};
 
-      // Dodaj parametry na poziomie ścieżki jeśli istnieją
+      // Add path-level parameters if they exist
       if (
         endpoint.pathLevelParameters &&
         endpoint.pathLevelParameters.length > 0
