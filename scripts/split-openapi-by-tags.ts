@@ -7,6 +7,7 @@ interface OpenAPISpec {
   info: any;
   servers?: any[];
   paths: Record<string, Record<string, any>>;
+  webhooks?: Record<string, Record<string, any>>; // Dodane webhooks
   components?: {
     schemas?: Record<string, any>;
     parameters?: Record<string, any>;
@@ -30,9 +31,18 @@ interface EndpointInfo {
   tags: string[];
 }
 
+interface WebhookInfo {
+  webhookName: string;
+  method: string;
+  operationId: string;
+  operation: any;
+  tags: string[];
+}
+
 interface TagGroup {
   tag: string;
   endpoints: EndpointInfo[];
+  webhooks: WebhookInfo[]; // Dodane webhooks do grupy tagów
 }
 
 const OUTPUT_FOLDER = path.join(
@@ -189,10 +199,11 @@ function extractSecuritySchemes(operation: any): Set<string> {
 }
 
 /**
- * Collects used security schemes from multiple operations
+ * Collects used security schemes from multiple operations (endpoints and webhooks)
  */
 function collectUsedSecuritySchemes(
   endpoints: EndpointInfo[],
+  webhooks: WebhookInfo[],
   allSecuritySchemes: Record<string, any>,
 ): Record<string, any> {
   const usedSchemes = new Set<string>();
@@ -201,6 +212,12 @@ function collectUsedSecuritySchemes(
   endpoints.forEach((endpoint) => {
     const endpointSchemes = extractSecuritySchemes(endpoint.operation);
     endpointSchemes.forEach((scheme) => usedSchemes.add(scheme));
+  });
+
+  // Collect all security schemes used by all webhooks for this tag
+  webhooks.forEach((webhook) => {
+    const webhookSchemes = extractSecuritySchemes(webhook.operation);
+    webhookSchemes.forEach((scheme) => usedSchemes.add(scheme));
   });
 
   const result: Record<string, any> = {};
@@ -263,18 +280,81 @@ function extractEndpointsByTags(
 }
 
 /**
- * Creates a complete OpenAPI spec for endpoints with a specific tag
+ * Extracts all webhooks from OpenAPI webhooks and groups them by tags
+ */
+function extractWebhooksByTags(
+  openApiSpec: OpenAPISpec,
+): Map<string, WebhookInfo[]> {
+  const tagGroups = new Map<string, WebhookInfo[]>();
+
+  // Check if webhooks exist in the spec
+  if (!openApiSpec.webhooks) {
+    return tagGroups;
+  }
+
+  for (const [webhookName, webhookItem] of Object.entries(
+    openApiSpec.webhooks,
+  )) {
+    for (const [method, operation] of Object.entries(webhookItem)) {
+      // Skip non-HTTP method properties
+      if (
+        ![
+          "get",
+          "post",
+          "put",
+          "patch",
+          "delete",
+          "options",
+          "head",
+          "trace",
+        ].includes(method.toLowerCase())
+      ) {
+        continue;
+      }
+
+      if (operation && typeof operation === "object" && operation.operationId) {
+        const webhook: WebhookInfo = {
+          webhookName,
+          method: method.toLowerCase(),
+          operationId: operation.operationId,
+          operation,
+          tags: operation.tags || ["untagged"], // Use 'untagged' for webhooks without tags
+        };
+
+        // Add this webhook to each of its tags
+        webhook.tags.forEach((tag) => {
+          if (!tagGroups.has(tag)) {
+            tagGroups.set(tag, []);
+          }
+          tagGroups.get(tag)!.push(webhook);
+        });
+      }
+    }
+  }
+
+  return tagGroups;
+}
+
+/**
+ * Creates a complete OpenAPI spec for endpoints and webhooks with a specific tag
  */
 function createTagOpenApiSpec(
   tag: string,
   endpoints: EndpointInfo[],
+  webhooks: WebhookInfo[],
   originalSpec: OpenAPISpec,
 ): OpenAPISpec {
-  // Collect all references from all endpoints for this tag
+  // Collect all references from all endpoints and webhooks for this tag
   const allRefs = new Set<string>();
+
   endpoints.forEach((endpoint) => {
     const endpointRefs = findAllReferences(endpoint.operation);
     endpointRefs.forEach((ref) => allRefs.add(ref));
+  });
+
+  webhooks.forEach((webhook) => {
+    const webhookRefs = findAllReferences(webhook.operation);
+    webhookRefs.forEach((ref) => allRefs.add(ref));
   });
 
   // Collect all referenced components
@@ -286,6 +366,7 @@ function createTagOpenApiSpec(
   // Collect used security schemes
   const usedSecuritySchemes = collectUsedSecuritySchemes(
     endpoints,
+    webhooks,
     originalSpec.components?.securitySchemes || {},
   );
 
@@ -306,20 +387,32 @@ function createTagOpenApiSpec(
     paths[endpoint.path][endpoint.method] = endpoint.operation;
   });
 
+  // Build webhooks object for this tag
+  const webhooksObj: Record<string, Record<string, any>> = {};
+  webhooks.forEach((webhook) => {
+    if (!webhooksObj[webhook.webhookName]) {
+      webhooksObj[webhook.webhookName] = {};
+    }
+    webhooksObj[webhook.webhookName][webhook.method] = webhook.operation;
+  });
+
   // Create new OpenAPI spec for this tag
   const tagSpec: OpenAPISpec = {
     openapi: originalSpec.openapi,
     info: {
       ...originalSpec.info,
       title: `${originalSpec.info.title} - ${tag}`,
-      description: `${
-        originalSpec.info.description || ""
-      } - Endpoints tagged with '${tag}'`,
+      description: `${originalSpec.info.description || ""}`,
     },
     servers: originalSpec.servers,
     paths,
     components: collectedComponents,
   };
+
+  // Add webhooks only if there are any for this tag
+  if (Object.keys(webhooksObj).length > 0) {
+    tagSpec.webhooks = webhooksObj;
+  }
 
   // Delete 'components' key if it's empty
   if (Object.keys(tagSpec.components || {}).length === 0) {
@@ -383,17 +476,27 @@ async function splitOpenApiByTags(): Promise<void> {
     // Create output directory
     await fs.mkdir(OUTPUT_FOLDER, { recursive: true });
 
-    // Extract endpoints grouped by tags
-    const tagGroups = extractEndpointsByTags(openApiSpec);
+    // Extract endpoints and webhooks grouped by tags
+    const endpointTagGroups = extractEndpointsByTags(openApiSpec);
+    const webhookTagGroups = extractWebhooksByTags(openApiSpec);
 
-    console.log(`Found ${tagGroups.size} tags to process`);
+    // Merge endpoint and webhook tag groups
+    const allTags = new Set([
+      ...endpointTagGroups.keys(),
+      ...webhookTagGroups.keys(),
+    ]);
+
+    console.log(`Found ${allTags.size} tags to process`);
 
     // Process each tag
-    for (const [tag, endpoints] of tagGroups) {
+    for (const tag of allTags) {
       try {
+        const endpoints = endpointTagGroups.get(tag) || [];
+        const webhooks = webhookTagGroups.get(tag) || [];
+
         // Create tag-specific OpenAPI spec
         const tagSpec = transformNullTypes(
-          createTagOpenApiSpec(tag, endpoints, openApiSpec),
+          createTagOpenApiSpec(tag, endpoints, webhooks, openApiSpec),
         );
 
         // Generate filename based on tag name
@@ -404,8 +507,12 @@ async function splitOpenApiByTags(): Promise<void> {
         // Write the file
         await fs.writeFile(filePath, JSON.stringify(tagSpec, null, 2));
 
+        const endpointsCount = endpoints.length;
+        const webhooksCount = webhooks.length;
+        const totalCount = endpointsCount + webhooksCount;
+
         console.log(
-          `Created: ${filename} (${endpoints.length} endpoints for tag '${tag}')`,
+          `Created: ${filename} (${endpointsCount} endpoints, ${webhooksCount} webhooks, ${totalCount} total for tag '${tag}')`,
         );
       } catch (error) {
         console.error(`Error processing tag ${tag}:`, error);
@@ -413,14 +520,18 @@ async function splitOpenApiByTags(): Promise<void> {
     }
 
     console.log(
-      `\nSuccessfully split OpenAPI into ${tagGroups.size} tag-based files`,
+      `\nSuccessfully split OpenAPI into ${allTags.size} tag-based files`,
     );
     console.log(`Output directory: ${OUTPUT_FOLDER}`);
 
     // Print summary
     console.log("\nTag summary:");
-    for (const [tag, endpoints] of tagGroups) {
-      console.log(`  ${tag}: ${endpoints.length} endpoints`);
+    for (const tag of allTags) {
+      const endpoints = endpointTagGroups.get(tag) || [];
+      const webhooks = webhookTagGroups.get(tag) || [];
+      console.log(
+        `  ${tag}: ${endpoints.length} endpoints, ${webhooks.length} webhooks`,
+      );
     }
   } catch (error) {
     console.error("Error splitting OpenAPI by tags:", error);
