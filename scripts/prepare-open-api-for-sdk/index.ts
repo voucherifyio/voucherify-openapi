@@ -416,9 +416,9 @@ const main = async (languageOptions: LanguageOptions) => {
   }
   if (languageOptions.breakingChangesVersion <= 2) {
     //ADD MORE TO IT ONCE DOTNET IS RELEASED
+    // Restore faulty type for referee_reward.amount
+    openAPIContent.components.schemas.ReferralProgram.properties.referee_reward.properties.amount.type = "string"
   }
-  // Restore faulty type for referee_reward.amount
-  openAPIContent.components.schemas.ReferralProgram.properties.referee_reward.properties.amount.type = "string"
   //////////////////////////////////////////////////////////////////////////////
   ///////////////////////////END OF BREAKING CHANGES////////////////////////////
   //////////////////////////////////////////////////////////////////////////////
