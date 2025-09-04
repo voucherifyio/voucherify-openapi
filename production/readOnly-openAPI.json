@@ -987,7 +987,7 @@
           },
           "price_formula": {
             "type": "number",
-            "description": "Formula used to calculate the discounted price of an item.",
+            "description": "Formula used to dynamically calculate the discounted price of an item.",
             "nullable": true
           },
           "effect": {
@@ -5951,6 +5951,7 @@
           },
           "amount_off_formula": {
             "type": "string",
+            "description": "Formula used to dynamically calculate the discount.",
             "nullable": true
           },
           "aggregated_amount_limit": {
@@ -6040,6 +6041,7 @@
           },
           "fixed_amount_formula": {
             "type": "string",
+            "description": "Formula used to dynamically calculate the discount.",
             "nullable": true
           },
           "effect": {
@@ -6086,6 +6088,7 @@
           },
           "percent_off_formula": {
             "type": "string",
+            "description": "Formula used to dynamically calculate the discount.",
             "nullable": true
           },
           "amount_limit": {
@@ -6142,7 +6145,7 @@
           },
           "unit_off_formula": {
             "type": "string",
-            "description": "Formula used to calculate the number of units.",
+            "description": "Formula used to dynamically calculate the number of units.",
             "nullable": true
           },
           "effect": {
@@ -6220,7 +6223,7 @@
           },
           "unit_off_formula": {
             "type": "string",
-            "description": "Formula used to calculate the number of units.",
+            "description": "Formula used to dynamically calculate the number of units.",
             "nullable": true
           },
           "effect": {
@@ -6537,6 +6540,11 @@
             "type": "integer",
             "description": "Defines how the points will be added to the loyalty card. FIXED adds a fixed number of points.",
             "nullable": true
+          },
+          "points_formula": {
+            "type": "string",
+            "description": "Formula used to dynamically calculate the rewarded points.",
+            "nullable": true
           }
         },
         "required": []
@@ -6599,6 +6607,11 @@
                     "description": "Number of points to be awarded, i.e. how many points to be added to the loyalty card.",
                     "nullable": true
                   },
+                  "points_formula": {
+                    "type": "string",
+                    "description": "Formula used to dynamically calculate the rewarded points.",
+                    "nullable": true
+                  },
                   "property": {
                     "type": "string",
                     "description": "Customer metadata property.",
@@ -6652,6 +6665,11 @@
                   "points": {
                     "type": "integer",
                     "description": "Number of points to be awarded, i.e. how many points to be added to the loyalty card.",
+                    "nullable": true
+                  },
+                  "points_formula": {
+                    "type": "string",
+                    "description": "Formula used to dynamically calculate the rewarded points.",
                     "nullable": true
                   },
                   "property": {
@@ -6722,6 +6740,11 @@
                     "type": "integer",
                     "description": "Number of points to be awarded, i.e. how many points to be added to the loyalty card.",
                     "nullable": true
+                  },
+                  "points_formula": {
+                    "type": "string",
+                    "description": "Formula used to dynamically calculate the rewarded points.",
+                    "nullable": true
                   }
                 },
                 "nullable": true
@@ -6765,7 +6788,7 @@
             "enum": [
               "ORDER_ITEMS_AMOUNT"
             ],
-            "description": "ORDER_ITEMS_AMOUNT; Pre-discount amount spent on items defined in the order_items.amount.object & .id (X points for every Y spent on items excluding discounts)",
+            "description": "ORDER_ITEMS_AMOUNT; Pre-discount amount spent on items defined in the `order_items.quantity.applicable_to` array or `order_items.quantity.object` & `.id` (X points for every Y spent on items excluding discounts)",
             "nullable": true
           },
           "order_items": {
@@ -6787,9 +6810,14 @@
                     "description": "Number of points to be awarded, i.e. how many points to be added to the loyalty card.",
                     "nullable": true
                   },
+                  "points_formula": {
+                    "type": "string",
+                    "description": "Formula used to dynamically calculate the rewarded points.",
+                    "nullable": true
+                  },
                   "object": {
                     "type": "string",
-                    "description": "Type of object taken under consideration.",
+                    "description": "Type of object which will be covered by the earning rule. This is required together with `id`. Can be replaced by the `applicable_to` array. In response, the value of the first object is returned even if `applicable_to` array was used.",
                     "enum": [
                       "products_collection",
                       "product",
@@ -6799,7 +6827,30 @@
                   },
                   "id": {
                     "type": "string",
-                    "description": "Unique ID of the resource, i.e. pc_75U0dHlr7u75BJodrW1AE3t6, prod_0bae32322150fd0546, or sku_0b7d7dfb090be5c619.",
+                    "description": "Unique ID of the resource assigned by Voucherify. This is required together with `object`. Can be replaced by the `applicable_to` array. In response, the value of the first object is returned even if `applicable_to` array was used. Values are, for example, `pc_75U0dHlr7u75BJodrW1AE3t6` for product collection, `prod_0bae32322150fd0546` for a product, or `sku_0b7d7dfb090be5c619` for a SKU.",
+                    "nullable": true
+                  },
+                  "applicable_to": {
+                    "type": "array",
+                    "description": "Defines products, SKUs, or product collections covered by the earning rule. Can be replaced by `object` and `id` to define only one object.",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "object": {
+                          "type": "string",
+                          "description": "Type of object which will be covered by the earning rule.",
+                          "enum": [
+                            "products_collection",
+                            "product",
+                            "sku"
+                          ]
+                        },
+                        "id": {
+                          "type": "string",
+                          "description": "Unique ID of the resource assigned by Voucherify. Values are, for example, `pc_75U0dHlr7u75BJodrW1AE3t6` for product collection, `prod_0bae32322150fd0546` for a product, or `sku_0b7d7dfb090be5c619` for a SKU."
+                        }
+                      }
+                    },
                     "nullable": true
                   }
                 },
@@ -6830,7 +6881,7 @@
             "enum": [
               "ORDER_ITEMS_QUANTITY"
             ],
-            "description": "`ORDER_ITEMS_QUANTITY`: Quantity of items defined in order_items.quantity.object & .id (X points for every Y items excluding free items)",
+            "description": "`ORDER_ITEMS_QUANTITY`: Quantity of items defined in the `order_items.quantity.applicable_to` array or `order_items.quantity.object` & `.id` (X points for every Y items excluding free items).",
             "nullable": true
           },
           "order_items": {
@@ -6852,9 +6903,14 @@
                     "description": "Number of points to be awarded, i.e. how many points to be added to the loyalty card.",
                     "nullable": true
                   },
+                  "points_formula": {
+                    "type": "string",
+                    "description": "Formula used to dynamically calculate the rewarded points.",
+                    "nullable": true
+                  },
                   "object": {
                     "type": "string",
-                    "description": "Type of object taken under consideration.",
+                    "description": "Type of object which will be covered by the earning rule. This is required together with `id`. Can be replaced by the `applicable_to` array. In response, the value of the first object is returned even if `applicable_to` array was used.",
                     "enum": [
                       "products_collection",
                       "product",
@@ -6864,7 +6920,30 @@
                   },
                   "id": {
                     "type": "string",
-                    "description": "Unique ID of the resource, i.e. pc_75U0dHlr7u75BJodrW1AE3t6, prod_0bae32322150fd0546, or sku_0b7d7dfb090be5c619.",
+                    "description": "Unique ID of the resource assigned by Voucherify. This is required together with `object`. Can be replaced by the `applicable_to` array. In response, the value of the first object is returned even if `applicable_to` array was used. Values are, for example, `pc_75U0dHlr7u75BJodrW1AE3t6` for product collection, `prod_0bae32322150fd0546` for a product, or `sku_0b7d7dfb090be5c619` for a SKU.",
+                    "nullable": true
+                  },
+                  "applicable_to": {
+                    "type": "array",
+                    "description": "Defines products, SKUs, or product collections covered by the earning rule. Can be replaced by `object` and `id` to define only one object.",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "object": {
+                          "type": "string",
+                          "description": "Type of object which will be covered by the earning rule.",
+                          "enum": [
+                            "products_collection",
+                            "product",
+                            "sku"
+                          ]
+                        },
+                        "id": {
+                          "type": "string",
+                          "description": "Unique ID of the resource assigned by Voucherify. Values are, for example, `pc_75U0dHlr7u75BJodrW1AE3t6` for product collection, `prod_0bae32322150fd0546` for a product, or `sku_0b7d7dfb090be5c619` for a SKU."
+                        }
+                      }
+                    },
                     "nullable": true
                   }
                 },
@@ -6917,9 +6996,14 @@
                     "description": "Number of points to be awarded, i.e. how many points to be added to the loyalty card.",
                     "nullable": true
                   },
+                  "points_formula": {
+                    "type": "string",
+                    "description": "Formula used to dynamically calculate the rewarded points.",
+                    "nullable": true
+                  },
                   "object": {
                     "type": "string",
-                    "description": "Type of object taken under consideration.",
+                    "description": "Type of object which will be covered by the earning rule. This is required together with `id`. Can be replaced by the `applicable_to` array. In response, the value of the first object is returned even if `applicable_to` array was used.",
                     "enum": [
                       "products_collection",
                       "product",
@@ -6929,7 +7013,30 @@
                   },
                   "id": {
                     "type": "string",
-                    "description": "Unique ID of the resource, i.e. pc_75U0dHlr7u75BJodrW1AE3t6, prod_0bae32322150fd0546, or sku_0b7d7dfb090be5c619.",
+                    "description": "Unique ID of the resource assigned by Voucherify. This is required together with `object`. Can be replaced by the `applicable_to` array. In response, the value of the first object is returned even if `applicable_to` array was used. Values are, for example, `pc_75U0dHlr7u75BJodrW1AE3t6` for product collection, `prod_0bae32322150fd0546` for a product, or `sku_0b7d7dfb090be5c619` for a SKU.",
+                    "nullable": true
+                  },
+                  "applicable_to": {
+                    "type": "array",
+                    "description": "Defines products, SKUs, or product collections covered by the earning rule. Can be replaced by `object` and `id` to define only one object.",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "object": {
+                          "type": "string",
+                          "description": "Type of object which will be covered by the earning rule.",
+                          "enum": [
+                            "products_collection",
+                            "product",
+                            "sku"
+                          ]
+                        },
+                        "id": {
+                          "type": "string",
+                          "description": "Unique ID of the resource assigned by Voucherify. Values are, for example, `pc_75U0dHlr7u75BJodrW1AE3t6` for product collection, `prod_0bae32322150fd0546` for a product, or `sku_0b7d7dfb090be5c619` for a SKU."
+                        }
+                      }
+                    },
                     "nullable": true
                   }
                 },
@@ -6981,6 +7088,11 @@
                   "points": {
                     "type": "integer",
                     "description": "Number of points to be awarded, i.e. how many points to be added to the loyalty card.",
+                    "nullable": true
+                  },
+                  "points_formula": {
+                    "type": "string",
+                    "description": "Formula used to dynamically calculate the rewarded points.",
                     "nullable": true
                   },
                   "property": {
@@ -7036,6 +7148,11 @@
                   "points": {
                     "type": "integer",
                     "description": "Number of points to be awarded, i.e. how many points to be added to the loyalty card.",
+                    "nullable": true
+                  },
+                  "points_formula": {
+                    "type": "string",
+                    "description": "Formula used to dynamically calculate the rewarded points.",
                     "nullable": true
                   }
                 },
@@ -11928,7 +12045,7 @@
             "nullable": true
           },
           "loyalty": {
-            "description": "An object that defines the number of points that will be added to a loyalty card and how the points will be added.\n\n- `FIXED` adds a fixed number of `points`\n- `PROPORTIONAL` adds points proportionally based on a pre-defined ratio",
+            "description": "An object that defines the number of points that will be added to a loyalty card and how the points will be added.\n\n- `FIXED` adds a fixed number of `points`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/EarningRuleFixed"
@@ -17036,6 +17153,7 @@
           "redeemables_limit",
           "applicable_redeemables_limit",
           "applicable_redeemables_per_category_limit",
+          "applicable_redeemables_category_limits",
           "applicable_exclusive_redeemables_limit",
           "applicable_exclusive_redeemables_per_category_limit",
           "discount_calculation_mode",
@@ -17090,6 +17208,17 @@
             "description": "Defines how many redeemables with the same category can be applied in one request. The number must be less than or equal to `applicable_redeemables_limit`. The ones above the limit will be `SKIPPED` according to the `redeemables_sorting_rule`.",
             "minimum": 1,
             "maximum": 30
+          },
+          "applicable_redeemables_category_limits": {
+            "type": "object",
+            "description": "Lists categories by category IDs (keys) and defines their limits (values) of applicable redeemables that belong to campaigns with that category.",
+            "additionalProperties": {
+              "type": "integer",
+              "description": "Limit of applicable redeemables per category.",
+              "minimum": 1,
+              "maximum": 10
+            },
+            "nullable": true
           },
           "applicable_exclusive_redeemables_limit": {
             "type": "integer",
@@ -23458,7 +23587,7 @@
         "properties": {
           "id": {
             "type": "string",
-            "description": "Id of the redeemable.",
+            "description": "ID of the redeemable. For a voucher, it's its `code` value.",
             "nullable": true
           },
           "object": {
@@ -25707,7 +25836,7 @@
                 "nullable": true
               },
               "amount": {
-                "type": "string",
+                "type": "number",
                 "description": "Define the number of `points` to add to a loyalty card or `credits` to the balance on a gift card. In case of the gift card, the value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000.",
                 "nullable": true
               }
@@ -25808,7 +25937,7 @@
           "stock": {
             "type": "integer",
             "nullable": true,
-            "description": "Configurable for **material rewards**. The number of units of the product that you want to share as reward."
+            "description": "Configurable for **material rewards**. The number of units of the product that you want to share as a reward. Use this parameter to code a stock-taking logic."
           },
           "redeemed": {
             "type": "integer",
@@ -26273,7 +26402,7 @@
           },
           "stock": {
             "type": "integer",
-            "description": "The number of units of the product that you want to share as a reward.",
+            "description": "The number of units of the product that you want to share as a reward. Use this parameter to code a stock-taking logic.",
             "nullable": true
           },
           "attributes": {
@@ -26549,7 +26678,7 @@
           },
           "stock": {
             "type": "integer",
-            "description": "The number of units of the product that you want to share as a reward.",
+            "description": "The number of units of the product that you want to share as a reward.  Use this parameter to code a stock-taking logic.",
             "nullable": true
           },
           "attributes": {
@@ -26786,15 +26915,16 @@
             "type": "string",
             "enum": [
               "auto-update",
+              "passive",
               "static"
             ],
-            "description": "Describes whether the segment is dynamic (customers come in and leave based on set criteria) or static (manually selected customers).",
+            "description": "Defines whether the segment is:\n- Active (`auto-update`): customers enter and leave the segment based on the defined filters and the `customer.segment.entered` and `customer.segment.left` events are triggered,\n- Passive (`passive`): customers enter and leave the segment based on the defined filters, but the `customer.segment.entered` and `customer.segment.left` events are not triggered,\n- Static (`static`): manually selected customers.",
             "nullable": true
           },
           "filter": {
             "type": "object",
             "nullable": true,
-            "description": "Defines a set of criteria for an `auto-update` segment type.  "
+            "description": "Defines a set of criteria for an `auto-update` or `passive` segment type."
           },
           "initial_sync_status": {
             "type": "string",
@@ -26829,9 +26959,9 @@
         ]
       },
       "SegmentsCreateRequestBodyDynamic": {
-        "title": "Dynamic Customer Segment",
+        "title": "Active or Passive Customer Segment",
         "type": "object",
-        "description": "Request body schema for creating a dynamic customer segment in **POST** `v1/segments`.",
+        "description": "Request body schema for creating an active or passive customer segment in **POST** `v1/segments`.",
         "properties": {
           "name": {
             "type": "string",
@@ -26840,16 +26970,16 @@
           },
           "type": {
             "type": "string",
-            "description": "Describes whether the segment is dynamic (customers come in and leave based on set criteria) or static (manually selected customers).",
-            "default": "auto-update",
+            "description": "Defines whether the segment is:\n- Active (`auto-update`): customers enter and leave the segment based on the defined filters and the `customer.segment.entered` and `customer.segment.left` events are triggered,\n- Passive (`passive`): customers enter and leave the segment based on the defined filters, but the `customer.segment.entered` and `customer.segment.left` events are not triggered.",
             "enum": [
-              "auto-update"
+              "auto-update",
+              "passive"
             ],
             "nullable": true
           },
           "filter": {
             "type": "object",
-            "description": "Defines a set of criteria for an `auto-update` segment type.",
+            "description": "Defines a set of criteria for an `auto-update` or `passive` segment type.",
             "nullable": true
           }
         }
@@ -26866,7 +26996,7 @@
           },
           "type": {
             "type": "string",
-            "description": "Describes whether the segment is dynamic (customers come in and leave based on set criteria) or static (manually selected customers).",
+            "description": "Defines that the segment is static, meaning it includes only the manually selected customers.",
             "default": "static",
             "enum": [
               "static"
@@ -28533,6 +28663,17 @@
             "default": 1,
             "maximum": 30,
             "minimum": 1,
+            "nullable": true
+          },
+          "applicable_redeemables_category_limits": {
+            "type": "object",
+            "description": "Lists categories by category IDs (keys) and defines their limits (values) of applicable redeemables that belong to campaigns with that category.",
+            "additionalProperties": {
+              "type": "integer",
+              "description": "Limit of applicable redeemables per category.",
+              "minimum": 1,
+              "maximum": 10
+            },
             "nullable": true
           },
           "applicable_exclusive_redeemables_limit": {
@@ -32607,7 +32748,7 @@
           "Qualifications"
         ],
         "summary": "Check Eligibility",
-        "description": "<!-- theme: warning -->\n> 🚧 The Qualifications endpoint ignores the rules checking:\n> \n> - Limit of total redeemed discount amount per campaign\n> - Limit of total redemptions count per campaign\n> - Redemptions per customer\n> - Redemptions per customer in a campaign \n\nGenerate a list of redeemables that are applicable in the context of the customer and order.\n\nThe new qualifications method is an improved version of [Campaign Qualifications](ref:examine-campaigns-qualification), [Voucher Qualifications](ref:examine-vouchers-qualification), and [Promotions Validation](ref:validate-promotions) API requests. The new qualification method introduces the following improvements:\n\n- Qualification results are returned faster\n- No limit on the number of returned redeemables\n- Introduces new qualification scenarios, not available in the previous version\n\n> 👍 Scenario Guide\n>\n> Read [the dedicated guide](doc:checking-eligibility) to learn about some use cases this endpoint can cover.\n\n## Paging \n\nThe Voucherify Qualifications API request will return to you all of the redeemables available for the customer in batches of up to 50 redeemables. To get the next batch of redeemables, you need to use the `starting_after` cursor.\n\nTo process of paging the redeemables works in the following manner:\n\n- You send the first API request for Qualifications without the `starting_after` parameter.\n- The response will contain a parameter named `has_more`. If the parameter's value is set to `true`, then more redeemables are available.\n- Get the value of the `created_at` parameter of the last returned redeemable. The value of this parameter will be used as a cursor to retrieve the next page of redeemables.\n- Send another API request for Qualification with the `starting_after` parameter set to the value taken from the `created_at` parameter from the last returned redeemable.\n- Voucherify will return the next page of redeemables.\n- If the `has_more` parameter is set to `true`, apply steps 3-5 to get the next page of redeemables.",
+        "description": "<!-- theme: warning -->\n> 🚧 The Qualifications endpoint ignores the rules checking:\n> \n> - Limit of total redeemed discount amount per campaign\n> - Limit of total redemptions count per campaign\n> - Redemptions per customer\n> - Redemptions per customer in a campaign \n\nGenerate a list of redeemables that are applicable in the context of the customer and order.\n\nThe new qualifications method is an improved version of [Campaign Qualifications](ref:examine-campaigns-qualification), [Voucher Qualifications](ref:examine-vouchers-qualification), and [Promotions Validation](ref:validate-promotions) API requests. The new qualification method introduces the following improvements:\n\n- Qualification results are returned faster\n- No limit on the number of returned redeemables\n- Introduces new qualification scenarios, not available in the previous version\n\n> 👍 Scenario Guide\n>\n> Read [the dedicated guide](doc:checking-eligibility) to learn about some use cases this endpoint can cover.\n\n## Paging \n\nThe Voucherify Qualifications API request will return to you all of the redeemables available for the customer in batches of up to 500 redeemables. To get the next batch of redeemables, you need to use the `starting_after` cursor.\n\nTo process of paging the redeemables works in the following manner:\n\n- You send the first API request for Qualifications without the `starting_after` parameter.\n- The response will contain a parameter named `has_more`. If the parameter's value is set to `true`, then more redeemables are available.\n- Get the value of the `created_at` parameter of the last returned redeemable. The value of this parameter will be used as a cursor to retrieve the next page of redeemables.\n- Send another API request for Qualification with the `starting_after` parameter set to the value taken from the `created_at` parameter from the last returned redeemable.\n- Voucherify will return the next page of redeemables.\n- If the `has_more` parameter is set to `true`, apply steps 3-5 to get the next page of redeemables.",
         "parameters": [],
         "security": [
           {
@@ -32881,7 +33022,7 @@
           "Validations"
         ],
         "summary": "Validate Stackable Discounts",
-        "description": "Verify redeemables provided in the request. This method is designed for server side integration which means that it is accessible only through private keys.",
+        "description": "Verify redeemables provided in the request. This method is designed for server side integration which means that it is accessible only through private keys.\n\nAPI keys with a Merchant role can't use this endpoint.",
         "parameters": [],
         "security": [
           {
@@ -34104,7 +34245,7 @@
           "Redemptions"
         ],
         "summary": "Redeem Stackable Discounts",
-        "description": "## How API returns calculated discounts and order amounts in the response\n\nIn the table below, you can see the logic the API follows to calculate discounts and amounts:\n\n| **Field** | **Calculation** | **Description** |\n|:---|:---|:---|\n| amount | N/A | This field shows the order amount before applying any discount |\n| total_amount | `total_amount` = `amount` - `total_discount_amount` | This field shows the order amount after applying all the discounts |\n| discount_amount | `discount_amount` = `previous_discount_amount` + `applied_discount_amount` | This field sums up all order-level discounts up to and including the specific discount being calculated for the stacked redemption. |\n| items_discount_amount | sum(items, i => i.discount_amount) | This field sums up all product-specific discounts |\n| total_discount_amount | `total_discount_amount` = `discount_amount` + `items_discount_amount` | This field sums up all order-level and all product-specific discounts |\n| applied_discount_amount | N/A | This field shows the order-level discount applied in a particular request |\n| items_applied_discount_amount | sum(items, i => i.applied_discount_amount) | This field sums up all product-specific discounts applied in a particular request |\n| total_applied_discount_amount | `total_applied_discount_amount` = `applied_discount_amount` + `items_applied_discount_amount` | This field sums up all order-level and all product-specific discounts applied in a particular request |\n\n<!-- theme: info -->\n> 📘 Rollbacks\n>\n> You can't roll back a child redemption. When you call rollback on a stacked redemption, all child redemptions will be rolled back. You need to refer to a parent redemption ID in your <!-- [rollback request](OpenAPI.json/paths/~1redemptions~1{parentRedemptionId}~1rollbacks/post) -->[rollback request](ref:rollback-stacked-redemptions).    \n\n<!-- theme: info -->\n> 📘 Also available on client-side\n>\n> This method is also accessible through public keys which you can use in client-side​ apps: mobile and web browser apps. Go to the dedicated [endpoint](ref:redeem-stacked-discounts-client-side) to learn more.\n> - Use `X-Client-Application-Id` as the application ID header.\n> - Use `X-Client-Token` as the appliction secret key header.\n> - Use client-side base URL.\n> - Use an `origin` header for your custom domain.",
+        "description": "## How API returns calculated discounts and order amounts in the response\n\nIn the table below, you can see the logic the API follows to calculate discounts and amounts:\n\n| **Field** | **Calculation** | **Description** |\n|:---|:---|:---|\n| amount | N/A | This field shows the order amount before applying any discount |\n| total_amount | `total_amount` = `amount` - `total_discount_amount` | This field shows the order amount after applying all the discounts |\n| discount_amount | `discount_amount` = `previous_discount_amount` + `applied_discount_amount` | This field sums up all order-level discounts up to and including the specific discount being calculated for the stacked redemption. |\n| items_discount_amount | sum(items, i => i.discount_amount) | This field sums up all product-specific discounts |\n| total_discount_amount | `total_discount_amount` = `discount_amount` + `items_discount_amount` | This field sums up all order-level and all product-specific discounts |\n| applied_discount_amount | N/A | This field shows the order-level discount applied in a particular request |\n| items_applied_discount_amount | sum(items, i => i.applied_discount_amount) | This field sums up all product-specific discounts applied in a particular request |\n| total_applied_discount_amount | `total_applied_discount_amount` = `applied_discount_amount` + `items_applied_discount_amount` | This field sums up all order-level and all product-specific discounts applied in a particular request |\n\n\n\nAPI keys with a Merchant role can't use this endpoint.\n\n<!-- theme: info -->\n> 📘 Rollbacks\n>\n> You can't roll back a child redemption. When you call rollback on a stacked redemption, all child redemptions will be rolled back. You need to refer to a parent redemption ID in your <!-- [rollback request](OpenAPI.json/paths/~1redemptions~1{parentRedemptionId}~1rollbacks/post) -->[rollback request](ref:rollback-stacked-redemptions).    \n\n<!-- theme: info -->\n> 📘 Also available on client-side\n>\n> This method is also accessible through public keys which you can use in client-side​ apps: mobile and web browser apps. Go to the dedicated [endpoint](ref:redeem-stacked-discounts-client-side) to learn more.\n> - Use `X-Client-Application-Id` as the application ID header.\n> - Use `X-Client-Token` as the appliction secret key header.\n> - Use client-side base URL.\n> - Use an `origin` header for your custom domain.",
         "parameters": [],
         "security": [
           {
@@ -48163,7 +48304,7 @@
           "Loyalties"
         ],
         "summary": "Transfer Loyalty Points",
-        "description": "Transfer points between different loyalty cards which have holders. You need to provide the campaign ID and the loyalty card ID you want the points to be transferred to as path parameters in the URL. In the request body, you provide the loyalty cards you want the points to be transferred from and the number of points to transfer from each card.\n\nTransfer works only for loyalty cards that have holders, meaning they were published to customers.",
+        "description": "Transfer points between different loyalty cards which have holders.\n\nProvide the campaign ID and the loyalty card ID you want the points to be transferred to as path parameters. In the request body, provide the loyalty cards you want the points to be transferred from and the number of points to transfer from each card.\n\nTransfer works only for loyalty cards that have holders, meaning the cards were published to customers.\n\nThe transferred points expire according to the target program expiration rules.",
         "parameters": [],
         "security": [
           {
@@ -62051,7 +62192,7 @@
           "Segments"
         ],
         "summary": "Create Segment",
-        "description": "Create a customer segment.\n\n> 🚧 Limit on Static Segments\n>\n> There is a cap on the number of customers that you can assign to a static segment: **20,000**. If you would like to create a bigger segment, then you can use the unlimited auto-update segment instead and use some customer metadata to build this segment.",
+        "description": "Create a customer segment.\n\n> 🚧 Limit on static segments\n>\n> There is a cap on the number of customers that you can assign to a static segment: **20,000**. If you would like to create a bigger segment, then you can use the unlimited `auto-update` or `passive` segment instead and use some customer metadata to build this segment.\n\n> 🚧 Limit on Active and Passive segments\n>\n> You can create a maximum of 100 passive and active segments.",
         "parameters": [],
         "security": [
           {
@@ -67280,18 +67421,40 @@
                 "examples": {
                   "Example": {
                     "value": {
-                      "id": "stk_0e9b71a0be48e967f3",
-                      "exclusive_categories": [],
-                      "joint_categories": [],
-                      "redeemables_limit": 30,
-                      "applicable_redeemables_limit": 15,
-                      "applicable_exclusive_redeemables_limit": 1,
+                      "id": "stk_0e9bdfd48108548fd3",
+                      "exclusive_categories": [
+                        "cat_0f2ba1284b565c235c",
+                        "cat_0d75bdfe4c9030a732"
+                      ],
+                      "joint_categories": [
+                        "cat_0d74559c3e9030da13",
+                        "cat_0d507a4d6e8a1b7b97"
+                      ],
+                      "redeemables_limit": 25,
+                      "applicable_redeemables_limit": 10,
+                      "applicable_redeemables_per_category_limit": 2,
+                      "applicable_redeemables_category_limits": {
+                        "cat_0d75bdfe4c9030a732": 1,
+                        "cat_0d7c4d183011d043cc": 2
+                      },
+                      "applicable_exclusive_redeemables_limit": 2,
+                      "applicable_exclusive_redeemables_per_category_limit": 2,
                       "discount_calculation_mode": "DISCOUNTED_AMOUNT",
-                      "initial_amount_mode_categories": [],
-                      "discounted_amount_mode_categories": [],
-                      "redeemables_application_mode": "ALL",
-                      "redeemables_sorting_rule": "REQUESTED_ORDER",
-                      "created_at": "2024-04-16T12:17:09.368Z"
+                      "initial_amount_mode_categories": [
+                        "cat_0d507a4d6e8a1b7b97"
+                      ],
+                      "discounted_amount_mode_categories": [
+                        "cat_0d7455f93c1030da4a"
+                      ],
+                      "redeemables_application_mode": "PARTIAL",
+                      "redeemables_sorting_rule": "CATEGORY_HIERARCHY",
+                      "redeemables_no_effect_rule": "REDEEM_ANYWAY",
+                      "no_effect_skip_categories": [],
+                      "no_effect_redeem_anyway_categories": [],
+                      "redeemables_products_application_mode": "ONCE",
+                      "redeemables_rollback_order_mode": "WITH_ORDER",
+                      "grouped_redeemables_sorting_rule": "JOINT_ALWAYS_LAST",
+                      "created_at": "2024-04-16T20:18:38.213Z"
                     }
                   }
                 }
@@ -67329,32 +67492,41 @@
                       "data_ref": "data",
                       "data": [
                         {
-                          "id": "stk_0d6264108617006147",
+                          "id": "stk_0e9bdfd48108548fd3",
                           "exclusive_categories": [
-                            "cat_0d75bdfe4c9030a732",
-                            "cat_0d74559c3e9030da13",
-                            "cat_0d7455f93c1030da4a"
+                            "cat_0f2ba1284b565c235c",
+                            "cat_0d75bdfe4c9030a732"
                           ],
                           "joint_categories": [
+                            "cat_0d74559c3e9030da13",
                             "cat_0d507a4d6e8a1b7b97"
                           ],
-                          "redeemables_limit": 29,
-                          "applicable_redeemables_limit": 28,
-                          "applicable_redeemables_per_category_limit": 27,
-                          "applicable_exclusive_redeemables_limit": 4,
-                          "applicable_exclusive_redeemables_per_category_limit": 3,
+                          "redeemables_limit": 25,
+                          "applicable_redeemables_limit": 10,
+                          "applicable_redeemables_per_category_limit": 2,
+                          "applicable_redeemables_category_limits": {
+                            "cat_0d75bdfe4c9030a732": 1,
+                            "cat_0d7c4d183011d043cc": 2
+                          },
+                          "applicable_exclusive_redeemables_limit": 2,
+                          "applicable_exclusive_redeemables_per_category_limit": 2,
                           "discount_calculation_mode": "DISCOUNTED_AMOUNT",
                           "initial_amount_mode_categories": [
-                            "cat_0d75bdfe4c9030a732",
-                            "cat_0d74559c3e9030da13"
+                            "cat_0d507a4d6e8a1b7b97"
                           ],
                           "discounted_amount_mode_categories": [
                             "cat_0d7455f93c1030da4a"
                           ],
                           "redeemables_application_mode": "PARTIAL",
                           "redeemables_sorting_rule": "CATEGORY_HIERARCHY",
-                          "created_at": "2023-08-17T08:33:19.399Z",
-                          "updated_at": "2024-04-16T10:38:27.028Z"
+                          "redeemables_no_effect_rule": "REDEEM_ANYWAY",
+                          "no_effect_skip_categories": [],
+                          "no_effect_redeem_anyway_categories": [],
+                          "redeemables_products_application_mode": "ONCE",
+                          "redeemables_rollback_order_mode": "WITH_ORDER",
+                          "grouped_redeemables_sorting_rule": "JOINT_ALWAYS_LAST",
+                          "created_at": "2024-04-16T20:18:38.213Z",
+                          "updated_at": "2025-08-28T08:28:53.038Z"
                         }
                       ],
                       "total": 1
@@ -67413,32 +67585,41 @@
                 "examples": {
                   "Example": {
                     "value": {
-                      "id": "stk_0d6264108617006147",
+                      "id": "stk_0e9bdfd48108548fd3",
                       "exclusive_categories": [
-                        "cat_0d75bdfe4c9030a732",
-                        "cat_0d74559c3e9030da13",
-                        "cat_0d7455f93c1030da4a"
+                        "cat_0f2ba1284b565c235c",
+                        "cat_0d75bdfe4c9030a732"
                       ],
                       "joint_categories": [
+                        "cat_0d74559c3e9030da13",
                         "cat_0d507a4d6e8a1b7b97"
                       ],
-                      "redeemables_limit": 29,
-                      "applicable_redeemables_limit": 28,
-                      "applicable_redeemables_per_category_limit": 27,
-                      "applicable_exclusive_redeemables_limit": 4,
-                      "applicable_exclusive_redeemables_per_category_limit": 3,
+                      "redeemables_limit": 25,
+                      "applicable_redeemables_limit": 10,
+                      "applicable_redeemables_per_category_limit": 2,
+                      "applicable_redeemables_category_limits": {
+                        "cat_0d75bdfe4c9030a732": 1,
+                        "cat_0d7c4d183011d043cc": 2
+                      },
+                      "applicable_exclusive_redeemables_limit": 2,
+                      "applicable_exclusive_redeemables_per_category_limit": 2,
                       "discount_calculation_mode": "DISCOUNTED_AMOUNT",
                       "initial_amount_mode_categories": [
-                        "cat_0d75bdfe4c9030a732",
-                        "cat_0d74559c3e9030da13"
+                        "cat_0d507a4d6e8a1b7b97"
                       ],
                       "discounted_amount_mode_categories": [
                         "cat_0d7455f93c1030da4a"
                       ],
                       "redeemables_application_mode": "PARTIAL",
                       "redeemables_sorting_rule": "CATEGORY_HIERARCHY",
-                      "created_at": "2023-08-17T08:33:19.399Z",
-                      "updated_at": "2024-04-16T10:38:27.028Z"
+                      "redeemables_no_effect_rule": "REDEEM_ANYWAY",
+                      "no_effect_skip_categories": [],
+                      "no_effect_redeem_anyway_categories": [],
+                      "redeemables_products_application_mode": "ONCE",
+                      "redeemables_rollback_order_mode": "WITH_ORDER",
+                      "grouped_redeemables_sorting_rule": "JOINT_ALWAYS_LAST",
+                      "created_at": "2024-04-16T20:18:38.213Z",
+                      "updated_at": "2025-08-28T08:28:53.038Z"
                     }
                   }
                 }
@@ -67482,28 +67663,41 @@
                 "examples": {
                   "Example": {
                     "value": {
-                      "id": "stk_0d6264108617006147",
-                      "exclusive_categories": [],
+                      "id": "stk_0e9bdfd48108548fd3",
+                      "exclusive_categories": [
+                        "cat_0f2ba1284b565c235c",
+                        "cat_0d75bdfe4c9030a732"
+                      ],
                       "joint_categories": [
+                        "cat_0d74559c3e9030da13",
                         "cat_0d507a4d6e8a1b7b97"
                       ],
-                      "redeemables_limit": 30,
-                      "applicable_redeemables_limit": 28,
-                      "applicable_redeemables_per_category_limit": 27,
-                      "applicable_exclusive_redeemables_limit": 4,
-                      "applicable_exclusive_redeemables_per_category_limit": 3,
+                      "redeemables_limit": 25,
+                      "applicable_redeemables_limit": 10,
+                      "applicable_redeemables_per_category_limit": 2,
+                      "applicable_redeemables_category_limits": {
+                        "cat_0d75bdfe4c9030a732": 1,
+                        "cat_0d7c4d183011d043cc": 2
+                      },
+                      "applicable_exclusive_redeemables_limit": 2,
+                      "applicable_exclusive_redeemables_per_category_limit": 2,
                       "discount_calculation_mode": "DISCOUNTED_AMOUNT",
                       "initial_amount_mode_categories": [
-                        "cat_0d75bdfe4c9030a732",
-                        "cat_0d74559c3e9030da13"
+                        "cat_0d507a4d6e8a1b7b97"
                       ],
                       "discounted_amount_mode_categories": [
                         "cat_0d7455f93c1030da4a"
                       ],
                       "redeemables_application_mode": "PARTIAL",
                       "redeemables_sorting_rule": "CATEGORY_HIERARCHY",
-                      "created_at": "2023-08-17T08:33:19.399Z",
-                      "updated_at": "2024-04-16T19:52:24.792Z"
+                      "redeemables_no_effect_rule": "REDEEM_ANYWAY",
+                      "no_effect_skip_categories": [],
+                      "no_effect_redeem_anyway_categories": [],
+                      "redeemables_products_application_mode": "ONCE",
+                      "redeemables_rollback_order_mode": "WITH_ORDER",
+                      "grouped_redeemables_sorting_rule": "JOINT_ALWAYS_LAST",
+                      "created_at": "2024-04-16T20:18:38.213Z",
+                      "updated_at": "2025-08-28T08:28:53.038Z"
                     }
                   }
                 }
@@ -69037,7 +69231,7 @@
           "Client-side"
         ],
         "summary": "Check Eligibility (client-side)",
-        "description": "Generate a list of redeemables that are applicable in the context of the customer and order.\n\nThe new qualifications method is an improved version of [Campaign Qualifications](ref:examine-campaigns-qualification), [Voucher Qualifications](ref:examine-vouchers-qualification), and [Promotions Validation](ref:validate-promotions) API requests. The new qualification method introduces the following improvements:\n\n- Qualification results are returned faster\n- No limit on the number of returned redeemables\n- Introduces new qualification scenarios, not available in the previous version\n\n> 👍 Scenario Guide\n>\n> Read our dedicated guide to learn about some use cases this endpoint can cover [here](doc:checking-eligibility).\n\n## Paging \n\nThe Voucherify Qualifications API request will return to you all of the redeemables available for the customer in batches of up to 50 redeemables. To get the next batch of redeemables, you need to use the `starting_after` cursor.\n\nTo process of paging the redeemables works in the following manner:\n\n- You send the first API request for Qualifications without the `starting_after` parameter.\n- The response will contain a parameter named `has_more`. If the parameter's value is set to `true`, then more redeemables are available.\n- Get the value of the `created_at` parameter of the last returned redeemable. The value of this parameter will be used as a cursor to retrieve the next page of redeemables.\n- Send another API request for Qualification with the `starting_after` parameter set to the value taken from the `created_at` parameter from the last returned redeemable.\n- Voucherify will return the next page of redeemables.\n- If the `has_more` parameter is set to `true`, apply steps 3-5 to get the next page of redeemables.",
+        "description": "Generate a list of redeemables that are applicable in the context of the customer and order.\n\nThe new qualifications method is an improved version of [Campaign Qualifications](ref:examine-campaigns-qualification), [Voucher Qualifications](ref:examine-vouchers-qualification), and [Promotions Validation](ref:validate-promotions) API requests. The new qualification method introduces the following improvements:\n\n- Qualification results are returned faster\n- No limit on the number of returned redeemables\n- Introduces new qualification scenarios, not available in the previous version\n\n> 👍 Scenario Guide\n>\n> Read our dedicated guide to learn about some use cases this endpoint can cover [here](doc:checking-eligibility).\n\n## Paging \n\nThe Voucherify Qualifications API request will return to you all of the redeemables available for the customer in batches of up to 500 redeemables. To get the next batch of redeemables, you need to use the `starting_after` cursor.\n\nTo process of paging the redeemables works in the following manner:\n\n- You send the first API request for Qualifications without the `starting_after` parameter.\n- The response will contain a parameter named `has_more`. If the parameter's value is set to `true`, then more redeemables are available.\n- Get the value of the `created_at` parameter of the last returned redeemable. The value of this parameter will be used as a cursor to retrieve the next page of redeemables.\n- Send another API request for Qualification with the `starting_after` parameter set to the value taken from the `created_at` parameter from the last returned redeemable.\n- Voucherify will return the next page of redeemables.\n- If the `has_more` parameter is set to `true`, apply steps 3-5 to get the next page of redeemables.",
         "parameters": [],
         "security": [
           {
