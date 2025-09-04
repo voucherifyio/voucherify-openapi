@@ -37,6 +37,7 @@ The Voucherify API uses conventional HTTP status codes to indicate success or fa
 | 400 | Bad Request | The request was invalid. It may occur for various reasons - a malformed JSON or a violated rule (e.g. an attempt to redeem an expired voucher). |
 | 401 | Unauthorized | Authentication has failed or has not been provided yet. |
 | 402 | Payment Required | The request exceeded your current pricing plan (we send friendly reminders first). |
+| 403 | Forbidden | The requested resource cannot be accessed. |
 | 404 | Not Found | The requested resource could not be found. |
 | 405 | Method Not Allowed | The request used a method (GET, POST, etc.) that is not available for a given resource. Error details include a hint on which methods are allowed. |
 | 406 | Not Acceptable | The API is unable to produce a response in a format specified by the `Accept` header. In most cases the only available response format is `application/json`. |
