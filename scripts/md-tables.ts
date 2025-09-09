@@ -5,7 +5,7 @@ export const mdTables: [string, string?][] = [
   ["Reward", "REWARDS-Reward-Object.md"],
   ["RewardAssignment", "REWARDS-Reward-Assignment-Object.md"],
   ["PublicationsCreateResponseBody", "PUBLICATIONS-Publication-Object.md"],
-  ["VouchersValidateResponseBody", "VALIDATIONS-Validation-Object.md"],
+  ["ValidationsValidateResponseBody", "VALIDATIONS-Validation-Object.md"],
   ["Redemption", "REDEMPTIONS-Redemption-Object.md"],
   ["RedemptionRollback", "REDEMPTIONS-Rollback-Redemption-Object.md"],
   ["RedemptionsRedeemResponseBody", "REDEMPTIONS-Redemption-Object.md"],
