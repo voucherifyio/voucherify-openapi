@@ -4,6 +4,9 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2025-09-09
+- Added `campaign_id` property to the `ExportVoucherBase` schema.
+
 ## 2025-08-29
 - Added the `applicable_redeemables_category_limits` object to the `ManagementProjectsStackingRulesBase` and `StackingRules` schemas.
 - Changed `type` to `number` for `amount` in the `ReferralProgram` schema. Reverted that for SDKs.
