@@ -16,11 +16,76 @@ Distribution-based webhooks in Voucherify let your application automatically rec
 4. In Action, define what kind of distribution action you want to create.
 5. In Channels, add Webhook. You can add many channels within one distribution.
 6. In the webhook channel, provide the event name, URL, and any optional HTTP headers.
-7. Select the attributes to add them to the webhook payload. Optionally, map the attributes to your own keys.
+7. Select the default or custom attributes. Custom attributes allow you to select the chosen attributes and add them to the webhook payload, or map the attributes to your own keys.
 
 To edit, pause, activate, or delete a distribution, click the three dots icon located on the far right of each row in the Distributions list view.
 
 **You can also add distribution webhooks while creating a loyalty or referral programs. The process follows similar pattern.**
+
+## Payload designer
+The Payload Designer allows you to control webhook payloads. By default, Voucherify sends the full webhook payload with no mapping. This is called the default mapping mode.
+
+You can switch to custom mode if you want to build your own payload. In custom mode, the editor starts empty. You can paste any existing payload or write it from scratch. Each key in the payload can have a value that is static, dynamic, nested, or an array.
+
+* Static values are fixed values you define, such as text, numbers, or booleans
+* Dynamic values come from Voucherify keys in the webhook payload. You can also mix static and dynamic values, for example "Hello {{customer.name}}"
+* Nested objects can be created with dots in the key name, such as order.shipping.method
+* Arrays are also supported with dots and indexes, such as items.0.name
+
+The Designer uses a new format called `custom_data_rules`. Each rule describes how to build the final payload.
+
+### Types of rules
+
+1. <b>Source rule</b>
+
+```{ "source": "customer.name", "dest": "customerName" }```
+
+This takes the value of customer.name from the webhook and saves it under customerName.
+
+2. <b>Template rule</b>
+
+```{ "template": "Hello dear {{customer.name}}!", "dest": "greeting" }```
+
+This builds a message that combines static text and a Voucherify key.
+
+Note: If the template contains only one key, such as "{{customer.name}}", it will be saved as a source rule.
+
+3. <b>Static rule</b>
+
+```{ "static": true, "type": "boolean", "dest": "isActive" }```
+
+This adds a fixed value to the payload. You can choose the type: string, boolean, integer, or decimal.
+
+### Empty values
+
+If `custom_data_rules` is not set (undefined or null), the full webhook payload is sent.
+
+If `custom_data_rules` is an empty array (`[]`), the result is an empty object (`{}`).
+
+### Example 1 – Customer summary with dynamic values
+```
+{
+  "Customer_profile": {
+    "ID": "{{customer.id}}",
+    "name": "{{customer.name}}",
+    "email": "{{customer.email}}"
+  }
+}
+```
+This payload builds a customer summary. All values are taken dynamically from the webhook.
+
+### Example 2 – Order confirmation with mixed values
+```
+{
+  "order": {
+    "orderId": "{{order.id}}",
+    "total": "{{order.total_amount}}",
+    "currency": "USD",
+    "message": "Thank you for your order, {{customer.name}}!"
+  }
+}
+```
+This payload mixes static and dynamic values. The currency is fixed, while the order details and greeting come from Voucherify.
 
 ## Re-enabling a webhook
 
