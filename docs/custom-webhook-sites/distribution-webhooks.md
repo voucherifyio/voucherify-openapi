@@ -59,7 +59,7 @@ This payload mixes static and dynamic values. The currency is fixed, while the o
 {
   "order": {
     "orderId": "{{order.id}}",
-    "total": "order.total_amount",
+    "total": {{order.total_amount}},
     "currency": "USD",
     "message": "Thank you for your order, {{customer.name}}!"
   }
