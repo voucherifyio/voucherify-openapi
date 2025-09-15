@@ -44,9 +44,9 @@ This payload builds a customer summary. All values are taken dynamically from th
 ```json
 {
   "customer_profile": {
-    "ID": "{{customer.id}}",
-    "name": "{{customer.name}}",
-    "email": "{{customer.email}}"
+    "ID": {{customer.id}},
+    "name": {{customer.name}},
+    "email": {{customer.email}}
   }
 }
 ```
@@ -58,7 +58,7 @@ This payload mixes static and dynamic values. The currency is fixed, while the o
 ```json
 {
   "order": {
-    "orderId": "{{order.id}}",
+    "orderId": {{order.id}},
     "total": {{order.total_amount}},
     "currency": "USD",
     "message": "Thank you for your order, {{customer.name}}!"
