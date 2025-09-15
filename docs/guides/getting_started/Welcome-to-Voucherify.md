@@ -17,11 +17,7 @@ Voucherify is an API-first promotions and loyalty engine. This means you can int
 - loyalty programs – create extensive loyalty programs to keep your customer base come back to earn points and get rewards,
 - referral programs – engage your customers in referring their friends and family.
 
-<!-- EXPAND WITH LINKS TO NEW IN-DEPTH ARTICLES LATER ON! -->
-
 If you're a marketer and you want to learn more, explore [Voucherify possibilities in general](https://www.voucherify.io/).
-
-<!-- Some better page? TBD! -->
 
 ![How Voucherify works with your system and our rules engine](https://files.readme.io/494bc1a-guides_getting_started_welcome_to_voucherify_voucherify_workflow_scheme_01.png "How Voucherify works with your system and our rules engine")
 
@@ -53,10 +49,9 @@ Thanks to Voucherify, you can solve the following problems:
 - Generating unsatisfactory ROI caused by generic offers, simplistic loyalty programs, and promotional fraud.
 - Continuously mediating between marketing and development teams' priorities.
 - Wasting development time to write extra code to keep multiple promotion and loyalty platforms in sync across applications, brands, and teams.
-- Struggling to build branded customer-facing UIs using legacy and monolithic services. <!-- Is this still true since we've removed LP and are about to get rid of cockpits?-->
+- Struggling to build branded customer-facing UIs using legacy and monolithic services.
 - Failing to effectively manage traffic spikes and priority changes.
 - [Many different promotion cases and issues](https://www.voucherify.io/promotion-examples "Voucherify recipes").
-<!-- Anything else? -->
 
 You can achieve this thanks to Voucherify's promotion and loyalty **REST API endpoints** and **a visual Dashboard** to help you with configuration.
 
@@ -67,8 +62,6 @@ Thanks to the [Voucherify API](ref:introduction-1), you can support your system 
 As the Voucherify API is unopinionated, you can pick whatever you need and build your integration in a smart and flexible way.
 
 Additionally, you can use webhooks to track customer activity or even how your promotional campaigns are managed.
-
-<!-- Mention configurable webhooks when it's done -->
 
 ## Visual dashboard
 
