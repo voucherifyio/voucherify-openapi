@@ -11,7 +11,7 @@ export type AllowedAttributesMap = {
  */
 export function sanitizeHtmlAttributes(
   html: string,
-  allowed: AllowedAttributesMap = { a: ["href"], div: ["class"] },
+  allowed: AllowedAttributesMap = { a: ["href"], div: ["class"], h2: ["id"] },
 ): string {
   if (!html) return html;
 
