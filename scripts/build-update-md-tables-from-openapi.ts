@@ -66,7 +66,7 @@ export const updateMdTablesInDoc = async () => {
 title: "${docFile?.title ?? objectName}"
 mode: "frame"
 ---`,
-        '<div class="inner">',
+        '<div class="custom-html">',
         docFile?.htmlDescription,
         fileContentAsHtml,
         "</div>",
