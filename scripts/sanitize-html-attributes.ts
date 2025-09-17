@@ -18,55 +18,57 @@ export function sanitizeHtmlAttributes(
   // Matches opening and self-closing tags, e.g.: <div>, <div id="x">, <img alt="x"/>, <a href="...">, etc.
   const tagRegex = /<([a-zA-Z][a-zA-Z0-9:-]*)(\s[^<>]*?)?(\/?)>/g;
 
-  return html.replace(
-    tagRegex,
-    (full, rawTagName: string, rawAttrs: string, selfClose: string) => {
-      const tagName = String(rawTagName).toLowerCase();
-      const isSelfClosing = !!selfClose;
+  return html
+    .replace(
+      tagRegex,
+      (full, rawTagName: string, rawAttrs: string, selfClose: string) => {
+        const tagName = String(rawTagName).toLowerCase();
+        const isSelfClosing = !!selfClose;
 
-      // If there are no attributes, return the tag as-is
-      if (!rawAttrs) {
-        return `<${tagName}${isSelfClosing ? "/" : ""}>`;
-      }
+        // If there are no attributes, return the tag as-is
+        if (!rawAttrs) {
+          return `<${tagName}${isSelfClosing ? "/" : ""}>`;
+        }
 
-      // Allowed attributes for this tag (lowercase)
-      const allowedForTag = (allowed[tagName] || []).map((a) =>
-        a.toLowerCase(),
-      );
+        // Allowed attributes for this tag (lowercase)
+        const allowedForTag = (allowed[tagName] || []).map((a) =>
+          a.toLowerCase(),
+        );
 
-      // If nothing is allowed — return the tag without attributes
-      if (allowedForTag.length === 0) {
-        return `<${tagName}${isSelfClosing ? "/" : ""}>`;
-      }
+        // If nothing is allowed — return the tag without attributes
+        if (allowedForTag.length === 0) {
+          return `<${tagName}${isSelfClosing ? "/" : ""}>`;
+        }
 
-      // Extract only allowed attributes from the original attribute string
-      // Supports values in double quotes, single quotes, and unquoted
-      const attrRegex =
-        /([^\s"'=<>\/]+)\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'=<>`]+))/g;
+        // Extract only allowed attributes from the original attribute string
+        // Supports values in double quotes, single quotes, and unquoted
+        const attrRegex =
+          /([^\s"'=<>\/]+)\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'=<>`]+))/g;
 
-      let match: RegExpExecArray | null;
-      const kept: string[] = [];
+        let match: RegExpExecArray | null;
+        const kept: string[] = [];
 
-      // Iterate through all attributes and keep only the allowed ones
-      while ((match = attrRegex.exec(rawAttrs)) !== null) {
-        const attrName = match[1].toLowerCase();
-        if (!allowedForTag.includes(attrName)) continue;
+        // Iterate through all attributes and keep only the allowed ones
+        while ((match = attrRegex.exec(rawAttrs)) !== null) {
+          const attrName = match[1].toLowerCase();
+          if (!allowedForTag.includes(attrName)) continue;
 
-        // Original value (one of groups 2, 3, 4)
-        const value = match[2] ?? match[3] ?? match[4] ?? "";
+          // Original value (one of groups 2, 3, 4)
+          const value = match[2] ?? match[3] ?? match[4] ?? "";
 
-        // Minimal sanitization: remove control chars 0x00-0x1F (except tab/newline)
-        const cleaned = value.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F]/g, "");
+          // Minimal sanitization: remove control chars 0x00-0x1F (except tab/newline)
+          const cleaned = value.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F]/g, "");
 
-        // Reassemble as a double-quoted attribute value
-        kept.push(`${attrName}="${cleaned}"`);
-      }
+          // Reassemble as a double-quoted attribute value
+          kept.push(`${attrName}="${cleaned}"`);
+        }
 
-      if (kept.length === 0) {
-        return `<${tagName}${isSelfClosing ? "/" : ""}>`;
-      }
+        if (kept.length === 0) {
+          return `<${tagName}${isSelfClosing ? "/" : ""}>`;
+        }
 
-      return `<${tagName} ${kept.join(" ")}${isSelfClosing ? "/" : ""}>`;
-    },
-  );
+        return `<${tagName} ${kept.join(" ")}${isSelfClosing ? "/" : ""}>`;
+      },
+    )
+    .replaceAll("<br>", "<br />");
 }
