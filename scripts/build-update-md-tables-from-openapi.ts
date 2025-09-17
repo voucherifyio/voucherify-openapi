@@ -65,8 +65,10 @@ export const updateMdTablesInDoc = async () => {
 title: "${docFile?.title ?? objectName}"
 mode: "frame"
 ---`,
+        '<div class="inner">',
         docFile?.htmlDescription,
         fileContentAsHtml,
+        "</div>",
       ])
         .filter((e) => !!e)
         .join(`${EOL}${EOL}`);
