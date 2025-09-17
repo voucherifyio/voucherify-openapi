@@ -571,11 +571,8 @@ async function splitOpenApiByTags(
 // Execute the script
 (async () => {
   try {
-    await splitOpenApiByTags(openApi, "/documentation/openapi");
-    await splitOpenApiByTags(
-      openApiWebhooks,
-      "/documentation/openapi-webhooks",
-    );
+    await splitOpenApiByTags(openApi as OpenAPISpec, "/documentation/openapi");
+    await splitOpenApiByTags(openApiWebhooks, "/documentation/openapi-events");
   } catch (error) {
     console.error("Script execution failed:", error);
     process.exit(1);

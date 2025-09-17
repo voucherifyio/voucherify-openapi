@@ -1,0 +1,78 @@
+---
+title: "Performance"
+description: "Average response rates"
+---
+
+[Suggest Edits](/edit/performance)
+
+As developers, we understand how important it is to have performant 3rd party APIs. Especially when it comes to the sales funnel process. That's why we put effort to make sure that Voucherify responds fast. Here are average response rates from our recent tests on multi-tenant clusters.
+
+| **API call**                                                     | **Response time – median** | **Response time – p95** |
+| ---------------------------------------------------------------- | -------------------------- | ----------------------- |
+| [Stackable Validation](/reference/validate-stacked-discounts)    | 100 ms                     | 220 ms                  |
+| [Stackable Redemption](/reference/redeem-stacked-discounts)      | 170 ms                     | 350 ms                  |
+| [Qualifications API](/reference/check-eligibility)               | 200 ms                     | 450 ms                  |
+| [Create Campaign](/reference/create-campaign) (100 000 vouchers) | 60 sec                     | –                       |
+
+The values for multi-tenant clusters may change depending on the configuration of the actual campaign.
+
+<Check>
+  [Contact us](https://www.voucherify.io/contact-sales) to discuss how Voucherify can meet your requirements, including:
+
+  * Custom SLA
+  * Premium Support
+  * **Single-tenant infrastructure with significantly better performance and stability**
+</Check>
+
+## What happens in the background?
+
+Every time you send a request to Voucherify, Voucherify reacts synchronously and asynchronously. This approach was taken to return the results as fast as possible, making the customer experience as seamless as it can be.
+
+When requesting a redemption, Voucherify synchronously validates the voucher, returns the result, and you can expose the result to the customer. However, this does not mean that the complete processing of the request is finished.
+
+Even though you have already received the result of the redemption, part of the processing is still ongoing. Voucherify is:
+
+* Saving the redemption, order, and updates to the customer in the database,
+* Updating the customer's Customer Segment assignment,
+* Running Loyalty Earning Rules,
+* Running Distributions.
+
+If you expect a customer to receive an email right after making the purchase or a change in the number of Loyalty Points on their card, you'll see the effect after a couple of seconds.
+
+Read about [background tasks](https://support.voucherify.io/article/524-project-logs#background-tasks-overview) and how you can monitor their processing time.
+
+Below you will find a list of operations that explicitly occur asynchronously.
+
+| **Types by Context**                                                                                                                              | **Endpoint**                                                                                                                                                                                                                           |
+| ------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **CAMPAIGN**                                                                                                                                      |                                                                                                                                                                                                                                        |
+| CAMPAIGN.VOUCHERS\_IMPORT                                                                                                                         | **POST** [/campaigns/\{campaignId}/import](/reference/import-vouchers-to-campaign)                                                                                                                                                     |
+| CAMPAIGN.VOUCHERS\_IMPORT\_CSV                                                                                                                    | **POST** [/campaigns/\{campaignId}/importCSV](/reference/import-vouchers-to-campaign-using-csv)                                                                                                                                        |
+| CAMPAIGN.VOUCHERS\_UPDATE                                                                                                                         | **PUT** [/campaigns/\{campaignId}](/reference/update-campaign)                                                                                                                                                                         |
+| CAMPAIGN.VOUCHERS\_DELETE                                                                                                                         | **DELETE** [/campaigns/\{campaignId}](/reference/delete-campaign)                                                                                                                                                                      |
+| CAMPAIGN.VOUCHERS\_GENERATE                                                                                                                       | * **POST** [/campaigns](/reference/create-campaign): asynchronous for campaigns with more than 1 voucher, synchronous for campaign with 1 voucher
+* **POST** [/campaigns/\{campaignId}/vouchers](/reference/add-vouchers-to-campaign)
+ |
+| **CUSTOMERS**                                                                                                                                     |                                                                                                                                                                                                                                        |
+| CUSTOMERS.IMPORT\_CSV                                                                                                                             | **POST** [/customers/importCSV](/reference/import-customers-using-csv)                                                                                                                                                                 |
+| CUSTOMERS.BULK\_UPDATE                                                                                                                            | **POST** [/customers/bulk/async](/reference/update-customers-in-bulk)                                                                                                                                                                  |
+| CUSTOMERS.METADATA\_UPDATE                                                                                                                        | **POST** [/customers/metadata/async](/reference/update-customers-metadata-in-bulk)                                                                                                                                                     |
+| **PRODUCTS**                                                                                                                                      |                                                                                                                                                                                                                                        |
+| PRODUCTS.BULK\_UPDATE                                                                                                                             | **POST** [/products/bulk/async](/reference/update-products-in-bulk)                                                                                                                                                                    |
+| PRODUCTS.METADATA\_UPDATE                                                                                                                         | **POST** [/products/metadata/async](/reference/update-products-metadata-in-bulk)                                                                                                                                                       |
+| PRODUCTS.IMPORT\_CSV                                                                                                                              | **POST** [/products/importCSV](/reference/import-products-using-csv)                                                                                                                                                                   |
+| SKUS.IMPORT\_CSV                                                                                                                                  | **POST** [/skus/importCSV](/reference/import-skus-using-csv)                                                                                                                                                                           |
+| **VOUCHERS**                                                                                                                                      |                                                                                                                                                                                                                                        |
+| VOUCHERS.IMPORT                                                                                                                                   | **POST** [/vouchers/import](/reference/import-vouchers)                                                                                                                                                                                |
+| VOUCHERS.IMPORT\_CSV                                                                                                                              | **POST** [/vouchers/importCSV](/reference/import-vouchers-using-csv)                                                                                                                                                                   |
+| VOUCHERS.BULK\_UPDATE                                                                                                                             | **POST** [/vouchers/bulk/async](/reference/update-vouchers-in-bulk)                                                                                                                                                                    |
+| VOUCHERS.METADATA\_UPDATE                                                                                                                         | **POST** [/vouchers/metadata/async](/reference/update-vouchers-metadata-in-bulk)                                                                                                                                                       |
+| **ORDERS**                                                                                                                                        |                                                                                                                                                                                                                                        |
+| ORDERS.IMPORT                                                                                                                                     | **POST** [/orders/import](/reference/import-orders)                                                                                                                                                                                    |
+| **METADATA KEY PURGE**                                                                                                                            |                                                                                                                                                                                                                                        |
+| CAMPAIGNS.METADATA\_KEY\_PURGECUSTOMERS.METADATA\_KEY\_PURGEPRODUCTS.METADATA\_KEY\_PURGEVOUCHERS.METADATA\_KEY\_PURGEORDERS.METADATA\_KEY\_PURGE | No API endpoint equivalent. You can perform this action through the Dashboard. See Dashboard documentation: Dashboard > [Project Settings](https://support.voucherify.io/article/99-schema-validation-metadata#maintenance)            |
+
+***
+
+* [Table of Contents](#)
+* * [What happens in the background?](#what-happens-in-the-background)

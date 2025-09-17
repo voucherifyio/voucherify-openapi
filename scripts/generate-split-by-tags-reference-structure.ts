@@ -19,8 +19,11 @@ interface OpenApiPathItem {
 }
 
 interface OpenApiDocument {
-  paths: {
+  paths?: {
     [path: string]: OpenApiPathItem;
+  };
+  webhooks?: {
+    [webhookName: string]: OpenApiPathItem;
   };
   [key: string]: any;
 }
@@ -39,7 +42,53 @@ function formatTagForFilename(tag: string): string {
 }
 
 /**
- * Generates structure grouped by tags with OpenAPI endpoints
+ * Processes a collection of PathItems (paths or webhooks) and groups them by tags
+ */
+function processPathItems(
+  items: { [name: string]: OpenApiPathItem },
+  groupedByTag: Map<string, string[]>,
+  prefix: string,
+) {
+  for (const apiPath in items) {
+    const pathItem = items[apiPath];
+
+    for (const method in pathItem) {
+      const lowerCaseMethod = method.toLowerCase();
+      if (
+        [
+          "get",
+          "post",
+          "put",
+          "delete",
+          "patch",
+          "head",
+          "options",
+          "trace",
+        ].includes(lowerCaseMethod)
+      ) {
+        const operation: OpenApiOperation | undefined = pathItem[method];
+
+        if (operation && operation.tags && operation.tags.length > 0) {
+          const pageEntry = `${lowerCaseMethod.toUpperCase()} ${prefix}${apiPath}`;
+
+          operation.tags.forEach((tag) => {
+            if (!groupedByTag.has(tag)) {
+              groupedByTag.set(tag, []);
+            }
+            groupedByTag.get(tag)!.push(pageEntry);
+          });
+        } else {
+          console.warn(
+            `Warning: Skipping operation on ${prefix}${apiPath} [${method}] due to missing tags.`,
+          );
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Generates structure grouped by tags with OpenAPI endpoints (paths + webhooks)
  */
 function generateOpenApiPagesByTags(openApiFilePath: string): OutputItem[] {
   if (!fs.existsSync(openApiFilePath)) {
@@ -59,58 +108,21 @@ function generateOpenApiPagesByTags(openApiFilePath: string): OutputItem[] {
     );
   }
 
-  // Map to group endpoints by tags
   const groupedByTag = new Map<string, string[]>();
 
   if (openApiDocument.paths) {
-    // Iterate through each path
-    for (const apiPath in openApiDocument.paths) {
-      const pathItem = openApiDocument.paths[apiPath];
-
-      // Iterate through each HTTP method
-      for (const method in pathItem) {
-        const lowerCaseMethod = method.toLowerCase();
-        if (
-          [
-            "get",
-            "post",
-            "put",
-            "delete",
-            "patch",
-            "head",
-            "options",
-            "trace",
-          ].includes(lowerCaseMethod)
-        ) {
-          const operation: OpenApiOperation | undefined = pathItem[method];
-
-          if (operation && operation.tags && operation.tags.length > 0) {
-            // Create page entry in format "${method} ${path}"
-            const pageEntry = `${lowerCaseMethod.toUpperCase()} ${apiPath}`;
-
-            // Add this endpoint to all tags it's associated with
-            operation.tags.forEach((tag) => {
-              if (!groupedByTag.has(tag)) {
-                groupedByTag.set(tag, []);
-              }
-              groupedByTag.get(tag)!.push(pageEntry);
-            });
-          } else {
-            console.warn(
-              `Warning: Skipping operation on path '${apiPath}' method '${method}' due to missing tags.`,
-            );
-          }
-        }
-      }
-    }
+    processPathItems(openApiDocument.paths, groupedByTag, "");
   }
 
-  // Transform map into final array of objects
+  if (openApiDocument.webhooks) {
+    processPathItems(openApiDocument.webhooks, groupedByTag, "");
+  }
+
   const resultArray: OutputItem[] = [];
   for (const [tag, pages] of groupedByTag.entries()) {
     resultArray.push({
       group: tag,
-      openapi: `/reference/split-by-tags/${formatTagForFilename(tag)}.json`,
+      openapi: `/openapi-rename-me/${formatTagForFilename(tag)}.json`,
       pages: pages,
     });
   }
@@ -120,7 +132,7 @@ function generateOpenApiPagesByTags(openApiFilePath: string): OutputItem[] {
 
 // Main execution block
 if (require.main === module) {
-  const defaultOpenApiFile = "./reference/OpenAPI.json";
+  const defaultOpenApiFile = "./reference/OpenAPIWebhooks.json";
   const openApiFile = process.argv[2] || defaultOpenApiFile;
 
   try {
