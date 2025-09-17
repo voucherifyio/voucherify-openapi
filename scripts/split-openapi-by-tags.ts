@@ -1,12 +1,13 @@
 import * as fs from "fs/promises";
 import * as path from "path";
 import * as openApi from "../reference/OpenAPI.json";
+import * as openApiWebhooks from "../reference/OpenAPIWebhooks.json";
 
 interface OpenAPISpec {
   openapi: string;
   info: any;
   servers?: any[];
-  paths: Record<string, Record<string, any>>;
+  paths?: Record<string, Record<string, any>>;
   webhooks?: Record<string, Record<string, any>>;
   components?: {
     schemas?: Record<string, any>;
@@ -45,11 +46,6 @@ interface TagGroup {
   endpoints: EndpointInfo[];
   webhooks: WebhookInfo[];
 }
-
-const OUTPUT_FOLDER = path.join(
-  __dirname,
-  "../reference/split-openapi-by-tags",
-);
 
 /**
  * Recursively finds all $ref references in an object
@@ -238,6 +234,11 @@ function extractEndpointsByTags(
   openApiSpec: OpenAPISpec,
 ): Map<string, EndpointInfo[]> {
   const tagGroups = new Map<string, EndpointInfo[]>();
+
+  // Check if webhooks exist in the spec
+  if (!openApiSpec.paths) {
+    return tagGroups;
+  }
 
   for (const [pathName, pathItem] of Object.entries(openApiSpec.paths)) {
     // Extract path-level parameters
@@ -458,10 +459,16 @@ function sanitizeTagName(tag: string): string {
 /**
  * Main function to split OpenAPI into tag-based files
  */
-async function splitOpenApiByTags(): Promise<void> {
-  try {
-    const openApiSpec = openApi as OpenAPISpec;
+async function splitOpenApiByTags(
+  openApiSpec: OpenAPISpec,
+  destination: string,
+): Promise<void> {
+  const OUTPUT_FOLDER = path.join(
+    __dirname,
+    `..${destination}`.replaceAll("//", "/"),
+  );
 
+  try {
     const oldOutputFolder = OUTPUT_FOLDER + "-to-delete";
     try {
       await fs.access(OUTPUT_FOLDER); // Check if OUTPUT_FOLDER exists
@@ -564,7 +571,11 @@ async function splitOpenApiByTags(): Promise<void> {
 // Execute the script
 (async () => {
   try {
-    await splitOpenApiByTags();
+    await splitOpenApiByTags(openApi, "/documentation/openapi");
+    await splitOpenApiByTags(
+      openApiWebhooks,
+      "/documentation/openapi-webhooks",
+    );
   } catch (error) {
     console.error("Script execution failed:", error);
     process.exit(1);
