@@ -30,6 +30,6 @@ export const mdTables: [
   ["Export", {}],
   ["Category", {}],
   ["21_obj_metadata_schema_object", {}],
-  // ["Location", {}],
+  ["Location", {}],
   ["QualificationsCheckEligibilityResponseBody", {}],
 ];
