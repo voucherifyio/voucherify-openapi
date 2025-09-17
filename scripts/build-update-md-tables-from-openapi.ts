@@ -59,14 +59,16 @@ export const updateMdTablesInDoc = async () => {
       const fileContent = await fs.readFile(mdPath, "utf8");
       const fileContentAsHtml = addIdsToH2(
         sanitizeHtmlAttributes(prettify(markdown(fileContent) as string)),
-      );
+      )
+        .replaceAll("<h1>", "<p>")
+        .replaceAll("</h1>", "</p>");
 
       const newFileContent = _.compact([
         `---
 title: "${docFile?.title ?? objectName}"
 mode: "frame"
 ---`,
-        '<div class="prose">',
+        '<div class="prose custom-html">',
         docFile?.htmlDescription,
         fileContentAsHtml,
         "</div>",
