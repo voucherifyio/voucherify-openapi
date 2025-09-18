@@ -140,17 +140,16 @@ export default class SchemaToMarkdownTable {
     return `<a href="${href}">${label}</a>`;
   }
 
-  private renderOneOfDescription(
-    oneOf: OneOf,
-    level: number,
-    skipOneOf: boolean = false,
-  ) {
-    const descriptionArr: string[] = [];
+  // Helper: create <ol> list from items
+  private asOrderedList(items: string[]) {
+    if (!items?.length) return "";
+    return `<ol>${items.map((i) => `<li>${i}</li>`).join("")}</ol>`;
+  }
+
+  // Helper: map oneOf array to array of HTML items and related object names
+  private listItemsFromOneOf(oneOf: OneOf, level: number) {
     const relatedObjectsNames: string[] = [];
-    if (!skipOneOf) {
-      descriptionArr.push(`One of:`);
-    }
-    const nestedObjectsHtml = oneOf
+    const itemsHtml = (oneOf || [])
       .map((item: any) => {
         if (
           "$ref" in item &&
@@ -195,61 +194,13 @@ export default class SchemaToMarkdownTable {
         }
       })
       .filter((i) => !!i) as string[];
-    descriptionArr.push(this.smartJoin(nestedObjectsHtml));
-    return { descriptionArr, relatedObjectsNames };
+    return { itemsHtml, relatedObjectsNames };
   }
 
-  private smartJoin(items: string[]): string {
-    const removeAllHtmlNesting = (html: string) => {
-      let letHtml = `${html}`;
-      let indexOfFirstMinoritySign = letHtml.indexOf("<");
-      let indexOfFirstMajoritySign = letHtml.indexOf(">");
-      while (indexOfFirstMinoritySign >= 0 && indexOfFirstMajoritySign >= 0) {
-        letHtml = `${letHtml.slice(0, indexOfFirstMinoritySign)}${letHtml.slice(
-          indexOfFirstMajoritySign + 1,
-          letHtml.length,
-        )}`;
-        indexOfFirstMinoritySign = letHtml.indexOf("<");
-        indexOfFirstMajoritySign = letHtml.indexOf(">");
-      }
-      return letHtml;
-    };
-
-    if (
-      items.filter((item) => item.at(0) === "<" && item.at(-1) === ">")
-        .length === items.length &&
-      !items.find(
-        (item) => item.includes("<table>") && item.includes("</table>"),
-      )
-    ) {
-      // all items are html tag, no table tag found
-      return items
-        .map((item, index) => {
-          return ` ${index + 1}. ${removeAllHtmlNesting(item)}`;
-        })
-        .join("\n");
-    }
-    // regular join
-    return items
-      .map((item, index) => {
-        if (!index) {
-          return item;
-        }
-        if (items[index - 1].at(0) === "<" && items[index - 1].at(-1) === ">") {
-          return item;
-        }
-        return `${this.redenderMode === RenderMode.List ? ", " : ""}${item}`;
-      })
-      .join("");
-  }
-
-  private renderAllOfDescription(allOf: OneOf, level: number) {
-    const descriptionArr: string[] = [];
+  // Helper: map allOf array to array of HTML items and related object names
+  private listItemsFromAllOf(allOf: AllOf, level: number) {
     const relatedObjectsNames: string[] = [];
-    if ((allOf?.length || 0) > 1) {
-      descriptionArr.push(`All of:`);
-    }
-    const nestedObjectsHtml = (allOf || [])
+    const itemsHtml = (allOf || [])
       .map((item: any) => {
         if (
           "$ref" in item &&
@@ -278,23 +229,69 @@ export default class SchemaToMarkdownTable {
           return renderMarkdown(html);
         } else if ("oneOf" in item) {
           const oneOf = oneOfSchema.validateSync(item["oneOf"]);
-          const {
-            descriptionArr: oneOfDescriptionArr,
-            relatedObjectsNames: oneOfRelatedObjectsNames,
-          } = this.renderOneOfDescription(oneOf, level + 1);
-          relatedObjectsNames.push(...oneOfRelatedObjectsNames);
-          return oneOfDescriptionArr.join(" ");
+          const { itemsHtml: oneOfItemsHtml, relatedObjectsNames: rel } =
+            this.listItemsFromOneOf(oneOf, level + 1);
+          relatedObjectsNames.push(...rel);
+          // render nested <ol> as a single item
+          return this.asOrderedList(oneOfItemsHtml);
         }
       })
       .filter((i) => !!i) as string[];
-    descriptionArr.push(
-      nestedObjectsHtml
-        .map(
-          (row, index) =>
-            `${(allOf?.length || 0) > 1 ? `${index + 1}. ` : ""}${row}`,
-        )
-        .join(this.redenderMode === RenderMode.List ? `${EOL}` : ""),
+    return { itemsHtml, relatedObjectsNames };
+  }
+
+  private renderOneOfDescription(
+    oneOf: OneOf,
+    level: number,
+    skipOneOf: boolean = false,
+  ) {
+    const descriptionArr: string[] = [];
+    const { itemsHtml, relatedObjectsNames } = this.listItemsFromOneOf(
+      oneOf,
+      level,
     );
+    if (!skipOneOf) {
+      descriptionArr.push(`One of:`);
+    }
+    descriptionArr.push(this.asOrderedList(itemsHtml));
+    return { descriptionArr, relatedObjectsNames };
+  }
+
+  private smartJoin(items: string[]): string {
+    const isHtmlTag = (s: string) => s.startsWith("<") && s.endsWith(">");
+    const allHtml = items.length > 0 && items.every(isHtmlTag);
+    const containsTable = items.some(
+      (item) => item.includes("<table") && item.includes("</table>"),
+    );
+
+    if (allHtml && !containsTable) {
+      const separator = this.redenderMode === RenderMode.List ? ", " : "";
+      return items.join(separator);
+    }
+
+    return items
+      .map((item, index) => {
+        if (!index) {
+          return item;
+        }
+        if (items[index - 1].at(0) === "<" && items[index - 1].at(-1) === ">") {
+          return item;
+        }
+        return `${this.redenderMode === RenderMode.List ? ", " : ""}${item}`;
+      })
+      .join("");
+  }
+
+  private renderAllOfDescription(allOf: OneOf, level: number) {
+    const descriptionArr: string[] = [];
+    const { itemsHtml, relatedObjectsNames } = this.listItemsFromAllOf(
+      allOf,
+      level,
+    );
+    if ((allOf?.length || 0) > 0) {
+      descriptionArr.push(`All of:`);
+    }
+    descriptionArr.push(this.asOrderedList(itemsHtml));
     return { descriptionArr, relatedObjectsNames };
   }
 
@@ -331,12 +328,13 @@ export default class SchemaToMarkdownTable {
       descriptionArr.push(renderMarkdown(html));
     } else if ("oneOf" in (items as any)) {
       const oneOf = oneOfSchema.validateSync((items as any).oneOf);
-      const {
-        descriptionArr: oneOfDescriptionArr,
-        relatedObjectsNames: oneOfRelatedObjectsNames,
-      } = this.renderOneOfDescription(oneOf, level + 1, true);
-      relatedObjectsNames.push(...oneOfRelatedObjectsNames);
-      descriptionArr.push(`Array any of: ${oneOfDescriptionArr.join(" ")}`);
+      const { itemsHtml, relatedObjectsNames: rel } = this.listItemsFromOneOf(
+        oneOf,
+        level + 1,
+      );
+      relatedObjectsNames.push(...rel);
+      descriptionArr.push("Array any of:");
+      descriptionArr.push(this.asOrderedList(itemsHtml));
     }
     return { descriptionArr, relatedObjectsNames };
   }
