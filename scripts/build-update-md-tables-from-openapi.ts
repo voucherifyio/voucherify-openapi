@@ -64,7 +64,6 @@ export const updateMdTablesInDoc = async () => {
       const newFileContent = _.compact([
         `---
 title: "${docFile?.title ?? objectName}"
-mode: "frame"
 ---`,
         '<div class="prose custom-html">',
         docFile?.htmlDescription,
