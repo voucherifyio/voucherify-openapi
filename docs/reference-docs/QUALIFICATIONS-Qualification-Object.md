@@ -13,13 +13,12 @@ order: 1
 > Read our dedicated guide to learn about some use cases these endpoints can cover [here](doc:checking-eligibility).
 
 ## Qualifications Check Eligibility Response Body
-| Attributes |  Description |
-|:-----|:--------|
-| redeemables | See: [Redeemables](#redeemables) |
+| Attributes | Description                                                                                                                                                 |
+|:-----|:------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| redeemables | See: [Redeemables](#redeemables)                                                                                                                            |
 | tracking_id</br>`string` | <p>This identifier is generated during voucher qualification based on your internal id (e.g., email, database ID). This is a hashed customer source ID.</p> |
-| order</br>`object` | All of: 1. [Order Calculated No Customer Data](#order-calculated-no-customer-data)
-2. <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">items</br><code>array</code></td><td style="text-align:left"><p>Array of items applied to the order. It can include up to 500 items.</p></td></tr></tbody></table> |
-| stacking_rules | See: [Stacking Rules](#stacking-rules) |
+| order</br>`object` | xx                                                                                                                                                          |
+| stacking_rules | See: [Stacking Rules](#stacking-rules)                                                                                                                      |
 
 ## Redeemables
 | Attributes |  Description |
