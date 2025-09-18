@@ -42,18 +42,22 @@ const createEventFiles = async (eventsConfig: EventsConfig) => {
       // Wyciągnij nazwę eventu z prefixu "webhook "
       const cleanEventName = eventName.replace(/^webhook\s+/, "");
 
-      // Usuń prefiksy EVENTS.GRUPA. i zostaw tylko ostatnią część
-      // np. EVENTS.CUSTOMER.CREATED -> CREATED
-      const eventParts = cleanEventName.split(".");
-      const lastPart = eventParts[eventParts.length - 1];
+      // Usuń dwa pierwsze człony (EVENTS i nazwa grupy), a następnie zamień . -> _ -> -
+      // To będzie baza dla title (bez zmiany wielkości liter)
+      const titleBase = cleanEventName
+        .split(".")
+        .slice(2)
+        .join(".")
+        .replaceAll(".", "_")
+        .replaceAll("_", "-");
 
-      // Konwertuj nazwę eventu na format pliku (lowercase, "." na "-")
-      const fileName = lastPart.toLowerCase().replace(/\./g, "-") + ".mdx";
+      // Nazwa pliku: jak wyżej + lowercase i .mdx
+      const fileName = `${titleBase.toLowerCase()}.mdx`;
       const filePath = path.join(groupDir, fileName);
 
       // Utwórz zawartość pliku MDX
       const fileContent = `---
-title: "${cleanEventName}"
+title: "${titleBase}"
 description: ""
 openapi: "${eventPage.openapi} ${eventName}"
 ---
