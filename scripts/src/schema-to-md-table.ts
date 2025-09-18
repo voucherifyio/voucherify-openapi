@@ -79,7 +79,7 @@ interface AllOf extends yup.InferType<typeof oneOfSchema> {}
 export type Properties = Record<string, Property>;
 type Property = {
   description?: string;
-  example?: string;
+  example?: any; // example może być liczbą, stringiem itd.
   type?: string;
   nullable?: boolean;
 };
@@ -138,6 +138,21 @@ export default class SchemaToMarkdownTable {
       .replace(/[\s]/g, "-")
       .replace(/[,]/g, "")}`;
     return `<a href="${href}">${label}</a>`;
+  }
+
+  // Strip single wrapping <p>...</p> to allow inline reuse
+  private stripWrappingParagraph(html: string) {
+    const trimmed = (html || "").trim();
+    if (trimmed.startsWith("<p>") && trimmed.endsWith("</p>")) {
+      return trimmed.slice(3, -4);
+    }
+    return trimmed;
+  }
+
+  // Render single block: <p><strong>Example:</strong> VALUE</p>
+  private renderExampleBlock(exampleHtml: string, label = "Example") {
+    const inner = this.stripWrappingParagraph(exampleHtml);
+    return `<p><strong>${label}:</strong> ${inner}</p>`;
   }
 
   // Helper: create <ol> list from items
@@ -382,8 +397,10 @@ export default class SchemaToMarkdownTable {
     const descriptionArr: string[] = [];
     const relatedObjectsNames: string[] = [];
     const example =
-      "example" in property && property.example
-        ? renderMarkdown(property.example)
+      "example" in property &&
+      property.example !== undefined &&
+      property.example !== null
+        ? renderMarkdown(String(property.example))
         : "";
 
     const {
@@ -485,7 +502,7 @@ export default class SchemaToMarkdownTable {
           .join("<br/>");
         const propertyLabelHtml = renderMarkdown(labelMarkdown);
 
-        const descriptionHtml = descriptionArr.join(" ");
+        let descriptionHtml = descriptionArr.join(" ");
 
         if (this.examplesRenderedAs === ExamplesRenderedAs.Column) {
           return this.getMarkdownTableRow([
@@ -494,15 +511,13 @@ export default class SchemaToMarkdownTable {
             example || "",
           ]);
         } else {
-          const descWithExample = descriptionArr.slice();
           if (example) {
-            descWithExample.push(renderMarkdown("**Example:**"));
-            descWithExample.push(example);
+            const exampleBlock = this.renderExampleBlock(example, "Example");
+            descriptionHtml = [descriptionHtml, exampleBlock]
+              .filter(Boolean)
+              .join("");
           }
-          return this.getMarkdownTableRow([
-            propertyLabelHtml,
-            descWithExample.join(" "),
-          ]);
+          return this.getMarkdownTableRow([propertyLabelHtml, descriptionHtml]);
         }
       },
     );
