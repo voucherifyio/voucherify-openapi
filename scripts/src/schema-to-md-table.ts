@@ -250,6 +250,13 @@ export default class SchemaToMarkdownTable {
       oneOf,
       level,
     );
+
+    if (itemsHtml.length === 1) {
+      // Single element: no "One of:" and no <ol>
+      descriptionArr.push(itemsHtml[0]);
+      return { descriptionArr, relatedObjectsNames };
+    }
+
     if (!skipOneOf) {
       descriptionArr.push(`One of:`);
     }
@@ -282,12 +289,19 @@ export default class SchemaToMarkdownTable {
       .join("");
   }
 
-  private renderAllOfDescription(allOf: OneOf, level: number) {
+  private renderAllOfDescription(allOf: AllOf, level: number) {
     const descriptionArr: string[] = [];
     const { itemsHtml, relatedObjectsNames } = this.listItemsFromAllOf(
       allOf,
       level,
     );
+
+    if (itemsHtml.length === 1) {
+      // Single element: no "All of:" and no <ol>
+      descriptionArr.push(itemsHtml[0]);
+      return { descriptionArr, relatedObjectsNames };
+    }
+
     if ((allOf?.length || 0) > 0) {
       descriptionArr.push(`All of:`);
     }
@@ -333,8 +347,13 @@ export default class SchemaToMarkdownTable {
         level + 1,
       );
       relatedObjectsNames.push(...rel);
-      descriptionArr.push("Array any of:");
-      descriptionArr.push(this.asOrderedList(itemsHtml));
+      if (itemsHtml.length === 1) {
+        descriptionArr.push("Array of:");
+        descriptionArr.push(itemsHtml[0]);
+      } else {
+        descriptionArr.push("Array any of:");
+        descriptionArr.push(this.asOrderedList(itemsHtml));
+      }
     }
     return { descriptionArr, relatedObjectsNames };
   }
