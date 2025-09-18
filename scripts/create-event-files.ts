@@ -57,7 +57,12 @@ const createEventFiles = async (eventsConfig: EventsConfig) => {
 
       // Utwórz zawartość pliku MDX
       const fileContent = `---
-title: "${titleBase}"
+title: "${titleBase
+        .toLowerCase()
+        .replaceAll("-", " ")
+        .split(" ")
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(" ")}"
 description: ""
 openapi: "${eventPage.openapi} ${eventName}"
 ---
