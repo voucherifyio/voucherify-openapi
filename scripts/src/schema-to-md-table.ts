@@ -10,9 +10,9 @@ yup.addMethod(
       "one-of-schemas",
       "Not all items in '${path}' match one of the allowed schemas",
       (item) =>
-        schemas.some((schema) => schema.isValidSync(item, { strict: true }))
+        schemas.some((schema) => schema.isValidSync(item, { strict: true })),
     );
-  }
+  },
 );
 
 const nodeWithTitleAndPropertiesSchema = yup.object({
@@ -39,7 +39,7 @@ const oneOfSchema = yup
     (yup.mixed() as any).oneOfSchemas([
       nodeWithTitleAndPropertiesSchema,
       yup.object({ $ref: yup.string().required() }),
-    ])
+    ]),
   )
   .optional();
 
@@ -63,7 +63,7 @@ const propertySchema = yup.object({
         yup.string(),
         yup.array().of(yup.number()),
         yup.array().of(yup.string()),
-      ])
+      ]),
     )
     .optional(),
   oneOf: oneOfSchema,
@@ -75,18 +75,17 @@ const propertySchema = yup.object({
 interface Items extends yup.InferType<typeof itemsSchema> {}
 interface OneOf extends yup.InferType<typeof oneOfSchema> {}
 interface AllOf extends yup.InferType<typeof oneOfSchema> {}
-interface OneOf extends yup.InferType<typeof oneOfSchema> {}
 
 export type Properties = Record<string, Property>;
 type Property = {
   description?: string;
-  example?: string;
+  example?: any; // example może być liczbą, stringiem itd.
   type?: string;
   nullable?: boolean;
 };
 
 const md = new MarkdownIt({ breaks: true, html: true });
-const renderMarkdown = (markdown) =>
+const renderMarkdown = (markdown: string) =>
   md.render(`${markdown}`).replace(/\n|\r/g, "");
 
 export enum RenderMode {
@@ -100,52 +99,72 @@ export enum ExamplesRenderedAs {
 
 export default class SchemaToMarkdownTable {
   constructor(
-    private schemas: object,
+    private schemas: Record<string, any>,
     private redenderMode: RenderMode = RenderMode.List,
-    private examplesRenderedAs = ExamplesRenderedAs.Column
+    private examplesRenderedAs = ExamplesRenderedAs.Column,
   ) {
     if (!schemas) {
       throw new Error("Schemas must be provided");
     }
     if (typeof schemas !== "object") {
       throw new Error(
-        "Schemas must be the object from openAPI file components.schemas attribute"
+        "Schemas must be the object from openAPI file components.schemas attribute",
       );
     }
   }
 
+  // Render HTML table head instead of Markdown head
   private getMarkdownTableHead() {
-    if (ExamplesRenderedAs.Column) {
-      return [
-        "| Attributes |  Description  | Example |",
-        "|:-----|:--------|------:|",
-      ].join(EOL);
-    }
-    return ["| Attributes |  Description |", "|:-----|:--------|"].join(EOL);
+    const hasExampleColumn =
+      this.examplesRenderedAs === ExamplesRenderedAs.Column;
+    const headCells = [
+      "<th>Attributes</th>",
+      "<th>Description</th>",
+      hasExampleColumn ? "<th>Example</th>" : "",
+    ].filter(Boolean);
+    return `<thead><tr>${headCells.join("")}</tr></thead>`;
   }
 
+  // Render HTML table row instead of Markdown row
   private getMarkdownTableRow(columns: string[]) {
-    return `| ${columns.join(" | ")} |`;
+    const tds = columns.map((c) => `<td>${c || ""}</td>`).join("");
+    return `<tr>${tds}</tr>`;
   }
 
+  // Use <a>…</a> so links render correctly inside HTML table cells
   private getMarkdownLinkToHeader(label: string) {
-    return `[${label}](#${label
+    const href = `#${label
       .toLocaleLowerCase()
       .replace(/[\s]/g, "-")
-      .replace(/[,]/g, "")})`;
+      .replace(/[,]/g, "")}`;
+    return `<a href="${href}">${label}</a>`;
   }
 
-  private renderOneOfDescription(
-    oneOf: OneOf,
-    level: number,
-    skipOneOf: boolean = false
-  ) {
-    const descriptionArr = [];
-    const relatedObjectsNames = [];
-    if (!skipOneOf) {
-      descriptionArr.push(`One of:`);
+  // Strip single wrapping <p>...</p> to allow inline reuse
+  private stripWrappingParagraph(html: string) {
+    const trimmed = (html || "").trim();
+    if (trimmed.startsWith("<p>") && trimmed.endsWith("</p>")) {
+      return trimmed.slice(3, -4);
     }
-    const nestedObjectsHtml = oneOf
+    return trimmed;
+  }
+
+  // Render single block: <p><strong>Example:</strong> VALUE</p>
+  private renderExampleBlock(exampleHtml: string, label = "Example") {
+    const inner = this.stripWrappingParagraph(exampleHtml);
+    return `<p><strong>${label}:</strong> ${inner}</p>`;
+  }
+
+  // Helper: create <ol> list from items
+  private asOrderedList(items: string[]) {
+    if (!items?.length) return "";
+    return `<ol>${items.map((i) => `<li>${i}</li>`).join("")}</ol>`;
+  }
+
+  // Helper: map oneOf array to array of HTML items and related object names
+  private listItemsFromOneOf(oneOf: OneOf, level: number) {
+    const relatedObjectsNames: string[] = [];
+    const itemsHtml = (oneOf || [])
       .map((item: any) => {
         if (
           "$ref" in item &&
@@ -154,7 +173,7 @@ export default class SchemaToMarkdownTable {
         ) {
           const nestedObjectName = item["$ref"].replace(
             "#/components/schemas/",
-            ""
+            "",
           );
           if (typeof this.schemas[nestedObjectName] !== "object") {
             return false;
@@ -176,7 +195,7 @@ export default class SchemaToMarkdownTable {
           const { html, relatedObjects } = this.renderSchema(
             item,
             level + 1,
-            true
+            true,
           );
           relatedObjectsNames.push(...relatedObjects);
           return renderMarkdown(html);
@@ -189,62 +208,14 @@ export default class SchemaToMarkdownTable {
           return level ? type : renderMarkdown(type);
         }
       })
-      .filter((i) => !!i);
-    descriptionArr.push(this.smartJoin(nestedObjectsHtml));
-    return { descriptionArr, relatedObjectsNames };
+      .filter((i) => !!i) as string[];
+    return { itemsHtml, relatedObjectsNames };
   }
 
-  private smartJoin(items: string[]): string {
-    const removeAllHtmlNesting = (html) => {
-      let letHtml = `${html}`;
-      let indexOfFirstMinoritySign = letHtml.indexOf("<");
-      let indexOfFirstMajoritySign = letHtml.indexOf(">");
-      while (indexOfFirstMinoritySign >= 0 && indexOfFirstMajoritySign >= 0) {
-        letHtml = `${letHtml.slice(0, indexOfFirstMinoritySign)}${letHtml.slice(
-          indexOfFirstMajoritySign + 1,
-          letHtml.length
-        )}`;
-        indexOfFirstMinoritySign = letHtml.indexOf("<");
-        indexOfFirstMajoritySign = letHtml.indexOf(">");
-      }
-      return letHtml;
-    };
-
-    if (
-      items.filter((item) => item.at(0) === "<" && item.at(-1) === ">")
-        .length === items.length &&
-      !items.find(
-        (item) => item.includes("<table>") && item.includes("</table>")
-      )
-    ) {
-      //all items are http tag, no table tag found
-      return items
-        .map((item, index) => {
-          return ` ${index + 1}. ${removeAllHtmlNesting(item)}`;
-        })
-        .join("\n");
-    }
-    //regular join
-    return items
-      .map((item, index) => {
-        if (!index) {
-          return item;
-        }
-        if (items[index - 1].at(0) === "<" && items[index - 1].at(-1) === ">") {
-          return item;
-        }
-        return `${this.redenderMode === RenderMode.List ? ", " : ""}${item}`;
-      })
-      .join("");
-  }
-
-  private renderAllOfDescription(allOf: OneOf, level: number) {
-    const descriptionArr = [];
-    const relatedObjectsNames = [];
-    if (allOf.length > 1) {
-      descriptionArr.push(`All of:`);
-    }
-    const nestedObjectsHtml = allOf
+  // Helper: map allOf array to array of HTML items and related object names
+  private listItemsFromAllOf(allOf: AllOf, level: number) {
+    const relatedObjectsNames: string[] = [];
+    const itemsHtml = (allOf || [])
       .map((item: any) => {
         if (
           "$ref" in item &&
@@ -253,7 +224,7 @@ export default class SchemaToMarkdownTable {
         ) {
           const nestedObjectName = item["$ref"].replace(
             "#/components/schemas/",
-            ""
+            "",
           );
           if (typeof this.schemas[nestedObjectName] !== "object") {
             return false;
@@ -273,37 +244,98 @@ export default class SchemaToMarkdownTable {
           return renderMarkdown(html);
         } else if ("oneOf" in item) {
           const oneOf = oneOfSchema.validateSync(item["oneOf"]);
-          const {
-            descriptionArr: oneOfDescriptionArr,
-            relatedObjectsNames: oneOfRelatedObjectsNames,
-          } = this.renderOneOfDescription(oneOf, level + 1);
-          relatedObjectsNames.push(...oneOfRelatedObjectsNames);
-          return oneOfDescriptionArr.join(" ");
+          const { itemsHtml: oneOfItemsHtml, relatedObjectsNames: rel } =
+            this.listItemsFromOneOf(oneOf, level + 1);
+          relatedObjectsNames.push(...rel);
+          // render nested <ol> as a single item
+          return this.asOrderedList(oneOfItemsHtml);
         }
       })
-      .filter((i) => !!i);
-    descriptionArr.push(
-      nestedObjectsHtml
-        .map(
-          (row, index) => `${allOf.length > 1 ? `${index + 1}. ` : ""}${row}`
-        )
-        .join(this.redenderMode === RenderMode.List ? `${EOL}` : "")
+      .filter((i) => !!i) as string[];
+    return { itemsHtml, relatedObjectsNames };
+  }
+
+  private renderOneOfDescription(
+    oneOf: OneOf,
+    level: number,
+    skipOneOf: boolean = false,
+  ) {
+    const descriptionArr: string[] = [];
+    const { itemsHtml, relatedObjectsNames } = this.listItemsFromOneOf(
+      oneOf,
+      level,
     );
+
+    if (itemsHtml.length === 1) {
+      // Single element: no "One of:" and no <ol>
+      descriptionArr.push(itemsHtml[0]);
+      return { descriptionArr, relatedObjectsNames };
+    }
+
+    if (!skipOneOf) {
+      descriptionArr.push(`One of:`);
+    }
+    descriptionArr.push(this.asOrderedList(itemsHtml));
+    return { descriptionArr, relatedObjectsNames };
+  }
+
+  private smartJoin(items: string[]): string {
+    const isHtmlTag = (s: string) => s.startsWith("<") && s.endsWith(">");
+    const allHtml = items.length > 0 && items.every(isHtmlTag);
+    const containsTable = items.some(
+      (item) => item.includes("<table") && item.includes("</table>"),
+    );
+
+    if (allHtml && !containsTable) {
+      const separator = this.redenderMode === RenderMode.List ? ", " : "";
+      return items.join(separator);
+    }
+
+    return items
+      .map((item, index) => {
+        if (!index) {
+          return item;
+        }
+        if (items[index - 1].at(0) === "<" && items[index - 1].at(-1) === ">") {
+          return item;
+        }
+        return `${this.redenderMode === RenderMode.List ? ", " : ""}${item}`;
+      })
+      .join("");
+  }
+
+  private renderAllOfDescription(allOf: AllOf, level: number) {
+    const descriptionArr: string[] = [];
+    const { itemsHtml, relatedObjectsNames } = this.listItemsFromAllOf(
+      allOf,
+      level,
+    );
+
+    if (itemsHtml.length === 1) {
+      // Single element: no "All of:" and no <ol>
+      descriptionArr.push(itemsHtml[0]);
+      return { descriptionArr, relatedObjectsNames };
+    }
+
+    if ((allOf?.length || 0) > 0) {
+      descriptionArr.push(`All of:`);
+    }
+    descriptionArr.push(this.asOrderedList(itemsHtml));
     return { descriptionArr, relatedObjectsNames };
   }
 
   private renderItemsDescription(items: Items, level: number) {
-    const descriptionArr = [];
-    const relatedObjectsNames = [];
+    const descriptionArr: string[] = [];
+    const relatedObjectsNames: string[] = [];
 
     if (
-      "$ref" in items &&
-      typeof items["$ref"] === "string" &&
-      items["$ref"].startsWith("#/components/schemas/")
+      "$ref" in (items as any) &&
+      typeof (items as any)["$ref"] === "string" &&
+      (items as any)["$ref"].startsWith("#/components/schemas/")
     ) {
-      const nestedObjectName = items["$ref"].replace(
+      const nestedObjectName = (items as any)["$ref"].replace(
         "#/components/schemas/",
-        ""
+        "",
       );
       relatedObjectsNames.push(nestedObjectName);
       const title = (this.schemas[nestedObjectName].title ||
@@ -315,26 +347,35 @@ export default class SchemaToMarkdownTable {
         const { html } = this.renderSchema(nestedObjectName, level + 1);
         descriptionArr.push(renderMarkdown(html));
       }
-    } else if ("type" in items && items.type === "object") {
+    } else if ("type" in (items as any) && (items as any).type === "object") {
       descriptionArr.push("Array of:");
-      const { html, relatedObjects } = this.renderSchema(items, level + 1);
+      const { html, relatedObjects } = this.renderSchema(
+        items as any,
+        level + 1,
+      );
       relatedObjectsNames.push(...relatedObjects);
       descriptionArr.push(renderMarkdown(html));
-    } else if ("oneOf" in items) {
-      const oneOf = oneOfSchema.validateSync(items.oneOf);
-      const {
-        descriptionArr: oneOfDescriptionArr,
-        relatedObjectsNames: oneOfRelatedObjectsNames,
-      } = this.renderOneOfDescription(oneOf, level + 1, true);
-      relatedObjectsNames.push(...oneOfRelatedObjectsNames);
-      descriptionArr.push(`Array any of: ${oneOfDescriptionArr.join(" ")}`);
+    } else if ("oneOf" in (items as any)) {
+      const oneOf = oneOfSchema.validateSync((items as any).oneOf);
+      const { itemsHtml, relatedObjectsNames: rel } = this.listItemsFromOneOf(
+        oneOf,
+        level + 1,
+      );
+      relatedObjectsNames.push(...rel);
+      if (itemsHtml.length === 1) {
+        descriptionArr.push("Array of:");
+        descriptionArr.push(itemsHtml[0]);
+      } else {
+        descriptionArr.push("Array any of:");
+        descriptionArr.push(this.asOrderedList(itemsHtml));
+      }
     }
     return { descriptionArr, relatedObjectsNames };
   }
 
   private renderRef(ref: string, level: number) {
-    const descriptionArr = [];
-    const relatedObjectsNames = [];
+    const descriptionArr: string[] = [];
+    const relatedObjectsNames: string[] = [];
     if (ref.startsWith("#/components/schemas/")) {
       const nestedObjectName = ref.replace("#/components/schemas/", "");
       relatedObjectsNames.push(nestedObjectName);
@@ -353,10 +394,14 @@ export default class SchemaToMarkdownTable {
   }
 
   private renderProperty = (property: Property, level: number) => {
-    const descriptionArr = [];
-    const relatedObjectsNames = [];
+    const descriptionArr: string[] = [];
+    const relatedObjectsNames: string[] = [];
     const example =
-      "example" in property ? renderMarkdown(property.example) : "";
+      "example" in property &&
+      property.example !== undefined &&
+      property.example !== null
+        ? renderMarkdown(String(property.example))
+        : "";
 
     const {
       description,
@@ -368,7 +413,7 @@ export default class SchemaToMarkdownTable {
       $ref,
       properties,
       additionalProperties,
-    } = propertySchema.validateSync(property);
+    } = propertySchema.validateSync(property as any);
 
     if (description) {
       descriptionArr.push(renderMarkdown(description));
@@ -376,9 +421,9 @@ export default class SchemaToMarkdownTable {
 
     if (EnumProp) {
       const availableValues = `Available values: ${EnumProp.map(
-        (value) => `\`${value}\``
+        (value) => `\`${value}\``,
       ).join(", ")}`;
-      descriptionArr.push(availableValues);
+      descriptionArr.push(renderMarkdown(availableValues));
     }
 
     if (allOf) {
@@ -421,7 +466,10 @@ export default class SchemaToMarkdownTable {
       type === "object" &&
       (properties instanceof Object || additionalProperties instanceof Object)
     ) {
-      const { html, relatedObjects } = this.renderSchema(property, level + 1);
+      const { html, relatedObjects } = this.renderSchema(
+        property as any,
+        level + 1,
+      );
       relatedObjectsNames.push(...relatedObjects);
       descriptionArr.push(renderMarkdown(html));
     }
@@ -431,11 +479,11 @@ export default class SchemaToMarkdownTable {
 
   private renderPropertiesAsTableRow = (
     properties: Properties,
-    level: number = 0
+    level: number = 0,
   ) => {
     const relatedObjectsNames: string[] = [];
 
-    const tableRows = Object.entries(properties).map(
+    const rowsHtml = Object.entries(properties).map(
       ([propertyId, property]) => {
         const {
           descriptionArr,
@@ -445,36 +493,39 @@ export default class SchemaToMarkdownTable {
 
         relatedObjectsNames.push(...additionalRelatedObjectsNames);
 
-        const propertyLabel = [
-          propertyId,
-          property.type
-            ? `\`${property.type}\`${property.nullable ? `, \`null\`` : ""}`
-            : false,
-        ]
-          .filter((e) => !!e)
-          .join("</br>");
+        // Build label as HTML (render markdown bits like code/backticks)
+        const typePart = property.type
+          ? `\`${property.type}\`${property.nullable ? `, \`null\`` : ""}`
+          : "";
+        const labelMarkdown = [propertyId, typePart]
+          .filter(Boolean)
+          .join("<br/>");
+        const propertyLabelHtml = renderMarkdown(labelMarkdown);
 
-        if (this.examplesRenderedAs == ExamplesRenderedAs.Column) {
+        let descriptionHtml = descriptionArr.join(" ");
+
+        if (this.examplesRenderedAs === ExamplesRenderedAs.Column) {
           return this.getMarkdownTableRow([
-            propertyLabel,
-            descriptionArr.join(" "),
-            example,
+            propertyLabelHtml,
+            descriptionHtml,
+            example || "",
           ]);
         } else {
           if (example) {
-            descriptionArr.push("**Example:**");
-            descriptionArr.push(example);
+            const exampleBlock = this.renderExampleBlock(example, "Example");
+            descriptionHtml = [descriptionHtml, exampleBlock]
+              .filter(Boolean)
+              .join("");
           }
-          return this.getMarkdownTableRow([
-            propertyLabel,
-            descriptionArr.join(" "),
-          ]);
+          return this.getMarkdownTableRow([propertyLabelHtml, descriptionHtml]);
         }
-      }
+      },
     );
 
+    const thead = this.getMarkdownTableHead();
+    const tbody = `<tbody>${rowsHtml.join("")}</tbody>`;
     return {
-      html: [this.getMarkdownTableHead(), ...tableRows].join(EOL),
+      html: `<table>${thead}${tbody}</table>`,
       relatedObjectsNames,
     };
   };
@@ -482,28 +533,28 @@ export default class SchemaToMarkdownTable {
   private renderSchema(
     schemaNameOrSchemaObject: string | object,
     level: number = 0,
-    skipTitle: boolean = false
+    skipTitle: boolean = false,
   ) {
     const schema =
       typeof schemaNameOrSchemaObject === "object"
-        ? schemaNameOrSchemaObject
-        : this.schemas[schemaNameOrSchemaObject];
+        ? (schemaNameOrSchemaObject as any)
+        : this.schemas[schemaNameOrSchemaObject as string];
     if (!schema) {
       throw new Error(`Schema "${schema}" not found`);
     }
 
     const schemaResult = nodeWithTitleAndPropertiesSchema.validateSync(schema);
-    const { title, additionalProperties } = schemaResult;
+    const { title, additionalProperties } = schemaResult as any;
     const properties =
-      schemaResult.properties instanceof Object
-        ? schemaResult.properties
+      (schemaResult as any).properties instanceof Object
+        ? (schemaResult as any).properties
         : additionalProperties instanceof Object
-        ? {}
-        : undefined;
+          ? {}
+          : undefined;
     if (additionalProperties instanceof Object) {
-      properties["[propertyName]"] = additionalProperties;
+      (properties as any)["[propertyName]"] = additionalProperties;
     }
-    const respopnseStrArr = [];
+    const respopnseStrArr: string[] = [];
 
     if (!skipTitle && title) {
       respopnseStrArr.push(`${"#".repeat(level + 2)} ${title}`);
@@ -517,15 +568,15 @@ export default class SchemaToMarkdownTable {
     if (properties) {
       const { html, relatedObjectsNames } = this.renderPropertiesAsTableRow(
         properties,
-        level
+        level,
       );
       relatedObjects.push(...relatedObjectsNames);
       respopnseStrArr.push(html);
     } else {
       propertySchema.validateSync(schema);
       const { descriptionArr, relatedObjectsNames } = this.renderProperty(
-        schema,
-        level
+        schema as any,
+        level,
       );
       relatedObjects.push(...relatedObjectsNames);
       respopnseStrArr.push(descriptionArr.join(`${EOL}${EOL}`));
@@ -540,12 +591,12 @@ export default class SchemaToMarkdownTable {
       return html;
     }
 
-    const schemasToRender = [schemaName];
-    const renderedSchemas = [];
+    const schemasToRender: string[] = [schemaName];
+    const renderedSchemas: string[] = [];
     const response: string[] = [];
 
     while (schemasToRender.length) {
-      const nextSchemaToRender = schemasToRender.shift();
+      const nextSchemaToRender = schemasToRender.shift()!;
       if (renderedSchemas.includes(nextSchemaToRender)) {
         continue;
       }
