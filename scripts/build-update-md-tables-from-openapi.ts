@@ -13,10 +13,7 @@ import { prettify } from "htmlfy";
 import { sanitizeHtmlAttributes } from "./sanitize-html-attributes";
 import { addIdsToH2 } from "./add-ids-to-h2";
 
-const PATH_TO_DOCS_REFERENCE = [
-  __dirname,
-  "../documentation/markdowns/objects",
-];
+const PATH_TO_DOCS_REFERENCE = [__dirname, "../documentation/api-reference/"];
 const PATH_TO_GENERATED_TABLES = [__dirname, "./output"];
 
 export const buildUpdateMdTablesFromOpenapi = async () => {
@@ -61,9 +58,11 @@ export const updateMdTablesInDoc = async () => {
         sanitizeHtmlAttributes(prettify(markdown(fileContent) as string)),
       );
 
+      const title = docFile?.title ?? objectName;
+
       const newFileContent = _.compact([
         `---
-title: "${docFile?.title ?? objectName}"
+title: "${title}"
 mode: "frame"
 ---`,
         '<div class="prose custom-html">',
@@ -74,7 +73,13 @@ mode: "frame"
         .filter((e) => !!e)
         .join(`${EOL}${EOL}`);
 
-      const docPath = path.join(...PATH_TO_DOCS_REFERENCE, `${objectName}.mdx`);
+      const docPath = path
+        .join(...PATH_TO_DOCS_REFERENCE, `${docFile.group}/${title}.mdx`)
+        .toLowerCase()
+        .replaceAll(" ", "-");
+
+      await fs.mkdir(path.dirname(docPath), { recursive: true });
+
       await fs.writeFile(docPath, newFileContent);
       console.log(`Updated table in ${docFile} `);
     } catch (e) {
