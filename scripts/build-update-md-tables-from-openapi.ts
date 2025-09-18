@@ -10,6 +10,8 @@ import SchemaToMarkdownTable, {
 import { EOL } from "os";
 import _ from "lodash";
 import { prettify } from "htmlfy";
+import { sanitizeHtmlAttributes } from "./sanitize-html-attributes";
+import { addIdsToH2 } from "./add-ids-to-h2";
 
 const PATH_TO_DOCS_REFERENCE = [
   __dirname,
@@ -55,15 +57,19 @@ export const updateMdTablesInDoc = async () => {
       const mdPath = path.join(...PATH_TO_GENERATED_TABLES, `${objectName}.md`);
       console.log(mdPath);
       const fileContent = await fs.readFile(mdPath, "utf8");
-      const fileContentAsHtml = prettify(markdown(fileContent) as string);
+      const fileContentAsHtml = addIdsToH2(
+        sanitizeHtmlAttributes(prettify(markdown(fileContent) as string)),
+      );
 
       const newFileContent = _.compact([
         `---
 title: "${docFile?.title ?? objectName}"
 mode: "frame"
 ---`,
+        '<div class="prose custom-html">',
         docFile?.htmlDescription,
         fileContentAsHtml,
+        "</div>",
       ])
         .filter((e) => !!e)
         .join(`${EOL}${EOL}`);
