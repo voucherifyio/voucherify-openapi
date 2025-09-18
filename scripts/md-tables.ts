@@ -7,7 +7,7 @@ export const mdTables: [
   ["PromotionTier", { title: "Promotion Tier Object" }],
   ["Reward", { title: "Reward Object" }],
   ["RewardAssignment", { title: "Reward Assignment Object" }],
-  ["PublicationsCreateResponseBody", { title: "Publication Object" }],
+  // ["PublicationsCreateResponseBody", { title: "Publication Object" }],
   ["ValidationsValidateResponseBody", { title: "Validation Object" }],
   ["Redemption", { title: "Redemption Object" }],
   ["RedemptionRollback", { title: "Redemption Rollback Object" }],
