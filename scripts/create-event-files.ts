@@ -18,60 +18,140 @@ interface EventsConfig {
   pages: EventPage[];
 }
 
+/**
+ * Create MDX files for events and append content from matching Markdown introduction files.
+ * Additionally validates that:
+ * - for every event a corresponding docs/webhook-introductions file exists
+ * - every file in docs/webhook-introductions is actually used by at least one event
+ */
 const createEventFiles = async (eventsConfig: EventsConfig) => {
   const baseDir = "events";
+  const introDir = path.join("docs", "webhook-introductions");
 
-  // Upewnij się, że główny folder events istnieje
+  // Ensure base directories exist
   if (!fs.existsSync(baseDir)) {
     await fsPromises.mkdir(baseDir, { recursive: true });
   }
+  if (!fs.existsSync(introDir)) {
+    throw new Error(
+      `Missing directory: ${introDir}. Please ensure your introduction Markdown files are present.`,
+    );
+  }
+
+  // Will be used to verify coverage of all files in docs/webhook-introductions
+  const usedIntroFiles = new Set<string>();
+  const missingIntroForEvents: Array<{ event: string; expectedFile: string }> =
+    [];
 
   for (const eventPage of eventsConfig.pages) {
-    // Konwertuj nazwę grupy na format folderu (lowercase, spacje na myślniki)
+    // Convert group name to a directory-friendly format
     const folderName = eventPage.group.toLowerCase().replace(/\s+/g, "-");
     const groupDir = path.join(baseDir, folderName);
 
-    // Utwórz folder grupy jeśli nie istnieje
+    // Ensure group folder exists
     if (!fs.existsSync(groupDir)) {
       await fsPromises.mkdir(groupDir, { recursive: true });
       console.log(`Created directory: ${groupDir}`);
     }
 
-    // Przetwórz każdy event w grupie
+    // Process each event in the group
     for (const eventName of eventPage.pages) {
-      // Wyciągnij nazwę eventu z prefixu "webhook "
+      // Strip the "webhook " prefix
       const cleanEventName = eventName.replace(/^webhook\s+/, "");
 
-      // Usuń prefiksy EVENTS.GRUPA. i zostaw tylko ostatnią część
-      // np. EVENTS.CUSTOMER.CREATED -> CREATED
-      const eventParts = cleanEventName.split(".");
-      const lastPart = eventParts[eventParts.length - 1];
+      // Compute title base by removing the first two parts (EVENTS and group), then converting dots -> dashes
+      const titleBase = cleanEventName
+        .split(".")
+        .slice(2)
+        .join(".")
+        .replaceAll(".", "_")
+        .replaceAll("_", "-");
 
-      // Konwertuj nazwę eventu na format pliku (lowercase, "." na "-")
-      const fileName = lastPart.toLowerCase().replace(/\./g, "-") + ".mdx";
+      // MDX file name: lowercase + .mdx
+      const fileName = `${titleBase.toLowerCase()}.mdx`;
       const filePath = path.join(groupDir, fileName);
 
-      // Utwórz zawartość pliku MDX
+      // MDX frontmatter/content
       const fileContent = `---
-title: "${cleanEventName}"
+title: "${titleBase
+        .toLowerCase()
+        .replaceAll("-", " ")
+        .split(" ")
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(" ")}"
 description: ""
 openapi: "${eventPage.openapi} ${eventName}"
 ---
 
 `;
 
-      // Zapisz plik jeśli nie istnieje
-      if (!fs.existsSync(filePath)) {
-        await fsPromises.writeFile(filePath, fileContent, "utf8");
-        console.log(`Created file: ${filePath}`);
+      // Build introduction markdown file name:
+      // Example: "EVENTS.CUSTOMER.CREATED" -> "events-customer-created.md"
+      const eventParts = cleanEventName.split(".");
+      const introMdName = `events-${eventParts
+        .slice(1)
+        .join("-")
+        .toLowerCase()}.md`;
+      const introMdPath = path.join(introDir, introMdName);
+
+      let introMdContent = "";
+      if (fs.existsSync(introMdPath)) {
+        introMdContent = await fsPromises.readFile(introMdPath, "utf8");
+        usedIntroFiles.add(introMdName);
+        // Ensure spacing after frontmatter
+        if (!fileContent.endsWith("\n\n") && !introMdContent.startsWith("\n")) {
+          introMdContent = `\n\n${introMdContent}`;
+        }
       } else {
-        console.log(`File already exists: ${filePath}`);
+        // Track missing introduction mapping for strict validation
+        missingIntroForEvents.push({
+          event: cleanEventName,
+          expectedFile: introMdName,
+        });
+        console.warn(
+          `Missing introduction file for ${cleanEventName} -> ${introMdName} (skipping append)`,
+        );
       }
+
+      // Always write (overwrite) the MDX file with the frontmatter and appended content (if any)
+      await fsPromises.writeFile(
+        filePath,
+        `${fileContent}${introMdContent}`,
+        "utf8",
+      );
+      console.log(`Updated file: ${filePath}`);
     }
   }
+
+  // Strict validation 1: ensure no event is missing its intro file
+  if (missingIntroForEvents.length > 0) {
+    const list = missingIntroForEvents
+      .map((m) => `- ${m.event} -> expected: ${m.expectedFile}`)
+      .join("\n");
+    throw new Error(
+      `Some events do not have corresponding introduction files in ${introDir}:\n${list}\n\n` +
+        `Please add these files or adjust the mapping.`,
+    );
+  }
+
+  // Strict validation 2: ensure all files in docs/webhook-introductions are used
+  const introFiles = (await fsPromises.readdir(introDir)).filter((f) =>
+    f.toLowerCase().endsWith(".md"),
+  );
+
+  const notUsedIntroFiles = introFiles.filter((f) => !usedIntroFiles.has(f));
+  if (notUsedIntroFiles.length > 0) {
+    const list = notUsedIntroFiles.map((f) => `- ${f}`).join("\n");
+    throw new Error(
+      `There are introduction Markdown files in ${introDir} that were not used by any event:\n${list}\n\n` +
+        `Please ensure corresponding events exist in the configuration or remove/rename the unused files.`,
+    );
+  }
+
+  console.log("All introduction Markdown files were properly used.");
 };
 
-// Przykład użycia - wklej tutaj swoją strukturę JSON
+// Example usage - paste your JSON structure here
 const eventsData: EventsConfig = {
   group: "Events",
   pages: [
@@ -187,11 +267,12 @@ const eventsData: EventsConfig = {
   ],
 };
 
-// Uruchom skrypt
+// Run the script
 createEventFiles(eventsData)
   .then(() => {
     console.log("Event files creation completed!");
   })
   .catch((error) => {
     console.error("Error creating event files:", error);
+    process.exitCode = 1;
   });
