@@ -217,13 +217,13 @@
 | /v1/products/{productId}              | delete | Delete Product                    | <font color='green'>supported</font> |               |
 | /v1/products/bulk/async               | post   | Update Products in Bulk           | <font color='green'>supported</font> |               |
 | /v1/products/metadata/async           | post   | Update Products' Metadata in Bulk | <font color='green'>supported</font> |               |
-| /v1/skus/{skuId}                      | get    | Get SKU                           | <font color='green'>supported</font> |               |
-| /v1/products/{productId}/skus         | get    | List SKUs in Product              | <font color='green'>supported</font> |               |
-| /v1/products/{productId}/skus         | post   | Create SKU                        | <font color='green'>supported</font> |               |
-| /v1/products/{productId}/skus/{skuId} | put    | Update SKU                        | <font color='green'>supported</font> |               |
-| /v1/products/{productId}/skus/{skuId} | delete | Delete SKU                        | <font color='green'>supported</font> |               |
+| /v1/SKUs/{skuId}                      | get    | Get SKU                           |                                      |               |
+| /v1/products/{productId}/SKUs         | get    | List SKUs in Product              |                                      |               |
+| /v1/products/{productId}/SKUs         | post   | Create SKU                        |                                      |               |
+| /v1/products/{productId}/SKUs/{skuId} | put    | Update SKU                        |                                      |               |
+| /v1/products/{productId}/SKUs/{skuId} | delete | Delete SKU                        |                                      |               |
 | /v1/products/importCSV                | post   | Import Products using CSV         | <font color='green'>supported</font> |               |
-| /v1/skus/importCSV                    | post   | Import SKUs using CSV             | <font color='green'>supported</font> |               |
+| /v1/SKUs/importCSV                    | post   | Import SKUs using CSV             |                                      |               |
 ## Product Collections
 | endpoint                                               | method | summary                     | is supported                         | is deprecated |
 | ------------------------------------------------------ | ------ | --------------------------- | ------------------------------------ | ------------- |
