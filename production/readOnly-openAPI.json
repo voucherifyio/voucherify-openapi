@@ -21257,6 +21257,10 @@
           }
         }
       },
+      "ParameterSkuId": {
+        "type": "string",
+        "example": "sku_0b661e41eccd35a8e9"
+      },
       "ParameterStackingRulesId": {
         "type": "string",
         "example": "stk_0d6264108617006147"
@@ -21800,6 +21804,54 @@
         "allOf": [
           {
             "$ref": "#/components/schemas/AsyncActions"
+          }
+        ]
+      },
+      "ProductsSkusUpdateRequestBody": {
+        "title": "Products Skus Update Request Body",
+        "type": "object",
+        "description": "Request body schema for **PUT** `v1/products/{productId}/skus/{skuId}`.",
+        "properties": {
+          "sku": {
+            "type": "string",
+            "example": "Large Pink Shirt",
+            "description": "Unique user-defined SKU name.",
+            "nullable": true
+          },
+          "price": {
+            "type": "integer",
+            "description": "SKU unit price. The value is multiplied by 100 to represent 2 decimal places. For example `10000 cents` for `$100.00`.",
+            "nullable": true
+          },
+          "currency": {
+            "type": "string",
+            "description": "SKU price currency.",
+            "nullable": true
+          },
+          "attributes": {
+            "type": "object",
+            "description": "The attributes object stores values for all custom attributes inherited by the SKU from the parent product. A set of key/value pairs that are attached to a SKU object and are unique to each SKU within a product family.",
+            "nullable": true
+          },
+          "image_url": {
+            "type": "string",
+            "description": "The HTTPS URL pointing to the .png or .jpg file that will be used to render the SKU image.",
+            "nullable": true
+          },
+          "metadata": {
+            "type": "object",
+            "description": "The metadata object stores all custom attributes assigned to the SKU. A set of key/value pairs that you can attach to a SKU object. It can be useful for storing additional information about the SKU in a structured format.",
+            "nullable": true
+          }
+        }
+      },
+      "ProductsSkusUpdateResponseBody": {
+        "type": "object",
+        "title": "Products Skus Update Response Body",
+        "description": "Response body schema for **PUT** `v1/products/{productId}/skus/{skuId}`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Sku"
           }
         ]
       },
@@ -28338,6 +28390,36 @@
           }
         },
         "required": []
+      },
+      "SkusGetResponseBody": {
+        "type": "object",
+        "title": "Skus Get Response Body",
+        "description": "Response body schema for **GET** `v1/skus/{skuId}`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Sku"
+          }
+        ]
+      },
+      "SkusImportCsvCreateResponseBody": {
+        "type": "object",
+        "title": "Skus Import Csv Create Response Body",
+        "description": "Response body schema for **POST** `v1/skus/importCSV`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/AsyncActions"
+          }
+        ]
+      },
+      "SkusImportCSVRequestBody": {
+        "type": "object",
+        "title": "Skus Import Csv Request Body",
+        "description": "Response body schema for **POST** `v1/skus/importCSV`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ImportCSVRequestBody"
+          }
+        ]
       },
       "SkusListForProduct": {
         "type": "object",
@@ -59792,6 +59874,200 @@
         }
       }
     },
+    "/v1/skus/{skuId}": {
+      "parameters": [
+        {
+          "schema": {
+            "$ref": "#/components/schemas/ParameterSkuId"
+          },
+          "name": "skuId",
+          "in": "path",
+          "required": true,
+          "description": "A Voucherify SKU identifier or SKU source ID."
+        }
+      ],
+      "get": {
+        "operationId": "get-sku",
+        "tags": [
+          "Products"
+        ],
+        "summary": "Get SKU",
+        "description": "Retrieve details of a SKU.",
+        "parameters": [],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": [],
+            "X-Voucherify-OAuth": [
+              "api",
+              "SKUs"
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns requested SKU object.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SkusGetResponseBody"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "id": "sku_0b1621b2f25248b79c",
+                      "source_id": "sku_source_id_1",
+                      "product_id": "prod_0b15f6b9f650c16990",
+                      "sku": "Extra Small Blue Shirt",
+                      "price": 1300,
+                      "currency": "USD",
+                      "attributes": {
+                        "size": "XS",
+                        "color": "blue",
+                        "ranking": 1
+                      },
+                      "image_url": "",
+                      "metadata": {},
+                      "created_at": "2022-05-17T10:36:30.057Z",
+                      "updated_at": "2022-07-01T05:34:16.822Z",
+                      "object": "sku"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/products/{productId}/skus/{skuId}": {
+      "parameters": [
+        {
+          "schema": {
+            "$ref": "#/components/schemas/ParameterProductId"
+          },
+          "name": "productId",
+          "in": "path",
+          "required": true,
+          "description": "A unique Voucherify [product](/api-reference/get-product) ID or product source ID."
+        },
+        {
+          "schema": {
+            "$ref": "#/components/schemas/ParameterSkuId"
+          },
+          "name": "skuId",
+          "in": "path",
+          "required": true,
+          "description": "A Voucherify [SKU ID](/api-reference/get-sku) or SKU source ID."
+        }
+      ],
+      "put": {
+        "operationId": "update-sku",
+        "tags": [
+          "Products"
+        ],
+        "summary": "Update SKU",
+        "description": "Updates the specified SKU by setting the values of the parameters passed in the request body. Any parameters not provided in the payload will be left unchanged.\n\nFields other than the ones listed in the request body schema won't be modified. Even if provided, they will be silently skipped.",
+        "parameters": [],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": [],
+            "X-Voucherify-OAuth": [
+              "api",
+              "products"
+            ]
+          }
+        ],
+        "requestBody": {
+          "description": "Specify the parameters to be updated.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProductsSkusUpdateRequestBody"
+              },
+              "examples": {
+                "Example": {
+                  "value": {
+                    "price": 210000,
+                    "currency": "PLN"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Returns the SKU object with the updated parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductsSkusUpdateResponseBody"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "id": "sku_0bae3b28f610fd0da1",
+                      "source_id": "first_product_sku_1",
+                      "product_id": "prod_0bae2dc5a090fd0184",
+                      "sku": "Samsung phone 256GB",
+                      "price": 210000,
+                      "currency": "PLN",
+                      "attributes": {
+                        "color": "vintage-black",
+                        "memory": "256",
+                        "processor": "Intel"
+                      },
+                      "image_url": "{{internalVoucherifyURL}}",
+                      "metadata": {
+                        "imported": true
+                      },
+                      "created_at": "2022-09-12T13:56:51.828Z",
+                      "updated_at": "2022-09-12T14:09:40.859Z",
+                      "object": "sku"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "delete-sku",
+        "tags": [
+          "Products"
+        ],
+        "summary": "Delete SKU",
+        "description": "Deletes a product SKU. This operation cannot be undone. \n\nIf the `force` parameter is set to `false` or not set at all, the SKU will be moved to [the bin](/api-reference/bin/list-bin-entries).",
+        "parameters": [
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterBoolean"
+            },
+            "in": "query",
+            "name": "force",
+            "description": "If this flag is set to `true`, the SKU will be removed permanently. If it is set to `false` or not set at all, the SKU will be moved to the bin. Going forward, the user will be able to create another SKU with exactly the same `source_id`."
+          }
+        ],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": [],
+            "X-Voucherify-OAuth": [
+              "api",
+              "products"
+            ]
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Returns no content if deletion is successful."
+          }
+        }
+      }
+    },
     "/v1/products/importCSV": {
       "post": {
         "operationId": "import-products-using-csv",
@@ -59828,6 +60104,56 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ProductsImportCsvCreateResponseBody"
+                },
+                "examples": {
+                  "Async Action": {
+                    "value": {
+                      "async_action_id": "aa_0a875d56c805df6601"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/skus/importCSV": {
+      "post": {
+        "operationId": "import-SKUs-using-csv",
+        "tags": [
+          "Products"
+        ],
+        "summary": "Import SKUs using CSV",
+        "description": "Import SKUs into the repository using a CSV file.\n\nThe CSV file has to include headers in the first line. All properties which cannot be mapped to standard SKU fields will be added to the metadata object. You can find an example template [here](https://s3.amazonaws.com/helpscout.net/docs/assets/5902f1c12c7d3a057f88a36d/attachments/627b98d08c9b585083488a4c/Import_SKUS_template.csv). \n\nCurl Example\n\n```cURL\ncurl -X **POST** \\\n  https://api.voucherify.io/v1/skus/importCSV \\\n  -F file=@/path/to/SKUs.csv \\\n  -H \"X-App-Id: c70a6f00-cf91-4756-9df5-47628850002b\" \\\n  -H \"X-App-Token: 3266b9f8-e246-4f79-bdf0-833929b1380c\"\n```\n> 🚧 Import sequence\n>\n> First import products using the [dedicated endpoint](/api-reference/import-products-using-csv), then import SKUs using this endpoint to properly match SKUs to products.\n\n\n\n> 📘 Standard SKU fields mapping\n>\n> - **Required** fields are `source_id` and `product_id`.\n> - Supported CSV file headers: `product_id,sku,source_id,price,image_url,attributes`\n> - SKU **source_id** must be unique in the entire product catalog, no duplicates are allowed.\n> - SKU attributes need to be in the form of a stringy-fied json, i.e.`\"{'color':'blue'}\"`. These attributes must be defined in the **product** beforehand so you can import them to the SKU.\n> - You can use this method to update the following parameters in bulk: **sku** and the sku **price**.\n> - Columns that cannot be mapped to standard fields will be mapped to Custom attributes and added as product metadata. There is no limit on the number of custom attributes that you can import as metadata.\n\nThis API request starts a process that affects Voucherify data in bulk. \n\nIn case of small jobs (like bulk update) the request is put into a queue and processed once every other bulk request placed in the queue prior to this request is finished. However, when the job takes a longer time (like vouchers generation) then it is processed in small portions in a round-robin fashion. When there is a list of vouchers generation scheduled, then they will all have the `IN_PROGRESS` status shortly. This way, small jobs added just after scheduling big jobs of the same type will be processed in a short time window. \n\nThe result will return the async ID. You can verify the status of your request via this [API request](/api-reference/async-actions/get-async-action).",
+        "parameters": [],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": [],
+            "X-Voucherify-OAuth": [
+              "api",
+              "SKUs"
+            ]
+          }
+        ],
+        "requestBody": {
+          "description": "The file path is stored in the form `file` header.",
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/SkusImportCSVRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Returns ID of the scheduled async action. The response informs you that your request has been accepted and SKUs will be added to the repository asynchronously. To check the import status and result, copy the `async_action_id` from the response and pass it using the [Get Async Action](/api-reference/async-actions/get-async-action) endpoint.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SkusImportCsvCreateResponseBody"
                 },
                 "examples": {
                   "Async Action": {
@@ -61836,7 +62162,7 @@
           "Async Actions"
         ],
         "summary": "List Async Actions",
-        "description": "Track asynchronous operations scheduled in your project.  \n\nThe table below lists the possible types of async actions. The types are different for each endpoint generating the async action. If you would like to learn more about importing data into Voucherify, read more [here](https://support.voucherify.io/article/574-data-import).\n\n| **Types by Context** | **Endpoint** |\n|:---|:---|\n| **CAMPAIGN** |  |\n| CAMPAIGN.VOUCHERS_IMPORT | **POST**   [/campaigns/{campaignId}/import](/api-reference/vouchers/import-vouchers-to-campaign) |\n| CAMPAIGN.VOUCHERS_IMPORT_CSV | **POST**   [/campaigns/{campaignId}/importCSV](/api-reference/vouchers/import-vouchers-to-campaign-using-csv) |\n| CAMPAIGN.VOUCHERS_UPDATE | **PUT** [/campaigns/{campaignId}](/api-reference/update-campaign) |\n| CAMPAIGN.VOUCHERS_DELETE | **DELETE** [/campaigns/{campaignId}](/api-reference/delete-campaign) |\n| CAMPAIGN.VOUCHERS_GENERATE | <ul><li>**POST** [/campaigns](/api-reference/create-campaign): asynchronous for campaigns with more than 1 voucher, synchronous for campaign with 1 voucher</li><li>**POST**    [/campaigns/{campaignId}/vouchers](/api-reference/add-vouchers-to-campaign)</li></ul> |\n| **CUSTOMERS** |  |\n| CUSTOMERS.IMPORT_CSV | **POST** [/customers/importCSV](/api-reference/import-customers-using-csv) |\n| CUSTOMERS.BULK_UPDATE | **POST** [/customers/bulk/async](/api-reference/update-customers-in-bulk) |\n| CUSTOMERS.METADATA_UPDATE | **POST** [/customers/metadata/async](/api-reference/update-customers-metadata-in-bulk) |\n| **PRODUCTS** |  |\n| PRODUCTS.BULK_UPDATE | **POST** [/products/bulk/async](/api-reference/update-products-in-bulk)<br /> |\n| PRODUCTS.METADATA_UPDATE | **POST** [/products/metadata/async](/api-reference/update-products-metadata-in-bulk) |\n| PRODUCTS.IMPORT_CSV | **POST** [/products/importCSV](/api-reference/import-products-using-csv) |\n| SKUS.IMPORT_CSV | **POST** [/SKUs/importCSV](/api-reference/import-SKUs-using-csv) |\n| **VOUCHERS** |  |\n| VOUCHERS.IMPORT | **POST** [/vouchers/import](/api-reference/vouchers/import-vouchers) |\n| VOUCHERS.IMPORT_CSV | **POST** [/vouchers/importCSV](/api-reference/vouchers/import-vouchers-using-csv) |\n| VOUCHERS.BULK_UPDATE | **POST** [/vouchers/bulk/async](/api-reference/update-vouchers-in-bulk)<br /> |\n| VOUCHERS.METADATA_UPDATE | **POST** [/vouchers/metadata/async](/api-reference/update-vouchers-metadata-in-bulk) | \n| **ORDERS** |  |\n| ORDERS.IMPORT | **POST** [/orders/import](/api-reference/import-orders) |\n| **METADATA KEY PURGE** |  |\n| CAMPAIGNS.METADATA_KEY_PURGE<br />CUSTOMERS.METADATA_KEY_PURGE<br />PRODUCTS.METADATA_KEY_PURGE<br />VOUCHERS.METADATA_KEY_PURGE<br />ORDERS.METADATA_KEY_PURGE | No API endpoint equivalent. You can perform this action through the Dashboard. See Dashboard documentation: Dashboard > [Project Settings](https://support.voucherify.io/article/99-schema-validation-metadata#maintenance) |",
+        "description": "Track asynchronous operations scheduled in your project.  \n\nThe table below lists the possible types of async actions. The types are different for each endpoint generating the async action. If you would like to learn more about importing data into Voucherify, read more [here](https://support.voucherify.io/article/574-data-import).\n\n| **Types by Context** | **Endpoint** |\n|:---|:---|\n| **CAMPAIGN** |  |\n| CAMPAIGN.VOUCHERS_IMPORT | **POST**   [/campaigns/{campaignId}/import](/api-reference/vouchers/import-vouchers-to-campaign) |\n| CAMPAIGN.VOUCHERS_IMPORT_CSV | **POST**   [/campaigns/{campaignId}/importCSV](/api-reference/vouchers/import-vouchers-to-campaign-using-csv) |\n| CAMPAIGN.VOUCHERS_UPDATE | **PUT** [/campaigns/{campaignId}](/api-reference/update-campaign) |\n| CAMPAIGN.VOUCHERS_DELETE | **DELETE** [/campaigns/{campaignId}](/api-reference/delete-campaign) |\n| CAMPAIGN.VOUCHERS_GENERATE | <ul><li>**POST** [/campaigns](/api-reference/create-campaign): asynchronous for campaigns with more than 1 voucher, synchronous for campaign with 1 voucher</li><li>**POST**    [/campaigns/{campaignId}/vouchers](/api-reference/add-vouchers-to-campaign)</li></ul> |\n| **CUSTOMERS** |  |\n| CUSTOMERS.IMPORT_CSV | **POST** [/customers/importCSV](/api-reference/import-customers-using-csv) |\n| CUSTOMERS.BULK_UPDATE | **POST** [/customers/bulk/async](/api-reference/update-customers-in-bulk) |\n| CUSTOMERS.METADATA_UPDATE | **POST** [/customers/metadata/async](/api-reference/update-customers-metadata-in-bulk) |\n| **PRODUCTS** |  |\n| PRODUCTS.BULK_UPDATE | **POST** [/products/bulk/async](/api-reference/update-products-in-bulk)<br /> |\n| PRODUCTS.METADATA_UPDATE | **POST** [/products/metadata/async](/api-reference/update-products-metadata-in-bulk) |\n| PRODUCTS.IMPORT_CSV | **POST** [/products/importCSV](/api-reference/import-products-using-csv) |\n| SKUS.IMPORT_CSV | **POST** [/skus/importCSV](/api-reference/import-SKUs-using-csv) |\n| **VOUCHERS** |  |\n| VOUCHERS.IMPORT | **POST** [/vouchers/import](/api-reference/vouchers/import-vouchers) |\n| VOUCHERS.IMPORT_CSV | **POST** [/vouchers/importCSV](/api-reference/vouchers/import-vouchers-using-csv) |\n| VOUCHERS.BULK_UPDATE | **POST** [/vouchers/bulk/async](/api-reference/update-vouchers-in-bulk)<br /> |\n| VOUCHERS.METADATA_UPDATE | **POST** [/vouchers/metadata/async](/api-reference/update-vouchers-metadata-in-bulk) | \n| **ORDERS** |  |\n| ORDERS.IMPORT | **POST** [/orders/import](/api-reference/import-orders) |\n| **METADATA KEY PURGE** |  |\n| CAMPAIGNS.METADATA_KEY_PURGE<br />CUSTOMERS.METADATA_KEY_PURGE<br />PRODUCTS.METADATA_KEY_PURGE<br />VOUCHERS.METADATA_KEY_PURGE<br />ORDERS.METADATA_KEY_PURGE | No API endpoint equivalent. You can perform this action through the Dashboard. See Dashboard documentation: Dashboard > [Project Settings](https://support.voucherify.io/article/99-schema-validation-metadata#maintenance) |",
         "parameters": [
           {
             "schema": {
@@ -61927,7 +62253,7 @@
           "Async Actions"
         ],
         "summary": "Get Async Action",
-        "description": "Check the result of a scheduled asynchronous operation.  \n\nThe table below lists the possible types of async actions. The types are different for each endpoint generating the async action. If you would like to learn more about importing data into Voucherify, read more [here](https://support.voucherify.io/article/574-data-import).\n\n| **Types by Context** | **Endpoint** |\n|:---|:---|\n| **CAMPAIGN** |  |\n| CAMPAIGN.VOUCHERS_IMPORT | **POST**   [/campaigns/{campaignId}/import](/api-reference/vouchers/import-vouchers-to-campaign) |\n| CAMPAIGN.VOUCHERS_IMPORT_CSV | **POST**   [/campaigns/{campaignId}/importCSV](/api-reference/vouchers/import-vouchers-to-campaign-using-csv) |\n| CAMPAIGN.VOUCHERS_UPDATE | **PUT** [/campaigns/{campaignId}](/api-reference/update-campaign) |\n| CAMPAIGN.VOUCHERS_DELETE | **DELETE** [/campaigns/{campaignId}](/api-reference/delete-campaign) |\n| CAMPAIGN.VOUCHERS_GENERATE | <ul><li>**POST** [/campaigns](/api-reference/create-campaign): asynchronous for campaigns with more than 1 voucher, synchronous for campaign with 1 voucher</li><li>**POST**    [/campaigns/{campaignId}/vouchers](/api-reference/add-vouchers-to-campaign)</li></ul> |\n| **CUSTOMERS** |  |\n| CUSTOMERS.IMPORT_CSV | **POST** [/customers/importCSV](/api-reference/import-customers-using-csv) |\n| CUSTOMERS.BULK_UPDATE | **POST** [/customers/bulk/async](/api-reference/update-customers-in-bulk) |\n| CUSTOMERS.METADATA_UPDATE | **POST** [/customers/metadata/async](/api-reference/update-customers-metadata-in-bulk) |\n| **PRODUCTS** |  |\n| PRODUCTS.BULK_UPDATE | **POST** [/products/bulk/async](/api-reference/update-products-in-bulk)<br /> |\n| PRODUCTS.METADATA_UPDATE | **POST** [/products/metadata/async](/api-reference/update-products-metadata-in-bulk) |\n| PRODUCTS.IMPORT_CSV | **POST** [/products/importCSV](/api-reference/import-products-using-csv) |\n| SKUS.IMPORT_CSV | **POST** [/SKUs/importCSV](/api-reference/import-SKUs-using-csv) |\n| **VOUCHERS** |  |\n| VOUCHERS.IMPORT | **POST** [/vouchers/import](/api-reference/vouchers/import-vouchers) |\n| VOUCHERS.IMPORT_CSV | **POST** [/vouchers/importCSV](/api-reference/vouchers/import-vouchers-using-csv) |\n| VOUCHERS.BULK_UPDATE | **POST** [/vouchers/bulk/async](/api-reference/update-vouchers-in-bulk)<br /> |\n| VOUCHERS.METADATA_UPDATE | **POST** [/vouchers/metadata/async](/api-reference/update-vouchers-metadata-in-bulk) | \n| **ORDERS** |  |\n| ORDERS.IMPORT | **POST** [/orders/import](/api-reference/import-orders) |\n| **METADATA KEY PURGE** |  |\n| CAMPAIGNS.METADATA_KEY_PURGE<br />CUSTOMERS.METADATA_KEY_PURGE<br />PRODUCTS.METADATA_KEY_PURGE<br />VOUCHERS.METADATA_KEY_PURGE<br />ORDERS.METADATA_KEY_PURGE | No API endpoint equivalent. You can perform this action through the Dashboard. See Dashboard documentation: Dashboard > [Project Settings](https://support.voucherify.io/article/99-schema-validation-metadata#maintenance) |",
+        "description": "Check the result of a scheduled asynchronous operation.  \n\nThe table below lists the possible types of async actions. The types are different for each endpoint generating the async action. If you would like to learn more about importing data into Voucherify, read more [here](https://support.voucherify.io/article/574-data-import).\n\n| **Types by Context** | **Endpoint** |\n|:---|:---|\n| **CAMPAIGN** |  |\n| CAMPAIGN.VOUCHERS_IMPORT | **POST**   [/campaigns/{campaignId}/import](/api-reference/vouchers/import-vouchers-to-campaign) |\n| CAMPAIGN.VOUCHERS_IMPORT_CSV | **POST**   [/campaigns/{campaignId}/importCSV](/api-reference/vouchers/import-vouchers-to-campaign-using-csv) |\n| CAMPAIGN.VOUCHERS_UPDATE | **PUT** [/campaigns/{campaignId}](/api-reference/update-campaign) |\n| CAMPAIGN.VOUCHERS_DELETE | **DELETE** [/campaigns/{campaignId}](/api-reference/delete-campaign) |\n| CAMPAIGN.VOUCHERS_GENERATE | <ul><li>**POST** [/campaigns](/api-reference/create-campaign): asynchronous for campaigns with more than 1 voucher, synchronous for campaign with 1 voucher</li><li>**POST**    [/campaigns/{campaignId}/vouchers](/api-reference/add-vouchers-to-campaign)</li></ul> |\n| **CUSTOMERS** |  |\n| CUSTOMERS.IMPORT_CSV | **POST** [/customers/importCSV](/api-reference/import-customers-using-csv) |\n| CUSTOMERS.BULK_UPDATE | **POST** [/customers/bulk/async](/api-reference/update-customers-in-bulk) |\n| CUSTOMERS.METADATA_UPDATE | **POST** [/customers/metadata/async](/api-reference/update-customers-metadata-in-bulk) |\n| **PRODUCTS** |  |\n| PRODUCTS.BULK_UPDATE | **POST** [/products/bulk/async](/api-reference/update-products-in-bulk)<br /> |\n| PRODUCTS.METADATA_UPDATE | **POST** [/products/metadata/async](/api-reference/update-products-metadata-in-bulk) |\n| PRODUCTS.IMPORT_CSV | **POST** [/products/importCSV](/api-reference/import-products-using-csv) |\n| SKUS.IMPORT_CSV | **POST** [/skus/importCSV](/api-reference/import-SKUs-using-csv) |\n| **VOUCHERS** |  |\n| VOUCHERS.IMPORT | **POST** [/vouchers/import](/api-reference/vouchers/import-vouchers) |\n| VOUCHERS.IMPORT_CSV | **POST** [/vouchers/importCSV](/api-reference/vouchers/import-vouchers-using-csv) |\n| VOUCHERS.BULK_UPDATE | **POST** [/vouchers/bulk/async](/api-reference/update-vouchers-in-bulk)<br /> |\n| VOUCHERS.METADATA_UPDATE | **POST** [/vouchers/metadata/async](/api-reference/update-vouchers-metadata-in-bulk) | \n| **ORDERS** |  |\n| ORDERS.IMPORT | **POST** [/orders/import](/api-reference/import-orders) |\n| **METADATA KEY PURGE** |  |\n| CAMPAIGNS.METADATA_KEY_PURGE<br />CUSTOMERS.METADATA_KEY_PURGE<br />PRODUCTS.METADATA_KEY_PURGE<br />VOUCHERS.METADATA_KEY_PURGE<br />ORDERS.METADATA_KEY_PURGE | No API endpoint equivalent. You can perform this action through the Dashboard. See Dashboard documentation: Dashboard > [Project Settings](https://support.voucherify.io/article/99-schema-validation-metadata#maintenance) |",
         "parameters": [],
         "security": [
           {
