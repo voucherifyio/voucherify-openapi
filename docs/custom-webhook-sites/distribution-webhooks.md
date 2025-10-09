@@ -31,8 +31,7 @@ The Payload designer is empty at the start. You can paste any existing payload o
 * Dynamic values come from Voucherify keys in the webhook payload. Use double curly braces `{{}}` to search for Voucherify keys. You can also mix static and dynamic values, for example `"Hello {{customer.name}}"`.
 * Nested objects can be created with dots in the key name, such as `{{order.status}}`.
 
-<b>If you want a value to be a string, wrap it in quotes `("")`.
-When the type of a value is unknown, also wrap it in quotes `("")` to ensure it is treated as a string.</b>
+**If you want a value to be a string, wrap it in quotes `("")`. When the type of a value is unknown, also wrap it in quotes `("")` to ensure it is treated as a string.**
 
 > 📘 Available Voucherify webhook keys
 >
