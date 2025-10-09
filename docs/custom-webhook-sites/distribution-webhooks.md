@@ -16,7 +16,7 @@ Distribution-based webhooks in Voucherify let your application automatically rec
 4. In Action, define what kind of distribution action you want to create.
 5. In Channels, add Webhook. You can add many channels within one distribution.
 6. In the webhook channel, provide the event name, URL, and any optional HTTP headers.
-7. Select the attributes to add them to the webhook payload. Optionally, map the attributes to your own keys.
+7. Select the default or custom attributes. Custom attributes open [the payload designer](#payload-designer) and allow you to select attributes and add them to the webhook payload, or map the attributes to your own keys.
 
 To edit, pause, activate, or delete a distribution, click the three dots icon located on the far right of each row in the Distributions list view.
 
