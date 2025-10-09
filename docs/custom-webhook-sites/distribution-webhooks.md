@@ -22,6 +22,52 @@ To edit, pause, activate, or delete a distribution, click the three dots icon lo
 
 **You can also add distribution webhooks while creating a loyalty or referral programs. The process follows similar pattern.**
 
+## Payload designer
+
+In the default mapping mode, Voucherify sends the full webhook payload without any mapping to other keys. Click Custom to use the payload designer and create webhook payloads in the JSON format.
+
+The Payload designer is empty at the start. You can paste any existing payload or write it from scratch. Each key in the payload can have a value that is static, dynamic, or nested:
+* Static values are fixed values you define, such as text, numbers, or boolean.
+* Dynamic values come from Voucherify keys in the webhook payload. Use double curly braces `{{}}` to search for Voucherify keys. You can also mix static and dynamic values, for example `"Hello {{customer.name}}"`.
+* Nested objects can be created with dots in the key name, such as `{{order.status}}`.
+
+**If you want a value to be a string, wrap it in quotes `("")`. When the type of a value is unknown, also wrap it in quotes `("")` to ensure it is treated as a string.**
+
+> 📘 Available Voucherify webhook keys
+>
+> The available keys supported by Voucherify are limited to a given distribution event that is used in the webhook. For example, if you create a webhook payload for the [Customer entered segment](ref:events-customer-segment-entered), you can use all the keys available in that event, like `customer.name` or `segment.name`. However, you can't use objects that aren't available in that webhook, like `redemption.date`.
+> 
+> Read [Webhooks available in Distributions](#webhooks-available-in-distributions) to learn which webhooks are available. Go to specific webhook pages to learn more about their payloads.
+
+### Example: Customer summary with dynamic values
+
+This payload builds a customer summary. All values are taken dynamically from the webhook.
+
+```json
+{
+  "customer_profile": {
+    "ID": "{{customer.id}}",
+    "name": "{{customer.name}}",
+    "email": "{{customer.email}}"
+  }
+}
+```
+
+### Example: Order confirmation with mixed values
+
+This payload mixes static and dynamic values. The currency is fixed, while the order details and greeting come from Voucherify.
+
+```json
+{
+  "order": {
+    "orderId": "{{order.id}}",
+    "total": {{order.total_amount}},
+    "currency": "USD",
+    "message": "Thank you for your order, {{customer.name}}!"
+  }
+}
+```
+
 ## Re-enabling a webhook
 
 To re-enable a paused webhook:
