@@ -1,0 +1,914 @@
+---
+title: "Halloween promotion workflow"
+description: "Complete guide showing qualification, validation, and redemption for a seasonal promotion campaign"
+---
+
+This guide demonstrates a complete promotion workflow using a Halloween campaign example. You'll learn how to use qualification to display discounted prices, validate carts with validation rules, and redeem promotions.
+
+## Scenario overview
+
+This guide covers the following workflow:
+
+* **Campaign**: Get $10 off Halloween items
+* **Qualification**: Display Halloween items with strike-through pricing to customers
+* **Validation**: Validate cart with Halloween items (includes failed validation when cart is below $50 minimum)
+* **Redemption**: Successfully redeem the promotion after meeting validation requirements
+
+## Prerequisites
+
+Before starting, ensure you have:
+
+* A promotion campaign configured with a $10 discount on Halloween items
+* A validation rule requiring a minimum cart value of $50
+* Halloween products in your product catalog
+
+## Step 1: Qualification - display strike-through prices
+
+Use the qualifications API to show customers which Halloween items are eligible for the promotion. This enables you to display strike-through pricing on product pages.
+
+### Request
+
+<CodeGroup>
+```json POST /v1/qualifications
+{
+  "scenario": "PRODUCTS_DISCOUNT",
+  "order": {
+    "items": [
+      {
+        "source_id": "halloween_skeleton_decoration",
+        "quantity": 1,
+        "price": 2500,
+        "related_object": "product",
+        "product": {
+          "name": "Skeleton Decoration",
+          "metadata": {
+            "category": "Halloween"
+          }
+        }
+      },
+      {
+        "source_id": "halloween_pumpkin_lights",
+        "quantity": 1,
+        "price": 1800,
+        "related_object": "product",
+        "product": {
+          "name": "Pumpkin String Lights",
+          "metadata": {
+            "category": "Halloween"
+          }
+        }
+      },
+      {
+        "source_id": "halloween_witch_hat",
+        "quantity": 1,
+        "price": 1200,
+        "related_object": "product",
+        "product": {
+          "name": "Witch Hat",
+          "metadata": {
+            "category": "Halloween"
+          }
+        }
+      }
+    ]
+  },
+  "options": {
+    "expand": [
+      "redeemable"
+    ]
+  }
+}
+```
+</CodeGroup>
+
+### Response
+
+<CodeGroup>
+```json 200 OK
+{
+  "redeemables": {
+    "object": "list",
+    "data_ref": "data",
+    "data": [
+      {
+        "id": "promo_halloween10off",
+        "object": "promotion_tier",
+        "created_at": "2024-10-01T10:00:00.000Z",
+        "result": {
+          "discount": {
+            "type": "AMOUNT",
+            "effect": "APPLY_TO_ITEMS",
+            "amount_off": 1000,
+            "is_dynamic": false
+          }
+        },
+        "order": {
+          "amount": 5500,
+          "items_discount_amount": 3000,
+          "total_discount_amount": 3000,
+          "total_amount": 2500,
+          "items_applied_discount_amount": 3000,
+          "total_applied_discount_amount": 3000,
+          "items": [
+            {
+              "object": "order_item",
+              "source_id": "halloween_skeleton_decoration",
+              "related_object": "product",
+              "quantity": 1,
+              "amount": 2500,
+              "discount_amount": 1000,
+              "applied_discount_amount": 1000,
+              "price": 2500,
+              "subtotal_amount": 1500,
+              "product": {
+                "name": "Skeleton Decoration",
+                "metadata": {
+                  "category": "Halloween"
+                }
+              }
+            },
+            {
+              "object": "order_item",
+              "source_id": "halloween_pumpkin_lights",
+              "related_object": "product",
+              "quantity": 1,
+              "amount": 1800,
+              "discount_amount": 1000,
+              "applied_discount_amount": 1000,
+              "price": 1800,
+              "subtotal_amount": 800,
+              "product": {
+                "name": "Pumpkin String Lights",
+                "metadata": {
+                  "category": "Halloween"
+                }
+              }
+            },
+            {
+              "object": "order_item",
+              "source_id": "halloween_witch_hat",
+              "related_object": "product",
+              "quantity": 1,
+              "amount": 1200,
+              "discount_amount": 1000,
+              "applied_discount_amount": 1000,
+              "price": 1200,
+              "subtotal_amount": 200,
+              "product": {
+                "name": "Witch Hat",
+                "metadata": {
+                  "category": "Halloween"
+                }
+              }
+            }
+          ],
+          "metadata": {},
+          "customer_id": null,
+          "referrer_id": null,
+          "object": "order"
+        },
+        "applicable_to": {
+          "data": [
+            {
+              "object": "products_collection",
+              "id": "pc_halloween_items",
+              "strict": false,
+              "effect": "APPLY_TO_EVERY",
+              "order_item_indices": [
+                0,
+                1,
+                2
+              ]
+            }
+          ],
+          "total": 1,
+          "data_ref": "data",
+          "object": "list"
+        },
+        "inapplicable_to": {
+          "data": [],
+          "total": 0,
+          "data_ref": "data",
+          "object": "list"
+        },
+        "metadata": {},
+        "name": "$10 off Halloween items",
+        "banner": "Get $10 off each Halloween item",
+        "campaign_id": "camp_halloween2024",
+        "campaign_name": "Halloween Promotion 2024"
+      }
+    ],
+    "total": 1,
+    "has_more": false
+  },
+  "tracking_id": "track_halloween_qual_001",
+  "order": {
+    "items": [
+      {
+        "object": "order_item",
+        "source_id": "halloween_skeleton_decoration",
+        "related_object": "product",
+        "quantity": 1,
+        "price": 2500,
+        "product": {
+          "name": "Skeleton Decoration",
+          "metadata": {
+            "category": "Halloween"
+          }
+        }
+      },
+      {
+        "object": "order_item",
+        "source_id": "halloween_pumpkin_lights",
+        "related_object": "product",
+        "quantity": 1,
+        "price": 1800,
+        "product": {
+          "name": "Pumpkin String Lights",
+          "metadata": {
+            "category": "Halloween"
+          }
+        }
+      },
+      {
+        "object": "order_item",
+        "source_id": "halloween_witch_hat",
+        "related_object": "product",
+        "quantity": 1,
+        "price": 1200,
+        "product": {
+          "name": "Witch Hat",
+          "metadata": {
+            "category": "Halloween"
+          }
+        }
+      }
+    ],
+    "metadata": {},
+    "customer_id": null,
+    "referrer_id": null,
+    "object": "order"
+  },
+  "stacking_rules": {
+    "redeemables_limit": 30,
+    "applicable_redeemables_limit": 5
+  }
+}
+```
+</CodeGroup>
+
+The qualification response shows that each Halloween item is eligible for a $10 discount. Use the `subtotal_amount` values to display strike-through pricing:
+
+* Skeleton Decoration: ~~$25.00~~ **$15.00**
+* Pumpkin String Lights: ~~$18.00~~ **$8.00**
+* Witch Hat: ~~$12.00~~ **$2.00**
+
+## Step 2: Validation - failed (cart below minimum)
+
+When a customer adds Halloween items to their cart, validate the promotion. In this case, the cart total is $55 but the validation rule requires a minimum of $50 **after** discounts are applied. Since the discounted total would be $25, the validation fails.
+
+### Request
+
+<CodeGroup>
+```json POST /v1/validations
+{
+  "customer": {
+    "source_id": "customer_12345",
+    "name": "Jane Smith",
+    "email": "[email protected]"
+  },
+  "redeemables": [
+    {
+      "object": "promotion_tier",
+      "id": "promo_halloween10off"
+    }
+  ],
+  "order": {
+    "amount": 5500,
+    "items": [
+      {
+        "source_id": "halloween_skeleton_decoration",
+        "quantity": 1,
+        "price": 2500,
+        "related_object": "product",
+        "product": {
+          "name": "Skeleton Decoration",
+          "metadata": {
+            "category": "Halloween"
+          }
+        }
+      },
+      {
+        "source_id": "halloween_pumpkin_lights",
+        "quantity": 1,
+        "price": 1800,
+        "related_object": "product",
+        "product": {
+          "name": "Pumpkin String Lights",
+          "metadata": {
+            "category": "Halloween"
+          }
+        }
+      },
+      {
+        "source_id": "halloween_witch_hat",
+        "quantity": 1,
+        "price": 1200,
+        "related_object": "product",
+        "product": {
+          "name": "Witch Hat",
+          "metadata": {
+            "category": "Halloween"
+          }
+        }
+      }
+    ]
+  }
+}
+```
+</CodeGroup>
+
+### Response
+
+<CodeGroup>
+```json 400 Bad Request
+{
+  "code": 400,
+  "message": "promotion tier 'promo_halloween10off' cannot be redeemed - validation rule 'val_min_order_50' failed",
+  "details": "order.amount",
+  "key": "invalid_amount",
+  "valid": false,
+  "redeemables": [
+    {
+      "status": "INAPPLICABLE",
+      "id": "promo_halloween10off",
+      "object": "promotion_tier",
+      "result": {
+        "error": {
+          "message": "order amount does not meet the minimum requirement",
+          "key": "invalid_amount"
+        }
+      },
+      "metadata": {},
+      "name": "$10 off Halloween items",
+      "banner": "Get $10 off each Halloween item",
+      "campaign_id": "camp_halloween2024",
+      "campaign_name": "Halloween Promotion 2024"
+    }
+  ],
+  "order": {
+    "amount": 5500,
+    "total_amount": 5500,
+    "items": [
+      {
+        "object": "order_item",
+        "source_id": "halloween_skeleton_decoration",
+        "related_object": "product",
+        "quantity": 1,
+        "amount": 2500,
+        "price": 2500,
+        "subtotal_amount": 2500,
+        "product": {
+          "name": "Skeleton Decoration",
+          "metadata": {
+            "category": "Halloween"
+          }
+        }
+      },
+      {
+        "object": "order_item",
+        "source_id": "halloween_pumpkin_lights",
+        "related_object": "product",
+        "quantity": 1,
+        "amount": 1800,
+        "price": 1800,
+        "subtotal_amount": 1800,
+        "product": {
+          "name": "Pumpkin String Lights",
+          "metadata": {
+            "category": "Halloween"
+          }
+        }
+      },
+      {
+        "object": "order_item",
+        "source_id": "halloween_witch_hat",
+        "related_object": "product",
+        "quantity": 1,
+        "amount": 1200,
+        "price": 1200,
+        "subtotal_amount": 1200,
+        "product": {
+          "name": "Witch Hat",
+          "metadata": {
+            "category": "Halloween"
+          }
+        }
+      }
+    ],
+    "metadata": {},
+    "customer_id": null,
+    "referrer_id": null,
+    "object": "order"
+  },
+  "tracking_id": "track_halloween_val_failed_001"
+}
+```
+</CodeGroup>
+
+The validation fails because the cart total after applying the $30 discount ($55 - $30 = $25) is below the $50 minimum requirement.
+
+## Step 3: Validation - success (cart meets minimum)
+
+The customer adds more Halloween items to meet the minimum order requirement. Now the cart total is $105, which after the discount ($105 - $50 = $55) meets the $50 minimum.
+
+### Request
+
+<CodeGroup>
+```json POST /v1/validations
+{
+  "customer": {
+    "source_id": "customer_12345",
+    "name": "Jane Smith",
+    "email": "[email protected]"
+  },
+  "redeemables": [
+    {
+      "object": "promotion_tier",
+      "id": "promo_halloween10off"
+    }
+  ],
+  "order": {
+    "amount": 10500,
+    "items": [
+      {
+        "source_id": "halloween_skeleton_decoration",
+        "quantity": 2,
+        "price": 2500,
+        "related_object": "product",
+        "product": {
+          "name": "Skeleton Decoration",
+          "metadata": {
+            "category": "Halloween"
+          }
+        }
+      },
+      {
+        "source_id": "halloween_pumpkin_lights",
+        "quantity": 2,
+        "price": 1800,
+        "related_object": "product",
+        "product": {
+          "name": "Pumpkin String Lights",
+          "metadata": {
+            "category": "Halloween"
+          }
+        }
+      },
+      {
+        "source_id": "halloween_witch_hat",
+        "quantity": 1,
+        "price": 1200,
+        "related_object": "product",
+        "product": {
+          "name": "Witch Hat",
+          "metadata": {
+            "category": "Halloween"
+          }
+        }
+      }
+    ]
+  }
+}
+```
+</CodeGroup>
+
+### Response
+
+<CodeGroup>
+```json 200 OK
+{
+  "valid": true,
+  "redeemables": [
+    {
+      "status": "APPLICABLE",
+      "id": "promo_halloween10off",
+      "object": "promotion_tier",
+      "result": {
+        "discount": {
+          "type": "AMOUNT",
+          "effect": "APPLY_TO_ITEMS",
+          "amount_off": 1000,
+          "is_dynamic": false
+        }
+      },
+      "order": {
+        "amount": 10500,
+        "items_discount_amount": 5000,
+        "total_discount_amount": 5000,
+        "total_amount": 5500,
+        "items_applied_discount_amount": 5000,
+        "total_applied_discount_amount": 5000,
+        "items": [
+          {
+            "object": "order_item",
+            "source_id": "halloween_skeleton_decoration",
+            "related_object": "product",
+            "quantity": 2,
+            "amount": 5000,
+            "discount_amount": 2000,
+            "applied_discount_amount": 2000,
+            "price": 2500,
+            "subtotal_amount": 3000,
+            "product": {
+              "name": "Skeleton Decoration",
+              "metadata": {
+                "category": "Halloween"
+              }
+            }
+          },
+          {
+            "object": "order_item",
+            "source_id": "halloween_pumpkin_lights",
+            "related_object": "product",
+            "quantity": 2,
+            "amount": 3600,
+            "discount_amount": 2000,
+            "applied_discount_amount": 2000,
+            "price": 1800,
+            "subtotal_amount": 1600,
+            "product": {
+              "name": "Pumpkin String Lights",
+              "metadata": {
+                "category": "Halloween"
+              }
+            }
+          },
+          {
+            "object": "order_item",
+            "source_id": "halloween_witch_hat",
+            "related_object": "product",
+            "quantity": 1,
+            "amount": 1200,
+            "discount_amount": 1000,
+            "applied_discount_amount": 1000,
+            "price": 1200,
+            "subtotal_amount": 200,
+            "product": {
+              "name": "Witch Hat",
+              "metadata": {
+                "category": "Halloween"
+              }
+            }
+          }
+        ],
+        "metadata": {},
+        "customer_id": "cust_abc123",
+        "referrer_id": null,
+        "object": "order"
+      },
+      "applicable_to": {
+        "data": [
+          {
+            "object": "products_collection",
+            "id": "pc_halloween_items",
+            "strict": false,
+            "effect": "APPLY_TO_EVERY",
+            "order_item_indices": [
+              0,
+              1,
+              2
+            ]
+          }
+        ],
+        "total": 1,
+        "data_ref": "data",
+        "object": "list"
+      },
+      "inapplicable_to": {
+        "data": [],
+        "total": 0,
+        "data_ref": "data",
+        "object": "list"
+      },
+      "metadata": {},
+      "name": "$10 off Halloween items",
+      "banner": "Get $10 off each Halloween item",
+      "campaign_id": "camp_halloween2024",
+      "campaign_name": "Halloween Promotion 2024"
+    }
+  ],
+  "order": {
+    "amount": 10500,
+    "discount_amount": 5000,
+    "total_discount_amount": 5000,
+    "total_amount": 5500,
+    "applied_discount_amount": 5000,
+    "total_applied_discount_amount": 5000,
+    "items": [
+      {
+        "object": "order_item",
+        "source_id": "halloween_skeleton_decoration",
+        "related_object": "product",
+        "quantity": 2,
+        "amount": 5000,
+        "discount_amount": 2000,
+        "applied_discount_amount": 2000,
+        "price": 2500,
+        "subtotal_amount": 3000,
+        "product": {
+          "name": "Skeleton Decoration",
+          "metadata": {
+            "category": "Halloween"
+          }
+        }
+      },
+      {
+        "object": "order_item",
+        "source_id": "halloween_pumpkin_lights",
+        "related_object": "product",
+        "quantity": 2,
+        "amount": 3600,
+        "discount_amount": 2000,
+        "applied_discount_amount": 2000,
+        "price": 1800,
+        "subtotal_amount": 1600,
+        "product": {
+          "name": "Pumpkin String Lights",
+          "metadata": {
+            "category": "Halloween"
+          }
+        }
+      },
+      {
+        "object": "order_item",
+        "source_id": "halloween_witch_hat",
+        "related_object": "product",
+        "quantity": 1,
+        "amount": 1200,
+        "discount_amount": 1000,
+        "applied_discount_amount": 1000,
+        "price": 1200,
+        "subtotal_amount": 200,
+        "product": {
+          "name": "Witch Hat",
+          "metadata": {
+            "category": "Halloween"
+          }
+        }
+      }
+    ],
+    "metadata": {},
+    "customer_id": "cust_abc123",
+    "referrer_id": null,
+    "object": "order"
+  },
+  "tracking_id": "track_halloween_val_success_001"
+}
+```
+</CodeGroup>
+
+The validation succeeds. The cart now contains 5 Halloween items totaling $105. After applying the $50 discount ($10 per item × 5 items), the final cart total is $55, which meets the $50 minimum requirement.
+
+## Step 4: Redemption
+
+After successful validation, redeem the promotion to complete the purchase.
+
+### Request
+
+<CodeGroup>
+```json POST /v1/redemptions
+{
+  "customer": {
+    "source_id": "customer_12345",
+    "name": "Jane Smith",
+    "email": "[email protected]"
+  },
+  "redeemables": [
+    {
+      "object": "promotion_tier",
+      "id": "promo_halloween10off"
+    }
+  ],
+  "order": {
+    "amount": 10500,
+    "source_id": "order_halloween_001",
+    "items": [
+      {
+        "source_id": "halloween_skeleton_decoration",
+        "quantity": 2,
+        "price": 2500,
+        "related_object": "product",
+        "product": {
+          "name": "Skeleton Decoration",
+          "metadata": {
+            "category": "Halloween"
+          }
+        }
+      },
+      {
+        "source_id": "halloween_pumpkin_lights",
+        "quantity": 2,
+        "price": 1800,
+        "related_object": "product",
+        "product": {
+          "name": "Pumpkin String Lights",
+          "metadata": {
+            "category": "Halloween"
+          }
+        }
+      },
+      {
+        "source_id": "halloween_witch_hat",
+        "quantity": 1,
+        "price": 1200,
+        "related_object": "product",
+        "product": {
+          "name": "Witch Hat",
+          "metadata": {
+            "category": "Halloween"
+          }
+        }
+      }
+    ]
+  }
+}
+```
+</CodeGroup>
+
+### Response
+
+<CodeGroup>
+```json 200 OK
+{
+  "redemptions": [
+    {
+      "id": "r_halloween_redemption_001",
+      "customer_id": "cust_abc123",
+      "tracking_id": "track_halloween_redemption_001",
+      "date": "2024-10-13T12:30:00.000Z",
+      "order": {
+        "id": "ord_halloween_order_001",
+        "source_id": "order_halloween_001",
+        "status": "PAID",
+        "amount": 10500,
+        "discount_amount": 5000,
+        "total_discount_amount": 5000,
+        "total_amount": 5500,
+        "applied_discount_amount": 5000,
+        "total_applied_discount_amount": 5000,
+        "items": [
+          {
+            "object": "order_item",
+            "source_id": "halloween_skeleton_decoration",
+            "related_object": "product",
+            "quantity": 2,
+            "amount": 5000,
+            "discount_amount": 2000,
+            "applied_discount_amount": 2000,
+            "price": 2500,
+            "subtotal_amount": 3000,
+            "product": {
+              "name": "Skeleton Decoration",
+              "metadata": {
+                "category": "Halloween"
+              }
+            }
+          },
+          {
+            "object": "order_item",
+            "source_id": "halloween_pumpkin_lights",
+            "related_object": "product",
+            "quantity": 2,
+            "amount": 3600,
+            "discount_amount": 2000,
+            "applied_discount_amount": 2000,
+            "price": 1800,
+            "subtotal_amount": 1600,
+            "product": {
+              "name": "Pumpkin String Lights",
+              "metadata": {
+                "category": "Halloween"
+              }
+            }
+          },
+          {
+            "object": "order_item",
+            "source_id": "halloween_witch_hat",
+            "related_object": "product",
+            "quantity": 1,
+            "amount": 1200,
+            "discount_amount": 1000,
+            "applied_discount_amount": 1000,
+            "price": 1200,
+            "subtotal_amount": 200,
+            "product": {
+              "name": "Witch Hat",
+              "metadata": {
+                "category": "Halloween"
+              }
+            }
+          }
+        ],
+        "customer_id": "cust_abc123",
+        "referrer_id": null,
+        "object": "order"
+      },
+      "customer": {
+        "id": "cust_abc123",
+        "source_id": "customer_12345",
+        "name": "Jane Smith",
+        "email": "[email protected]",
+        "object": "customer"
+      },
+      "result": "SUCCESS",
+      "promotion_tier": {
+        "id": "promo_halloween10off",
+        "name": "$10 off Halloween items",
+        "banner": "Get $10 off each Halloween item",
+        "campaign": {
+          "id": "camp_halloween2024"
+        }
+      }
+    }
+  ],
+  "parent_redemption": {
+    "id": "r_halloween_parent_001",
+    "customer_id": "cust_abc123",
+    "tracking_id": "track_halloween_redemption_001",
+    "date": "2024-10-13T12:30:00.000Z",
+    "order": {
+      "id": "ord_halloween_order_001",
+      "source_id": "order_halloween_001",
+      "status": "PAID",
+      "customer_id": "cust_abc123",
+      "referrer_id": null,
+      "amount": 10500,
+      "discount_amount": 5000,
+      "applied_discount_amount": 5000,
+      "total_discount_amount": 5000,
+      "total_applied_discount_amount": 5000,
+      "total_amount": 5500,
+      "object": "order"
+    },
+    "customer": {
+      "id": "cust_abc123",
+      "source_id": "customer_12345",
+      "name": "Jane Smith",
+      "email": "[email protected]",
+      "object": "customer"
+    },
+    "result": "SUCCESS"
+  },
+  "order": {
+    "id": "ord_halloween_order_001",
+    "source_id": "order_halloween_001",
+    "created_at": "2024-10-13T12:30:00.000Z",
+    "updated_at": null,
+    "status": "PAID",
+    "amount": 10500,
+    "discount_amount": 5000,
+    "total_discount_amount": 5000,
+    "total_amount": 5500,
+    "applied_discount_amount": 5000,
+    "total_applied_discount_amount": 5000,
+    "customer": {
+      "id": "cust_abc123",
+      "object": "customer"
+    },
+    "customer_id": "cust_abc123",
+    "referrer_id": null,
+    "object": "order",
+    "redemptions": {
+      "r_halloween_parent_001": {
+        "date": "2024-10-13T12:30:00.000Z",
+        "related_object_type": "redemption",
+        "related_object_id": "r_halloween_parent_001",
+        "stacked": [
+          "r_halloween_redemption_001"
+        ]
+      }
+    }
+  }
+}
+```
+</CodeGroup>
+
+The redemption is successful. The customer purchased 5 Halloween items for $55 (original price $105 - $50 discount).
+
+## Summary
+
+This guide demonstrated a complete promotion workflow:
+
+1. **Qualification** - Used `PRODUCTS_DISCOUNT` scenario to show which items are eligible for the promotion and display strike-through pricing
+2. **Validation (failed)** - Cart total after discount ($25) was below the $50 minimum requirement
+3. **Validation (success)** - Customer added more items; cart total after discount ($55) met the $50 minimum
+4. **Redemption** - Successfully redeemed the promotion and completed the purchase
+
+## Related resources
+
+* [Qualification - checking eligibility](/guides/checking-eligibility)
+* [Qualifications API](/api-reference/qualifications/check-eligibility)
+* [Validations API](/api-reference/validations/validation-object)
+* [Redemptions API](/api-reference/redemptions/redemption-object)
+* [Validation rules](/api-reference/validation-rules/validation-rule-object)
