@@ -59,6 +59,7 @@ export const updateMdTablesInDoc = async () => {
       );
 
       const title = docFile?.title ?? objectName;
+      console.log(321321, title);
 
       const newFileContent = _.compact([
         `---
@@ -80,7 +81,10 @@ mode: "frame"
 
       await fs.mkdir(path.dirname(docPath), { recursive: true });
 
-      await fs.writeFile(docPath, newFileContent);
+      if (title === "Publication Object") {
+        console.log(newFileContent.replaceAll(" - ", " &#45; "));
+      }
+      await fs.writeFile(docPath, newFileContent.replaceAll(" -", " &#45;"));
       console.log(`Updated table in ${docFile} `);
     } catch (e) {
       console.log(`Error for ${objectName}`, e);
