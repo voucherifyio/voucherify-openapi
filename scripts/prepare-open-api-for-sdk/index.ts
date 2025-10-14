@@ -22,6 +22,7 @@ import {
 } from "./remove-bugged-tags-from-open-api";
 import { removeUnwantedProperties } from "./remove-unwanted-properties";
 import addMissingDefaults from "./add-missing-defaults";
+import { removeRequiredFromRequestsAndResponses } from "./remove-required-from-request-and-responses";
 
 const options = minimist(process.argv.slice(2));
 
@@ -66,7 +67,7 @@ const supportedLanguages: {
   js: {
     name: "js",
     supportOauth: true,
-    breakingChangesVersion: 2,
+    breakingChangesVersion: 3,
   },
 };
 
@@ -527,7 +528,7 @@ const main = async (languageOptions: LanguageOptions) => {
   }
 
   // Building all together
-  const newOpenApiFile = cleanUpDescriptionsInEntireObject({
+  let newOpenApiFile = cleanUpDescriptionsInEntireObject({
     ...openAPIContent,
     components: {
       ...openAPIContent.components,
@@ -560,13 +561,30 @@ const main = async (languageOptions: LanguageOptions) => {
       {
         $ref: "#/components/schemas/OrderCalculated",
       };
-    ///
     newOpenApiFile.components.schemas.LoyaltiesMembersPointsExpirationListResponseBody.properties.data.items =
       newOpenApiFile.components.schemas.LoyaltyPointsBucket;
     newOpenApiFile.components.schemas.LoyaltyCardTransaction.properties.details.properties.balance =
       newOpenApiFile.components.schemas.VoucherBalance;
     newOpenApiFile.components.schemas.VoucherTransaction.properties.details.properties.balance =
       newOpenApiFile.components.schemas.VoucherBalance;
+  }
+  if (languageOptions.breakingChangesVersion <= 2) {
+    newOpenApiFile =
+      removeRequiredFromRequestsAndResponses(newOpenApiFile).spec;
+
+    const addToRequestBodyIn = {
+      "/v1/vouchers/{code}": ["put"],
+      "/v1/vouchers/{code}/balance": ["post"],
+      "/v1/vouchers/import": ["post"],
+      "/v1/vouchers/bulk/async": ["post"],
+      "/v1/vouchers/metadata/async": ["post"],
+    };
+
+    for (const [path, methods] of Object.entries(addToRequestBodyIn)) {
+      for (const method of methods) {
+        newOpenApiFile.paths[path][method].requestBody.required = true;
+      }
+    }
   }
   //////////////////////////////////////////////////////////////////////////////
   ///////////////////////////END OF BREAKING CHANGES////////////////////////////
