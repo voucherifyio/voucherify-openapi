@@ -65,7 +65,7 @@ export const updateMdTablesInDoc = async () => {
 title: "${title}"
 mode: "frame"
 ---`,
-        '<div class="prose custom-html">',
+        '<div class="prose dark:prose-invert custom-html">',
         docFile?.htmlDescription,
         fileContentAsHtml,
         "</div>",
