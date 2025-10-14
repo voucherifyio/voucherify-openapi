@@ -81,10 +81,13 @@ mode: "frame"
 
       await fs.mkdir(path.dirname(docPath), { recursive: true });
 
-      if (title === "Publication Object") {
-        console.log(newFileContent.replaceAll(" - ", " &#45; "));
-      }
-      await fs.writeFile(docPath, newFileContent.replaceAll(" -", " &#45;"));
+      await fs.writeFile(
+        docPath,
+        newFileContent
+          .replaceAll(" -", " &#45;")
+          .replaceAll(" =", " &#61;")
+          .replaceAll(" +", " &#43;"),
+      );
       console.log(`Updated table in ${docFile} `);
     } catch (e) {
       console.log(`Error for ${objectName}`, e);
