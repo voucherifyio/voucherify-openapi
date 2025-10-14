@@ -567,6 +567,7 @@ const main = async (languageOptions: LanguageOptions) => {
       newOpenApiFile.components.schemas.VoucherBalance;
     newOpenApiFile.components.schemas.VoucherTransaction.properties.details.properties.balance =
       newOpenApiFile.components.schemas.VoucherBalance;
+    //NOTHING MORE HERE!
   }
   if (languageOptions.breakingChangesVersion <= 2) {
     newOpenApiFile =
@@ -585,7 +586,10 @@ const main = async (languageOptions: LanguageOptions) => {
         newOpenApiFile.paths[path][method].requestBody.required = true;
       }
     }
+    //NOTHING MORE HERE!
   }
+  //!!!!!!!!!!!!!!!!!!!TYPE MORE BREAKING CHANGES BELOW!!!!!!!!!!!!!!!!!!!!!!!!!
+
   //////////////////////////////////////////////////////////////////////////////
   ///////////////////////////END OF BREAKING CHANGES////////////////////////////
   //////////////////////////////////////////////////////////////////////////////
