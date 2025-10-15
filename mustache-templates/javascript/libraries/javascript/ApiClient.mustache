@@ -278,36 +278,6 @@ class ApiClient {
     }
 
     {{#emitJSDoc}}/**
-    * Builds a string representation of an array-type actual parameter, according to the given collection format.
-    * @param {Array} param An array parameter.
-    * @param {module:{{#invokerPackage}}{{.}}/{{/invokerPackage}}ApiClient.CollectionFormatEnum} collectionFormat The array element separator strategy.
-    * @returns {String|Array} A string representation of the supplied collection, using the specified delimiter. Returns
-    * <code>param</code> as is if <code>collectionFormat</code> is <code>multi</code>.
-    */{{/emitJSDoc}}
-    buildCollectionParam(param, collectionFormat) {
-        if (param == null) {
-            return null;
-        }
-        switch (collectionFormat) {
-            case 'csv':
-                return param.map(this.paramToString, this).join(',');
-            case 'ssv':
-                return param.map(this.paramToString, this).join(' ');
-            case 'tsv':
-                return param.map(this.paramToString, this).join('\t');
-            case 'pipes':
-                return param.map(this.paramToString, this).join('|');
-            case 'multi':
-                //return the array directly as SuperAgent will handle it as expected
-                return param.map(this.paramToString, this);
-            case 'passthrough':
-                return param;
-            default:
-                throw new Error('Unknown collection format: ' + collectionFormat);
-        }
-    }
-
-    {{#emitJSDoc}}/**
     * Applies authentication headers to the request.
     * @param {Object} request The request object created by a <code>superagent()</code> call.
     * @param {Array.<String>} authNames An array of authentication method names.
@@ -521,6 +491,27 @@ class ApiClient {
         }
 
         {{#usePromises}}
+        if (callback) {
+            request.end((error, response) => {
+                var data = null;
+                if (!error) {
+                    try {
+                        data = this.deserialize(response, returnType);
+                        if (this.enableCookies && typeof window === 'undefined'){
+                            this.agent._saveCookies(response);
+                        }
+                    } catch (err) {
+                        error = err;
+                    }
+                }
+
+                callback(error, data, response);
+            });
+
+            return request;
+        }
+
+
         return new Promise((resolve, reject) => {
             request.end((error, response) => {
                 if (error) {
@@ -551,25 +542,17 @@ class ApiClient {
 
         {{/usePromises}}
         {{^usePromises}}
-        request.end((error, response) => {
-            if (callback) {
-                var data = null;
-                if (!error) {
-                    try {
-                        data = this.deserialize(response, returnType);
-                        if (this.enableCookies && typeof window === 'undefined'){
-                            this.agent._saveCookies(response);
-                        }
-                    } catch (err) {
-                        error = err;
-                    }
-                }
-
-                callback(error, data, response);
+        return request.then((response) => {
+            try {
+                 const data = this.deserialize(response, returnType);
+                 if (this.enableCookies && typeof window === 'undefined'){
+                    this.agent._saveCookies(response);
+                 }
+                 return data;
+            } catch (err) {
+                throw err;
             }
         });
-
-        return request;
         {{/usePromises}}
     }
 
