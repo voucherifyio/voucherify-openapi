@@ -561,6 +561,10 @@ const main = async (languageOptions: LanguageOptions) => {
       newOpenApiFile.components.schemas.VoucherBalance;
     newOpenApiFile.components.schemas.VoucherTransaction.properties.details.properties.balance =
       newOpenApiFile.components.schemas.VoucherBalance;
+
+    if(languageOptions.name === "dotnet") {
+      newOpenApiFile.paths['/v1/products/{productId}/skus'].get.operationId = 'list-skus-in-product'
+    }
   }
   //////////////////////////////////////////////////////////////////////////////
   ///////////////////////////END OF BREAKING CHANGES////////////////////////////
