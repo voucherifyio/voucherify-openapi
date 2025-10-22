@@ -59,7 +59,6 @@ export const updateMdTablesInDoc = async () => {
       );
 
       const title = docFile?.title ?? objectName;
-      console.log(321321, title);
 
       const newFileContent = _.compact([
         `---
