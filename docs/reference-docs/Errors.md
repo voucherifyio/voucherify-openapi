@@ -23,20 +23,22 @@ The Voucherify API uses conventional HTTP status codes to indicate success or fa
 > Voucherify attempts to provide a developer-friendly API, hence sometimes you can find a hint on how to fix an error right in its details (like in the example above).
 
 
-| Attributes | Description |
-|:---:|:---|
-| `code` | The HTTP status code of error returned. Possible values are varients of: `2xx`, `4xx`, or `5xx`. |
-| `key` | For API object errors, a short string from the list on the right hand side, describing the kind of error which occurred. |
-| `message` | A human-readable message providing a short description about the error. |
-| `details` | A human-readable message providing more details about the error. |
+| Attributes | Description                                                                                                              |
+| :--------: | :----------------------------------------------------------------------------------------------------------------------- |
+|   `code`   | The HTTP status code of error returned. Possible values are varients of: `2xx`, `4xx`, or `5xx`.                         |
+|   `key`    | For API object errors, a short string from the list on the right hand side, describing the kind of error which occurred. |
+| `message`  | A human-readable message providing a short description about the error.                                                  |
+| `details`  | A human-readable message providing more details about the error.                                                         |
 
 ## HTTP status code summary
+
 
 | HTTP Status Code | Text | Description |
 |:---|:---|:---|
 | 400 | Bad Request | The request was invalid. It may occur for various reasons - a malformed JSON or a violated rule (e.g. an attempt to redeem an expired voucher). |
 | 401 | Unauthorized | Authentication has failed or has not been provided yet. |
 | 402 | Payment Required | The request exceeded your current pricing plan (we send friendly reminders first). |
+| 403 | Forbidden | The requested resource cannot be accessed. |
 | 404 | Not Found | The requested resource could not be found. |
 | 405 | Method Not Allowed | The request used a method (GET, POST, etc.) that is not available for a given resource. Error details include a hint on which methods are allowed. |
 | 406 | Not Acceptable | The API is unable to produce a response in a format specified by the `Accept` header. In most cases the only available response format is `application/json`. |
@@ -54,50 +56,51 @@ The table below shows a list of errors that may be returned along with a brief d
 >  
 > Go to **Project Settings** > Error Messages to customize an error message. Then click on *Create new translations group* to create specific error messages. [Read more here](https://support.voucherify.io/article/264-how-can-i-create-custom-errors).
 
-| **Error** | **Reason** |
-|:---|:---|
-| `already_rolled_back` | redemption was rolled back before the current operation start time |
-| `customer_rules_violated` | customer did not match to the segment |
-| `duplicate_resource_key` | resource identifier is in use |
-| `gift_amount_exceeded` | gift amount has been exceeded |
-| `invalid_add_balance_params` | balance object was specified incorrectly |
-| `invalid_amount` | order amount was specified incorrectly |
-| `invalid_campaign_params` | campaign object was specified incorrectly |
-| `invalid_code_config` | voucher code configuration object was specified incorrectly |
-| `invalid_customer` | customer object was specified incorrectly |
-| `invalid_export_params` | export object was specified incorrectly |
-| `invalid_gift` | gift object was specified incorrectly |
-| `invalid_order` | order object was specified incorrectly |
-| `invalid_payload` | a request body is invalid and cannot be processed |
-| `invalid_product` | product object was specified incorrectly |
-| `invalid_publish_params` | publication object was specified incorrectly |
-| `invalid_query_params` | input request query parameters are invalid |
-| `invalid_rollback_params` | redemption rollback object was specified incorrectly |
-| `invalid_sku` | SKU object was specified incorrectly |
-| `invalid_validation_rules` | validation rules object was specified incorrectly |
-| `invalid_voucher` | voucher object was specified incorrectly (e.g., `gift` or `discount` is missing) |
-| `loyalty_card_points_exceeded` | loyalty card points were exceeded |
-| `missing_amount` | order amount was not specified |
-| `missing_customer` | customer was not specified |
-| `missing_order` | order is missing |
-| `missing_order_items` | order items were not specified |
-| `missing_order_items_amount` | missing order item's amount(s) |
-| `missing_reward` | reward is missing |
-| `multiple_requests` | multiple requests detected; i.e. when a redemption is in progress and a session lock is in place, then an attempt to validate the voucher will result in this error because it is unknown whether the voucher can or cannot be used |
-| `no_voucher_suitable_for_publication` | lack of vouchers suitable for publication |
-| `not_found` | resource with given ID/code does not exist |
-| `order_rules_violated` | order did not match validation rules |
-| `promotion_inactive` | promotion is inactive |
-| `promotion_not_active_now` | promotion is not active in the given timeframe |
-| `quantity_exceeded` | voucher's redemptions limit has been exceeded |
-| `query_too_large` | request body payload too large or query string too large |
-| `redemption_rules_violated` | the redemption did not match validation rules |
-| `referrer_not_permitted_to_redeem` | the referral code is being redeemed by the referrer |
-| `resource_not_found` | voucher with given code does not exist |
-| `voucher_disabled` | voucher has been disabled (active: false) |
-| `voucher_expired` | voucher has already expired (after expiration date) |
-| `voucher_not_active` | voucher is not active yet (before start date) |
-| `voucher_not_active_now` | voucher is not active in the given timeframe |
+| **Error**                             | **Reason**                                                                                                                                                                                                                          |
+| :------------------------------------ | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `already_rolled_back`                 | redemption was rolled back before the current operation start time                                                                                                                                                                  |
+| `customer_rules_violated`             | customer did not match to the segment                                                                                                                                                                                               |
+| `duplicate_found`                     | resource with the same identifier was found                                                                                                                                                                                         |
+| `duplicate_resource_key`              | resource identifier is in use                                                                                                                                                                                                       |
+| `gift_amount_exceeded`                | gift amount has been exceeded                                                                                                                                                                                                       |
+| `invalid_add_balance_params`          | balance object was specified incorrectly                                                                                                                                                                                            |
+| `invalid_amount`                      | order amount was specified incorrectly                                                                                                                                                                                              |
+| `invalid_campaign_params`             | campaign object was specified incorrectly                                                                                                                                                                                           |
+| `invalid_code_config`                 | voucher code configuration object was specified incorrectly                                                                                                                                                                         |
+| `invalid_customer`                    | customer object was specified incorrectly                                                                                                                                                                                           |
+| `invalid_export_params`               | export object was specified incorrectly                                                                                                                                                                                             |
+| `invalid_gift`                        | gift object was specified incorrectly                                                                                                                                                                                               |
+| `invalid_order`                       | order object was specified incorrectly                                                                                                                                                                                              |
+| `invalid_payload`                     | a request body is invalid and cannot be processed                                                                                                                                                                                   |
+| `invalid_product`                     | product object was specified incorrectly                                                                                                                                                                                            |
+| `invalid_publish_params`              | publication object was specified incorrectly                                                                                                                                                                                        |
+| `invalid_query_params`                | input request query parameters are invalid                                                                                                                                                                                          |
+| `invalid_rollback_params`             | redemption rollback object was specified incorrectly                                                                                                                                                                                |
+| `invalid_sku`                         | SKU object was specified incorrectly                                                                                                                                                                                                |
+| `invalid_validation_rules`            | validation rules object was specified incorrectly                                                                                                                                                                                   |
+| `invalid_voucher`                     | voucher object was specified incorrectly (e.g., `gift` or `discount` is missing)                                                                                                                                                    |
+| `loyalty_card_points_exceeded`        | loyalty card points were exceeded                                                                                                                                                                                                   |
+| `missing_amount`                      | order amount was not specified                                                                                                                                                                                                      |
+| `missing_customer`                    | customer was not specified                                                                                                                                                                                                          |
+| `missing_order`                       | order is missing                                                                                                                                                                                                                    |
+| `missing_order_items`                 | order items were not specified                                                                                                                                                                                                      |
+| `missing_order_items_amount`          | missing order item's amount(s)                                                                                                                                                                                                      |
+| `missing_reward`                      | reward is missing                                                                                                                                                                                                                   |
+| `multiple_requests`                   | multiple requests detected; i.e. when a redemption is in progress and a session lock is in place, then an attempt to validate the voucher will result in this error because it is unknown whether the voucher can or cannot be used |
+| `no_voucher_suitable_for_publication` | lack of vouchers suitable for publication                                                                                                                                                                                           |
+| `not_found`                           | resource with given ID/code does not exist                                                                                                                                                                                          |
+| `order_rules_violated`                | order did not match validation rules                                                                                                                                                                                                |
+| `promotion_inactive`                  | promotion is inactive                                                                                                                                                                                                               |
+| `promotion_not_active_now`            | promotion is not active in the given timeframe                                                                                                                                                                                      |
+| `quantity_exceeded`                   | voucher's redemptions limit has been exceeded                                                                                                                                                                                       |
+| `query_too_large`                     | request body payload too large or query string too large                                                                                                                                                                            |
+| `redemption_rules_violated`           | the redemption did not match validation rules                                                                                                                                                                                       |
+| `referrer_not_permitted_to_redeem`    | the referral code is being redeemed by the referrer                                                                                                                                                                                 |
+| `resource_not_found`                  | voucher with given code does not exist                                                                                                                                                                                              |
+| `voucher_disabled`                    | voucher has been disabled (active: false)                                                                                                                                                                                           |
+| `voucher_expired`                     | voucher has already expired (after expiration date)                                                                                                                                                                                 |
+| `voucher_not_active`                  | voucher is not active yet (before start date)                                                                                                                                                                                       |
+| `voucher_not_active_now`              | voucher is not active in the given timeframe                                                                                                                                                                                        |
 
 ## Custom error messages with Validation Rules
 

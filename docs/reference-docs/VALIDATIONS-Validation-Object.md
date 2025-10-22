@@ -8,75 +8,62 @@ hidden: false
 order: 1
 ---
 
-## Vouchers Validate Response Body
-<p>Response body schema for <strong>POST</strong> <code>v1/vouchers/{code}/validate</code>.</p>
-
-One of:
-
-[Vouchers Validate Valid Response Body](#vouchers-validate-valid-response-body), [Vouchers Validate Invalid Response Body](#vouchers-validate-invalid-response-body)
-
-## Vouchers Validate Valid Response Body
+## Validations Validate Response Body
 | Attributes |  Description |
 |:-----|:--------|
-| valid</br>`boolean` | <p>Indicates whether the voucher is valid within the context of the parameters provided in the request body.</p> |
-| code</br>`string` | <p>Voucher code.</p> |
-| applicable_to | <p>Contains list of items that qualify in the scope of the discount. These are definitions of included products, SKUs, and product collections. These can be discounted.</p> [Applicable To Result List](#applicable-to-result-list) |
-| inapplicable_to | <p>Contains list of items that do not qualify in the scope of the discount. These are definitions of excluded products, SKUs, and product collections. These CANNOT be discounted.</p> [Inapplicable To Result List](#inapplicable-to-result-list) |
-| campaign</br>`string` | <p>Voucher's parent campaign name.</p> |
-| campaign_id</br>`string` | <p>Voucher's parent campaign's unique ID.</p> |
-| metadata</br>`object` | <p>The metadata object stores all custom attributes assigned to the code. A set of key/value pairs that you can attach to a voucher object. It can be useful for storing additional information about the voucher in a structured format.</p> |
-| discount | See: [Discount](#discount) |
-| gift | <p>Gift object response</p> [Gift](#gift) |
-| loyalty</br>`object` | <p>Contains the cost of reward in points.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">points_cost</br><code>number</code></td><td style="text-align:left"><p>Number of points that wlil be deducted from loyaty card for the associated reward.</p></td></tr></tbody></table> |
-| reward</br>`object` | <p>Contains information about the reward that is being validated.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>Unique reward ID assigned by Voucherify.</p></td></tr><tr><td style="text-align:left">assignment_id</br><code>string</code></td><td style="text-align:left"><p>Unique reward assignment ID assigned by Voucherify.</p></td></tr><tr><td style="text-align:left">points</br><code>number</code></td><td style="text-align:left"><p>Number of points applied to the reward.</p></td></tr></tbody></table> |
+| id</br>`string` | <p>Unique identifier of the validation, assigned by Voucherify.</p> **Example:** <p>valid_101740aa2869354c6d</p> |
+| valid</br>`boolean` | <p>The result of the validation. It takes all of the redeemables into account and returns a <code>false</code> if at least one redeemable is inapplicable. Returns <code>true</code> if all redeemables are applicable.</p> |
+| redeemables</br>`array` | <p>Lists validation results of each redeemable. If redeemables_application_mode=&quot;PARTIAL&quot; all redeemables here will be &quot;APPLICABLE&quot;</p> Array any of: [Applicable Redeemable](#applicable-redeemable), [Inapplicable Redeemable](#inapplicable-redeemable), [Skipped Redeemable](#skipped-redeemable) |
+| skipped_redeemables</br>`array` | <p>Lists validation results of each skipped redeemable.</p> |
+| inapplicable_redeemables</br>`array` | <p>Lists validation results of each inapplicable redeemable.</p> |
+| order | All of: 1. [Order Calculated No Customer Data](#order-calculated-no-customer-data)
+2. <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">items</br><code>array</code></td><td style="text-align:left"><p>Array of items applied to the order. It can include up to 500 items.</p></td></tr></tbody></table> |
+| tracking_id</br>`string` | <p>Hashed customer source ID.</p> **Example:** <p>track_VAVo1/z+G2GI2LPw==</p> |
+| session | See: [Session](#session) |
+| stacking_rules | See: [Stacking Rules](#stacking-rules) |
+
+## Applicable Redeemable
+| Attributes |  Description |
+|:-----|:--------|
+| status</br>`string` | <p>Indicates whether the redeemable can be applied or not applied based on the validation rules.</p> Available values: `APPLICABLE` |
+| id</br>`string` | <p>Redeemable ID, i.e. the voucher code.</p> |
+| object</br>`string` | <p>Redeemable's object type.</p> Available values: `voucher`, `promotion_tier` |
 | order | All of: 1. [Order Calculated No Customer Data](#order-calculated-no-customer-data)
 2. <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">items</br><code>array</code></td><td style="text-align:left"><p>Array of items applied to the order. It can include up to 500 items.</p> Array of <a href="#order-item-calculated">Order Item Calculated</a></td></tr></tbody></table> |
-| session | <p>Schema model for session lock object. The session object contains information about the session key that was used to establish a session between multiple parallel validation and redemption requests.</p> [Session](#session) |
-| start_date</br>`string` | <p>Activation timestamp defines when the voucher starts to be active in ISO 8601 format. Voucher is inactive before this date.</p> |
-| expiration_date</br>`string` | <p>Expiration timestamp defines when the voucher expires in ISO 8601 format. Voucher is inactive after this date.</p> |
-| tracking_id</br>`string` | <p>Hashed order source ID.</p> |
+| applicable_to | See: [Applicable To Result List](#applicable-to-result-list) |
+| inapplicable_to | See: [Inapplicable To Result List](#inapplicable-to-result-list) |
+| result | <p>Specifies the redeemable's end effect on the order. This object is unique to each type of redeemable.</p> One of: [Coupon Code](#coupon-code), [Gift Card](#gift-card), [Loyalty Card](#loyalty-card), [Promotion Tier](#promotion-tier), [Promotion Stack](#promotion-stack) |
+| metadata</br>`object` | <p>The metadata object stores all custom attributes in the form of key/value pairs assigned to the redeemable.</p> |
+| categories</br>`array` | Array of [Category with Stacking Rules Type](#category-with-stacking-rules-type) |
+| campaign_name</br>`string` | <p>Campaign name. Displayed only if the <code>options.expand</code> is passed with a <code>redeemable</code> value in the validation request body.</p> |
+| campaign_id</br>`string` | <p>Unique campaign ID assigned by Voucherify. Displayed only if the <code>options.expand</code> is passed with a <code>redeemable</code> value in the validation request body.</p> **Example:** <p>camp_pqZjuhG6Mgtp4GD0zD7b8hA3</p> |
+| name</br>`string` | <p>Name of the promotion tier. Displayed only if the <code>options.expand</code> is passed with a <code>redeemable</code> value in the validation request body.</p> |
 
-## Vouchers Validate Invalid Response Body
+## Inapplicable Redeemable
 | Attributes |  Description |
 |:-----|:--------|
-| valid</br>`boolean` | <p>Indicates whether the voucher is valid within the context of the parameters provided in the request body.</p> |
-| code</br>`string` | <p>Voucher code.</p> |
-| error</br>`object` | <p>Detailed failure cause for the invalid voucher if the reason has a translation defined in the Dashboard → Project Settings → Error Messages.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">code</br><code>number</code></td><td style="text-align:left"><p>Voucher code.</p></td></tr><tr><td style="text-align:left">key</br><code>string</code></td><td style="text-align:left"></td></tr><tr><td style="text-align:left">message</br><code>string</code></td><td style="text-align:left"><p>Customized error message.</p></td></tr><tr><td style="text-align:left">details</br><code>string</code></td><td style="text-align:left"></td></tr><tr><td style="text-align:left">request_id</br><code>string</code></td><td style="text-align:left"></td></tr><tr><td style="text-align:left">resource_id</br><code>string</code></td><td style="text-align:left"></td></tr><tr><td style="text-align:left">resource_type</br><code>string</code></td><td style="text-align:left"></td></tr></tbody></table> |
-| tracking_id</br>`string` | <p>Hashed customer source ID.</p> |
-| customer_id</br>`string` | <p>Unique customer identifier of the customer making the purchase. The ID is assigned by Voucherify.</p> |
-| metadata</br>`object` | <p>The metadata object stores all custom attributes assigned to the code. A set of key/value pairs that you can attach to a voucher object. It can be useful for storing additional information about the voucher in a structured format.</p> |
-| reason</br>`string` |  |
+| status</br>`string` | <p>Indicates whether the redeemable can be applied or not applied based on the validation rules.</p> Available values: `INAPPLICABLE` |
+| id</br>`string` | <p>Redeemable ID, i.e. the voucher code.</p> |
+| object</br>`string` | <p>Redeemable's object type.</p> Available values: `voucher`, `promotion_tier` |
+| result</br>`object` | <p>Includes the error object with details about the reason why the redeemable is inapplicable</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">error</td><td style="text-align:left">See: <a href="#error-object">Error Object</a></td></tr><tr><td style="text-align:left">details</br><code>object</code></td><td style="text-align:left"><p>Provides details about the reason why the redeemable is inapplicable.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">message</br><code>string</code></td><td style="text-align:left"><p>Generic message from the <code>message</code> string shown in the <code>error</code> object or the message configured in a validation rule.</p></td></tr><tr><td style="text-align:left">key</br><code>string</code></td><td style="text-align:left"><p>Generic message from the <code>key</code> string shown in the <code>error</code> object.</p></td></tr></tbody></table></td></tr><tr><td style="text-align:left">bundle</td><td style="text-align:left">See: <a href="#bundle-details">Bundle Details</a></td></tr></tbody></table> |
+| metadata</br>`object` | <p>The metadata object stores all custom attributes in the form of key/value pairs assigned to the redeemable.</p> |
+| categories</br>`array` | Array of [Category with Stacking Rules Type](#category-with-stacking-rules-type) |
+| campaign_name</br>`string` | <p>Campaign name. Displayed only if the <code>options.expand</code> is passed with a <code>redeemable</code> value in the validation request body.</p> |
+| campaign_id</br>`string` | <p>Unique campaign ID assigned by Voucherify. Displayed only if the <code>options.expand</code> is passed with a <code>redeemable</code> value in the validation request body.</p> **Example:** <p>camp_pqZjuhG6Mgtp4GD0zD7b8hA3</p> |
+| name</br>`string` | <p>Name of the promotion tier. Displayed only if the <code>options.expand</code> is passed with a <code>redeemable</code> value in the validation request body.</p> |
 
-## Applicable To Result List
+## Skipped Redeemable
 | Attributes |  Description |
 |:-----|:--------|
-| data</br>`array` | <p>Contains array of items to which the discount can apply.</p> Array of [Applicable To](#applicable-to) |
-| total</br>`integer` | <p>Total number of objects defining included products, SKUs, or product collections.</p> |
-| object</br>`string` | <p>The type of the object represented by JSON.</p> Available values: `list` |
-| data_ref</br>`string` | <p>The type of the object represented by JSON.</p> Available values: `data` |
-
-## Inapplicable To Result List
-| Attributes |  Description |
-|:-----|:--------|
-| data</br>`array` | <p>Contains array of items to which the discount cannot apply.</p> Array of [Inapplicable To](#inapplicable-to) |
-| total</br>`integer` | <p>Total number of objects defining included products, SKUs, or product collections.</p> |
-| object</br>`string` | <p>The type of the object represented by JSON.</p> Available values: `list` |
-| data_ref</br>`string` | <p>The type of the object represented by JSON.</p> Available values: `data` |
-
-## Discount
-<p>Contains information about discount.</p>
-
-One of:
-
-[Amount](#amount), [Unit](#unit), [Unit Multiple](#unit-multiple), [Percent](#percent), [Fixed](#fixed)
-
-## Gift
-| Attributes |  Description |
-|:-----|:--------|
-| amount</br>`number` | <p>Total gift card income over the lifetime of the card. The value is multiplied by 100 to represent 2 decimal places. For example <code>10000 cents</code> for <code>$100.00</code>.</p> |
-| subtracted_amount</br>`integer` | <p>Total amount of subtracted credits over the gift card lifetime.</p> |
-| balance</br>`number` | <p>Available funds. The value is multiplied by 100 to represent 2 decimal places. For example <code>10000 cents</code> for <code>$100.00</code>. <code>balance</code> = <code>amount</code> - <code>subtracted_amount</code> - <code>redemption.redeemed_amount</code>.</p> |
-| effect</br>`string` | <p>Defines how the credits are applied to the customer's order.</p> Available values: `APPLY_TO_ORDER`, `APPLY_TO_ITEMS` |
+| status</br>`string` | <p>Indicates whether the redeemable can be applied or not applied based on the validation rules.</p> Available values: `SKIPPED` |
+| id</br>`string` | <p>Redeemable ID, i.e. the voucher code.</p> |
+| object</br>`string` | <p>Redeemable's object type.</p> Available values: `voucher`, `promotion_tier` |
+| result</br>`object` | <p>Provides details about the reason why the redeemable is skipped.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">details</td><td style="text-align:left">One of: <a href="#validations-redeemable-skipped-result-limit-exceeded">Validations Redeemable Skipped Result Limit Exceeded</a>, <a href="#validations-redeemable-skipped-result-category-limit-exceeded">Validations Redeemable Skipped Result Category Limit Exceeded</a>, <a href="#validations-redeemable-skipped-result-redeemables-limit-exceeded">Validations Redeemable Skipped Result Redeemables Limit Exceeded</a>, <a href="#validations-redeemable-skipped-result-redeemables-category-limit-exceeded">Validations Redeemable Skipped Result Redeemables Category Limit Exceeded</a>, <a href="#validations-redeemable-skipped-result-exclusion-rules-not-met">Validations Redeemable Skipped Result Exclusion Rules Not Met</a>, <a href="#validations-redeemable-skipped-result-preceding-validation-failed">Validations Redeemable Skipped Result Preceding Validation Failed</a></td></tr></tbody></table> |
+| metadata</br>`object` | <p>The metadata object stores all custom attributes in the form of key/value pairs assigned to the redeemable.</p> |
+| categories</br>`array` | Array of [Category with Stacking Rules Type](#category-with-stacking-rules-type) |
+| campaign_name</br>`string` | <p>Campaign name. Displayed only if the <code>options.expand</code> is passed with a <code>redeemable</code> value in the validation request body.</p> |
+| campaign_id</br>`string` | <p>Unique campaign ID assigned by Voucherify. Displayed only if the <code>options.expand</code> is passed with a <code>redeemable</code> value in the validation request body.</p> **Example:** <p>camp_pqZjuhG6Mgtp4GD0zD7b8hA3</p> |
+| name</br>`string` | <p>Name of the promotion tier. Displayed only if the <code>options.expand</code> is passed with a <code>redeemable</code> value in the validation request body.</p> |
 
 ## Order Calculated No Customer Data
 | Attributes |  Description |
@@ -103,6 +90,33 @@ One of:
 | referrer | [Referrer Id](#referrer-id) |
 | redemptions</br>`object` | <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">[propertyName]</td><td style="text-align:left">See: <a href="#order-redemptions">Order Redemptions</a></td></tr></tbody></table> |
 
+## Session
+| Attributes |  Description |
+|:-----|:--------|
+| key</br>`string` | <p>The session unique ID assigned by Voucherify or your own unique session ID. Sending an existing ID will result in overwriting an existing session. If no session key is provided, then a new ID will be generated.</p> |
+| type</br>`string` | <p>This parameter is required to establish a new session.</p> Available values: `LOCK` |
+| ttl</br>`number` | <p>Value for the period of time that the session is active. Units for this parameter are defined by the session.ttl_unit parameter.</p> |
+| ttl_unit</br>`string` | <p>Defines the type of unit in which the session time is counted.</p> Available values: `DAYS`, `HOURS`, `MICROSECONDS`, `MILLISECONDS`, `MINUTES`, `NANOSECONDS`, `SECONDS` |
+
+## Stacking Rules
+| Attributes |  Description |
+|:-----|:--------|
+| redeemables_limit</br>`integer` | <p>Defines how many redeemables can be sent in one request. Note: more redeemables means more processing time.</p> |
+| applicable_redeemables_limit</br>`integer` | <p>Defines how many redeemables can be applied in one request. The number must be less than or equal to <code>redeemables_limit</code>. For example, a user can select 30 discounts but only 5 will be applied to the order and the remaining will be <code>SKIPPED</code> according to the <code>redeemables_sorting_rule</code>.</p> |
+| applicable_redeemables_per_category_limit</br>`integer` | <p>Defines how many redeemables with the same category can be applied in one request. The number must be less than or equal to <code>applicable_redeemables_limit</code>. The ones above the limit will be <code>SKIPPED</code> according to the <code>redeemables_sorting_rule</code>.</p> |
+| applicable_redeemables_category_limits</br>`object` | <p>Lists categories by category IDs (keys) and defines their limits (values) of applicable redeemables that belong to campaigns with that category.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">[propertyName]</br><code>integer</code></td><td style="text-align:left"><p>Limit of applicable redeemables per category.</p></td></tr></tbody></table> |
+| applicable_exclusive_redeemables_limit</br>`integer` | <p>Defines how many redeemables with an assigned exclusive category can be applied in one request. The ones above the limit will be <code>SKIPPED</code> according to the <code>redeemables_sorting_rule</code>.</p> |
+| applicable_exclusive_redeemables_per_category_limit</br>`integer` | <p>Defines how many redeemables with an exclusive category per category in stacking rules can be applied in one request. The ones above the limit will be <code>SKIPPED</code> according to the <code>redeemables_sorting_rule</code>.</p> |
+| exclusive_categories</br>`array` | <p>Lists the IDs of exclusive categories. A redeemable from a campaign with an exclusive category is the only redeemable to be redeemed when applied with redeemables from other campaigns unless these campaigns are exclusive or joint.</p> |
+| joint_categories</br>`array` | <p>Lists the IDs of the joint categories. A campaign with a joint category is always applied regardless of the exclusivity of other campaigns.</p> |
+| redeemables_application_mode</br>`string` | <p>Defines the application mode for redeemables.<br><code>&quot;ALL&quot;</code> means that all redeemables must be validated for the redemption to be successful.<br><code>&quot;PARTIAL&quot;</code> means that only those redeemables that can be validated will be redeemed. The redeemables that fail validaton will be skipped.</p> Available values: `ALL`, `PARTIAL` |
+| redeemables_sorting_rule</br>`string` | <p>Defines redeemables sorting rule. <code>CATEGORY_HIERARCHY</code> means that redeemables are applied oaccording to the category priority. <code>REQUESTED_ORDER</code> means that redeemables are applied in the sequence provided in the request.</p> Available values: `CATEGORY_HIERARCHY`, `REQUESTED_ORDER` |
+| redeemables_products_application_mode</br>`string` | <p>Defines redeemables products application mode. <code>STACK</code> means that multiple discounts can be applied to a product. <code>ONCE</code> means that only one discount can be applied to the same product.</p> Available values: `STACK`, `ONCE` |
+| redeemables_no_effect_rule</br>`string` | <p>Defines redeemables no effect rule. <code>REDEEM_ANYWAY</code> means that the redeemable will be redeemed regardless of any restrictions or conditions in place. <code>SKIP</code> means that the redeemable will be processed only when an applicable effect is calculated.</p> Available values: `REDEEM_ANYWAY`, `SKIP` |
+| no_effect_skip_categories</br>`array` | <p>Lists category IDs. Redeemables with a given category are skipped even if the <code>redeemables_no_effect_rule</code> is set to <code>REDEEM_ANYWAY</code>. Category IDs can't overlap with the IDs in <code>no_effect_redeem_anyway_categories</code>.</p> |
+| no_effect_redeem_anyway_categories</br>`array` | <p>Lists category IDs. Redeemables with a given category are redeemed anyway even if the <code>redeemables_no_effect_rule</code> is set to <code>SKIP</code>. Category IDs can't overlap with the IDs in <code>no_effect_skip_categories</code>.</p> |
+| redeemables_rollback_order_mode</br>`string` | <p>Defines the rollback mode for the order. <code>WITH_ORDER</code> is a default setting. The redemption is rolled back together with the data about the order, including related discount values. <code>WITHOUT_ORDER</code> allows rolling the redemption back without affecting order data, including the applied discount values.</p> Available values: `WITH_ORDER`, `WITHOUT_ORDER` |
+
 ## Order Item Calculated
 | Attributes |  Description |
 |:-----|:--------|
@@ -128,86 +142,113 @@ One of:
 | object</br>`string` | <p>The type of the object represented by JSON.</p> Available values: `order_item` |
 | metadata</br>`object` | <p>A set of custom key/value pairs that you can attach to an item object. It can be useful for storing additional information about the item in a structured format. It can be used to define business validation rules or discount formulas.</p> |
 
-## Session
+## Applicable To Result List
 | Attributes |  Description |
 |:-----|:--------|
-| key</br>`string` | <p>The session unique ID assigned by Voucherify or your own unique session ID. Sending an existing ID will result in overwriting an existing session. If no session key is provided, then a new ID will be generated.</p> |
-| type</br>`string` | <p>This parameter is required to establish a new session.</p> Available values: `LOCK` |
-| ttl</br>`number` | <p>Value for the period of time that the session is active. Units for this parameter are defined by the session.ttl_unit parameter.</p> |
-| ttl_unit</br>`string` | <p>Defines the type of unit in which the session time is counted.</p> Available values: `DAYS`, `HOURS`, `MICROSECONDS`, `MILLISECONDS`, `MINUTES`, `NANOSECONDS`, `SECONDS` |
+| data</br>`array` | <p>Contains array of items to which the discount can apply.</p> Array of [Applicable To](#applicable-to) |
+| total</br>`integer` | <p>Total number of objects defining included products, SKUs, or product collections.</p> |
+| object</br>`string` | <p>The type of the object represented by JSON.</p> Available values: `list` |
+| data_ref</br>`string` | <p>The type of the object represented by JSON.</p> Available values: `data` |
 
-## Applicable To
+## Inapplicable To Result List
 | Attributes |  Description |
 |:-----|:--------|
-| object</br>`string` | <p>This object stores information about the resource to which the discount is applicable.</p> Available values: `product`, `sku`, `products_collection` |
-| id</br>`string` | <p>Unique product collection, product, or SKU identifier assigned by Voucherify.</p> |
-| source_id</br>`string` | <p>The source identifier from your inventory system.</p> |
-| product_id</br>`string` | <p>Parent product's unique ID assigned by Voucherify.</p> |
-| product_source_id</br>`string` | <p>Parent product's source ID from your inventory system.</p> |
-| price</br>`number` | <p>New fixed price of an item. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $10 price is written as 1000. In case of the fixed price being calculated by the formula, i.e. the price_formula parameter is present in the fixed price definition, this value becomes the fallback value. Such that in a case where the formula cannot be calculated due to missing metadata, for example, this value will be used as the fixed price.</p> |
-| price_formula</br>`number` | <p>Formula used to calculate the discounted price of an item.</p> |
-| effect | <p>Defines how the discount is applied to the customer's order.</p> [Applicable To Effect](#applicable-to-effect) |
-| quantity_limit</br>`integer` | <p>The maximum number of units allowed to be discounted per order line item.</p> |
-| aggregated_quantity_limit</br>`integer` | <p>The maximum number of units allowed to be discounted combined across all matched order line items.</p> |
-| amount_limit</br>`integer` | <p>Upper limit allowed to be applied as a discount per order line item. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $6 maximum discount is written as 600.</p> |
-| aggregated_amount_limit</br>`integer` | <p>Maximum discount amount per order. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $6 maximum discount on the entire order is written as 600. This value is definable for the following discount effects:</p><ul><li><code>APPLY_TO_ITEMS</code> (each item subtotal is discounted equally)</li><li><code>APPLY_TO_ITEMS_BY_QUANTITY</code> (each unit of matched products has the same discount value)</li></ul> |
-| order_item_indices</br>`array` | <p>Lists which order lines are (not) covered by the discount. The order in the array is determined by the sequence of applied discounts, while the numbers correspond to the order lines sent in the <code>order</code> object in the request. The first order line is assigned <code>0</code>, the second order line is assigned <code>1</code>, and so on.</p> |
-| order_item_units</br>`array` | <p>Lists which units within order lines are covered by the discount. The order line items are listed according to sequence of applied discounts while the <code>index</code> corresponds to the order line sent in the <code>order</code> object in the request.</p> Array of: <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">index</br><code>integer</code></td><td style="text-align:left"><p>Number assigned to the order line item in accordance with the order sent in the request.</p></td></tr><tr><td style="text-align:left">units</br><code>array</code></td><td style="text-align:left"><p>Numbers of units in the order line covered by the discount; e.g. <code>2, 5, 8</code> for 10 units with the setting <code>&quot;skip_initially&quot;: 1</code>, <code>&quot;repeat&quot;: 3</code>. The counting of units starts from <code>1</code>. The maximum quantity of all handled units is 1000. If the quantity of all order items exceeds 1000, this array is not returned, but <code>units_limit_exceeded: true</code>. However, the discount is calculated properly for all relevant units.</p></td></tr><tr><td style="text-align:left">units_limit_exceeded</br><code>boolean</code></td><td style="text-align:left"><p>Returned as <code>true</code> only when the sum total of <code>quantity</code> of all order items exceeds 1000.</p></td></tr></tbody></table> |
-| repeat</br>`integer` | <p>Determines the recurrence of the discount, e.g. <code>&quot;repeat&quot;: 3</code> means that the discount is applied to every third item.</p> |
-| skip_initially</br>`integer` | <p>Determines how many items are skipped before the discount is applied.</p> |
-| target</br>`string` | <p>Determines to which kinds of objects the discount is applicable. <code>ITEM</code> includes products and SKUs. <code>UNIT</code> means particular units within an order line.</p> Available values: `ITEM`, `UNIT` |
+| data</br>`array` | <p>Contains array of items to which the discount cannot apply.</p> Array of [Inapplicable To](#inapplicable-to) |
+| total</br>`integer` | <p>Total number of objects defining included products, SKUs, or product collections.</p> |
+| object</br>`string` | <p>The type of the object represented by JSON.</p> Available values: `list` |
+| data_ref</br>`string` | <p>The type of the object represented by JSON.</p> Available values: `data` |
 
-## Inapplicable To
-[Applicable To](#applicable-to)
-
-## Amount
+## Coupon Code
 | Attributes |  Description |
 |:-----|:--------|
-| type</br>`string` | <p>Defines the type of the voucher.</p> Available values: `AMOUNT` |
-| amount_off</br>`number` | <p>Amount taken off the subtotal of a price. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $10 discount is written as 1000.</p> |
-| amount_off_formula</br>`string` |  |
-| aggregated_amount_limit</br>`integer` | <p>Maximum discount amount per order.</p> |
-| effect | <p>Defines how the discount is applied to the customer's order.</p> [Discount Amount Vouchers Effect Types](#discount-amount-vouchers-effect-types) |
-| is_dynamic</br>`boolean` | <p>Flag indicating whether the discount was calculated using a formula.</p> |
+| discount | <p>Discount details about the type of discount to be applied for the redeemable.</p> One of: [Amount](#amount), [Unit](#unit), [Unit Multiple](#unit-multiple), [Percent](#percent), [Fixed](#fixed) |
+| bundle | See: [Bundle Details](#bundle-details) |
 
-## Unit
+## Gift Card
 | Attributes |  Description |
 |:-----|:--------|
-| type</br>`string` | <p>Discount type.</p> Available values: `UNIT` |
-| unit_off</br>`integer` | <p>Number of units to be granted a full value discount.</p> |
-| unit_off_formula</br>`string` | <p>Formula used to calculate the number of units.</p> |
-| effect | <p>Defines how the unit is added to the customer's order.</p> [Discount Unit Vouchers Effect Types](#discount-unit-vouchers-effect-types) |
-| unit_type</br>`string` | <p>The product deemed as free, chosen from product inventory (e.g. time, items).</p> |
-| product | <p>Contains information about the product.</p> [Simple Product Discount Unit](#simple-product-discount-unit) |
-| sku | See: [Simple Sku Discount Unit](#simple-sku-discount-unit) |
-| is_dynamic</br>`boolean` | <p>Flag indicating whether the discount was calculated using a formula.</p> |
+| gift</br>`object` | <p>Stores the amount of gift card credits to be applied.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">balance</br><code>integer</code></td><td style="text-align:left"><p>Available funds at the moment of validation. The value is multiplied by 100 to represent 2 decimal places. For example <code>10000 cents</code> for <code>$100.00</code>.</p></td></tr><tr><td style="text-align:left">credits</br><code>integer</code></td><td style="text-align:left"><p>Total number of gift card credits to be applied. The value is multiplied by 100 to represent 2 decimal places. For example <code>10000 cents</code> for <code>$100.00</code>.</p></td></tr></tbody></table> |
 
-## Unit Multiple
+## Loyalty Card
 | Attributes |  Description |
 |:-----|:--------|
-| type</br>`string` | <p>Discount type.</p> Available values: `UNIT` |
-| effect</br>`string` | <p>Defines how the discount is applied to the customer's order.</p> Available values: `ADD_MANY_ITEMS` |
-| units</br>`array` | Array of [One Unit](#one-unit) |
+| loyalty_card</br>`object` | <p>Stores the amount of loyalty card points to be applied in the redemption.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">points</br><code>integer</code></td><td style="text-align:left"><p>Total number of loyalty points to be applied in the redemption.</p></td></tr></tbody></table> |
 
-## Percent
+## Promotion Tier
 | Attributes |  Description |
 |:-----|:--------|
-| type</br>`string` | <p>Defines the type of the voucher.</p> Available values: `PERCENT` |
-| percent_off</br>`number` | <p>The percent discount that the customer will receive.</p> |
-| percent_off_formula</br>`string` |  |
-| amount_limit</br>`number` | <p>Upper limit allowed to be applied as a discount. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $6 maximum discount is written as 600.</p> |
-| aggregated_amount_limit</br>`integer` | <p>Maximum discount amount per order.</p> |
-| effect | <p>Defines how the discount is applied to the customer's order.</p> [Discount Percent Vouchers Effect Types](#discount-percent-vouchers-effect-types) |
-| is_dynamic</br>`boolean` | <p>Flag indicating whether the discount was calculated using a formula.</p> |
+| discount | <p>Discount details about the type of discount to be applied for the redeemable.</p> One of: [Amount](#amount), [Unit](#unit), [Unit Multiple](#unit-multiple), [Percent](#percent), [Fixed](#fixed) |
+| bundle | See: [Bundle Details](#bundle-details) |
 
-## Fixed
+## Promotion Stack
 | Attributes |  Description |
 |:-----|:--------|
-| type</br>`string` | <p>Defines the type of the voucher.</p> Available values: `FIXED` |
-| fixed_amount</br>`number` | <p>Sets a fixed value for an order total or the item price. The value is multiplied by 100 to precisely represent 2 decimal places. For example, a $10 discount is written as 1000. If the fixed amount is calculated by the formula, i.e. the <code>fixed_amount_formula</code> parameter is present in the fixed amount definition, this value becomes the <strong>fallback value</strong>. As a result, if the formula cannot be calculated due to missing metadata, for example, this value will be used as the fixed value.</p> |
-| fixed_amount_formula</br>`string` |  |
-| effect | <p>Defines how the discount is applied to the customer's order.</p> [Discount Fixed Vouchers Effect Types](#discount-fixed-vouchers-effect-types) |
-| is_dynamic</br>`boolean` | <p>Flag indicating whether the discount was calculated using a formula.</p> |
+| discount | <p>Discount details about the type of discount to be applied for the redeemable.</p> One of: [Amount](#amount), [Unit](#unit), [Unit Multiple](#unit-multiple), [Percent](#percent), [Fixed](#fixed) |
+| bundle | See: [Bundle Details](#bundle-details) |
+
+## Category with Stacking Rules Type
+<p>Category object with <code>stacking_rules_type</code></p>
+
+All of:
+
+1. [Category](#category)
+2. <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">stacking_rules_type</br><code>string</code></td><td style="text-align:left"><p>The type of the stacking rule eligibility.</p> Available values: <code>JOINT</code>, <code>EXCLUSIVE</code></td></tr></tbody></table>
+
+## Error Object
+| Attributes |  Description |
+|:-----|:--------|
+| code</br>`integer` | <p>Error's HTTP status code.</p> |
+| key</br>`string` | <p>Short string describing the kind of error which occurred.</p> |
+| message</br>`string` | <p>A human-readable message providing a short description of the error.</p> |
+| details</br>`string` | <p>A human-readable message providing more details about the error.</p> |
+| request_id</br>`string` | <p>This ID is useful when troubleshooting and/or finding the root cause of an error response by our support team.</p> **Example:** <p>v-0a885062c80375740f</p> |
+| resource_id</br>`string` | <p>Unique resource ID that can be used in another endpoint to get more details.</p> **Example:** <p>rf_0c5d710a87c8a31f86</p> |
+| resource_type</br>`string` | <p>The resource type.</p> **Example:** <p>voucher</p> |
+| error</br>`object` | <p>Includes additional information about the error.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">message</br><code>string</code></td><td style="text-align:left"><p>The message configured by the user in a validation rule.</p></td></tr></tbody></table> |
+
+## Bundle Details
+| Attributes |  Description |
+|:-----|:--------|
+| quantity</br>`integer` | <p>Determines how many bundles are qualified. If there are missing bundle products, the value is <code>0</code>. If the bundle is qualified, the value is <code>1</code>. The maximum number of identified bundles can equal the number set in <code>limit</code>. Also defines the multiplier of the discount for <code>AMOUNT</code>, <code>PERCENT</code>, and <code>UNIT</code> discount types. To inform end-customers that more products can be added to meet additional bundles, compare this parameter with <code>limit</code>.</p> |
+| limit</br>`integer` | <p>Determines the maximum number of identified bundles. This also defines the maximum multiplier of the bundle discount.</p> |
+| identified</br>`array` | <p>Determines products from the customer's order items that meet bundle conditions. SKUs meet the conditions for their product that is used in the bundle. Returns only the products and their quantity that meet the bundle.</p> Array of: <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>Unique identifier of the product or SKU that meets the bundle condition. This is an ID assigned by Voucherify.</p></td></tr><tr><td style="text-align:left">object</br><code>string</code></td><td style="text-align:left"><p>Determines the type of the object that meets the bundle condition.</p> Available values: <code>product</code>, <code>sku</code></td></tr><tr><td style="text-align:left">item_index</br><code>integer</code></td><td style="text-align:left"><p>Number assigned to the order line item in accordance with the order sent in the request. It starts with <code>0</code> for the first order line item in the request.</p></td></tr><tr><td style="text-align:left">item_quantity</br><code>integer</code></td><td style="text-align:left"><p>Quantity of items that meet the bundle conditions. If the quantity in the order is higher than the quantity required by the bundle, this returns only the number that meets the bundle. For example, if the bundle requires <code>5</code> coffees, but the order includes <code>10</code> coffees, <code>item_quantity</code> returns <code>5</code>.</p></td></tr></tbody></table> |
+| missing</br>`array` | <p>Determines products, SKUs, or collections from the bundle that are missing in the customer's order items. Determines also the missing quantity. For collections, this means that order items do not include a sufficient number of items that belong to the collection. Not returned when all required bundle items are in the order.</p> Array of: <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>Unique identifier of the collection, product, or SKU that is missing in the customer's order items. This is an ID assigned by Voucherify.</p></td></tr><tr><td style="text-align:left">object</br><code>string</code></td><td style="text-align:left"><p>Determines the type of the object that is missing in the customer's order items.</p> Available values: <code>product</code>, <code>products_collection</code>, <code>sku</code></td></tr><tr><td style="text-align:left">item_quantity</br><code>integer</code></td><td style="text-align:left"><p>Quantity of items that are missing in the order items to meet the bundle conditions.</p></td></tr></tbody></table> |
+
+## Validations Redeemable Skipped Result Limit Exceeded
+| Attributes |  Description |
+|:-----|:--------|
+| key</br>`string` | Available values: `applicable_redeemables_limit_exceeded` |
+| message</br>`string` | **Example:** <p>Applicable redeemables limit exceeded</p> |
+
+## Validations Redeemable Skipped Result Category Limit Exceeded
+| Attributes |  Description |
+|:-----|:--------|
+| key</br>`string` | Available values: `applicable_redeemables_per_category_limit_exceeded` |
+| message</br>`string` | **Example:** <p>Applicable redeemables limit per category exceeded</p> |
+
+## Validations Redeemable Skipped Result Redeemables Limit Exceeded
+| Attributes |  Description |
+|:-----|:--------|
+| key</br>`string` | Available values: `applicable_exclusive_redeemables_limit_exceeded` |
+| message</br>`string` | **Example:** <p>Applicable exclusive redeemables limit exceeded</p> |
+
+## Validations Redeemable Skipped Result Redeemables Category Limit Exceeded
+| Attributes |  Description |
+|:-----|:--------|
+| key</br>`string` | Available values: `applicable_exclusive_redeemables_per_category_limit_exceeded` |
+| message</br>`string` | **Example:** <p>Applicable exclusive redeemables limit per category exceeded</p> |
+
+## Validations Redeemable Skipped Result Exclusion Rules Not Met
+| Attributes |  Description |
+|:-----|:--------|
+| key</br>`string` | Available values: `exclusion_rules_not_met` |
+| message</br>`string` | **Example:** <p>Redeemable cannot be applied due to exclusion rules</p> |
+
+## Validations Redeemable Skipped Result Preceding Validation Failed
+| Attributes |  Description |
+|:-----|:--------|
+| key</br>`string` | Available values: `preceding_validation_failed` |
+| message</br>`string` | **Example:** <p>Redeemable cannot be applied due to preceding validation failure</p> |
 
 ## Customer Id
 | Attributes |  Description |
@@ -229,6 +270,89 @@ One of:
 | related_object_parent_id</br>`string` | <p>Represent's the campaign ID of the voucher if the redemption was based on a voucher that was part of bulk codes generated within a campaign. In case of a promotion tier, this represents the campaign ID of the promotion tier's parent campaign.</p> |
 | stacked</br>`array` | <p>Contains a list of unique IDs of child redemptions, which belong to the stacked incentives.</p> |
 | rollback_stacked</br>`array` | <p>Lists the rollback redemption IDs of the particular child redemptions.</p> |
+
+## Applicable To
+| Attributes |  Description |
+|:-----|:--------|
+| object</br>`string` | <p>This object stores information about the resource to which the discount is applicable.</p> Available values: `product`, `sku`, `products_collection` |
+| id</br>`string` | <p>Unique product collection, product, or SKU identifier assigned by Voucherify.</p> |
+| source_id</br>`string` | <p>The source identifier from your inventory system.</p> |
+| product_id</br>`string` | <p>Parent product's unique ID assigned by Voucherify.</p> |
+| product_source_id</br>`string` | <p>Parent product's source ID from your inventory system.</p> |
+| price</br>`number` | <p>New fixed price of an item. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $10 price is written as 1000. In case of the fixed price being calculated by the formula, i.e. the price_formula parameter is present in the fixed price definition, this value becomes the fallback value. Such that in a case where the formula cannot be calculated due to missing metadata, for example, this value will be used as the fixed price.</p> |
+| price_formula</br>`number` | <p>Formula used to dynamically calculate the discounted price of an item.</p> |
+| effect | <p>Defines how the discount is applied to the customer's order.</p> [Applicable To Effect](#applicable-to-effect) |
+| quantity_limit</br>`integer` | <p>The maximum number of units allowed to be discounted per order line item.</p> |
+| aggregated_quantity_limit</br>`integer` | <p>The maximum number of units allowed to be discounted combined across all matched order line items.</p> |
+| amount_limit</br>`integer` | <p>Upper limit allowed to be applied as a discount per order line item. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $6 maximum discount is written as 600.</p> |
+| aggregated_amount_limit</br>`integer` | <p>Maximum discount amount per order. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $6 maximum discount on the entire order is written as 600. This value is definable for the following discount effects:</p><ul><li><code>APPLY_TO_ITEMS</code> (each item subtotal is discounted equally)</li><li><code>APPLY_TO_ITEMS_BY_QUANTITY</code> (each unit of matched products has the same discount value)</li></ul> |
+| order_item_indices</br>`array` | <p>Lists which order lines are (not) covered by the discount. The order in the array is determined by the sequence of applied discounts, while the numbers correspond to the order lines sent in the <code>order</code> object in the request. The first order line is assigned <code>0</code>, the second order line is assigned <code>1</code>, and so on.</p> |
+| order_item_units</br>`array` | <p>Lists which units within order lines are covered by the discount. The order line items are listed according to sequence of applied discounts while the <code>index</code> corresponds to the order line sent in the <code>order</code> object in the request.</p> Array of: <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">index</br><code>integer</code></td><td style="text-align:left"><p>Number assigned to the order line item in accordance with the order sent in the request.</p></td></tr><tr><td style="text-align:left">units</br><code>array</code></td><td style="text-align:left"><p>Numbers of units in the order line covered by the discount; e.g. <code>2, 5, 8</code> for 10 units with the setting <code>&quot;skip_initially&quot;: 1</code>, <code>&quot;repeat&quot;: 3</code>. The counting of units starts from <code>1</code>. The maximum quantity of all handled units is 1000. If the quantity of all order items exceeds 1000, this array is not returned, but <code>units_limit_exceeded: true</code>. However, the discount is calculated properly for all relevant units.</p></td></tr><tr><td style="text-align:left">units_limit_exceeded</br><code>boolean</code></td><td style="text-align:left"><p>Returned as <code>true</code> only when the sum total of <code>quantity</code> of all order items exceeds 1000.</p></td></tr></tbody></table> |
+| repeat</br>`integer` | <p>Determines the recurrence of the discount, e.g. <code>&quot;repeat&quot;: 3</code> means that the discount is applied to every third item.</p> |
+| skip_initially</br>`integer` | <p>Determines how many items are skipped before the discount is applied.</p> |
+| target</br>`string` | <p>Determines to which kinds of objects the discount is applicable. <code>ITEM</code> includes products and SKUs. <code>UNIT</code> means particular units within an order line.</p> Available values: `ITEM`, `UNIT` |
+
+## Inapplicable To
+[Applicable To](#applicable-to)
+
+## Amount
+| Attributes |  Description |
+|:-----|:--------|
+| type</br>`string` | <p>Defines the type of the voucher.</p> Available values: `AMOUNT` |
+| amount_off</br>`number` | <p>Amount taken off the subtotal of a price. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $10 discount is written as 1000.</p> |
+| amount_off_formula</br>`string` | <p>Formula used to dynamically calculate the discount.</p> |
+| aggregated_amount_limit</br>`integer` | <p>Maximum discount amount per order.</p> |
+| effect | <p>Defines how the discount is applied to the customer's order.</p> [Discount Amount Vouchers Effect Types](#discount-amount-vouchers-effect-types) |
+| is_dynamic</br>`boolean` | <p>Flag indicating whether the discount was calculated using a formula.</p> |
+
+## Unit
+| Attributes |  Description |
+|:-----|:--------|
+| type</br>`string` | <p>Discount type.</p> Available values: `UNIT` |
+| unit_off</br>`integer` | <p>Number of units to be granted a full value discount.</p> |
+| unit_off_formula</br>`string` | <p>Formula used to dynamically calculate the number of units.</p> |
+| effect | <p>Defines how the unit is added to the customer's order.</p> [Discount Unit Vouchers Effect Types](#discount-unit-vouchers-effect-types) |
+| unit_type</br>`string` | <p>The product deemed as free, chosen from product inventory (e.g. time, items).</p> |
+| product | <p>Contains information about the product.</p> [Simple Product Discount Unit](#simple-product-discount-unit) |
+| sku | See: [Simple Sku Discount Unit](#simple-sku-discount-unit) |
+| is_dynamic</br>`boolean` | <p>Flag indicating whether the discount was calculated using a formula.</p> |
+
+## Unit Multiple
+| Attributes |  Description |
+|:-----|:--------|
+| type</br>`string` | <p>Discount type.</p> Available values: `UNIT` |
+| effect</br>`string` | <p>Defines how the discount is applied to the customer's order.</p> Available values: `ADD_MANY_ITEMS` |
+| units</br>`array` | Array of [One Unit](#one-unit) |
+
+## Percent
+| Attributes |  Description |
+|:-----|:--------|
+| type</br>`string` | <p>Defines the type of the voucher.</p> Available values: `PERCENT` |
+| percent_off</br>`number` | <p>The percent discount that the customer will receive.</p> |
+| percent_off_formula</br>`string` | <p>Formula used to dynamically calculate the discount.</p> |
+| amount_limit</br>`number` | <p>Upper limit allowed to be applied as a discount. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $6 maximum discount is written as 600.</p> |
+| aggregated_amount_limit</br>`integer` | <p>Maximum discount amount per order.</p> |
+| effect | <p>Defines how the discount is applied to the customer's order.</p> [Discount Percent Vouchers Effect Types](#discount-percent-vouchers-effect-types) |
+| is_dynamic</br>`boolean` | <p>Flag indicating whether the discount was calculated using a formula.</p> |
+
+## Fixed
+| Attributes |  Description |
+|:-----|:--------|
+| type</br>`string` | <p>Defines the type of the voucher.</p> Available values: `FIXED` |
+| fixed_amount</br>`number` | <p>Sets a fixed value for an order total or the item price. The value is multiplied by 100 to precisely represent 2 decimal places. For example, a $10 discount is written as 1000. If the fixed amount is calculated by the formula, i.e. the <code>fixed_amount_formula</code> parameter is present in the fixed amount definition, this value becomes the <strong>fallback value</strong>. As a result, if the formula cannot be calculated due to missing metadata, for example, this value will be used as the fixed value.</p> |
+| fixed_amount_formula</br>`string` | <p>Formula used to dynamically calculate the discount.</p> |
+| effect | <p>Defines how the discount is applied to the customer's order.</p> [Discount Fixed Vouchers Effect Types](#discount-fixed-vouchers-effect-types) |
+| is_dynamic</br>`boolean` | <p>Flag indicating whether the discount was calculated using a formula.</p> |
+
+## Category
+| Attributes |  Description |
+|:-----|:--------|
+| id</br>`string` | <p>Unique category ID assigned by Voucherify.</p> |
+| name</br>`string` | <p>Category name.</p> |
+| hierarchy</br>`integer` | <p>Category hierarchy. Categories with lower hierarchy are processed before categories with higher hierarchy value.</p> |
+| object</br>`string` | <p>The type of the object represented by the JSON. This object stores information about the category.</p> Available values: `category` |
+| created_at</br>`string` | <p>Timestamp representing the date and time when the category was created. The value is shown in the ISO 8601 format.</p> **Example:** <p>2022-07-14T10:45:13.156Z</p> |
+| updated_at</br>`string` | <p>Timestamp representing the date and time when the category was updated. The value is shown in the ISO 8601 format.</p> **Example:** <p>2022-08-16T10:52:08.094Z</p> |
 
 ## Applicable To Effect
 Available values: `APPLY_TO_EVERY`, `APPLY_TO_CHEAPEST`, `APPLY_FROM_CHEAPEST`, `APPLY_TO_MOST_EXPENSIVE`, `APPLY_FROM_MOST_EXPENSIVE`
@@ -257,7 +381,7 @@ Available values: `ADD_MISSING_ITEMS`, `ADD_NEW_ITEMS`, `ADD_MANY_ITEMS`
 | Attributes |  Description |
 |:-----|:--------|
 | unit_off</br>`number` | <p>Number of units to be granted a full value discount.</p> |
-| unit_off_formula</br>`string` | <p>Formula used to calculate the number of units.</p> |
+| unit_off_formula</br>`string` | <p>Formula used to dynamically calculate the number of units.</p> |
 | effect</br>`string` | <p>Defines how the unit is added to the customer's order.</p> Available values: `ADD_NEW_ITEMS`, `ADD_MISSING_ITEMS` |
 | unit_type</br>`string` | <p>The product deemed as free, chosen from product inventory (e.g. time, items).</p> |
 | product | <p>Contains information about the product.</p> [Simple Product Discount Unit](#simple-product-discount-unit) |

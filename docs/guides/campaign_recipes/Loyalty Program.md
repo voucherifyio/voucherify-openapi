@@ -9,8 +9,6 @@ order: 5
 link_url: https://support.voucherify.io/article/491-getting-started-with-loyalty-programs
 ---
 
-<!-- IT'S A REDIRECT UNTIL WE GET BACK TO THIS WITH A MORE DEV-ORIENTED CONTENT -->
-
 > 👍 Before you start
 >
 > Read the [loyalty program user guide](https://support.voucherify.io/article/177-how-to-create-loyalty-program-step-by-step) to get an overview of this campaign type.

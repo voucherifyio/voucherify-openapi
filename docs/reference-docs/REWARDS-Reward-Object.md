@@ -13,7 +13,7 @@ order: 1
 |:-----|:--------|
 | id</br>`string` | <p>Unique reward ID, assigned by Voucherify.</p> **Example:** <p>rew_nIy4gHpQHle2c3pNMwuj7G6j</p> |
 | name</br>`string` | <p>Reward name.</p> |
-| stock</br>`integer`, `null` | <p>Configurable for <strong>material rewards</strong>. The number of units of the product that you want to share as reward.</p> |
+| stock</br>`integer`, `null` | <p>Configurable for <strong>material rewards</strong>. The number of units of the product that you want to share as a reward. Use this parameter to code a stock-taking logic.</p> |
 | redeemed</br>`integer`, `null` | <p>Defines the number of already invoked (successful) reward redemptions.</p> |
 | attributes</br>`object` | <p>These properties are configurable for <strong>material rewards</strong>.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">image_url</br><code>string</code></td><td style="text-align:left"><p>The HTTPS URL pointing to the .png or .jpg file.</p></td></tr><tr><td style="text-align:left">description</br><code>string</code></td><td style="text-align:left"><p>An arbitrary string that you can attach to a material reward.</p></td></tr></tbody></table> |
 | metadata</br>`object` | <p>The metadata object stores all custom attributes assigned to the reward. A set of key/value pairs that you can attach to a reward object. It can be useful for storing additional information about the reward in a structured format.</p> |

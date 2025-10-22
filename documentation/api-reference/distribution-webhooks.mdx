@@ -1,0 +1,499 @@
+---
+title: "Distribution webhooks"
+description: "Distribution-based webhooks in Voucherify let your application automatically receive notifications related to distribution events. They help you track the results of distributions and quickly respond when certain actions occur. For example, your application can be notified when a voucher is successfully published, a scheduled campaign message is delivered, or when a customer enters or leaves a specific customer segment."
+---
+
+## Configuring Distribution webhooks
+
+1. In Voucherify dashboard, go to Distributions in the Engagement section.
+2. Click Create distribution.
+3. Select the appropriate [trigger](#webhooks-available-in-distributions "Distribution webhooks") that creates a send out.
+4. In Action, define what kind of distribution action you want to create.
+5. In Channels, add Webhook. You can add many channels within one distribution.
+6. In the webhook channel, provide the event name, URL, and any optional HTTP headers.
+7. Select the attributes to add them to the webhook payload. Optionally, map the attributes to your own keys.
+
+To edit, pause, activate, or delete a distribution, click the three dots icon located on the far right of each row in the Distributions list view.
+
+**You can also add distribution webhooks while creating a loyalty or referral programs. The process follows similar pattern.**
+
+## Payload designer
+
+In the default mapping mode, Voucherify sends the full webhook payload without any mapping to other keys. Click Custom to use the payload designer and create webhook payloads in the JSON format.
+
+The Payload designer is empty at the start. You can paste any existing payload or write it from scratch. Each key in the payload can have a value that is static, dynamic, or nested:
+* Static values are fixed values you define, such as text, numbers, or boolean.
+* Dynamic values come from Voucherify keys in the webhook payload. Use double curly braces `{{}}` to search for Voucherify keys. You can also mix static and dynamic values, for example `"Hello {{customer.name}}"`.
+* Nested objects can be created with dots in the key name, such as `{{order.status}}`.
+
+**If you want a value to be a string, wrap it in quotes `("")`. When the type of a value is unknown, also wrap it in quotes `("")` to ensure it is treated as a string.**
+
+> 📘 Available Voucherify webhook keys
+>
+> The available keys supported by Voucherify are limited to a given distribution event that is used in the webhook. For example, if you create a webhook payload for the [Customer entered segment](/api-reference/customer/segment-entered), you can use all the keys available in that event, like `customer.name` or `segment.name`. However, you can't use objects that aren't available in that webhook, like `redemption.date`.
+> 
+> Read [Webhooks available in Distributions](#webhooks-available-in-distributions) to learn which webhooks are available. Go to specific webhook pages to learn more about their payloads.
+
+### Example: Customer summary with dynamic values
+
+This payload builds a customer summary. All values are taken dynamically from the webhook.
+
+```json
+{
+  "customer_profile": {
+    "ID": "{{customer.id}}",
+    "name": "{{customer.name}}",
+    "email": "{{customer.email}}"
+  }
+}
+```
+
+### Example: Order confirmation with mixed values
+
+This payload mixes static and dynamic values. The currency is fixed, while the order details and greeting come from Voucherify.
+
+```json
+{
+  "order": {
+    "orderId": "{{order.id}}",
+    "total": {{order.total_amount}},
+    "currency": "USD",
+    "message": "Thank you for your order, {{customer.name}}!"
+  }
+}
+```
+
+## Re-enabling a webhook
+
+To re-enable a paused webhook:
+
+1. Go to the Distribution Manager.
+2. Click the distribution that has been paused.
+3. Click the set live icon in the upper right corner.
+
+## Webhooks available in Distributions
+
+These webhooks are triggered by the events which cause distribution.
+
+Some distribution events, for example Customer entered segment, have different purposes:
+
+* Notify customers about promotion
+* Send and publish unique codes from campaign
+* Send plain message to customers
+
+The table below shows which distributions support webhooks:
+
+| Related Activity              | Event                                   | Notify customers about promotion | Send and publish unique codes from campaign | Send plain message to customers |
+| ----------------------------- | --------------------------------------- | -------------------------------- | ------------------------------------------- | ------------------------------- |
+| Segment                       | Customer entered segment                | ✅                                | ✅                                           | ✅                               |
+| Segment                       | Customer left segment                   | ✅                                | ✅                                           | ✅                               |
+| Cart                          | Order update                            | ✅                                | ✅                                           | ✅                               |
+| Cart                          | Order has been paid                     | ✅                                | ✅                                           | ✅                               |
+| Cart                          | Order creation                          | ✅                                | ✅                                           | ✅                               |
+| Cart                          | Order cancelled                         | ✅                                | ✅                                           | ✅                               |
+| Voucher                       | Gift credits adjusted                   | ❌                                | ❌                                           | ✅                               |
+| Voucher                       | Loyalty points adjusted                 | ❌                                | ❌                                           | ✅                               |
+| Voucher                       | Loyalty points expired                  | ❌                                | ❌                                           | ✅                               |
+| Voucher                       | Loyalty pending points adjusted         | ❌                                | ❌                                           | ✅                               |
+| Voucher                       | Loyalty pending points updated          | ❌                                | ❌                                           | ✅                               |
+| Voucher                       | Loyalty pending points activated        | ❌                                | ❌                                           | ✅                               |
+| Voucher                       | Loyalty pending points canceled         | ❌                                | ❌                                           | ✅                               |
+| Voucher                       | Voucher redeemed                        | ❌                                | ❌                                           | ✅                               |
+| Voucher                       | Voucher redemption rolled back           | ❌                                | ❌                                           | ✅                               |
+| Customer rewards              | Reward redemption                       | ❌                                | ❌                                           | ✅                               |
+| Manual messages               | One or bulk messages                    | ✅                                | ✅                                           | ❌                               |
+| Publishing codes              | Successfully published                  | ❌                                | ❌                                           | ✅                               |
+| Custom events                 | Custom event                            | ✅                                | ✅                                           | ✅                               |
+| Loyalty tier related activity | Customer entered loyalty tier structure | ❌                                | ❌                                           | ✅                               |
+| Loyalty tier related activity | Customer left loyalty tier structure    | ❌                                | ❌                                           | ✅                               |
+| Loyalty tier related activity | Customer loyalty tier upgraded          | ❌                                | ❌                                           | ✅                               |
+| Loyalty tier related activity | Customer loyalty tier downgraded        | ❌                                | ❌                                           | ✅                               |
+| Loyalty tier related activity | Customer loyalty tier prolonged         | ❌                                | ❌                                           | ✅                               |
+| Loyalty tier related activity | Customer rewarded loyalty points        | ❌                                | ❌                                           | ✅                               |
+| Referral related activity     | Customer was referred                   | ❌                                | ❌                                           | ✅                               |
+
+* Custom events:
+  * [Custom event](/api-reference/customer/custom-event "Customer custom event event documentation")
+
+* Segment related activities:
+
+  * [Customer entered segment](/api-reference/customer/segment-entered "Customer entered segment event documentation")
+  * [Customer left segment](/api-reference/customer/segment-left "Customer left segment event documentation")
+
+* Manual messages:
+
+  * Notify customers about promotion – covered by [the MANUAL\_DISTRIBUTION\_SCHEDULE event](/api-reference/distribution/manual-distribution-schedule "Manual distribution schedule event documentation")
+  * Send and publish unique codes from a campaign – covered by [the MANUAL\_DISTRIBUTION\_SCHEDULE event](/api-reference/distribution/manual-distribution-schedule "Manual distribution schedule event documentation")
+  * Send a plain message to customers – does not support webhooks as a distribution channel
+
+* Cart related activities:
+
+  * [Order updated](/api-reference/customer/order-updated "Order updated event documentation")
+  * [Order paid](/api-reference/customer/order-paid "Order paid event documentation")
+  * [Order created](/api-reference/customer/order-created "Order created event documentation")
+  * [Order canceled](/api-reference/customer/order-canceled "Order canceled event documentation")
+
+* Publishing codes:
+  * [Successfully published](/api-reference/customer/publication-succeeded "Code published event documentation")
+
+* Voucher related activities:
+
+  * [Gift credits added](/api-reference/customer/voucher-gift-balance-added "Gift credits added event documentation")
+  * [Loyalty points added](/api-reference/customer/voucher-loyalty-card-points-added "Loyalty points added event documentation")
+  * [Loyalty card points expired](/api-reference/customer/voucher-loyalty-card-points-expired "Customer loyalty card points expired event documentation")
+  * [Loyalty pending points added](/api-reference/customer/voucher-loyalty-card-pending-points-added "Customer loyalty card pending points added")
+  * [Loyalty pending points updated](/api-reference/customer/voucher-loyalty-card-pending-points-updated "Voucher loyalty card pending points update event documentation")
+  * [Loyalty pending points activated](/api-reference/customer/voucher-loyalty-card-pending-points-activated "Customer loyalty card pending points activated")
+  * [Loyalty pending points canceled](/api-reference/customer/voucher-loyalty-card-pending-points-canceled "Customer loyalty card pending points canceled")
+  * [Voucher redeemed](/api-reference/customer/redemption-succeeded "Voucher redeemed event documentation")
+  * [Voucher redemption rolled back](/api-reference/customer/redemption-rollback-succeeded "Voucher redemption rolled back event documentation")
+
+* Customer rewards:
+  * [Reward redeemed](/api-reference/customer/rewarded "Customer rewarded documentation")
+
+* Loyalty tier related activities:
+
+  * [Customer entered loyalty tier structure](/api-reference/customer/loyalty-tier-joined "Customer entered loyalty tier structure event documentation")
+  * [Customer left loyalty tier structure](/api-reference/customer/loyalty-tier-left "Customer left loyalty tier structure event documentation")
+  * [Customer loyalty tier upgraded](/api-reference/customer/loyalty-tier-upgraded "Customer loyalty tier upgraded event documentation")
+  * [Customer loyalty tier downgraded](/api-reference/customer/loyalty-tier-downgraded "Customer loyalty tier downgraded event documentation")
+  * [Customer loyalty tier prolonged](/api-reference/customer/loyalty-tier-prolonged "Customer loyalty tier prolonged event documentation")
+  * [Customer rewarded loyalty points](/api-reference/customer/rewarded-loyalty-points "Customer rewarded loyalty points documentation")
+
+* Referral related activities:
+  * Customer was referred
+
+### Loyalty and referral campaign Distributions
+
+The following campaigns can also trigger webhook send outs as a distribution:
+
+* Loyalty campaigns:
+
+  * [Send loyalty program code](/api-reference/customer/publication-succeeded)
+  * [Loyalty points gained](/api-reference/customer/rewarded-loyalty-points)
+  * [Reward redeemed](/api-reference/customer/reward-redemptions-completed)
+
+* Referral campaigns:
+
+  * [Send referral code to the referrer](/api-reference/customer/publication-succeeded)
+  * Customer referred (documentation in progress)
+
+### Distribution webhook payload
+
+The list shows a general structure of a webhook payload set in Distributions. Indented bullet points mean that an object contains further properties or objects.
+
+<Note>
+The list shows the complete, unedited payload. If you customize it with the Payload editor, your data may include fewer fields.
+</Note>
+
+- `id` (`string`): Unique identifier of the send out for this webhook. **Example:** `whs_0e16e42bc6e0c65b57`
+- `project_id` (`string`): Unique identifier of the Voucherify project. **Example:** `proj_5T4Rpl4T1nuM`
+- `created_at` (`string`): The exact moment when the webhook was created. **Example:** `2024-01-01T11:11:11.111Z`
+- `type` (`string`): Displays the name entered in the `Event name` field in the distribution creator.
+- `data` (`object`): Payload depends on the event that triggered the webhook send out. Distributions cover the following events:
+  - [customer.custom_event](/api-reference/customer/custom-event)
+  - [customer.loyalty.tier.downgraded](/api-reference/customer/loyalty-tier-downgraded)
+  - [customer.loyalty.tier.joined](/api-reference/customer/loyalty-tier-joined)
+  - [customer.loyalty.tier.left](/api-reference/customer/loyalty-tier-left)
+  - [customer.loyalty.tier.prolonged](/api-reference/customer/loyalty-tier-prolonged)
+  - [customer.loyalty.tier.upgraded](/api-reference/customer/loyalty-tier-upgraded)
+  - [customer.order.canceled](/api-reference/customer/order-canceled)
+  - [customer.order.created](/api-reference/customer/order-created)
+  - [customer.order.paid](/api-reference/customer/order-paid)
+  - [customer.order.updated](/api-reference/customer/order-updated)
+  - [customer.publication.succeeded](/api-reference/customer/publication-succeeded)
+  - [customer.redemption.rollback.succeeded](/api-reference/customer/redemption-rollback-succeeded)
+  - [customer.redemption.succeeded](/api-reference/customer/redemption-succeeded)
+  - customer.referred
+  - [customer.reward_redemptions.completed](/api-reference/customer/reward-redemptions-completed)
+  - [customer.rewarded](/api-reference/customer/rewarded)
+  - [customer.rewarded.loyalty_points](/api-reference/customer/rewarded-loyalty-points)
+  - [customer.segment.entered](/api-reference/customer/segment-entered)
+  - [customer.segment.left](/api-reference/customer/segment-left)
+  - [customer.voucher.gift.balance_added](/api-reference/customer/voucher-gift-balance-added)
+  - [customer.voucher.loyalty_card.pending_points.activated](/api-reference/customer/voucher-loyalty-card-pending-points-activated)
+  - [customer.voucher.loyalty_card.pending_points.added](/api-reference/customer/voucher-loyalty-card-pending-points-added)
+  - [customer.voucher.loyalty_card.pending_points.canceled](/api-reference/customer/voucher-loyalty-card-pending-points-canceled)
+  - [customer.voucher.loyalty_card.pending_points.updated](/api-reference/customer/voucher-loyalty-card-pending-points-updated)
+  - [customer.voucher.loyalty_card.points_added](/api-reference/customer/voucher-loyalty-card-points-added)
+  - [customer.voucher.loyalty_card.points_expired](/api-reference/customer/voucher-loyalty-card-points-expired)
+  - [manual_distribution_schedule](/api-reference/distribution/manual-distribution-schedule)
+- `source` (`object`): Contains details about the source of the webhook send out. Properties:
+  - `id` (`string`): Unique identifier of the distribution that sent the webhook. **Example:** `distr_TrJj0lHV44EMt6HvLa2pyNlHTF`
+  - `object` (`string`): Determines the type of the object. Available values: `distribution` **Example:** `distribution`
+  - `target_url` (`string`): The address where the webhook will be sent.
+- `event` (`object`): Contains other data of the event that triggered the send out. Properties:
+  - `id` (`string`): Unique identifier of the event that triggered the send out. **Example:** `evred_1f3611301g3127begb`
+  - `type` (`string`): Determines the type of the event. **Example:**
+    - `customer.custom_event`
+    - `customer.loyalty.tier.downgraded`
+    - `customer.loyalty.tier.joined`
+    - `customer.loyalty.tier.left`
+    - `customer.loyalty.tier.prolonged`
+    - `customer.loyalty.tier.upgraded`
+    - `customer.order.canceled`
+    - `customer.order.created`
+    - `customer.order.paid`
+    - `customer.order.updated`
+    - `customer.publication.succeeded`
+    - `customer.redemption.rollback.succeeded`
+    - `customer.redemption.succeeded`
+    - `customer.referred`
+    - `customer.reward_redemptions.completed`
+    - `customer.rewarded`
+    - `customer.rewarded.loyalty_points`
+    - `customer.segment.entered`
+    - `customer.segment.left`
+    - `customer.voucher.gift.balance_added`
+    - `customer.voucher.loyalty_card.pending_points.activated`
+    - `customer.voucher.loyalty_card.pending_points.added`
+    - `customer.voucher.loyalty_card.pending_points.canceled`
+    - `customer.voucher.loyalty_card.points_added`
+    - `customer.voucher.loyalty_card.points_expired`
+    - `loyalty_card.pending_points.updated`
+    - `manual_distribution_schedule`
+  - `created_at` (`string`): The exact moment when the event was created. **Example:** `2024-01-01T11:11:11.111Z`
+  - `entity_id` (`string`): Unique identifier of the entity that triggered the send out. **Example:** `r_1f3611302bf107befb`
+  - `group_id` (`string`): Unique identifier of the request that triggered the event. **Example:** `v-1f36113948e50fc4ge`
+  - `event_source` (`object`): Contains the source of the object that triggered the send out. Properties:
+    - `channel` (`string`): Determines the channel that triggered the send out. Available values: `USER_PORTAL`, `API`, `CLIENT_API`, `INTERNAL` **Example:** `API`
+    - `user` (`string`): Defines the user who triggered the event.
+    - `api_key` (`object`): Determines the API key used to initiate the send out.
+      - `name` (`string`): Channel name in the application keys.
+      - `app_id` (`string`): Contains the application ID from the Voucherify API key pair. **Example:** `1XXXX5XX-0XXX-XXXb-X7XX-XX2XXaXXX6XX`
+
+
+```JSON Customer voucher redeemed example
+{
+  "id": "whs_ID",
+  "project_id": "proj_ID",
+  "created_at": "2025-10-16T16:54:11.816Z",
+  "type": "Voucher-redeemed",
+  "data": {
+    "customer": {
+      "id": "cust_ID",
+      "name": "Alex Doe",
+      "email": "alex.doe@doe.alex.io",
+      "source_id": "4lx-d03",
+      "metadata": {
+        "acquisition_channel": "Website"
+      },
+      "object": "customer"
+    },
+    "order": {
+      "id": "ord_ID",
+      "source_id": null,
+      "status": "PAID",
+      "customer_id": "cust_ID",
+      "referrer_id": null,
+      "amount": 4198,
+      "applied_discount_amount": 0,
+      "total_applied_discount_amount": 0,
+      "total_amount": 4198,
+      "items": [
+        {
+          "id": "ordli_IDD",
+          "object": "order_item",
+          "product_id": "prod_IDD",
+          "quantity": 1,
+          "amount": 199,
+          "price": 199,
+          "subtotal_amount": 199
+        },
+        {
+          "id": "ordli_ID",
+          "object": "order_item",
+          "product_id": "prod_ID",
+          "quantity": 1,
+          "amount": 3999,
+          "price": 3999,
+          "subtotal_amount": 3999
+        }
+      ],
+      "metadata": {},
+      "created_at": "2025-10-16T16:54:11.785Z",
+      "object": "order"
+    },
+    "campaign": {
+      "id": "camp_ID",
+      "name": "Autumn-2025",
+      "campaign_type": "DISCOUNT_COUPONS",
+      "type": "STANDALONE",
+      "is_referral_code": false,
+      "voucher": {
+        "type": "DISCOUNT_VOUCHER",
+        "discount": {
+          "type": "AMOUNT",
+          "amount_off": 100,
+          "units": null,
+          "effect": "APPLY_TO_ITEMS"
+        },
+        "redemption": {
+          "quantity": null,
+          "redeemed_quantity": 0
+        },
+        "code_config": {
+          "pattern": "########",
+          "length": 8,
+          "charset": "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",
+          "prefix": "",
+          "postfix": "",
+          "min_desired": 1
+        }
+      },
+      "auto_join": false,
+      "join_once": false,
+      "active": true,
+      "category_id": null,
+      "category": null,
+      "metadata": {},
+      "start_date": null,
+      "expiration_date": null,
+      "description": null,
+      "created_at": "2025-10-14T08:45:08.857Z",
+      "updated_at": "2025-10-16T16:51:09.275Z",
+      "object": "campaign"
+    },
+    "voucher": {
+      "id": "v_ID",
+      "code": "kUs7oM-cOD3",
+      "discount": {
+        "type": "AMOUNT",
+        "amount_off": 100,
+        "effect": "APPLY_TO_ITEMS"
+      },
+      "type": "DISCOUNT_VOUCHER",
+      "campaign": "Autumn-2025",
+      "campaign_id": "camp_ID",
+      "is_referral_code": false,
+      "holder_id": "cust_ID",
+      "category_id": null,
+      "active": true,
+      "created_at": "2025-10-16T16:02:41.255Z",
+      "updated_at": "2025-10-16T16:54:11.804Z",
+      "redemption": {
+        "quantity": null,
+        "redeemed_quantity": 1
+      },
+      "start_date": null,
+      "expiration_date": null,
+      "metadata": {},
+      "object": "voucher"
+    },
+    "holder": {
+      "id": "cust_ID",
+      "name": "Alex Doe",
+      "email": "alex.doe@doe.alex.io",
+      "source_id": "4lx-d03",
+      "metadata": {
+        "acquisition_channel": "Website"
+      },
+      "object": "customer"
+    },
+    "promotion_tier": null,
+    "promotion_stack": null,
+    "redemption": {
+      "id": "r_ID",
+      "customer_id": "cust_ID",
+      "tracking_id": "track_ID",
+      "date": "2025-10-16T16:54:11.816Z",
+      "order": {
+        "id": "ord_ID",
+        "source_id": null,
+        "status": "PAID",
+        "customer_id": "cust_ID",
+        "referrer_id": null,
+        "amount": 4198,
+        "applied_discount_amount": 0,
+        "total_applied_discount_amount": 0,
+        "total_amount": 4198,
+        "items": [
+          {
+            "id": "ordli_IDD",
+            "object": "order_item",
+            "product_id": "prod_IDD",
+            "quantity": 1,
+            "amount": 199,
+            "price": 199,
+            "subtotal_amount": 199
+          },
+          {
+            "id": "ordli_ID",
+            "object": "order_item",
+            "product_id": "prod_ID",
+            "quantity": 1,
+            "amount": 3999,
+            "price": 3999,
+            "subtotal_amount": 3999
+          }
+        ],
+        "metadata": {},
+        "created_at": "2025-10-16T16:54:11.785Z",
+        "object": "order"
+      },
+      "customer": {
+        "id": "cust_ID",
+        "name": "Alex Doe",
+        "email": "alex.doe@doe.alex.io",
+        "source_id": "4lx-d03",
+        "metadata": {
+          "acquisition_channel": "Website"
+        },
+        "object": "customer"
+      },
+      "result": "SUCCESS",
+      "status": "SUCCEEDED",
+      "voucher": {
+        "id": "v_ID",
+        "code": "kUs7oM-cOD3",
+        "discount": {
+          "type": "AMOUNT",
+          "amount_off": 100,
+          "effect": "APPLY_TO_ITEMS"
+        },
+        "type": "DISCOUNT_VOUCHER",
+        "campaign": "Autumn-2025",
+        "campaign_id": "camp_ID",
+        "is_referral_code": false,
+        "holder_id": "cust_ID",
+        "category_id": null,
+        "active": true,
+        "created_at": "2025-10-16T16:02:41.255Z",
+        "updated_at": "2025-10-16T16:54:11.804Z",
+        "redemption": {
+          "quantity": null,
+          "redeemed_quantity": 1
+        },
+        "start_date": null,
+        "expiration_date": null,
+        "metadata": {},
+        "object": "voucher"
+      },
+      "metadata": {},
+      "channel": {
+        "channel_id": "user_ID",
+        "channel_type": "USER"
+      },
+      "object": "redemption"
+    }
+  },
+  "source": {
+    "id": "distr_ID",
+    "object": "distribution",
+    "target_url": "https://your.website.io"
+  },
+  "event": {
+    "id": "evcus_115d38459e5318ae94",
+    "type": "customer.redemption.succeeded",
+    "created_at": "2025-10-16T16:54:11.816Z",
+    "entity_id": "cust_ID",
+    "group_id": "v-115d384583cfba443b",
+    "event_source": {
+      "channel": "USER_PORTAL",
+      "user": {
+        "id": "user_ID"
+      }
+    }
+  }
+}
+```
