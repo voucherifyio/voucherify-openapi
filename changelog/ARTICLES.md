@@ -7,6 +7,14 @@ Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
 # Articles – changelog
 
+## 2025-10-24
+
+- Added `voucherify-core-mcp.mdx` article
+
+## 2025-10-22
+
+- Mintlify launch: A lot of changes to documentation in [PR 915](https://github.com/voucherifyio/voucherify-openapi/pull/915)
+
 ## 2025-08-27
 - Added `custom-events-in-referral-programs.md` from the Support documentation.
 - Moved content of `Distributions.md` from the Integration blueprint section to Development.
