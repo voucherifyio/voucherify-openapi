@@ -48,10 +48,6 @@ const common = [
 ];
 
 const conditionalByPath = {
-   dotnet: [{
-    search: "ListSKUsInProductAsync",
-    replaceWith: "ListSkusInProductAsync",
-  }],
   ruby: common,
   java: common,
   php: common,

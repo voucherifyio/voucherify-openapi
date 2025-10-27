@@ -1,27 +1,27 @@
-import fsPromises from "fs/promises";
-import fs from "fs";
-import path from "path";
-import minimist from "minimist";
 import colors from "colors";
-import { parseNullsToNullableObjects, removeStoplightTag } from "./utils";
-import originalOpenAPIContent from "../../reference/OpenAPI.json";
+import fs from "fs";
+import fsPromises from "fs/promises";
 import _ from "lodash";
-
-let openAPIContent: any = originalOpenAPIContent;
-import { removedNotUsedParameters } from "./removed-not-used-parameters";
-import { removeNotUsedSchemas } from "./remove-not-used-schemas";
+import minimist from "minimist";
+import path from "path";
+import originalOpenAPIContent from "../../reference/OpenAPI.json";
+import addMissingDefaults from "./add-missing-defaults";
 import { getPathsWithoutDeprecated } from "./get-paths-without-deprecated";
-import {
-  cleanUpDescriptionsInEntireObject,
-  removeAllOneOfs,
-} from "./removeOneOfs";
 import { putNotObjectSchemasIntoObjectSchemas } from "./put-not-object-schemas-into-object-schemas";
 import {
   removeBuggedTagsFromOpenAPIParameters,
   removeBuggedTagsFromOpenAPIPaths,
 } from "./remove-bugged-tags-from-open-api";
+import { removeNotUsedSchemas } from "./remove-not-used-schemas";
 import { removeUnwantedProperties } from "./remove-unwanted-properties";
-import addMissingDefaults from "./add-missing-defaults";
+import { removedNotUsedParameters } from "./removed-not-used-parameters";
+import {
+  cleanUpDescriptionsInEntireObject,
+  removeAllOneOfs,
+} from "./removeOneOfs";
+import { parseNullsToNullableObjects, removeStoplightTag } from "./utils";
+
+let openAPIContent: any = originalOpenAPIContent;
 
 const options = minimist(process.argv.slice(2));
 
@@ -42,7 +42,7 @@ const supportedLanguages: {
     name: "python",
     simplifyAllObjectsThatHaveAdditionalProperties: true, //MUST STAY!
     use2XX: true, //MUST STAY!
-    breakingChangesVersion: 1,
+    breakingChangesVersion: 2,
   },
   ruby: {
     name: "ruby",
