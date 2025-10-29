@@ -65,7 +65,7 @@ export const updateMdTablesInDoc = async () => {
 title: "${title}"
 mode: "frame"
 ---`,
-        '<div class="prose custom-html">',
+        '<div class="prose dark:prose-invert custom-html">',
         docFile?.htmlDescription,
         fileContentAsHtml,
         "</div>",
@@ -80,7 +80,13 @@ mode: "frame"
 
       await fs.mkdir(path.dirname(docPath), { recursive: true });
 
-      await fs.writeFile(docPath, newFileContent);
+      await fs.writeFile(
+        docPath,
+        newFileContent
+          .replaceAll(" -", " &#45;")
+          .replaceAll(" =", " &#61;")
+          .replaceAll(" +", " &#43;"),
+      );
       console.log(`Updated table in ${docFile} `);
     } catch (e) {
       console.log(`Error for ${objectName}`, e);

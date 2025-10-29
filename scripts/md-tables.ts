@@ -22,7 +22,7 @@ export const mdTables: [
   ],
   [
     "RedemptionsRedeemResponseBody",
-    { title: "Redemption Object", group: "Redemptions" },
+    { title: "Stackable Redemptions Object", group: "Redemptions" },
   ],
   [
     "8_obj_loyalty_campaign_object",

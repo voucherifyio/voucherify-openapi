@@ -156,6 +156,8 @@ The following changes to the `OpenAPI.json` file consistent breaking changes:
 - Adding `format` or its change in a schema which has `"type": "string"`.
 - Adding a `default` (**most likely**).
 - Adding a new `enum` value if the existing values have the same prefix.
+- Changing `operationId` for endpoint - FORBIDDEN - if needed we will introduce mapping
+- Changing `tags` for endpoint - FORBIDDEN - if needed we will introduce mapping
 
 To avoid breaking changes, fix them in the [`index.ts` file](./scripts/prepare-open-api-for-sdk/index.ts).
 

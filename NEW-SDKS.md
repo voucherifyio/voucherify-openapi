@@ -71,6 +71,7 @@ See [GENERATING SDKS](/GENERATING-SDKS.md).
         - Query qualifications.
         - Perform validation and redemption successfully.
         - Compare at least a few response parameters using `expect()`.
+        - Create a campaign with `expiration_date` and then update it with `null` to make sure updates with null works - use assertion.
     3. Using `X_MANAGEMENT_ID` and `X_MANAGEMENT_TOKEN`:
         - Query projects.
         - List metadata schemas.
