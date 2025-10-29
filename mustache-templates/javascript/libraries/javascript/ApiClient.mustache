@@ -542,17 +542,31 @@ class ApiClient {
 
         {{/usePromises}}
         {{^usePromises}}
-        return request.then((response) => {
-            try {
-                 const data = this.deserialize(response, returnType);
-                 if (this.enableCookies && typeof window === 'undefined'){
-                    this.agent._saveCookies(response);
-                 }
-                 return data;
-            } catch (err) {
-                throw err;
-            }
-        });
+        const handleResponse = (response) => {
+           try {
+             const data = this.deserialize(response, returnType);
+             if (this.enableCookies && typeof window === 'undefined'){
+               this.agent._saveCookies(response);
+             }
+             return { data, response };
+           } catch (err) {
+             throw err;
+           }
+        };
+
+        const promise = request.then(handleResponse);
+
+        if (callback) {
+           return promise
+             .then(({ data, response }) => {
+               callback(null, data, response);
+             })
+             .catch((error) => {
+               callback(error, null, error.response);
+             });
+        }
+
+        return promise.then(({ data }) => data);
         {{/usePromises}}
     }
 
