@@ -7,6 +7,13 @@ Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
 # Articles – changelog
 
+## 2025-10-31
+
+- Removed from `docs.json`:
+  - `manage-stackable-discounts`,
+  - `guides/discount-effects`,
+  - `give-item-for-free-unit-discount`
+
 ## 2025-10-24
 
 - Added `voucherify-core-mcp.mdx` article
