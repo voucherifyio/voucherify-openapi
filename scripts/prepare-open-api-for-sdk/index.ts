@@ -22,6 +22,8 @@ import {
 import { parseNullsToNullableObjects, removeStoplightTag } from "./utils";
 
 let openAPIContent: any = originalOpenAPIContent;
+import addMissingDefaults from "./add-missing-defaults";
+import { removeRequiredFromRequestsAndResponses } from "./remove-required-from-request-and-responses";
 
 const options = minimist(process.argv.slice(2));
 
@@ -62,6 +64,11 @@ const supportedLanguages: {
     supportOauth: true,
     removeAllSchemasDefaults: true,
     breakingChangesVersion: 2,
+  },
+  js: {
+    name: "js",
+    supportOauth: true,
+    breakingChangesVersion: 3,
   },
 };
 
@@ -381,29 +388,29 @@ const main = async (languageOptions: LanguageOptions) => {
     );
     // Restore previous voucher_type filter
     openAPIContent.components.schemas.ParameterFiltersListCampaigns.properties.voucher_type =
-    {
-      type: "object",
-      description: "Filter by voucher type",
-      properties: {
-        conditions: {
-          $ref: "#/components/schemas/FilterConditionsString",
+      {
+        type: "object",
+        description: "Filter by voucher type",
+        properties: {
+          conditions: {
+            $ref: "#/components/schemas/FilterConditionsString",
+          },
         },
-      },
-    };
+      };
     // Restore previous is_referral_code filter
     openAPIContent.components.schemas.ParameterFiltersListCampaigns.properties.is_referral_code.properties =
-    {
-      $is: {
-        type: "string",
-        description: "Value is exactly this value (single value).",
-        enum: ["TRUE", "FALSE"],
-      },
-      $is_not: {
-        type: "string",
-        description: "Results omit this value (single value).",
-        enum: ["TRUE", "FALSE"],
-      },
-    };
+      {
+        $is: {
+          type: "string",
+          description: "Value is exactly this value (single value).",
+          enum: ["TRUE", "FALSE"],
+        },
+        $is_not: {
+          type: "string",
+          description: "Results omit this value (single value).",
+          enum: ["TRUE", "FALSE"],
+        },
+      };
     // Remove new conditions – $contains, $not_contain from FilterConditionsString
     delete openAPIContent.components.schemas.FilterConditionsString.properties
       .$contains;
@@ -417,7 +424,8 @@ const main = async (languageOptions: LanguageOptions) => {
   if (languageOptions.breakingChangesVersion <= 2) {
     //ADD MORE TO IT ONCE DOTNET IS RELEASED
     // Restore faulty type for referee_reward.amount
-    openAPIContent.components.schemas.ReferralProgram.properties.referee_reward.properties.amount.type = "string"
+    openAPIContent.components.schemas.ReferralProgram.properties.referee_reward.properties.amount.type =
+      "string";
   }
   //////////////////////////////////////////////////////////////////////////////
   ///////////////////////////END OF BREAKING CHANGES////////////////////////////
@@ -521,7 +529,7 @@ const main = async (languageOptions: LanguageOptions) => {
   }
 
   // Building all together
-  const newOpenApiFile = cleanUpDescriptionsInEntireObject({
+  let newOpenApiFile = cleanUpDescriptionsInEntireObject({
     ...openAPIContent,
     components: {
       ...openAPIContent.components,
@@ -551,10 +559,9 @@ const main = async (languageOptions: LanguageOptions) => {
       };
     });
     newOpenApiFile.components.schemas.OrdersListResponseBody.properties.orders.items =
-    {
-      $ref: "#/components/schemas/OrderCalculated",
-    };
-    ///
+      {
+        $ref: "#/components/schemas/OrderCalculated",
+      };
     newOpenApiFile.components.schemas.LoyaltiesMembersPointsExpirationListResponseBody.properties.data.items =
       newOpenApiFile.components.schemas.LoyaltyPointsBucket;
     newOpenApiFile.components.schemas.LoyaltyCardTransaction.properties.details.properties.balance =
@@ -565,7 +572,29 @@ const main = async (languageOptions: LanguageOptions) => {
     if(languageOptions.name === "dotnet") {
       newOpenApiFile.paths['/v1/products/{productId}/skus'].get.operationId = 'list-skus-in-product'
     }
+    //NOTHING MORE HERE!
   }
+  if (languageOptions.breakingChangesVersion <= 2) {
+    newOpenApiFile =
+      removeRequiredFromRequestsAndResponses(newOpenApiFile).spec;
+
+    const addToRequestBodyIn = {
+      "/v1/vouchers/{code}": ["put"],
+      "/v1/vouchers/{code}/balance": ["post"],
+      "/v1/vouchers/import": ["post"],
+      "/v1/vouchers/bulk/async": ["post"],
+      "/v1/vouchers/metadata/async": ["post"],
+    };
+
+    for (const [path, methods] of Object.entries(addToRequestBodyIn)) {
+      for (const method of methods) {
+        newOpenApiFile.paths[path][method].requestBody.required = true;
+      }
+    }
+    //NOTHING MORE HERE!
+  }
+  //!!!!!!!!!!!!!!!!!!!TYPE MORE BREAKING CHANGES BELOW!!!!!!!!!!!!!!!!!!!!!!!!!
+
   //////////////////////////////////////////////////////////////////////////////
   ///////////////////////////END OF BREAKING CHANGES////////////////////////////
   //////////////////////////////////////////////////////////////////////////////

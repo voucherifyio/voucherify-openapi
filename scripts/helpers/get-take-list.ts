@@ -17,13 +17,13 @@ export const rawTakeList = {
     get: true,
   },
   "/v1/oauth/token": {
-    post: ["dotnet"],
+    post: ["dotnet", "js"],
   },
   "/v1/oauth/introspect": {
-    post: ["dotnet"],
+    post: ["dotnet", "js"],
   },
   "/v1/oauth/token/revoke": {
-    post: ["dotnet"],
+    post: ["dotnet", "js"],
   },
   "/v1/loyalties/members/{memberId}/pending-points/{pendingPointsId}/balance": {
     post: true,
