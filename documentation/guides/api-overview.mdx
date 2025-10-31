@@ -1,0 +1,160 @@
+---
+title: "API overview"
+description: This guide explains how Voucherify’s API works — including endpoints, performance, optimization, client-side use, and versioning. Use it when building, optimizing, or maintaining your integration.
+keywords: ['API', 'overview', 'optimization', 'version', 'endpoint', 'cluster', 'region', 'client-side']
+---
+
+## Choose the right API endpoint
+
+Voucherify hosts API clusters in multiple regions. Pick the one closest to your users for lower latency.
+
+**Shared cluster endpoints**
+
+- Europe (default): https://api.voucherify.io
+
+- United States: https://us1.api.voucherify.io
+
+- Asia (Singapore): https://as1.api.voucherify.io
+
+If your company uses a **dedicated cluster**, use its unique URL. Calling the wrong region returns an error.
+
+<Note>
+SDKs let you override the default API endpoint if your project is hosted elsewhere.
+</Note>
+
+## Understand request processing
+
+Each API request runs in two phases:
+
+- **Synchronous phase** — main response (for example, redemption result).
+
+- **Asynchronous phase** — [background tasks](https://support.voucherify.io/article/524-project-logs#background-tasks-overview) such as:
+
+  - Updating segments
+
+  - Sending webhooks
+  
+  - Applying loyalty points
+  
+  - Triggering distributions
+
+Async operations may complete a few seconds later. Monitor them under **Dashboard → Background Tasks**.
+
+**Examples of long-running jobs**
+
+- Bulk imports or exports (customers, products, vouchers)
+
+- Campaign creation or updates
+
+- Metadata updates
+
+## Improve performance and efficiency
+
+Voucherify optimizes most requests for speed. Average response time on shared clusters:
+
+- **Validations:** ~100–200 ms  
+
+- **Redemptions:** ~150–350 ms  
+
+Longer operations (for example, campaign creation) can take more time.
+
+Follow these rules to keep your integration fast and efficient.
+
+### Use efficient API flows
+
+Follow the recommended flows for validation, redemption, and campaign management. Avoid unnecessary round-trips.
+
+### Don’t pre-synchronize data
+
+You can send customer, order, or product data directly in validation or redemption calls. No need to pre-create them.
+
+### Replace polling with webhooks
+
+Use webhooks instead of repeated API requests. Webhooks don’t count toward API call limits and deliver updates in real time.
+
+## Client-side API (browser and mobile)
+
+Use the client-side API only when you must expose live validation in a web or mobile app. Example: check a promo code on checkout.
+
+### SDK and widgets
+
+The **Voucherify JS SDK** includes methods and components for:
+
+- Validation  
+
+- Redemption  
+
+- Voucher publication  
+
+- Subscription forms  
+
+React components are also available.
+
+### Rate limiting
+
+Client-side calls share a global limit per IP address. If the limit is exceeded, the API returns:
+
+```json
+{
+  "code": 429,
+  "message": "Too many requests hit the API too quickly."
+}
+```
+
+### Client-side settings
+
+Go to **Dashboard** → **Project Settings** → **Client-side Settings** to configure:
+
+- **Allowed website URLs** — list allowed origins.
+Use * only in development.
+
+- **Danger Zone options** — enable with caution:
+
+    - Redeeming vouchers
+
+    - Publishing vouchers
+
+    - Listing vouchers
+
+    - Creating customers
+
+    - Updating voucher expiration
+
+    - Creating loyalty or referral events
+
+<Warning> Enable these only if you fully understand the security impact. </Warning>
+
+## Manage API versions
+
+Voucherify releases dated API versions (for example, 2022-09-01). Your project won’t auto-upgrade. You control when to move.
+
+Check your current version in **Project Setting** → **API Version**.
+
+### Upgrading
+
+1. Review the API changelog
+
+2. Test the new version in a sandbox project.
+
+3. Click Upgrade to the latest API version when ready.
+
+### Backward-compatible changes
+
+Voucherify may:
+
+- Add new endpoints or properties
+
+- Add optional parameters
+
+- Change property order
+
+- Introduce new webhook event types
+
+Your integration should ignore unknown fields and event types.
+
+## Management API (Enterprise)
+
+Enterprise accounts may use the Management API to automate project and user administration.
+It covers actions such as creating projects, managing users, and editing schemas.
+
+<Note> Contact Voucherify Sales Team to enable the Management API. </Note>
