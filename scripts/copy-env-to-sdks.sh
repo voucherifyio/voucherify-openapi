@@ -18,7 +18,8 @@ TARGET_DIRS=(
   "sdks/java/.env"
   "sdks/php/.env"
   "sdks/python/.env"
-  "sdks/ruby/.env"
+  "sdks/ruby/.env",
+  "sdks/js/.env"
 )
 
 # Copy .env to each target directory
