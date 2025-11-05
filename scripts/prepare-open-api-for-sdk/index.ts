@@ -419,16 +419,11 @@ const main = async (languageOptions: LanguageOptions) => {
     // Restore faulty type for referee_reward.amount
     openAPIContent.components.schemas.ReferralProgram.properties.referee_reward.properties.amount.type = "string";
     // Restore `created_at` to POST `v1/orders/import`
-    openAPIContent.components.schemas.OrdersImportCreateRequestBody.items.allOf.push({
-      type: "object",
-      properties: {
-        created_at: {
-          type: "string",
-          description: "Timestamp representing the date and time when the order was created. The value is shown in the ISO 8601 format.",
-          format: "date-time"
-        },
-      },
-    });
+    openAPIContent.components.schemas.OrdersImportCreateRequestBody.items.allOf[1].properties.created_at = {
+      type: "string",
+      description: "Timestamp representing the date and time when the order was created. The value is shown in the ISO 8601 format.",
+      format: "date-time"
+    };
   }
   //////////////////////////////////////////////////////////////////////////////
   ///////////////////////////END OF BREAKING CHANGES////////////////////////////
