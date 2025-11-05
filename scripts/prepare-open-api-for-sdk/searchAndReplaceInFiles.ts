@@ -40,16 +40,32 @@ function searchAndReplaceInFiles(dir, extensions, searchRegex, replaceWith) {
   });
 }
 
-const searchReplace = [
+const common = [
   {
     search: "POINTS_PENDING_ACTIVATION",
     replaceWith: "PENDING_POINTS_ACTIVATION",
   },
 ];
 
+const conditionalByPath = {
+   dotnet: [{
+    search: "ListSKUsInProductAsync",
+    replaceWith: "ListSkusInProductAsync",
+  }],
+  ruby: common,
+  java: common,
+  php: common,
+  python: common,
+}
+
 async function main(_path: string) {
   const startDir = path.join(__dirname, "../../sdks", _path);
-  const extensions = [".ruby", ".php", ".java", ".md", ".py"];
+  const extensions = [".ruby", ".php", ".java", ".md", ".py", ".cs"];
+  const searchReplace = conditionalByPath[_path];
+  if(!searchReplace) throw new Error(
+    `No search replace for path ${_path}`
+  )
+
   for (const _searchReplace of searchReplace) {
     await new Promise((r) => setTimeout(r, 1000));
 
