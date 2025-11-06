@@ -417,7 +417,16 @@ const main = async (languageOptions: LanguageOptions) => {
   if (languageOptions.breakingChangesVersion <= 2) {
     //ADD MORE TO IT ONCE DOTNET IS RELEASED
     // Restore faulty type for referee_reward.amount
-    openAPIContent.components.schemas.ReferralProgram.properties.referee_reward.properties.amount.type = "string"
+    openAPIContent.components.schemas.ReferralProgram.properties.referee_reward.properties.amount.type = "string";
+    openAPIContent.components.schemas.Segment.properties[
+      "initial_sync_status"
+    ] = {
+      type: "string",
+      enum: [
+        "IN_PROGRESS",
+        "DONE"
+      ],
+    }
   }
   //////////////////////////////////////////////////////////////////////////////
   ///////////////////////////END OF BREAKING CHANGES////////////////////////////
@@ -562,7 +571,7 @@ const main = async (languageOptions: LanguageOptions) => {
     newOpenApiFile.components.schemas.VoucherTransaction.properties.details.properties.balance =
       newOpenApiFile.components.schemas.VoucherBalance;
 
-    if(languageOptions.name === "dotnet") {
+    if (languageOptions.name === "dotnet") {
       newOpenApiFile.paths['/v1/products/{productId}/skus'].get.operationId = 'list-skus-in-product'
     }
   }
