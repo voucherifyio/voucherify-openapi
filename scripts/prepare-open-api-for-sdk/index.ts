@@ -418,6 +418,16 @@ const main = async (languageOptions: LanguageOptions) => {
     //ADD MORE TO IT ONCE DOTNET IS RELEASED
     // Restore faulty type for referee_reward.amount
     openAPIContent.components.schemas.ReferralProgram.properties.referee_reward.properties.amount.type = "string";
+    // Restore `initial_sync_status`
+    openAPIContent.components.schemas.Segment.properties[
+      "initial_sync_status"
+    ] = {
+      type: "string",
+      enum: [
+        "IN_PROGRESS",
+        "DONE"
+      ],
+    }
     // Restore `created_at` to POST `v1/orders/import`
     openAPIContent.components.schemas.OrdersImportCreateRequestBody.items.allOf[1].properties.created_at = {
       type: "string",
