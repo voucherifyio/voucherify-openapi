@@ -4,6 +4,10 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2025-11-04
+
+Remove `initial_sync_status` from the `Segment` schema.
+
 ## 2025-10-31
 
 - Removed `created_at` from `OrdersImportCreateRequestBody` schema – internal request.
