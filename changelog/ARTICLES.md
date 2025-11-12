@@ -7,6 +7,10 @@ Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
 # Articles – changelog
 
+## 2025-11-12
+
+Hid `new-voucherify-documentation.mdx`.
+
 ## 2025-10-31
 
 - Removed from `docs.json`:
