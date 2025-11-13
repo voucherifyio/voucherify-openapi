@@ -5,7 +5,9 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
-# Articles – changelog
+## 2025-11-13
+
+Add more info regarding `required` in responses to `introduction-api.mdx`.
 
 ## 2025-11-12
 
