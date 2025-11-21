@@ -1,0 +1,115 @@
+---
+title: "Infobip"
+keywords: ['integration', 'infobip']
+---
+
+Infobip, a global communication platform, allows businesses to engage customers through SMS, WhatsApp, and email, while Voucherify enables personalized [promotions](https://support.voucherify.io/article/519-create-cart-level-promotions), [vouchers](https://support.voucherify.io/article/514-coupons), and [loyalty programs](https://support.voucherify.io/article/177-how-to-create-loyalty-program-step-by-step). By combining the strengths of both platforms, you can streamline marketing campaigns that engage your customers across channels with personalized offers. Some example use cases in marketing campaign engagement scenarios are:
+
+*   **Automated Birthday Campaigns** **via various Messaging Channels**. Automatically send personalized [birthday offers](https://support.voucherify.io/article/517-birthday-campaign) to customers via their preferred messaging channel (e.g., WhatsApp, SMS, Viber) to enhance engagement and encourage voucher redemption.
+*   **Cart Abandonment Recovery with Personalized Discounts**. Use personalized discount vouchers sent through a customer’s preferred messaging channel to win back those who have abandoned their shopping carts.
+*   **Loyalty Program Engagement**. Reward loyal customers by sending real-time updates about their loyalty status or rewards through their chosen communication platform.
+*   **Event-Triggered Campaigns** (e.g., Black Friday Flash Sales). Maximize engagement during special events by sending time-sensitive offers across [multiple messaging channels](https://support.voucherify.io/article/19-how-does-the-distribution-manager-work), ensuring timely outreach to various customer segments.
+
+Also, Infobip’s contact center and customer support capabilities can be extended with Voucherify to enable the following scenarios:
+
+*   **Appeasement Codes for Customer Resolutions**. Customer support agents can quickly generate and share appeasement codes (e.g., discounts or free shipping vouchers) via a customer’s preferred channel directly from their support platform to resolve issues swiftly and improve satisfaction.
+*   **Proactive Problem-Solving with Personalized Offers**. When an issue is detected (e.g., delayed shipment), a personalized apology voucher or discount can be automatically generated and sent to the customer, preemptively addressing concerns and showing appreciation for their patience.
+*   **Feedback-Based Incentives**. After a customer support interaction, send a satisfaction survey, and upon completion, instantly deliver a voucher or discount code as a token of appreciation, fostering engagement and encouraging feedback.
+
+The following guide will walk you through the process of setting up an Infobip + Voucherify integration flow without any coding necessary to automatically send a personalized WhatsApp birthday message with a discount voucher to your customers.
+
+## Overview of the flow
+
+The flow involves three steps:
+
+1.  Triggering the Flow. The trigger can be:
+    *   External source (e.g., CRM, CDP, or eCommerce)
+    *   Action or event,
+    *   Predefined audience in Infobip,
+    *   Inbound message,
+    *   Change in person’s profile.
+
+In this example, an [API call to Infobip](https://www.infobip.com/docs/moments/flow-elements/flow-entry-exit#flow-api-external-source) triggers the flow.
+
+2.  Calling Voucherify API: Infobip flow calls Voucherify to generate and retrieve a personalized voucher code.
+3.  Sending WhatsApp Message: Infobip extracts the voucher code and uses it in a WhatsApp message to the customer.
+
+## Step-by-Step Configuration
+
+### Creating a Flow in Infobip’s Flow Builder
+
+1.  Access the Flow Builder: Navigate to the Campaigns section and select Flows to [create a new flow](https://www.infobip.com/docs/moments/manage-flow).
+2.  Define the Trigger: Choose External Source and Flow API as the starting point. This allows the flow to be triggered externally via an API call. 
+<Note>
+You will get the Infobip’s API endpoint URL for this specific flow.
+</Note>
+
+Refer to [Infobip documentation for details on how to call this endpoint](https://www.infobip.com/docs/api/customer-engagement/moments/add-flow-participants). You may also need to update [the API Base URL](https://portal.infobip.com/dev/api-keys).
+
+### Making an API Call to Voucherify
+
+1.  Add “Call API” Block in Infobip flow.
+2.  Configure the API Call to Voucherify
+<Note>
+To generate unique personalized vouchers, a Voucherify [Discount Code Campaign](https://support.voucherify.io/article/46-bulk-unique-codes-campaign) needs to be configured. Then, the codes can be generated via [Voucherify’s Create Publication API endpoint](https://docs.voucherify.io/reference/create-publication).
+</Note>
+*   Request URL: `https://{cluster}.voucherify.io/v1/publications`
+*   HTTP Method: POST
+*   Header: Include Content-Type: application/json and the necessary Voucherify API credentials (X-App-Id and X-App-Token).
+*   Body Payload: Pass the data needed for Voucherify to create the voucher, such as the `customer_id`, `campaign_id`, and any other metadata required in JSON format.
+
+```
+{
+    "campaign": {
+        "name": "Happy Birthday 2024 Coupons Campaign"
+    },
+    "customer": {
+        "source_id": "{$id}"
+    },
+    "metadata": {
+        "callFrom": "Infobip"
+    }
+}
+```
+
+<Note>
+You can pass `customer.source_id` as placeholder so that either ID from external source or Infobip’s internal ID could be used in the runtime. Voucherify can work with any external ID.
+</Note>
+
+1.  Extract the Voucher Code:
+    *   Once the API call is successful, configure Infobip to extract the voucher code from the API response. On the Response tab of Call API block configuration, turn “Wait until response is received” toggle on.
+    *   In Response Body Variable, add a Variable. Use JSON path expression `$.voucher.code` to map the voucher code to a flow variable, e.g., `{voucher_code}`. A flow variable can be either preconfigured in the flow settings or configured in the context of the Call API block configuration.
+<Note>
+For the sake of simplicity, the API Call block error handling configuration capabilities is skipped here.
+</Note>
+### Sending the WhatsApp Message with Voucher Code
+
+1.  Connect “Send WhatsApp Message” block to “Call API” block:
+2.  Configure WhatsApp Messaging Block:
+    *   Use a message template that includes personalized elements like the customer’s name and the generated voucher code.
+    *   Include the `{voucher\_code}` variable extracted earlier to insert the voucher code dynamically in the WhatsApp message.
+    *   Example message template:
+
+`🎉HappyBirthday{firstName}!Here’sa$50discountonyournextbouquet.Usecode{voucher_code}toredeemyourgift!`
+
+<Note>
+`{firstName}` here is a standard Infobip variable; `{voucher_code}` is a flow-specific variable that was configured earlier.
+</Note>
+
+### Launching the flow
+
+Now, make sure you give a name to the flow and hit the Validate button. If everything is configured correctly, the flow is ready to launch.
+
+You can observe the flow’s live performance, e.g., the number of engaged users or total engagements, on Infobip canvas.
+
+<Note>
+Voucherify must be integrated with the e-commerce store to enable customers to redeem their voucher codes. This integration ensures that the generated voucher codes sent through the Infobip flow can be validated and redeemed during checkout.
+</Note>
+
+## Throttling
+
+Voucherify limits the number of API requests you can send per month or hour/minute. To avoid surpassing these limits, use the built-in Infobip’s throttling mechanism.
+
+By adding throttling, you can prevent your application from sending more requests than allowed within the allotted timeframe. For example, you could configure your system to send only a maximum of 80 requests per minute if the limit is 100, leaving some buffer space for validation and redemption requests in other parts of the integration.
+
+To introduce throttling, add a defined message-sending speed that’s available in the “Scheduling” tab of Infobip’s Call API block.

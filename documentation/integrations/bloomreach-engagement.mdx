@@ -1,0 +1,258 @@
+---
+title: "Bloomreach Engagement Integration"
+keywords: ['integration', 'bloomreach']
+---
+
+[Bloomreach Engagement](https://www.bloomreach.com/en/products/engagement) is a customer data platform (CDP) that gathers all your customer data in one place. You can use this data to create personalized email, SMS, web, and mobile campaigns.
+
+Thanks to a two-way integration between Bloomreach Engagement and Voucherify, you can send Voucherify events to enrich your Bloomreach Engagement content (inbound traffic) as well as receive data in Voucherify from Bloomreach Engagement (outbound traffic).
+
+This way, you can store Bloomreach Engagement audience information in Voucherify and use it to build complex campaign eligibility and targeting options as well as reduce the manual work needed for granular user segmentation.
+<Note>
+The integration with Bloomreach CDP uses [webhook limits](https://docs.voucherify.io/docs/limits#webhooks) for sending data from Bloomreach CDP to Voucherify.
+</Note>
+<Warning>
+The integration updates only the defined customer metadata. The undefined metadata or data that does not match the defined data type is omitted.
+</Warning>
+
+## Marketing automation – code publication
+
+Bloomreach Engagement supports marketing automation. The scenarios you define in Bloomreach Engagement can be enhanced by Voucherify’s API requests, enabling the following use cases:
+
+*   Assigning a coupon code and sharing it with the customer once the customer meets your segmentation criteria,
+*   Sending out a reward to customers who left a comment or a review based on an event-triggered automation,
+*   Informing the customer how many loyalty points they have,
+*   Showing the most recent discount they are eligible for,
+*   Sending out to the customer a gift voucher based on the customer’s anniversary,
+*   And many more.
+
+### Throttling
+<Warning>
+If you want to use the marketing automation approach, read this chapter carefully.
+</Warning>
+A Voucherify account has a limited number of API requests per hour or per minute. The marketing automation approach consumes your hourly API limits. If you want to send messages to a large number of customers in bulk, it is important to throttle the message sendout.
+
+Once you add a webhook tile to your Bloomreach Engagement scenario, make sure to turn on the **Throughput policies** in the webhook **Settings** tab. The Throughput policies allow you to limit the number of concurrent requests to Voucherify and save your hourly API requests. **T****he code publication triggered by Bloomreach will use the API calls limit**. Note that if you send the messages in bulk to thousands of customers, setting the throughput policy to 1 (minimum value) will still translate to up to 9,000 API requests per hour.
+
+### Setting up a Scenario
+
+Voucherify API can enhance marketing campaigns created through [Bloomreach Scenarios](https://documentation.bloomreach.com/engagement/docs/introduction-to-scenarios) by sending to each customers a unique coupon code, the amount of points the customer received on their loyalty card, the most recent discount that the customer can get, and many more.
+
+In this scenario, the cart abandoned email is enhanced with Voucherify’s discount coupon code to encourage the customer to finish the purchase by giving an additional benefit. The scenario consists of three components:
+
+*   An **On event** trigger that will start the process.
+*   A webhook component that will communicate with Voucherify to get a unique coupon code for the customer.
+*   An email action that will send a message to the customer including the assigned voucher code.
+
+Publishing the coupon code webhook requires the following configuration.
+
+Use a POST Endpoint with the following details depending on the cluster.
+  
+| Shared Cluster       | Endpoint for Braze Connected Content             |
+| -------------------- | ------------------------------------------------ |
+| Europe (default)     | `https://api.voucherify.io/v1/publications`     |
+| United States        | `https://us1.api.voucherify.io/v1/publications` |
+| Asia (Singapore)     | `https://as1.api.voucherify.io/v1/publications` |
+
+The payload you send to Voucherify is described in detail in the [Publication API endpoint](https://docs.voucherify.io/reference/create-publication). In the payload, you need to provide the customer’s hard id and the name of the campaign.
+
+```
+{
+	"customer": {
+		"source_id": "{{ customer_ids.main_hard_id }}"
+	},
+	"campaign":{
+		"name":"Discount code campaign name"
+
+	}
+}
+```
+
+To use the response in another scenario action, select **Process the response as JSON**.
+
+Finally, in the Settings tab, provide the API keys to your Voucherify application. You can obtain your API keys from Voucherify’s project settings explained in the [Generating Voucherify API keys for Bloomreach Engagement](#generating-voucherify-api-keys-for-bloomreach-engagement) section.
+
+The API keys must be set in the headers as X-App-Id and X-App-Token.
+
+Once the component is ready, the returned values can be used in the marketing automation. The returned values can be applied with the Jinja tags, in the case below `{{ webhook['voucher.code'] }}`:
+
+## Inbound integration
+
+The inbound integration supports the flow of data from Voucherify to Bloomreach Engagement. The events sent from Voucherify will be associated with customers in Bloomreach Engagement and can be used to fill in the customer’s parameters with additional information received from Voucherify, trigger an event-based messaging and to enhance the Bloomreach segmentation options.
+
+The following list shows the events sent to Bloomreach Engagement:
+
+*   Redemption:
+
+```
+EVENTS.CUSTOMER.REDEMPTION.SUCCEEDED
+EVENTS.CUSTOMER.REDEMPTION.ROLLBACK.SUCCEEDED
+EVENTS.CUSTOMER.REDEMPTION.FAILED
+EVENTS.CUSTOMER.REDEMPTION.ROLLBACK.FAILED
+EVENTS.CUSTOMER.REWARD_REDEMPTIONS.CREATED
+EVENTS.CUSTOMER.REWARD_REDEMPTIONS.COMPLETED
+```
+
+*   Publication:
+
+```
+EVENTS.CUSTOMER.PUBLICATION.SUCCEEDED
+EVENTS.CUSTOMER.PUBLICATION.FAILED
+```
+
+*   Rewards:
+
+```
+EVENTS.CUSTOMER.REWARDED.MAIN
+EVENTS.CUSTOMER.REWARDED.LOYALTY_POINTS
+```
+
+*   Validation:
+
+```
+EVENTS.CUSTOMER.VALIDATION.SUCCEEDED
+EVENTS.CUSTOMER.VALIDATION.FAILED
+```
+
+### Setting up the inbound integration
+
+The integration between Voucherify and Bloomreach Engagement requires the configuration of both the inbound and outbound modes. You will need to generate the API keys in Bloomreach Engagement.
+
+#### Generating Bloomreach Engagement API keys
+
+To use Bloomreach Engagement with Voucherify, you need to generate [API keys in  Bloomreach Engagement](https://documentation.bloomreach.com/engagement/reference/authentication).
+
+1.  Click the cog (**Settings**) button in the top right corner and go to **Project Settings**.
+2.  Click **Access management** and go to **API**.
+3.  Save your **Project Token**, **API Base URL**, and **API Token**.
+4.  Create a new **API group** or use an API group created earlier. The API group must be private.
+5.  In the **Group Keys** section, click the **Add key** button.
+6.  Provide the **Key name** and click the **Create** button.
+7.  Your **API secret** key will be displayed. Copy and save it before closing this window. You will not be able to see it again.
+8.  Click the **Close** button to view the **Group Keys** list. You will see your **API Key ID** on the list.
+9.  Go to the **Events** tab under **Group permissions** and give permission for events that you want to process through API.
+10.  **Optional**: if you do not have defined events or you want to allow processing of all new events, select the **New Events** checkbox.
+
+#### Configuring Bloomreach Engagement in Voucherify
+
+To enable the integration between Bloomreach and Voucherify, you need to specify a few details in the integration section of Voucherify. To configure the integration, follow these steps:
+
+1.  Click your user name in the top right corner to display the drop-down menu.
+2.  Go to **Integrations**.
+3.  Scroll down to the **Bloomreach Engagement** section.
+4.  Click the **Connect** button to open Bloomreach Engagement integration menu.
+
+In the basic menu view, the following items are displayed:
+
+*   **Bloomreach Engagement Main Hard ID** – Bloomreach Engagement identifies its customers using many IDs. Define which Bloomreach Engagement Customer’s Hard ID will be used as a customer’s source\_id in Voucherify. This field is required for both the inbound and outbound modes.
+*   **Send events** – it enables the inbound integration to receive the Voucherify events associated with customers by Bloomreach Engagement. If enabled, Bloomreach Engagement API keys need to be provided.
+*   **Sync Voucherify Customer's ID** – If enabled, the Voucherify Customer’s ID will be stored in Bloomreach Engagement as either a Hard or Soft ID.[](https://s3.amazonaws.com/helpscout.net/docs/assets/5902f1c12c7d3a057f88a36d/images/653782301ec9493542048984/file-IDbe2bIy4p.png)
+
+The Bloomreach Engagement full menu view includes the following fields:
+
+*   **Bloomreach Hard/Soft ID for storing Voucherify Customer's ID** – this setting is accessible only when **Sync Voucherify Customer's ID** is enabled. This field specifies the Hard ID or Soft ID that stores the Voucherify customer ID.
+*   Bloomreach Engagement API keys – these fields are required when **Send events** or **Sync Voucherify Customer's ID** is enabled. The Project Token, API base URL, the API Key and Secret are available in Bloomreach Engagement in the API page of the Access Management section. See the [Generating Bloomreach Engagement API keys](#generating-bloomreach-engagement-api-keys) section above to learn more.
+
+Once the configuration is done, all customer-related events in Voucherify will be sent to Bloomreach Engagement.
+
+## Setting up the outbound integration
+
+The outbound integration allows you to send the customer data updates and events from Bloomreach Engagement to Voucherify. The data shared with Voucherify can be used for:
+
+*   Incentivizing promotions and discounts depending on the events associated with the customers or the updated customer profiles,
+*   Synchronizing customers,
+*   Segmenting customers based on the updates sent from Bloomreach Engagement.
+
+The outbound integration requires a set of API keys dedicated for Bloomreach Engagement and defining which Hard ID should be used to identify the customer in Voucherify.
+
+### Generating Voucherify API keys for Bloomreach Engagement
+
+In Voucherify, you will need to generate API integration keys for Bloomreach Engagement.
+
+1.  Go to **Project Settings** and in the **General** tab, scroll down to **Integration Keys**. 
+2.  Click the plus button on the right.
+3.  Fill in the **Name** for your key.
+4.  Choose your role from the **Role** drop-down list.
+5.  Choose **Bloomreach Engagement** from the **Integration** drop-down list.
+6.  Click the **Create Integration API Key** button.
+<Warning>
+The integration secret key is visible only for 15 minutes when it is generated for the first time or regenerated. Write your key down and keep it in a safe place.
+</Warning>
+### Defining the main Hard ID
+
+Bloomreach Engagement identifies its customers using IDs. You need to define which Bloomreach Engagement [Customer’s Hard ID](https://documentation.bloomreach.com/engagement/docs/customer-identification#hard-id) will be used as a [customer’s source\_id](https://support.voucherify.io/article/67-how-to-import-my-customers) in Voucherify. To define the Hard ID:
+
+1.  In Voucherify, click your user name in the top right corner to display the drop-down menu.
+2.  Go to **Integrations**.
+3.  Scroll down to the **Bloomreach Engagement** section.
+4.  Click the **Connect** button to open Bloomreach Engagement integration menu.
+5.  Define the **Bloomreach Engagement Main Hard ID**.
+
+### Creating an outbound scenario in Bloomreach Engagement
+
+Sending out events and customer data updates can be defined in a [Campaign Scenario](https://documentation.bloomreach.com/engagement/docs/introduction-to-scenarios) in Bloomreach Engagement.
+
+During the Scenario setup, you can add [various components](https://documentation.bloomreach.com/engagement/docs/creating-a-basic-scenario), e.g. a webhook component. The webhook action component allows sending a message to another system. In the webhook, you need to define:
+
+*   The endpoint,
+*   The application ID and secret key as a part of the headers,
+*   Specify the payload as a batch webhook,
+*   The payload’s template.
+
+The endpoints to send the payload to are as follows:
+
+| Cluster      | Customer update                                                                                  | Events                                                                                         |
+| ------------ | ------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| **Europe**   | `https://bloomreach.voucherify.io/bloomreach-engagement/upsert-customer-bulk`                    | `https://bloomreach.voucherify.io/bloomreach-engagement/create-event-bulk`                    |
+| **United States** | `https://us1.bloomreach.voucherify.io/bloomreach-engagement/upsert-customer-bulk`           | `https://us1.bloomreach.voucherify.io/bloomreach-engagement/create-event-bulk`                |
+| **Asia**     | `https://as1.bloomreach.voucherify.io/bloomreach-engagement/upsert-customer-bulk`                | `https://as1.bloomreach.voucherify.io/bloomreach-engagement/create-event-bulk`                |
+
+The application ID and the secret key must be provided under the **Settings** section of the webhook configuration.
+
+The payload you share with Voucherify has to conform to the following structure.
+
+Events:
+
+```
+{
+	"event": "Event Name",
+	"customer": {
+		"main_hard_id": "{{ customer_ids.main_hard_id }}"	
+	},
+	"metadata": {
+		"example_metadata_key" : "Example metadata value",
+		"example_customer_consent":"{{ customer.consent_status }}"
+	}
+}
+```
+
+Customer updates:
+
+```
+{
+    "registered": "{{ customer_ids.main_hard_id }}",
+    "name": "{{ customer.firstName }}",
+    "description": "{{ customer.description }}",
+    "email": "{{ customer.email }}",
+    "phone": "{{ customer.phone }}",
+    "birthdate": "{{ customer.birthDate }}",
+    "address": {
+        "city": "{{ customer.city }}",
+        "state": "{{ customer.state }}",
+        "line_1": "{{ customer.address1 }}",
+        "line_2": "{{ customer.address2 }}",
+        "country": "{{ customer.country }}",
+        "postal_code": "{{ customer.postalCode }}"
+    },
+    "metadata": {
+        "segment": "{{ customer.segment }}"
+    }
+}
+```
+
+<Warning>
+The Hard ID defined in the payload must conform to the Hard ID defined in the Voucherify’s configuration.
+</Warning>
+The customer objects must conform to Voucherify customer definitions. The objects can contain any parameter that Bloomreach Engagement has stored about the customer. Accessing the customer object is detailed in [Bloomreach Engagement documentation](https://documentation.bloomreach.com/engagement/docs/customers), while Voucherify customer definition is available in the [Voucherify API reference](https://docs.voucherify.io/reference/customer-object).
+
+The metadata section of the customer object allows feeding Voucherify custom data about your customers. The data can be used to allow or fail the redemption of the coupon codes based on the customer profile you shared via Bloomreach Engagement.
