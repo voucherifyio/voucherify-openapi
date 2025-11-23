@@ -1,4 +1,3 @@
-
 {{#models}}{{#model}}{{#emitJSDoc}}/**
  * The {{classname}} model module.
  * @module {{#invokerPackage}}{{.}}/{{/invokerPackage}}{{#modelPackage}}{{.}}/{{/modelPackage}}{{classname}}
@@ -11,7 +10,7 @@ class {{classname}} {{#parent}}{{^parentModel}}{{#vendorExtensions.x-is-array}}e
      * @alias module:{{#invokerPackage}}{{.}}/{{/invokerPackage}}{{#modelPackage}}{{.}}/{{/modelPackage}}{{classname}}{{#useInheritance}}{{#parent}}
      * @extends {{#parentModel}}module:{{#invokerPackage}}{{.}}/{{/invokerPackage}}{{#modelPackage}}{{.}}/{{/modelPackage}}{{classname}}{{/parentModel}}{{^parentModel}}{{#vendorExtensions.x-is-array}}Array{{/vendorExtensions.x-is-array}}{{#vendorExtensions.x-is-map}}Object{{/vendorExtensions.x-is-map}}{{/parentModel}}{{/parent}}{{#interfaces}}
      * @implements module:{{#invokerPackage}}{{.}}/{{/invokerPackage}}{{#modelPackage}}{{.}}/{{/modelPackage}}{{.}}{{/interfaces}}{{/useInheritance}}{{#vendorExtensions.x-all-required}}
-     * @param {{name}} {{=< >=}}{<&vendorExtensions.x-jsdoc-type>}<={{ }}=> {{{description}}}{{/vendorExtensions.x-all-required}}
+     * @param {{=< >=}}{<&vendorExtensions.x-jsdoc-type>}<={{ }}=> {{name}} {{{description}}}{{/vendorExtensions.x-all-required}}
      */{{/emitJSDoc}}
     constructor({{#vendorExtensions.x-all-required}}{{name}}{{^-last}}, {{/-last}}{{/vendorExtensions.x-all-required}}) { {{#parent}}{{^parentModel}}{{#vendorExtensions.x-is-array}}
         super();
@@ -33,8 +32,8 @@ class {{classname}} {{#parent}}{{^parentModel}}{{#vendorExtensions.x-is-array}}e
     {{#emitJSDoc}}/**
      * Constructs a <code>{{classname}}</code> from a plain JavaScript object, optionally creating a new instance.
      * Copies all relevant properties from <code>data</code> to <code>obj</code> if supplied or a new instance if not.
-     * @param {object} data The plain JavaScript object bearing properties of interest.
-     * @param {{=< >=}}{module:<#invokerPackage><invokerPackage>/</invokerPackage><#modelPackage><modelPackage>/</modelPackage><classname>}<={{ }}=> obj Optional instance to populate.
+     * @param {{=< >=}}{Partial<module:<#invokerPackage><invokerPackage>/</invokerPackage><#modelPackage><modelPackage>/</modelPackage><classname>>}<={{ }}=> data The plain JavaScript object bearing properties of interest.
+     * @param {{=< >=}}{module:<#invokerPackage><invokerPackage>/</invokerPackage><#modelPackage><modelPackage>/</modelPackage><classname>}<={{ }}=> [obj] Optional instance to populate.
      * @returns {{=< >=}}{module:<#invokerPackage><invokerPackage>/</invokerPackage><#modelPackage><modelPackage>/</modelPackage><classname>}<={{ }}=> The populated <code>{{classname}}</code> instance.
      */{{/emitJSDoc}}
     static constructFromObject(data, obj) {
@@ -57,7 +56,7 @@ class {{classname}} {{#parent}}{{^parentModel}}{{#vendorExtensions.x-is-array}}e
 
     {{#emitJSDoc}}/**
      * Validates the JSON data with respect to <code>{{classname}}</code>.
-     * @param {object} data The plain JavaScript object bearing properties of interest.
+     * @param {{=< >=}}{Partial<module:<#invokerPackage><invokerPackage>/</invokerPackage><#modelPackage><modelPackage>/</modelPackage><classname>>}<={{ }}=> data The plain JavaScript object bearing properties of interest.
      * @returns {boolean} to indicate whether the JSON data is valid with respect to <code>{{classname}}</code>.
      */{{/emitJSDoc}}
     static validateJSON(data) {
@@ -152,25 +151,38 @@ class {{classname}} {{#parent}}{{^parentModel}}{{#vendorExtensions.x-is-array}}e
 {{#requiredVars}}{{#-first}}{{classname}}.RequiredProperties = [{{/-first}}"{{{baseName}}}"{{^-last}}, {{/-last}}{{#-last}}];{{/-last}}{{/requiredVars}}
 
 {{#vars}}{{#emitJSDoc}}/**{{#description}}
- * {{{.}}}{{/description}}
- * @member {{=< >=}}{<&vendorExtensions.x-jsdoc-type>}<={{ }}=> {{#lowercase}}{{baseName}}{{/lowercase}}{{#defaultValue}}
- * @default {{{.}}}{{/defaultValue}}
- */{{/emitJSDoc}}
+    * {{{.}}}{{/description}}
+    {{#isEnum}}
+    * @type { {{#isArray}}Array<{{/isArray}}(keyof typeof {{classname}}.{{enumName}} {{#isArray}}>{{/isArray}}) | undefined}
+    {{/isEnum}}
+    {{^isEnum}}
+    * @type {{=< >=}}{<&vendorExtensions.x-jsdoc-type> | undefined}<={{ }}=>
+    {{/isEnum}}
+    {{#defaultValue}}
+    * @default {{{.}}}
+    {{/defaultValue}}
+    */{{/emitJSDoc}}
 {{classname}}.prototype['{{baseName}}'] = {{{defaultValue}}}{{^defaultValue}}undefined{{/defaultValue}};
 
 {{/vars}}
 
 {{#useInheritance}}{{#interfaceModels}}// Implement {{classname}} interface:
 {{#allVars}}{{#emitJSDoc}}/**{{#description}}
- * {{{.}}}{{/description}}
- * @member {{=< >=}}{<&vendorExtensions.x-jsdoc-type>}<={{ }}=> {{baseName}}{{#defaultValue}}
- * @default {{{.}}}{{/defaultValue}}
- */{{/emitJSDoc}}
+    * {{{.}}}{{/description}}{{#isEnum}}
+    * @type {(keyof typeof {{classname}}.{{enumName}}) | undefined}
+    {{/isEnum}}
+    {{^isEnum}}
+    *
+    * @type {{=< >=}}{<&vendorExtensions.x-jsdoc-type> | undefined}<={{ }}=>
+    {{/isEnum}}
+    * @member {{=< >=}}{<&vendorExtensions.x-jsdoc-type> | undefined}<={{ }}=> {{baseName}}{{#defaultValue}}
+    * @default {{{.}}}{{/defaultValue}}
+    */{{/emitJSDoc}}
 {{classname}}.prototype['{{baseName}}'] = {{{defaultValue}}}{{^defaultValue}}undefined{{/defaultValue}};
 {{/allVars}}{{/interfaceModels}}{{/useInheritance}}
 
 {{#vars}}{{#isEnum}}{{^isContainer}}
-{{>partial_model_inner_enum}}
+    {{>partial_model_inner_enum}}
 
 {{/isContainer}}{{/isEnum}}{{#items.isEnum}}{{#items}}{{^isContainer}}
 {{>partial_model_inner_enum}}
