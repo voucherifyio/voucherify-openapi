@@ -1,31 +1,23 @@
 ---
 title: "CleverTap"
+description: "Transfer data from Voucherify to CleverTap and trigger messages and deliver codes to customers"
 keywords: ['integration', 'clevertap']
 ---
 
-This integration enables data transfer from Voucherify to CleverTap, allowing you to effectively trigger action-based messaging and deliver codes to customers. Here are some scenarios where this functionality can be used:
+Here are some scenarios where Voucherify and CleverTap can be used:
 
 *   **Bulk delivery:** Send codes to a specific customer segment in one go.
 *   **Segment updates:** Automatically deliver codes when a customer enters or exits a defined segment.
 *   **Event-based responses:** Send codes in reaction to an outstanding order or any custom event.
+* **Re-engage inactive customers:** Identify customers who have not visited your store for a while and incentivize them with a discount coupon.
+* ***Exclusive redemption:** Ensure that only the recipient of the voucher can redeem it, maintaining exclusivity and preventing misuse.
+* ***Personalized delivery:** Send tailored coupons to customers via email, creating a more engaging and targeted experience.
 
-## How does the integration work?
+## Setting up the integration in Voucherify
 
-Thanks to this integration, you can inform your customers about promotions and deliver personalized coupons seamlessly. Combining CleverTap campaigns with Voucherify allows you to respond to various customer actions or occasions by automatically distributing unique coupons and gift cards.
+Generate API integration keys for CleverTap.
 
-Here is an example scenario:
-
-1.  **Re-engage inactive customers:** Identify customers who have not visited your store for a while and incentivize them with a discount coupon.
-2.  **Exclusive redemption:** Ensure that only the recipient of the voucher can redeem it, maintaining exclusivity and preventing misuse.
-3.  **Personalized delivery:** Send tailored coupons to customers via email, creating a more engaging and targeted experience.
-
-## Setting up the integration
-
-### Voucherify
-
-In Voucherify, you will need to generate API integration keys for CleverTap.
-
-1.  Go to Project Settings and scroll to Integration Keys in the General tab. 
+1.  Go to Project Settings and scroll to Integration Keys in the General tab. 
 2.  Click the plus button on the right.
 3.  Fill in the Name for your key.
 4.  Choose your role from the Role drop-down list.
@@ -33,6 +25,8 @@ In Voucherify, you will need to generate API integration keys for CleverTap.
 6.  Click the Create Integration API Key button.
 
 ## How to distribute Voucherify’s unique coupons with CleverTap
+
+Follow these steps to distribute coupons.
 
 ### Step 1: Prepare a Voucherify campaign to engage inactive customers
 
@@ -45,7 +39,7 @@ The key setting in this campaign is the **"Customers will be allowed to join the
 
 With this setting you can control whether customers can access multiple reactivation codes or just a single one, depending on your campaign strategy.
 
-You will need the  **campaign ID** for later steps. You can copy it from the campaign tile in the campaign list or you can call [the GET campaign endpoint](/api-reference/campaigns/get-campaign).
+You will need the **campaign ID** for later steps. You can copy it from the campaign tile in the campaign list or you can call [the GET campaign endpoint](/api-reference/campaigns/get-campaign).
 
 ### Step 2: Configure a CleverTap Linked Content endpoint, which will publish a new code from the campaign
 
@@ -55,12 +49,12 @@ In your CleverTap account, go to Settings > Setup > Linked Content and select th
 *   API URL: type in the address of the Create Publications endpoint: `{{API_URL}}/v1/publications/create?campaign=[Voucherify campaign ID]&customer={{customersourceid}}`. You can find your API URL in your Voucherify Project Settings in the Application Information section under the API endpoint.
 *   In the Parameters tab, a customersourceid parameter will appear. Check the Mark mandatory checkbox, as without the customer ID, a coupon cannot be assigned to the customer.
 *   In the Headers tab:
-    *   Add X-App-Id and X-App-Token headers you have generated earlier in Voucherify
+    *   Add `X-App-Id` and `X-App-Token` headers you have generated earlier in Voucherify
     *   Set Content-Type header to `application/json`.
 
 After you save the configuration, you can test it using the Test Linked Content. If everything is configured correctly, you will see Voucherify’s response.
 
-You can now click the Auto-Fill Objects with Response button to populate objects present in the response automatically. In this example, only the voucher.code field will be needed – it contains the published code.
+You can now click the Auto-Fill Objects with Response button to populate objects present in the response automatically. In this example, only the `voucher.code` field will be needed – it contains the published code.
 
 ### Step 3: Use the Linked Content endpoint in a CleverTap campaign
 
@@ -92,14 +86,12 @@ You can also view the generated codes in the selected campaign dashboard in the 
 
 The process of assigning a [referral code](https://support.voucherify.io/article/48-referral-program-basics) or [loyalty card](https://support.voucherify.io/category/389-loyalty-campaigns) is similar to the one described above. All you need to do is change the campaign name parameter to the referral or loyalty campaign you created.
 
-In this example, the customer's code is retrieved from the referral program with the ID `camp_f0bKCWIYyTfOept56g2UMLY7`.
+In this example, the customer's code is retrieved from the referral program by using campaign ID.
 
-If the **Customer is allowed to join the campaign only once** (the option is enabled in the referral program configuration), a customer who is already part of the program will receive their previously assigned referral code. If a referral code has not yet been assigned to the customer, a new code will be generated and included in the response.
+If the **Customer is allowed to join the campaign only once** (the option is enabled in the referral program configuration), a customer who is already part of the program will receive their previously assigned referral code. If a referral code has not yet been assigned to the customer, a new code will be generated and included in the response.
 
 First, configure the Linked Content endpoint.
 
-Then, to retrieve the loyalty card, use the following code:
+Then, to retrieve the loyalty card, use the following code: `{{ Linked["Customer Referral Code"].code }}`.
 
-`{{ Linked["Customer Referral Code"].code }}`
-
-The customer can share their referral code with a friend. When they use it during a purchase, the referrer will be awarded the gift you have set up in the Voucherify Dashboard. 
+The customer can share their referral code with a friend. When they use it during a purchase, the referrer will be awarded the gift you have set up in the Voucherify Dashboard. 
