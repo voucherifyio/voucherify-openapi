@@ -1,5 +1,6 @@
 ---
 title: "MoEngage"
+description: "Let customers know about promotions and distribute customized coupons"
 keywords: ['integration', 'moengage']
 ---
 
@@ -9,7 +10,7 @@ MoEngage is a customer engagement platform that provides a suite of tools to hel
 
 MoEngage ContentAPI is a third-party API client that allows businesses to deliver personalized content to their customers in real time.
 
-Thanks to this integration, you can inform your customers of promotions and distribute customized coupons to every one of them. With event-triggered MoEngage campaigns, you can react to various occasions with new Voucherify coupons and gift cards, which will be delivered to your customers.
+Thanks to this integration, you can inform your customers of promotions and distribute customized coupons to every one of them. With event-triggered MoEngage campaigns, you can react to various occasions with Voucherify coupons and gift cards, which will be delivered to your customers.
 
 The example below shows the implementation of the following scenario:
 
@@ -18,6 +19,8 @@ The example below shows the implementation of the following scenario:
 *   The customer should receive personalized coupons via email.
 
 ## How to distribute unique coupons with MoEngage?
+
+Follow these steps to distribute coupons.
 
 ### Prepare a Voucherify campaign to engage inactive customers
 
@@ -32,40 +35,24 @@ You will need the campaign ID needed later. You can obtain the ID by calling [th
 In your MoEngage account, go to **Settings** > **Advanced settings** > **Content API,** and select the **Add Content API** button. Fill it in the following way:
 
 1. **API Name**: this is the name of the Content API endpoints. It can’t be changed afterwards. In this case, it is named new\_reactivation\_voucher because it will send out voucher codes from the Customer Reactivation campaign.
-2. **API Url**: type in the address of the Create Publications endpoint:
-    
-```
-{{API_URL}}/v1/publications/create
-``` 
-
- You can find your **API URL** in your Voucherify **Project Settings** in the **Application Information** section under **API endpoint**. 
-    
+2. **API Url**: type in the address of the Create Publications endpoint: `{{API_URL}}/v1/publications/create`. You can find your **API URL** in your Voucherify **Project Settings** in the **Application Information** section under **API endpoint**. 
 3. In the **URL Parameters** tab:
-    * Add a **customer** parameter and fill in the MoEngage field that should be used as the customer’s **source\_id** field in Voucherify. In this case, the customer’s email is used as **source\_id**. Refer to MoEngage documentation to learn more about [user attributes](https://help.moengage.com/hc/en-us/articles/207836953-Derived-Events-Attributes#tracked-standard-attribute-0-15).
-    * Add a **campaign** parameter and fill in your Voucherify campaign ID.
-        <Note>
-        The API Url is automatically updated with the filled-in parameters.
-        </Note>
-4. In the **Headers** tab:
-
-* Add **X-App-Id** and **X-App-Token** headers. You can generate the application keys for integration with MoEngage in your Voucherify **Project Settings**. In the **General** tab, scroll down to **Integration Keys** and create a new integration API key for MoEngage. In the **Name** field, enter the name of your key. In the drop-down lists, select **User** in **Role** and **MoEngage** in **Integration**.
-<Warning>
-The integration secret key is visible only for 15 minutes when it is generated for the first time or regenerated. Write your key down and keep it in a safe place.
-</Warning>
-
+    1. Add a **customer** parameter and fill in the MoEngage field that should be used as the customer’s **source\_id** field in Voucherify. In this case, the customer’s email is used as **source\_id**. Refer to MoEngage documentation to learn more about [user attributes](https://help.moengage.com/hc/en-us/articles/207836953-Derived-Events-Attributes#tracked-standard-attribute-0-15).
+    2. Add a **campaign** parameter and fill in your Voucherify campaign ID. The API URL is automatically updated with the filled-in parameters.
+4. In the **Headers** tab, add `X-App-Id` and `X-App-Token` headers. You can generate the application keys for integration with MoEngage in your Voucherify **Project Settings**. In the **General** tab, scroll down to **Integration Keys** and create a new integration API key for MoEngage. In the **Name** field, enter the name of your key. In the drop-down lists, select **User** in **Role** and **MoEngage** in **Integration**. The integration secret key is visible only for 15 minutes when it is generated for the first time or regenerated. Write your key down and keep it in a safe place.
 5. After you save the configuration, you can test it with the play icon. If everything is configured correctly, you will see Voucherify’s response.    
 
 ### Use the Content API endpoint in a MoEngage campaign.
 
 1.  Create a new MoEngage campaign. This example is a one-time email outbound campaign that targets customers who have not visited an e-commerce site in 30 days.
 2.  Prepare the email content. In MoEngage, you can use [the Jinja templating language](https://help.moengage.com/hc/en-us/articles/115002757783-MoEngage-Templating-Language-JINJA-) to insert e.g. the customer’s name into the email content. As a result, the Content API endpoint created in Step 2 will be called, and its response will be parsed to display the desired details to the customer.
-    * To call Voucherify’s create publication endpoint and publish a new code to an email’s recipient, use this code snippet:
+    1. To call Voucherify’s create publication endpoint and publish a new code to an email’s recipient, use this code snippet:
         
 ```
 {% set publication = ContentApi.new_reactivation_voucher({({"params":{"customer":"{{UserAttribute['Email (Standard)']}}"}})}) %}
 ```
 
-3.  To extract only the published voucher’s code from the response, use this expression:
+    2.  To extract only the published voucher’s code from the response, use this expression:
         
 ```
 {{publication.voucher.code}}
@@ -80,12 +67,6 @@ You can also view the generated codes in the campaign dashboard in the **Voucher
 ### Referral code and loyalty card publication
 
 The process of assigning a referral code or loyalty card is very similar to the one described above. All you need to do is to change the campaign name parameter to the [referral](https://support.voucherify.io/article/48-referral-program-basics) or [loyalty campaign](https://support.voucherify.io/category/389-loyalty-campaigns) that you have created.
-
-In this example, the customer’s code will be retrieved from the referral program with the following ID:
-
-```
-camp_f0bKCWIYyTfOept56g2UMLY7
-```
 
 If the **Customer will be allowed to join the campaign only once** option is turned on in the referral program configuration, the customer who is a program member will receive their already-assigned referral code. If a referral code hasn’t been assigned yet to the customer, they will receive the code, which will be present in the response.
 
