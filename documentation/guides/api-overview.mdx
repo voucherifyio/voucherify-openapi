@@ -1,0 +1,196 @@
+---
+title: "API overview"
+description: Learn how Voucherify’s API works to build, optimize, or maintain your integration
+keywords: ['API', 'overview', 'optimization', 'version', 'endpoint', 'cluster', 'region', 'client-side']
+---
+
+## Choose the right API endpoint
+
+Voucherify hosts API clusters in multiple regions. Pick the one closest to your users for lower latency.
+
+Shared cluster endpoints:
+
+- Europe (default): `https://api.voucherify.io`
+- United States: `https://us1.api.voucherify.io`
+- Asia (Singapore): `https://as1.api.voucherify.io`
+
+If your company has a dedicated cluster, use its unique URL. If you're calling the wrong region, you'll receive an error.
+
+<Note>
+[SDKs](/guides/sdks) let you override the default API endpoint. Read Readme of a specific SDK to learn more.
+</Note>
+
+## Understand request processing
+
+Each API request runs in two phases:
+
+- **Synchronous phase** — main response (for example, redemption result).
+- **Asynchronous phase** — [background tasks](https://support.voucherify.io/article/524-project-logs#background-tasks-overview) such as:
+  - Updating segments
+  - Sending webhooks  
+  - Applying loyalty points  
+  - Triggering distributions
+
+Async operations may complete a few seconds later. Monitor them under **Dashboard** > **Background tasks**.
+
+Examples of long-running jobs:
+- Bulk imports or exports (customers, products, vouchers)
+- Campaign creation or updates
+- Metadata updates
+
+<Accordion title="Async actions">
+
+| **Types by Context**                                                                                                                              | **Endpoint**                                                                                                                                                                                                                           |
+| ------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **CAMPAIGN**                                                                                                                                      |                                                                                                                                                                                                                                        |
+| `CAMPAIGN.VOUCHERS_IMPORT`                                                                                                                         | **POST** [/campaigns/\{campaignId}/import](/api-reference/campaigns/import-vouchers-to-campaign)                                                                                                                                                     |
+| `CAMPAIGN.VOUCHERS_IMPORT_CSV`                                                                                                                    | **POST** [/campaigns/\{campaignId}/importCSV](/api-reference/campaigns/import-vouchers-to-campaign-by-csv)                                                                                                                                        |
+| `CAMPAIGN.VOUCHERS_UPDATE`                                                                                                                         | **PUT** [/campaigns/\{campaignId}](/api-reference/campaigns/update-campaign)                                                                                                                                                                         |
+| `CAMPAIGN.VOUCHERS_DELETE`                                                                                                                         | **DELETE** [/campaigns/\{campaignId}](/api-reference/campaigns/delete-campaign)                                                                                                                                                                      |
+| `CAMPAIGN.VOUCHERS_GENERATE`                                                                                                                       | - **POST** [/campaigns](/api-reference/campaigns/create-campaign): asynchronous for campaigns with more than 1 voucher, synchronous for campaign with 1 voucher <br />- **POST** [/campaigns/\{campaignId}/vouchers](/reference/add-vouchers-to-campaign)>
+ |
+| **CUSTOMERS**                                                                                                                                     |                                                                                                                                                                                                                                        |
+| `CUSTOMERS.IMPORT_CSV`                                                                                                                             | **POST** [/customers/importCSV](/api-reference/customers/import-and-update-customers-using-csv)                                                                                                                                                                 |
+| `CUSTOMERS.BULK_UPDATE`                                                                                                                            | **POST** [/customers/bulk/async](/api-reference/customers/update-customers-in-bulk)                                                                                                                                                                  |
+| `CUSTOMERS.METADATA_UPDATE`                                                                                                                        | **POST** [/customers/metadata/async](/api-reference/customers/update-customers-metadata-in-bulk)                                                                                                                                                     |
+| **PRODUCTS**                                                                                                                                      |                                                                                                                                                                                                                                        |
+| `PRODUCTS.BULK_UPDATE`                                                                                                                             | **POST** [/products/bulk/async](/api-reference/products/update-products-in-bulk)                                                                                                                                                                    |
+| `PRODUCTS.METADATA_UPDATE`                                                                                                                         | **POST** [/products/metadata/async](/api-reference/products/update-products-metadata-in-bulk)                                                                                                                                                       |
+| `PRODUCTS.IMPORT_CSV`                                                                                                                              | **POST** [/products/importCSV](/api-reference/products/import-products-using-csv)                                                                                                                                                                   |
+| `SKUS.IMPORT_CSV`                                                                                                                                  | **POST** [/skus/importCSV](/api-reference/products/import-skus-using-csv)                                                                                                                                                                           |
+| **VOUCHERS**                                                                                                                                      |                                                                                                                                                                                                                                        |
+| `VOUCHERS.IMPORT`                                                                                                                                   | **POST** [/vouchers/import](/api-reference/vouchers/import-vouchers)                                                                                                                                                                                |
+| `VOUCHERS.IMPORT_CSV`                                                                                                                              | **POST** [/vouchers/importCSV](/api-reference/vouchers/import-vouchers-using-csv)                                                                                                                                                                   |
+| `VOUCHERS.BULK_UPDATE`                                                                                                                             | **POST** [/vouchers/bulk/async](/api-reference/vouchers/update-vouchers-in-bulk)                                                                                                                                                                    |
+| `VOUCHERS.METADATA_UPDATE`                                                                                                                         | **POST** [/vouchers/metadata/async](/api-reference/vouchers/update-vouchers-metadata-in-bulk)                                                                                                                                                       |
+| **ORDERS**                                                                                                                                        |                                                                                                                                                                                                                                        |
+| `ORDERS.IMPORT`                                                                                                                                     | **POST** [/orders/import](/api-reference/orders/import-orders)                                                                                                                                                                                    |
+| **METADATA KEY PURGE**                                                                                                                            |                                                                                                                                                                                                                                        |
+| `CAMPAIGNS.METADATA_KEY_PURGE`, `CUSTOMERS.METADATA_KEY_PURGE`, `PRODUCTS.METADATA_KEY_PURGE`, `VOUCHERS.METADATA_KEY_PURGE`, `ORDERS.METADATA_KEY_PURGE` | No API endpoint equivalent. You can perform this action through the Dashboard. See Dashboard documentation: **Dashboard** > [**Project Settings**](https://support.voucherify.io/article/99-schema-validation-metadata#maintenance)            |  
+</Accordion>
+
+## Improve performance and efficiency
+
+Voucherify optimizes most requests for speed. Average response time on shared clusters:
+
+| **API call**                                                     | **Response time – median** | **Response time – p95** |
+| ---------------------------------------------------------------- | -------------------------- | ----------------------- |
+| [Stackable Validation](/api-reference/validations/validate-stackable-discounts)    | 100 ms                     | 220 ms                  |
+| [Stackable Redemption](/api-reference/redemptions/redeem-stackable-discounts)      | 170 ms                     | 350 ms                  |
+| [Qualifications API](/api-reference/qualifications/check-eligibility)               | 200 ms                     | 450 ms                  |
+| [Create Campaign](/api-reference/campaigns/create-campaign) (100 000 vouchers) | 60 sec                     | –                       |
+
+To keep your integration fast, efficient, and within your budget, follow these rules.
+
+### Use efficient API flows
+
+Follow the recommended flows for validation, redemption, and campaign management. Avoid unnecessary round-trips.
+
+<Tip>
+
+To learn more about optimized flows, read the [Integration processes](/guides/integration-processes) guide.
+
+</Tip>
+
+### Synchronize data when really needed
+
+You can send [customer](/guides/data-synchronization#upserting-customers), [order](data-synchronization#order-synchronization), or [product](/guides/data-synchronization#overriding-product-data) data directly in validation or redemption calls. In some cases it's not needed to create them earlier through the API or imports.
+
+### Replace polling with webhooks
+
+Use [webhooks](/api-reference/introduction-to-webhooks) instead of repeated API requests to check your data. Webhooks don’t count toward API call limits and deliver updates in real time.
+
+## Client-side API (browser and mobile)
+
+Use the client-side API only when you must expose live validation in a web or mobile app. For example, you want users check a promo code on checkout.
+
+### SDK and widgets
+
+The [Voucherify JS SDK](https://github.com/voucherifyio/voucherify-js-sdk/) includes methods and components for:
+- Validation  
+- Redemption  
+- Voucher publication  
+- Subscription forms  
+
+[React widgets](https://github.com/voucherifyio/voucherify-js-sdk/tree/%40voucherify/sdk%402.9.4/packages/react-widget) are available but no longer supported.
+
+### Rate limiting
+
+Client-side calls share a global limit per IP address. If the limit is exceeded, the API returns:
+
+```json
+{
+  "code": 429,
+  "message": "Too many requests hit the API too quickly."
+}
+```
+
+### Client-side settings
+
+Go to **Dashboard** > **Project Settings** > **Client-side Settings** to configure:
+- **Allowed website URLs** — list allowed origins. Use `*` only in development.
+- **Danger zone options** — enable with caution to allow the following directly from a client-side API or SDK:
+    - Redeeming vouchers (risk: users may change request data)
+    - Publishing vouchers
+    - Listing vouchers
+    - Creating customers (risk: it can expose customer metadata creation to the browser)
+    - Updating voucher expiration (recommended only for controlled test cases)
+    - Creating loyalty or referral events
+
+<Warning> Enable these only if you fully understand the security impact.</Warning>
+
+## Manage API versions
+
+Voucherify releases dated API versions that control the API or webhook behavior, like properties sent in requests and responses. When the API introduces breaking changes, a new dated version is released. However, your project won’t auto-upgrade, so you control when to move.
+
+Check your current version in **Project Setting** > **API Version**.
+
+### Backward-compatible changes
+
+Voucherify may:
+- Add new endpoints or properties
+- Add optional parameters
+- Change property order
+- Change the length or format of object IDs or other opaque strings
+- Introduce new webhook event types
+
+Your integration should ignore unknown fields and event types.
+
+### Upgrading
+
+1. Review the API changelog
+2. Test the new version in a Sandbox project.
+3. Click **Upgrade to the latest API version** when ready.
+
+### API changelog
+
+Read the API changelog:
+- **v2017-04-05 (deprecated)**:
+  - Responses from the voucher and campaign listing methods were moved to the new object structure. Methods now render specific properties for a total count and an array of objects.
+  - Introduced validation for listing parameters: `limit` and `page`. A limit can range between 1 and 100 items.
+  - `GET voucher/campaign` methods render **validation rules** related to the voucher object (can be inherited from a campaign).
+  - Created an API method for getting a campaign identified by name.
+- **v2017-04-20 (deprecated)**:
+  - Response from the voucher publish method was moved to the new object structure. Returned voucher details are wrapped by a transaction object describing the publication event: 
+  ```json
+  {
+      "id": "pub_whQzIndYoyZoqiLEKN0s04GK",
+      "object": "publication",
+      "created_at": "2017-04-20T13:18:01Z",
+      "customer_id": "cust_mOjhGypfbqch0v3DpAA9LDXj",
+      "tracking_id": "janusz",
+      "channel": "API",
+      "metadata": {
+        "test": true
+      },
+      "voucher": {}
+    }
+    ```
+- **v2018-08-01**: Introduces a new model for building **Validation Rules**. The extended mechanism provides advanced configuration for promo conditions. Changes affect these API methods:
+  - `List Promotion Tiers`: replaced an object describing conditions by a list of records describing an association between rule and tier (`validation_rule_assignments`).
+  - `List Promotion Tiers for campaign`: same as above.
+  - `Promotion Tier Object`: updated to support new structure.
+  - `Validation Rule Object`: reorganized to handle advanced rules.
+  - `Validation Rule Assignment Object`: added to describe relation between rules and linked promotions.
+  - `Validation Rules`: modified data model.
+- **Webhooks v2024-01-01**: In [v20231205](https://support.voucherify.io/article/23-whats-new-in-voucherify#v20231205), a new version of webhooks was introduced. These webhooks are available for distribution and the events listed in **Project settings**.
