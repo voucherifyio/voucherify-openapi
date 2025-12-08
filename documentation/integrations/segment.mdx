@@ -1,0 +1,145 @@
+---
+title: "Segment"
+keywords: ['integration', 'segment']
+---
+
+[Segment.io](https://segment.com/) is a Customer Data Platform that enables the transfer and collection of data between different sources and destinations. Segment.io collects information about events occurring on a specific application or site, and then transmits this data to Segment's servers, transforms it to the desired format, and passes it on to the tools that are destinations (usually analytics tools).
+
+<Note>
+The integration with Segment uses [webhook limits](/guides/limits#webhooks) for sending data from Segment to Voucherify.
+</Note>
+
+<Warning>
+The integration updates only the [customer metadata](https://support.voucherify.io/article/99-schema-validation-metadata) defined in Project settings. The undefined metadata or data that does not match the defined data type is omitted.
+</Warning>
+
+## Two-way configuration
+
+With this connector, you can push data from a promotion engine to a Customer Data Platform (CDP) and the other way around and your business can leverage its customer attributes to create targeted promotions. For example, the promotions can be based on customers' past purchases, browsing history, demographics, and actions, such as leaving a review.
+
+Segment's event tracking and user identification capabilities can be effectively used to automatically trigger Voucherify campaigns, personalize incentives, and measure the effectiveness of campaigns in real-time.
+
+The integration between Segment.io and Voucherify is bidirectional: outbound and inbound. In other words, Voucherify can be configured as both the destination and source of customer data. 
+
+## Outbound integration between Segment and Voucherify
+
+The outbound integration provides a continuous flow of customer data from Segment to Voucherify. The data received from Segment enable you to:
+
+*   Track custom events in Voucherify
+*   Create or update customers in Voucherify
+*   Group customers
+
+To create an outbound integration between Voucherify and Segment.io, create a source on your Segment.io account that you want to integrate. Head to **Sources** and click **Add source**. Inside of the catalog, there are three main categories: **Sources**, **Destinations**, and **Functions**. You can find Voucherify in the destinations category in the referrals section.
+
+For Segment to send information to Voucherify, we first need to connect Voucherify as Segment’s destination. 
+
+1. Choose Voucherify from Segment’s Catalog and choose your sources to connect the destination. 
+2. Use Voucherify’s integrations keys to authenticate the connector. In Voucherify, go to **Dashboard** and **Project Settings**. In the **General** tab, scroll down to **Integration keys**. Fill in the **Name** and choose your **Role** from the drop-down list. Choose Segment from the **Integration** drop-down list and click the **Create Integration API Key** button.
+
+<Warning>    
+The integration secret key is visible only for 15 minutes when it is generated for the first time or regenerated. Write your key down and keep it in a safe place.
+</Warning>        
+
+3. Paste your keys into the new source settings in Segment.
+4. Fill in the **Custom Voucherify URL** field. Go to Voucherify **Dashboard** > **Project Settings** > **General** tab. In the  **Application Information** section, scroll down to **API endpoint**. For example, if your API endpoint is `https://api.voucherify.io`, the Custom Voucherify URL will be `https://segmentio.voucherify.io`. You can also use dedicated URLs.
+
+## Inbound integration between Segment and Voucherify
+
+The inbound integration supports the flow of data the other way around – from Voucherify to Segment. The integration supports the following events to be sent to Segment:
+
+*   Redemption:
+    *   [EVENTS.CUSTOMER.REDEMPTION.SUCCEEDED](/api-reference/redemption/succeeded)
+    *   [EVENTS.CUSTOMER.REDEMPTION.ROLLBACK.SUCCEEDED](/api-reference/redemption/rollback-succeeded)
+    *   [EVENTS.CUSTOMER.REDEMPTION.FAILED](/api-reference/redemption/failed)
+    *   [EVENTS.CUSTOMER.REDEMPTION.ROLLBACK.FAILED](/api-reference/redemption/rollback-failed)
+    *   [EVENTS.CUSTOMER.REWARD\_REDEMPTIONS.CREATED](/api-reference/customer/reward-redemptions-created)
+    *   [EVENTS.CUSTOMER.REWARD\_REDEMPTIONS.COMPLETED](/api-reference/customer/reward-redemptions-completed)
+
+*   Publication:
+    *   [EVENTS.CUSTOMER.PUBLICATION.SUCCEEDED](/api-reference/customer/publication-succeeded)
+    *   [EVENTS.CUSTOMER.PUBLICATION.FAILED](/api-reference/customers/customer-activity-object#event-customer-publication-failed)
+
+*   Rewards:
+    *   [EVENTS.CUSTOMER.REWARDED.MAIN](/api-reference/customer/rewarded)
+    *   [EVENTS.CUSTOMER.REWARDED.LOYALTY\_POINTS](/api-reference/customer/rewarded-loyalty-points)
+
+*   Validation:
+    *   [EVENTS.CUSTOMER.VALIDATION.SUCCEEDED](/api-reference/customers/customer-activity-object#event-customer-validation-succeeded)
+    *   [EVENTS.CUSTOMER.VALIDATION.FAILED](/api-reference/customers/customer-activity-object#event-customer-validation-failed)
+
+Only the events that have a customer attached will be sent from Voucherify.
+
+When you have set up the outbound integration and created a new source, click your source to see more information such as the **Write Key**. This key is needed for the inbound integration.
+
+If you want to have a two-way integration, you need to paste it in the Voucherify dashboard. Go to the **Integrations** tab, scroll down to Segment.io, and click **Connect**.
+
+<Note>
+The default region is set to US (Oregon), but it is also possible to send data to an EU endpoint. After connecting to Segment, click **Settings** in the integration and select the proper region.
+</Note>
+
+The events which are sent to Segment by Voucherify are flattened. This means that Voucherify will not send highly nested objects. 
+
+Voucherify will know where to send its information – Segment will also be able to display all the events from Voucherify, including code publication. 
+
+Consequently, you can now connect Voucherify source to a destination that delivers the promo codes via email or push notification to enable discount code redemption.
+
+Remember: in order to have all your customer actions displayed, you must first connect Voucherify **Source** to a given space. Go to **Unify Settings** > **Profile sources** and click **Connect source**.
+
+See the full set-up instructions by viewing Segment’s [integration documentation](https://segment.com/docs/connections/destinations/catalog/voucherify-actions/).
+
+## Choosing the Right Event Type in Segment
+
+To update or modify customer data in Voucherify through Segment, use Update Customer, Create Customer, or Upsert Customer events. These are Identify-type events in Segment, used to update customer traits in Voucherify.
+
+Other event types are sent using the Track Event API call and do not support customer metadata updates. Any metadata added to these events is mapped as event metadata instead of customer traits.
+
+To make metadata work in Segment, follow these steps:
+
+1.  Choose an event that supports customer updates, such as Update Customer, Create Customer, or Upsert Customer.
+2.  Structure the Payload Correctly – Ensure the `"traits"` object includes metadata, as shown in this example:
+    
+```json
+{
+  "userId": "Segmentuser1302",
+  "traits": {
+    "address": {
+      "city": "Warsaw"
+    },
+    "metadata": {
+      "code": "customercode",
+      "location_number": 007
+    }
+  }
+}	
+```
+
+The **traits.address.city** mapping appears under the address definition. Metadata should be structured the same way to be mapped correctly.    
+3.  Check the Mappings – The general and address mappings in your configuration should match the provided example.
+4.  Verify Metadata Mapping – Check if the metadata defined in the payload appears in the mappings.
+5.  Run a Test Event – When set up correctly, the customer will be properly recorded in Voucherify.
+
+<Warning>
+The integration updates only the [customer metadata](https://support.voucherify.io/article/99-schema-validation-metadata) defined in Project settings. The undefined metadata or data that does not match the defined data type is omitted.
+</Warning>
+
+
+## Examples
+
+You can check if the connection works properly and data are sent between Segment.io and Voucherify. First, try the inbound integration.
+
+1. Redeem a voucher in Voucherify dashboard
+2. See if any notification appears on the Segment account; head to your Segment account and click  **Connections** > **Sources**. Select your source and click **Debugger**. There, you can keep track of all the actions that have taken place including the redemption that was made seconds ago.
+3. Click the redemption to see more details regarding the event.
+
+If all the information shows proper data that were sent between the two sources, you can test the outbound integration.
+
+1. Go to **Connections** > **Destinations**. Select your destination and go to **Mappings**.
+2. Choose between already existing mappings or add a new one by clicking **New Mapping** in the upper right corner.
+3. Follow the **Create** or **Update Customer** mapping, click on the three dots and edit the mapping.
+4. In the second step, select the **Load Sample Event** option.
+5. The third step shows information defining mappings that can be used. You can see these changes being also implemented at the bottom of step 3 window.
+6. When ready, select test mapping at the bottom of the page. 
+
+You can check the details of this event by going to your [Audit Log](https://support.voucherify.io/article/524-project-logs) with Voucherify.
+
+This shows that the integration works both ways the way it is intended.

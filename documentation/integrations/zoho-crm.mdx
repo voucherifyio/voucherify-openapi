@@ -1,0 +1,58 @@
+---
+title: "ZOHO CRM"
+description: "Configure Voucherify and ZOHO CRM to publish codes to your customers"
+keywords: ['integration', 'zoho']
+---
+
+ZOHO CRM is a customer relationship management software designed to help businesses of all sizes manage their customer relationships, streamline sales processes, and improve overall customer engagement.
+
+Voucherify can boost customer experience by adding a voucher with a unique coupon code to each message sent to a customer. This voucher can encourage the customer to make a purchase or distribute referral codes to referrers.
+
+You can use Voucherify’s Publication request as a function in ZOHO to track customers who received the voucher from you. You can use this action to start the voucher's validity period or specify that only the voucher holders can use it.
+
+## Configuration
+
+Voucherify offers different API requests that can be integrated with tools that understand REST APIs. ZOHO works similarly: you can add the APIs as functions and use them in a template. The functions must use Voucherify’s API keys.
+
+To find Voucherify’s keys, go to the **Project Settings**. In the **General** tab, scroll down to Application Keys.
+
+Once you have your API keys, you can create functions in ZOHO. Go to your ZOHO account and select Setup > Functions.
+
+For the purposes of this guide, I have done one more necessary step before creating a new function. In the Contacts tab, select any contact you have and press the Edit button. You can add new custom fields inside your contact by selecting Edit Page Layout in the upper left corner. I have created a field called Voucher.
+
+When it is done, we can return to creating our new function.
+
+Press the + New Function button and add the name of your new function. Select the category to Automation.
+
+Now we will have to create an appropriate request. This is the code you will have to use, copy, and paste it into ZOHO:
+
+```
+params = Map();
+customer = Map();
+campaign = Map();
+customer.put("source_id",source_id);
+campaign.put("name",campaign_name);
+params.put("customer",customer);
+params.put("campaign",campaign);
+response = invokeurl
+[
+url :"https://api.voucherify.io/v1/publications"
+type :POST
+parameters:params.toString()
+headers:{"X-App-Id":"App-id","X-App-Token":"Secret"}
+content-type:"application/json"
+];
+//contact.put("Voucher",response.get("voucher").get("code"));
+voucher = response.get("voucher").get("code");
+zoho.crm.updateRecord("Contacts",source_id,{"Voucher":voucher});
+```
+
+In the headers line in place of “App-id” and “Secret”, paste your Voucherify keys.
+
+When you have pasted the code, select Edit Arguments, visible at the top of the page, and add two new function arguments - `source_id` and `campaign_name` with a string as value.
+
+The last step is to create a new workflow in ZOHO. Head to the Automation section and select + Create Rule button.
+
+While creating a new workflow, edit the function and map the fields properly. Voucherify’s `source_id` will be equal to the value of the Contacts - Contact Id field in ZOHO (you must first press ‘#’ within the field to map it properly). We also have to add the name of our campaign that we have created in Voucherify.
+
+The integration is ready, and now every time you create a new contact in ZOHO, a code will be published automatically.
