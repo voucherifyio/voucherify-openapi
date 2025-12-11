@@ -1,0 +1,203 @@
+---
+title: "Wyng"
+keywords: ['integration', 'wyng']
+---
+
+Wyng is a customer activation platform that supports developing and deploying various digital experiences - including quizzes, gamified promotions, sweepstakes, user-generated content, and preference centers - that engage consumers and collect zero-party data. These experiences can be integrated across multiple marketing channels, such as websites, mobile apps, ads, emails, and SMS.
+
+## Exporting promo codes from Voucherify into Wyng
+
+To distribute Voucherify codes via Wyng, follow these steps:
+
+1. **Export codes from Voucherify:**
+Begin by [exporting](https://support.voucherify.io/article/543-data-export#vouchers) the desired set of codes from Voucherify. Ensure that these codes are not published or distributed directly through Voucherify.
+2. **Import codes into Wyng:**
+[Import](https://help.wyng.com/s/article/How-do-I-apply-Code-Validation-to-a-sign-up-form) the exported codes into the Reward and Validation Codes section in Wyng. This allows Wyng to store and manage the codes internally for later distribution.
+3. **Distribute codes via Wyng:** 
+Set up a campaign in Wyng to distribute the imported codes. When a customer completes the required action (e.g., form submission), Wyng will display a unique code on the confirmation page.
+
+This process ensures that codes remain unpublished in Voucherify and are exclusively distributed through Wyng’s landing pages and widgets.
+
+Pros:
+
+* Automatic code display – codes will be automatically displayed to customers as they are retrieved directly from Wyng's database.
+
+Cons:
+
+* Manual code import – codes must be manually imported into Wyng.
+* Manual code tracking – codes can be exported; the list will show you which codes have been issued to which customers. You can see an example at the bottom of [this article](https://help.wyng.com/s/article/Reward-Component).
+
+## Custom webhook integration
+
+With the custom [webhook integration](https://help.wyng.com/s/article/Send-form-entries-through-webhook-integration?r=46&ui-knowledge-components-aura-actions.KnowledgeArticleVersionCreateDraftFromOnlineAction.createDraftFromOnlineArticle=1), Wyng will call the Voucherify APIs after completing the form page. This can be used, for example, to publish the code, create/update customer profiles, send custom events, and more. It is possible to define a custom payload and use variables to pass data provided by the customer to Voucherify.
+
+To create a custom webhook integration with Wyng, follow these steps:
+
+1. Define the webhook in Wyng:
+Navigate to the Integrations tab (More > Integrations), and create a new webhook integration. Specify the data source and the experience data that you want to share via the webhook. 
+2. Specify the webhook URL and payload:
+Next, you can add custom HTTP headers and form variables using the custom request body.
+
+Pros:
+
+* Automated code management – no need to manually import codes.
+* Data sharing – webhooks allow automatic data transfer between Wyng and Voucherify.
+* Expiration date configuration — issuing the code to the customer can automatically set the expiration date. 
+
+Cons:
+
+* Limited visibility — the code will not be displayed directly on the Wyng form. The workflow will proceed as follows:
+
+1.  The customer fills out the form: The client completes the Wyng form with the required information.
+2.  Confirmation message: After submission, the client receives a message confirming that the form has been completed.
+3.  Code delivery: The code will be sent to the client through an alternative channel, such as an email sent via Voucherify.
+
+## CDP integrations
+
+Wyng offers ready integrations with [Segment](https://help.wyng.com/s/article/Twilio-Segment-Integration) and [Braze](https://help.wyng.com/s/article/Braze-Integration).
+
+### Segment Integration with Wyng
+
+Wyng provides an integration with Segment that can be utilized to transmit form data to Segment. We offer a [bidirectional integration](/integrations/segment#two-way-configuration) (i.e., Segment -> Voucherify and Voucherify -> Segment), which allows us to build an integration between Wyng and Voucherify through Segment.
+
+In cases where a client uses Segment as their CDP, the connection between Wyng and Voucherify can be established via Segment. The integration process could follow this sequence:
+
+1.  The customer fills out the Wyng form.
+2.  Form data or form submission event is sent to Segment.
+3.  Segment sends a notification to Voucherify about the submission of the form or a specific event.
+4.  Voucherify responds to the action received from Segment, for example, by issuing a voucher, applying loyalty points, etc.
+
+### Braze Integration with Wyng
+
+Wyng also integrates with Braze, allowing the transfer of form data or form submission events to Braze. Similarly, we can transmit data to Braze. However, through Braze’s [Connected Content](/integrations/braze-connected-content) feature, Braze can pull data from Voucherify.
+
+While the integration between Wyng and Voucherify via Braze does not provide the full capabilities of the Segment integration, specific actions can still be triggered based on 'Connected Content'. The integration process with Braze could look like this:
+
+1.  The customer fills out the Wyng form.
+2.  Form data or form submission event is sent to Braze.
+3.  A campaign in Braze, defined to react to data from Wyng, could trigger actions such as sending vouchers. Using 'Connected Content', the campaign could also pull voucher data from Voucherify.
+
+## Custom JavaScript integration
+
+For security reasons, it is recommended to use the [client-side API](/guides/api-overview#client-side-api-browser-and-mobile) for a custom JS integration. Ensure proper client-side settings by:
+
+1.  **Limiting access** to specific actions only.
+2.  **Allowing traffic** from trusted domains.
+
+This helps secure your integration and prevent unauthorized access.
+
+To define a custom JS integration, use the custom JavaScript option in Wyng.
+
+Here is a sample JavaScript that can be used for voucher publication:
+
+```js
+(function () { // Define your API keys and campaign name 
+	const voucherifyBaseUrl = 'https://api.voucherify.io/client/v1'; // Replace with your API endpoint 
+	const campaignName = 'campaign_name'; // Replace with your campaign name from which the voucher should be published 
+	const apiKey = 'apiKey'; // Replace with your client-side Application ID 
+	const secretKey = 'secretKey'; // Replace with your client-side Secret Key 
+	const customer_id = window.wyng['_WYNG_ID_'].getLocalUserId(); // By this function, you can get the unique customer ID generated by Wyng 
+
+// Function to call Voucherify publication API. Pass variables as parameters you want to send to Voucherify, e.g., email, first_name, last_name, etc. 
+	async function publishCode(email, first_name, last_name) {  
+		try { 
+			const response = await fetch(`${voucherifyBaseUrl}/publish`, { 
+				method: 'POST', 
+				headers: { 
+					'X-Client-Application-Id': apiKey, 
+					'X-Client-Token': secretKey, 
+					'Content-Type': 'application/json', 
+					}, 
+				body: JSON.stringify({ 
+					campaign: campaignName, 
+					customer: {  
+						source_id: customer_id, 
+						email: email,  
+						name: first_name + " " + last_name}, 
+				}) 
+			}); 
+
+			if (!response.ok) { 
+				throw new Error('Failed to publish voucher'); 
+			} 
+
+// Below data will be displayed on the Wyng page         
+const publishedVoucher = await response.json();  
+	document.getElementById('voucher_code').innerHTML = 
+publishedVoucher.voucher.code; // Get published voucher code 
+	if(publishedVoucher.voucher.expiration_date){ // Optional: get voucher 
+expiration date published and display it in customer’s local timezone 
+	document.getElementById('voucher_expiration_date').innerHTML = (new 
+Date(publishedVoucher.voucher.expiration_date)).toLocaleString() 
+	} 
+	else{ 
+		document.getElementById('voucher_expiration_date_containere').remove() 
+	} 
+	document.getElementById('voucher_qr_code_img').setAttribute("src", 
+publishedVoucher.voucher.assets.qr.url) // Optional: get voucher QR code published 
+	} catch (error) { 
+		console.error('Error publishing voucher:', error); 
+	} 
+} 
+
+// Function to get data entered by the customer on the form 
+function listener(event) {  
+	console.log(event) // Optional: to see event details in the console (may be useful to find 
+fields from which data should be passed) 
+	const email = event.email; 
+	const first_name = event.fields.find(field => field.field_type === 'first_name')?.answer; 
+	const last_name = event.fields.find(field => field.field_type === 'last_name')?.answer; 
+	publishCode(email,first_name,last_name) 
+} 
+
+	window.wyng['_WYNG_ID_'].addEventListener('form_submit_success', listener); 
+})();
+```
+
+After defining JavaScript, you can specify what content should be displayed on the first page after submitting the form.  
+
+In the source code view, use HTML to specify what should be displayed, such as the voucher code, expiration date, and a QR code.
+
+```html
+<p>Here is your Voucher: <span id="voucher_code"></span></p>
+<p id="voucher_expiration_date_containere">Expiration date: <span id="voucher_expiration_date"></span></p>
+<p><img id="voucher_qr_code_img"></p>
+```
+
+Based on the above configuration, here's the final result: The page displays a form to be completed, and once submitted, it shows the voucher code along with the expiration date and a QR code.
+
+![Wyng01](/images/docs/wyng-integration-01.png "Form completion")        
+
+![Wyng02](/images/docs/wyng-integration-02.png "QR code")        
+
+## Exemplary Use Cases
+
+### Wheel of Fortune / Spinning the Wheel / Scratch Card / Mystery Box
+
+You can distribute Voucherify codes in various Wyng-powered landing pages and web widgets using Voucherify imports or webhooks.
+
+Note that in the case of webhooks, the codes will not be displayed directly on the Wyng form but will be delivered to the customer through other channels.
+
+Access can be granted to all customers or limited to specific groups. It can be one-time or allow multiple accesses with varying time restrictions (e.g., once per day, week, or month). Access can be open or restricted, where customers may need to provide a unique coupon code from Voucherify, such as codes printed inside products or on packaging. There can be instant win opportunities, with single or multiple rewards available based on predefined probabilities. Rewards may include coupon codes, gift cards, or loyalty points managed through Voucherify.
+
+For more instructions, visit Wyng's documentation on [spin the wheel](https://help.wyng.com/s/article/How-can-I-build-a-Spin-to-Win-with-a-Linked-Reward) scenario and [scratch-off](https://help.wyng.com/s/article/How-can-I-build-a-Scratch-Off-with-a-Linked-Reward).
+
+### Lottery / Sweepstake
+
+Voucherify coupon codes, gift cards, or loyalty points can be used as rewards in Wyng-powered lotteries and sweepstakes. In a lottery or sweepstake, access can be open to all customers or restricted to a specific group. Participation can be free or require a unique coupon code from Voucherify. Winners may be determined instantly or through a draw after the event concludes.
+
+For more instructions, visit Wyng's documentation on [promo code unlock](https://help.wyng.com/s/article/How-can-I-build-an-experience-with-the-Unlock-Promo-Code-use-case).
+
+### Loyalty program enrollment
+
+Customers can register for a loyalty program with minimal details, such as an email or phone number. To complete their profile and gain full access, they provide their email or phone number to receive a one-time code (OTP). After entering the correct OTP, they can access the profile page, complete their information, and submit the form, with the data passed to Voucherify.
+
+### In-store voucher redemption
+
+The voucher codes are imported from Voucherify into Wyng. Customers or cashiers enter the page and submit the coupon code. Once the coupon code is validated, a successful page with more details about the applicable discount is displayed. The cashier applies the discount in the POS. 
+
+Once a code is validated and used, it can be marked as used in Voucherify either manually or via the Voucherify API.
+
+### Wyng Live Demo: Loyalty Marketing featuring Voucherify
+
+Learn more about the possible use cases from the [demo](https://www.youtube.com/watch?v=ox5cd1uOvSg).
