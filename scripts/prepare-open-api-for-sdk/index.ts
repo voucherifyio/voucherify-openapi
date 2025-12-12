@@ -5,7 +5,6 @@ import _ from "lodash";
 import minimist from "minimist";
 import path from "path";
 import originalOpenAPIContent from "../../reference/OpenAPI.json";
-import addMissingDefaults from "./add-missing-defaults";
 import { getPathsWithoutDeprecated } from "./get-paths-without-deprecated";
 import { putNotObjectSchemasIntoObjectSchemas } from "./put-not-object-schemas-into-object-schemas";
 import {
@@ -388,29 +387,29 @@ const main = async (languageOptions: LanguageOptions) => {
     );
     // Restore previous voucher_type filter
     openAPIContent.components.schemas.ParameterFiltersListCampaigns.properties.voucher_type =
-      {
-        type: "object",
-        description: "Filter by voucher type",
-        properties: {
-          conditions: {
-            $ref: "#/components/schemas/FilterConditionsString",
-          },
+    {
+      type: "object",
+      description: "Filter by voucher type",
+      properties: {
+        conditions: {
+          $ref: "#/components/schemas/FilterConditionsString",
         },
-      };
+      },
+    };
     // Restore previous is_referral_code filter
     openAPIContent.components.schemas.ParameterFiltersListCampaigns.properties.is_referral_code.properties =
-      {
-        $is: {
-          type: "string",
-          description: "Value is exactly this value (single value).",
-          enum: ["TRUE", "FALSE"],
-        },
-        $is_not: {
-          type: "string",
-          description: "Results omit this value (single value).",
-          enum: ["TRUE", "FALSE"],
-        },
-      };
+    {
+      $is: {
+        type: "string",
+        description: "Value is exactly this value (single value).",
+        enum: ["TRUE", "FALSE"],
+      },
+      $is_not: {
+        type: "string",
+        description: "Results omit this value (single value).",
+        enum: ["TRUE", "FALSE"],
+      },
+    };
     // Remove new conditions – $contains, $not_contain from FilterConditionsString
     delete openAPIContent.components.schemas.FilterConditionsString.properties
       .$contains;
@@ -574,9 +573,9 @@ const main = async (languageOptions: LanguageOptions) => {
       };
     });
     newOpenApiFile.components.schemas.OrdersListResponseBody.properties.orders.items =
-      {
-        $ref: "#/components/schemas/OrderCalculated",
-      };
+    {
+      $ref: "#/components/schemas/OrderCalculated",
+    };
     newOpenApiFile.components.schemas.LoyaltiesMembersPointsExpirationListResponseBody.properties.data.items =
       newOpenApiFile.components.schemas.LoyaltyPointsBucket;
     newOpenApiFile.components.schemas.LoyaltyCardTransaction.properties.details.properties.balance =
