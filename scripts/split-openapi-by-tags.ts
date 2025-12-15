@@ -3,6 +3,11 @@ import * as path from "path";
 import * as openApi from "../reference/OpenAPI.json";
 import * as openApiWebhooks from "../reference/OpenAPIWebhooks.json";
 
+
+openApi.paths["/v1/vouchers"].get.parameters = openApi.paths[
+  "/v1/vouchers"
+].get.parameters.filter((e) => e.name !== "filters");
+
 interface OpenAPISpec {
   openapi: string;
   info: any;
