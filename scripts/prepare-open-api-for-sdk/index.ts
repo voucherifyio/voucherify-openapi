@@ -62,7 +62,7 @@ const supportedLanguages: {
     name: "dotnet",
     supportOauth: true,
     removeAllSchemasDefaults: true,
-    breakingChangesVersion: 2,
+    breakingChangesVersion: 4,
   },
   js: {
     name: "js",
@@ -387,29 +387,29 @@ const main = async (languageOptions: LanguageOptions) => {
     );
     // Restore previous voucher_type filter
     openAPIContent.components.schemas.ParameterFiltersListCampaigns.properties.voucher_type =
-    {
-      type: "object",
-      description: "Filter by voucher type",
-      properties: {
-        conditions: {
-          $ref: "#/components/schemas/FilterConditionsString",
+      {
+        type: "object",
+        description: "Filter by voucher type",
+        properties: {
+          conditions: {
+            $ref: "#/components/schemas/FilterConditionsString",
+          },
         },
-      },
-    };
+      };
     // Restore previous is_referral_code filter
     openAPIContent.components.schemas.ParameterFiltersListCampaigns.properties.is_referral_code.properties =
-    {
-      $is: {
-        type: "string",
-        description: "Value is exactly this value (single value).",
-        enum: ["TRUE", "FALSE"],
-      },
-      $is_not: {
-        type: "string",
-        description: "Results omit this value (single value).",
-        enum: ["TRUE", "FALSE"],
-      },
-    };
+      {
+        $is: {
+          type: "string",
+          description: "Value is exactly this value (single value).",
+          enum: ["TRUE", "FALSE"],
+        },
+        $is_not: {
+          type: "string",
+          description: "Results omit this value (single value).",
+          enum: ["TRUE", "FALSE"],
+        },
+      };
     // Remove new conditions – $contains, $not_contain from FilterConditionsString
     delete openAPIContent.components.schemas.FilterConditionsString.properties
       .$contains;
@@ -421,25 +421,31 @@ const main = async (languageOptions: LanguageOptions) => {
     };
   }
   if (languageOptions.breakingChangesVersion <= 2) {
-    //ADD MORE TO IT ONCE DOTNET IS RELEASED
     // Restore faulty type for referee_reward.amount
-    openAPIContent.components.schemas.ReferralProgram.properties.referee_reward.properties.amount.type = "string";
+    openAPIContent.components.schemas.ReferralProgram.properties.referee_reward.properties.amount.type =
+      "string";
     // Restore `initial_sync_status`
     openAPIContent.components.schemas.Segment.properties[
       "initial_sync_status"
     ] = {
       type: "string",
-      enum: [
-        "IN_PROGRESS",
-        "DONE"
-      ],
-    }
-    // Restore `created_at` to POST `v1/orders/import`
-    openAPIContent.components.schemas.OrdersImportCreateRequestBody.items.allOf[1].properties.created_at = {
-      type: "string",
-      description: "Timestamp representing the date and time when the order was created. The value is shown in the ISO 8601 format.",
-      format: "date-time"
+      enum: ["IN_PROGRESS", "DONE"],
     };
+    // Restore `created_at` to POST `v1/orders/import`
+    openAPIContent.components.schemas.OrdersImportCreateRequestBody.items.allOf[1].properties.created_at =
+      {
+        type: "string",
+        description:
+          "Timestamp representing the date and time when the order was created. The value is shown in the ISO 8601 format.",
+        format: "date-time",
+      };
+  }
+  if (languageOptions.breakingChangesVersion <= 3) {
+    openAPIContent.components.schemas.ReferralProgram.properties.referee_reward.properties.amount.type =
+      "number";
+  }
+  if (languageOptions.breakingChangesVersion <= 4) {
+    //ADD MORE TO IT ONCE DOTNET IS RELEASED
   }
   //////////////////////////////////////////////////////////////////////////////
   ///////////////////////////END OF BREAKING CHANGES////////////////////////////
@@ -573,9 +579,9 @@ const main = async (languageOptions: LanguageOptions) => {
       };
     });
     newOpenApiFile.components.schemas.OrdersListResponseBody.properties.orders.items =
-    {
-      $ref: "#/components/schemas/OrderCalculated",
-    };
+      {
+        $ref: "#/components/schemas/OrderCalculated",
+      };
     newOpenApiFile.components.schemas.LoyaltiesMembersPointsExpirationListResponseBody.properties.data.items =
       newOpenApiFile.components.schemas.LoyaltyPointsBucket;
     newOpenApiFile.components.schemas.LoyaltyCardTransaction.properties.details.properties.balance =
@@ -584,7 +590,8 @@ const main = async (languageOptions: LanguageOptions) => {
       newOpenApiFile.components.schemas.VoucherBalance;
 
     if (languageOptions.name === "dotnet") {
-      newOpenApiFile.paths['/v1/products/{productId}/skus'].get.operationId = 'list-skus-in-product'
+      newOpenApiFile.paths["/v1/products/{productId}/skus"].get.operationId =
+        "list-skus-in-product";
     }
     //NOTHING MORE HERE!
   }
@@ -605,10 +612,12 @@ const main = async (languageOptions: LanguageOptions) => {
         newOpenApiFile.paths[path][method].requestBody.required = true;
       }
     }
-    //NOTHING MORE HERE!
   }
-  //!!!!!!!!!!!!!!!!!!!TYPE MORE BREAKING CHANGES BELOW!!!!!!!!!!!!!!!!!!!!!!!!!
-
+  if (languageOptions.breakingChangesVersion <= 3) {
+    //!!!!!!!!!!!!!!!!!!!TYPE MORE BREAKING CHANGES BELOW!!!!!!!!!!!!!!!!!!!!!!!!!
+    //
+    //
+  }
   //////////////////////////////////////////////////////////////////////////////
   ///////////////////////////END OF BREAKING CHANGES////////////////////////////
   //////////////////////////////////////////////////////////////////////////////
