@@ -182,6 +182,7 @@
 | /v1/loyalties/members/{memberId}/tiers                                     | get    | List Member's Loyalty Tiers                       | <font color='green'>supported</font> |               |
 | /v1/loyalties/{campaignId}/tiers/{loyaltyTierId}/earning-rules             | get    | List Loyalty Tier Earning Rules                   | <font color='green'>supported</font> |               |
 | /v1/loyalties/{campaignId}/tiers/{loyaltyTierId}/rewards                   | get    | List Loyalty Tier Rewards                         | <font color='green'>supported</font> |               |
+| /v1/loyalties/{campaignId}/qualifications                                  | post   | Estimate loyalty points                           |                                      |               |
 ## Customers
 | endpoint                                      | method | summary                               | is supported                         | is deprecated |
 | --------------------------------------------- | ------ | ------------------------------------- | ------------------------------------ | ------------- |
