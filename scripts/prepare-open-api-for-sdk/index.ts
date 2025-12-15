@@ -444,13 +444,13 @@ const main = async (languageOptions: LanguageOptions) => {
   if (languageOptions.breakingChangesVersion <= 3) {
     openAPIContent.components.schemas.ReferralProgram.properties.referee_reward.properties.amount.type =
       "number";
+    openApi.paths["/v1/vouchers"].get.parameters = openApi.paths[
+      "/v1/vouchers"
+    ].get.parameters.filter((e) => e.name !== "filters");
   }
   if (languageOptions.breakingChangesVersion <= 4) {
     //ADD MORE TO IT ONCE DOTNET IS RELEASED
   }
-  openApi.paths["/v1/vouchers"].get.parameters = openApi.paths[
-    "/v1/vouchers"
-  ].get.parameters.filter((e) => e.name !== "filters");
   //////////////////////////////////////////////////////////////////////////////
   ///////////////////////////END OF BREAKING CHANGES////////////////////////////
   //////////////////////////////////////////////////////////////////////////////
