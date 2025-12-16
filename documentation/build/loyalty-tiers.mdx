@@ -1,0 +1,108 @@
+---
+title: "Loyalty tiers"
+description: "Learn how loyalty tiers work in Voucherify"
+---
+
+Loyalty tiers are optional membership levels within your loyalty program. They divide your program based on a customer's status, typically tied to their point balance or points collected over time.
+
+Each tier can have unique rules for both earning points and redeeming rewards, allowing you to offer premium benefits to your most engaged customers.
+
+## Tier structure and overview
+
+| Tier property | Description | Example |
+| :--- | :--- | :--- |
+| **Membership level** | Unlimited number of tiers supported per campaign. | Basic, Silver, Gold, Platinum. |
+| **Qualification method** | Determined by either **points balance** or **points collected in a period**. | Points balance (100 – 499 points). |
+| **Earning rules mapping** | Each tier can define point multipliers to increase or decrease earned points per rule. | 2x points for Gold tier members. |
+| **Rewards mapping** | Each tier can define multipliers or custom values for reward point prices. | Reward X costs 50% fewer points for Gold tier members. |
+
+## Qualification by points balance
+
+Qualification is based on a customer's current, spendable point balance falling within the tier's defined minimum and maximum point range.
+
+### Tier status logic
+
+| System event | Default behavior (continuous check) | Custom expiration option |
+| :--- | :--- | :--- |
+| **Tier entry** | Immediate upgrade when balance reaches minimum threshold. | Counter starts, running for the specified months, **after reaching minimum required points**. |
+| **Tier exit** | Immediate downgrade when balance falls below minimum range. | Tier remains valid for a defined period (months) even if the balance falls out of range. |
+| **Verification** | Real-time balance check. | Verified upon tier expiration: **prolonged** if balance is sufficient, **downgraded** if insufficient. |
+
+<Warning>
+
+The **auto-redeem** feature operates before loyalty tier checks are performed. This creates a conflict for **balance-based tiers** and may prevent the customer from meeting the tier's qualification threshold.
+
+</Warning>
+
+### Expiration period rounding
+
+The expiration period, defined as a number of months, can be rounded up until the end of a selected period (e.g., end of a calendar month, quarter, year).
+
+## Qualification by points collected in a period
+
+Qualification requires the sum of points collected within a specific time period to reach the tier threshold.
+
+<Note>
+
+Qualification is based on **collected points** (earned) rather than current balance. Therefore, **auto-redeem does not interfere** with these tiers.
+
+</Note>
+
+### Qualification periods
+
+* **Calendar month**
+* **Calendar quarter**
+* **Calendar half-year**
+* **Calendar year**
+
+### Tier start and expiration logic
+
+The resulting tier status is determined by the combination of the start date and expiration date configurations:
+
+| Configuration parameter | Option | Description |
+| :--- | :--- | :--- |
+| **Tier start date** | **Immediately** | Tier starts immediately when the threshold is reached. |
+| | **Next calendar month** | Tier start is postponed until the beginning of the subsequent qualification period. |
+| **Tier expiration date** | **End of the qualification period** | Tier is valid till the end of the period in which it was granted. |
+| | **End of the next calendar month** | Tier is valid till the end of the following period after it was granted. |
+
+#### Grace period
+
+A **grace period** can be added to the tier expiration date with 'extend expiration date by' option, extending the validity period in days or months to delay downgrades.
+
+## Tier-specific rules and rewards mapping
+
+Tiers define configuration overrides for the default points values of program rules:
+
+* **Earning rules mapping:** Defines point **multipliers** that increase or decrease the number of earned points per rule.
+* **Rewards mapping:** Defines **multipliers** or **custom values** that set new reward point prices for tier members.
+    * Rewards can be disabled for a tier using the **Not available** option.
+
+## Tier campaign modification rules
+
+It is possible to implement changes to an existing campaign's qualification rules or tier structure.
+
+<Warning>
+
+**Recommendation:** Changes to **qualification rules** and **tiers structure** should be performed in **sequential, separate campaign modification steps**. Two asynchronous tasks might be scheduled otherwise, leading to potential discrepancies in customer tiers updates.
+
+</Warning>
+
+### Qualification rules changes
+
+Qualification rules changes are triggered by selecting the **refresh tiers** option in the Tiers step under the expiration options when editing a campaign.
+
+| Option selected | Customer tier result (upon save) |
+| :--- | :--- |
+| **Without the ‘Refresh tiers’ option selected** | Tiers are **not changed**; no upgrades or downgrades occur. |
+| **With the ‘Refresh tiers’ option selected** | Tiers **may be refreshed**: potential tier **upgrades** and expiration date updates (shortened or extended) may occur. There will be **no downgrades**. |
+
+### Tier structure changes (thresholds)
+
+Tier structure changes involve adding new tiers or modifying existing points thresholds.
+
+| Structure change | Customer status | Customer tier result (upon save) |
+| :--- | :--- | :--- |
+| **Adding/changing thresholds** | Tiers without expiration dates | Tiers are updated with potential **upgrades and downgrades**. |
+| | Tiers with expiration dates | Customers **will not be downgraded** but **may be upgraded**. |
+| **Removing tier(s)** | All customers | Customers **lose** the removed tier(s). |
