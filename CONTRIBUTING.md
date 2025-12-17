@@ -96,7 +96,7 @@ To update the **[production/readOnly-openAPI.json]** file, run the `npm run buil
 
 The **[tmp/referenceToUpload/OpenAPI.json]** file is generated while running the `npm run create-clean-project -- (parameters)` command.
 
-The **[tmp/reference/{language}/OpenAPI.json]** files are generated while running `npm run prepare-open-api-for-sdk -- --language=(language)` command. The available languages are `ruby` and `python`.
+The **[tmp/reference/{language}/OpenAPI.json]** files are generated while running `npm run prepare-open-api -- --language=(language)` command. The available languages are `ruby` and `python`.
 
 ## OpenAPI
 

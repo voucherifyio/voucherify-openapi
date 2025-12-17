@@ -42,7 +42,7 @@ Creates and updates docs in `./docs/reference-docs` directory.
 
 Spotlight is GUI software for editing OpenAPI files. Each usage added some tags to an OpenAPI file. This command removes them.
 
-### `prepare-open-api-for-sdk`
+### `prepare-open-api`
  
 Scripts in the basic form are not ready for generating SDKs without errors or bugs. This command performs actions which are mostly language-specific.
   - (all) removing unsupported endpoints (deprecated or those that wasn't refactored to the newest versions of the API)
@@ -113,7 +113,7 @@ Checks if the OpenAPI schemas haven't changed after scripts refactoring.
 The easiest way for running tests is to use the `docker-compose` file.
 1. Ensure that you have installed `docker`.
 2. Ensure that you have the init submodules with `git submodule update --init --recursive`.
-3. Make sure you filled up `./env` file in root directory and `./scripts/copy-env-to-sdks.sh` have been launched.
+3. Make sure you filled up `./env` file in root directory and `./scripts/sdks/shared/copy-env-to-sdks.sh` have been launched.
 4. Run `npm run test-sdks` or `npm run test-python-sdk/test-php-sdk/test-java-sdk/test-ruby-sdk/test-dotnet-sdk`
 
 To run SDKs separately or on your local machine without docker, go to the SDK directory and read the `README.md` file.
@@ -169,8 +169,8 @@ The following changes to the `OpenAPI.json` file consistent breaking changes:
 - Changing `operationId` for endpoint - FORBIDDEN - if needed we will introduce mapping
 - Changing `tags` for endpoint - FORBIDDEN - if needed we will introduce mapping
 
-To avoid breaking changes, fix them in the [`index.ts` file](./scripts/prepare-open-api-for-sdk/index.ts).
+To avoid breaking changes, fix them in the [`index.ts` file](./scripts/prepare-open-api/index.ts).
 
 #### Releasing major version
 
-Before releasing new major version please go to [`index.ts` file](./scripts/prepare-open-api-for-sdk/index.ts) and update `breakingChangesVersion` to make sure that all breaking changes will be applied at the same time. 
+Before releasing new major version please go to [`index.ts` file](./scripts/prepare-open-api/index.ts) and update `breakingChangesVersion` to make sure that all breaking changes will be applied at the same time. 
