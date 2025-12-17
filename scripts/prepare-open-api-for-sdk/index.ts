@@ -5,7 +5,6 @@ import _ from "lodash";
 import minimist from "minimist";
 import path from "path";
 import originalOpenAPIContent from "../../reference/OpenAPI.json";
-import addMissingDefaults from "./add-missing-defaults";
 import { getPathsWithoutDeprecated } from "./get-paths-without-deprecated";
 import { putNotObjectSchemasIntoObjectSchemas } from "./put-not-object-schemas-into-object-schemas";
 import {
@@ -22,6 +21,8 @@ import {
 import { parseNullsToNullableObjects, removeStoplightTag } from "./utils";
 
 let openAPIContent: any = originalOpenAPIContent;
+import addMissingDefaults from "./add-missing-defaults";
+import { removeRequiredFromRequestsAndResponses } from "./remove-required-from-request-and-responses";
 
 const options = minimist(process.argv.slice(2));
 
@@ -62,6 +63,11 @@ const supportedLanguages: {
     supportOauth: true,
     removeAllSchemasDefaults: true,
     breakingChangesVersion: 2,
+  },
+  js: {
+    name: "js",
+    supportOauth: true,
+    breakingChangesVersion: 3,
   },
 };
 
@@ -537,7 +543,7 @@ const main = async (languageOptions: LanguageOptions) => {
   }
 
   // Building all together
-  const newOpenApiFile = cleanUpDescriptionsInEntireObject({
+  let newOpenApiFile = cleanUpDescriptionsInEntireObject({
     ...openAPIContent,
     components: {
       ...openAPIContent.components,
@@ -570,7 +576,6 @@ const main = async (languageOptions: LanguageOptions) => {
     {
       $ref: "#/components/schemas/OrderCalculated",
     };
-    ///
     newOpenApiFile.components.schemas.LoyaltiesMembersPointsExpirationListResponseBody.properties.data.items =
       newOpenApiFile.components.schemas.LoyaltyPointsBucket;
     newOpenApiFile.components.schemas.LoyaltyCardTransaction.properties.details.properties.balance =
@@ -581,7 +586,29 @@ const main = async (languageOptions: LanguageOptions) => {
     if (languageOptions.name === "dotnet") {
       newOpenApiFile.paths['/v1/products/{productId}/skus'].get.operationId = 'list-skus-in-product'
     }
+    //NOTHING MORE HERE!
   }
+  if (languageOptions.breakingChangesVersion <= 2) {
+    newOpenApiFile =
+      removeRequiredFromRequestsAndResponses(newOpenApiFile).spec;
+
+    const addToRequestBodyIn = {
+      "/v1/vouchers/{code}": ["put"],
+      "/v1/vouchers/{code}/balance": ["post"],
+      "/v1/vouchers/import": ["post"],
+      "/v1/vouchers/bulk/async": ["post"],
+      "/v1/vouchers/metadata/async": ["post"],
+    };
+
+    for (const [path, methods] of Object.entries(addToRequestBodyIn)) {
+      for (const method of methods) {
+        newOpenApiFile.paths[path][method].requestBody.required = true;
+      }
+    }
+    //NOTHING MORE HERE!
+  }
+  //!!!!!!!!!!!!!!!!!!!TYPE MORE BREAKING CHANGES BELOW!!!!!!!!!!!!!!!!!!!!!!!!!
+
   //////////////////////////////////////////////////////////////////////////////
   ///////////////////////////END OF BREAKING CHANGES////////////////////////////
   //////////////////////////////////////////////////////////////////////////////

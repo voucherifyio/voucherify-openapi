@@ -1,0 +1,215 @@
+---
+title: "Integration blueprint"
+description: "Follow this blueprint for a successful Voucherify launch."
+keywords: ['blueprint', 'launch', 'discover', 'plan', 'integrate', 'migrate', 'business scenario', 'use case']
+---
+
+## Discover
+
+Before going live, involve the right people: marketing, product, and engineering. Define what "success" means in your context:
+
+- **What are you trying to improve?** Conversion rate? Repeat purchase? Average order value (AOV)?
+- **Which incentive types are worth testing?** Coupons, bundles, gift cards, referrals, loyalty points?
+- **Who sees what?** Define your audience segments, control groups, and rules.
+- **Where do incentives appear?** Email, app, checkout, QR codes?
+- **When do they trigger?** Map rules like time windows, frequency caps, cart conditions.
+- **How do you stop overspend?** Set up budget caps, time frames, and throttling logic.
+- **What else is in your stack?** CDP, CRM, CEP? Map what tools to connect.
+
+## Plan
+
+Start with a Voucherify Sandbox project. It comes with its own API keys and a 60-day trial for safe testing.  For best performance, pick a project cluster close to your region.
+
+Consider these key points in your planning:
+
+- **Team access**: Invite as [many users](https://support.voucherify.io/article/120-account-settings) as needed and assign role-based access to keep responsibilities clear and data secure. Generate separate API keys if needed to manage integrations by scope.
+
+- **API touchpoints**: Map out your customer journey to decide where incentives will appear and how they’ll be redeemed. Identify if you need [qualification](/guides/checking-eligibility), [validation](/api-reference/validations/validate-stackable-discounts), or [redemption](/api-reference/redemptions/rollback-stackable-redemptions) steps and where each fits in the flow. Then, pinpoint which systems (e.g. ecommerce, mobile app, POS) should connect with Voucherify to handle these calls.
+
+- **Data model**: Define what kind of data you need and prepare them beforehand.
+
+- **Distribution**: Decide how you will deliver promo codes or promotion notifications to customers. We recommend using dedicated CEPs. Voucherify offers two distribution modes:
+
+  - Pull: Use API to get promotions in front of customers (e.g., list all active coupons).
+  - Push: Define a trigger for the message send-out (e.g., if a customer signs up for a newsletter, send him a 10% off promo code). 
+
+- **Reporting**: Plan how you’ll measure campaign performance using Voucherify Dashboard or data exports. If you're using a BI tool, define how data will flow ([CSV](https://support.voucherify.io/article/543-data-export), APIs, or [webhooks](/api-reference/introduction-to-webhooks)).
+
+- **Migration**: If you are moving from another promotion system, plan the [import of existing incentives](/guides/import-codes).
+
+- **Scale**: Estimate your expected load (API call volumes, user count, and peak redemption rates). High traffic or large datasets might require a dedicated cluster or impact your rate limit planning. This helps you choose the right subscription tier and avoid performance issues. 
+
+- **Project structure**: Voucherify lets you manage separate projects for different brands, locations, currencies, or dev stages. You can isolate business contexts with distinct projects or use categories, labels, code prefixes, and metadata to manage everything in a shared project. Projects affect settings like currency, timezone, user roles, API keys, and webhooks. For enterprise users, the [Management API](/guides/management-api) allows full programmatic control over project setup, updates, and maintenance.
+
+- **Security and compliance**: Review any [security](/guides/security) requirements and data policies before integrating. Identify sensitive data (PII) that will be sent to Voucherify and ensure it aligns with GDPR or other regulations. Use server-side API keys for critical operations and ensure encryption for data in transit. Control access with Voucherify’s role-based permissions and project scopes. If fraud is a concern, plan rules or monitoring to detect and block suspicious activity.
+
+<Note>
+Voucherify’s modular design lets you integrate only what you need first, then expand as your needs grow. 
+</Note>
+
+### Promotion limits
+
+As part of planning, define exactly who can and can’t access your promotions. For each campaign, combine rules using Boolean logic across customer, order, product, and time dimensions:
+
+- **Customers and customer attributes**: Voucherify lets you collect, update, store, and export customer data to be used in your campaigns. Once synced, you can build [segments](https://support.voucherify.io/article/51-customer-segments) and apply limits based on any attribute. 
+
+- **Cart structure and product information**: Integrating your inventory allows you to launch product-specific campaigns and add physical rewards to loyalty and referral programs. When the product data is synced, you can quickly:
+
+  - Restrict promotions to apply to certain products or develop [“buy X, get Y” scenarios](https://support.voucherify.io/article/558-product-bundles).
+
+  - Exclude products and SKUs from campaigns.
+
+  - Create loyalty earning rules based on cart structure.
+
+  - Build static and dynamic product collections.
+
+  - Define product attributes using metadata.
+
+<Note>
+Syncing customer and product data is optional. Instead of syncing data, you can use an external customer or product identifier to provide relevant attributes during validation.
+</Note>
+
+- **Promotion budget**: Voucherify offers a safety net that works hand in hand with customer profile- and cart-based [validation rules](https://support.voucherify.io/article/529-validation-rules-campaign-limits). You can configure a campaign in a way that automatically stops when its target is satisfied, for example:
+
+  - Redemptions per customer/code in a specific timeframe.
+  - Maximum discount for a percentage deal.
+  - Total order value, discounted amount, and total number of redemptions.
+  - Many more!
+
+- **Custom attributes and events**: Add custom fields to Voucherify. The schema configuration ensures custom data integrity by supporting various data types, including arrays, data limits, and nesting. You can also map custom events to trigger promotion-related activities, such as promo code send-out.
+
+## Model and prepare data
+
+A successful implementation of Voucherify requires preparing a good data model:
+
+- **Customer data**: Identify which customer attributes and events Voucherify needs to meet your use case. Decide whether to sync this data through the API or Dashboard, and how often updates should occur to stay accurate. You can also integrate a CDP to automate and centralize this flow. 
+
+- **Product catalog**: If your campaigns rely on product data, connect your product catalog to Voucherify. Import product IDs, SKUs, or collections so promotion rules can use them accurately. Sync through the API or  Dashboard and decide how often to update. Make sure product IDs match your ecommerce system to keep everything consistent.
+
+- **Orders**: Sync transaction data with Voucherify during validation or redemption to enforce cart-level rules. For legacy order history, use the import orders endpoint or the [Create](/api-reference/orders/create-order) and [Update](/api-reference/orders/update-order) Order APIs. This ensures redemptions are tied to real transactions and enables accurate tracking and reporting.
+
+- **Metadata**: [Define metadata schemas](/guides/metadata-mapping) upfront for customers, orders, or other entities to support custom rules, like loyalty tier or custom segments. Adding these fields ensures consistency and guides developers on what data to include in API calls. It also makes rule-building in Voucherify clearer and more reliable.
+
+- **Event schema**: If you plan to use [custom events](https://support.voucherify.io/article/111-custom-events), set them up in Voucherify ahead of time. This ensures your system's events are recognized and can trigger rewards or promotions based on real-time actions.
+
+- **Campaign configuration**: While campaign setup is mainly for marketing, creating one or two test campaigns with validation rules is useful during development. It helps confirm that your customer, product, and transaction data is properly integrated and aligns with campaign logic. 
+
+<Note>
+Take into consideration your data volume (how many customers, products, orders, and other records you plan to send to Voucherify). This helps you plan for performance, API usage, and any bulk import needs upfront.
+</Note>
+
+## Integrate
+
+The Integrate phase involves incorporating Voucherify’s API into your application workflows:
+
+- Authenticate with the Voucherify API:
+
+  - Server-side (secret) API key: Used for secure operations on your backend.
+  
+  - Client-side (publishable) API key: Used for public client applications (mobile apps, web apps) to access a subset of the API labeled as client-side. Client-side features require domain/mobile app origin whitelisting in **Project settings** > **Client-side settings**.
+  
+  - OAuth 2.0: Voucherify supports OAuth 2.0 for API authorization.
+
+- Install an SDK: Voucherify provides SDKs for various languages, which automatically handle API keys.
+
+- Select core API calls:
+
+  - [**Validation**](/api-reference/validations/validate-stackable-discounts): Checks the eligibility of discounts and calculates final prices.
+
+  - [**Redemption**](/api-reference/redemptions/redeem-stackable-discounts): Applies incentives to a customer’s order.
+
+  - [**Qualification**](/guides/checking-eligibility): Suggests relevant promotions and coupons based on customer attributes, selected scenario, and current shopping cart contents, with filtering options for campaign category and hierarchy. It can be used to display strike-through prices.
+
+  - [**Publication**](/api-reference/publications/create-publication): Associates a code with a specific customer, typically for code distribution. This step can be triggered on demand.
+
+- Connect with your stack: Configure API keys to integrate Voucherify with other tools.
+
+- Migrate data: Import the planned data as well as any legacy codes you want to transfer from your previous systems.
+
+- Configure additional functionalities: Prepare distributions to automate actions in response to selected triggers or set up webhooks for automation and data tracking.
+
+## Test
+
+Before you launch, test your Voucherify integration thoroughly to ensure it works just as you planned. Voucherify offers two ways of basic testing:
+
+- **​Sandbox**: Each Voucherify account comes with a [Sandbox](https://support.voucherify.io/article/538-sandbox) that’s separate from your project limit and has its own API keys. It’s capped at 100 API calls per hour and includes default test data like campaigns, codes, customers, and products. For meaningful testing, add realistic data – customers who qualify (or don’t), sample products, and example campaigns. This helps validate your setup before going live.
+
+- **Demo Shop**: The Sandbox includes a built-in Demo Shop, a test environment for simulating transactions and validating campaigns. You can apply discounts, redeem codes, and see how your rules behave in real scenarios. Each redemption is logged in the Dashboard, and you can inspect API requests and responses, including full JSON payloads.
+
+### Functional testing
+
+For each campaign type and user story, perform tests within your application:
+
+- **Coupons**: Test valid, expired, used, and invalid codes. Confirm correct discount application and appropriate error messages.
+
+- **Cart promotions**: Test various cart contents to ensure automatic promotions trigger (or not) as expected.
+
+- **Loyalty**: Simulate earning points by triggering events like test purchases. Check that loyalty balances update correctly and that point redemptions only succeed when enough points are available. 
+
+- **Referrals**: Simulate referral flows using two test customer accounts, verifying incentives for both the referred and referrer.
+
+- **Distribution**: Trigger conditions for automatic distributions (emails, etc.) and confirm messages are sent.
+
+<Note>
+Intentionally test failure scenarios and edge cases. Send malformed API calls, remove required data, use wrong keys, or disable networks to ensure your error handling works. Also test complex rules like mutually exclusive promotions or budget caps to confirm campaigns behave correctly under pressure. 
+</Note>
+
+### Data integrity checks
+
+Ensure data consistency between systems. After test redemptions, verify the following in the Voucherify Dashboard:
+
+- Redemption entries to confirm details such as customer and order amount. Check with your internal database if it also reflects the redemption.
+
+- Order entries to check if discounts, metadata, and activity data show intended results.
+
+- Audit log to inspect any other event that requires checking, including webhook sendouts.
+
+## Deploy
+
+Before rolling out the integration into production, complete a final launch checklist:
+
+- **Swap to production API keys**: Update the application configuration to use the production Voucherify API keys for the live environment.
+
+- **Data consistency**: Replicate key data from your Sandbox to your production project. Double-check that product catalogs, metadata schemas, and other configs are consistent. Use campaign templates to transfer discount or gift campaign setups easily, ensuring a smooth transition without starting from scratch.
+
+- **Enable production campaigns**: Activate and configure all campaigns intended for launch in the production Voucherify project. Upload production-specific data and verify campaign settings (date ranges, discount values, budget limits). Disable or delete any test campaigns or codes in the production project that should not be live.
+
+- **Access**: Confirm all team members needing access to Voucherify have appropriate roles in the production project. Ensure API key permissions align with required API actions.
+
+- **Training**: Confirm the Marketing/CRM team is proficient in using Voucherify in production, including creating, pausing, and monitoring campaigns.
+
+- **Backup**: Establish a contingency plan for potential issues post-launch, such as disabling a malfunctioning promotion or reverting to manual workarounds. Understand how to contact Voucherify support for urgent platform issues.
+
+- **Privacy and compliance check**: Verify all privacy measures are in place, particularly regarding real customer data flow. Ensure compliance with GDPR and other regulations.
+
+- **Go live communication**: Inform all relevant parties, including customer support, about new promotions and the Voucherify system.
+
+## Maintain
+
+You can use the following functionalities to track and maintain your Voucherify project:
+
+- **Webhooks**: Stream real-time events directly into your systems. Webhooks enable instant reactions, integration with marketing automation, and syncing with data warehouses or analytics platforms.
+
+- **APIs for data export**: Use Voucherify’s APIs to query redemptions, customer profiles, campaign statistics, and more. Bulk operations are supported, making this ideal for syncing with BI tools or external reporting systems.
+
+- **Built-in reporting and CSV export**: Access real-time analytics in the Dashboard for each campaign type, and export data (vouchers, redemptions, customer lists) in CSV format for deeper analysis or audit trails.
+
+- **Campaign and customer insights**: Track campaign performance, ROI, and budget spent over time or in real-time. Drill down into aggregate metrics or browse individual events. Use the 360-degree customer view to explore personal details, order history, promotion activity, and loyalty status.
+
+- **Redemption tracking**: Analyze when and why redemptions fail to optimize eligibility rules and UX flows.
+
+- **Audit logs**: Full transparency into system activity with logs covering API request/response data, webhook events, and system-level changes, useful for debugging and compliance.
+
+- **API usage monitoring**: Keep tabs on your hourly and monthly API consumption with clear dashboards. Set up automatic in-app or email alerts when nearing limits for API calls, redemptions, or bulk operations. Alerts also cover webhook usage thresholds.
+
+- **Integrations with BI and marketing tools**: Voucherify supports event streaming (for example with Kafka), async CSV exports, and direct integrations with CDPs and CEPs. This makes it easy to use Voucherify as a data source in broader marketing and analytics pipelines.
+
+## What’s next?
+
+- Explore the [Voucherify Postman Collection](https://www.postman.com/voucherify/voucherify-s-public-workspace/) to check API requests and responses.
+
+- Join [Voucherify Community Slack](https://www.voucherify.io/community) to get help and inspiration.
+
+- Visit the [Voucherify roadmap](https://roadmap.voucherify.io/) to find out what Voucherify developers are currently working on or suggest improvements and vote for features you want to see in the platform.
+
+- Contact [Voucherify support](https://www.voucherify.io/contact-support) if you have any further questions.
