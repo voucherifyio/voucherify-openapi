@@ -1,132 +1,153 @@
 ---
 title: "Earning rules"
-description: "A complete guide to earning rules, including types, limits, and configuration parameters in Voucherify"
+description: "Learn about earning rules, their types, limits, and configuration parameters in Voucherify"
+keywords: ['loyalty earning rules', 'gaining loyalty points', 'how to earn points', 'earning points']
 ---
 
-## Detailed earning rule configuration fields
+## Earning rule configuration steps in detail
 
-The process of creating an earning rule is divided into four distinct steps, each defining key parameters that govern the rule's functionality and scope.
+Configuration of an earning rule is divided into four steps. Each step defines key and optional settings that specify how a rule works and its scope.
 
-### 1. Details (required)
+### Details (required)
 
-This section defines the rule's identification and lifecycle management.
+This step defines the rule's identification and lifecycle management.
 
-* **Name**: The unique name of the earning rule, used for management and reporting.
-* **Time frame (optional)**: Defines the period during which the rule is active.
-    * **Inheritance**: If a time frame is not explicitly specified, the rule **inherits** the start and expiration date from the parent loyalty campaign.
-    * **Time frame options**:
-        * Start date & time
-        * End date & time (expiration)
-        * Valid in this timeframe only (recurring)
-        * Valid on particular days only
+- **Name**: The unique name of the earning rule, used for management and reporting.
+- Earning rule type: Defines what customers need to do to earn points. There are four main earning rule types:
+    - Order has been paid
+    - Custom event
+    - Entered segment
+    - Tier events
+- **Time frame** (optional): Defines the period when the rule is active and customers can earn points through this rule.
+    - **Inheritance**: If a time frame is not defined, the rule inherits the settings from the parent loyalty campaign.
+    - **Time frame options**:
+        - Start date and time
+        - End date and time (expiration)
+        - Valid in this timeframe only (recurring)
+        - Valid on particular days only
 
-### 2. Points (required)
+### Points (required)
 
-This section defines the reward value, timing, and expiration rules for the points earned.
+This step defines the reward value, timing, and expiration rules for the points earned.
 
 * **Point value**: Determines how many loyalty points the customer will receive.
-    * It can be a **fixed value** (e.g., 50 points) or a **dynamic value** calculated using the **points formula builder**.
-* **Pending points**: This feature allows you to delay the moment points are officially credited.
-    * You can set a specific **pending period in days**.
-    * Points are added to the customer's account immediately but remain in a *Pending* state. Once the configured number of days has passed, the points are automatically **credited** to the customer.
-* **Expiration rules**: Configuration defining when the points acquired through this specific earning rule will expire.
+    - It can be a **fixed** value (for example, 50 points) or a **dynamic value** calculated using the **points formula builder**.
+    - It can be a **proportional** value (for example, 10 points for every $10 spent) that scales with a selected condition. **Proportional** values are unavailable in **Tier events** rules.
+* **Pending points**: You can set a delay time when customer's can actually use the earned points.
+    - You can set a specific pending period in days.
+    - Points are added to the customer's account immediately but remain in a pending state. Once the set number of days has passed, the points are automatically made available to the customer.
+* **Expiration rules**: Configuration defining when the points acquired through this specific earning rule will expire. If an earning rule doesn't have its own expiration rule, the campaign-level point expiration will be used instead.
 
-### 3. Validation rules (optional)
+### Validation rules (optional)
 
-Validation rules are advanced constraints that must be met for the earning rule to activate.
-
-* **Function**: They limit earning rule usage to predefined circumstances.
-* **Examples of application**: Validation rules can define:
-    * Cart structure and volume (e.g., minimum order value)
-    * Customer attributes (e.g., only for customers in country X)
-    * Qualified customer segments (e.g., only for the "Premium Customers" segment)
-
-### 4. Metadata (optional)
-
-Metadata allows you to attach custom attributes to the earning rule by defining key/value pairs.
-
-* **Function**: This is used to add custom attributes for internal tracking, organization, or for use in more advanced logic.
-
----
-
-## Context for point earning by rule type
-
-This section explains how points are calculated and awarded for each rule type, focusing on **proportional earning** and required **metadata schema**.
-
-### A. Paid orders
-
-Points are added to the customer's loyalty card when a new order changes its status to **PAID**.
-
-| Earning method | Detailed functionality | Metadata requirements |
-| :--- | :--- | :--- |
-| **Fixed** | Awards a fixed number of points for paying an order. | None |
-| **Proportional** | The customer receives a defined number of points (*X*) for every predefined value (*Y*) in the selected metric (e.g., amount spent). | The metadata field must be a **Number** type and defined earlier in **Project Settings > Metadata Schema**. |
-
-#### Proportional earning options for orders
-
-1.  **Pre-discount order amount**: Points for every $Y$ spent **excluding** discounts (order total amount counted *before* discounts were applied).
-2.  **Total order amount**: Points for every $Y$ spent **including** discounts (order total amount counted *after* discounts were applied).
-3.  **Pre-discount amount spent on items**: Points for every $Y$ spent on specific items or collections, **excluding** discounts.
-4.  **Amount spent on items**: Points for every $Y$ spent on specific items or collections, **including** discounts.
-5.  **Quantity of items in the cart**: Points for every $Y$ items, **excluding** free items.
-6.  **Order Metadata**: Points awarded proportionally to the value of a metadata attribute defined in the **Order** schema.
-7.  **Customer Metadata**: Points awarded proportionally to the value of a metadata attribute defined in the **Customer** schema.
+Validation rules are additional conditions that the customer needs to meet to gain points with the earning rule.
 
 <Tip>
-
-When selecting multiple products or collections for proportional earning, if the same item belongs to multiple selected collections, points will be calculated based on eligible items **only once**.
-
+    <Badge color="green">Validation rules in earning rules</Badge>
+    
+    Validation rules can additionally define the following conditions:
+    - Cart structure and volume, like minimum order value.
+    - Customer data, like only for customers in a given country
+    - Qualified customer segments, like only for the "Premium customers" segment
 </Tip>
 
-### B. Custom events
+### Metadata (optional)
 
-Custom events are actions taken by your customers that are tracked in your application/website and passed to Voucherify using the API.
+The **Metadata** step allows you to attach custom attributes to the earning rule by defining key/value pairs. Use metadata for internal tracking, organization, or in more advanced logic.
 
-* **Pre-configuration**: Events must first be defined in **Project Settings > Event Schema**.
-* **Function**: The customer receives points every time they perform the required action (the custom event is sent to and received by Voucherify).
-* **Validation**: When an event is received, the application checks if the customer linked to the event matches the segment rules, customer metadata, and/or custom event metadata rules.
+## Earning rules by types
 
-#### Point Earning Options
+Learn how points are calculated and awarded for each rule type, focusing on **proportional earning** and required **metadata schema**.
 
-* **Fixed** number of points.
-* **Proportional** to a value in selected metadata.
-    * **Customer metadata**: Value comes from a metadata attribute defined in the **Customer schema**.
-    * **Custom event metadata**: Value comes from a metadata attribute defined as a property of the chosen event in the **Event schema**.
+<Info>
+
+    Earning rules based on metadata must have a **Number** type and be defined in the **Metadata Schema**.
+
+</Info>
+
+### Order has been paid
+
+**Order has been paid** rule adds points to the customer's loyalty card when a new order changes its status to **PAID**.
+
+There are two earning methods for the **Order has been paid** earning rule.
+
+- **Fixed**: Awards a fixed number of points for paying for an order.
+- **Proportional**, awards a defined number of points (*X*) for every predefined value (*Y*) in the selected metric, like amount spent. The following **Proportional** methods are available: 
+    - **Pre-discount order amount**: Awards X points for every \$Y spent, excluding discounts (order total amount counted *before* discounts were applied).
+    - **Total order amount**: Awards X points for every \$Y spent including discounts (order total amount counted *after* discounts were applied).
+    - **Pre-discount amount spent on items**: Awards X points for every \$Y spent on specific items or collections, excluding discounts.
+    - **Amount spent on items**: Awards X points for every \$Y spent on specific items or collections, including discounts.
+    - **Quantity of items in the cart**: Awards X points for every Y items, excluding free items.
+    - **Order metadata**: Awards X points proportionally to the value of a metadata attribute defined in the **Order** schema.
+    - **Customer metadata**: Awards X points awarded proportionally to the value of a metadata attribute defined in the **Customer** schema.
+
+<Note>
+
+    When selecting multiple products or collections for proportional earning, if the same item belongs to multiple selected collections, points will be calculated based on eligible items only once.
+
+</Note>
+
+### Custom event
 
 <Warning>
 
-Sending custom events to Voucherify **requires developer implementation** and use of the **Events API**.
+Sending custom events to Voucherify requires developer implementation and use of the [POST Track custom event](/api-reference/events/track-custom-event) endpoint.
 
 </Warning>
 
-### C. Entered segment
+<Info>
 
-Segments group customers based on predefined criteria.
+    <Badge color="gray">Prerequisite</Badge>
 
-* **Function**: Customers who match the segment rules **enter** the segment and **immediately** earn loyalty points.
-* **Conditions**: Points are assigned only if **all** segment conditions (defined beforehand in the **Customers** section) are met.
+    A custom event must be first defined in **Project Settings** > **Event Schema**.
 
-#### Point earning options
+</Info>
 
-* **Fixed** number of points.
-* **Proportional** to a value in Customer metadata.
-    * The metadata must be defined in the **Customer** schema and must be a **Number** type.
+Custom events are actions taken by your customers that are tracked in your application or website and passed to Voucherify using the API.
 
-### D. Tier structure events
+When a custom event earning rule is used with a **Validation rule**, the moment the event is received, Voucherify checks if the customer linked to the event matches the conditions defined in the **Validation rule**, like segment rules, customer metadata, or custom event metadata.
 
-Tiers are different membership levels in the loyalty program, defined by a minimum and maximum point range.
+There are two earning methods for **Custom event** earning rule:
+- **Fixed**: Awards a fixed number of points when the **Custom event** occurs.
+- **Proportional**: Awards a defined number of points (*X*) for every predefined value (*Y*) in the selected metric. The following **Proportional** methods are available:
+    - **Customer metadata**: Value comes from a metadata attribute defined in the **Customer schema**.
+    - **Custom event metadata**: Value comes from a metadata attribute defined as a property of the chosen event in the **Event schema**.
 
-* **Function**: Points are added when a specific tier-related change occurs, provided all related event conditions are met.
-* **Requirement**: The rule must be built upon existing tiers defined in the **Tiers** section.
+### Entered segment
 
-#### Types of tier events and point earning
+Segments group customers based on defined filter criteria. The **Entered segment** earning rule ensures that the customer earns points only when the customer meets all segment conditions.
 
-| Tier event trigger | Moment points are awarded |
-| :--- | :--- |
-| **Joined tiers structure** | Customer first joins the tier structure. |
-| **Left tiers structure** | Customer leaves the tier structure. |
-| **Tier upgraded** | Customer's tier level increases. |
-| **Tier downgraded** | Customer's tier level decreases. |
-| **Tier prolonged** | Customer's current tier level is extended. |
+<Warning>
 
-**Point Earning** can be **fixed** or **proportional** to a Customer metadata value (which must be a **Number** type).
+    The **Entered segment** earning rule adds points the the customers who will enter the selected segment when the earning rule is active. Customers who have already entered the segment won't receive points.
+
+</Warning>
+
+There are two earning methods for the **Entered segment** earning rule:
+- **Fixed**: Awards a fixed number of points when the customer enters the segment.
+- **Proportional**: Awards a defined number of points (*X*) for every predefined value (*Y*) in the **Customer** metadata.
+
+### Tier events
+
+<Info>
+
+    <Badge color="gray">Prerequisite</Badge>
+
+    The **Tier events** earning rule uses the loyalty tiers created in the **Tiers (optional)** step in the loyalty campaign builder.
+
+</Info>
+
+**Loyalty tiers** are different membership levels in a loyalty program, defined by a minimum and, optionally, maximum point range. Points are added when a specific tier-related change occurs, provided that all related conditions are met.
+
+There are the following **Tier events**:
+- **Joined tier structure**: Customer earns points when they join the tier structure for the first time.
+- **Left tiers structure**: Customer earns points when they left the tier structure.
+- **Tier upgraded**: Customer earns points when they reach a higher loyalty tier.
+- **Tier downgraded**: Customer earns points when they fall to a lower loyalty tier.
+- **Tier prolonged**: Customer earns points when their current tier level is extended.
+
+By default, the **Tier events** apply to **Any** loyalty tier. Optionally, you can define a **Specific tier** that will trigger the **Tier event**.
+
+There are two earning methods for the **Tier events** earning rule:
+- **Fixed**: Awards a fixed number of points when the tier event occurs.
+- **Proportional**: Awards a defined number of points (*X*) for every predefined value (*Y*) in the **Customer** metadata.
