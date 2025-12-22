@@ -23,6 +23,7 @@ import { parseNullsToNullableObjects, removeStoplightTag } from "./utils";
 let openAPIContent: any = originalOpenAPIContent;
 import addMissingDefaults from "./add-missing-defaults";
 import { removeRequiredFromRequestsAndResponses } from "./remove-required-from-request-and-responses";
+import * as openApi from "../../reference/OpenAPI.json";
 
 const options = minimist(process.argv.slice(2));
 
@@ -441,6 +442,9 @@ const main = async (languageOptions: LanguageOptions) => {
       format: "date-time"
     };
   }
+  openApi.paths["/v1/vouchers"].get.parameters = openApi.paths[
+    "/v1/vouchers"
+  ].get.parameters.filter((e) => e.name !== "filters");
   //////////////////////////////////////////////////////////////////////////////
   ///////////////////////////END OF BREAKING CHANGES////////////////////////////
   //////////////////////////////////////////////////////////////////////////////
