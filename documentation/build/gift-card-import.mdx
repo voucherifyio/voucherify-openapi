@@ -1,44 +1,123 @@
 ---
-title: "Gift Card Import"
+title: "Gift card import"
 description: "Learn how to import gift cards to Voucherify"
 keywords: ['gift card', 'code', 'import', 'CSV', 'generic gift card import', 'standalone gift card import']
 ---
 
-## Overview
+import VoucherImport from '/snippets/voucher-import.mdx'
+import CodeImportLimit from '/snippets/code-import-limit.mdx'
+import CodeImportCallout from '/snippets/code-import-callout.mdx'
 
-Do you need to share gift cards from other sources with Voucherify? You can handle this scenario using the **CSV Import Tool** in the Dashboard. The tool enables you to import gift cards, which you can group as a campaign or manage as standalone items.
+If you need to share codes from other sources with Voucherify, you can handle this scenario using the Import CSV tool in the Dashboard. The tool enables you to import:
+- Generic gift cards.
+- New unique gift cards to a campaign.
+- Existing gift cards to update them.
 
-<Info>
+<CodeImportLimit/>
+<CodeImportCallout/>
 
-You can also use this import feature to update existing gift cards in your campaigns.
+## Preparing CSV file for generic gift cards
 
-</Info>
+To import generic gift cards, prepare a CSV file with your codes and define columns as follows:
+- Required:
+    - **Voucher Type** (text: `GIFT_VOUCHER`)
+    - **Balance** (an integer value - number representing the initial balance)
+    - **Code** (the unique gift card code)
+- Optional:
+    - Category
+    - Active (`TRUE` / `FALSE`)
+    - Start date
+    - Expiration date
+    - Redeemed quantity
+    - Redemption limit
+    - Additional Info
+    - Formula
 
 <Note>
 
-<Badge color="blue">Important notes</Badge>
+Fields other than the ones listed above will not be imported. Even if you provide them, they will be skipped.
 
-* The start and expiration dates in the CSV file should be provided in compliance with the **ISO 8601** norms, for example, `2020-03-11T09:00:00.000Z`.
-* CSV columns mapped to Custom Attributes will be added as gift cards' metadata. The number of custom attributes you can import as metadata is unlimited.
-* You cannot import two identical codes to a single Project.
-* When importing existing incentives (discount coupons, referral codes, loyalty cards, or gift cards) into a campaign, only two fields can be updated: the **active** status (`true/false`) and the **category**. All other attributes remain unchanged.
+<a href="/examples/import-generic-gift-cards-template.csv" download>CSV generic gift card file template</a>
 
 </Note>
 
-## Import gift cards
+These codes will function as standalone gift cards, independent of a campaign. 
 
-You can import gift cards by first importing them as generic cards or by grouping them into a campaign.
+### Import generic gift cards
 
-* **Generic codes** function as independent gift cards.
-* **Campaign codes** are assigned to a particular campaign and inherit its settings (validation rules, timeframe, redemption limits).
+Go to **Campaign hub** > **Campaigns** and **Import CSV**.
 
-### Webhook triggers
+<Info>
 
-Webhooks can be triggered when you import gift cards from the main campaign list (the **Campaigns** tab) and are sent for each created or updated gift card. They are **not** triggered when you import gift cards into a specific campaign's view.
+<Badge color="gray">Webhook sendout prerequisite</Badge>
 
-To enable webhooks when uploading gift cards from the **Campaigns** tab, check the box labeled **Create a webhook sendout for the vouchers created and updated during the import** in step 2 of the import process (**Map Fields**).
+While importing, you can additionally select the checkbox to **Create a webhook sendout for the vouchers created and updated during the import**. This triggers a [Voucher created](/api-reference/voucher/created) or [Voucher updated](/api-reference/voucher/updated) webhook when the coupons are processed.
 
-### Metadata (custom attributes) mapping
+To enable webhook sendout during the voucher import, first configure webhooks in **Project settings** > **Webhooks**. Select the `voucher.created` and `voucher.updated` events for the sendout to work.
+
+Read [Project settings webhooks](/api-reference/project-settings-webhooks) to learn more about configuring webhooks.
+
+</Info>
+
+<VoucherImport/>
+
+## Preparing CSV file for campaign gift cards
+
+<Info>
+
+<Badge color="gray">Import gift cards to campaign prerequisite</Badge>
+
+If you don't have a campaign for your codes yet, [create a gift card campaign](/build/create-gift-cards) first.
+
+</Info>
+
+When adding gift cards to an existing campaign, he CSV should have the following columns:
+* **Required:**
+    - **Code**
+* **Optional:**
+    - **Active**
+    - **Category**
+    - **Redeemed Quantity**
+    - Custom metadata fields
+
+<Note>
+
+Fields other than the ones listed above will not be imported. Even if you provide them, they will be skipped.
+
+<a href="/examples/import-gift-cards-into-campaign-template.csv" download>CSV gift card file template</a>
+
+</Note>
+
+All unmapped attributes will inherit the campaign’s default settings as well as validation rules, time frame, redemption limits, and so on.
+
+### Import behavior for selected attributes
+
+Some of the attributes work as follows when imported:
+- **Active**:
+    - If the campaign is **Active** and the `active` field is omitted in the CSV, the `active` attribute for the imported vouchers is set to `TRUE`.
+    - If the campaign is **Expired** and the `active` field is omitted in the CSV, the `active` attribute for the imported vouchers is set to `FALSE`.
+- **Metadata**:
+    - If metadata is omitted, the voucher inherits the campaign's metadata.
+    - If metadata columns are added, the mapped metadata only overrides those specific fields.
+
+### Import gift cards to a campaign
+
+In **Campaign hub** > **Campaigns**, go to the gift card campaign where you want to import the cards. In the top right corner, use the three-dot menu to **Import CSV file**.
+
+<VoucherImport/>
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 To add a field that is unlisted in the built-in properties, change the **Voucherify fields** dropdown to **Metadata (Schema)** or **Metadata (Unknown)** during the mapping step. 
 
@@ -53,130 +132,3 @@ If you want the gift cards to have different attributes than those in the campai
 </Accordion>
 
 </AccordionGroup>
-
-## Generic gift card import (standalone)
-
-To import generic gift cards, prepare a CSV file with your codes. These codes will function as standalone gift cards, independent of a campaign.
-
-Besides **the gift card code**, your file must include the following gift card attributes:
-
-* **Voucher Type** (text: `GIFT_VOUCHER`)
-* **Balance** (an integer value - number representing the initial balance)
-* **Code** (the unique gift card code)
-
-The following fields in the CSV template are optional:
-
-* Category
-* Active (`TRUE` / `FALSE`)
-* Start date
-* Expiration date
-* Redeemed quantity
-* Redemption limit
-* Additional Info
-* Formula
-
-<Info>
-
-Fields other than the ones listed above will not be imported. Even if you provide them, they will be skipped.
-
-[CSV generic gift card file template](https://s3.amazonaws.com/helpscout.net/docs/assets/5902f1c12c7d3a057f88a36d/attachments/6218c437528a5515a2fcc929/Import_standalone_coupons_template.csv)
-
-</Info>
-
-### Import procedure for generic gift cards
-
-<Steps>
-
-<Step title="Upload the CSV file">
-
-Go to the **Vouchers** view $\rightarrow$ **Import tool** and choose **Import CSV file** to upload your prepared file. 
-
-</Step>
-
-<Step title="Map fields">
-
-Go to **Map Fields** to connect your CSV columns with the Voucherify fields.
-
-</Step>
-
-<Step title="Complete the import">
-
-Click **Import** and wait for confirmation.
-
-</Step>
-
-</Steps>
-
-## Import gift cards to a campaign
-
-If you do not have a campaign for your codes, you must create a gift card campaign first.
-
-When adding gift cards to an existing campaign, the CSV may contain:
-
-* **Required:**
-    * `Code`
-* **Optional:**
-    * `Active`
-    * `Category`
-    * `Redeemed Quantity`
-    * Custom metadata fields
-
-All unmapped attributes will inherit the campaign’s default settings.
-
-### Inheritance and metadata behavior
-
-* If the campaign is **Active** and the `active` field is omitted from the CSV $\rightarrow$ imported gift cards become `TRUE`.
-* If the campaign is **Expired** and the `active` field is omitted from the CSV $\rightarrow$ imported gift cards become `FALSE`.
-
-### Metadata behavior
-
-* If metadata is omitted $\rightarrow$ the gift card inherits the campaign's metadata.
-* If metadata columns are added $\rightarrow$ the mapped metadata only overrides those specific fields.
-
-<Info>
-
-Fields other than the ones listed above will not be imported. Even if you provide them, they will be skipped.
-
-[CSV gift card for campaign file template](https://s3.amazonaws.com/helpscout.net/docs/assets/5902f1c12c7d3a057f88a36d/attachments/6038b7ddb3ebfb109b586588/Import_Gift_Cards_to_Campaign_Template.csv)
-
-</Info>
-
-### Import procedure for campaign vouchers
-
-<Steps>
-
-<Step title="Open the Campaign Import Tool">
-
-Open your desired **Campaign view** $\rightarrow$ **Import CSV file**. 
-
-</Step>
-
-<Step title="Upload your CSV">
-
-Upload your prepared CSV file.
-
-</Step>
-
-<Step title="Map fields">
-
-Map the CSV fields to the corresponding Voucherify fields.
-
-</Step>
-
-<Step title="Start the import">
-
-Click **Import**. The new gift cards appear in the **Vouchers** tab of the campaign.
-
-</Step>
-
-<Step title="Wait for notification">
-
-<Info>
-
-For large imports, the process can take a significant amount of time. You will receive a notification when the import is complete.
-
-</Info>
-
-</Step>
-
-</Steps>
