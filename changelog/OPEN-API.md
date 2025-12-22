@@ -4,6 +4,11 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2025-12-12
+
+- Changed description in POST `v1/redemptions` – removed detailed description of client-side redemption.
+- Added POST `v1/loyalties/{campaignId}/qualifications` endpoint.
+
 ## 2025-11-04
 
 Remove `initial_sync_status` from the `Segment` schema.

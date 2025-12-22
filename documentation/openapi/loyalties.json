@@ -11486,6 +11486,171 @@
           }
         }
       }
+    },
+    "/v1/loyalties/{campaignId}/qualifications": {
+      "parameters": [
+        {
+          "schema": {
+            "$ref": "#/components/schemas/ParameterCampaignId"
+          },
+          "name": "campaignId",
+          "in": "path",
+          "required": true,
+          "description": "Unique campaign ID of the loyalty program."
+        }
+      ],
+      "post": {
+        "operationId": "estimate-points",
+        "tags": [
+          "Loyalties"
+        ],
+        "summary": "Estimate loyalty points",
+        "description": "Estimates the number of points a customer will receive for a given order in the loyalty campaign under its earning rules.\n\nThis endpoint returns only an estimation, not a precise point value.\n\nAlso, this estimation works only for the Order paid earning rules. If a campaign includes tiers, mappings, and multiple earning rules, the calculation becomes more complex. During final calculation, a customer may change tiers and earn more or fewer points depending on other factors.",
+        "parameters": [],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": [],
+            "X-Voucherify-OAuth": [
+              "api",
+              "loyalties"
+            ]
+          }
+        ],
+        "requestBody": {
+          "description": "Provide customer `source_id` and order `source_id`.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoyaltiesQualificationsCheckEligibilityRequestBody"
+              },
+              "examples": {
+                "Point estimation request": {
+                  "value": {
+                    "customer": {
+                      "source_id": "customerSourceID",
+                      "metadata": {
+                        "reason": "loyaltyQualifications"
+                      }
+                    },
+                    "order": {
+                      "source_id": "ord_113628fa0685537f99",
+                      "metadata": {
+                        "source": "qualifyPoints"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Returns campaign details and estimated number of points.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoyaltiesQualificationsCheckEligibilityResponseBody"
+                },
+                "examples": {
+                  "Point estimation response": {
+                    "value": {
+                      "campaign": {
+                        "id": "camp_6hAtKbSF3iMj8wN8HjlvPuQG",
+                        "name": "Loyalty-campaign",
+                        "object": "campaign"
+                      },
+                      "points_estimation": 51
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Returns an error if a required property is missing or the campaign or loyalty card is inactive. Also, returns an error if point estimation is made for a customer who doesn't participate in the loyalty campaign and the auto-join setting is turned off.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Auto-join turned off": {
+                    "value": {
+                      "code": 400,
+                      "key": "campaign_not_allow_auto_join",
+                      "message": "Loyalty campaign 'camp_MuI0R45sm7Zc071zTKr4l7U2' does not allow auto-join for non-members",
+                      "details": "Given campaign does not allow auto-join",
+                      "request_id": "v-11a681dec0d56f0616"
+                    }
+                  },
+                  "Customer object missing": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_payload",
+                      "message": "Invalid payload",
+                      "details": "Property .customer must be object",
+                      "request_id": "v-11a682e603156f14ea"
+                    }
+                  },
+                  "Order object missing": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_payload",
+                      "message": "Invalid payload",
+                      "details": "Property .order must be object",
+                      "request_id": "v-11a683295e48bae514"
+                    }
+                  },
+                  "Inactive campaign": {
+                    "value": {
+                      "code": 400,
+                      "key": "campaign_not_active",
+                      "message": "Loyalty campaign 'camp_MuI0R45sm7Zc071zTKr4l7U2' is not active",
+                      "details": "Given campaign is not active",
+                      "request_id": "v-11a683767b556f1ec4"
+                    }
+                  },
+                  "Inactive loyalty card": {
+                    "value": {
+                      "code": 400,
+                      "key": "loyalty_card_not_active",
+                      "message": "Customer's loyalty card 'Loyalty-ZC4Vg' is not active",
+                      "details": "Given customer's loyalty card is not active",
+                      "request_id": "v-11a683f3eec8baf2cd"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Returns an error if the campaign ID that was specified in the path parameter is not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Not Found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find campaign with id camp_MuIR45sm7Zc071zTKr4l7U2",
+                      "request_id": "v-11a681ab00d56f0327",
+                      "resource_id": "camp_MuIR45sm7Zc071zTKr4l7U2",
+                      "resource_type": "campaign"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -13583,6 +13748,80 @@
           "data_ref",
           "data",
           "total"
+        ]
+      },
+      "LoyaltiesQualificationsCheckEligibilityRequestBody": {
+        "title": "Loyalties Campaigns Qualifications Request Body",
+        "type": "object",
+        "description": "Request body schema for estimating loyalty points for an order with **POST** `/loyalties/{campaignId}/qualifications`.",
+        "properties": {
+          "customer": {
+            "$ref": "#/components/schemas/Customer"
+          },
+          "order": {
+            "type": "object",
+            "description": "Details regarding the order being processed.",
+            "properties": {
+              "source_id": {
+                "type": "string",
+                "description": "The unique ID assigned by Voucherify of an existing order that will be linked to the loyalty point estimation (qualification). This property can be also sent as `id` instead."
+              },
+              "metadata": {
+                "type": "object",
+                "description": "A set of custom key/value pairs that you can attach to an order. It can be useful for storing additional information about the order in a structured format. ",
+                "additionalProperties": true
+              },
+              "amount": {
+                "type": "integer",
+                "description": "A positive integer in the smallest currency unit (e.g. 100 cents for $1.00) representing the total amount of the order. Use if the related order doesn't have an amount value calculated."
+              }
+            }
+          }
+        },
+        "required": [
+          "customer",
+          "order"
+        ]
+      },
+      "LoyaltiesQualificationsCheckEligibilityResponseBody": {
+        "title": "Loyalties Campaigns Qualifications Response Body",
+        "type": "object",
+        "description": "Response body schema for estimating loyalty points for an order with **POST** `/loyalties/{campaignId}/qualifications`.",
+        "properties": {
+          "campaign": {
+            "type": "object",
+            "description": "Details about the campaign associated with the estimation.",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "The unique identifier for the campaign, assigned by Voucherify."
+              },
+              "name": {
+                "type": "string",
+                "description": "The human-readable name of the campaign."
+              },
+              "object": {
+                "type": "string",
+                "description": "The type of the object represented by JSON.",
+                "enum": [
+                  "campaign"
+                ]
+              }
+            },
+            "required": [
+              "id",
+              "name",
+              "object"
+            ]
+          },
+          "points_estimation": {
+            "type": "integer",
+            "description": "The calculated estimation of points based on the order data and loyalty campaign's earning rules."
+          }
+        },
+        "required": [
+          "campaign",
+          "points_estimation"
         ]
       },
       "ParameterPage": {
@@ -16030,6 +16269,28 @@
           "object"
         ]
       },
+      "Customer": {
+        "title": "Customer",
+        "allOf": [
+          {
+            "type": "object",
+            "title": "Customer Id And Source Id",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "The ID of an existing customer."
+              },
+              "source_id": {
+                "type": "string",
+                "description": "A unique identifier of the customer who validates a voucher. It can be a customer ID or email from a CRM system, database, or a third-party service. If you also pass a customer ID (unique ID assigned by Voucherify), the source ID will be ignored."
+              }
+            }
+          },
+          {
+            "$ref": "#/components/schemas/CustomerBase"
+          }
+        ]
+      },
       "LoyaltyCampaignVoucher": {
         "type": "object",
         "description": "Schema model for a campaign voucher.",
@@ -16488,28 +16749,6 @@
             }
           }
         }
-      },
-      "Customer": {
-        "title": "Customer",
-        "allOf": [
-          {
-            "type": "object",
-            "title": "Customer Id And Source Id",
-            "properties": {
-              "id": {
-                "type": "string",
-                "description": "The ID of an existing customer."
-              },
-              "source_id": {
-                "type": "string",
-                "description": "A unique identifier of the customer who validates a voucher. It can be a customer ID or email from a CRM system, database, or a third-party service. If you also pass a customer ID (unique ID assigned by Voucherify), the source ID will be ignored."
-              }
-            }
-          },
-          {
-            "$ref": "#/components/schemas/CustomerBase"
-          }
-        ]
       },
       "LoyaltyPendingPoints": {
         "type": "object",
@@ -18020,6 +18259,73 @@
           }
         ]
       },
+      "CustomerBase": {
+        "title": "Customer Base",
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Customer's first and last name."
+          },
+          "description": {
+            "type": "string",
+            "description": "An arbitrary string that you can attach to a customer object."
+          },
+          "email": {
+            "type": "string",
+            "description": "Customer's email address."
+          },
+          "phone": {
+            "type": "string",
+            "description": "Customer's phone number. This parameter is mandatory when you try to send out codes to customers via an SMS channel."
+          },
+          "birthday": {
+            "type": "string",
+            "description": "`Deprecated`. ~~Customer's birthdate; format YYYY-MM-DD~~.",
+            "format": "date"
+          },
+          "birthdate": {
+            "type": "string",
+            "description": "Customer's birthdate; format YYYY-MM-DD.",
+            "format": "date"
+          },
+          "address": {
+            "type": "object",
+            "nullable": true,
+            "description": "Customer's address.",
+            "properties": {
+              "city": {
+                "type": "string",
+                "description": "City"
+              },
+              "state": {
+                "type": "string",
+                "description": "State"
+              },
+              "line_1": {
+                "type": "string",
+                "description": "First line of address."
+              },
+              "line_2": {
+                "type": "string",
+                "description": "Second line of address."
+              },
+              "country": {
+                "type": "string",
+                "description": "Country."
+              },
+              "postal_code": {
+                "type": "string",
+                "description": "Postal code."
+              }
+            }
+          },
+          "metadata": {
+            "type": "object",
+            "description": "A set of custom key/value pairs that you can attach to a customer. The metadata object stores all custom attributes assigned to the customer. It can be useful for storing additional information about the customer in a structured format. This metadata can be used for validating whether the customer qualifies for a discount or it can be used in building customer segments."
+          }
+        }
+      },
       "CampaignLoyaltyCard": {
         "type": "object",
         "description": "Schema model for a campaign loyalty card.",
@@ -18349,73 +18655,6 @@
           },
           "access_settings": {
             "$ref": "#/components/schemas/AccessSettings"
-          }
-        }
-      },
-      "CustomerBase": {
-        "title": "Customer Base",
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "description": "Customer's first and last name."
-          },
-          "description": {
-            "type": "string",
-            "description": "An arbitrary string that you can attach to a customer object."
-          },
-          "email": {
-            "type": "string",
-            "description": "Customer's email address."
-          },
-          "phone": {
-            "type": "string",
-            "description": "Customer's phone number. This parameter is mandatory when you try to send out codes to customers via an SMS channel."
-          },
-          "birthday": {
-            "type": "string",
-            "description": "`Deprecated`. ~~Customer's birthdate; format YYYY-MM-DD~~.",
-            "format": "date"
-          },
-          "birthdate": {
-            "type": "string",
-            "description": "Customer's birthdate; format YYYY-MM-DD.",
-            "format": "date"
-          },
-          "address": {
-            "type": "object",
-            "nullable": true,
-            "description": "Customer's address.",
-            "properties": {
-              "city": {
-                "type": "string",
-                "description": "City"
-              },
-              "state": {
-                "type": "string",
-                "description": "State"
-              },
-              "line_1": {
-                "type": "string",
-                "description": "First line of address."
-              },
-              "line_2": {
-                "type": "string",
-                "description": "Second line of address."
-              },
-              "country": {
-                "type": "string",
-                "description": "Country."
-              },
-              "postal_code": {
-                "type": "string",
-                "description": "Postal code."
-              }
-            }
-          },
-          "metadata": {
-            "type": "object",
-            "description": "A set of custom key/value pairs that you can attach to a customer. The metadata object stores all custom attributes assigned to the customer. It can be useful for storing additional information about the customer in a structured format. This metadata can be used for validating whether the customer qualifies for a discount or it can be used in building customer segments."
           }
         }
       },
