@@ -18,7 +18,7 @@ See [GENERATING SDKS](/GENERATING-SDKS.md).
     3. Go to the repository and find the Mustache template. It should be in `modules/openapi-generator/src/main/resources/{language}`.
     4. Copy the Mustache template to `./mustache-templates`.
 
-2. Open [`./scripts/prepare-open-api-for-sdk/index.ts`](./scripts/prepare-open-api-for-sdk/index.ts) and add support for the new SDK, following the structure of the previous SDKs.
+2. Open [`./scripts/prepare-open-api/index.ts`](./scripts/prepare-open-api/index.ts) and add support for the new SDK, following the structure of the previous SDKs.
     1. This step may require special care since some SDKs have specific limitations. For example:
         - **Python** does not allow multiple response statuses for a single path, it is needed to merge them using the `use2XX` option.
         - Some SDKs can't have both `additionalProperties` and regular properties simultaneously, so the `simplifyAllObjectsThatHaveAdditionalProperties` option is needed.
@@ -27,7 +27,7 @@ See [GENERATING SDKS](/GENERATING-SDKS.md).
         - A new SDK should contain all breaking changes, so provide `breakingChangesVersion` option with the highest number (+1 if the highest number already has all known breaking changes see `if (languageOptions.breakingChangesVersion <= {highestNumber}) {`)
     2. The new SDK should include all breaking changes.
 
-3. Open [`./scripts/helpers/get-take-list.ts`](./scripts/helpers/get-take-list.ts) and add support for the new SDK. All non-deprecated paths should be included.
+3. Open [`./scripts/utils/get-take-list.ts`](./scripts/utils/get-take-list.ts) and add support for the new SDK. All non-deprecated paths should be included.
 
 4. Open [`./scripts/generate-endpoints-coverage-doc.ts`](./scripts/generate-endpoints-coverage-doc.ts) and add support for the new SDK.
 
@@ -35,7 +35,7 @@ See [GENERATING SDKS](/GENERATING-SDKS.md).
 
 6. In `package.json`, create a new script to generate the SDK. It should look like this:
    ```json
-   "generate-sdk-{language}": "npm run generate-endpoints-coverage-doc -- --generateFor={language}; rm -r ./sdks/{language}/{sdk_generated_file_folder}; npm run prepare-open-api-for-sdk -- --language={language}; java -jar openapi-generator-jar/openapi-generator-cli-X.X.X.jar generate -i ./reference/readonly-sdks/{language}/OpenAPI.json -g {language} -o ./sdks/{language} -t ./mustache-templates/{language} --additional-properties={check_documentation}"
+   "generate-sdk-{language}": "npm run generate-endpoints-coverage-doc -- --generateFor={language}; rm -r ./sdks/{language}/{sdk_generated_file_folder}; npm run prepare-open-api -- --language={language}; java -jar openapi-generator-jar/openapi-generator-cli-X.X.X.jar generate -i ./reference/readonly-sdks/{language}/OpenAPI.json -g {language} -o ./sdks/{language} -t ./mustache-templates/{language} --additional-properties={check_documentation}"
    ```  
     1. `{language}` should be replaced with the target language, e.g., `csharp` or `php-nextgen`.
     2. To determine correct `additional-properties`, visit [OpenAPI Generator Documentation](https://openapi-generator.tech/docs/generators) and select your language.
