@@ -6,10 +6,6 @@ const removeJsBreakingChanges = {
 
     openApi.components.schemas.ReferralProgram.properties.referee_reward.properties.amount.type =
       "number";
-    openApi.paths["/v1/vouchers"].get.parameters = openApi.paths[
-      "/v1/vouchers"
-    ].get.parameters.filter((e) => e.name !== "filters");
-
     // Restore `initial_sync_status`
     openApi.components.schemas.Segment.properties["initial_sync_status"] = {
       type: "string",
