@@ -1,0 +1,117 @@
+---
+title: "Discount code import"
+description: "Learn how to import codes to Voucherify"
+keywords: ['discount', 'code', 'import', 'CSV', 'generic code import', 'standalone code import', 'coupon import']
+---
+
+import VoucherImport from '/snippets/voucher-import.mdx'
+import CodeImportLimit from '/snippets/code-import-limit.mdx'
+import CodeImportCallout from '/snippets/code-import-callout.mdx'
+import WebhookPrerequisite from '/snippets/callouts/note-webhook-sendout-prerequisite.mdx'
+
+If you need to share codes from other sources with Voucherify, you can handle this scenario using the **Import CSV** tool in the Dashboard. The tool enables you to import:
+- Generic coupons
+- New unique coupons to a campaign.
+- Existing coupons to update them.
+
+<CodeImportLimit/>
+
+<CodeImportCallout/>
+
+## Preparing CSV file for generic coupons
+
+To import generic coupons, prepare a CSV file with your codes and define columns as follows:
+- Required:
+    - **Code** (the unique discount code)
+    - **Voucher Type** (text: `DISCOUNT_VOUCHER`)
+    - **Value** (an integer value - number)
+    - **Discount Type** (text: `AMOUNT`, `PERCENT`, `FIXED`, or `UNIT`)
+- Optional:
+    * **Discount effect** defines how the discount is applied. The values are:
+        * `APPLY_TO_ORDER`
+        * `APPLY_TO_ITEMS`
+        * `APPLY_TO_ITEMS_PROPORTIONALLY`
+        * `APPLY_TO_ITEMS_PROPORTIONALLY_BY_QUANTITY`
+        * `APPLY_TO_ITEMS_BY_QUANTITY`
+    <Warning>
+
+    For effects that contain `_ITEMS_`, a validation rule is required — without it, the product won’t be assigned to the discount.
+
+    The `ADD_MISSING_ITEMS`, `ADD_NEW_ITEMS`, `ADD_MANY_ITEMS`, and `REPLACE_ITEMS` effects are not supported.
+
+    </Warning>
+    * **Validation rule ID**
+    * **Category**
+    * **Active** (values: `TRUE` or `FALSE`)
+    * **Start date**
+    * **Expiration date**
+    * **Redeemed quantity**
+    * **Redeemed amount**
+    * **Redemption limit**
+    * **Additional info**
+    * **Formula**
+
+<Note>
+
+Fields other than the ones listed above will not be imported. Even if you provide them, they will be skipped.
+
+<a href="/examples/import-generic-coupons-template.csv" download>CSV generic coupon file template</a>
+
+</Note>
+
+These codes will function as standalone discount coupons, independent of a campaign. 
+
+### Import generic coupons
+
+Go to **Campaign hub** > **Campaigns** and **Import CSV**.
+
+<WebhookPrerequisite/>
+
+<VoucherImport/>
+
+## Preparing CSV file for campaign discount coupons
+
+<Info>
+
+<Badge color="gray">Import coupons to campaign prerequisite</Badge>
+
+If you don't have a campaign for your codes yet, [create a discount coupon campaign](/build/create-discount-coupons) first.
+
+</Info>
+
+When adding vouchers to an existing campaign, the CSV should have the following columns:
+* Required:
+    * **Code**
+* Optional:
+    * **Active** (values: `TRUE` or `FALSE`)
+    * **Category**
+    * **Redeemed quantity**
+    * **Start date**
+    * **Expiration date**
+    * **Custom metadata fields**
+
+<Note>
+
+Fields other than the ones listed above will not be imported. Even if you provide them, they will be skipped.
+
+<a href="/examples/import-discount-coupons-into-campaign-template.csv" download>CSV discount coupon file template</a>
+
+</Note>
+
+All unmapped attributes will inherit the campaign’s default settings as well as validation rules, time frame, redemption limits, and so on.
+
+### Import behavior for selected attributes
+
+Some of the attributes work as follows when imported:
+- **Active**:
+    - If the campaign is **Active** and the `active` field is omitted in the CSV, the `active` attribute for the imported vouchers is set to `TRUE`.
+    - If the campaign is **Expired** and the `active` field is omitted in the CSV, the `active` attribute for the imported vouchers is set to `FALSE`.
+- **Metadata**:
+    - If metadata is omitted, the voucher inherits the campaign's metadata.
+    - If metadata columns are added, the mapped metadata only overrides those specific fields.
+
+### Import discount coupons to a campaign
+
+In **Campaign hub** > **Campaigns**, go to the discount campaign where you want to import the coupons. In the top right corner, use the three-dot menu to **Import CSV file**.
+
+<VoucherImport/>
