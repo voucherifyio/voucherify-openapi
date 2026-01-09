@@ -1,0 +1,262 @@
+---
+title: "Create and manage metadata"
+description: "Learn how to add custom fields to your objects using metadata schema and how to manage them"
+keywords: ['custom', 'attribute', 'metadata', 'manage', 'create', 'schema']
+---
+
+Metadata is a set of custom attributes (key/value pairs) added to your Voucherify project. Use it to customize campaigns and to track, report, and personalize promotions.
+
+<Info>
+
+To manage metadata via the API, see the [Metadata mapping](/guides/metadata-mapping) article.
+
+</Info>
+
+## How metadata works
+
+Before using metadata attributes, you must add them to the **Metadata schema** in **Project settings**.
+
+### Supported Objects
+
+You can extend the following entities with metadata:
+
+- Voucher
+- Campaign
+- Customer
+- Product
+- Redemption
+- Publication
+- Order
+- Order line item
+- Loyalty tier
+- Promotion tier
+- Earning rule
+- Reward
+
+### Schema limits
+
+- Each schema (e.g., customer or campaign) can contain **up to 100 definitions**.
+
+<Warning>
+
+Removed definitions still count toward the 100-definition limit. You must **purge** them to free up space.
+
+</Warning>
+
+- Nested metadata counts as one definition, but individual nested components are counted separately.
+
+## Metadata types
+
+You can define metadata using the following data types:
+
+| Type | Details |
+| :--- | :--- |
+| **Text** | Supports criteria: min/max/exact length, equal to any of. |
+| **Number** | Supports criteria: less/greater than (or equal), equal to any of, not equal to. |
+| **Flag** | Boolean values (`true` or `false`). |
+| **Date / Date time** | Complies with **ISO 8601** (e.g., `2020-03-11T09:00:00.000Z`). |
+| **Object** | Groups attributes to create nested structures. |
+| **Geopoint** | Represents location. Stores coordinates as `latitude, longitude`. |
+
+## Define a new metadata attribute
+
+To use metadata on resources (for example, customers or vouchers), you first define it in the **Metadata schema**. A definition describes the metadata key, its type, and optional validation rules.
+
+<Steps>
+
+  <Step title="Open the new metadata form">
+    
+    Open **Metadata schema**, then select the ⋮ at the end of the object line and select "Add definition". Optionally, you can click on the object name and select "Create" in the new window pop up.
+    
+    <Info>
+    
+    The definition you create is added to the schema in **Project settings**.
+    
+    </Info>
+  
+  </Step>
+
+  <Step title="Enter the metadata key (property name)">
+  
+    In **Property name (key)**, type the name of your metadata field.
+
+    <Warning>
+  
+    **Property name (key)** is required. You cannot save the definition if this field is empty.
+  
+    </Warning>
+  
+  </Step>
+
+  <Step title="Choose whether the property is required">
+    Use the dropdown next to **is a(n)** to mark the metadata as:
+    - **optional**, or
+    - **required**
+
+    <Info>
+  
+    If a metadata field is required, you must provide it when creating a new resource of this object type.
+  
+    </Info>
+  
+  </Step>
+
+  <Step title="Choose if the property holds a single value or multiple values">
+    Use the dropdown next to **property containing** to choose:
+    - **single** (one value), or
+    - **multiple** (an array of values)
+
+    <Info>
+  
+    If you choose **multiple**, the stored value becomes a list of values for the same key.
+  
+    </Info>
+  
+  </Step>
+
+  <Step title="Select the metadata type">
+    Use the **Type** dropdown to select the value type:
+    - String
+    - Number
+    - Date
+    - Datetime
+    - Flag
+    - Image URL
+    - Geopoint (enterprise feature, on demand)
+
+    <Info>
+  
+    The selected type controls which validation rules you can define below.
+  
+    </Info>
+  
+  </Step>
+
+  <Step title="(Optional) Add validation rules">
+    You can add validation rules for the metadata value. For example, for text fields you can set:
+    - minimum length
+    - maximum length
+    - exact length
+    - allowed values (equal to any of)
+
+    <Info>
+  
+    Some validation rules show input fields where you enter numeric limits or allowed values.
+  
+    </Info>
+  
+  </Step>
+
+  <Step title="Save the definition">
+    Select **Save** to add the metadata definition to the schema.
+  
+  </Step>
+
+</Steps>
+
+## Nested metadata
+
+In addition to standard metadata properties, you can create an **Object** type attribute and use it to group other metadata fields under one key.
+
+For example, you can create a metadata property called `Payment` and add nested properties such as:
+
+- `payment_method`
+- `payment_channel`
+- `payment_tax`
+
+<Steps>
+  <Step title="Create a nested schema">
+    Select **Create nested schema** at the top of the page.
+
+    Enter a name for the nested schema (for example, `Payment`).
+  </Step>
+
+  <Step title="Add nested metadata definitions">
+    Inside the nested schema, add metadata definitions the same way you do for standard metadata.
+  </Step>
+
+  <Step title="Attach the nested schema to an Object attribute">
+    In the **Standard schema**, create (or open) a metadata definition with type **Object**.
+
+    Attach your nested schema to this Object attribute.
+  </Step>
+
+  <Step title="Save the schema">
+    Save your changes.
+
+    <Check>
+    
+    After saving, you can store nested metadata values under the parent key (for example, payment information inside `Payment`).
+    
+    </Check>
+  
+  </Step>
+
+</Steps>
+
+## Unknown metadata
+
+Unknown metadata is custom data sent to Voucherify without a definition in the Metadata Schema.
+- **Format**: Always treated as a string.
+- **Limitations**: Limited filtering and validation compared to defined metadata.
+- **Source**: Created via API requests, CDP imports, or manual entry of undefined properties.
+
+## Maintenance
+
+### Validation Modes
+
+- **Allow only defined metadata**: Rejects requests (400 Bad Request) if they contain undefined metadata fields.
+- **Allow any metadata**: Accepts undefined fields but still validates defined fields against the schema.
+
+### Remove, Restore, and Purge
+
+- **Remove**: Moves the definition to the "Removed definitions" section.
+- **Restore**: Returns a removed definition to the active schema.
+- **Purge**: Permanently removes the definition from all existing resources. This is an asynchronous process.
+
+### Copying Schema
+
+You can copy definitions from another project:
+<Steps>
+  <Step title="Open Settings">
+    Go to **Project settings** > **Metadata schema**.
+  </Step>
+
+  <Step title="Start Copy">
+    Select the option to copy from another project.
+  </Step>
+  
+  <Step title="Select Definitions">
+    Choose the source project and the specific definitions to import.
+  
+  </Step>
+
+</Steps>
+
+## Technical Implementation
+
+When interacting with the API, you send metadata as a JSON object. The example below shows a **request** (the data you send to Voucherify) and the resulting **response** (the confirmation sent back by the system).
+
+<CodeGroup>
+```json Request
+{
+  "name": "Summer Promotion",
+  "metadata": {
+    "region": "West_Coast",
+    "is_priority": true,
+    "membership_duration": 12
+  }
+}
+```
+```json Response
+{
+  "id": "camp_zXy90",
+  "object": "campaign",
+  "metadata": {
+    "region": "West_Coast",
+    "is_priority": true,
+    "membership_duration": 12
+  }
+}
+```
+</CodeGroup>
