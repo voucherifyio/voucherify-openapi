@@ -1,0 +1,184 @@
+---
+title: "Dynamic formula builder reference"
+description: "A complete technical reference for building dynamic discount values and loyalty point formulas using operators and operands"
+keywords: ['dynamic', 'formula', 'builder', 'reference']
+---
+
+The dynamic formula builder allows you to create mathematical and logical expressions to calculate discount values or loyalty points in real time. Instead of using a static value, Voucherify evaluates the formula during redemption based on available system data and metadata.
+
+## Formula builder overview
+
+You can interact with the formula builder in two ways:
+
+- **Formula builder utility** – Use guided dialogs to assemble formulas from operands and operators.
+- **Expression output** – View and edit the generated formula as a raw expression.
+
+<Note>
+
+**Fallback value**  
+A static fallback value is required. Voucherify uses it when the dynamic formula cannot be evaluated (for example, when metadata is missing, incorrectly typed, or a calculation fails).
+
+</Note>
+
+### Application scope
+
+- **Discounts** – Order discounts, product discounts, and rewards (used in coupons, in-cart promotions, and referral codes).
+- **Loyalty points** – Fixed and proportional earning rules.
+
+## Operand reference
+
+Operands are the building blocks of a formula. They retrieve data from the system or perform specific operations.
+
+### Metadata and system operands
+
+| Operand | Description | Example |
+| :--- | :--- | :--- |
+| **Number** | A static numeric value. | `2` |
+| **Text** | A static string value. | `"Gold_Member"` |
+| **Order metadata** | Attribute from the order object. | `ORDER_METADATA("day_of_week")` |
+| **Voucher metadata** | Custom attributes assigned to the voucher. | `REDEEMABLE_METADATA("month")` |
+| **Customer metadata** | Custom attributes from the customer profile. | `CUSTOMER_METADATA("ltv")` |
+| **Redemption metadata** | Attributes passed in the redemption request. | `REDEMPTION_METADATA("store_id")` |
+
+<Note>
+
+Metadata operands are always **scoped**. There is no generic `METADATA()` operand.
+
+</Note>
+
+### Mathematical functions
+
+| Function | Description | Example |
+| :--- | :--- | :--- |
+| **MIN / MAX** | Returns the smallest or largest value. | `MIN(ORDER_AMOUNT; 100)` |
+| **POW** | Raises a number to a power. | `POW(ORDER_METADATA("visits"); 2)` |
+| **ROUND** | Rounds a value to the given precision. | `ROUND(CUSTOMER_METADATA("ltv"); 1)` |
+| **FLOOR / CEIL** | Rounds down or up. | `FLOOR(ORDER_ITEM_PRICE; 0)` |
+| **IF** | Conditional logic. | `IF(ORDER_AMOUNT > 100; 20; 5)` |
+| **DEFAULT_TO** | Returns the first non-null value. | `DEFAULT_TO(CUSTOMER_METADATA("tier"); 1)` |
+
+### Order-item operands (product discounts only)
+
+| Operand | Description |
+| :--- | :--- |
+| `ORDER_ITEM_PRICE` | Current item price before discounts. |
+| `ORDER_ITEM_AMOUNT` | Original item price (used for stacked discounts). |
+| `ORDER_ITEM_SUBTOTAL` | Item price after previously applied discounts. |
+| `ORDER_ITEM_METADATA("key")` | Metadata value assigned to the order item. |
+
+<Note>
+
+Order-item operands are available **only** in product discount formulas.
+
+</Note>
+
+### Order-level operands
+
+| Operand | Description |
+| :--- | :--- |
+| `ORDER_AMOUNT` | Total cart value. |
+| `ORDER_ITEMS_QUANTITY` | Total quantity of items in the order. |
+
+### Date and time variables
+
+| Variable | Description | Format |
+| :--- | :--- | :--- |
+| **TODAY** | Current date. | `YYYY-MM-DD` |
+| **NOW** | Current date and time. | `YYYY-MM-DDThh:mm:ss` |
+| **DATE** | Fixed date value. | `DATE("2024-12-25")` |
+| **VOUCHER_EXPIRATION_DATE** | Voucher expiration date. | ISO 8601 |
+
+## Operator reference
+
+### Numeric operators
+
+| Operator | Meaning | Example |
+| :--- | :--- | :--- |
+| `+` | Add | `CUSTOMER_METADATA("visits") + 1` |
+| `-` | Subtract | `ORDER_AMOUNT - 50` |
+| `*` | Multiply | `ORDER_METADATA("day") * 2` |
+| `/` | Divide | `CUSTOMER_METADATA("months") / 12` |
+| `%` | Modulo | `ORDER_ITEMS_QUANTITY % 2` |
+| `>` / `<` | Comparison | `IF(ORDER_AMOUNT > 500; 20; 5)` |
+| `=` | Equality | `IF(ORDER_METADATA("day") = 5; 10; 0)` |
+| `IN_ARRAY` | Membership check | `IF(ORDER_ITEMS_QUANTITY IN_ARRAY "3,6,9"; 10; 5)` |
+
+<Note>
+
+The Formula Builder UI may render multiplication and division as visual symbols (×, ÷), but expressions use `*` and `/`.
+
+</Note>
+
+### String operators
+
+| Operator | Logic | Example |
+| :--- | :--- | :--- |
+| **is** | Exact match | `IF(CUSTOMER_METADATA("channel") is "FB"; 20; 5)` |
+| **isNot** | Non-equal | `IF(REDEEMABLE_METADATA("source") isNot "Twitter"; 10; 0)` |
+| **contains** | Partial match | `IF(CUSTOMER_METADATA("city") contains "New"; 15; 0)` |
+| **startsWith** | Prefix match | `IF(ORDER_METADATA("store") startsWith "NY_"; 10; 5)` |
+
+### Date operators
+
+| Operator | Description | Example |
+| :--- | :--- | :--- |
+| **DAYS_SINCE** | Days from date to today. | `DAYS_SINCE(CUSTOMER_METADATA("birthdate"))` |
+| **DAYS_UNTIL** | Days from today to date. | `DAYS_UNTIL(VOUCHER_EXPIRATION_DATE)` |
+| **MONTHS_SINCE** | Months elapsed since date. | `MONTHS_SINCE(CUSTOMER_METADATA("signup"))` |
+| **IS_AFTER** | True if Date A is after Date B. | `IF(TODAY IS_AFTER DATE("2024-01-01"); 10; 0)` |
+
+## Advanced functions
+
+### SWITCH
+
+Evaluates a value against multiple cases.
+
+```text
+SWITCH(
+  ORDER_METADATA("store_city");
+  SWITCH_CASE("Boston"; 10)
+  SWITCH_CASE("New York"; 15);
+  5
+)
+```
+### Nested formulas
+
+You can nest functions to build advanced logic.
+
+```
+IF(
+  ORDER_ITEMS_QUANTITY > 4;
+  IF(ORDER_AMOUNT > 200; 25; 15);
+  10
+)
+```
+
+### Tie-breaking logic for item-based operands
+
+When using item selectors such as CHEAPEST_ORDER_ITEM or MOST_EXPENSIVE_ORDER_ITEM and multiple items share the same price, Voucherify resolves ties in the following order:
+
+**Price** – Lowest or highest item price.
+**Subtotal** – Item subtotal after previously applied discounts.
+**Position** – The first matching item in the request payload.
+
+This ensures deterministic behavior across redemptions.
+
+### Evaluation and error handling
+
+Mathematical operations require numeric operands.
+
+Metadata values must be correctly typed (for example, numbers for arithmetic).
+
+Formula evaluation fails when:
+
+- Required metadata is missing or null
+- Operands are used outside their supported scope
+- A calculation is invalid (for example, division by zero)
+
+When evaluation fails, Voucherify applies the configured fallback value.
+
+<Note> 
+
+Operand availability depends on context. Using unsupported operands (for example, order-item operands in order-level discounts or loyalty rules) results in validation errors. 
+
+</Note> 
