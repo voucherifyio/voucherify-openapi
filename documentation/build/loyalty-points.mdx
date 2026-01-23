@@ -1,0 +1,193 @@
+---
+title: "Loyalty points"
+description: "Comprehensive guide to loyalty points mechanics"
+keywords: ['pending points', 'auto-redeem', 'automatic redemption', 'expiration rules', 'loyalty point expiration', 'loyalty point calculation', 'add loyalty points', 'remove loyalty points',]
+tag: "NEW"
+---
+
+Loyalty points work like a currency in your loyalty program. Customers earn points on their dedicated loyalty card. Points are awarded based on predefined **earning rules** and can be redeemed for **rewards** defined by **redemption rules**.
+
+## Loyalty point expiration rules
+
+Loyalty point expiration rules define the duration of point validity to ensure that customers actively participate in a loyalty program. Point expiration is always based on the activity date, for example order date. The point expiration date is the last date customers can spend their points.
+
+The expiration rules are configured globally or for an individual earning rule. Earning rules without an expiration rule use the default campaign expiration rule.
+
+<AccordionGroup>
+    <Accordion title="Months after earning activity">
+    
+        Points expire after a set number of months.
+
+        Examples:
+        - If set to 1 month, points earned on 25th January are available until the end of 25th February. On midnight of 25th February, points will expire and will be unavailable.
+        - If set to 0 months, points will expire on midnight of the day they are earned. For example, points earned on 1st January will be available until the end of that day and they will expire on 00:00 of 2nd January.
+        
+        <Note>
+            <Badge color="blue">Point expiration date nuances</Badge>
+
+            Because months have different number of days, Voucherify handles these cases by rounding down the expiration date to the last day of the month in which the points are available.
+            
+            For points earned on the 29th, 30th, or 31st day of a month, the expiration date is rounded down to the end of the month. For example, points earned on 31st January with one month expiration period will expire at the end of 28th February.
+
+        </Note>
+    
+    </Accordion>
+
+    <Accordion title="Round up expiration date">
+        
+        For **Months after earning activity**, you can additionally set a period that will round up the expiration till the end of a set period, so your customers can have a longer time to spend their points.
+
+        You can set round up expiration period till:
+        - **Each half-year**: at the end of June and December.
+        - **Each month**: at the end of each month.
+        - **Each quarter**: at the end of March, June, September, and December.
+        - **Each year**: at the end of the calendar year (end of December).
+        - **Particular month**: at the end of a selected month, for example, end of February.
+
+        For example, if **Months after earning activity** is set to 1 month and rounded up till the end of each month, points earned in January will expire at the end of 28th February.
+
+    </Accordion>
+
+    <Accordion title="Expiration day and month">
+
+        Points expire each year at the end of a given day of a selected month. For example, points will expire on the end of 1st January, each year.
+    
+    </Accordion>
+
+</AccordionGroup>
+
+## Loyalty point operations
+
+Loyalty points can be:
+- Redeemed
+- Adjusted
+- Transferred
+
+### Loyalty point redemption
+
+Loyalty points can be redeemed for a **Material** or **Digital** reward or used to pay for an order. Redemptions use the points that have the shortest expiration date.
+
+### Manual loyalty point adjustment
+
+You can adjust loyalty card balance by adding or removing loyalty points. You can do this only for published loyalty cards, meaning those that have been assigned to customers. Unpublished or unassigned cards must be published before point adjustments can be made.
+
+To change the balance, go to a loyalty card's view and select the add points icon. You can also set an expiration date when adding points.
+
+### Loyalty point transfer
+
+<Info>
+
+    <Badge color="gray">Developer setup</Badge>
+
+    Loyalty points can be transferred only through the [POST Transfer Loyalty Points](/api-reference/loyalties/transfer-loyalty-points) endpoint.
+
+</Info>
+
+You can transfer loyalty points between loyalty cards, including between loyalty cards in different loyalty programs.
+
+When you transfer points from one card to another, the expiration date is reset for the transferred points on the transfer day. For example, if the transfer occurs on 25th January and the expiration is set to 1 month, the points will expire on 25th February after the transfer.
+
+However, you can't transfer expired or pending points.
+
+## Pending points
+
+Pending points are points that have been earned by a customer, but are not yet available for redemption. This status is used to create a mandatory waiting period for points to ensure validity, account for potential returns, or synchronize with external systems.
+
+You can set the pending period between 1 and 90 days. Points are instantly applied to the customer's loyalty card, but remain *pending*. When the pending period ends, they are automatically activated and become available for redemption. You can also activate the pending points manually.
+
+For pending points, point expiration starts when the points become active.
+
+Pending points can be also adjusted (added or subtracted) or deleted (canceled).
+
+You can check pending points in:
+- Customer's **Wallet**.
+- Loyalty card details.
+- Loyalty card details > **Pending points** tab.
+- Loyalty campaign details > **Pending points** tab.
+
+    <Tip>
+
+    Explore [a pending point demo](https://app.demoboost.com/playback/me6nsub0?step=1) to learn more about the feature.
+
+    </Tip>
+
+    <Tip>
+
+    Pending points can also be used to trigger [distributions](https://support.voucherify.io/article/19-how-does-the-distribution-manager-work). This means you can send messages to customers when their pending points are updated. The following triggers are available:
+        - Loyalty pending points added
+        - Loyalty pending points updated
+        - Loyalty pending points activated
+        - Loyalty pending points canceled
+
+    </Tip>
+
+    <Tip>
+
+        <Badge color="green">Developer setup: track pending points with webhooks</Badge>
+        
+        You can track pending point events with the following webhooks:
+        - [Pending Points Added](/api-reference/voucher/loyalty-card-pending-points-added)
+        - [Pending Points Activated](/api-reference/voucher/loyalty-card-pending-points-activated)
+        - [Pending Points Canceled](/api-reference/voucher/loyalty-card-pending-points-canceled)
+        - [Pending Points Updated](/api-reference/voucher/loyalty-card-pending-points-updated)
+
+    </Tip>
+
+## Auto-redeem
+
+With the **Auto-redeem** feature, you can set one reward (**Digital** or **Material**) per loyalty program to be automatically redeemed once customers reach the defined point threshold. When their point balance meets or exceeds the reward cost, the points are deducted, and the reward is automatically issued.
+
+A single customer can perform up to 10 redemptions with the auto-redeem logic per day. Each redemption (transaction) can hold up to 25 rewards, which, daily, gives a maximum of 250 rewards.
+
+    <Warning>
+
+    <Badge color="yellow">Auto-redeem and loyalty tiers</Badge>
+
+    **Auto-redeem** applies before loyalty tier checks are performed. This means that if you have a configuration like Auto-Redeem at 100 points and Tier X threshold of 100 point balance, a customer will never reach that tier. This happens because the points will be automatically spent with **Auto-Redeem** before the balance is checked for tier qualification.
+
+    However, for loyalty tiers based on points collected within a defined period, **Auto-Redeem** doesn't interfere. Since these tiers are based on the total points earned rather than the current balance, the fact that points are automatically redeemed doesn't impact the number of points collected during a given period.
+
+    </Warning>
+
+    <Warning>
+
+    If a customer were to trigger auto-redeem more than 10 times on a single day, Voucherify will block auto-redeem for that reward as an anti-fraud mechanism. Usually, this may be caused by a faulty loyalty program configuration.
+
+    Contact [Voucherify support](https://www.voucherify.io/contact-support) to unlock auto-redeem if this happens.
+
+    </Warning>
+
+## Loyalty point balance types
+
+In loyalty card details, you can find the following information about loyalty points.
+
+| Type | Description | Availability for redemption |
+| :--- | :--- | :--- |
+| **Balance** | Points that have cleared the pending period, haven't expired yet, and are ready to be used. | **Yes** |
+| **Pending point balance** | Points earned, but currently held during the set pending period. | **No** |
+| **Expired points** | Points that have passed their set expiration date or period. | **No** |
+|**Subtracted points** | Points that have been manually subtracted from the loyalty card. | **No** (for tracking purposes) |
+| **Lifetime points** | The sum of all points ever earned by the customer (active + pending + redeemed + expired). | **No** (for tracking purposes) |
+
+## Point and tier calculation on a new day
+
+Loyalty points and tiers are recalculated at midnight of each new day according to an internal Voucherify mechanism. This occurs every day at midnight in the timezone set in **Project settings**.
+
+The mechanism works as follows:
+1. **Pending point activation**  
+   At a pending point bucket level, the activation date is set by specifying when the points are going to be activated.  
+   For example, an activation date of `2026-01-01` means that points will be activated on `2026-01-01 00:00`.
+2. **Auto-redeem**  
+   After the pending points have been activated, the system checks whether the points should be automatically spent on a reward, so no other effect occurs (like a tier upgrade).
+3. **Loyalty tier recalculation**  
+   Based on tier settings, the following actions are performed:
+   1. **Recalculation of expiring tiers**  
+      An expiration date is set by specifying when the tier will expire.  
+      For example, an expiration date of `2025-12-31` means that the tier will expire on `2026-01-01 00:00` (this is the same date and time as pending point buckets).  
+      As a result, the customer can upgrade, downgrade, leave, or prolong their tier.
+   2. **Recalculation of tiers when a new calculation period starts**
+4. **Loyalty point expiration**  
+   At an expiration bucket level, the expiration date is set by specifying when the points are going to be deducted.  
+   For example, an expiration date of `2025-12-31` means that points will be deducted on `2026-01-01 00:00` (this is the same date and time as pending point buckets).
+5. **Loyalty tier recalculation based on the point balance after point expiration**  
+   Once the points are deducted, the balance changes so that balance-based tiers are updated accordingly.
