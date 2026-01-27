@@ -179,7 +179,7 @@ const main = async (generateFor: GenerateForOption) => {
         tags: methodContent.tags,
         summary: methodContent.summary,
         isDeprecated:
-          methodContent.summary.toLowerCase().includes("deprecated") || false,
+          methodContent.deprecated || false,
         supported: {
           [generateFor]: supported,
         },
