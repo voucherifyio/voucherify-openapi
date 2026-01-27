@@ -1,0 +1,233 @@
+---
+title: "Geofencing"
+description: "Learn how to create location-based campaigns that reward customers for being in the right place at the right time"
+---
+
+<Info>
+<Badge color="purple">Enterprise feature</Badge>
+
+Geofencing is available only in the Enterprise subscription (on demand).
+</Info>
+
+Geofencing lets you create location-specific campaigns with redemption limits based on customer, product, and SKU geolocations. You can:
+
+- Limit redemptions to customers who share specific locations.
+- Decide which products or SKUs are discounted or excluded based on their current location.
+- Exclude particular areas from applying the discount.
+
+## Locations manager
+
+The Locations manager lets you create and manage geographic boundaries for your campaigns.
+
+Go to **Locations** in the Dashboard.
+
+### Create a location
+
+1. Click **Create location** in the top right corner.
+2. Use the map or search bar to find the required area.
+3. Define the location boundaries using one of the following tools:
+   - **Circle**: Define a radius around a central point.
+   - **Polygon**: Draw a custom shape by placing points that form a closed region.
+4. Enter a **Name** for the location.
+5. Click **Save**.
+
+<Note>
+Each location can be a single point defined by specific coordinates or a multi-coordinate area. You can reuse saved locations in future campaigns.
+</Note>
+
+### Manage existing locations
+
+Use the tricolon **⁝** menu next to any location to access the following options:
+
+| Option | Description |
+|--------|-------------|
+| **Show usage** | Displays which resources use the location, such as product collections or customer segments. |
+| **Edit** | Modifies the location name and boundaries. |
+| **Duplicate** | Creates a copy of the location for modification. |
+| **Delete** | Removes the location. |
+
+### Map controls
+
+| Icon | Description |
+|------|-------------|
+| Focus | Brings the selected area back into focus on the map. |
+| Add boundary | Adds a polygon or circular boundary. |
+| Edit mode | Modifies existing boundaries. |
+| Delete | Removes boundaries. |
+| Zoom | Zooms in and out of the map. |
+
+## Create a geofence campaign with customer location
+
+Use customer geolocation to restrict campaign redemptions to specific areas. When you pass the customer's geolocation with a redemption or validation request, Voucherify verifies if the customer location meets campaign rules.
+
+<Steps>
+
+<Step title="Define a location">
+
+Create a location that defines the boundaries for eligible customers.
+
+1. Go to **Locations** in the Dashboard.
+2. Click **Create location**.
+3. Use the map or search bar to find the required area.
+4. Draw the boundaries using the radius or polygon tools.
+5. Enter a **Name** and click **Save**.
+
+</Step>
+
+<Step title="Add geopoint metadata to the customer schema">
+
+Create a metadata definition to pass the customer's geolocation to Voucherify.
+
+1. Go to **Project Settings** > **Metadata Schema**.
+2. Click the three dots next to the **Customer** object and select **Add definition**, or click the **Customer** object name and use the **Create** button.
+3. Enter a **Property name** (for example, `current_location`).
+4. Select **Geopoint** as the metadata type.
+5. Click **Save**.
+
+<Note>
+The geopoint metadata type accepts coordinates (latitude and longitude) in geo URI format.
+</Note>
+
+</Step>
+
+<Step title="Create an area-specific customer segment">
+
+Build a segment that groups customers based on their location.
+
+1. Go to **Customers** in the Dashboard.
+2. Click **Create segment**.
+3. Select **Auto-update** as the segment type.
+4. Add a filter condition using the geopoint metadata property you created.
+5. Select the location you defined in Step 1.
+6. Enter a **Name** and click **Save**.
+
+The segment automatically updates as customers enter or leave the defined area.
+
+</Step>
+
+<Step title="Add a segment-based validation rule to your campaign">
+
+Restrict your campaign to customers in the location-based segment.
+
+1. Create or edit a campaign.
+2. In the campaign builder, add a **Validation rule**.
+3. Select **Customer segment** as the condition type.
+4. Choose the segment you created in Step 3.
+5. Complete the campaign setup and save.
+
+Only customers who are in the defined geographic area (and therefore in the segment) can redeem the campaign.
+
+</Step>
+
+</Steps>
+
+## Create a geofence campaign with product or SKU location
+
+You can also restrict discounts based on product or SKU locations. This is useful for scenarios where you want to offer location-specific product promotions.
+
+<Steps>
+
+<Step title="Define a location">
+
+Create a location that defines the boundaries for eligible products or SKUs.
+
+1. Go to **Locations** in the Dashboard.
+2. Click **Create location**.
+3. Draw the boundaries for the product location.
+4. Enter a **Name** and click **Save**.
+
+</Step>
+
+<Step title="Add geopoint metadata to the product or SKU schema">
+
+Create a metadata definition to store product or SKU locations.
+
+1. Go to **Project Settings** > **Metadata Schema**.
+2. Click the three dots next to the **Product** or **Order item** object and select **Add definition**.
+3. Enter a **Property name** (for example, `store_location`).
+4. Select **Geopoint** as the metadata type.
+5. Click **Save**.
+
+</Step>
+
+<Step title="Create a location-based product collection">
+
+Build a product collection that groups products based on their location.
+
+1. Go to **Products** in the Dashboard.
+2. Click **Create collection**.
+3. Add filter conditions using the geopoint metadata property.
+4. Select the location you defined in Step 1.
+5. Enter a **Name** and click **Save**.
+
+</Step>
+
+<Step title="Add a product-based validation rule to your campaign">
+
+Restrict your campaign to products in the location-based collection.
+
+1. Create or edit a campaign.
+2. In the campaign builder, add a **Validation rule**.
+3. Select **Product collection** as the condition type.
+4. Choose the collection you created in Step 3.
+5. Complete the campaign setup and save.
+
+</Step>
+
+</Steps>
+
+## Pass geolocation data via API
+
+To use geofencing, you must pass the customer's or product's geolocation in your API requests.
+
+### Customer geolocation in validation or redemption requests
+
+Include the customer's geopoint metadata in the `customer.metadata` object:
+
+```json
+{
+  "customer": {
+    "source_id": "customer_123",
+    "metadata": {
+      "current_location": "geo:40.7128,-74.0060"
+    }
+  }
+}
+```
+
+<Note>
+The geopoint value must be in geo URI format: `geo:latitude,longitude`. Allowed values are:
+- Latitude: -90 to 90
+- Longitude: -180 to 180
+</Note>
+
+### Product geolocation in order items
+
+Include the product's geopoint metadata in the order items:
+
+```json
+{
+  "order": {
+    "items": [
+      {
+        "product_id": "prod_123",
+        "quantity": 1,
+        "metadata": {
+          "store_location": "geo:40.7128,-74.0060"
+        }
+      }
+    ]
+  }
+}
+```
+
+## Related resources
+
+<CardGroup cols={2}>
+  <Card title="Location object" icon="map-pin" href="/api-reference/locations/location-object">
+    API reference for the location object.
+  </Card>
+  <Card title="List locations" icon="list" href="/api-reference/locations/list-locations">
+    API endpoint to retrieve your locations.
+  </Card>
+</CardGroup>
