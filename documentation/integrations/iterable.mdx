@@ -103,4 +103,126 @@ As a result, the data feed will contain the information about the voucher, which
 
 In the image below, you can see how data is fed to the message:
 
-![Iterable02](/images/docs/iterable-integration-02.png "Data feed message")        
+![Iterable02](/images/docs/iterable-integration-02.png "Data feed message")
+
+## Iterable → Voucherify integration
+
+Besides pulling data from Voucherify into Iterable using a data feed, it is also possible to send data **from Voucherify to Iterable**.
+
+This section describes an **example integration** where Voucherify uses **custom webhooks** to notify Iterable about events that happen in Voucherify.  
+Iterable can then react to those events and send customer communication, such as emails.
+
+### Example use case
+
+In this example:
+- a customer completes an action, such as a successful referral,
+- Voucherify publishes a reward, for example a discount code,
+- the customer should receive an email sent from Iterable.
+
+Voucherify is responsible for detecting the event and publishing the reward.  
+Iterable is used only to send the email.
+
+### Flow
+
+1. Voucherify publishes a reward.
+2. Publishing the reward triggers a Voucherify distribution.
+3. The distribution sends a custom webhook request to Iterable.
+4. Iterable sends a triggered email to the customer.
+
+This shows that communication between Voucherify and Iterable can work in both directions:
+- Iterable can pull data from Voucherify using data feeds.
+- Voucherify can send data to Iterable using custom webhooks.
+
+### Step 1: Create a triggered email campaign in Iterable
+
+In Iterable, create a **triggered email campaign**:
+- The campaign is used to define the email content.
+- No data feed is required.
+- The campaign is triggered directly using an Iterable API endpoint.
+
+You can use dynamic fields, such as `couponCode`, in the email template.  
+These fields are filled with values sent from Voucherify.
+
+---
+
+### Step 2: Generate an Iterable API key
+
+To allow Voucherify to send requests to Iterable:
+
+1. In Iterable, go to **Integrations**.
+2. Create a new **API key**.
+3. Save the API key for later use.
+
+The API key is used to authorize requests sent from Voucherify.
+
+---
+
+### Step 3: Configure a Voucherify distribution trigger
+
+In Voucherify, configure a **distribution** that is triggered when a reward is published.
+
+Example configuration:
+- Trigger: `successfully published`
+- Reward type: discount code
+
+The distribution does not send any email from Voucherify.  
+It is used only to trigger a custom webhook.
+
+---
+
+### Step 4: Configure a custom webhook in the distribution
+
+In the distribution action, configure a **custom webhook**.
+
+#### Target URL
+
+Use the Iterable endpoint that sends a triggered email, for example:
+
+POST /email/target
+
+
+#### Headers
+
+Add an authorization header using the Iterable API key:
+
+- Header name: `Api-Key`
+- Header value: `<ITERABLE_API_KEY>`
+
+#### Payload
+
+The webhook payload must follow Iterable API requirements.
+
+Important fields include:
+- `recipientUserId` – identifies the Iterable user who should receive the email
+- `campaignId` – identifies the triggered email campaign
+- `dataFields` – values used inside the email template
+
+Values from Voucherify, such as the published discount code, are passed in `dataFields`.
+
+---
+
+### Step 5: Align customer identifiers
+
+To send the email to the correct user:
+- The Voucherify customer must have a `source_id`.
+- The same value must exist as the Iterable `userId`.
+
+This mapping allows Voucherify to identify the correct recipient in Iterable.
+
+---
+
+### Result
+
+When a reward is published in Voucherify:
+- the distribution is triggered,
+- Voucherify sends a webhook request to Iterable,
+- Iterable sends a triggered email to the customer,
+- the email includes values such as the published discount code.
+
+---
+
+### Notes
+
+This section shows **one example** of sending data from Voucherify to Iterable using custom webhooks.
+
+Other Iterable endpoints can be used in a similar way. These options are not described here and are left for customers to explore.
