@@ -24,14 +24,18 @@ The following concepts are key for understanding the referral program.
     A unique code assigned to a **referrer**. When a **referee** redeems (uses) this code, Voucherify links the two profiles to track the successful conversion event.
   </Accordion>
 
-  <Accordion title="Conversion event">
-    It defines an action that converts a new customer to a **referee**. It can be a custom event passed using the API or the **referral code** redemption. Once Voucherify recognizes a new conversion event, the related customer is marked as referred and the **referrer** has another successful referral.
+ <Accordion title="Referral tier">
+    A reward level that defines when and how a referrer is rewarded. Tiers enable milestone-based and multi-level referral programs.
   </Accordion>
 
-  <Accordion title="Reward tiers and criteria">
-    Referral rewards are organized into tiers. For each tier, you select the criteria that grant a reward to the referrer:
-    * **Each unique referee redemption** – the referrer is rewarded for every unique redemption made by a friend.
-    * **Minimum unique referee redemptions** – the referrer receives a reward only after a specific number of unique redemptions take place. This option allows for additional filters to further define the criteria.
+  <Accordion title="Reward">
+    An incentive issued to referrers and, in double-sided programs, to referees. Rewards can include discounts, gift credits, or loyalty points.
+  </Accordion>
+
+  <Accordion title="Referral code publication">
+    The assignment of a referral code to a specific customer. Codes must be published before a customer can start referring others.
+
+    Additionally, codes can be shared with other customers, so more people can share one code, even though they aren't a **referrer**.
   </Accordion>
 
   <Accordion title="Join-once campaign">
@@ -42,15 +46,97 @@ The following concepts are key for understanding the referral program.
     An optional mode where the application automatically generates new unique **referral codes** when the initial batch runs out.
   </Accordion>
 
-  <Accordion title="Double-sided program">
-    **Double-sided referral programs** reward both referrers and referred customers.
-  </Accordion>
-
-  <Accordion title="Single-sided program">
-    **Single-sided referral program** reward only referrers. Referees don't receive any rewards.
-  </Accordion>
-
 </AccordionGroup>
+
+## Referral program types
+
+When setting up your incentive workflow in the Campaign Manager, you must decide between a single-sided or double-sided structure. This determines who receives a reward when a successful referral occurs. 
+
+### Single-sided programs
+
+In a single-sided program, only the referrer (the person sharing the code) is rewarded. The referee (the invited friend) joins the program or performs an action but does not receive an incentive from the referral campaign itself. 
+
+
+<img 
+    src="/images/docs/referral-overview-01.png"
+    alt="Diagram showing a single-sided referral program flow."
+    style={{ display: 'block', margin: '0 auto' }} 
+/>
+
+### Double-sided programs
+
+A double-sided program rewards both the referrer and the referee. This "mutual benefit" model is often more effective at driving high conversion rates because it incentivizes the invited customer to complete their first purchase or sign-up.
+
+<img 
+    src="/images/docs/referral-overview-02.png"
+    alt="Diagram showing a double-sided referral program flow."
+    style={{ display: 'block', margin: '0 auto' }} 
+/>
+
+## Conversion events
+
+A conversion event is the specific action that triggers a successful referral in Voucherify. Each campaign can only have one primary conversion event.
+
+### Referral code redemption
+
+The most common conversion event is a successful redemption. 
+
+* The referee uses the referral code during a checkout process.
+* Voucherify marks the customer as "referred" the moment the redemption is successful.
+* If a discount is assigned to the referee, it is applied directly to their order during this step.
+* Referrer (and referee in case of a double-sided program) receive a reward.
+
+<img 
+    src="/images/docs/referral-code-redemption.jpg"
+    alt="Diagram showing a referral program flow with a redemption as a conversion event. The diagram shows also that the referee and referrer are awarded upon successful redemption."
+    style={{ display: 'block', margin: '0 auto' }} 
+/>
+
+### Custom events
+
+<Info>
+
+  <Badge color="gray">Prerequisite: Developer setup</Badge>
+
+  Tracking custom events in your system requires sending them to Voucherify through [POST Track custom events](/api-reference/events/track-custom-event) API endpoint.
+
+</Info>
+
+When Voucherify tracks your custom events, the conversion event flow looks as follows:
+
+* Voucherify counts a successful referral only after receiving the API call for that specific event.
+* Even if a referee redeems a code for a discount earlier (for discount coupon rewards), the referrer is not rewarded until the custom event occurs.
+* To pass the events, send a request to the track custom event endpoint. Include the referee's details and the referral code in the payload.
+
+<img 
+    src="/images/docs/referral-custom-event.png"
+    alt="Diagram showing a referral program flow with a custom event as a conversion event. The diagram shows also that the referee and referrer are awarded when the custom event is triggered."
+    style={{ display: 'block', margin: '0 auto' }} 
+/>
+
+## Referee rewards
+
+In double-sided programs, the new customer also receives a reward.
+
+### Reward types
+
+You can choose from several reward categories depending on your business model:
+
+* **Discount coupon**: Applies an immediate discount (e.g., 20% off, free shipping, or a fixed amount) to the referee's order when the referral code is used for redemption.
+* **Gift card credits**: Adds a specific balance to the referee's gift card.
+* **Loyalty points**: Adds points to the referee’s loyalty card, which can be redeemed for future rewards.
+
+<Note> 
+
+  If a referee doesn't already have a loyalty or gift card, Voucherify will automatically publish one to their profile before adding the points or credits. 
+
+</Note>
+
+### Validation rules for referees
+
+To prevent fraud and ensure high-quality leads, you can add a **validation rule** to referee rewards.
+
+The recommended default rule is **Redemptions per customer in a campaign** set to 1. This ensures that each new customer can only be "referred" once, maintaining the integrity of your campaign budget.
 
 ## Referral workflow
 
@@ -62,15 +148,18 @@ Voucherify supports the referral program lifecycle through the following stages:
   </Step>
 
   <Step title="Enrollment and sharing">
-    Assign **referral code**s to your advocates. You can use **distributions** to send these codes via email, text messages, or display them directly in your application.
+    Assign **referral code**s to your advocates. You can use **distributions** to send these codes with email, text messages, or display them directly in your application.
   </Step>
 
   <Step title="Conversion">
     When a friend performs the **conversion event** (code redemption or custom event), they provide the **referrer**'s **referral code**. Voucherify checks the code and records the link between the **referrer** and the **referee**.
+
+    For double-sided programs, the referee receives their reward at this step.
+    
   </Step>
 
   <Step title="Reward triggering">
-    Once the referee meets the defined **criteria** in a tier, Voucherify automatically triggers the reward for the referrer.
+    Once the defined **criteria** in a referral tier are met, Voucherify automatically triggers the reward for the referrer.
   </Step>
 
   <Step title="Analysis">
