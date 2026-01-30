@@ -4,6 +4,10 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-01-23
+
+- Add `filters` object to query params for GET `v1/vouchers`.
+
 ## 2025-12-12
 
 - Changed description in POST `v1/redemptions` – removed detailed description of client-side redemption.
