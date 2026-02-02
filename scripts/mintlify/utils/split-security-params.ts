@@ -18,7 +18,9 @@ export const splitSecurityParams = (openapi: any) => {
                           value.forEach((security) => {
                             Object.entries(security).forEach(([key, value]) => {
                               allSecurity[key] = allSecurity[key] || [];
-                              allSecurity[key].push(value);
+                              if (Array.isArray(value)) {
+                                allSecurity[key].push(...value);
+                              }
                             });
                           });
                         }
