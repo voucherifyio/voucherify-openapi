@@ -22,16 +22,6 @@ They are slightly modified from the original ones for our needs.
 
 SDK will be generated in `./sdks` directory in the respective language folder.
 
-## Updating SDK version:
-
-### Dotnet:
-
-In order to update the SDK version, we must update 2 files:
-- `package.json` - script `generate-sdk-dotnet` - find and update `packageVersion=` value
-- `sdks/dotnet/src/Voucherify/Voucherify.nuspec` - find and update `<version>` value
-
-Additionally, we need to copy the updated changelog from `sdks/dotnet/readme.md` to `sdks/dotnet/src/Voucherify/Voucherify.nuspec`
-
 ## Command explanation
 
 ### `build-update-md-tables-from-openapi`
