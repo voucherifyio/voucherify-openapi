@@ -2,6 +2,7 @@ import * as fs from "fs/promises";
 import * as path from "path";
 import * as openApiWebhooks from "../../reference/OpenAPIWebhooks.json";
 import * as _openApi from "../../reference/OpenAPI.json";
+import { splitSecurityParams } from "./utils/split-security-params";
 
 const openApi = _openApi as any;
 
@@ -30,7 +31,7 @@ interface OpenAPISpec {
   [key: string]: any;
 }
 
-interface EndpointInfo {
+export interface EndpointInfo {
   path: string;
   method: string;
   operationId: string;
@@ -465,7 +466,7 @@ function sanitizeTagName(tag: string): string {
 /**
  * Main function to split OpenAPI into tag-based files
  */
-async function splitOpenApiByTags(
+async function splitSecurityParamsThenSplitOpenapiByTags(
   openApiSpec: OpenAPISpec,
   destination: string,
 ): Promise<void> {
@@ -577,11 +578,11 @@ async function splitOpenApiByTags(
 // Execute the script
 (async () => {
   try {
-    await splitOpenApiByTags(
-      openApi as OpenAPISpec,
+    await splitSecurityParamsThenSplitOpenapiByTags(
+      splitSecurityParams(openApi) as unknown as OpenAPISpec,
       "/../documentation/openapi",
     );
-    await splitOpenApiByTags(
+    await splitSecurityParamsThenSplitOpenapiByTags(
       openApiWebhooks,
       "/../documentation/openapi-events",
     );
