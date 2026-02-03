@@ -1,0 +1,199 @@
+---
+title: "Discount code import"
+description: "Learn how to import codes to Voucherify"
+keywords: ['discount', 'code', 'import', 'CSV', 'generic code import', 'standalone code import', 'coupon import']
+---
+
+import VoucherImport from '/snippets/voucher-import.mdx'
+import CodeImportLimit from '/snippets/code-import-limit.mdx'
+import CodeImportCallout from '/snippets/code-import-callout.mdx'
+import WebhookPrerequisite from '/snippets/callouts/note-webhook-sendout-prerequisite.mdx'
+import MetadataImport from '/snippets/metadata-import.mdx'
+
+If you need to share codes from other sources with Voucherify, you can handle this scenario using the **Import CSV** tool in the Dashboard. The tool enables you to import:
+- Generic coupons
+- New unique coupons to a campaign.
+- Existing coupons to update them.
+
+<CodeImportLimit/>
+
+<CodeImportCallout/>
+
+## Preparing CSV file for generic coupons
+
+Use these fields when importing **standalone (generic) discount coupons**. Generic coupons are not assigned to a campaign and work independently.
+
+### Required fields
+- **Code**  
+  A unique discount coupon code.  
+  You cannot import two identical codes into a single Voucherify project.
+
+- **Voucher Type**  
+  Defines the voucher type.  
+  For discount coupons, the value must be `DISCOUNT_VOUCHER`.
+
+- **Value**  
+  The discount value.  
+  Must be provided as an integer number.  
+
+- **Discount Type**  
+  Defines how the discount value is interpreted.  
+  Supported values:
+  - `AMOUNT` – fixed amount discount
+  - `PERCENT` – percentage discount
+  - `FIXED` – fixed price
+  - `UNIT` – discount applied per item unit
+
+### Optional fields
+
+- **Discount effect**  
+  Defines how the discount is applied to the order.  
+  Supported values:
+  - `APPLY_TO_ORDER` – applies the discount to the entire order total
+  - `APPLY_TO_ITEMS` – applies the discount to selected items only
+  - `APPLY_TO_ITEMS_PROPORTIONALLY` – distributes the discount proportionally across item values
+  - `APPLY_TO_ITEMS_PROPORTIONALLY_BY_QUANTITY` – distributes the discount proportionally based on item quantities
+  - `APPLY_TO_ITEMS_BY_QUANTITY` – applies the discount to a specific number of eligible items
+
+<Warning>
+  For effects that contain `_ITEMS_`, a validation rule is required.  
+  Without a validation rule, the discount will not be applied to products.
+</Warning>
+- **Validation rule ID**  
+  The ID of a validation rule that governs how and when the coupon can be redeemed.  
+  The rule is automatically applied to the imported coupon.
+
+- **Category**  
+  A custom tag assigned to the coupon.  
+  Categories help you filter and organize coupons in the Dashboard.
+
+- **Active**  
+  Enables or disables the coupon.  
+  Accepted values: `TRUE` or `FALSE`.  
+  An inactive coupon cannot be redeemed, even if it is within its validity timeframe.
+
+- **Start date**  
+  The date when the coupon becomes valid.  
+  Must follow the ISO 8601 format, for example: `2022-09-19T00:00:00.000Z`.
+
+- **Expiration date**  
+  The date when the coupon expires.  
+  Must follow the ISO 8601 format, for example: `2022-11-30T00:00:00.000Z`.
+
+- **Redeemed quantity**  
+  The number of times the coupon has already been redeemed.  
+  If omitted, the value defaults to `0`.
+
+- **Redeemed amount**  
+  The total discount amount already redeemed using this coupon.
+
+- **Redemption limit**  
+  The maximum number of redemptions allowed.  
+  If omitted, the redemption limit is set to unlimited.
+
+- **Additional info**  
+  Any additional information you want to store with the coupon.  
+  This field is informational only.
+
+- **Formula**  
+  A dynamic discount formula applied to the coupon.  
+  Provide the *Expression Output* of an existing formula.
+
+- **Metadata (custom attributes)**  
+
+    <MetadataImport/>
+
+<Note>
+
+Fields other than the ones listed above will not be imported. Even if you provide them, they will be skipped.
+
+<a href="/examples/import-generic-coupons-template.csv" download>CSV generic coupon file template</a>
+
+</Note>
+
+These codes will function as standalone discount coupons, independent of a campaign. 
+
+### Import generic coupons
+
+Go to **Campaign hub** > **Campaigns** and **Import CSV**.
+
+<WebhookPrerequisite/>
+
+<VoucherImport/>
+
+## Preparing CSV file for campaign discount coupons
+
+<Info>
+
+<Badge color="gray">Import coupons to campaign prerequisite</Badge>
+
+If you don't have a campaign for your codes yet, [create a discount coupon campaign](/build/create-discount-coupons) first.
+
+</Info>
+
+Use these fields when importing discount coupons **into an existing campaign**.  
+Imported coupons inherit all campaign settings unless explicitly overridden.
+
+### Required fields
+
+- **Code**  
+  A unique discount coupon code.
+
+### Optional fields
+
+- **Active**  
+  Enables or disables the coupon.  
+  Accepted values: `TRUE` or `FALSE`.
+
+  Import behavior:
+  - If the campaign is **Active** and the `active` field is omitted, imported coupons are set to `TRUE`.
+  - If the campaign is **Expired** and the `active` field is omitted, imported coupons are set to `FALSE`.
+
+- **Category**  
+  A custom tag assigned to the coupon for filtering and organization.
+
+- **Redeemed quantity**  
+  The number of times the coupon has already been redeemed.
+
+- **Start date**  
+  The date when the coupon becomes valid.  
+  Must follow the ISO 8601 format.
+
+- **Expiration date**  
+  The date when the coupon expires.  
+  Must follow the ISO 8601 format.
+
+- **Metadata (custom attributes)**  
+
+<MetadataImport/>
+
+  Metadata import behavior:
+  - If metadata columns are omitted, the coupon inherits the campaign’s metadata.
+  - If metadata columns are added and mapped, only those specific fields are overridden.
+  - Metadata that is not mapped remains unchanged.
+
+<Note>
+
+Fields other than the ones listed above will not be imported. Even if you provide them, they will be skipped.
+
+<a href="/examples/import-discount-coupons-into-campaign-template.csv" download>CSV discount coupon file template</a>
+
+</Note>
+
+All unmapped attributes will inherit the campaign’s default settings as well as validation rules, time frame, redemption limits, and so on.
+
+### Import behavior for selected attributes
+
+Some of the attributes work as follows when imported:
+- **Active**:
+    - If the campaign is **Active** and the `active` field is omitted in the CSV, the `active` attribute for the imported vouchers is set to `TRUE`.
+    - If the campaign is **Expired** and the `active` field is omitted in the CSV, the `active` attribute for the imported vouchers is set to `FALSE`.
+- **Metadata**:
+    - If metadata is omitted, the voucher inherits the campaign's metadata.
+    - If metadata columns are added, the mapped metadata only overrides those specific fields.
+
+### Import discount coupons to a campaign
+
+In **Campaign hub** > **Campaigns**, go to the discount campaign where you want to import the coupons. In the top right corner, use the three-dot menu to **Import CSV file**.
+
+<VoucherImport/>
