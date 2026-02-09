@@ -103,4 +103,153 @@ As a result, the data feed will contain the information about the voucher, which
 
 In the image below, you can see how data is fed to the message:
 
-![Iterable02](/images/docs/iterable-integration-02.png "Data feed message")        
+![Iterable02](/images/docs/iterable-integration-02.png "Data feed message")
+
+## Iterable → Voucherify integration
+
+Besides pulling data from Voucherify into Iterable using a data feed, it is also possible to send data **from Voucherify to Iterable**.
+
+This section describes an **example integration** where Voucherify uses **custom webhooks** to notify Iterable about events that happen in Voucherify.
+
+Iterable can then react to those events and send customer communication defined as Iterable campaigns.
+
+### Example use case
+
+In this example:
+
+- Customer completes an action, such as a successful referral
+- Voucherify publishes a reward, for example a discount code
+- Customer receives an email sent from Iterable
+
+Voucherify is responsible for detecting the event and publishing the reward.  
+
+Iterable is responsible to send the email.
+
+## Flow
+
+<Steps>
+  <Step title="Trigger a referral reward">
+    A successful referral assigns a reward to the customer.
+  </Step>
+
+  <Step title="Publish the reward">
+    Voucherify publishes the reward to the customer profile.
+  </Step>
+
+  <Step title="Trigger distribution">
+    Publishing the reward automatically triggers a Voucherify distribution.
+  </Step>
+
+  <Step title="Send webhook to Iterable">
+    The distribution sends a custom webhook request to the Iterable API endpoint.
+  </Step>
+
+  <Step title="Send triggered email">
+    Iterable processes the webhook and sends a triggered email to the customer.
+  </Step>
+</Steps>
+
+This shows that communication between Voucherify and Iterable can work in both directions:
+
+- Iterable can pull data from Voucherify using data feeds.
+- Voucherify can send data to Iterable using custom webhooks.
+
+### Create a triggered email campaign in Iterable
+
+In Iterable, create a **triggered email campaign**:
+
+- The campaign is used to define the email content
+- No data feed should be selected
+- The campaign is triggered directly using an Iterable API endpoint
+
+You can use dynamic fields, such as `couponCode`, in the email template. 
+
+These fields are filled with values sent from Voucherify.
+
+### Generate an Iterable API key
+
+To allow Voucherify to send requests to Iterable:
+
+<Steps>
+  <Step title="Open integrations in Iterable">
+    In Iterable, go to **Integrations**.
+  </Step>
+
+  <Step title="Create an API key">
+    Create a new **API key**.
+  </Step>
+
+  <Step title="Save the API key">
+    Save the API key for later use.
+  </Step>
+</Steps>
+
+The API key is used to authorize requests sent from Voucherify.
+
+### Configure a Voucherify distribution trigger
+
+In Voucherify, configure a **distribution** that is triggered when a reward is published.
+
+Example configuration:
+- Trigger: `successfully published`
+- Reward type: discount code
+
+The distribution does not send any email from Voucherify.
+
+It is used only to trigger a custom webhook.
+
+### Configure a custom webhook in the distribution
+
+In the distribution action, configure a **custom webhook**.
+
+<Steps>
+  <Step title="Headers">
+    Add an authorization header using the Iterable API key:
+
+    - Header name: `Api-Key`
+    - Header value: `<ITERABLE_API_KEY>`
+  </Step>
+
+  <Step title="Payload">
+    The webhook payload must follow Iterable API requirements.
+
+    Enable the **Send raw payload** checkbox.
+
+    Important fields include:
+    - `recipientUserId` – identifies the Iterable user who should receive the email
+    - `campaignId` – identifies the triggered email campaign - you will find it in Iterable
+    - `dataFields` – values used inside the email template
+
+    Values from Voucherify, such as the published discount code, are passed as dynamic values. You can search for the right value after entering: `{{`
+
+    Payload example:
+
+    ![Iterable03](/images/docs/iterable-integration-03.png "Webhook payload")
+  </Step>
+
+  <Step title="Align customer identifiers">
+    To send the email to the correct user:
+
+    - The Voucherify customer must have a `source_id`
+    - The same value must exist as the Iterable `userId`
+
+    This mapping allows Voucherify to identify the correct recipient in Iterable, so make sure your audience is synchronized.
+  </Step>
+</Steps>
+
+### Result
+
+When a reward is published in Voucherify:
+
+- The distribution is triggered
+- Voucherify sends a webhook request to Iterable
+- Iterable sends a triggered email to the customer
+- The email includes values such as the published discount code
+
+<Note>
+
+This section shows **one example** of sending data from Voucherify to Iterable using custom webhooks.
+
+Other Iterable endpoints can be used in a similar way. These options are not described here and are left for customers to explore.
+
+</Note>
