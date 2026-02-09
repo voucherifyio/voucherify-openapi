@@ -6,10 +6,6 @@ import { splitSecurityParams } from "./utils/split-security-params";
 
 const openApi = _openApi as any;
 
-openApi.paths["/v1/vouchers"].get.parameters = openApi.paths[
-  "/v1/vouchers"
-].get.parameters.filter((e) => e.name !== "filters");
-
 interface OpenAPISpec {
   openapi: string;
   info: any;
