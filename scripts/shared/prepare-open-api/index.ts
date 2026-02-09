@@ -155,6 +155,8 @@ const main = async (languageOptions: LanguageOptions) => {
         "Contains details about the event. The objects that are returned in the data attribute differ based on the context of the event type.",
     };
   }
+  // Remove query parameter from GET /v1/templates/campaigns/{campaignTemplateId}
+  openAPIContent.paths["/v1/templates/campaigns/{campaignTemplateId}"].get.parameters = [];
   //////////////////////////////////////////////////////////////////////////////
   ///////////////////////END OF CLEANUP OPEN API FILE///////////////////////////
   //////////////////////////////////////////////////////////////////////////////
