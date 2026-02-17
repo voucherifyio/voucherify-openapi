@@ -96,7 +96,9 @@ Often, writers of tutorials who are anxious that their students should know thin
 
 ## Core review principles
 
-Use guidelines from `## Core writing principles`.
+Use guidelines from `## Core writing principles`. Before reviewing, tell me what these guidelines are as well as Additional review requirements and then act on them.
+
+If you can't fetch the file that's going to be reviewed, inform the user and abort operation. Do not invent anything.
 
 ### Additional review requirements
 
