@@ -150,6 +150,7 @@ Once installed, run:
 
 ```csharp
 using System.Collections.Generic;
+using System;
 using System.Diagnostics;
 {{#useHttpClient}}
 using System.Net.Http;
@@ -160,74 +161,54 @@ using {{packageName}}.{{modelPackage}};
 
 namespace Example
 {
-    public class {{operationId}}Example
+    public class Example
     {
         public static void Main()
         {
-{{#apiInfo}}{{#apis}}{{#-first}}{{#operations}}{{#operation}}{{#-first}}
-            Configuration config = new Configuration();
-            config.BasePath = "{{{basePath}}}";
-            {{#hasAuthMethods}}
-            {{#authMethods}}
-            {{#isBasicBasic}}
-            // Configure HTTP basic authorization: {{{name}}}
-            config.Username = "YOUR_USERNAME";
-            config.Password = "YOUR_PASSWORD";
-            {{/isBasicBasic}}
-            {{#isBasicBearer}}
-            // Configure Bearer token for authorization: {{{name}}}
-            config.AccessToken = "YOUR_BEARER_TOKEN";
-            {{/isBasicBearer}}
-            {{#isApiKey}}
-            // Configure API key authorization: {{{name}}}
-            config.ApiKey.Add("{{{keyParamName}}}", "YOUR_API_KEY");
-            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-            // config.ApiKeyPrefix.Add("{{{keyParamName}}}", "Bearer");
-            {{/isApiKey}}
-            {{#isOAuth}}
-            // Configure OAuth2 access token for authorization: {{{name}}}
-            config.AccessToken = "YOUR_ACCESS_TOKEN";
-            {{/isOAuth}}
-            {{/authMethods}}
+            var host = Environment.GetEnvironmentVariable("VOUCHERIFY_HOST") ?? "https://api.voucherify.io";
+            var xAppId = Environment.GetEnvironmentVariable("X_APP_ID");
+            var xAppToken = Environment.GetEnvironmentVariable("X_APP_TOKEN");
 
-            {{/hasAuthMethods}}
+            if (string.IsNullOrWhiteSpace(xAppId) || string.IsNullOrWhiteSpace(xAppToken))
+            {
+                throw new Exception("X_APP_ID and X_APP_TOKEN must be set in the environment.");
+            }
+
+            Configuration config = new Configuration
+            {
+                BasePath = host
+            };
+            config.ApiKey.Add("X-App-Id", xAppId);
+            config.ApiKey.Add("X-App-Token", xAppToken);
             {{#useHttpClient}}
             // create instances of HttpClient, HttpClientHandler to be reused later with different Api classes
             HttpClient httpClient = new HttpClient();
             HttpClientHandler httpClientHandler = new HttpClientHandler();
-            var apiInstance = new {{classname}}(httpClient, config, httpClientHandler);
+            var apiInstance = new CampaignsApi(httpClient, config, httpClientHandler);
             {{/useHttpClient}}
             {{^useHttpClient}}
-            var apiInstance = new {{classname}}(config);
+            var apiInstance = new CampaignsApi(config);
             {{/useHttpClient}}
-            {{#allParams}}
-            {{#isPrimitiveType}}
-            var {{paramName}} = {{{example}}};  // {{{dataType}}} | {{{description}}}{{^required}} (optional) {{/required}}{{#defaultValue}} (default to {{{.}}}){{/defaultValue}}
-            {{/isPrimitiveType}}
-            {{^isPrimitiveType}}
-            var {{paramName}} = new {{{dataType}}}(); // {{{dataType}}} | {{{description}}}{{^required}} (optional) {{/required}}{{#defaultValue}} (default to {{{.}}}){{/defaultValue}}
-            {{/isPrimitiveType}}
-            {{/allParams}}
 
             try
             {
-                {{#summary}}
-                // {{{.}}}
-                {{/summary}}
-                {{#returnType}}{{{.}}} result = {{/returnType}}apiInstance.{{{operationId}}}({{#allParams}}{{paramName}}{{^-last}}, {{/-last}}{{/allParams}});{{#returnType}}
-                Debug.WriteLine(result);{{/returnType}}
+                var result = apiInstance.ListCampaigns();
+                Debug.WriteLine(result);
             }
             catch (ApiException e)
             {
-                Debug.Print("Exception when calling {{classname}}.{{operationId}}: " + e.Message );
+                Debug.Print("Exception when calling CampaignsApi.ListCampaigns: " + e.Message );
                 Debug.Print("Status Code: "+ e.ErrorCode);
                 Debug.Print(e.StackTrace);
             }
-{{/-first}}{{/operation}}{{/operations}}{{/-first}}{{/apis}}{{/apiInfo}}
         }
     }
 }
 ```
+
+> [!NOTE]
+>
+> This code just lists campaigns, so it won't affect your Voucherify data.
 
 > [!TIP]
 >

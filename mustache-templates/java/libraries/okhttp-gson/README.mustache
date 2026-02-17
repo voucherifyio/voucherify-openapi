@@ -107,49 +107,33 @@ Next, install manually the following JARs:
 Once installed, run:
 
 ```java
-{{#apiInfo}}{{#apis}}{{#-first}}{{#operations}}{{#operation}}{{#-first}}
 // Import classes:
 import {{{invokerPackage}}}.ApiClient;
 import {{{invokerPackage}}}.ApiException;
 import {{{invokerPackage}}}.Configuration;{{#hasAuthMethods}}
 import {{{invokerPackage}}}.auth.*;{{/hasAuthMethods}}
-import {{{invokerPackage}}}.models.*;
-import {{{package}}}.{{{classname}}};
+import {{{apiPackage}}}.CampaignsApi;
 
 public class Example {
   public static void main(String[] args) {
-    ApiClient defaultClient = Configuration.getDefaultApiClient();
-    defaultClient.setBasePath("{{{basePath}}}");
-    {{#withAWSV4Signature}}
-    // Configure AWS Signature V4 authorization
-    defaultClient.setAWS4Configuration("YOUR_ACCESS_KEY", "YOUR_SECRET_KEY", "REGION", "SERVICE")
-    {{/withAWSV4Signature}}
-    {{#hasAuthMethods}}
-    {{#authMethods}}{{#isBasic}}{{#isBasicBasic}}
-    // Configure HTTP basic authorization: {{{name}}}
-    HttpBasicAuth {{{name}}} = (HttpBasicAuth) defaultClient.getAuthentication("{{{name}}}");
-    {{{name}}}.setUsername("YOUR USERNAME");
-    {{{name}}}.setPassword("YOUR PASSWORD");{{/isBasicBasic}}{{#isBasicBearer}}
-    // Configure HTTP bearer authorization: {{{name}}}
-    HttpBearerAuth {{{name}}} = (HttpBearerAuth) defaultClient.getAuthentication("{{{name}}}");
-    {{{name}}}.setBearerToken("BEARER TOKEN");{{/isBasicBearer}}{{/isBasic}}{{#isApiKey}}
-    // Configure API key authorization: {{{name}}}
-    defaultClient.setAuthentication("{{{name}}}", "YOUR {{{name}}}");{{/isApiKey}}{{#isOAuth}}
-    // Configure OAuth2 access token for authorization: {{{name}}}
-    OAuth {{{name}}} = (OAuth) defaultClient.getAuthentication("{{{name}}}");
-    {{{name}}}.setAccessToken("YOUR ACCESS TOKEN");{{/isOAuth}}
-    {{/authMethods}}
-    {{/hasAuthMethods}}
+    String host = System.getenv("VOUCHERIFY_HOST");
+    String xAppId = System.getenv("X_APP_ID");
+    String xAppToken = System.getenv("X_APP_TOKEN");
 
-      {{{classname}}} apiInstance = new {{{classname}}}(defaultClient);
-      {{#allParams}}
-      {{{dataType}}} {{{paramName}}} = {{{example}}}; // {{{dataType}}} | {{{description}}}
-      {{/allParams}}
+    if (xAppId == null || xAppId.isEmpty() || xAppToken == null || xAppToken.isEmpty()) {
+      throw new RuntimeException("X_APP_ID and X_APP_TOKEN must be set in the environment.");
+    }
+
+    ApiClient defaultClient = Configuration.getDefaultApiClient();
+    defaultClient.setBasePath((host == null || host.isEmpty()) ? "https://api.voucherify.io" : host);
+    defaultClient.setAuthentication("X-App-Id", xAppId);
+    defaultClient.setAuthentication("X-App-Token", xAppToken);
+
+      CampaignsApi apiInstance = new CampaignsApi(defaultClient);
       try {
-        {{#returnType}}{{{.}}} result = {{/returnType}}apiInstance.{{{operationId}}}({{#allParams}}{{{paramName}}}{{^-last}}, {{/-last}}{{/allParams}}{{#returnType}}
-         System.out.println(result);{{/returnType}}
+        System.out.println(apiInstance.listCampaigns(null, null, null, null, null, null, null, null, null));
       } catch (ApiException e) {
-        System.err.println("Exception when calling {{{classname}}}#{{{operationId}}}");
+        System.err.println("Exception when calling CampaignsApi#listCampaigns");
         System.err.println("Status code: " + e.getCode());
         System.err.println("Reason: " + e.getResponseBody());
         System.err.println("Response headers: " + e.getResponseHeaders());
@@ -157,8 +141,11 @@ public class Example {
       }
     }
 }
-{{/-first}}{{/operation}}{{/operations}}{{/-first}}{{/apis}}{{/apiInfo}}
 ```
+
+> [!NOTE]
+>
+> This code just lists campaigns, so it won't affect your Voucherify data.
 
 > [!NOTE]
 >
