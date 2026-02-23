@@ -4,6 +4,10 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-02-23
+
+- Add **PUT** `v1/product-collections/{productCollectionId}` endpoint
+
 ## 2026-02-10
 
 - Removed the info about basic/advanced validation rules from the descriptions
