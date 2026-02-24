@@ -432,6 +432,195 @@
           }
         }
       },
+      "put": {
+        "operationId": "put-product-collection",
+        "tags": [
+          "Product Collections"
+        ],
+        "summary": "Update Product Collection",
+        "description": "Updates the product collection.\n\nFor `STATIC` collections, you can update only the `name`.\n\nFor `AUTO_UPDATE` collections, you can update its `name` and `filters`.",
+        "parameters": [],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": []
+          },
+          {
+            "X-Voucherify-OAuth": [
+              "api",
+              "product-collections"
+            ]
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "description": "Specify the parameters to be updated.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProductCollectionsUpdateRequestBody"
+              },
+              "examples": {
+                "Update static collection": {
+                  "value": {
+                    "name": "New static collection name"
+                  }
+                },
+                "Update auto-update collection": {
+                  "value": {
+                    "name": "New auto-update collection name",
+                    "filter": {
+                      "junction": "AND",
+                      "metadata.brand": {
+                        "conditions": {
+                          "$is": [
+                            "Voucherify"
+                          ]
+                        }
+                      },
+                      "metadata.vendor": {
+                        "conditions": {
+                          "$in": [
+                            "Bull&Pear",
+                            "D&B",
+                            "FloppCity",
+                            "Home",
+                            "I&N",
+                            "Reversed"
+                          ]
+                        }
+                      },
+                      "price": {
+                        "conditions": {
+                          "$more_than_equal": [
+                            10000
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Returns a product collection object if a valid identifier was provided in the path.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductCollectionsUpdateResponseBody"
+                },
+                "examples": {
+                  "Static": {
+                    "value": {
+                      "id": "pc_bQ2p9TycbEhd3YzwFCR3JQYA",
+                      "name": "Shirts",
+                      "type": "STATIC",
+                      "products": [
+                        {
+                          "id": "prod_0a9f9aeddb019a42db",
+                          "object": "product"
+                        },
+                        {
+                          "id": "prod_0a9f9ab4ab019a42d5",
+                          "object": "product"
+                        }
+                      ],
+                      "created_at": "2022-02-28T11:42:12.484Z",
+                      "updated_at": "2026-02-23T17:43:22.384Z",
+                      "object": "products_collection"
+                    }
+                  },
+                  "Dynamic": {
+                    "value": {
+                      "id": "pc_Dj1qSH7bho4SVh7aSDKjU174",
+                      "name": "Products in Poland",
+                      "type": "AUTO_UPDATE",
+                      "filter": {
+                        "junction": "and",
+                        "metadata.product_location": {
+                          "conditions": {
+                            "$in_location": [
+                              "loc_RcYz537sV07e1t5aG5tIH9FD"
+                            ]
+                          }
+                        }
+                      },
+                      "created_at": "2022-07-14T16:12:26.377Z",
+                      "updated_at": "2026-02-23T17:43:22.384Z",
+                      "object": "products_collection"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Returns an error if the data is invalid.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Name is not `string`": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_payload",
+                      "message": "Invalid payload",
+                      "details": "Property .name must be string",
+                      "request_id": "v-1204a5e6cb9054fc8a"
+                    }
+                  },
+                  "Incorrect `junction` property": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_payload",
+                      "message": "Invalid payload",
+                      "details": "Property .filter has wrong `junction` property. It must be one of: and, or",
+                      "request_id": "v-1204a62a891054fd04"
+                    }
+                  },
+                  "Empty `filter` object": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_payload",
+                      "message": "Invalid payload",
+                      "details": "'AUTO_UPDATE' collection must contain valid filter with 'junction' property",
+                      "request_id": "v-1204a662d6c65738b0"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Returns an error when requesting a product collection that has been deleted or does not exist.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Not Found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find products_collection with id pc_wIv11jDp2n7YuX6Tkyue2Lv",
+                      "request_id": "v-1204a6862d1054fdb6",
+                      "resource_id": "pc_wIv11jDp2n7YuX6Tkyue2Lv",
+                      "resource_type": "products_collection"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
       "delete": {
         "operationId": "delete-product-collection",
         "tags": [
@@ -791,7 +980,7 @@
       },
       "ProductCollectionsCreateRequestBody": {
         "title": "Product Collections Create Request Body",
-        "description": "Response body schema for **POST** `v1/product-collections`.",
+        "description": "Request body schema for **POST** `v1/product-collections`.",
         "oneOf": [
           {
             "$ref": "#/components/schemas/ProductCollectionsCreateStaticRequestBody"
@@ -866,6 +1055,39 @@
       "ParameterProductCollectionId": {
         "type": "string",
         "example": "pc_41V4DiQQO8YGqj0J2oZD57j4"
+      },
+      "ProductCollectionsUpdateRequestBody": {
+        "title": "Product Collections Update Request Body",
+        "description": "Response body schema for **PUT** `v1/product-collections/{productCollectionId}`.",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/ProductCollectionsUpdateStaticRequestBody"
+          },
+          {
+            "$ref": "#/components/schemas/ProductCollectionsUpdateDynamicRequestBody"
+          }
+        ]
+      },
+      "ProductCollectionsUpdateResponseBody": {
+        "type": "object",
+        "title": "Product Collections Update Response Body",
+        "description": "Response body schema for **PUT** `v1/product-collections/{productCollectionId}`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ProductCollectionsItem"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "updated_at": {
+                "type": "string",
+                "example": "2022-04-26T08:35:54.960Z",
+                "description": "Timestamp representing the date and time when the product collection was last updated. The value is shown in the ISO 8601 format.",
+                "format": "date-time"
+              }
+            }
+          }
+        ]
       },
       "ResourceInUseError": {
         "title": "Resource in Use Error Object",
@@ -1018,7 +1240,7 @@
                   "$ref": "#/components/schemas/FieldConditions"
                 }
               ],
-              "description": "Valid keys: `id`, `product_id`, `source_id`, `name`, `price`, `object`, `attributes`, `image_url`, `SKUs`, `created_at`, `updated_at` and `metadata.*`"
+              "description": "Valid keys: `id`, `product_id`, `source_id`, `name`, `price`, `object`, `attributes`, `image_url`, `skus`, `created_at`, `updated_at` and `metadata.*`"
             }
           },
           "products": {
@@ -1077,7 +1299,7 @@
       },
       "ProductCollectionsCreateStaticRequestBody": {
         "title": "Product Collections Create Static Request Body",
-        "description": "Response body schema for **POST** `v1/product-collections`.",
+        "description": "Request body schema for **POST** `v1/product-collections`.",
         "type": "object",
         "properties": {
           "type": {
@@ -1129,7 +1351,7 @@
       },
       "ProductCollectionsCreateDynamicRequestBody": {
         "title": "Product Collections Create Dynamic (Auto Update) Request Body",
-        "description": "Response body schema for **POST** `v1/product-collections`.",
+        "description": "Request body schema for **POST** `v1/product-collections`.",
         "type": "object",
         "properties": {
           "type": {
@@ -1161,7 +1383,7 @@
                   "$ref": "#/components/schemas/FieldConditions"
                 }
               ],
-              "description": "Valid keys: `id`, `product_id`, `source_id`, `name`, `price`, `object`, `attributes`, `image_url`, `SKUs`, `created_at`, `updated_at` and `metadata.*`"
+              "description": "Valid keys: `id`, `product_id`, `source_id`, `name`, `price`, `object`, `attributes`, `image_url`, `skus`, `created_at`, `updated_at` and `metadata.*`"
             }
           }
         },
@@ -1170,6 +1392,48 @@
           "name",
           "filter"
         ]
+      },
+      "ProductCollectionsUpdateStaticRequestBody": {
+        "title": "Product Collections Create Static Request Body",
+        "description": "Request body schema for **PUT** `v1/product-collections/{productCollectionId}`.",
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Unique user-defined product collection name."
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "ProductCollectionsUpdateDynamicRequestBody": {
+        "title": "Product Collections Update Dynamic (Auto Update) Request Body",
+        "description": "Request body schema for **PUT** `v1/product-collections/{productCollectionId}`.",
+        "type": "object",
+        "properties": {
+          "name": {
+            "description": "Unique user-defined product collection name.",
+            "type": "string"
+          },
+          "filter": {
+            "type": "object",
+            "description": "Defines a set of criteria and boundary conditions for an `AUTO_UPDATE` product collection type.\n\nSending the `filter` object overwrites the existing values.",
+            "properties": {
+              "junction": {
+                "$ref": "#/components/schemas/Junction"
+              }
+            },
+            "additionalProperties": {
+              "description": "Valid keys: `id`, `product_id`, `source_id`, `name`, `price`, `object`, `attributes`, `image_url`, `skus`, `created_at`, `updated_at` and `metadata.*`",
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/FieldConditions"
+                }
+              ]
+            }
+          }
+        }
       },
       "ParameterDate": {
         "type": "string",
