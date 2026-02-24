@@ -5,7 +5,7 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
-## 2025-12-23
+## 2025-12-24
 
 Add three articles under Orchestration:
 - `code-publication`
