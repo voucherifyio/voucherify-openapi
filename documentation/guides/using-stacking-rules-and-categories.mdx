@@ -1,184 +1,210 @@
 ---
 title: "Using stacking rules and categories"
 description: "Business scenarios that show what you can configure with stacking rules and categories"
-keywords: ['stacking rules', 'categories', 'campaign stacking', 'never stackable', 'always stackable', 'discount order']
+keywords: ['stacking rules', 'categories', 'incentive stacking', 'never stackable', 'always stackable', 'discount order', 'stacking rule use cases', 'stacking rule business scenarios']
+tag: "NEW"
 ---
 
-Stacking rules and categories help you control how campaigns behave when more than one campaign is applied in the same order.
+<Info>
 
-This article provides practical examples of what you can achieve with these settings.
+   <Badge>Prerequisite: Stacking rules and Categories</Badge>
 
-## Example 1. Application order changes eligibility
+   Read [Stacking rules](/orchestrate/stacking-rules) and [Manage categories](/orchestrate/manage-categories) before reading this page.
 
-In this example, Incentive application order is set to **Requested order**, which means incentives are applied in the same sequence as they are sent in the API request.
-In Scenario A, the 10% discount is sent first. In Scenario B, the 20% discount is sent first.
+</Info>
+
+Stacking rules and categories help you control how incentives behave when more than one campaign is applied in the same order.
+
+Read the following scenarios to learn what you can achieve with these settings.
+
+## Change incentive eligibility with incentive application order 
+
+The **Stacking settings** are set as follows:
+- **Incentive application order** is set to **Requested order**, which means incentives are applied in the same sequence as they are sent in the API request.
+- **Discount calculation mode** is set to **Based on discounted amount**, so each discount is calculated from the previous discount, not the original order value.
 
 A store runs two campaigns:
-
-- 10% off everything  
-- 20% off orders above \$100  
+- Campaign 1: 10% off everything  
+- Campaign 2: 20% off orders with total amount above \$100
 
 A customer adds products worth \$105.
 
-### Scenario A. 10% applies first
+In Scenario A, the 10% discount is sent first. In Scenario B, the 20% discount is sent first.
 
+### Scenario A: 10% applies first
+
+The incentives are applied as follows:
 1. 10% discount is applied.  
-   \$105 → \$94.50  
+   \$105 → \$94.50
 2. The order total is now below \$100.  
-3. The 20% campaign no longer meets its condition.  
+3. The 20% campaign no longer meets its validation condition to exceed \$100 order value.
 
-Only the 10% discount applies.
+As a result, only the 10% discount applies.
 
-### Scenario B. 20% applies first
+### Scenario B: 20% applies first
 
+The incentives are applied as follows:
 1. 20% discount is applied.  
-   \$105 → \$84  
-2. The 10% discount is then calculated based on your discount calculation settings.  
+   \$105 → \$84
+2. The 10% discount is then calculated.
+    \$84 → \$75.6
 
-In this case, the customer receives a larger total discount.
-
-This scenario shows why **incentive application order** and **category hierarchy** matter.
+In this scenario, the customer receives a larger total discount.
 
 <Note>
-Category hierarchy affects the order only when incentive application order is set to use hierarchy in stacking settings.
+
+   <Badge>Request order and hierarchy</Badge>
+
+   Category hierarchy affects the order of discounts only when **Incentive application order** is set to use **Hierarchy priority** in **Stacking settings**.
+
+   In this use case, you can achieve similar results with **Hierarchy priority** if the two campaigns have different hierarchies:
+   - In Scenario A, Campaign 1 has lower hierarchy (higher priority) than Campaign 2
+   - In Scenario B, Campaign 2 has lower hierarchy (higher priority) than Campaign 1
+
 </Note>
 
-The exact final outcome may also depend on how discounts are calculated (initial vs discounted), configured in stacking settings and category rules.
+## Partial and all-or-nothing behavior
 
-## Example 2. Partial vs all-or-nothing behavior
+This scenario shows differences between **All** and **Partial** settings in **Redemption stack validation policy**.
 
-A customer applies two campaigns:
+A customer tries to apply incentives from two campaigns:
+- Incentive A: Valid welcome campaign incentive  
+- Incentive B: Expired incentive from a seasonal campaign  
 
-- A valid welcome campaign  
-- An expired seasonal campaign  
+### Scenario A: All
 
-### Scenario A. All
-
-1. The system validates both campaigns.  
-2. One campaign fails.  
-3. The entire redemption fails.  
+The process goes as follows:
+1. Voucherify validates both incentives.
+2. Incentive A is validated successfully, while Incentive B is inapplicable.
+3. The entire validation fails.
 
 The customer receives no discount.
 
-In this mode, even valid campaigns are not applied if any item in the stack fails validation.
+In this mode, even valid incentives are not applied if any other incentive in the stack fails validation.
 
-### Scenario B. Partial
+### Scenario B: Partial
 
-1. The system validates both campaigns.  
-2. The expired campaign fails.  
-3. The valid campaign still applies.  
+The process goes as follows:
+1. Voucherify validates both incentives.
+2. Incentive A is validated successfully, while Incentive B is inapplicable.
+3. The validation is successful, Incentive A applies.  
 
 The customer receives the available discount.
 
-This setup prevents a single invalid campaign from blocking checkout.
+This setup prevents a single invalid incentive from blocking checkout.
 
-## Example 3. Exclusive campaign using Never stackable
+## Exclusive incentive with Never stackable category
 
-A store offers:
+**Never stackable** categories prevent other **Common** categories from being applied in one stack.
 
-- 50% VIP campaign  
-- 10% newsletter campaign  
+A store runs two campaigns:
+- 50% VIP campaign with a category set to **Stacking eligibility: Never stackable**
+- 10% newsletter campaign with a category set to **Stacking eligibility: Common**
 
-The VIP campaign is assigned to a category with:
-
-**Stacking eligibility: Never stackable**
-
-The exclusive campaign blocks Common campaigns in the same redemption. In this case, hierarchy and application order do not matter.
-
-### What happens in the cart?
-
+The **Never stackable** campaign blocks **Common** campaigns from application in the same stack:
 1. Both campaigns are valid.  
 2. The VIP campaign applies.  
 3. The newsletter campaign does not apply.  
 
-This is useful for high-value or limited offers.
+This is useful for high-value or limited offers that you don't want to combine with other incentives.
 
-## Example 4. Combining Never stackable and Always stackable
+<Note>
 
-A store offers:
+   In this case, hierarchy and application order do not matter. If the 50% VIP incentive has lower hierarchy (for **Hierarchy priority**) or it's sent second (for **Requested order**) in the API request and hierarchy/order would affect discount calculation, the **Never stackable** category ignores settings set for the **Common** category.
 
-- A large exclusive discount (Never stackable)  
-- A campaign that should always apply if valid  
+   However, if you combine several incentives belong to different categories with **Never stackable**, **Incentive application order** applies.
 
-The second campaign is assigned to:
+</Note>
 
-**Stacking eligibility: Always stackable**
+## Combining Never stackable and Always stackable
 
-### What happens in the cart?
+**Always stackable** categories are always applied in a stack, even those with **Never stackable** categories.
 
-1. The exclusive campaign is validated and applied.  
-2. The Always stackable campaign is also validated.  
-3. Both campaigns apply together.  
+A store runs two campaigns:
+- An exclusive incentive that's set to a **Never stackable** category.
+- A campaign that should always apply if valid, so it's set to **Stacking eligibility: Always stackable**.
 
-Always stackable campaigns can join the redemption stack even when an exclusive campaign is used.
+The incentives from the campaigns are applied as follows:
+1. The exclusive incentive is validated successfully.  
+2. The incentive from the **Always stackable** campaign is also validated successfully.  
+3. Both incentives apply together.  
 
-This is useful for incentives that should not be blocked by exclusivity.
+Incentives with an **Always stackable** category apply in the redemption stack even when a **Never stackable** incentive is also used.
 
-Whether campaigns can apply together depends on their category stacking eligibility.  
-The Compatibility guide shows these combinations in a simple table.
+**Always stackable** is useful for incentives that should not be blocked by exclusivity, like small giveaways or other low-value promotions.
 
-## Example 5. Category stacking limit
+<Tip>
 
-A store runs several Flash sale campaigns in one category.
+   In the **Stacking rules** view, use **Compatibility guide** to see which category combinations apply together.
 
-Three campaigns are valid in the cart.
+</Tip>
 
-The category stacking limit is set to 2.
+## Category stacking limit
 
-Campaigns are applied based on category hierarchy or application order.
+The category stacking limit adds an additional limit on how many incentives from a given category can be stacked.
 
-### What happens?
+A store runs three flash sale campaigns in one category, which has the category stacking limit set to 2.
 
-1. All three campaigns are validated.  
-2. Only two campaigns are applied.  
-3. The third campaign is skipped because the category limit is reached.  
+A customer wants to use incentives from each of those campaigns and they're all valid.
+
+Voucherify checks the incentives:
+1. All three incentives are checked.  
+2. However, only two incentives are applicable.
+3. The third incentive is skipped because the category limit is reached.
+
+In this case, the incentives are applied based on the application order as they share the same category and, as a result, hierarchy.
 
 The final number of applied campaigns also depends on the global stacking limit.
 
 This scenario helps prevent too many similar discounts from stacking.
 
-Voucherify applies campaigns up to the global maximum, and the category limit can further restrict that number.
+## No-effect incentive: Force and prevent redemption 
 
-## Example 6. Campaign valid but no discount effect
+**No effect** determines how Voucherify handles incentives that produce no effect.
 
-A campaign is valid but produces no effect (for example, the discount value is 0).
+In this example, an single-use incentive is valid, but it produces no effect like the discount value is 0.
 
-### Scenario A. Prevent redemption
+### Scenario A: Prevent redemption
 
-1. The campaign is validated.  
+Voucherify works as follows:
+1. The incentive is checked.
 2. No discount value is calculated.  
-3. The campaign is not redeemed.  
+3. The incentive is not redeemed.
 
-It remains available for later use.
+The incentive remains available for later use.
 
 ### Scenario B. Force redemption
 
-1. The campaign is validated.  
+Voucherify works as follows:
+1. The incentive is checked.
 2. No discount value is calculated.  
-3. The campaign is still redeemed.  
+3. The incentive is redeemed nonetheless.
 
-It counts as used even without a discount.
+The incentive counts as used even though it didn't apply any discounts. Because it was a single-use incentive, it can't be used again.
 
-## Example 7. Discount calculation mode
+## Discount calculation mode: Initial and discounted
 
-Two percentage campaigns are applied together:
+**Discount calculation mode** determines if a discount is calculated based on the initial amount, before any other discounts have been applied, or on the already discounted amount.
 
-- 10% off  
-- 20% off  
+In this example, two incentives are applied in the following sequence:
+- 10% off the whole cart
+- 20% off the whole cart
 
-The order value is \$100.
+The cart value is \$100.
 
 ### Scenario A. Initial calculation
 
+The discounts are calculated as follows:
 1. 10% of \$100 = \$10  
-2. 20% of \$100 = \$20  
+2. 20% of \$100 = \$20
 
 Total discount = \$30
 
 ### Scenario B. Discounted calculation
 
-1. 10% of \$100 = \$10 → \$90  
-2. 20% of \$90 = \$18  
+The discounts are calculated as follows:
+1. 10% of \$100 = \$10; this brings the amount to \$90
+2. 20% of \$90 = \$18
 
 Total discount = \$28
 
