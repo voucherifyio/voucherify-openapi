@@ -1,15 +1,16 @@
 ---
-title: "Fetching data through Braze Connected Content"
-description: "Fetch data from Voucherify and send messages to Braze segments"
+title: "Learn Braze Connected Content"
+description: "Understand basics about Voucherify data in Braze Connected Content"
 keywords: ['integration', 'braze']
 ---
 
-See how to set up connected content scripts to publish Voucherify coupons, invite new referrers, retrieve loyalty card balance, and more.
+See how to set up Braze connected content scripts to publish Voucherify coupons, invite new referrers, retrieve loyalty card balance, and more.
 
 <Note>
-<Badge color="blue">Examples</Badge>
+   
+   <Badge color="blue">Examples</Badge>
 
-Head over to our [Github Repository](https://github.com/voucherifyio/braze-connected-content) to see examples of connected content scripts.
+   Head over to our [Github Repository](https://github.com/voucherifyio/braze-connected-content) to see examples of connected content scripts.
 
 </Note>
 
@@ -17,8 +18,7 @@ Head over to our [Github Repository](https://github.com/voucherifyio/braze-conne
 
 The very basic schema of the script looks as follows:
 
-```
-liquid
+```liquid
 {% connected_content
   "voucherify-API-ENDPOINT-url" // Selected Voucherify endpoint
   :method post //HTTP method
@@ -55,7 +55,7 @@ Connected Content calls made via HTTP POST don’t cache by default and will mak
 *   Add a `:cache_max_age` attribute. By default, the caching duration is 5 minutes. You can customize the duration using seconds. It can be set between 5 minutes to 4 hours. Example: `:cache_max_age 3600` will cache for 1 hour.
 *   Provide a caching key `cache_id={{cache_id}}` in the destination endpoint query parameter so Braze can identify a unique publication. First, define the variable and then append the unique query string to your endpoint. This will differentiate each publication by the `source_id`.
 
-```
+```liquid
 <body class="body" style="padding:0 !important; margin:0 !important; display:block !important; min-width:100% !important; width:100% !important; background:#f4f4f7; -webkit-text-size-adjust:none">
 {% assign braze_campaign_id = {{campaign.${api_id}}} %}
 {% assign customer_id = {{${user_id}}} %}
@@ -78,7 +78,9 @@ Connected Content calls made via HTTP POST don’t cache by default and will mak
 ```
 
 <Note>
-Braze caches the API calls based on the URL. The unique string used as a query parameter is ignored by Voucherify, but it distinguishes different API requests for Braze and allows to cache each unique attempt separately. Without that query parameter, every customer will receive the same coupon code for the cache duration.
+   
+   Braze caches the API calls based on the URL. The unique string used as a query parameter is ignored by Voucherify, but it distinguishes different API requests for Braze and allows to cache each unique attempt separately. Without that query parameter, every customer will receive the same coupon code for the cache duration.
+
 </Note>
 
 ### Retry attribute
@@ -87,7 +89,7 @@ Connected Content does not validate the Voucherify response, so we additionally 
 
 If you do not use `:retry`, then irrespective of the response returned from Voucherify, Braze will attempt to send the distribution, which may result in generating emails without a published code.
 
-```
+```liquid
 <body class="body" style="padding:0 !important; margin:0 !important; display:block !important; min-width:100% !important; width:100% !important; background:#f4f4f7; -webkit-text-size-adjust:none">
 {% assign braze_campaign_id = {{campaign.${api_id}}} %}
 {% assign customer_id = {{${user_id}}} %}
@@ -114,7 +116,7 @@ If you do not use `:retry`, then irrespective of the response returned from Vouc
 
 The `source_id` parameter in the script body provides that each customer can receive only one unique code in a single Braze campaign. As a result, even if Braze unintentionally multiplies the request, each user will receive the same unique code that was published to him/her in the first message.
 
-```
+```liquid
 <body class="body" style="padding:0 !important; margin:0 !important; display:block !important; min-width:100% !important; width:100% !important; background:#f4f4f7; -webkit-text-size-adjust:none">
 {% assign braze_campaign_id = {{campaign.${api_id}}} %}
 {% assign customer_id = {{${user_id}}} %}
@@ -152,7 +154,7 @@ If your Voucherify campaign has a limit _Customers can join only once_, remove p
 
 Your Connected Content script should be as follows:
 
-```
+```liquid
 {% assign braze_campaign_id = {{campaign.${api_id}}} %}
 {% assign customer_id = {{${user_id}}} %}
 {% assign cache_id = braze_campaign_id | append: customer_id %}
@@ -172,216 +174,3 @@ Your Connected Content script should be as follows:
    :save publication
  %}
 ```
-
-## Examples
-
-<Note>
-Head over to our [Github Repository](https://github.com/voucherifyio/braze-connected-content) to see examples of connected content scripts.
-</Note>
-
-<Warning>
-Keep in mind that all examples below use Voucherify publication source id, and Braze cache and retry parameters to limit API calls invoked by a Braze campaign. You must be aware of the following consequences: 
-
-*   It isn't possible to publish and send different codes to the same customer in a single Braze campaign.
-*   If your Voucherify campaign uses the **join only once feature**, you need to remove `source_id` from the connected content body as described [here](#customer-can-join-only-once).
-</Warning>
-
-### Publish and send unique coupon code
-
-In this example, the Connected Content script calls Voucherify API to publish a unique coupon code and send it in the Braze message. Each Braze user receives only one unique code. 
-
-```
-{% assign braze_campaign_id = {{campaign.${api_id}}} %}
-{% assign customer_id = {{${user_id}}} %}
-{% assign source_id = braze_campaign_id | append: customer_id %}
-{% assign voucherify_campaign_id = "CAMPAIGN_ID" %}
-{% assign cache_id = source_id %}
-
-{% connected_content 
-   YOUR API ENDPOINT/v1/publications?cache_id={{cache_id}}
-   :method post
-   :headers {
-        "X-App-Id": "VOUCHERIFY-APP-ID",
-        "X-App-Token": "VOUCHERIFY-APP-TOKEN"
-   }
-   :body campaign={{voucherify_campaign_id}}&customer={{customer_id}}&channel=Braze&source_id={{source_id}}
-   :content_type application/json
-   :cache_max_age
-   :retry
-   :save publication
- %}
-```
-
-### Invite new referrers
-
-This Connected Content script enables you to publish and send unique referral codes to selected Braze users. Each user receives only one referral code to share with other users and gain new referrals. 
-
-```
-{% assign braze_campaign_id = {{campaign.${api_id}}} %}
-{% assign customer_id = {{${user_id}}} %}
-{% assign source_id = braze_campaign_id | append: customer_id %}
-{% assign voucherify_campaign_id = "CAMPAIGN_ID" %}
-{% assign cache_id = source_id %}
-
-{% connected_content 
-   YOUR API ENDPOINT/v1/publications?cache_id={{cache_id}}
-   :method post
-   :headers {
-  	"X-App-Id": "VOUCHERIFY-APP-ID",
-        "X-App-Token": "VOUCHERIFY-APP-TOKEN"
-   }
-   :body campaign={{voucherify_campaign_id}}&customer={{customer_id}}&channel=Braze&source_id={{source_id}}
-   :content_type application/json
-   :cache_max_age
-   :retry
-   :save publication
- %}
-```
-
-### Fetch loyalty card balance
-
-Here is an example of a Connected Content script that pulls the current loyalty balance based on the loyalty card code that was sent beforehand to Braze as a custom attribute. Note that you need to store the loyalty card code as a custom attribute in Braze user’s profile before using this script.
-
-```
-{% assign braze_campaign_id = {{campaign.${api_id}}} %}
-{% assign customer_id = {{${user_id}}} %}
-{% assign source_id = braze_campaign_id | append: customer_id %}
-{% assign voucherify_campaign_id = "CAMPAIGN_ID" %}
-{% assign cache_id = source_id %}
-
-{% connected_content 
-   YOUR API ENDPOINT/v1/loyalties/{{voucherify_campaign_id}}/members/{{custom_attribute.${loyalty.card}}}?cache_id={{cache_id}}
-   :method get
-   :headers {
-	"X-App-Id": "VOUCHERIFY-APP-ID", 
-        "X-App-Token": "VOUCHERIFY-APP-TOKEN"
-   }
-   :content_type application/json
-   :cache_max_age
-   :retry
-   :save member
- %}
-```
-
-## Display fetched data in Braze messages
-
-We’re assuming you already have a Braze campaign or canva in which you want to use the connected content script. 
-
-#### Step 1: Add connected content script to message template
-
-1. Copy and paste the Connected Content script under the `<body>` tag in a message HTML template. 
-Replace **CAMPAIGN\_ID** with a Voucherify `campaign_id` copied from the URL address of Voucherify campaign dashboard.
-
-```
-{% assign voucherify_campaign_id = "camp_Y7h1meBSyybsNs7UpSVVZZce}"	
-```
-
-2. Paste your API endpoint. If you don't know what your API endpoint is, you can check it in the Project settings > General > API endpoint.
-    
-```
-YOUR API ENDPOINT/v1/publications?cache_id={{cache_id}}	
-```
-
-| Shared Cluster     | Endpoint for Braze Connected Content |
-| ------------------ | ------------------------------------ |
-| Europe (default)   | `https://api.voucherify.io/v1/publications` |
-| United States      | `https://us1.api.voucherify.io/v1/publications` |
-| Asia (Singapore)   | `https://as1.api.voucherify.io/v1/publications` |
-    
-3. Add your API keys for authentication. You can find **Voucherify-App-Id** and ** in **Project Settings** > **General** > **Application Keys**.
-    
-```
-"X-App-Id": "VOUCHERIFY-APP-ID",
-"X-App-Token": "VOUCHERIFY-APP-TOKEN"	
-```
-
-Now your Connected Content script is ready to go.
-
-```
-{% assign braze_campaign_id = {{campaign.${api_id}}} %}
-{% assign customer_id = {{${user_id}}} %}
-{% assign source_id = braze_campaign_id | append: customer_id %}
-{% assign voucherify_campaign_id = "camp_Y7h1meBSyybsNs7UpSVVZZce" %}
-{% assign cache_id = source_id %}
-
-{% connected_content 
-   https://api.voucherify.io/v1/publications?cache_id={{cache_id}}
-   :method post
-   :headers {
-        "X-App-Id": "490a3fb6-a",
-        "X-App-Token": "328099d5-a"
-   }
-   :body campaign={{voucherify_campaign_id}}&customer={{customer_id}}&channel=Braze&source_id={{source_id}}
-   :content_type application/json
-   :cache_max_age
-   :retry
-   :save publication
- %}
-```
-
-### Step 2: Create snippet to display fetched data
-
-Responses from the Voucherify API is stored by connected content under the value of `:save` parameter. For example:
-
-```
-:save member
-```
-
-This enables you to retrieve and display data from a Voucherify response in Braze messages.
-
-You can create snippets that display the published code, loyalty card balance, expiration date, and other parameters included in JSON format response from the Voucherify API.
-
-For example, to display the published code in a message template, you need to create a snippet that fetches a unique code from the voucher object.
-
-Connected content script:
-
-```
-{% assign braze_campaign_id = {{campaign.${api_id}}} %}
-{% assign customer_id = {{${user_id}}} %}
-{% assign cache_id = braze_campaign_id | append: customer_id %}
-{% assign voucherify_campaign_id = "CAMPAIGN_ID" %}
-
-{% connected_content 
-   https://api.voucherify.io/v1/publications?cache_id={{cache_id}}
-   :method post
-   :headers {
-	"X-App-Id": "VOUCHERIFY-APP-ID",
-	"X-App-Token": "VOUCHERIFY-APP-TOKEN"
-   }
-   :body campaign={{voucherify_campaign_id}}&customer={{customer_id}}&channel=Braze
-   :content_type application/json
-   :cache_max_age
-   :retry
-   :save publication //Here
- %}
-```
-
-Snippet in Braze message template:
-
-```
-{{publication.voucher.code}}
-```
-
-As a result, each customer gets a message with a unique code automatically assigned to their profile. Each time the user receives a code, it is published to their profile in Voucherify.
-
-To display a loyalty card balance fetched from the Voucherify API, you need to create the following snippet:
-
-```
-{{member.loyalty_card.balance}}
-```
-
-where the member is a value of the `:save` parameter in Connected Content script.
-
-```
-:save member
-```
-
-<Tip>
-It's better not to entirely depend on the 'Preview mode' and to send several test messages to confirm that everything works as it should.
-</Tip>
-
-### Step 3: Set up rate limiter
-
-When setting up a campaign target, use advanced settings to limit the number of messages sent per minute.
-
-Read more about Rate Limiter and Frequency Capping in Braze [documentation](https://www.braze.com/docs/user_guide/engagement_tools/campaigns/building_campaigns/rate-limiting/#delivery-speed-rate-limiting).
