@@ -1,184 +1,499 @@
 ---
 title: "Dynamic formula builder reference"
-description: "A complete technical reference for building dynamic discount values and loyalty point formulas using operators and operands"
-keywords: ['dynamic', 'formula', 'builder', 'reference']
+description: "Dynamic discount and points formula builder with full operator and operand reference"
+keywords: ['dynamic', 'formula', 'builder', 'discount', 'points']
 ---
 
-The dynamic formula builder allows you to create mathematical and logical expressions to calculate discount values or loyalty points in real time. Instead of using a static value, Voucherify evaluates the formula during redemption based on available system data and metadata. This enables truly dynamic incentives, such as scaling discounts based on order value, customer attributes, purchase history, or contextual data, without creating multiple campaigns or codes.
+The dynamic formula builder defines how the values are calculated.
 
-## Formula builder overview
+Instead of using a static value for discounts or loyalty points, you can create formulas with mathematical and logical operators and assign a dynamic value. Discounts or points will be calculated during redemption based on the provided formula and metadata values.
 
-You can interact with the formula builder in two ways:
+The formula builder requires a static fallback value in case the dynamic value cannot be calculated from the formula's given parameters.
 
-- **Formula builder utility** – Use guided dialogs to assemble formulas from operands and operators.
-- **Expression output** – View and edit the generated formula as a raw expression.
+You can either use the Formula builder utility with step-by-step dialogs that you fill out to build the formula from element building blocks or the Expression output with operators and operands.
 
-<Note>
+## Application scope
 
-**Fallback value**  
-A static fallback value is required. Voucherify uses it when the dynamic formula cannot be evaluated (for example, when metadata is missing, incorrectly typed, or a calculation fails).
+The dynamic discount formula builder applies to the following discount types:
 
-</Note>
+- Order discount  
+- Product discount  
+- Reward  
 
-### Application scope
+It can be used when creating coupon campaigns, in-cart promotions, and referral codes.
 
-- **Discounts** – Order discounts, product discounts, and rewards (used in coupons, in-cart promotions, and referral codes).
-- **Loyalty points** – Fixed and proportional earning rules.
+The dynamic points formula builder applies to the following earning rules:
+
+- Fixed  
+- Proportional  
+
+It can be used when creating loyalty programs.
+
+## Context specific
+
+The operators and operands in the dynamic formula builder depend on the context of the formula, such as the discount effect and other factors. Some of the operators and operands will not be available based on the specific configuration.
+
+## Formula builder
+
+You can use the Formula builder utility with step-by-step dialogs to build the formula from element building blocks.
+
+<Steps>
+  <Step title="Open formula builder">
+    Click the Formula button next to the discount value or points.
+  </Step>
+  <Step title="Build formula">
+    Build your formula using the formula builder by choosing a type of operand followed by an operator. Click the X button to delete a number or expression and the + button to add a number or expression.
+  </Step>
+  <Step title="Remove operator">
+    To remove an operator you have entered, click on it and click the Remove button.
+  </Step>
+  <Step title="Review expression">
+    To review your expression, choose Expression output.
+  </Step>
+  <Step title="Save">
+    Click Save once you have finished defining your dynamic discount formula.
+  </Step>
+</Steps>
+
+To edit your existing formula, click the Formula button next to the discount value.
+
+To remove a saved formula, click — button next to the Formula button.
+
+## Expression output
+
+You can view and edit the dynamic formula through a mathematical expression using operands and operators.
+
+Click Save once you have finished defining your dynamic formula.
 
 ## Operand reference
 
-Operands are the building blocks of a formula. They retrieve data from the system or perform specific operations.
+You can see the discount values that you can create using different discount operands in the following table.
 
-### Metadata and system operands
+### Metadata and base operands
 
-| Operand | Description | Example |
-| :--- | :--- | :--- |
-| **Number** | A static numeric value. | `2` |
-| **Text** | A static string value. | `"Gold_Member"` |
-| **Order metadata** | Attribute from the order object. | `ORDER_METADATA("day_of_week")` |
-| **Voucher metadata** | Custom attributes assigned to the voucher. | `REDEEMABLE_METADATA("month")` |
-| **Customer metadata** | Custom attributes from the customer profile. | `CUSTOMER_METADATA("ltv")` |
-| **Redemption metadata** | Attributes passed in the redemption request. | `REDEMPTION_METADATA("store_id")` |
+| Operand | Definition | Example |
+|----------|------------|----------|
+| Number | Value is a Number. | `2` |
+| Text | Value is a String. | Unique string of alphanumeric characters. |
+| Order metadata | Value is an order metadata attribute of type Number or String. | `ORDER_METADATA("day_of_week")` |
+| Voucher metadata | Value is a voucher metadata attribute of type Number or String. Available in dynamic discount formulas only. | `REDEEMABLE_METADATA("active_on_calendar_month")` |
+| Customer metadata | Value is a customer metadata attribute of type Number or String. | `CUSTOMER_METADATA("customer_life_time_value")` |
+| Redemption metadata | Value is a redemption metadata attribute of type Number or String. Available in dynamic discount formulas only. | `REDEMPTION_METADATA("store_list")` |
+| Publication metadata | Value is a publication metadata attribute of type Number or String. Available in dynamic discount formulas only. | `PUBLICATION_METADATA("year")` |
+| Promotion tier metadata | Value is an order metadata attribute of type Number or String. Available in dynamic discount formulas only (promotion). | `REDEEMABLE_METADATA("membership_duration")` |
 
-<Note>
+### Expression functions
 
-Metadata operands are always **scoped**. There is no generic `METADATA()` operand.
+| Operand | Definition | Example |
+|----------|------------|----------|
+| Brackets | Groups expression elements together; i.e. adds parentheses to your formula. | `(10 - ORDER_METADATA("number_of_store_visits"))` |
+| Min | Lowest value in a range | `MIN(PUBLICATION_METADATA("year"); CUSTOMER_METADATA("customer_life_time_value"))` |
+| Max | Highest value in a range | `MAX(PUBLICATION_METADATA("year"); CUSTOMER_METADATA("customer_life_time_value"))` |
+| Power | A number raised to a power; defines the base and exponent. | `POW(ORDER_METADATA("number_of_store_visits");2)` |
+| Round | Round a number to a specified number of digits. Positive precision refers to a decimal place indicator. Negative precision indicates an integer place indicator. | `ROUND(CUSTOMER_METADATA("customer_life_time_value");1)` |
+| Floor | Round down to a specified number of digits. | `FLOOR(CUSTOMER_METADATA("customer_life_time_value");1)` |
+| Ceil | Round up to a specified number of digits. | `CEIL(CUSTOMER_METADATA("customer_life_time_value");1)` |
+| If | Value based on a logical expression; defines the logical test value, value if expression is true and value if expression is false. | `IF(ORDER_METADATA("number_of_store_visits") > 5;10;3)` |
+| Default to | Returns the first non-null value of range. | `DEFAULT_TO(REDEMPTION_METADATA("store_list") / 2;5)` |
 
-</Note>
+### Order item operands (product discount only)
 
-### Mathematical functions
-
-| Function | Description | Example |
-| :--- | :--- | :--- |
-| **MIN / MAX** | Returns the smallest or largest value. | `MIN(ORDER_AMOUNT; 100)` |
-| **POW** | Raises a number to a power. | `POW(ORDER_METADATA("visits"); 2)` |
-| **ROUND** | Rounds a value to the given precision. | `ROUND(CUSTOMER_METADATA("ltv"); 1)` |
-| **FLOOR / CEIL** | Rounds down or up. | `FLOOR(ORDER_ITEM_PRICE; 0)` |
-| **IF** | Conditional logic. | `IF(ORDER_AMOUNT > 100; 20; 5)` |
-| **DEFAULT_TO** | Returns the first non-null value. | `DEFAULT_TO(CUSTOMER_METADATA("tier"); 1)` |
-
-### Order-item operands (product discounts only)
-
-| Operand | Description |
-| :--- | :--- |
-| `ORDER_ITEM_PRICE` | Current item price before discounts. |
-| `ORDER_ITEM_AMOUNT` | Original item price (used for stacked discounts). |
-| `ORDER_ITEM_SUBTOTAL` | Item price after previously applied discounts. |
-| `ORDER_ITEM_METADATA("key")` | Metadata value assigned to the order item. |
-
-<Note>
-
-Order-item operands are available **only** in product discount formulas.
-
-</Note>
+| Operand | Definition |
+|----------|------------|
+| ORDER_ITEM_PRICE | Returns order item price. |
+| ORDER_ITEM_AMOUNT | Returns order item amount; for stacked discounts, returns the original amount without any modifications due to other discounts. |
+| ORDER_ITEM_SUBTOTAL | Returns order item subtotal; for stacked discounts, each additional discount is based on the result obtained after calculating the previous discount. |
+| ORDER_ITEM_UNITS_QUANTITY | Returns order item quantity. |
+| ORDER_ITEM_METADATA("Size") | Returns order item metadata. |
+| ORDER_ITEM_PRODUCT_METADATA("category") | Returns order item product metadata. |
 
 ### Order-level operands
 
-| Operand | Description |
-| :--- | :--- |
-| `ORDER_AMOUNT` | Total cart value. |
-| `ORDER_ITEMS_QUANTITY` | Total quantity of items in the order. |
+| Operand | Definition |
+|----------|------------|
+| ORDER_AMOUNT | Returns the order total value, whole cart value. |
+| ORDER_ITEMS_QUANTITY | Returns the item count. |
+| ORDER_UNITS_QUANTITY | Returns the sum of the units ordered. |
 
-### Date and time variables
+### Cheapest order item operands
 
-| Variable | Description | Format |
-| :--- | :--- | :--- |
-| **TODAY** | Current date. | `YYYY-MM-DD` |
-| **NOW** | Current date and time. | `YYYY-MM-DDThh:mm:ss` |
-| **DATE** | Fixed date value. | `DATE("2024-12-25")` |
-| **VOUCHER_EXPIRATION_DATE** | Voucher expiration date. | ISO 8601 |
+| Operand | Definition |
+|----------|------------|
+| CHEAPEST_ORDER_ITEM_PRICE | Returns the price of the cheapest line item in the order. |
+| CHEAPEST_ORDER_ITEM_AMOUNT | Returns the amount of the cheapest line items in the order; for stacked discounts, returns the original amount without any modifications due to other discounts. |
+| CHEAPEST_ORDER_ITEM_SUBTOTAL | Returns the subtotal of the cheapest line items in the order; for stacked discounts, each additional discount is based on the result obtained after calculating the previous discount. |
+| CHEAPEST_ORDER_ITEM_UNITS_QUANTITY | Returns total units of the cheapest order line items. |
+| CHEAPEST_ORDER_ITEM_METADATA("Size") | Returns the cheapest order item metadata of type Number or String. |
+| CHEAPEST_ORDER_ITEM_PRODUCT_METADATA("category") | Returns the cheapest order item product metadata. |
+
+### Most expensive order item operands
+
+| Operand | Definition |
+|----------|------------|
+| MOST_EXPENSIVE_ORDER_ITEM_PRICE | Returns the price of the most expensive line item in the order. |
+| MOST_EXPENSIVE_ORDER_ITEM_AMOUNT | Returns the amount of the most expensive line items in the order; for stacked discounts, returns the original amount without any modifications due to discounts. |
+| MOST_EXPENSIVE_ORDER_ITEM_SUBTOTAL | Returns the subtotal of the most expensive line items in the order; for stacked discounts, each additional discount is based on the result obtained after calculating the previous discount. |
+| MOST_EXPENSIVE_ORDER_ITEM_UNITS_QUANTITY | Returns the total units of the most expensive order line items. |
+| MOST_EXPENSIVE_ORDER_ITEM_METADATA("Size") | Returns the most expensive order item metadata of type Number or String. |
+| MOST_EXPENSIVE_ORDER_ITEM_PRODUCT_METADATA("category") | Returns the most expensive order item product metadata. |
+
+## The Cheapest & Most Expensive Order Item
+
+How are the cheapest and most expensive order items found if there are multiple items with the same price?
+
+### Cheapest order item
+
+1. First, the formula tries to find the order item with the cheapest price. If there is one item, the formula returns this item. Otherwise, it proceeds to step 2.
+2. If there are n items that have the same cheapest price, from this n, the formula finds the items with the lowest subtotal. If there is only one item, the formula returns this item. Otherwise, if there are many items, it proceeds to step 3.
+3. Finally, it returns the first item from the list of the cheapest items with the lowest subtotal.
+
+### Most expensive order item
+
+1. First, the formula tries to find the order item with the most expensive price. If there is one item, the formula returns this item. Otherwise, it proceeds to step 2.
+2. If there are n items that have the same most expensive price, from this n, the formula finds the items with the lowest subtotal. If there is only one item, the formula returns this item. Otherwise, if there are many items, it proceeds to step 3.
+3. Finally, it returns the first item from the list of the most expensive items with the lowest subtotal.
 
 ## Operator reference
 
-### Numeric operators
+## Number operators
 
-| Operator | Meaning | Example |
-| :--- | :--- | :--- |
-| `+` | Add | `CUSTOMER_METADATA("visits") + 1` |
-| `-` | Subtract | `ORDER_AMOUNT - 50` |
-| `*` | Multiply | `ORDER_METADATA("day") * 2` |
-| `/` | Divide | `CUSTOMER_METADATA("months") / 12` |
-| `%` | Modulo | `ORDER_ITEMS_QUANTITY % 2` |
-| `>` / `<` | Comparison | `IF(ORDER_AMOUNT > 500; 20; 5)` |
-| `=` | Equality | `IF(ORDER_METADATA("day") = 5; 10; 0)` |
-| `IN_ARRAY` | Membership check | `IF(ORDER_ITEMS_QUANTITY IN_ARRAY "3,6,9"; 10; 5)` |
+Here are the discount formula operators you can choose from for properties of Number type.
 
-<Note>
+### Add (+)
 
-The Formula Builder UI may render multiplication and division as visual symbols (×, ÷), but expressions use `*` and `/`.
+Adds numbers or expressions.
 
-</Note>
-
-### String operators
-
-| Operator | Logic | Example |
-| :--- | :--- | :--- |
-| **is** | Exact match | `IF(CUSTOMER_METADATA("channel") is "FB"; 20; 5)` |
-| **isNot** | Non-equal | `IF(REDEEMABLE_METADATA("source") isNot "Twitter"; 10; 0)` |
-| **contains** | Partial match | `IF(CUSTOMER_METADATA("city") contains "New"; 15; 0)` |
-| **startsWith** | Prefix match | `IF(ORDER_METADATA("store") startsWith "NY_"; 10; 5)` |
-
-### Date operators
-
-| Operator | Description | Example |
-| :--- | :--- | :--- |
-| **DAYS_SINCE** | Days from date to today. | `DAYS_SINCE(CUSTOMER_METADATA("birthdate"))` |
-| **DAYS_UNTIL** | Days from today to date. | `DAYS_UNTIL(VOUCHER_EXPIRATION_DATE)` |
-| **MONTHS_SINCE** | Months elapsed since date. | `MONTHS_SINCE(CUSTOMER_METADATA("signup"))` |
-| **IS_AFTER** | True if Date A is after Date B. | `IF(TODAY IS_AFTER DATE("2024-01-01"); 10; 0)` |
-
-## Advanced functions
-
-### SWITCH
-
-You can create expressions using the switch function to create different discount rates based on a given factor. For example, give a different discount rate based on where the order is placed.
+Example with missing metadata property defaulting to fallback value:
 
 ```text
-SWITCH(
-  ORDER_METADATA("store_city");
-  SWITCH_CASE("Boston"; 10)
-  SWITCH_CASE("New York"; 15);
-  5
-)
-```
-### Nested formulas
-
-You can nest functions to build advanced logic.
-
-```
-IF(
-  ORDER_ITEMS_QUANTITY > 4;
-  IF(ORDER_AMOUNT > 200; 25; 15);
-  10
-)
+CUSTOMER_METADATA("number_of_store_visits") + REDEEMABLE_METADATA("active_on_calendar_month")
 ```
 
-### Tie-breaking logic for item-based operands
+Missing metadata property: `number_of_store_visits`  
+Fallback value: 10%
 
-When using item selectors such as CHEAPEST_ORDER_ITEM or MOST_EXPENSIVE_ORDER_ITEM and multiple items share the same price, Voucherify resolves ties in the following order:
+### Subtract (-)
 
-**Price** – Lowest or highest item price.
-**Subtotal** – Item subtotal after previously applied discounts.
-**Position** – The first matching item in the request payload.
+Subtracts numbers or expressions.
 
-This ensures deterministic behavior across redemptions.
+Give a customer a percent off for every year since they first became a customer.
 
-### Evaluation and error handling
+```text
+PUBLICATION_METADATA("year") - CUSTOMER_METADATA("customer_life_time_value")
+```
 
-Mathematical operations require numeric operands.
+year: 2022  
+customer_life_time_value: 2012  
 
-Metadata values must be correctly typed (for example, numbers for arithmetic).
+Calculated dynamic discount value: 10%  
+Fallback value: 10%
 
-Formula evaluation fails when:
+### Multiply (x)
 
-- Required metadata is missing or null
-- Operands are used outside their supported scope
-- A calculation is invalid (for example, division by zero)
+Multiplies numbers or expressions.
 
-When evaluation fails, Voucherify applies the configured fallback value.
+Give a customer a discount proportional to the day of the week if the week is defined as:
 
-<Note> 
+Sunday - 0  
+Monday - 1  
+Tuesday - 2  
+Wednesday - 3  
+Thursday - 4  
+Friday - 5  
+Saturday - 6  
 
-Operand availability depends on context. Using unsupported operands (for example, order-item operands in order-level discounts or loyalty rules) results in validation errors. 
+```text
+ORDER_METADATA("day_of_week") x 2
+```
 
-</Note> 
+day_of_week: 5  
+
+Calculated dynamic discount value: $10  
+Fallback value: $10
+
+### Divide (÷)
+
+Divides numbers or expressions.
+
+Give a customer an eighth for every month the customer was active.
+
+```text
+CUSTOMER_METADATA("customer_months_active") ÷ 8
+```
+
+customer_months_active: 8  
+
+Calculated dynamic discount value: $10  
+Fallback value: $10
+
+### Modulo (%)
+
+Returns the remainder after division.
+
+Give a customer a certain number of free items based on a custom formula.
+
+```text
+REDEEMABLE_METADATA("active_on_calendar_month") % REDEMPTION_METADATA("allowed_free_units")
+```
+
+active_on_calendar_month: 10  
+allowed_free_units: 9  
+remainder: 1  
+
+Calculated dynamic discount value: 1 Free item  
+Fallback value: 1 Free item
+
+### Greater than (>)
+
+Logical operator returns the value if true when the left side is greater than the right side.
+
+Give a customer 20% off every time they make a purchase after their 10th store visit. Otherwise, the customer receives a standard 3% discount.
+
+```text
+IF(CUSTOMER_METADATA("number_of_store_visits") > 10;20;3)
+```
+
+### Less than (\<)
+
+Logical operator returns the value if true when the left side is less than the right side.
+
+Give a customer 3% off each store visit until their 9th store visit. Beginning from their 10th visit, give the customer a 20% discount.
+
+```text
+IF(CUSTOMER_METADATA("number_of_store_visits") < 10;3;20)
+```
+
+### Equal to (=)
+
+Logical operator returns the value if true when both sides are equal.
+
+Give a customer 50% off on their 50th store visit.
+
+```text
+IF(CUSTOMER_METADATA("number_of_store_visits") = 50;50;0)
+```
+
+### In array
+
+Logical operator returns true if the value is one of the provided values.
+
+Give a customer a $10 discount if the number of units in an order is 3, 6, 9, 12, or 15.
+
+```text
+IF(ORDER_UNITS_QUANTITY IN_ARRAY "3, 6, 9, 12, 15";10;5)
+```
+
+### Not in array
+
+Logical operator returns true if the value is NOT one of the provided values.
+
+```text
+IF(ORDER_UNITS_QUANTITY NOT_IN_ARRAY "1, 2, 3, 4";10;5)
+```
+
+## String operators
+
+Here are the operators you can choose from for properties of String type.
+
+### Is
+
+Returns true if strings are equal.
+
+```text
+IF(CUSTOMER_METADATA("acquisition_channel") is "Facebook";20;CUSTOMER_METADATA("age"))
+```
+
+### Is not
+
+Returns true if strings are NOT equal.
+
+```text
+IF(CUSTOMER_METADATA("acquisition_channel") isNot "Twitter";10;3)
+```
+
+### Contains
+
+Returns true if the value contains the provided string.
+
+```text
+IF(CUSTOMER_METADATA("location") contains "California";3;0)
+```
+
+### Starts with
+
+Returns true if the value starts with the provided string.
+
+```text
+IF(REDEMPTION_METADATA("location_id") startsWith "Jersey_Shoreline_store_";15;0)
+```
+
+### Ends with
+
+Returns true if the value ends with the provided string.
+
+```text
+IF(PUBLICATION_METADATA("publication_method") endsWith "_sms";50;35)
+```
+
+### In array
+
+```text
+IF(ORDER_METADATA("region") IN_ARRAY "EU, EMEA";10;5)
+```
+
+### Not in array
+
+```text
+IF(ORDER_METADATA("region") NOT_IN_ARRAY "EU, EMEA";10;5)
+```
+
+## Date operators
+
+Here are the operators for properties of Date type.
+
+### Days since
+
+Returns number of days from the start date to today (excluding end date).
+
+```text
+IF(DAYS_SINCE(CUSTOMER_METADATA("date_last_purchase")) < 31;30 / DAYS_SINCE(CUSTOMER_METADATA("date_last_purchase"));0)
+```
+
+### Months since
+
+Returns number of months from the start date to today (excluding end date).
+
+```text
+IF(MONTHS_SINCE(CUSTOMER_METADATA("date_subscribed")) > 12;20;10)
+```
+
+### Years since
+
+Returns number of years from the start date to today.
+
+```text
+YEARS_SINCE(CUSTOMER_METADATA("acquisition_date"))
+```
+
+Get a discount equal to your age:
+
+```text
+YEARS_SINCE(CUSTOMER_BIRTHDATE)
+```
+
+### Days until
+
+Returns number of days from today to the future date.
+
+Early bird example:
+
+```text
+DAYS_UNTIL(VOUCHER_EXPIRATION_DATE) * 2
+```
+
+### Months until
+
+```text
+IF(MONTHS_UNTIL(VOUCHER_EXPIRATION_DATE) > 6;15;5)
+```
+
+### Day of month
+
+Customer's whose birthday falls on the 6th of the month get a 10% discount.
+
+```text
+IF(DAY_OF_MONTH(CUSTOMER_BIRTHDATE) = 6;10;5)
+```
+
+### Month
+
+Incentivize customers to make orders through the year.
+
+```text
+MONTH(TODAY) * 2
+```
+
+### Year
+
+Give higher discounts for younger customers.
+
+```text
+YEAR(CUSTOMER_BIRTHDATE) / 100
+```
+
+### Date
+
+Incentivize customers to buy on release date.
+
+```text
+IF(DATE("2023-08-17");10;5)
+```
+
+### Date time
+
+Buy within 5 days since release date and time.
+
+```text
+IF(DAYS_SINCE(DATE_TIME("2023-08-17T14:05:00.000Z")) < 5;10;5)
+```
+
+### Date equality
+
+```text
+IF(TODAY DATE_IS DATE("2023-08-22");10;5)
+```
+
+### Date inequality
+
+```text
+IF(TODAY DATE_IS_NOT DATE("2023-08-22");10;5)
+```
+
+### Is after
+
+```text
+IF(TODAY IS_AFTER DATE("2023-08-22");10;5)
+```
+
+### Is before
+
+```text
+IF(NOW IS_BEFORE DATE("2023-08-22");10;5)
+```
+
+## Complex expression operators
+
+### AND
+
+All components must be true.
+
+```text
+IF(CUSTOMER_METADATA("number_of_store_visits") > 10 AND ORDER_METADATA("day_of_week") = 5;20;3)
+```
+
+### OR
+
+At least one component must be true.
+
+```text
+IF(CUSTOMER_METADATA("number_of_store_visits") > 10 OR ORDER_METADATA("day_of_week") = 5;20;3)
+```
+
+## Nested formulas
+
+You can create nested expressions by embedding IF statements.
+
+```text
+IF(ORDER_ITEMS_QUANTITY > 4;IF(ORDER_AMOUNT > 200;25;15);10)
+```
+
+## Switch function
+
+You can create expressions using the switch function to create different discount rates.
+
+```text
+SWITCH(ORDER_METADATA("store_city");
+  SWITCH_CASE("Boston";10)
+  SWITCH_CASE("New York";15);
+5)
+```
