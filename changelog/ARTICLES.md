@@ -5,6 +5,17 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-02-27
+
+Changed navigation and content of Braze articles:
+- `braze-overview`
+- `stream-events-to-braze`
+- `sync-braze-customers-with-voucherify`
+- `braze-connected-content`
+- `fetch-data-with-braze-connected-content`
+- `braze-custom-attributes`
+- `braze-promotion-codes`
+
 ## 2025-12-24
 
 Add three articles under Orchestration:
