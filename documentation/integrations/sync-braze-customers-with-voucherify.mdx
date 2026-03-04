@@ -17,52 +17,9 @@ Use Braze Canvas webhooks as one-way customer data synchronization from Braze to
 
 This way, you can create promotions targeted at specific customer groups segmented in Braze or trigger Voucherify actions that are based on tracking custom events.
 
-## Braze customer synchronization
+## Synchronize customers with Braze Canvas
 
 You can use Braze Canvas webhooks to synchronize Braze customer data with Voucherify.
-
-### Braze customer synchronization: Technical details
-
-The synchronization calls a dedicated URL in Voucherify to update the customer's Braze `audience_id` in Voucherify.
-
-<Accordion title="Dedicated webhook URLs">
-
-    | Cluster                | Webhook URL                                                                                 |
-    | ---------------------- | ------------------------------------------------------------------------------------------- |
-    | **Europe**             | `https://braze.voucherify.io/braze/customer-webhook`                                        |
-    | **United States**      | `https://us1.braze.voucherify.io/braze/customer-webhook`                                    |
-    | **Asia**               | `https://as1.braze.voucherify.io/braze/customer-webhook`                                    |
-    | **Remaining Clusters** | `https://{cluster}.braze.voucherify.io/braze/customer-webhook` (use your dedicated cluster) |
-
-</Accordion>
-
-### Data structure and request body parameters
-
-The webhook data is structured as follows.
-
-| Structure          | Details                                                                                                                                   |
-| ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| **Authentication** | - `applicationId`<br />- `secretKey`<br /><br />These are the keys you've created in **Project settings** > **Integration keys**. |
-| **HTTP method**    | POST                                                                                                                                      |
-| **Request body**   | The request body contains **3 required parameters** (see below), the rest is optional.                                                               |
-
-The request body data is structured as follows.
-
-| Parameter                  | Definition / Options / Mapping                                                                                                                                                                                                   |
-| -------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **action** (required)      | - `"add"` to add members to the audience<br />- `"delete"` to remove members from the audience<br /><br />This operation adds or removes the customer metadata field `brazeAudiences` from the customer’s profile in Voucherify. |
-| **audience_id** (required) | The `audience_id` can have any value from Braze Canvas. All customers in a segment will share the same audience ID stored in Voucherify customer metadata, for example:<br /><br />`brazeAudiences: ["brazeAudienceID"]`         |
-| **user_id** (required)     | Braze `user_id`                                                                                                                                                                                                                  |
-| **email_address**          | Maps directly to Voucherify's `email` field                                                                                                                                                                                      |
-| **first_name**             | Concatenates with last name into the customer’s `name` field                                                                                                                                                                     |
-| **last_name**              | Concatenates with first name into the customer’s `name` field                                                                                                                                                                    |
-| **country**                | Maps to Voucherify customer address (`country`)                                                                                                                                                                                  |
-| **city**                   | Maps to Voucherify customer address (`city`)                                                                                                                                                                                     |
-| **phone_number**           | Maps to Voucherify customer address (`phone`)                                                                                                                                                                                    |
-
-### Synchronize customers with Braze Canvas
-
-To synchronize Braze customers with Voucherify, use Braze Canvas.
 
 <Steps>
     
@@ -72,37 +29,88 @@ To synchronize Braze customers with Voucherify, use Braze Canvas.
     
     </Step>
 
-    <Step title="Select Webhook message">
+    <Step title="Select webhook message">
     
-    When you create a message, select **Webhook** with a blank template.
-    
-    </Step>
-
-    <Step title="Enter the webhook URL">
-    
-    Enter the URL of the endpoint in **Webhook URL**: `https://{yourCluster}.braze.voucherify.io/braze/customer-webhook`
+    Create a **Message** and select **Webhook** to **Compose webhook**.
     
     </Step>
 
-    <Step title="Configure request headers">
+    <Step title="Compose webhook">
+    
+    Set the following details:
+    - In **Webhook URL**, enter the URL of the endpoint: `https://{yourCluster}.braze.voucherify.io/braze/customer-webhook`.
+    - In **HTTP method**, set `POST`.
+    - In **Request body**, set **JSON Key/Value Pairs**.
 
-    Enter all the required parameters in the **Request headers**:
-    - `applicationId`: Integration application ID
-    - `secretKey`: Integration application token
-    - **HTTP method**: POST
+    <Accordion title="Webhook URLs for different regions">
+
+    Use the webhook URL for your region.
+
+    | Region                | Webhook URL                                                                                 |
+    | ---------------------- | ------------------------------------------------------------------------------------------- |
+    | **Europe**             | `https://braze.voucherify.io/braze/customer-webhook`                                        |
+    | **United States**      | `https://us1.braze.voucherify.io/braze/customer-webhook`                                    |
+    | **Asia**               | `https://as1.braze.voucherify.io/braze/customer-webhook`                                    |
+    | **Remaining clusters** | `https://{cluster}.braze.voucherify.io/braze/customer-webhook` (use your dedicated cluster) |
+
+</Accordion>
     
     </Step>
 
     <Step title="Configure request body">
     
-    Enter all the **required** parameters in the **Request Body**:
-    - `action`: `"add"` to add members to the audience, or `"delete"` to remove members.
+    Enter the **required** parameters in the **Request Body**:
+    - `action`: Use `add` to add members to the audience or `delete` to remove them.
     - `user_id`: Use personalization in the editor to add a Braze user ID, for example, `{{${user_id}}}`.
-    - `audience_id`: Add the ID of the audience to update, for example, `608`
+    - `audience_id`: Add the ID of the audience to update, for example, `608`.
+
+    <Accordion title="Optional fields">
+
+        You can use the following optional fields to synchronize additional details.
+
+        | Parameter                  | Definition / Options / Mapping                                                                                                                                                                                                   |
+        | -------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+        | `email_address`          | Maps directly to Voucherify's `email` field                                                                                                                                                                                      |
+        | `first_name`             | Concatenates with last name into the customer’s `name` field                                                                                                                                                                     |
+        | `last_name`              | Concatenates with first name into the customer’s `name` field                                                                                                                                                                    |
+        | `country`                | Maps to Voucherify customer address (`country`)                                                                                                                                                                                  |
+        | `city`                   | Maps to Voucherify customer address (`city`)                                                                                                                                                                                     |
+        | `phone_number`           | Maps to Voucherify customer address (`phone`)                                                                                                                                                                                    |
+
+
+    </Accordion>
     
     </Step>
 
+    <Step title="Configure request headers">
+
+    Add the required parameters in the **Request headers**:
+    - `applicationId`: Integration application ID.
+    - `secretKey`: Integration application token.
+    
+    </Step>
+
+    <Step title="Test your message">
+
+    Go to **Test** tab and **Send test** message to check if your configuration is correct.
+
+    <Tip>
+
+        In Voucherify, go to **Audit log** to check if the test message has been successfully sent. You'll get a **200** status for **POST** method and the `/v1/customers` URL with **Braze Outbound** channel.
+        
+        Go to that log to see more details.
+
+    </Tip>
+
+    Once everything's correct, click **Done** to save your message.
+
+    </Step>
+
 </Steps>
+
+Your message is now saved in the Canvas.
+
+The `brazeAudiences` array in Voucherify customer metadata as well as other optional data (if configured) will be updated whenever the relevant event occurs.
 
 <Info>
 
@@ -116,9 +124,11 @@ Use Braze [Canvas](https://www.braze.com/docs/user_guide/getting_started/campaig
 
 <Tip>
 
-    Experiment ideas:
+    Use the following experiment ideas as Canvas triggers:
     - Mark a referral as complete by forwarding a Braze event to Voucherify.
-    - Give a voucher to a customer when they register on your website.
+    - Give a free item voucher to a customer when they register on your website.
+    - Add loyalty points to a customer loyalty card when they left a review in your portal.
+    - Give a discount coupon when a customer abandoned their cart.
 
 </Tip>
 
@@ -128,7 +138,7 @@ Configure general settings of your Canvas.
 
 <Steps>
 
-    <Step title="Choose an entry schedule">
+    <Step title="Choose Entry schedule">
     
     As **Entry schedule**, select [Action-Based](https://www.braze.com/docs/user_guide/engagement_tools/canvas/create_a_canvas/create_a_canvas/?tab=action-based%20delivery).
     
@@ -138,7 +148,13 @@ Configure general settings of your Canvas.
 
     <Step title="Select the custom event">
     
-    From the drop-down list, select the custom event the customer needs to perform.
+    In **Action Based Options**, select the **Perform Custom Event** and **Add trigger**. Select the custom event the customer needs to perform.
+
+    <Info>
+
+        If you [stream Voucherify events to Braze](/integrations/stream-events-to-braze), you can also select a Voucherify event as a custom event.
+
+    </Info>
     
     </Step>
 
@@ -170,25 +186,24 @@ Configure your Canvas to send events from Braze to Voucherify.
 
 <Steps>
 
-    <Step title="Add message with webhook">
+    <Step title="Select webhook message">
     
-    In the flow, add **Message** and in the **Messaging channels**, add a **Webhook**.
+    Create a **Message** and select **Webhook** to **Compose webhook**.
     
     </Step>
 
-    <Step title="Configure webhook settings">
+    <Step title="Compose webhook">
     
-    Provide your Voucherify **X-App-Token** and **X-App-Id** you've generated in Voucherify **Project settings** > **Integrations**.
-    
-    Choose the **POST** method.
-    
-    In the **Compose** section, add `https://{yourCluster}.voucherify.io/v1/events` to the **Webhook URL**.
+    Set the following details:
+    - In **Webhook URL**, enter the URL of the endpoint: `https://{yourCluster}.voucherify.io/v1/events`.
+    - In **HTTP method**, set `POST`.
+    - In **Request body**, set **Raw Text**.
     
     </Step>
 
     <Step title="Configure request body">
     
-    In the **Request Body**, add the payload for the [track event](/api-reference/events/track-custom-event) endpoint, for example:
+    In **Insert Raw Text**, add the payload for the [track event](/api-reference/events/track-custom-event) endpoint, for example:
 
     ```json
     {
@@ -200,26 +215,34 @@ Configure your Canvas to send events from Braze to Voucherify.
     ```
     </Step>
 
-    <Step title="Test the configuration">
+    <Step title="Configure request headers">
+
+    Add the required parameters in the **Request headers**:
+    - `X-App-Token`: Integration application ID.
+    - `X-App-Id`: Integration application token.
     
-    Test the configuration by sending the chosen Braze custom event to a Braze profile. Check if it is forwarded to Voucherify.
+    </Step>
 
-    Braze Endpoint: [/users/track](https://www.braze.com/docs/api/endpoints/user_data/post_user_track/)
+    <Step title="Test your message">
 
-    For example:
+    Go to **Test** tab and **Send test** message to check if your configuration is correct.
 
-    ```json
-    {
-    "events": [
-        {
-            "external_id": "uniqueUserId",
-            "app_id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", 
-            "name": "user_registered", 
-            "time": "2024-03-07T19:03:52Z"
-        }
-    ]
-    }
-    ```
+     <Tip>
+
+        In Voucherify, go to **Audit log** to check if the test message has been successfully sent. You'll get a **200** status for **POST** method and the `/v1/events` URL with **API** channel.
+        
+        Go to that log to see more details.
+
+    </Tip>
+
+    Once everything's correct, click **Done** to save your message.
+
     </Step>
 
 </Steps>
+
+Your message is now saved in the Canvas.
+
+## Related features
+
+SEGMENTS
