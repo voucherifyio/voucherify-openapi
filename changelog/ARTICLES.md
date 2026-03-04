@@ -5,6 +5,10 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-03-03
+
+Updated `stream-events-to-braze.mdx` in view of the new messaging.
+
 ## 2026-02-27
 
 Changed navigation and content of Braze articles:
