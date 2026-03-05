@@ -5,6 +5,10 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-03-05
+
+Updated `send-data-from-braze.mdx`.
+
 ## 2026-03-03
 
 Updated `stream-events-to-braze.mdx` in view of the new messaging.
