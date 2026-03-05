@@ -161,9 +161,12 @@ Once installed, run:
 using System.Collections.Generic;
 using System;
 using System.Diagnostics;
-using Voucherify.Api;
-using Voucherify.Client;
-using Voucherify.Model;
+{{#useHttpClient}}
+using System.Net.Http;
+{{/useHttpClient}}
+using {{packageName}}.{{apiPackage}};
+using {{packageName}}.Client;
+using {{packageName}}.{{modelPackage}};
 
 namespace Example
 {
@@ -186,8 +189,15 @@ namespace Example
             };
             config.ApiKey.Add("X-App-Id", xAppId);
             config.ApiKey.Add("X-App-Token", xAppToken);
-
+            {{#useHttpClient}}
+            // create instances of HttpClient, HttpClientHandler to be reused later with different Api classes
+            HttpClient httpClient = new HttpClient();
+            HttpClientHandler httpClientHandler = new HttpClientHandler();
+            var apiInstance = new CampaignsApi(httpClient, config, httpClientHandler);
+            {{/useHttpClient}}
+            {{^useHttpClient}}
             var apiInstance = new CampaignsApi(config);
+            {{/useHttpClient}}
 
             try
             {
@@ -200,7 +210,6 @@ namespace Example
                 Debug.Print("Status Code: "+ e.ErrorCode);
                 Debug.Print(e.StackTrace);
             }
-
         }
     }
 }
