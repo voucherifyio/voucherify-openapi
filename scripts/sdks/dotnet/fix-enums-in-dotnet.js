@@ -2,10 +2,14 @@ const fs = require('fs');
 const path = require('path');
 const glob = require('glob');
 
-const modelDir = path.join(__dirname, '..', 'sdks', 'dotnet', 'src', 'Voucherify', 'Model');
+const modelDir = path.join(__dirname, '..', '..', '..', 'sdks', 'dotnet', 'src', 'Voucherify', 'Model');
 
 // Find all .cs files in the Model directory
 const files = glob.sync(path.join(modelDir, '*.cs'));
+if(files.length === 0) throw new Error(
+    `No .cs files found in ${modelDir}`
+)
+
 
 files.forEach(file => {
     let content = fs.readFileSync(file, 'utf8');

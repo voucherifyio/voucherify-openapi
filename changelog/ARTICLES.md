@@ -5,6 +5,13 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2025-12-24
+
+Add three articles under Orchestration:
+- `code-publication`
+- `manage-categories`
+- `stacking-rules`
+
 ## 2025-12-23
 
 Added info to `bloomreach-engagement.mdx` about API limits as per internal request.
