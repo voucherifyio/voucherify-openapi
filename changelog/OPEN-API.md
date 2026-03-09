@@ -4,6 +4,10 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-03-09
+
+Update descriptions of validation rule schemas for new weekly redemption limits.
+
 ## 2026-02-23
 
 - Add **PUT** `v1/product-collections/{productCollectionId}` endpoint

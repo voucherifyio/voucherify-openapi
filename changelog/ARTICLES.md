@@ -5,6 +5,10 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-03-09
+
+Update descriptions in `validation-rules-reference` for new weekly redemption limits.
+
 ## 2026-03-05
 
 Updated `send-data-from-braze.mdx`.
