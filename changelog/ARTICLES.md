@@ -5,6 +5,13 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-03-10
+
+Published:
+- `areas-and-stores-scenario.mdx`
+- `areas-and-stores.mdx`
+- `manage-areas-and-stores.mdx`
+
 ## 2026-03-05
 
 Updated `send-data-from-braze.mdx`.
