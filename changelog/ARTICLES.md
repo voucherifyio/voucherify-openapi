@@ -5,6 +5,10 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-03-11
+
+Refreshed `braze-custom-attributes.mdx`.
+
 ## 2026-03-10
 
 Published:
