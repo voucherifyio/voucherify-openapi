@@ -5,6 +5,18 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+
+## 2026-03-11
+
+Refreshed `braze-custom-attributes.mdx`.
+
+## 2026-03-10
+
+Published:
+- `areas-and-stores-scenario.mdx`
+- `areas-and-stores.mdx`
+- `manage-areas-and-stores.mdx`
+
 ## 2026-03-09
 
 Update descriptions in `validation-rules-reference` for new weekly redemption limits.
