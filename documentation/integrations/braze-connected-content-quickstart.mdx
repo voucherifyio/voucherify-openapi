@@ -17,9 +17,19 @@ tag: "NEW"
 
 Use this tutorial to set up a basic scenario of code publication with Connected Content.
 
+<Note>
+
+   The connected content script example has additional data provided to make the script optimized.
+
+   In this tutorial, only essential Voucherify data is described.
+
+   Read the [Optimize your Connected Content scripts](/integrations/braze-connected-content-optimization) for more details.
+
+</Note>
+
 ## Display fetched data in Braze messages
 
-Use the following steps to display data fetched from Voucherify in Braze messages.
+Use the following steps to display the data fetched from Voucherify in Braze messages.
 
 <Steps>
 
@@ -49,16 +59,6 @@ Use the following steps to display data fetched from Voucherify in Braze message
       %}
    ```
 
-      <Note>
-
-         The script has additional data provided to make the script optimized.
-
-         In this tutorial, only essential Voucherify data is described.
-
-         Read the [Optimize your Connected Content scripts](/integrations/braze-connected-content-optimization) for more details.
-
-      </Note>
-
    </Step>
 
    <Step title="Set up necessary Voucherify API details">
@@ -66,10 +66,10 @@ Use the following steps to display data fetched from Voucherify in Braze message
    Add from Voucherify:
    - `campaign_id` copied from the campaign details view in the Voucherify dashboard (line 4).
    - Your API endpoint. You can check it in **Project settings** > **General** > **API endpoint** (line 8).
-   - Add publications address `/v1/publications` and the API method (lines 8-9).
+   - Add publications address `/v1/publications` and the API method (lines 8-9). Don't edit `?cache_id={{cache_id}}`.
    - Add your API credentials for authentication (lines 11-12).
 
-   ```liquid Connected content publication script lines highlight={4,8-9,11-12}
+   ```liquid Connected content publication script lines focus={4,8-9,11-12}
       {% assign braze_campaign_id = {{campaign.${api_id}}} %}
       {% assign customer_id = {{${user_id}}} %}
       {% assign source_id = braze_campaign_id | append: customer_id %}
@@ -95,63 +95,48 @@ Use the following steps to display data fetched from Voucherify in Braze message
 
    <Step title="Create snippet to display fetched data">
 
-   Responses from the Voucherify API is stored by connected content under the value of `:save` parameter. For example:
+   Responses from the Voucherify API is stored by connected content under the value of `:save` parameter. For example, `:save publication` in line 18.
 
-   ```
-   :save member
+   ```liquid Connected content publication script lines focus={18}
+      {% assign braze_campaign_id = {{campaign.${api_id}}} %}
+      {% assign customer_id = {{${user_id}}} %}
+      {% assign source_id = braze_campaign_id | append: customer_id %}
+      {% assign voucherify_campaign_id = "camp_XXXXXXXXXXXXXXXXXXXXXXXX" %}
+      {% assign cache_id = source_id %}
+
+      {% connected_content 
+         https://api.voucherify.io/v1/publications?cache_id={{cache_id}}
+         :method post
+         :headers {
+            "X-App-Id": "12345678-90QW-ERTY-UIOP-asdfghjklzxc",
+            "X-App-Token": "MNBVCXZL-KJHG-FDSA-POIU-ytrewq098765"
+         }
+         :body campaign={{voucherify_campaign_id}}&customer={{customer_id}}&channel=Braze&source_id={{source_id}}
+         :content_type application/json
+         :cache_max_age
+         :retry
+         :save publication
+      %}
    ```
 
    This enables you to retrieve and display data from a Voucherify response in Braze messages.
 
-   You can create snippets that display the published code, loyalty card balance, expiration date, and other parameters included in JSON format response from the Voucherify API.
+   </Step>
 
-   For example, to display the published code in a message template, you need to create a snippet that fetches a unique code from the voucher object.
+   <Step title="Display fetched data in messages">
 
-   Connected content script:
-
-   ```liquid
-   {% assign braze_campaign_id = {{campaign.${api_id}}} %}
-   {% assign customer_id = {{${user_id}}} %}
-   {% assign cache_id = braze_campaign_id | append: customer_id %}
-   {% assign voucherify_campaign_id = "CAMPAIGN_ID" %}
-
-   {% connected_content 
-      https://api.voucherify.io/v1/publications?cache_id={{cache_id}}
-      :method post
-      :headers {
-      "X-App-Id": "VOUCHERIFY-APP-ID",
-      "X-App-Token": "VOUCHERIFY-APP-TOKEN"
-      }
-      :body campaign={{voucherify_campaign_id}}&customer={{customer_id}}&channel=Braze
-      :content_type application/json
-      :cache_max_age
-      :retry
-      :save publication //Here
-   %}
-   ```
-
-   Snippet in Braze message template:
+   To display the published code in a message template, create a snippet that fetches a unique code from the voucher object:
 
    ```liquid
    {{publication.voucher.code}}
    ```
 
-   As a result, each customer gets a message with a unique code automatically assigned to their profile. Each time the user receives a code, it is published to their profile in Voucherify.
-
-   To display a loyalty card balance fetched from the Voucherify API, you need to create the following snippet:
-
-   ```liquid
-   {{member.loyalty_card.balance}}
-   ```
-
-   where the member is a value of the `:save` parameter in Connected Content script.
-
-   ```liquid
-   :save member
-   ```
+   Each customer will get a message with a unique code automatically assigned to their profile. Each time the user receives a code, it is published to their profile in Voucherify.
 
    <Tip>
-   It's better not to entirely depend on the 'Preview mode' and to send several test messages to confirm that everything works as it should.
+   
+      It's better not to entirely depend on the **Preview mode** in Braze. Send several test messages to confirm that everything works as intended.
+   
    </Tip>
 
    </Step>
@@ -167,5 +152,5 @@ Use the following steps to display data fetched from Voucherify in Braze message
 
 ## Next steps
 
-- [Secure your Connected Content scripts](/integrations/braze-connected-content-security) — Configure caching and retry mechanisms
+- [Optimize your Connected Content scripts](/integrations/braze-connected-content-optimization) — Configure caching and retry mechanisms
 - [Connected Content script reference](/integrations/braze-connected-content-reference) — View all script templates
