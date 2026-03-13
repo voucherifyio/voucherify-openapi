@@ -1,0 +1,173 @@
+---
+title: "Get started with Braze Connected Content"
+description: "Publish your first Voucherify coupon code in a Braze campaign"
+keywords: ['integration', 'braze', 'connected content', 'quickstart']
+tag: "NEW"
+---
+
+<Info>
+
+   <Badge color="gray">Prerequisites</Badge>
+
+   - A Voucherify campaign with codes to publish
+   - A Braze campaign or Canvas
+   - [Voucherify API credentials](/integrations/braze-overview/#connect-braze-with-voucherify) (App ID and App Token)
+
+</Info>
+
+Use this tutorial to set up a basic scenario of code publication with Connected Content.
+
+<Note>
+
+   The connected content script example has additional data provided to make the script optimized.
+
+   In this tutorial, only essential Voucherify data is described.
+
+   Read the [Optimize your Connected Content scripts](/integrations/braze-connected-content-optimization) for more details.
+
+</Note>
+
+## Display fetched data in Braze messages
+
+Use the following steps to display the data fetched from Voucherify in Braze messages.
+
+<Steps>
+
+   <Step title="Add connected content script to message template">
+
+   Copy and paste the Connected Content script under the `<body>` tag in a message HTML template.
+
+   ```liquid Connected content publication script lines
+      {% assign braze_campaign_id = {{campaign.${api_id}}} %}
+      {% assign customer_id = {{${user_id}}} %}
+      {% assign source_id = braze_campaign_id | append: customer_id %}
+      {% assign voucherify_campaign_id = "camp_XXXXXXXXXXXXXXXXXXXXXXXX" %}
+      {% assign cache_id = source_id %}
+
+      {% connected_content 
+         https://api.voucherify.io/v1/publications?cache_id={{cache_id}}
+         :method post
+         :headers {
+            "X-App-Id": "12345678-90QW-ERTY-UIOP-asdfghjklzxc",
+            "X-App-Token": "MNBVCXZL-KJHG-FDSA-POIU-ytrewq098765"
+         }
+         :body campaign={{voucherify_campaign_id}}&customer={{customer_id}}&channel=Braze&source_id={{source_id}}
+         :content_type application/json
+         :cache_max_age
+         :retry
+         :save publication
+      %}
+   ```
+
+   </Step>
+
+   <Step title="Set up necessary Voucherify API details">
+
+   Add from Voucherify:
+   - `campaign_id` copied from the campaign details view in the Voucherify dashboard (line 4).
+   - Your API endpoint. You can check it in **Project settings** > **General** > **API endpoint** (line 8).
+   - Add publications address `/v1/publications` and the API method (lines 8-9). Don't edit `?cache_id={{cache_id}}`.
+   - Add your API credentials for authentication (lines 11-12).
+
+   ```liquid Connected content publication script lines focus={4,8-9,11-12}
+      {% assign braze_campaign_id = {{campaign.${api_id}}} %}
+      {% assign customer_id = {{${user_id}}} %}
+      {% assign source_id = braze_campaign_id | append: customer_id %}
+      {% assign voucherify_campaign_id = "camp_XXXXXXXXXXXXXXXXXXXXXXXX" %}
+      {% assign cache_id = source_id %}
+
+      {% connected_content 
+         https://api.voucherify.io/v1/publications?cache_id={{cache_id}}
+         :method post
+         :headers {
+            "X-App-Id": "12345678-90QW-ERTY-UIOP-asdfghjklzxc",
+            "X-App-Token": "MNBVCXZL-KJHG-FDSA-POIU-ytrewq098765"
+         }
+         :body campaign={{voucherify_campaign_id}}&customer={{customer_id}}&channel=Braze&source_id={{source_id}}
+         :content_type application/json
+         :cache_max_age
+         :retry
+         :save publication
+      %}
+   ```
+
+   </Step>
+
+   <Step title="Create snippet to display fetched data">
+
+   Responses from the Voucherify API are stored by connected content under the value of `:save` parameter. For example, `:save publication` in line 18.
+
+   ```liquid Connected content publication script lines focus={18}
+      {% assign braze_campaign_id = {{campaign.${api_id}}} %}
+      {% assign customer_id = {{${user_id}}} %}
+      {% assign source_id = braze_campaign_id | append: customer_id %}
+      {% assign voucherify_campaign_id = "camp_XXXXXXXXXXXXXXXXXXXXXXXX" %}
+      {% assign cache_id = source_id %}
+
+      {% connected_content 
+         https://api.voucherify.io/v1/publications?cache_id={{cache_id}}
+         :method post
+         :headers {
+            "X-App-Id": "12345678-90QW-ERTY-UIOP-asdfghjklzxc",
+            "X-App-Token": "MNBVCXZL-KJHG-FDSA-POIU-ytrewq098765"
+         }
+         :body campaign={{voucherify_campaign_id}}&customer={{customer_id}}&channel=Braze&source_id={{source_id}}
+         :content_type application/json
+         :cache_max_age
+         :retry
+         :save publication
+      %}
+   ```
+
+   This enables you to retrieve and display data from a Voucherify response in Braze messages.
+
+   </Step>
+
+   <Step title="Display fetched data in messages">
+
+   To display the published code in a message template, create a snippet that fetches a unique code from the voucher object:
+
+   ```liquid
+   {{publication.voucher.code}}
+   ```
+
+   Each customer will get a message with a unique code automatically assigned to their profile. Each time the user receives a code, it is published to their profile in Voucherify.
+
+   <Tip>
+
+      <Badge color="green">Experiment with different data fields</Badge>
+
+      You can fetch any field from from Voucherify's response.
+
+      For gift cards, you can also display gift card balance by using the following snippet:
+      
+      ```liquid
+      Your gift card: {{publication.voucher.code}}.
+      
+      Your balance: {{publication.voucher.gift.amount}}.
+      ```
+
+      See [POST Create publication](/api-reference/publications/create-publication) for the full response schema.
+
+   </Tip>
+
+   </Step>
+
+   <Step title="Set up rate limiter">
+
+   When setting up a campaign target, use advanced settings to limit the number of messages sent per minute.
+
+   Rate limits protect your margins during testing and live traffic. When running A/B tests or scaling campaigns, uncontrolled sending can exhaust code pools or exceed budget caps.
+
+   Read more about Rate Limiter and Frequency Capping in Braze [documentation](https://www.braze.com/docs/user_guide/engagement_tools/campaigns/building_campaigns/rate-limiting/#delivery-speed-rate-limiting).
+
+   </Step>
+
+</Steps>
+
+The script is ready. Send test messages before launching — Braze preview mode doesn't display Connected Content calls with a `retry` attribute.
+
+## Next steps
+
+- [Optimize your Connected Content scripts](/integrations/braze-connected-content-optimization) — Configure caching and retry mechanisms
+- [Connected Content script reference](/integrations/braze-connected-content-reference) — View all script templates
