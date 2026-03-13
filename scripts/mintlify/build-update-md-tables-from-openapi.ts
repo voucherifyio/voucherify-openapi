@@ -16,7 +16,7 @@ const openApi = _openApi as any;
 
 const PATH_TO_DOCS_REFERENCE = [
   __dirname,
-  "../../../documentation/api-reference/",
+  "../../documentation/api-reference/",
 ];
 const PATH_TO_GENERATED_TABLES = [__dirname, "./output"];
 
