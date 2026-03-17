@@ -37,10 +37,14 @@ Head over to Voucherify's [Github Repository](https://github.com/voucherifyio/br
 
 </Warning>
 
+## Publish and send unique code
 
-## Publish and send unique coupon code
+This Connected Content script calls Voucherify API to publish a unique code and send it in a Braze message. Each Braze user receives only one unique code.
 
-This Connected Content script calls Voucherify API to publish a unique coupon code and send it in a Braze message. Each Braze user receives only one unique code.
+Use this snippet to distribute codes in the following scenarios:
+- Abandoned cart recovery
+- Braze user performs a custom event – reward for an achievement
+- Sending the same through multiple channels (for example, email and push)
 
 ```liquid Publish and send unique code lines wrap
 {% assign braze_campaign_id = {{campaign.${api_id}}} %}
@@ -50,7 +54,7 @@ This Connected Content script calls Voucherify API to publish a unique coupon co
 {% assign cache_id = source_id %}
 
 {% connected_content 
-   YOUR API ENDPOINT/v1/publications?cache_id={{cache_id}}
+   https://api.voucherify.io/v1/publications?cache_id={{cache_id}}
    :method post
    :headers {
         "X-App-Id": "12345678-90QW-ERTY-UIOP-asdfghjklzxc",
@@ -64,13 +68,36 @@ This Connected Content script calls Voucherify API to publish a unique coupon co
  %}
 ```
 
-### Display the published code
+<Accordion title="Display different voucher details">
 
-To display the published code in your message, use the following snippet.
+  To display the published code in your message, use the following snippet.
 
-```liquid Published code snippet lines
-{{publication.voucher.code}}
-```
+  ```liquid Published code snippet lines
+  {{publication.voucher.code}}
+  ```
+
+  If you publish a gift card, you can additionally display its value with the following snippet.
+
+  ```liquid Display gift card balance lines
+  {{publication.voucher.gift.balance}}
+  ```
+
+  If you publish a loyalty card when a customer fulfils an earning rule and receives a card with a loyalty card balance, use the following snippet.
+
+  ```liquid Display loyalty card balance lines
+  {{publication.voucher.loyalty_card.balance}}
+  ```
+
+  If the points have an expiration date, use:
+
+
+  ```liquid Display loyalty card point expiration date lines
+  {{publication.voucher.loyalty_card.next_expiration_date}}
+  ```
+
+</Accordion>
+
+Read the documentation of [POST Create publication](/api-reference/publications/create-publication) endpoint to learn more about the endpoint response.
 
 ## Invite new referrers
 
@@ -143,7 +170,7 @@ This Connected Content script fetches the current loyalty balance from a loyalty
 
 ### Display the loyalty card balance snippet
 
-To display the published referral code in your message, use the following snippet.
+To display the published loyalty point balance in your message, use the following snippet.
 
 ```liquid Loyalty card balance snippet lines
 {{member.loyalty_card.balance}}
