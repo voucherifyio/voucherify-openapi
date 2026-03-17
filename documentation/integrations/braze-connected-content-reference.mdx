@@ -2,48 +2,59 @@
 title: "Connected Content script reference"
 description: "API endpoints, script templates, and parameter configurations for Braze Connected Content"
 keywords: ['integration', 'braze', 'connected content', 'reference']
+tag: "NEW"
 ---
 
-<Note>
+<Info>
 
-    Head over to our [Github Repository](https://github.com/voucherifyio/braze-connected-content) to see examples of connected content scripts.
+  <Badge color="gray">Prerequisite: Recommended reading</Badge>
 
-</Note>
+  It's recommended to read the following articles before exploring the scripts:
+  - [Get started with Braze Connected Content](/integrations/braze-connected-content-quickstart)
+  - [Optimize your Connected Content scripts](/integrations/braze-connected-content-optimization)
+
+</Info>
+
+Get inspired and experiment with this collection of ready scripts.
+
+Head over to Voucherify's [Github Repository](https://github.com/voucherifyio/braze-connected-content) to see more examples of connected content scripts.
+
+<Info>
+
+  The examples below use the default API address `https://api.voucherify.io`.
+
+  If your API endpoint is in a [different region](/integrations/braze-connected-content-overview#api-endpoints), remember to change it.
+
+</Info>
 
 <Warning>
 
-    Keep in mind that all examples below use Voucherify publication source id, and Braze cache and retry parameters to limit API calls invoked by a Braze campaign. You must be aware of the following consequences: 
-
-    *   It isn't possible to publish and send different codes to the same customer in a single Braze campaign.
-    *   If your Voucherify campaign uses the **join only once feature**, you need to remove `source_id` from the connected content body as described in [Secure your Connected Content scripts](/integrations/braze-connected-content-optimization#customer-can-join-only-once).
+    All publication examples below use Voucherify publication source ID and Braze cache and retry parameters to limit API calls invoked by a Braze campaign.
+    
+    As a result: 
+    - This prevents publication and sending different codes to the same customer in a single Braze campaign.
+    - If your Voucherify campaign uses the **Customers can join campaign only once** setting, remove `source_id` from the connected content body as described in [Optimize your Connected Content scripts](/integrations/braze-connected-content-optimization#publication-with-customer-can-join-only-once).
 
 </Warning>
 
-## API endpoints
-
-| Shared Cluster     | Endpoint for Braze Connected Content |
-| ------------------ | ------------------------------------ |
-| Europe (default)   | `https://api.voucherify.io/v1/publications` |
-| United States      | `https://us1.api.voucherify.io/v1/publications` |
-| Asia (Singapore)   | `https://as1.api.voucherify.io/v1/publications` |
 
 ## Publish and send unique coupon code
 
-In this example, the Connected Content script calls Voucherify API to publish a unique coupon code and send it in the Braze message. Each Braze user receives only one unique code. 
+This Connected Content script calls Voucherify API to publish a unique coupon code and send it in a Braze message. Each Braze user receives only one unique code.
 
-```liquid
+```liquid Publish and send unique code lines wrap
 {% assign braze_campaign_id = {{campaign.${api_id}}} %}
 {% assign customer_id = {{${user_id}}} %}
 {% assign source_id = braze_campaign_id | append: customer_id %}
-{% assign voucherify_campaign_id = "CAMPAIGN_ID" %}
+{% assign voucherify_campaign_id = "camp_XXXXXXXXXXXXXXXXXXXXXXXX" %}
 {% assign cache_id = source_id %}
 
 {% connected_content 
    YOUR API ENDPOINT/v1/publications?cache_id={{cache_id}}
    :method post
    :headers {
-        "X-App-Id": "VOUCHERIFY-APP-ID",
-        "X-App-Token": "VOUCHERIFY-APP-TOKEN"
+        "X-App-Id": "12345678-90QW-ERTY-UIOP-asdfghjklzxc",
+        "X-App-Token": "MNBVCXZL-KJHG-FDSA-POIU-ytrewq098765"
    }
    :body campaign={{voucherify_campaign_id}}&customer={{customer_id}}&channel=Braze&source_id={{source_id}}
    :content_type application/json
@@ -51,25 +62,33 @@ In this example, the Connected Content script calls Voucherify API to publish a 
    :retry
    :save publication
  %}
+```
+
+### Display the published code
+
+To display the published code in your message, use the following snippet.
+
+```liquid Published code snippet lines
+{{publication.voucher.code}}
 ```
 
 ## Invite new referrers
 
-This Connected Content script enables you to publish and send unique referral codes to selected Braze users. Each user receives only one referral code to share with other users and gain new referrals. 
+This Connected Content script publishes and sends unique referral codes to selected Braze users. Each user receives only one referral code to share with other users and gain new referrals.
 
-```liquid
+```liquid Invite customers to referral program lines wrap
 {% assign braze_campaign_id = {{campaign.${api_id}}} %}
 {% assign customer_id = {{${user_id}}} %}
 {% assign source_id = braze_campaign_id | append: customer_id %}
-{% assign voucherify_campaign_id = "CAMPAIGN_ID" %}
+{% assign voucherify_campaign_id = "camp_XXXXXXXXXXXXXXXXXXXXXXXX" %}
 {% assign cache_id = source_id %}
 
 {% connected_content 
-   YOUR API ENDPOINT/v1/publications?cache_id={{cache_id}}
+   https://api.voucherify.io/v1/publications?cache_id={{cache_id}}
    :method post
    :headers {
-  	"X-App-Id": "VOUCHERIFY-APP-ID",
-        "X-App-Token": "VOUCHERIFY-APP-TOKEN"
+  	"X-App-Id": "12345678-90QW-ERTY-UIOP-asdfghjklzxc",
+    "X-App-Token": "MNBVCXZL-KJHG-FDSA-POIU-ytrewq098765"
    }
    :body campaign={{voucherify_campaign_id}}&customer={{customer_id}}&channel=Braze&source_id={{source_id}}
    :content_type application/json
@@ -79,23 +98,41 @@ This Connected Content script enables you to publish and send unique referral co
  %}
 ```
 
+### Display the published referral code
+
+To display the published referral code in your message, use the following snippet. This is the same snippet as for regular code publication.
+
+```liquid Published referral code snippet lines
+{{publication.voucher.code}}
+```
+
 ## Fetch loyalty card balance
 
-Here is an example of a Connected Content script that pulls the current loyalty balance based on the loyalty card code that was sent beforehand to Braze as a custom attribute. Note that you need to store the loyalty card code as a custom attribute in Braze user's profile before using this script.
+<Info>
 
-```liquid
+  <Badge color="gray">Prerequisite: Send loyalty card code as a custom attribute</Badge>
+
+  For this script to work, you need to store the loyalty card code as a custom attribute in Braze user's profile.
+
+  Read [Distribute to Braze custom attributes](/integrations/braze-custom-attributes) to learn how to send Voucherify data as Braze custom attributes.
+
+</Info>
+
+This Connected Content script fetches the current loyalty balance from a loyalty card code that was sent to Braze as a custom attribute.
+
+```liquid Fetch loyalty card balance lines wrap
 {% assign braze_campaign_id = {{campaign.${api_id}}} %}
 {% assign customer_id = {{${user_id}}} %}
 {% assign source_id = braze_campaign_id | append: customer_id %}
-{% assign voucherify_campaign_id = "CAMPAIGN_ID" %}
+{% assign voucherify_campaign_id = "camp_XXXXXXXXXXXXXXXXXXXXXXXX" %}
 {% assign cache_id = source_id %}
 
 {% connected_content 
-   YOUR API ENDPOINT/v1/loyalties/{{voucherify_campaign_id}}/members/{{custom_attribute.${loyalty.card}}}?cache_id={{cache_id}}
+   https://api.voucherify.io/v1/loyalties/{{voucherify_campaign_id}}/members/{{custom_attribute.${loyalty.card}}}?cache_id={{cache_id}}
    :method get
    :headers {
-	"X-App-Id": "VOUCHERIFY-APP-ID", 
-        "X-App-Token": "VOUCHERIFY-APP-TOKEN"
+	  "X-App-Id": "12345678-90QW-ERTY-UIOP-asdfghjklzxc",
+    "X-App-Token": "MNBVCXZL-KJHG-FDSA-POIU-ytrewq098765"
    }
    :content_type application/json
    :cache_max_age
@@ -104,25 +141,10 @@ Here is an example of a Connected Content script that pulls the current loyalty 
  %}
 ```
 
-## Source ID configurations
+### Display the loyalty card balance snippet
 
-| Configuration | Effect |
-| ------------- | ------ |
-| `{{campaign.${dispatch_id}}}` | Ensures that all customers within a single send-out will use the same publication. |
-| `{{campaign.${api_id}}}` | Ensures that all customers within a single campaign will use the same publication. |
-| `{{${user_id}}}` or `{{${braze_id}}}` | Ensures that every customer will use the same publication no matter which campaign is sent (you can use `${user_id}` which is an external_id and `${braze_id}` which is an internal id). |
-| `{{campaign.${dispatch_id}}}` and `{{campaign.${user_id}}}` | Each customer within a single send-out will use the same unique publication. |
+To display the published referral code in your message, use the following snippet.
 
-## Display snippets
-
-### Published code
-
-```liquid
-{{publication.voucher.code}}
-```
-
-### Loyalty card balance
-
-```liquid
+```liquid Loyalty card balance snippet lines
 {{member.loyalty_card.balance}}
 ```
