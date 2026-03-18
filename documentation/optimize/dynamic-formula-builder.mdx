@@ -1,0 +1,377 @@
+---
+title: Dynamic formula builder
+description: Reference for dynamic discount and loyalty point formulas using operands and operators
+keywords: ['dynamic', 'formula', 'builder', 'discount', 'points']
+tag: "NEW"
+---
+
+The dynamic formula builder defines how discount or loyalty point values are calculated.
+
+Instead of using a static value for discounts or loyalty points, you can create formulas using mathematical and logical operators combined with metadata values. The final value is calculated dynamically during redemption.
+
+The formula builder requires a **fallback value**. The fallback value is used if the dynamic formula cannot be evaluated due to missing parameters.
+
+## Application scope
+
+Dynamic formulas can be used as follows.
+
+### Dynamic discount formulas
+
+The dynamic discount formula builder applies to:
+- Order discount  
+- Product discount  
+- Reward  
+
+Used in:
+- Coupon campaigns  
+- In-cart promotions  
+- Referral codes  
+
+### Dynamic points formulas
+
+The dynamic points formula builder applies to:
+- Fixed earning rules  
+- Proportional earning rules  
+
+Used when creating **loyalty programs**.
+
+## Formula builder
+
+Use the **Formula builder** to define formulas.
+
+<Steps>
+
+<Step title="Open the builder">
+
+Click the **Formula** button next to the discount value or points.
+
+</Step>
+
+<Step title="Build the formula">
+
+Build your formula by selecting an **operand** followed by an **operator**.
+
+Click **+** to add elements and **X** to remove them.
+
+</Step>
+
+<Step title="Review expression">
+
+To review your expression, choose **Expression output**.
+
+You can also edit the formula here or paste a formula prepared earlier.
+
+</Step>
+
+<Step title="Save">
+
+Click **Save** after defining the formula.
+
+</Step>
+
+</Steps>
+
+To edit an existing formula, click the **Formula** button again.
+
+To remove a saved formula, click the **—** button next to the Formula button.
+
+## Operand reference
+
+Operands represent the values used inside formulas.
+
+Example (paste the expression to the Expression output tab and switch to the Formula builder tab to see the result).
+
+### Data type
+
+You can use the following data type operands. In some contexts, only number is allowed.
+
+| Operand | Definition | Example |
+|---|---|---|
+| Number | Value is a Number. | `2` |
+| Text | Value is a String. | `"VIP"` |
+
+### Metadata operands
+
+You can use the following metadata operands.
+
+| Operand | Definition | Example |
+|---|---|---|
+| Order metadata | Order metadata attribute of type Number or String. | `ORDER_METADATA("day_of_week")` |
+| Voucher metadata | Voucher metadata attribute of type Number or String. Available in dynamic discount formulas only. | `REDEEMABLE_METADATA("active_on_calendar_month")` |
+| Customer metadata | Customer metadata attribute of type Number or String. | `CUSTOMER_METADATA("customer_life_time_value")` |
+| Redemption metadata | Redemption metadata attribute of type Number or String. Available in dynamic discount formulas only. | `REDEMPTION_METADATA("store_list")` |
+| Publication metadata | Publication metadata attribute of type Number or String. Available in dynamic discount formulas only. | `PUBLICATION_METADATA("year")` |
+| Promotion tier metadata | Promotion tier metadata attribute of type Number or String. Available in dynamic discount formulas only (promotion). | `REDEEMABLE_METADATA("membership_duration")` |
+
+<Note>
+
+Depending on the context, the formula builder may accept either metadata with a number type only, or any type (string, boolean, array, and so on).
+
+</Note>
+
+### Order item operands
+
+You can use the following operands in dynamic discount formulas only (product discounts).
+
+| Operand | Definition | Example |
+|---|---|---|
+| Order item price | Returns order item price. | `ORDER_ITEM_PRICE` |
+| Order item amount | Returns order item amount before stacked discounts. | `ORDER_ITEM_AMOUNT` |
+| Order item subtotal | Returns order item subtotal used for stacked discounts. | `ORDER_ITEM_SUBTOTAL` |
+| Order item units quantity | Returns order item quantity. | `ORDER_ITEM_UNITS_QUANTITY` |
+| Order item metadata | Returns order item metadata. | `ORDER_ITEM_METADATA("Size")` |
+| Order item product metadata | Returns product metadata. | `ORDER_ITEM_PRODUCT_METADATA("category")` |
+
+<Accordion title="Example: Order item operand">
+
+```
+(order item price) × 0.01 + 1
+```
+
+If the item price is **6.00**, the discount is **1.06**.  
+If the item price is **10.00**, the discount is **1.10**.
+
+</Accordion>
+
+### Cheapest order item operands
+
+You can use the following cheapest order item operands.
+
+| Operand | Definition | Example |
+|---|---|---|
+| Cheapest order item price | Returns the price of the cheapest line item in the order. | `CHEAPEST_ORDER_ITEM_PRICE` |
+| Cheapest order item amount | Returns the amount of the cheapest line items in the order; for stacked discounts, returns the original amount without any modifications due to other discounts. | `CHEAPEST_ORDER_ITEM_AMOUNT` |
+| Cheapest order item subtotal | Returns the subtotal of the cheapest line items in the order; for stacked discounts, each additional discount is based on the result obtained after calculating the previous discount. | `CHEAPEST_ORDER_ITEM_SUBTOTAL` |
+| Cheapest order item units quantity | Returns total units of the cheapest order line items. | `CHEAPEST_ORDER_ITEM_UNITS_QUANTITY` |
+| Cheapest order item metadata | Returns the cheapest order item metadata of type Number or String. | `CHEAPEST_ORDER_ITEM_METADATA("Size")` |
+| Cheapest order item product metadata | Returns the cheapest order item product metadata. | `CHEAPEST_ORDER_ITEM_PRODUCT_METADATA("category")` |
+
+<Accordion title="How the cheapest order item is determined">
+
+The cheapest order item is determined as follows when there are several items with the same price.
+
+1. First, the formula tries to find the order item with the cheapest price. If there is one item, the formula returns this item. Otherwise, it proceeds to step 2.
+
+2. If there are **n items that have the same cheapest price**, from this n, the formula finds the items with the lowest subtotal. If there is only one item, the formula returns this item. Otherwise, if there are many items, it proceeds to step 3.
+
+3. Finally, it returns the **first item from the list of the cheapest items with the lowest subtotal**.
+
+</Accordion>
+
+### Most expensive order item operands
+
+You can use the following most expensive order item operands.
+
+| Operand | Definition | Example |
+|---|---|---|
+| Most expensive order item price | Returns the price of the most expensive line item in the order. | `MOST_EXPENSIVE_ORDER_ITEM_PRICE` |
+| Most expensive order item amount | Returns the amount of the most expensive line items in the order; for stacked discounts, returns the original amount without any modifications due to discounts. | `MOST_EXPENSIVE_ORDER_ITEM_AMOUNT` |
+| Most expensive order item subtotal | Returns the subtotal of the most expensive line items in the order; for stacked discounts, each additional discount is based on the result obtained after calculating the previous discount. | `MOST_EXPENSIVE_ORDER_ITEM_SUBTOTAL` |
+| Most expensive order item units quantity | Returns the total units of the most expensive order line items. | `MOST_EXPENSIVE_ORDER_ITEM_UNITS_QUANTITY` |
+| Most expensive order item metadata | Returns the most expensive order item metadata of type Number or String. | `MOST_EXPENSIVE_ORDER_ITEM_METADATA("Size")` |
+| Most expensive order item product metadata | Returns the most expensive order item product metadata. | `MOST_EXPENSIVE_ORDER_ITEM_PRODUCT_METADATA("category")` |
+
+<Accordion title="How the most expensive order item is determined">
+
+The most expensive order item is determined as follows when there are several items with the same price.
+
+1. First, the formula tries to find the order item with the most expensive price. If there is one item, the formula returns this item. Otherwise, it proceeds to step 2.
+
+2. If there are **n items that have the same most expensive price**, from this n, the formula finds the items with the lowest subtotal. If there is only one item, the formula returns this item. Otherwise, if there are many items, it proceeds to step 3.
+
+3. Finally, it returns the **first item from the list of the most expensive items with the lowest subtotal**.
+
+</Accordion>
+
+### Order-level operands
+
+You can use the following order-level operands.
+
+| Operand | Definition | Example |
+|---|---|---|
+| Order amount | Returns order total value. | `ORDER_AMOUNT` |
+| Order items quantity | Returns item count. | `ORDER_ITEMS_QUANTITY` |
+| Order units quantity | Returns the sum of the units ordered. | `ORDER_UNITS_QUANTITY` |
+
+### Voucher operands
+
+You can use the following voucher operands. These operands are unavailable for earning rules.
+
+| Operand | Definition | Example |
+|---|---|---|
+| Voucher redemption quantity | Returns voucher redemption limit. | `VOUCHER_REDEMPTION_QUANTITY` |
+| Voucher redeemed quantity | Returns number of redemptions. | `VOUCHER_REDEEMED_QUANTITY` |
+| Voucher publish count | Returns the number of times the voucher was published (0 or 1). | `VOUCHER_PUBLISH_COUNT` |
+| Voucher start date | Returns voucher start date. | `VOUCHER_START_DATE` |
+| Voucher expiration date | Returns voucher expiration date. | `VOUCHER_EXPIRATION_DATE` |
+
+### Promotion tier operands
+
+You can use the following promotion tier operands.
+
+| Operand | Definition | Example |
+|---|---|---|
+| Promotion tier start date | Returns promotion tier start date. | `PROMOTION_TIER_START_DATE` |
+| Promotion tier expiration date | Returns promotion tier expiration date. | `PROMOTION_TIER_EXPIRATION_DATE` |
+
+### Customer operands
+
+You can use the following customer operand. It can be combined only with date operands and operators.
+
+| Operand | Definition | Example |
+|---|---|---|
+| Customer birthdate | Returns the customer's birthdate. | `CUSTOMER_BIRTHDATE` |
+
+### Date operands
+
+You can use the following date operands.
+
+| Operand | Definition | Example |
+|---|---|---|
+| Day of month | Returns number of day of month in a date. | `DAY_OF_MONTH(CUSTOMER_BIRTHDATE)` |
+| Month | Returns number of month in a date. | `MONTH(TODAY)` |
+| Year | Returns year in a date. | `YEAR(CUSTOMER_BIRTHDATE)` |
+| Today | Returns today's date. | `TODAY` |
+| Now | Returns current date and time. | `NOW` |
+| Date | Returns chosen date value. | `DATE("2023-08-17")` |
+| Date time | Returns chosen date and time. | `DATE_TIME("2023-08-17T14:05:00.000Z")` |
+
+## Expression functions
+
+You can use the following formula operators to create complex expressions.
+
+| Operand | Definition | Example |
+|---|---|---|
+| Brackets | Groups expression elements together (adds parentheses). | `(10 - ORDER_METADATA("number_of_store_visits"))` |
+| Min | Lowest value in a range. | `MIN(PUBLICATION_METADATA("year"); CUSTOMER_METADATA("customer_life_time_value"))` |
+| Max | Highest value in a range. | `MAX(PUBLICATION_METADATA("year"); CUSTOMER_METADATA("customer_life_time_value"))` |
+| Power | A number raised to a power. | `POW(ORDER_METADATA("number_of_store_visits");2)` |
+| If | Value based on a logical expression. | `IF(ORDER_METADATA("number_of_store_visits") > 5;10;3)` |
+| Default to | Returns the first non-null value of range. | `DEFAULT_TO(REDEMPTION_METADATA("store_list") / 2;5)` |
+| Round | Round a number to a specified number of digits. Positive precision refers to a decimal place indicator. Negative precision indicates an integer place indicator. | Assume the customer lifetime value is 75.55.<br/>`ROUND(CUSTOMER_METADATA("customer_life_time_value");1)`<br/>= 75.60 (precision value equal to 1)<br/>`ROUND(CUSTOMER_METADATA("customer_life_time_value");0)`<br/>= 76.00 (precision value equal to 0)<br/>`ROUND(CUSTOMER_METADATA("customer_life_time_value");-1)`<br/>= 80.00 (precision value equal to -1) |
+| Floor | Round down to a specified number of digits. Positive precision refers to a decimal place indicator. Negative precision indicates an integer place indicator. | Assume the customer lifetime value is 75.55.<br/>`FLOOR(CUSTOMER_METADATA("customer_life_time_value");1)` <br/><br/>= 75.50 (precision value equal to 1)<br/><br/>`FLOOR(CUSTOMER_METADATA("customer_life_time_value");0)` <br/><br/>= 75.00 (precision value equal to 0)<br/><br/>`FLOOR(CUSTOMER_METADATA("customer_life_time_value");-1)` <br/><br/>= 70.00 (precision value equal to -1) |
+| Ceil | Round up to a specified number of digits. Positive precision refers to a decimal place indicator. Negative precision indicates an integer place indicator. | Assume the customer lifetime value is 74.44.<br/>`CEIL(CUSTOMER_METADATA("customer_life_time_value");1)` <br/><br/>= 74.50 (precision value equal to 1)<br/><br/>`CEIL(CUSTOMER_METADATA("customer_life_time_value");0)` <br/><br/>= 75.00 (precision value equal to 0)<br/><br/>`CEIL(CUSTOMER_METADATA("customer_life_time_value");-1)` <br/><br/>= 80.00 (precision value equal to -1) |
+
+## Operator reference
+
+You can use the following operators depending on the data type.
+
+### Number operators
+
+You can use the following operators with the number type.
+
+| Operator | Description | Example |
+|---|---|---|
+| Add (+) | Adds numbers or expressions. | `A + B` |
+| Subtract (-) | Subtracts values. | `A - B` |
+| Multiply (x) | Multiplies numbers. | `ORDER_METADATA("day_of_week") x 2` |
+| Divide (÷) | Divides values. | `CUSTOMER_METADATA("customer_months_active") ÷ 8` |
+| Modulo (%) | Returns the  remainder after division, meaning it returns the amount "left over" after dividing one number or expression by another. | `A % B` |
+| Greater than | Logical operator returns the **Value if true** if the value on the left is greater than the value on the right. Otherwise, it returns the **Value if false**. | `A > B` |
+| Less than | Logical operator returns the Logical operator returns the **Value if true** if the value on the left is less than the value on the right. Otherwise, it returns the **Value if false**. | `A < B` |
+| Equal to | Logical operator returns the  **Value if true** if the value on the left is equal to the value on the right. Otherwise, it returns the **Value if false**. | `A = B` |
+| In array | Logical operator returns the value true if the value on the left is one of the values provided on the right. Otherwise, it returns false. | `IN_ARRAY` |
+| Not in array | Logical operator returns the value true if the value on the left is NOT one of the values provided on the right. Otherwise, it returns false. | `NOT_IN_ARRAY` |
+
+### String operators
+
+You can use the following operators with the string type.
+
+| Operator | Description | Example |
+|---|---|---|
+| Is | True if strings are equal. | `is "VIP"` |
+| Is not | True if strings are NOT equal. | `isNot "Beginner"` |
+| Contains | Checks substring presence. | `contains "California"` |
+| Starts with | Checks prefix match. | `startsWith "store_"` |
+| Ends with | Checks suffix match. | `endsWith "_sms"` |
+| In array | Checks if value is from a set. | `IN_ARRAY "EU,EMEA"` |
+| Not in array | Checks if value is NOT from a set. | `NOT_IN_ARRAY "EU,EMEA"` |
+
+### Date operators
+
+You can use the following operators with the date type.
+
+| Operator | Description | Example |
+|---|---|---|
+| Days since | Days between today and a date. | `DAYS_SINCE(date)` |
+| Months since | Months between today and a date. | `MONTHS_SINCE(date)` |
+| Years since | Years between today and a date. | `YEARS_SINCE(date)` |
+| Days until | Days until future date. | `DAYS_UNTIL(date)` |
+| Months until | Months until future date. | `MONTHS_UNTIL(date)` |
+| Date is | Date equality check. | `DATE_IS` |
+| Date is not | Date inequality check. | `DATE_IS_NOT` |
+| Is after | Date comparison. | `IS_AFTER` |
+| Is before | Date comparison. | `IS_BEFORE` |
+
+## Complex expression operators
+
+Complex expressions combine multiple logical conditions.
+
+### AND operator
+
+All conditions must evaluate to **true**.
+
+<Accordion title="Example: AND operator">
+
+Give a customer **20% off** when:
+- they have more than **10 store visits**
+- AND the purchase occurs on **Friday**
+
+Otherwise they receive **3% discount**.
+
+``` wrap
+IF(CUSTOMER_METADATA("number_of_store_visits") > 10 AND ORDER_METADATA("day_of_week") = 5;20;3)
+```
+
+</Accordion>
+
+### OR operator
+
+At least **one condition** must evaluate to **true**.
+
+<Accordion title="Example: OR operator">
+
+Example use case:
+
+Give a customer **20% off** when:
+- they have more than **10 store visits**
+- OR the purchase occurs on **Friday**
+
+Otherwise they receive **3% discount**.
+
+``` wrap
+IF(CUSTOMER_METADATA("number_of_store_visits") > 10 OR ORDER_METADATA("day_of_week") = 5;20;3)
+```
+
+</Accordion>
+
+## Nested formulas
+
+Nested formulas allow expressions inside logical conditions.
+
+If a condition is true, the logical expression will follow the nested path defined inside the condition. If the condition is false, the logical expression will follow the other path.
+
+``` wrap
+IF(ORDER_ITEMS_QUANTITY > 4;IF(ORDER_AMOUNT > 200;25;15);10)
+```
+
+Example logic:
+
+- more than 4 items AND order > 200 → **25% discount**
+- more than 4 items only → **15% discount**
+- otherwise → **10% discount**
+
+## Switch function
+
+Switch expressions allow different values depending on a factor.
+
+Example: discount based on store location.
+
+``` wrap
+SWITCH(ORDER_METADATA("store_city");SWITCH_CASE("Boston";10) SWITCH_CASE("New York";15);5)
+```
+
+Example:
+- Boston customers get **10% discount**
+- New York customers get **15% discount**
+- Customers from other locations get **5% discount**
