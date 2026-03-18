@@ -5,6 +5,48 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+
+## 2026-03-11
+
+Refreshed `braze-custom-attributes.mdx`.
+
+## 2026-03-10
+
+Published:
+- `areas-and-stores-scenario.mdx`
+- `areas-and-stores.mdx`
+- `manage-areas-and-stores.mdx`
+
+## 2026-03-09
+
+Update descriptions in `validation-rules-reference` for new weekly redemption limits.
+
+## 2026-03-05
+
+Updated `send-data-from-braze.mdx`.
+
+## 2026-03-03
+
+Updated `stream-events-to-braze.mdx` in view of the new messaging.
+
+## 2026-02-27
+
+Changed navigation and content of Braze articles:
+- `braze-overview`
+- `stream-events-to-braze`
+- `sync-braze-customers-with-voucherify`
+- `braze-connected-content`
+- `fetch-data-with-braze-connected-content`
+- `braze-custom-attributes`
+- `braze-promotion-codes`
+
+## 2025-12-24
+
+Add three articles under Orchestration:
+- `code-publication`
+- `manage-categories`
+- `stacking-rules`
+
 ## 2025-12-23
 
 Added info to `bloomreach-engagement.mdx` about API limits as per internal request.

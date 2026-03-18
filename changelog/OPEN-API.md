@@ -4,6 +4,23 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-03-09
+
+Update descriptions of validation rule schemas for new weekly redemption limits.
+
+## 2026-02-23
+
+- Add **PUT** `v1/product-collections/{productCollectionId}` endpoint
+
+## 2026-02-10
+
+- Removed the info about basic/advanced validation rules from the descriptions
+- Fixed cURL examples in the POST Create validation rule assignment endpoint
+
+## 2026-02-09
+
+Add `expand=json_template` query param to GET `/v1/templates/campaigns/{campaignTemplateId}`. Removed the param from SDK preparation script.
+
 ## 2026-01-23
 
 - Add `filters` object to query params for GET `v1/vouchers`.
