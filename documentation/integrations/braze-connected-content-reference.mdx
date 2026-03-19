@@ -44,6 +44,7 @@ This Connected Content script calls Voucherify API to publish a unique code and 
 Use this snippet to distribute codes in the following scenarios:
 - Abandoned cart recovery
 - Braze user performs a custom event – reward for an achievement
+- Invite referrers to a referral program
 - Sending the same through multiple channels (for example, email and push)
 
 ```liquid Publish and send unique code lines wrap
@@ -68,21 +69,21 @@ Use this snippet to distribute codes in the following scenarios:
  %}
 ```
 
-<Accordion title="Display different voucher details">
+<Accordion title="Display different voucher details: Snippets">
 
-  To display the published code in your message, use the following snippet.
+  To display the published code in your message, use the following snippet:
 
   ```liquid Published code snippet lines
   {{publication.voucher.code}}
   ```
 
-  If you publish a gift card, you can additionally display its value with the following snippet.
+  If you publish a gift card, you can additionally display its value:
 
   ```liquid Display gift card balance lines
   {{publication.voucher.gift.balance}}
   ```
 
-  If you publish a loyalty card when a customer fulfils an earning rule and receives a card with a loyalty card balance, use the following snippet.
+  If you publish a loyalty card when a customer fulfils an earning rule and receives a card with a loyalty card balance, use the following snippet:
 
   ```liquid Display loyalty card balance lines
   {{publication.voucher.loyalty_card.balance}}
@@ -90,48 +91,13 @@ Use this snippet to distribute codes in the following scenarios:
 
   If the points have an expiration date, use:
 
-
   ```liquid Display loyalty card point expiration date lines
   {{publication.voucher.loyalty_card.next_expiration_date}}
   ```
 
 </Accordion>
 
-Read the documentation of [POST Create publication](/api-reference/publications/create-publication) endpoint to learn more about the endpoint response.
-
-## Invite new referrers
-
-This Connected Content script publishes and sends unique referral codes to selected Braze users. Each user receives only one referral code to share with other users and gain new referrals.
-
-```liquid Invite customers to referral program lines wrap
-{% assign braze_campaign_id = {{campaign.${api_id}}} %}
-{% assign customer_id = {{${user_id}}} %}
-{% assign source_id = braze_campaign_id | append: customer_id %}
-{% assign voucherify_campaign_id = "camp_XXXXXXXXXXXXXXXXXXXXXXXX" %}
-{% assign cache_id = source_id %}
-
-{% connected_content 
-   https://api.voucherify.io/v1/publications?cache_id={{cache_id}}
-   :method post
-   :headers {
-  	"X-App-Id": "12345678-90QW-ERTY-UIOP-asdfghjklzxc",
-    "X-App-Token": "MNBVCXZL-KJHG-FDSA-POIU-ytrewq098765"
-   }
-   :body campaign={{voucherify_campaign_id}}&customer={{customer_id}}&channel=Braze&source_id={{source_id}}
-   :content_type application/json
-   :cache_max_age
-   :retry
-   :save publication
- %}
-```
-
-### Display the published referral code
-
-To display the published referral code in your message, use the following snippet. This is the same snippet as for regular code publication.
-
-```liquid Published referral code snippet lines
-{{publication.voucher.code}}
-```
+Read the documentation of [POST Create publication](/api-reference/publications/create-publication) endpoint to learn more about the response data.
 
 ## Fetch loyalty card balance
 
@@ -168,10 +134,36 @@ This Connected Content script fetches the current loyalty balance from a loyalty
  %}
 ```
 
-### Display the loyalty card balance snippet
+<Accordion title="Display loyalty card details: Snippets">
 
-To display the published loyalty point balance in your message, use the following snippet.
+Use the following snippets to display loyalty card details.
+
+Remind your customers their loyalty card code:
+
+```liquid Loyalty card code snippet lines
+{{member.code}}
+```
+
+Display the current balance the customer has:
 
 ```liquid Loyalty card balance snippet lines
 {{member.loyalty_card.balance}}
 ```
+
+If there are points that are about to expire, create the sense of urgency to spend them. Display the number of expiring points and the date when they will expire:
+
+```liquid Display loyalty card expiring points with date lines
+{{member.loyalty_card.next_expiration_points}}
+{{member.loyalty_card.next_expiration_date}}
+```
+
+If you use pending points, display the number of points that are in the pending state:
+
+```liquid Display loyalty card point pending points lines
+{{member.loyalty_card.pending_points}}
+```
+
+</Accordion>
+
+Read the documentation of [GET Member](/api-reference/loyalties/get-member) endpoint to learn more about the response data.
+
