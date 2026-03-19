@@ -5,6 +5,17 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-03-19
+
+Published:
+- `geofencing.mdx`
+- `orchestrate-overview.mdx`
+
+Updated `voucherify-user-guide.mdx`
+
+## 2026-03-18
+
+Published `campaign-maintenance.mdx`.
 
 ## 2026-03-11
 
