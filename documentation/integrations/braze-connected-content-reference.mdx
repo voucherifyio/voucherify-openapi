@@ -99,6 +99,51 @@ Use this snippet to distribute codes in the following scenarios:
 
 Read the documentation of [POST Create publication](/api-reference/publications/create-publication) endpoint to learn more about the response data.
 
+## Generate and publish a discount coupon
+
+Generate and publish a promo code with a custom prefix followed by a custom attribute, e.g., customer name, phone number, email address and more.
+
+Use this in the following scenarios:
+- Scenario TBD!
+
+```liquid
+{% assign campaign_id = {{campaign.${dispatch_id}}} %}
+{% assign customer_id = {{${user_id}}} %}
+{% assign phoneNumber = {{${phone_number}}} %}
+{% assign source_id = campaign_id | append: customer_id %}
+{% assign voucherify_campaign_id = "Voucherify’s Campaign ID" %}
+{% assign prefix = "Your-Prefix" %}
+
+{% connected_content
+	{{api_endpoint}}/v1/campaigns/{{voucherify_campaign_id}}/vouchers/{{prefix}}{{phoneNumber}}?c={{source_id}}
+	:method post
+	:headers {
+    	"X-App-Id": "APP ID",
+    	"X-App-Token": "APP_TOKEN"
+	}
+	
+	:content_type application/json
+	:cache_max_age 
+	:save voucher_created
+	:retry
+%} 
+
+{% connected_content
+	{{api_endpoint}}/v1/publications?c={{source_id}}
+	:method post
+	:headers {
+    	"X-App-Id": "APP ID",
+    	"X-App-Token": "APP_TOKEN"
+	}
+
+	:body voucher={{prefix}}{{phoneNumber}}&customer={{customer_id}}&channel=Braze&source_id={{source_id}}
+	:content_type application/json
+	:cache_max_age 
+	:save publication
+	:retry
+%}
+```
+
 ## Fetch loyalty card balance
 
 <Info>
@@ -167,3 +212,244 @@ If you use pending points, display the number of points that are in the pending 
 
 Read the documentation of [GET Member](/api-reference/loyalties/get-member) endpoint to learn more about the response data.
 
+## Add loyalty points with a custom event earning rule
+
+There are a couple of ways to trigger loyalty points. This approach gives the most flexibility to the marketing team.
+
+Your marketing team can create an earning rule that will reward a customer after the customer is associated with an event. You can send the event when the message is sent.
+
+Once the event is sent, depending on the definition of the earning rule, different customers can get a different number of points depending on their customer segment.
+
+Use this in the following scenarios:
+- Scenario TBD!
+
+```liquid
+{% assign campaign_id = {{campaign.${dispatch_id}}} %}
+{% assign customer_id = {{${user_id}}} %}
+{% assign source_id = campaign_id | append: customer_id %}
+
+{% capture postBody %}
+{ 
+    "event":"Event Name",
+    "customer": {
+        "source_id": "{{customer_id}}"
+    }
+}
+{% endcapture %}
+
+
+{% connected_content
+	{{api_endpoint}}/v1/events?c={{source_id}}
+	:method post
+	:headers {
+    	"X-App-Id": "VOUCHERIFY-APP-ID",
+    	"X-App-Token": "VOUCHERIFY-APP-TOKEN"
+	}
+	:body {{postBody}}
+	:content_type application/json
+	:cache_max_age
+	:retry
+%}
+```
+
+## Add credits to a gift card
+
+Add additional credits to a gift card. The gift card code should be stored in the customer’s custom attributes in Braze.
+
+Use this in the following scenarios:
+- Scenario TBD!
+
+```liquid
+{% assign campaign_id = {{campaign.${dispatch_id}}} %}
+{% assign customer_id = {{${user_id}}} %}
+{% assign source_id = campaign_id | append: customer_id %}
+
+{% capture postBody %}
+{ 
+    "amount":1000
+}
+{% endcapture %}
+
+{% connected_content
+	{{api_endpoint}}/v1/vouchers/{{custom_attribute.${gift_card_from_attribute}}}/balance?c={{source_id}}
+	:method post
+
+	:headers {
+    	"X-App-Id": "VOUCHERIFY-APP-ID",
+    	"X-App-Token": "VOUCHERIFY-APP-TOKEN"
+	}
+	:body {{postBody}}
+	:content_type application/json
+	:no_cache
+	:retry
+%}
+```
+
+## List unused coupons
+
+List all unused promo codes available to a selected Braze user.
+
+Use this in the following scenarios:
+- Scenario TBD!
+
+```liquid
+{% assign campaign_id = {{campaign.${dispatch_id}}} %}
+{% assign customer_id = {{${user_id}}} %}
+{% assign source_id = campaign_id | append: customer_id %}
+{% assign voucherify_campaign_id = "{{voucherify_campaign_id}}" %}
+
+{% connected_content
+	{{api_endpoint}}/v1/vouchers?customer={{customer_id}}&c={{source_id}}
+	:method GET
+	:headers {
+    	"X-App-Id": "VOUCHERIFY-APP-ID",
+    	"X-App-Token": "VOUCHERIFY-APP-TOKEN"
+	}
+	:save voucher_list
+
+{% comment %}To display the results properly, you need to build a table or an array view.{endcomment %}
+
+{% for voucher in voucher_list.vouchers %}
+{% if voucher.redemption.redeemed_quantity != 0 %}
+Code: {{voucher.code}}
+
+{% endif %}
+
+{% endfor %}
+```
+
+## List unused promotion tiers
+
+List all unused promotion tiers available to a selected Braze user.
+
+To display the results properly, you need to build a table or an array view.
+
+Use this in the following scenarios:
+- Scenario TBD!
+
+```liquid
+{% assign campaign_id = {{campaign.${dispatch_id}}} %}
+{% assign customer_id = {{${user_id}}} %}
+{% assign source_id = campaign_id | append: customer_id %}
+
+{% capture postBody %}
+{
+    "customer": {
+        "source_id": "{{customer_id}}"
+    }
+}
+{% endcapture %}
+
+{% connected_content
+	{{api_endpoint}}/v1/promotions/validation?audienceRulesOnly=true&c={{source_id}}
+	:method post
+	:headers {
+    	"X-App-Id": "VOUCHERIFY-APP-ID",
+    	"X-App-Token": "VOUCHERIFY-APP-TOKEN"
+	}
+	:body {{postBody}}
+	:content_type application/json
+	:cache_max_age
+	:save promotion_list
+	:retry
+%}
+
+
+{% if promotion_list.valid == true %}
+{% for promotion in promotion_list.promotions %}
+Promotion Name: {{promotion.name}}
+{% endfor %}
+{% else %}
+No promotions.
+{% endif %}
+```
+
+## List all codes and publish a new one if there are none
+
+List all promo codes available to a selected Braze user. If there are no available codes or the latest was redeemed, then assign a new promo code from the same campaign.
+
+Use this in the following scenarios:
+- Scenario TBD!
+
+Retrieve the vouchers from the campaign assigned to a customer (lines 1-14).
+
+Verify if the customer has a voucher from the campaign or if a voucher was already redeemed (lines 16-34).
+
+```liquid List codes lines wrap highlight={1-14,16-34}
+{% assign campaign_id = {{campaign.${dispatch_id}}} %}
+{% assign customer_id = {{${user_id}}} %}
+{% assign source_id = campaign_id | append: customer_id %}
+{% assign voucherify_campaign_id = "{{voucherify_campaign_id}}" %}
+
+{% connected_content
+	{{api_endpoint}}/v1/vouchers?customer={{customer_id}}&campaign_id={{voucherify_campaign_id}}&c={{source_id}}
+	:method GET
+	:headers {
+    	"X-App-Id": "VOUCHERIFY-APP-ID",
+    	"X-App-Token": "VOUCHERIFY-APP-TOKEN"
+	}
+	:save voucher_list
+%} 
+
+{% if (voucher_list.total) == 0 or (voucher_list.vouchers[0].redemption.redeemed_quantity) != 0%}
+{% connected_content
+	{{api_endpoint}}/v1/publications?c={{source_id}}
+	:method post
+	:headers {
+    	"X-App-Id": "VOUCHERIFY-APP-ID",
+    	"X-App-Token": "VOUCHERIFY-APP-TOKEN"
+	}
+
+	:body campaign={{voucherify_campaign_id}}&customer={{customer_id}}&channel=Braze&source_id={{source_id}}
+	:content_type application/json
+	:save new_voucher
+	:cache_max_age
+	:retry
+%} 
+{% assign code = new_voucher.voucher.code}} %}
+{% else %}
+{% assign code = {{voucher_list.vouchers[0].code}} %}
+{% endif %}
+```
+
+Place this snippet where you would like to display the promo code.
+
+```liquid
+Here is your code: {{code}}
+```
+
+## Resend codes
+
+First, assign a promo code/gift card/referral code to a Braze user. Save the code and expiration date as custom attributes. Build a customer segment based on the expiration date and target the message at this segment. If the incentive was already redeemed, the message will be aborted.
+
+Use this in the following scenarios:
+- Scenario TBD!
+
+```liquid
+{% assign campaign_id = {{campaign.${dispatch_id}}} %}
+{% assign customer_id = {{${user_id}}} %}
+{% assign source_id = campaign_id | append: customer_id %}
+
+{% connected_content
+	{{api_endpoint}}/vouchers/{{custom_attribute.${incentive_name}&c={{source_id}}
+	:method GET
+	:headers {
+    	"X-App-Id": "VOUCHERIFY-APP-ID",
+    	"X-App-Token": "VOUCHERIFY-APP-TOKEN"
+	}
+	:save {{incentive}}
+  }}}
+
+{% if incentive.__http_status_code__ != 200 %}
+  Voucher does not exist.
+  {% comment %}You can abort sending in this case{% endcomment %}
+{% endif %}
+
+{% if incentive.redemption.redeemed_quantity == 0 %}
+You can still use the voucher {{incentive.code}} up until {{incentive.expiration_date}}
+{% else %}
+
+Your voucher {{incentive.code}} has been used.
+
+{% endif %}
+```
