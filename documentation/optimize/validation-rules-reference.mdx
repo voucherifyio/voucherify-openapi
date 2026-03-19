@@ -144,18 +144,69 @@ You can add subrules such as:
 
 ## Prices and quantities
 
-These rules define validation based on order volume and pricing:
+These rules define validation based on order value and pricing.
 
 <Note>
-**Total amount before discounts** checks the cart value before any discounts are calculated, while **Initial amount** checks the cart value before discounts and before other campaign adjustments such as stacked promotions.
+In stacking scenarios, some rules are evaluated against the **original cart value**, while others use the **current cart value at the moment of validation**. This difference can affect whether a promotion is applicable depending on the order in which incentives are applied.
 </Note>
 
-- **Total amount before discounts**: Required total cart value before discounts are applied.
-- **Total amount after discounts**: Required total cart value after discounts are applied. If applying the campaign discount reduces the order total below the configured threshold, the validation fails and the discount is not applied.
-- **Initial amount**: Cart value before discounts are applied.
-- **Items quantity**: Required number of products in the cart.
-- **Price of each item**: Required price for every product in the cart.
-- **Price of any item**: Required price for at least one product in the cart.
+### Core concepts
+
+- **Initial amount**: The original cart value before any discounts or other campaign effects are applied. This value remains **constant** throughout stacking.
+
+- **Total amount before discounts**: The cart value at the moment a given incentive is validated, before applying the discount from the current incentive. This value may change depending on previously applied incentives.
+
+### Quick comparison
+
+| Rule                         | What it checks                          | Changes during stacking | When to use |
+|-----------------------------|------------------------------------------|--------------------------|-------------|
+| **Initial amount**           | Original cart value                      | ❌ No                   | Ignore stacking order |
+| **Total amount before discounts** | Cart value at validation time          | ✅ Yes                  | Depend on current cart value |
+| **Total amount after discounts**  | Cart value after applying discount     | ✅ Yes                  | Enforce minimum after discount |
+
+<Warning>
+**Total amount before discounts** depends on stacking order. If earlier incentives reduce the cart value, this rule may fail even if the original cart value meets the requirement.
+</Warning>
+
+### Available rules
+
+- **Total amount before discounts**: Requires the cart value (at validation time, before applying the current incentive) to meet a specified threshold.
+
+- **Total amount after discounts**: Requires the cart value after applying the current incentive to meet a specified threshold. If applying the discount reduces the order total below the configured threshold, validation fails and the discount is not applied.
+
+- **Initial amount**: Requires the original cart value (before any discounts or stacking adjustments) to meet a specified threshold.
+
+- **Items quantity**: Requires a minimum or maximum number of products in the cart.
+
+- **Price of each item**: Requires every product in the cart to meet a specified price condition.
+
+- **Price of any item**: Requires at least one product in the cart to meet a specified price condition.
+
+### Example: stacking impact
+
+A cart has an initial value of **10.50**.
+
+A coupon has the following rules:
+- **Total amount before discounts > 10**
+- **Initial amount < 11**
+
+A gift card reduces the cart value by **1.00**.
+
+**Scenario 1: Coupon applied first**
+- Cart at validation: **10.50**
+- Both rules pass → coupon is applicable
+
+**Scenario 2: Gift card applied first**
+- Cart after gift card: **9.50**
+- Coupon validation sees:
+  - Initial amount = **10.50** ✅
+  - Total amount before discounts = **9.50** ❌
+- Coupon is **not applicable**
+
+<Info>
+Use **Initial amount** when validation should be independent of stacking order.  
+Use **Total amount before discounts** when validation should depend on the cart value at the moment the incentive is applied.
+</Info>
 
 ## Budget constraints
 
