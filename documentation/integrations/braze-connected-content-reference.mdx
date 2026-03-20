@@ -73,26 +73,26 @@ Use this snippet to distribute codes in the following scenarios:
 
   To display the published code in your message, use the following snippet:
 
-  ```liquid Published code snippet lines
+  ```liquid Published code snippet
   {{publication.voucher.code}}
   ```
 
   If you publish a gift card, you can additionally display its value:
 
-  ```liquid Display gift card balance lines
+  ```liquid Display gift card balance
   {{publication.voucher.gift.balance}}
   ```
 
   If you publish a loyalty card when a customer fulfils an earning rule and receives a card with a loyalty card balance, use the following snippet:
 
-  ```liquid Display loyalty card balance lines
+  ```liquid Display loyalty card balance
   {{publication.voucher.loyalty_card.balance}}
   ```
 
   If the points have an expiration date, use:
 
-  ```liquid Display loyalty card point expiration date lines
-  {{publication.voucher.loyalty_card.next_expiration_date}}
+  ```liquid Display loyalty card point expiration date
+  {{publication.voucher.loyalty_card.next_expiration_date }}
   ```
 
 </Accordion>
@@ -149,13 +149,13 @@ Use this snippet to distribute personalized codes in the following scenarios:
 
   To display the generated and published code in your message, use the following snippet:
 
-  ```liquid Published code snippet lines
+  ```liquid Published code snippet
   {{publication.voucher.code}}
   ```
 
   If you need to confirm the code prefix in the message:
 
-  ```liquid Display code with prefix lines
+  ```liquid Display code with prefix
   Your personal code: {{publication.voucher.code}}
   ```
 
@@ -204,26 +204,26 @@ Use the following snippets to display loyalty card details.
 
 Remind your customers their loyalty card code:
 
-```liquid Loyalty card code snippet lines
+```liquid Loyalty card code snippet
 {{member.code}}
 ```
 
 Display the current balance the customer has:
 
-```liquid Loyalty card balance snippet lines
+```liquid Loyalty card balance snippet
 {{member.loyalty_card.balance}}
 ```
 
 If there are points that are about to expire, create the sense of urgency to spend them. Display the number of expiring points and the date when they will expire:
 
-```liquid Display loyalty card expiring points with date lines
+```liquid Display loyalty card expiring points with date
 {{member.loyalty_card.next_expiration_points}}
 {{member.loyalty_card.next_expiration_date}}
 ```
 
 If you use pending points, display the number of points that are in the pending state:
 
-```liquid Display loyalty card point pending points lines
+```liquid Display loyalty card point pending points
 {{member.loyalty_card.pending_points}}
 ```
 
@@ -282,7 +282,7 @@ Use this snippet to award loyalty points in the following scenarios:
 
 </Accordion>
 
-Read the documentation of [POST Track custom event](/api-reference/events/track-custom-event) endpoint to learn more about the request and response data.
+Read the documentation of [POST Track custom event](/api-reference/events/track-custom-event) endpoint to learn more about the request and response data. Also, read [Custom events](/prepare/custom-events) to learn more about defining them.
 
 ## Add credits to a gift card
 
@@ -296,7 +296,7 @@ Read the documentation of [POST Track custom event](/api-reference/events/track-
 
 </Info>
 
-This Connected Content script adds credits to a customer's gift card. The gift card code is retrieved from a Braze custom attribute, and the specified amount is added to the card balance.
+This Connected Content script adds credits to a customer's gift card (lines 5-9). The gift card code is retrieved from a Braze custom attribute, and the specified amount is added to the card balance.
 
 Use this snippet to top up gift cards in the following scenarios:
 - Birthday or anniversary bonus credits
@@ -304,7 +304,13 @@ Use this snippet to top up gift cards in the following scenarios:
 - Seasonal top-ups during holiday campaigns
 - Reward credits for completing a purchase or hitting a spending milestone
 
-```liquid Add credits to a gift card lines wrap
+<Tip>
+
+	This snippet can be also used for adding loyalty points to an existing loyalty card that's assigned as a custom attribute to a user profile in Braze.
+
+</Tip>
+
+```liquid Add credits to a gift card lines wrap highlight={5-9}
 {% assign campaign_id = {{campaign.${dispatch_id}}} %}
 {% assign customer_id = {{${user_id}}} %}
 {% assign source_id = campaign_id | append: customer_id %}
@@ -325,6 +331,7 @@ Use this snippet to top up gift cards in the following scenarios:
 	:body {{postBody}}
 	:content_type application/json
 	:no_cache
+	:save balances
 	:retry
 %}
 ```
@@ -335,13 +342,23 @@ Use this snippet to top up gift cards in the following scenarios:
 
   To notify the customer about the added credits:
 
-  ```liquid Display added amount lines
-  We've added credits to your gift card!
+  ```liquid Display added amount
+  We've added credits to your gift card: {{ balances.amount | divided_by: 100.0 }}
+
+  Your current balances is: {{ balances.balance | divided_by: 100.0 }}.
   ```
 
-  To display the current balance, combine this script with the [Fetch loyalty card balance](#fetch-loyalty-card-balance) pattern, replacing the loyalty endpoint with a voucher GET call.
+  If your country uses a comma (`,`) as a decimal separator, append `replace: '.', ','` to the snippet:
+
+	```liquid Display added amount
+	We've added credits to your gift card: {{ balances.amount | divided_by: 100.0 | replace: '.', ',' }}
+
+	Your current balances is: {{ balances.balance | divided_by: 100.0 | replace: '.', ',' }}.
+	```
 
 </Accordion>
+
+Read the documentation of [Adjust voucher balance](/api-reference/vouchers/adjust-voucher-balance) endpoint to learn more about the request and response data.
 
 ## List unused coupons
 
@@ -357,7 +374,6 @@ Use this snippet to remind customers about available codes in the following scen
 {% assign campaign_id = {{campaign.${dispatch_id}}} %}
 {% assign customer_id = {{${user_id}}} %}
 {% assign source_id = campaign_id | append: customer_id %}
-{% assign voucherify_campaign_id = "camp_XXXXXXXXXXXXXXXXXXXXXXXX" %}
 
 {% connected_content
 	https://api.voucherify.io/v1/vouchers?customer={{customer_id}}&c={{source_id}}
@@ -376,25 +392,32 @@ Code: {{voucher.code}}
 {% endfor %}
 ```
 
+<Tip>
+
+If you want to display unused codes from one campaign, add `{% assign voucherify_campaign_id = "camp_XXXXXXXXXXXXXXXXXXXXXXXX" %}`.
+
+Then, edit the URL to `https://api.voucherify.io/v1/vouchers?customer={{customer_id}}&campaign_id={{voucherify_campaign_id}}&c={{source_id}}` to display only the vouchers from this campaign.
+
+</Tip>
+
 <Accordion title="Display unused coupon details: Snippets">
 
   To display each unused code:
 
-  ```liquid Unused coupon code snippet lines
-  {{voucher.code}}
-  ```
-
   To show additional details like the discount value for each voucher:
 
-  ```liquid Display coupon with discount lines
+  ```liquid Display coupon with discount
   Code: {{voucher.code}} — Discount: {{voucher.discount.percent_off}}% off
   ```
 
   To display the expiration date for urgency:
 
-  ```liquid Display coupon expiration date lines
-  Code: {{voucher.code}} — Expires: {{voucher.expiration_date}}
+  ```liquid Display coupon expiration date
+  Code: {{voucher.code}} — Expires: {{voucher.expiration_date | date: "%d.%m.%Y" }}
   ```
+
+  You can further down format date and time
+  - 
 
 </Accordion>
 
@@ -450,19 +473,19 @@ No promotions available.
 
   To display each eligible promotion name:
 
-  ```liquid Promotion name snippet lines
+  ```liquid Promotion name snippet
   {{promotion.name}}
   ```
 
   To display the promotion banner (if configured):
 
-  ```liquid Display promotion banner lines
+  ```liquid Display promotion banner
   {{promotion.banner}}
   ```
 
   To show a fallback message when no promotions are available:
 
-  ```liquid Display no promotions fallback lines
+  ```liquid Display no promotions fallback
   {% if promotion_list.valid != true %}
   Check back soon for new offers!
   {% endif %}
@@ -522,7 +545,7 @@ The script retrieves the vouchers from the campaign assigned to a customer (line
 
   Place this snippet where you want to display the promo code in your message:
 
-  ```liquid Display promo code lines
+  ```liquid Display promo code
   Here is your code: {{code}}
   ```
 
@@ -580,19 +603,19 @@ Your voucher {{incentive.code}} has been used.
 
   To display the incentive code:
 
-  ```liquid Incentive code snippet lines
+  ```liquid Incentive code snippet
   {{incentive.code}}
   ```
 
   To show the expiration date to create urgency:
 
-  ```liquid Display expiration date lines
+  ```liquid Display expiration date
   Your code {{incentive.code}} expires on {{incentive.expiration_date}} — use it before it's gone!
   ```
 
   To display different messages based on redemption status:
 
-  ```liquid Conditional redemption status lines
+  ```liquid Conditional redemption status
   {% if incentive.redemption.redeemed_quantity == 0 %}
   You still have an unused code: {{incentive.code}}
   {% else %}
@@ -603,3 +626,15 @@ Your voucher {{incentive.code}} has been used.
 </Accordion>
 
 Read the documentation of [GET Get voucher](/api-reference/vouchers/get-voucher) endpoint to learn more about the response data.
+
+## Tips
+
+If you fetch date and time, for example `expiration_date`, you can format it according to your preference as follows
+
+`{{voucher.expiration_date | date: "%d.%m.%Y"}}`
+
+`{{voucher.expiration_date | date: "%d.%m.%Y o %H:%M"}}`
+
+`{{voucher.expiration_date | date: "%B %d, %Y"}}`
+
+`{{ voucher.expiration_date | time_zone: 'Europe/Warsaw' | date: "%d.%m.%Y %H:%M" }}`
