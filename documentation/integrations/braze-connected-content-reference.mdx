@@ -153,12 +153,6 @@ Use this snippet to distribute personalized codes in the following scenarios:
   {{publication.voucher.code}}
   ```
 
-  If you need to confirm the code prefix in the message:
-
-  ```liquid Display code with prefix
-  Your personal code: {{publication.voucher.code}}
-  ```
-
 </Accordion>
 
 Read the documentation of [POST Create publication](/api-reference/publications/create-publication) endpoint to learn more about the response data.
@@ -362,7 +356,7 @@ Read the documentation of [Adjust voucher balance](/api-reference/vouchers/adjus
 
 ## List unused coupons
 
-This Connected Content script retrieves all unredeemed promo codes assigned to a Braze user. It loops through the customer's vouchers and displays only the ones that haven't been used yet.
+This Connected Content script retrieves all unredeemed discount coupons assigned to a Braze user. It loops through the customer's vouchers and displays only the ones that haven't been used yet.
 
 Use this snippet to remind customers about available codes in the following scenarios:
 - Weekly or monthly "wallet" digest emails listing available coupons
@@ -413,11 +407,8 @@ Then, edit the URL to `https://api.voucherify.io/v1/vouchers?customer={{customer
   To display the expiration date for urgency:
 
   ```liquid Display coupon expiration date
-  Code: {{voucher.code}} — Expires: {{voucher.expiration_date | date: "%d.%m.%Y" }}
+  Code: {{voucher.code}} — Expires: {{voucher.expiration_date}}
   ```
-
-  You can further down format date and time
-  - 
 
 </Accordion>
 
@@ -483,6 +474,11 @@ No promotions available.
   {{promotion.banner}}
   ```
 
+  To show the expiration date to create urgency:
+  ```liquid
+  {promotions.expiration_date}
+  ```
+
   To show a fallback message when no promotions are available:
 
   ```liquid Display no promotions fallback
@@ -521,7 +517,7 @@ The script retrieves the vouchers from the campaign assigned to a customer (line
 	:save voucher_list
 %} 
 
-{% if (voucher_list.total) == 0 or (voucher_list.vouchers[0].redemption.redeemed_quantity) != 0%}
+{% if (voucher_list.total) == 0 or (voucher_list.vouchers[0].redemption.redeemed_quantity) != 0% }
 {% connected_content
 	https://api.voucherify.io/v1/publications?c={{source_id}}
 	:method post
@@ -535,7 +531,7 @@ The script retrieves the vouchers from the campaign assigned to a customer (line
 	:cache_max_age
 	:retry
 %} 
-{% assign code = new_voucher.voucher.code}} %}
+{% assign code = {{new_voucher.voucher.code}} %}
 {% else %}
 {% assign code = {{voucher_list.vouchers[0].code}} %}
 {% endif %}
@@ -543,11 +539,17 @@ The script retrieves the vouchers from the campaign assigned to a customer (line
 
 <Accordion title="Display the code: Snippets">
 
-  Place this snippet where you want to display the promo code in your message:
+  Place this snippet where you want to display the discount coupon in your message:
 
-  ```liquid Display promo code
-  Here is your code: {{code}}
+  ```liquid Display discount coupon
+  {{code}}
   ```
+
+For gift cards, you can display also their balance:
+
+```liquid Display gift card balance
+{{gift.balance}}
+```
 
 </Accordion>
 
@@ -559,7 +561,7 @@ Read the documentation of [GET List vouchers](/api-reference/vouchers/list-vouch
 
   <Badge color="gray">Prerequisite: Store incentive code as a custom attribute</Badge>
 
-  For this script to work, you need to first assign a promo code, gift card, or referral code to a Braze user and save the code and expiration date as custom attributes.
+  For this script to work, you need to first assign a discount coupon, gift card, or referral code to a Braze user and save the code and expiration date as custom attributes.
 
   Read [Distribute to Braze custom attributes](/integrations/braze-custom-attributes) to learn how to send Voucherify data as Braze custom attributes.
 
