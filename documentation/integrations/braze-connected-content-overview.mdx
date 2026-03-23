@@ -5,46 +5,101 @@ keywords: ['integration', 'braze', 'connected content']
 tag: "NEW"
 ---
 
-Braze Connected Content allows you to fetch data from the Voucherify API and display it in your Braze messages. You can publish coupons, invite new referrers, retrieve loyalty card balances, and more.
+Braze Connected Content allows you to fetch data from the Voucherify API at message send time and display it directly in your Braze messages. You can publish coupons, invite new referrers, retrieve loyalty card balances, add gift card credits, and more.
 
 <Tip>
    
-   <Badge color="green">Experiment with connected content examples</Badge>
+   <Badge color="green">Experiment with Connected Content examples</Badge>
 
-   Head over to Voucherify's [Github repository](https://github.com/voucherifyio/braze-connected-content) to see examples of connected content scripts.
+   Head over to Voucherify's [GitHub repository](https://github.com/voucherifyio/braze-connected-content) to see examples of Connected Content scripts.
 
 </Tip>
 
 ## How does it work?
 
-A basic schema of the script looks as follows:
+When Braze sends a message, the Connected Content script calls the Voucherify API, fetches the response, and injects the data into the message template before delivery.
 
-```liquid Connected content basic schema highlight={2-3,5-6,10}
-  {% connected_content
-    "voucherify-API-ENDPOINT-url" // Selected Voucherify endpoint
-    :method post //HTTP method
-    :headers {
-      "X-App-Id": "Voucherify-API-key", //Unique Voucherify API key for authentication
-      "X-App-Token": "Voucherify-Secret-key" //Unique Voucherify API token for authentication
-    }
-    :content_type application/json
-    :retry
-    :save {{result_variable}} //Variable storing the result (Voucherify API response)
-  %}
+A basic Connected Content script looks as follows:
+
+```liquid Connected content basic schema lines
+{% connected_content
+   "voucherify-API-ENDPOINT-url"
+   :method post
+   :headers {
+      "X-App-Id": "Voucherify-API-key",
+      "X-App-Token": "Voucherify-Secret-key"
+   }
+   :content_type application/json
+   :retry
+   :save {{result_variable}}
+%}
 ```
+
+The script contains the following elements:
+
+| Element | Description |
+|---|---|
+| API endpoint URL | The Voucherify API endpoint to call (for example, `/v1/publications`). |
+| `:method` | The HTTP method — `post` for creating resources, `get` for fetching data. |
+| `:headers` | Your Voucherify API credentials (`X-App-Id` and `X-App-Token`) for authentication. |
+| `:content_type` | Set to `application/json` for Voucherify API calls. |
+| `:retry` | Retries the call up to 5 times if the request fails. |
+| `:save` | Stores the API response in a variable you can reference in the message body. |
+
+## What can you do with Connected Content?
+
+Connected Content scripts support various Voucherify use cases:
+
+| Use case | Description |
+|---|---|
+| **Publish unique coupon codes** | Assign and send a unique discount code to each customer. |
+| **Generate personalized codes** | Create codes with custom prefixes based on customer attributes. |
+| **Invite referrers** | Publish referral codes for customers to share. |
+| **Fetch loyalty card balance** | Display a customer's current loyalty points and expiration dates. |
+| **Add loyalty points** | Award points through custom event earning rules. |
+| **Add gift card credits** | Top up a customer's gift card balance. |
+| **List unused coupons** | Show customers their available, unredeemed codes. |
+| **Resend existing codes** | Remind customers about codes they already received. |
+
+See the [Connected Content script reference](/integrations/braze-connected-content-reference) for ready-to-use scripts for each use case.
 
 ## API endpoints
 
-Connected Content calls Voucherify API. The examples used in documentation call the default cluster. Remember to change it if your project is located in another region or you use a dedicated cluster.
+Connected Content calls Voucherify API. The examples used in documentation call the default cluster. Change the endpoint if your project is in another region or uses a dedicated cluster.
 
-| Shared Cluster     | Endpoint for Braze Connected Content |
+You can check your API endpoint in Voucherify under **Project settings** > **General** > **API endpoint**.
+
+| Shared cluster     | Endpoint for Braze Connected Content |
 | ------------------ | ------------------------------------ |
 | Europe (default)   | `https://api.voucherify.io/v1/` |
 | United States      | `https://us1.api.voucherify.io/v1/` |
 | Asia (Singapore)   | `https://as1.api.voucherify.io/v1/` |
 
+## Optimization and security
+
+Without proper optimization, each Connected Content message triggers at least two Voucherify API calls, which can drain your hourly and monthly limits. Before going to production, configure:
+
+- **Rate limiting** — Limit the number of messages Braze sends per minute to protect both APIs.
+- **Caching** — Add `cache_id` and `:cache_max_age` to reduce duplicate API calls.
+- **Retry** — Use the `:retry` attribute so Braze retries failed requests up to 5 times.
+- **Source ID** — Use `source_id` to ensure each customer receives only one unique code per campaign.
+
+Read [Optimize your Connected Content scripts](/integrations/braze-connected-content-optimization) for detailed configuration instructions.
+
 ## Next steps
 
-- [Get started with Braze Connected Content](/integrations/braze-connected-content-quickstart): Publish your first coupon code
-- [Secure your Connected Content scripts](/integrations/braze-connected-content-optimization): Configure rate limiting, caching, and retry mechanisms
-- [Connected Content script reference](/integrations/braze-connected-content-reference): API endpoints, script templates, and parameter configurations
+<CardGroup cols={3}>
+
+<Card title="Get started" icon="rocket" href="/integrations/braze-connected-content-quickstart">
+Publish your first coupon code with a step-by-step tutorial.
+</Card>
+
+<Card title="Optimize scripts" icon="gauge-high" href="/integrations/braze-connected-content-optimization">
+Configure caching, retry, and rate limiting for production.
+</Card>
+
+<Card title="Script reference" icon="code" href="/integrations/braze-connected-content-reference">
+Browse ready-to-use script templates for all use cases.
+</Card>
+
+</CardGroup>
