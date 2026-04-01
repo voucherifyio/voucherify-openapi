@@ -4,6 +4,10 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-04-01
+
+Update the `LoyaltiesQualificationsCheckEligibilityRequestBody` schema with missing data.
+
 ## 2026-03-25
 
 Change descriptions of `assets`, `assets.cockpit_url`, and added `assets.cockpit_preference_center_url` in the `CustomerWithSummaryLoyaltyReferrals` schema.
