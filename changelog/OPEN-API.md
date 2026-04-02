@@ -4,6 +4,10 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-04-02
+
+Update the `ApplicableTo` schema with settings for campaign budget limits.
+
 ## 2026-04-01
 
 Update the `LoyaltiesQualificationsCheckEligibilityRequestBody` schema with missing data.
