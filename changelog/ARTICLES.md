@@ -5,6 +5,11 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-04-08
+
+- Deleted `campaign-reporting.mdx`, because it was not needed and stale.
+- Added `campaign-analytics.mdx` to `Analyze` section.
+
 ## 2026-04-01
 
 Updated `voucherify-core-mcp` with info about estimate loyalty points.
