@@ -4,6 +4,10 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-04-13
+
+- Updated `EventPublicationSucceededData` schema in `OpenAPIWebhooks.json` regarding the `user` field.
+
 ## 2026-04-02
 
 Update the `ApplicableTo` schema with settings for campaign budget limits.
