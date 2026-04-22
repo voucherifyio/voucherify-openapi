@@ -5,6 +5,10 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-04-22
+
+Add `voucherify-docs-mcp.mdx` article.
+
 ## 2026-04-13
 
 Fixed `user (string)` in `distribution-webhooks.mdx` and `project-settings-webhooks.mdx`.
