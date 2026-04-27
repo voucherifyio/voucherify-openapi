@@ -2,48 +2,56 @@
 title: "Connected Content script reference"
 description: "API endpoints, script templates, and parameter configurations for Braze Connected Content"
 keywords: ['integration', 'braze', 'connected content', 'reference']
+tag: "NEW"
 ---
 
-<Note>
+<Info>
 
-    Head over to our [Github Repository](https://github.com/voucherifyio/braze-connected-content) to see examples of connected content scripts.
+  <Badge color="gray">Prerequisite: Recommended reading</Badge>
 
-</Note>
+  It's recommended to read the following articles before exploring the scripts:
+  - [Get started with Braze Connected Content](/integrations/braze-connected-content-quickstart)
+  - [Optimize your Connected Content scripts](/integrations/braze-connected-content-optimization)
+
+</Info>
+
+This page contains ready-to-use Connected Content scripts for common Voucherify use cases. Copy a script, replace the placeholder values, and add it to your Braze message template.
+
+The examples use the default API address `https://api.voucherify.io`. If your project is in a [different region](/integrations/braze-connected-content-overview#api-endpoints), change the endpoint accordingly.
 
 <Warning>
 
-    Keep in mind that all examples below use Voucherify publication source id, and Braze cache and retry parameters to limit API calls invoked by a Braze campaign. You must be aware of the following consequences: 
-
-    *   It isn't possible to publish and send different codes to the same customer in a single Braze campaign.
-    *   If your Voucherify campaign uses the **join only once feature**, you need to remove `source_id` from the connected content body as described in [Secure your Connected Content scripts](/integrations/braze-connected-content-optimization#customer-can-join-only-once).
+    All publication examples below use Voucherify publication `source_id` and Braze cache and retry parameters to limit API calls invoked by a Braze campaign.
+    
+    As a result: 
+    - A customer can't receive different codes within the same Braze campaign.
+    - If your Voucherify campaign uses the **Customers can join campaign only once** setting, remove `source_id` from the connected content body as described in [Optimize your Connected Content scripts](/integrations/braze-connected-content-optimization#publication-with-customer-can-join-only-once).
 
 </Warning>
 
-## API endpoints
+## Publish and send unique code
 
-| Shared Cluster     | Endpoint for Braze Connected Content |
-| ------------------ | ------------------------------------ |
-| Europe (default)   | `https://api.voucherify.io/v1/publications` |
-| United States      | `https://us1.api.voucherify.io/v1/publications` |
-| Asia (Singapore)   | `https://as1.api.voucherify.io/v1/publications` |
+This script calls the Voucherify API to publish a unique code and send it in a Braze message. Each Braze user receives only one unique code.
 
-## Publish and send unique coupon code
+Use this snippet to distribute codes in the following scenarios:
+- Abandoned cart recovery
+- Braze user performs a custom event – reward for an achievement
+- Invite referrers to a referral program
+- Sending the same through multiple channels (for example, email and push)
 
-In this example, the Connected Content script calls Voucherify API to publish a unique coupon code and send it in the Braze message. Each Braze user receives only one unique code. 
-
-```liquid
+```liquid Publish and send unique code lines wrap
 {% assign braze_campaign_id = {{campaign.${api_id}}} %}
 {% assign customer_id = {{${user_id}}} %}
 {% assign source_id = braze_campaign_id | append: customer_id %}
-{% assign voucherify_campaign_id = "CAMPAIGN_ID" %}
+{% assign voucherify_campaign_id = "camp_XXXXXXXXXXXXXXXXXXXXXXXX" %}
 {% assign cache_id = source_id %}
 
 {% connected_content 
-   YOUR API ENDPOINT/v1/publications?cache_id={{cache_id}}
+   https://api.voucherify.io/v1/publications?cache_id={{cache_id}}
    :method post
    :headers {
-        "X-App-Id": "VOUCHERIFY-APP-ID",
-        "X-App-Token": "VOUCHERIFY-APP-TOKEN"
+        "X-App-Id": "12345678-90QW-ERTY-UIOP-asdfghjklzxc",
+        "X-App-Token": "MNBVCXZL-KJHG-FDSA-POIU-ytrewq098765"
    }
    :body campaign={{voucherify_campaign_id}}&customer={{customer_id}}&channel=Braze&source_id={{source_id}}
    :content_type application/json
@@ -53,49 +61,336 @@ In this example, the Connected Content script calls Voucherify API to publish a 
  %}
 ```
 
-## Invite new referrers
+<Accordion title="Display different voucher details: Snippets">
 
-This Connected Content script enables you to publish and send unique referral codes to selected Braze users. Each user receives only one referral code to share with other users and gain new referrals. 
+  To display the published code in your message, use the following snippet:
 
-```liquid
-{% assign braze_campaign_id = {{campaign.${api_id}}} %}
+  ```liquid Published code snippet
+  {{publication.voucher.code}}
+  ```
+
+  If you publish a gift card, you can additionally display its value:
+
+  ```liquid Display gift card balance
+  {{publication.voucher.gift.balance}}
+  ```
+
+  If you publish a loyalty card when a customer fulfils an earning rule and receives a card with a loyalty card balance, use the following snippet:
+
+  ```liquid Display loyalty card balance
+  {{publication.voucher.loyalty_card.balance}}
+  ```
+
+  If the points have an expiration date, use:
+
+  ```liquid Display loyalty card point expiration date
+  {{publication.voucher.loyalty_card.next_expiration_date }}
+  ```
+
+</Accordion>
+
+Read the documentation of [POST Create publication](/api-reference/publications/create-publication) endpoint to learn more about the response data.
+
+## Generate and publish a discount coupon
+
+This script generates a coupon with a custom prefix based on a customer attribute (for example, phone number or email) and then publishes it. The two-step process first creates the voucher, then assigns it to the customer.
+
+Use this snippet to distribute personalized codes in the following scenarios:
+- VIP welcome offers with recognizable, branded codes
+- Phone-number-based coupons for SMS campaigns where the code doubles as an identifier
+- Personalized codes for partner or co-branded promotions
+- Event-specific codes tied to customer attributes for easy tracking
+
+```liquid Generate and publish a discount coupon lines wrap
+{% assign campaign_id = {{campaign.${dispatch_id}}} %}
 {% assign customer_id = {{${user_id}}} %}
-{% assign source_id = braze_campaign_id | append: customer_id %}
-{% assign voucherify_campaign_id = "CAMPAIGN_ID" %}
-{% assign cache_id = source_id %}
+{% assign phoneNumber = {{${phone_number}}} %}
+{% assign source_id = campaign_id | append: customer_id %}
+{% assign voucherify_campaign_id = "camp_XXXXXXXXXXXXXXXXXXXXXXXX" %}
+{% assign prefix = "Your-Prefix" %}
 
-{% connected_content 
-   YOUR API ENDPOINT/v1/publications?cache_id={{cache_id}}
-   :method post
-   :headers {
-  	"X-App-Id": "VOUCHERIFY-APP-ID",
-        "X-App-Token": "VOUCHERIFY-APP-TOKEN"
-   }
-   :body campaign={{voucherify_campaign_id}}&customer={{customer_id}}&channel=Braze&source_id={{source_id}}
-   :content_type application/json
-   :cache_max_age
-   :retry
-   :save publication
- %}
+{% connected_content
+	https://api.voucherify.io/v1/campaigns/{{voucherify_campaign_id}}/vouchers/{{prefix}}{{phoneNumber}}?c={{source_id}}
+	:method post
+	:headers {
+    	"X-App-Id": "12345678-90QW-ERTY-UIOP-asdfghjklzxc",
+    	"X-App-Token": "MNBVCXZL-KJHG-FDSA-POIU-ytrewq098765"
+	}
+	:content_type application/json
+	:cache_max_age
+	:save voucher_created
+	:retry
+%} 
+
+{% connected_content
+	https://api.voucherify.io/v1/publications?c={{source_id}}
+	:method post
+	:headers {
+    	"X-App-Id": "12345678-90QW-ERTY-UIOP-asdfghjklzxc",
+    	"X-App-Token": "MNBVCXZL-KJHG-FDSA-POIU-ytrewq098765"
+	}
+	:body voucher={{prefix}}{{phoneNumber}}&customer={{customer_id}}&channel=Braze&source_id={{source_id}}
+	:content_type application/json
+	:cache_max_age
+	:save publication
+	:retry
+%}
 ```
+
+<Accordion title="Display generated coupon details: Snippets">
+
+  To display the generated and published code in your message, use the following snippet:
+
+  ```liquid Published code snippet
+  {{publication.voucher.code}}
+  ```
+
+  If you publish a gift card, you can additionally display its value:
+
+  ```liquid Display gift card balance
+  {{publication.voucher.gift.balance | divided_by: 100.0 }}
+  ```
+
+</Accordion>
+
+Read the documentation of [POST Create publication](/api-reference/publications/create-publication) endpoint to learn more about the response data.
+
+
+## List unused coupons
+
+This script retrieves all unredeemed discount coupons assigned to a Braze user (lines 15-19). It loops through the customer's vouchers and displays only the ones that haven't been used.
+
+Use this snippet to remind customers about available codes in the following scenarios:
+- Weekly or monthly "wallet" digest emails listing available coupons
+- Re-engagement campaigns reminding inactive users they have unused discounts
+- Post-purchase follow-ups nudging customers to use remaining codes
+- End-of-campaign reminders before codes expire
+
+```liquid List unused coupons lines wrap highlight={15-19}
+{% assign campaign_id = {{campaign.${dispatch_id}}} %}
+{% assign customer_id = {{${user_id}}} %}
+{% assign source_id = campaign_id | append: customer_id %}
+
+{% connected_content
+	https://api.voucherify.io/v1/vouchers?customer={{customer_id}}&c={{source_id}}
+	:method GET
+	:headers {
+    	"X-App-Id": "12345678-90QW-ERTY-UIOP-asdfghjklzxc",
+    	"X-App-Token": "MNBVCXZL-KJHG-FDSA-POIU-ytrewq098765"
+	}
+	:save voucher_list
+%}
+
+{% for voucher in voucher_list.vouchers %}
+{% if voucher.redemption.redeemed_quantity == 0 %}
+Code: {{voucher.code}}
+{% endif %}
+{% endfor %}
+```
+
+<Tip>
+
+If you want to display unused codes from one campaign, add `{% assign voucherify_campaign_id = "camp_XXXXXXXXXXXXXXXXXXXXXXXX" %}`.
+
+Then, edit the URL to `https://api.voucherify.io/v1/vouchers?customer={{customer_id}}&campaign_id={{voucherify_campaign_id}}&c={{source_id}}` to display only the vouchers from this campaign.
+
+</Tip>
+
+<Accordion title="Display unused coupon details: Snippets">
+
+  Use this snippet to show additional details like the discount value for each voucher:
+
+  ```liquid Display coupon with discount
+  Code: {{voucher.code}} — Discount: {{voucher.discount.percent_off}}% off
+  ```
+
+  Use this snippet to display the expiration date for urgency:
+
+  ```liquid Display coupon expiration date
+  Code: {{voucher.code}} — Expires: {{voucher.expiration_date}}
+  ```
+
+</Accordion>
+
+Read the documentation of [GET List vouchers](/api-reference/vouchers/list-vouchers) endpoint to learn more about the response data.
+
+## List all codes and publish a new one if there are none
+
+This script checks if a customer already has an available code from a specific campaign. If the customer has no codes, or if their most recent code was already redeemed, it publishes a new one. This ensures every message contains a valid, usable code.
+
+Use this snippet to guarantee a valid code in the following scenarios:
+- Always-on promotional campaigns where customers should always have an active code
+- Recurring campaigns where a new code is needed after each redemption
+- Win-back flows that check for an existing offer before generating a new one
+- Multi-touch nurture sequences where you want one active code per customer at all times
+
+The script retrieves the vouchers from the campaign assigned to a customer (lines 1-14), then verifies if the customer has a voucher from the campaign or if a voucher was already redeemed (lines 16-34).
+
+```liquid List codes and publish if none lines wrap highlight={1-14,16-34}
+{% assign campaign_id = {{campaign.${dispatch_id}}} %}
+{% assign customer_id = {{${user_id}}} %}
+{% assign source_id = campaign_id | append: customer_id %}
+{% assign voucherify_campaign_id = "camp_XXXXXXXXXXXXXXXXXXXXXXXX" %}
+
+{% connected_content
+	https://api.voucherify.io/v1/vouchers?customer={{customer_id}}&campaign_id={{voucherify_campaign_id}}&c={{source_id}}
+	:method GET
+	:headers {
+    	"X-App-Id": "12345678-90QW-ERTY-UIOP-asdfghjklzxc",
+    	"X-App-Token": "MNBVCXZL-KJHG-FDSA-POIU-ytrewq098765"
+	}
+	:save voucher_list
+%} 
+
+{% if (voucher_list.total) == 0 or (voucher_list.vouchers[0].redemption.redeemed_quantity) != 0% }
+{% connected_content
+	https://api.voucherify.io/v1/publications?c={{source_id}}
+	:method post
+	:headers {
+    	"X-App-Id": "12345678-90QW-ERTY-UIOP-asdfghjklzxc",
+    	"X-App-Token": "MNBVCXZL-KJHG-FDSA-POIU-ytrewq098765"
+	}
+	:body campaign={{voucherify_campaign_id}}&customer={{customer_id}}&channel=Braze&source_id={{source_id}}
+	:content_type application/json
+	:save new_voucher
+	:cache_max_age
+	:retry
+%} 
+{% assign code = {{new_voucher.voucher.code}} %}
+{% else %}
+{% assign code = {{voucher_list.vouchers[0].code}} %}
+{% endif %}
+```
+
+<Accordion title="Display the code: Snippets">
+
+  Place this snippet where you want to display the discount coupon in your message:
+
+  ```liquid Display discount coupon
+  {{code}}
+  ```
+
+For gift cards, you can display also their balance:
+
+```liquid Display gift card balance
+{{new_voucher.voucher.gift.balance}}
+
+{{voucher_list.vouchers[0].gift.balance}}
+```
+
+</Accordion>
+
+Read the documentation of [GET List vouchers](/api-reference/vouchers/list-vouchers) and [POST Create publication](/api-reference/publications/create-publication) endpoints to learn more about the response data.
+
+## Resend codes
+
+<Info>
+
+  <Badge color="gray">Prerequisite: Store incentive codes as custom attributes</Badge>
+
+  For this script to work, you need to first assign a discount coupon, gift card, or referral code to a Braze user and save the code and expiration date as custom attributes.
+
+  Read [Distribute to Braze custom attributes](/integrations/braze-custom-attributes) to learn how to send Voucherify data as Braze custom attributes.
+
+</Info>
+
+This script fetches an existing incentive code from the customer's custom attributes and checks its status. If the code hasn't been redeemed, the message reminds the customer to use it. If the code has been redeemed, the message acknowledges it. Build a customer segment based on the expiration date and target this message at that segment.
+
+Use this snippet to resend existing codes in the following scenarios:
+- Expiration reminder emails sent a few days before a code expires
+- Re-engagement campaigns for customers who received but never used a code
+- Multi-channel reminders (for example, push notification after an email)
+- Post-purchase follow-ups reminding customers about their remaining gift card or referral code
+
+```liquid Resend codes lines wrap
+{% assign campaign_id = {{campaign.${dispatch_id}}} %}
+{% assign customer_id = {{${user_id}}} %}
+{% assign source_id = campaign_id | append: customer_id %}
+
+{% connected_content
+	https://api.voucherify.io/v1/vouchers/{{custom_attribute.${incentive_name}}}?c={{source_id}}
+	:method GET
+	:headers {
+    	"X-App-Id": "12345678-90QW-ERTY-UIOP-asdfghjklzxc",
+    	"X-App-Token": "MNBVCXZL-KJHG-FDSA-POIU-ytrewq098765"
+	}
+	:save incentive
+%}
+
+{% if incentive.__http_status_code__ != 200 %}
+  {% abort_message("Voucher does not exist") %}
+{% endif %}
+
+{% if incentive.redemption.redeemed_quantity == 0 %}
+You can still use the voucher {{incentive.code}} up until {{incentive.expiration_date}}
+{% else %}
+Your voucher {{incentive.code}} has been used.
+{% endif %}
+```
+
+<Accordion title="Display resent code details: Snippets">
+
+  To display the incentive code:
+
+  ```liquid Incentive code snippet
+  {{incentive.code}}
+  ```
+
+  To show the expiration date to create urgency:
+
+  ```liquid Display expiration date
+  Your code {{incentive.code}} expires on {{incentive.expiration_date}} — use it before it's gone!
+  ```
+
+  To display different messages based on redemption status:
+
+  ```liquid Conditional redemption status
+  {% if incentive.redemption.redeemed_quantity == 0 %}
+  You still have an unused code: {{incentive.code}}
+  {% else %}
+  Thanks for using your code!
+  {% endif %}
+  ```
+
+</Accordion>
+
+Read the documentation of [GET Get voucher](/api-reference/vouchers/get-voucher) endpoint to learn more about the response data.
 
 ## Fetch loyalty card balance
 
-Here is an example of a Connected Content script that pulls the current loyalty balance based on the loyalty card code that was sent beforehand to Braze as a custom attribute. Note that you need to store the loyalty card code as a custom attribute in Braze user's profile before using this script.
+<Info>
 
-```liquid
+  <Badge color="gray">Prerequisite: Send loyalty card code as a custom attribute</Badge>
+
+  For this script to work, you need to store the loyalty card code as a custom attribute in Braze user's profile.
+
+  Read [Distribute to Braze custom attributes](/integrations/braze-custom-attributes) to learn how to send Voucherify data as Braze custom attributes.
+
+</Info>
+
+This script fetches the current loyalty balance from a loyalty card code stored as a custom attribute in Braze.
+
+Use this snippet in the following scenarios:
+- Point balance reminder email
+- Post-purchase point update
+- Tier-based messaging
+- Monthly loyalty statement
+- Re-engagement for inactive members
+
+
+```liquid Fetch loyalty card balance lines wrap
 {% assign braze_campaign_id = {{campaign.${api_id}}} %}
 {% assign customer_id = {{${user_id}}} %}
 {% assign source_id = braze_campaign_id | append: customer_id %}
-{% assign voucherify_campaign_id = "CAMPAIGN_ID" %}
+{% assign voucherify_campaign_id = "camp_XXXXXXXXXXXXXXXXXXXXXXXX" %}
 {% assign cache_id = source_id %}
 
 {% connected_content 
-   YOUR API ENDPOINT/v1/loyalties/{{voucherify_campaign_id}}/members/{{custom_attribute.${loyalty.card}}}?cache_id={{cache_id}}
+   https://api.voucherify.io/v1/loyalties/{{voucherify_campaign_id}}/members/{{custom_attribute.${loyalty.card}}}?cache_id={{cache_id}}
    :method get
    :headers {
-	"X-App-Id": "VOUCHERIFY-APP-ID", 
-        "X-App-Token": "VOUCHERIFY-APP-TOKEN"
+	  "X-App-Id": "12345678-90QW-ERTY-UIOP-asdfghjklzxc",
+    "X-App-Token": "MNBVCXZL-KJHG-FDSA-POIU-ytrewq098765"
    }
    :content_type application/json
    :cache_max_age
@@ -104,25 +399,218 @@ Here is an example of a Connected Content script that pulls the current loyalty 
  %}
 ```
 
-## Source ID configurations
+<Accordion title="Display loyalty card details: Snippets">
 
-| Configuration | Effect |
-| ------------- | ------ |
-| `{{campaign.${dispatch_id}}}` | Ensures that all customers within a single send-out will use the same publication. |
-| `{{campaign.${api_id}}}` | Ensures that all customers within a single campaign will use the same publication. |
-| `{{${user_id}}}` or `{{${braze_id}}}` | Ensures that every customer will use the same publication no matter which campaign is sent (you can use `${user_id}` which is an external_id and `${braze_id}` which is an internal id). |
-| `{{campaign.${dispatch_id}}}` and `{{campaign.${user_id}}}` | Each customer within a single send-out will use the same unique publication. |
+Use the following snippets to display loyalty card details.
 
-## Display snippets
+Display the loyalty card code:
 
-### Published code
-
-```liquid
-{{publication.voucher.code}}
+```liquid Loyalty card code snippet
+{{member.code}}
 ```
 
-### Loyalty card balance
+Display the current balance:
 
-```liquid
+```liquid Loyalty card balance snippet
 {{member.loyalty_card.balance}}
 ```
+
+If points are about to expire, create a sense of urgency to spend them. Display the number of expiring points and the date when they will expire:
+
+```liquid Display loyalty card expiring points with date
+{{member.loyalty_card.next_expiration_points}}
+{{member.loyalty_card.next_expiration_date}}
+```
+
+If you use pending points, display the number of points that are in the pending state:
+
+```liquid Display loyalty card point pending points
+{{member.loyalty_card.pending_points}}
+```
+
+If you send emails to remind users about their point balance, you can use the following template:
+
+```liquid Remind users about their balance wrap
+Hi {{${first_name}}},
+
+You currently have {{member.loyalty_card.balance}} loyalty points!
+
+{% if member.loyalty_card.balance >= 500 %}
+  You have enough points to redeem a reward. Visit your account to browse available rewards.
+{% else %}
+  You're only {{500 | minus: member.loyalty_card.balance}} points away from your next reward!
+{% endif %}
+```
+
+Use the following template to message users about their progress in achieving loyalty tiers:
+
+```liquid Tier-based messaging with conditional logic wrap
+{% if member.loyalty_card.balance >= 1000 %}
+  As a Gold member with {{member.loyalty_card.balance}} points, you get early access to our seasonal sale!
+{% elsif member.loyalty_card.balance >= 500 %}
+  You have {{member.loyalty_card.balance}} points — earn {{1000 | minus: member.loyalty_card.balance}} more to unlock Gold status!
+{% else %}
+  Start collecting points today. Your current balance: {{member.loyalty_card.balance}}.
+{% endif %}
+```
+
+</Accordion>
+
+Read the documentation of [GET Member](/api-reference/loyalties/get-member) endpoint to learn more about the response data.
+
+## Add loyalty points with a custom event earning rule
+
+This script sends a custom event (lines 5-12) to Voucherify when a Braze message is delivered. The event triggers an earning rule in your loyalty campaign, which awards points to the customer. Different segments can receive different point amounts based on the earning rule configuration.
+
+Use this snippet to award loyalty points in the following scenarios:
+- Reward customers for opening or engaging with a campaign message
+- Award bonus points during double-points promotional periods
+- Grant points for completing a profile, survey, or onboarding step
+- Trigger milestone rewards when a customer reaches a segment threshold
+
+```liquid Add loyalty points with a custom event lines wrap highlight={5-12}
+{% assign campaign_id = {{campaign.${dispatch_id}}} %}
+{% assign customer_id = {{${user_id}}} %}
+{% assign source_id = campaign_id | append: customer_id %}
+
+{% capture postBody %}
+{ 
+    "event":"Event Name",
+    "customer": {
+        "source_id": "{{customer_id}}"
+    }
+}
+{% endcapture %}
+
+{% connected_content
+	https://api.voucherify.io/v1/events?c={{source_id}}
+	:method post
+	:headers {
+    	"X-App-Id": "12345678-90QW-ERTY-UIOP-asdfghjklzxc",
+    	"X-App-Token": "MNBVCXZL-KJHG-FDSA-POIU-ytrewq098765"
+	}
+	:body {{postBody}}
+	:content_type application/json
+	:cache_max_age
+	:retry
+%}
+```
+
+<Accordion title="How it works: Custom event earning rules">
+
+  The script sends a [custom event](/api-reference/events/track-custom-event) to Voucherify with the customer's `source_id`. Voucherify evaluates the event against your earning rules and awards points accordingly.
+
+  To set this up:
+  1. Create a custom event schema in Voucherify under **Project settings** > **Custom events**.
+  2. Create an earning rule in your loyalty campaign that listens for this event.
+  3. Replace `"Event Name"` in the script with your custom event name.
+
+  Different earning rules can award different point amounts per segment, so you can run tiered loyalty campaigns from a single Braze message.
+
+</Accordion>
+
+Read the documentation of [POST Track custom event](/api-reference/events/track-custom-event) endpoint to learn more about the request and response data. Also, read [Custom events](/prepare/custom-events) to learn more about defining them.
+
+## Add credits to a gift card
+
+<Info>
+
+  <Badge color="gray">Prerequisite: Send the gift card code as a custom attribute</Badge>
+
+  For this script to work, you need to store the gift card code as a custom attribute in Braze user's profile.
+
+  Read [Distribute to Braze custom attributes](/integrations/braze-custom-attributes) to learn how to send Voucherify data as Braze custom attributes.
+
+</Info>
+
+This script adds credits to a customer's gift card (lines 5-9). The gift card code is retrieved from a Braze custom attribute, and the specified amount is added to the card balance.
+
+Use this snippet to top up gift cards in the following scenarios:
+- Birthday or anniversary bonus credits
+- Compensation credits for a negative customer experience
+- Seasonal top-ups during holiday campaigns
+- Reward credits for completing a purchase or hitting a spending milestone
+
+The `"amount": 1000` is a value in the smallest currency units (for example, cents for USD or EUR).
+
+<Tip>
+
+	This snippet can be also used for adding loyalty points to an existing loyalty card that's assigned as a custom attribute to a user profile in Braze.
+
+</Tip>
+
+```liquid Add credits to a gift card lines wrap highlight={5-9}
+{% assign campaign_id = {{campaign.${dispatch_id}}} %}
+{% assign customer_id = {{${user_id}}} %}
+{% assign source_id = campaign_id | append: customer_id %}
+
+{% capture postBody %}
+{ 
+    "amount":1000
+}
+{% endcapture %}
+
+{% connected_content
+	https://api.voucherify.io/v1/vouchers/{{custom_attribute.${gift_card_from_attribute}}}/balance?c={{source_id}}
+	:method post
+	:headers {
+    	"X-App-Id": "12345678-90QW-ERTY-UIOP-asdfghjklzxc",
+    	"X-App-Token": "MNBVCXZL-KJHG-FDSA-POIU-ytrewq098765"
+	}
+	:body {{postBody}}
+	:content_type application/json
+	:no_cache
+	:save balances
+	:retry
+%}
+```
+
+<Accordion title="Display gift card balance update: Snippets">
+
+  After adding credits, you can confirm the top-up in the message. The `:no_cache` attribute ensures the balance reflects the latest update.
+
+  To notify the customer about the added credits:
+
+  ```liquid Display added amount
+  We've added credits to your gift card: {{ balances.amount | divided_by: 100.0 }}
+
+  Your current balance is: {{ balances.balance | divided_by: 100.0 }}.
+  ```
+
+</Accordion>
+
+Read the documentation of [Adjust voucher balance](/api-reference/vouchers/adjust-voucher-balance) endpoint to learn more about the request and response data.
+
+## Tips for fetching data with Braze Connected Content
+
+Use the following tips to format data fetched from Voucherify.
+
+<AccordionGroup>
+
+<Accordion title="Format date and time">
+
+	If you fetch date and time, for example `expiration_date` for points or codes, you can format it according to your preferences as follows:
+	- day, month, year: `{{voucher.expiration_date | date: "%d.%m.%Y"}}`
+	- day, month, year and time: `{{voucher.expiration_date | date: "%d.%m.%Y o %H:%M"}}`
+	- month, day, year: `{{voucher.expiration_date | date: "%B %d, %Y"}}`
+	- date and time adjusted to the time zone: `{{ voucher.expiration_date | time_zone: 'Europe/Warsaw' | date: "%d.%m.%Y %H:%M" }}`
+
+</Accordion>
+
+<Accordion title="Adjust decimals">
+
+	If you fetch a gift card balance or discount amount, Voucherify returns the value multiplied by 100. Divide by `100.0` to display the correct currency amount.
+	
+	For example `{{ voucher.gift.balance | divided_by: 100.0 }}` renders `"balance": 10000` as `100.0`
+
+	If your country uses a comma (`,`) as a decimal separator, append `replace: '.', ','` to the snippet:
+
+		```liquid Display added amount
+		We've added credits to your gift card: {{ balances.amount | divided_by: 100.0 | replace: '.', ',' }}
+
+		Your current balance is: {{ balances.balance | divided_by: 100.0 | replace: '.', ',' }}.
+		```
+
+</Accordion>
+
+</AccordionGroup>
