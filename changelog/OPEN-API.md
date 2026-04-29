@@ -4,6 +4,23 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-04-13
+
+- Update the `DiscountUnitVouchersEffectTypes` schema with `ADD_SAME_ITEMS` effect.
+- Updated `EventPublicationSucceededData` schema in `OpenAPIWebhooks.json` regarding the `user` field.
+
+## 2026-04-02
+
+Update the `ApplicableTo` schema with settings for campaign budget limits.
+
+## 2026-04-01
+
+Update the `LoyaltiesQualificationsCheckEligibilityRequestBody` schema with missing data.
+
+## 2026-03-25
+
+Change descriptions of `assets`, `assets.cockpit_url`, and added `assets.cockpit_preference_center_url` in the `CustomerWithSummaryLoyaltyReferrals` schema.
+
 ## 2026-03-09
 
 Update descriptions of validation rule schemas for new weekly redemption limits.
