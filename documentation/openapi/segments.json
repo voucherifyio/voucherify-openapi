@@ -53,7 +53,7 @@
           "Segments"
         ],
         "summary": "Get Segment",
-        "description": "Retrieves the segment with a given segment ID.",
+        "description": "Retrieves the segment with a given segment ID.\n\nThis method doesn't return the customers that belong to the segment. To return a list of customers who belong to a segment, use [GET List customers](/api-reference/customers/list-customers) endpoint with the `segment_id` query parameter.",
         "parameters": [],
         "security": [
           {
@@ -182,7 +182,7 @@
           "Segments"
         ],
         "summary": "List segments",
-        "description": "Retrieves a list of segments.",
+        "description": "Retrieves a list of segments.\n\nThe list doesn't include the customers that belong to respective segments. To return a list of customers who belong to a segment, use [GET List customers](/api-reference/customers/list-customers) endpoint with the `segment_id` query parameter.\n\nTo return a list of different results, use the `filters[created_at][conditions][$before]` and `filters[created_at][conditions][$after]` query parameters as pagination.",
         "parameters": [
           {
             "$ref": "#/components/parameters/limit"
@@ -204,14 +204,6 @@
             "description": "Filters for listing templates.",
             "style": "deepObject",
             "explode": true
-          },
-          {
-            "schema": {
-              "$ref": "#/components/schemas/ParameterDate"
-            },
-            "in": "query",
-            "name": "starting_after",
-            "description": "Cursor used for paging. Returns results based on `created_at`. Use `order=created_at` query parameter to return results after the date. Use `order=-created_at` query parameter to return results before the date."
           },
           {
             "schema": {
@@ -244,7 +236,85 @@
                 },
                 "examples": {
                   "List of segments": {
-                    "value": {}
+                    "value": {
+                      "object": "list",
+                      "data_ref": "data",
+                      "data": [
+                        {
+                          "id": "seg_5ix74s3gM3N7",
+                          "name": "Customers with placed order",
+                          "created_at": "2023-08-03T10:37:49.285Z",
+                          "updated_at": null,
+                          "type": "auto-update",
+                          "filter": {
+                            "junction": "and",
+                            "events.payment_placed.count": {
+                              "conditions": {
+                                "$more_than": [
+                                  "0"
+                                ]
+                              }
+                            }
+                          },
+                          "object": "segment"
+                        },
+                        {
+                          "id": "seg_fi47Ds3gM3N7",
+                          "name": "Newsletter subscribers",
+                          "created_at": "2023-08-03T10:37:49.264Z",
+                          "updated_at": null,
+                          "type": "auto-update",
+                          "filter": {
+                            "junction": "and",
+                            "events.newsletter_subscribed.count": {
+                              "conditions": {
+                                "$more_than": [
+                                  "0"
+                                ]
+                              }
+                            }
+                          },
+                          "object": "segment"
+                        },
+                        {
+                          "id": "seg_f0r4hs3gM3N7",
+                          "name": "Reviewers",
+                          "created_at": "2023-08-03T10:37:49.244Z",
+                          "updated_at": null,
+                          "type": "auto-update",
+                          "filter": {
+                            "junction": "and",
+                            "events.review_left.count": {
+                              "conditions": {
+                                "$more_than": [
+                                  "0"
+                                ]
+                              }
+                            }
+                          },
+                          "object": "segment"
+                        },
+                        {
+                          "id": "seg_t4ir0Ds3gM3N7",
+                          "name": "Sign up customers",
+                          "created_at": "2023-08-03T10:37:49.225Z",
+                          "updated_at": null,
+                          "type": "auto-update",
+                          "filter": {
+                            "junction": "and",
+                            "events.sign_up.count": {
+                              "conditions": {
+                                "$more_than": [
+                                  "0"
+                                ]
+                              }
+                            }
+                          },
+                          "object": "segment"
+                        }
+                      ],
+                      "total": 99
+                    }
                   }
                 }
               }
@@ -479,7 +549,7 @@
           },
           "name": {
             "type": "object",
-            "description": "Unique user-defined template name.",
+            "description": "Unique user-defined segment name.",
             "properties": {
               "conditions": {
                 "$ref": "#/components/schemas/FilterConditionsString"
@@ -567,11 +637,6 @@
           }
         }
       },
-      "ParameterDate": {
-        "type": "string",
-        "example": "2023-12-22T10:13:06.487Z",
-        "format": "date-time"
-      },
       "ParameterIds": {
         "type": "array",
         "items": {
@@ -601,7 +666,7 @@
           },
           "segments": {
             "type": "array",
-            "description": "An array of segment objects.",
+            "description": "An array of segment objects. Returns an empty array if there are no results matching query parameters.",
             "items": {
               "$ref": "#/components/schemas/Segment"
             }
