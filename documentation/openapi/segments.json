@@ -176,6 +176,82 @@
       }
     },
     "/v1/segments": {
+      "get": {
+        "operationId": "list-segment",
+        "tags": [
+          "Segments"
+        ],
+        "summary": "List segments",
+        "description": "Retrieves a list of segments.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/limit"
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterOrderCreatedAt"
+            },
+            "in": "query",
+            "name": "order",
+            "description": "Apply this filter to order the segments according the date and time when they were created. By default, lists the segments from the newest to the oldest. Use `created_at` to list from the oldest to the newest."
+          },
+          {
+            "name": "filters",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/ParameterFiltersListSegments"
+            },
+            "description": "Filters for listing templates.",
+            "style": "deepObject",
+            "explode": true
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterDate"
+            },
+            "in": "query",
+            "name": "starting_after",
+            "description": "Cursor used for paging. Returns results based on `created_at`. Use `order=created_at` query parameter to return results after the date. Use `order=-created_at` query parameter to return results before the date."
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterIds"
+            },
+            "in": "query",
+            "name": "ids",
+            "description": "Contains the list of segments in the sequence defined by the `order` parameter."
+          }
+        ],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": []
+          },
+          {
+            "X-Voucherify-OAuth": [
+              "api",
+              "segments"
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns a `data` array with segment objects.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SegmentsListResponseBody"
+                },
+                "examples": {
+                  "List of segments": {
+                    "value": {}
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
       "post": {
         "operationId": "create-segment",
         "tags": [
@@ -316,7 +392,7 @@
     "schemas": {
       "SegmentsGetResponseBody": {
         "title": "Create Customer Segment Response Body",
-        "description": "Response body schema for **GET** `v1/v1/segments/{segmentId}`.",
+        "description": "Response body schema for **GET** `v1/segments/{segmentId}`.",
         "allOf": [
           {
             "$ref": "#/components/schemas/Segment"
@@ -379,6 +455,169 @@
         "type": "string",
         "example": "seg_DNAOhUtJffvX0f57ajLMFBYR"
       },
+      "ParameterOrderCreatedAt": {
+        "type": "string",
+        "enum": [
+          "created_at",
+          "-created_at"
+        ]
+      },
+      "ParameterFiltersListSegments": {
+        "type": "object",
+        "properties": {
+          "junction": {
+            "$ref": "#/components/schemas/Junction"
+          },
+          "id": {
+            "type": "object",
+            "description": "Unique segment ID.",
+            "properties": {
+              "conditions": {
+                "$ref": "#/components/schemas/FilterConditionsString"
+              }
+            }
+          },
+          "name": {
+            "type": "object",
+            "description": "Unique user-defined template name.",
+            "properties": {
+              "conditions": {
+                "$ref": "#/components/schemas/FilterConditionsString"
+              }
+            }
+          },
+          "type": {
+            "type": "object",
+            "description": "Segment type.",
+            "properties": {
+              "conditions": {
+                "type": "object",
+                "description": "Data filters used to narrow down the data records to be returned in the result.",
+                "properties": {
+                  "$in": {
+                    "type": "array",
+                    "description": "Array of resource values that should be included in the results (multiple values).",
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "auto-update",
+                        "passive",
+                        "static"
+                      ]
+                    }
+                  },
+                  "$not_in": {
+                    "type": "array",
+                    "description": "Array of resource values that should be included in the results (multiple values).",
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "auto-update",
+                        "passive",
+                        "static"
+                      ]
+                    }
+                  },
+                  "$is": {
+                    "type": "string",
+                    "description": "Value is exactly this value (single value).",
+                    "enum": [
+                      "auto-update",
+                      "passive",
+                      "static"
+                    ]
+                  },
+                  "$is_not": {
+                    "type": "string",
+                    "description": "Results omit this value (single value).",
+                    "enum": [
+                      "auto-update",
+                      "passive",
+                      "static"
+                    ]
+                  },
+                  "$has_value": {
+                    "type": "string",
+                    "description": "Value is NOT null. The value for this parameter is an empty string."
+                  },
+                  "$is_unknown": {
+                    "type": "string",
+                    "description": "Value is null. The value for this parameter is an empty string."
+                  },
+                  "$starts_with": {
+                    "type": "string",
+                    "description": "Value starts with the specified string."
+                  },
+                  "$ends_with": {
+                    "type": "string",
+                    "description": "Value ends with the specified string."
+                  }
+                }
+              }
+            }
+          },
+          "created_at": {
+            "description": "Timestamp representing the date and time when the segment was created. The value is shown in the ISO 8601 format.",
+            "type": "object",
+            "properties": {
+              "conditions": {
+                "$ref": "#/components/schemas/FilterConditionsDateTime"
+              }
+            }
+          }
+        }
+      },
+      "ParameterDate": {
+        "type": "string",
+        "example": "2023-12-22T10:13:06.487Z",
+        "format": "date-time"
+      },
+      "ParameterIds": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "SegmentsListResponseBody": {
+        "title": "List Customer Segments Response Body",
+        "description": "Response body schema for **GET** `v1/segments`.",
+        "type": "object",
+        "properties": {
+          "object": {
+            "type": "string",
+            "default": "list",
+            "enum": [
+              "list"
+            ],
+            "description": "The type of the object represented by JSON. This object stores information about segments."
+          },
+          "data_ref": {
+            "type": "string",
+            "default": "data",
+            "enum": [
+              "data"
+            ],
+            "description": "Identifies the name of the attribute that contains the array of segments."
+          },
+          "segments": {
+            "type": "array",
+            "description": "An array of segment objects.",
+            "items": {
+              "$ref": "#/components/schemas/Segment"
+            }
+          },
+          "total": {
+            "type": "integer",
+            "description": "Total number of segments returned for given filters and query parameters with the exception of `limit`."
+          }
+        },
+        "required": [
+          "object",
+          "data_ref",
+          "data",
+          "total"
+        ]
+      },
       "SegmentsCreateRequestBody": {
         "title": "Create Customer Segment Request Body",
         "description": "Request body schema for **POST** `v1/segments`.",
@@ -419,6 +658,12 @@
             "description": "Timestamp representing the date and time when the segment was created. The value is shown in the ISO 8601 format.",
             "format": "date-time"
           },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2022-10-03T12:24:58.008Z",
+            "description": "Timestamp in ISO 8601 format indicating when the segment was updated."
+          },
           "type": {
             "type": "string",
             "enum": [
@@ -443,6 +688,108 @@
           }
         },
         "description": "This is an object representing a customer segment."
+      },
+      "ParameterLimit": {
+        "type": "integer",
+        "maximum": 100,
+        "minimum": 1
+      },
+      "Junction": {
+        "title": "Junction",
+        "description": "Logical Operator Between Filters. Filter by conditions set on the `junction` parameter indicating how the `conditions` should be accounted for in the query. An `AND` is an all-inclusive logical operator, meaning the `AND` operator displays a record if **ALL** the conditions separated by AND are TRUE, while  an `OR` operator displays a record if **ANY** of the conditions separated by OR is TRUE.",
+        "enum": [
+          "and",
+          "or"
+        ],
+        "type": "string"
+      },
+      "FilterConditionsString": {
+        "title": "Filter by conditions",
+        "type": "object",
+        "description": "Data filters used to narrow down the data records to be returned in the result.",
+        "properties": {
+          "$in": {
+            "type": "array",
+            "description": "Array of resource values that should be included in the results (multiple values).",
+            "items": {
+              "type": "string"
+            }
+          },
+          "$not_in": {
+            "type": "array",
+            "description": "Array of resource values that should be included in the results (multiple values).",
+            "items": {
+              "type": "string"
+            }
+          },
+          "$is": {
+            "type": "string",
+            "description": "Value is exactly this value (single value)."
+          },
+          "$is_not": {
+            "type": "string",
+            "description": "Results omit this value (single value)."
+          },
+          "$has_value": {
+            "type": "string",
+            "description": "Value is NOT null. The value for this parameter is an empty string."
+          },
+          "$is_unknown": {
+            "type": "string",
+            "description": "Value is null. The value for this parameter is an empty string."
+          },
+          "$starts_with": {
+            "type": "string",
+            "description": "Value starts with the specified string."
+          },
+          "$ends_with": {
+            "type": "string",
+            "description": "Value ends with the specified string."
+          },
+          "$contains": {
+            "type": "string",
+            "description": "Value includes the specified string."
+          },
+          "$not_contain": {
+            "type": "string",
+            "description": "Value does NOT include the specified string."
+          }
+        }
+      },
+      "FilterConditionsDateTime": {
+        "title": "Filter by conditions",
+        "type": "object",
+        "description": "Data filters used to narrow down the data records to be returned in the result.",
+        "properties": {
+          "$after": {
+            "type": "string",
+            "description": "Value is after this date. The value for this parameter is shown in the ISO 8601 format.",
+            "format": "date-time",
+            "example": "2024-01-01T00:00:00.000Z"
+          },
+          "$before": {
+            "type": "string",
+            "description": "Value is before this date. The value for this parameter is shown in the ISO 8601 format.",
+            "format": "date-time",
+            "example": "2024-01-01T00:00:00.000Z"
+          },
+          "$has_value": {
+            "type": "string",
+            "description": "Value is NOT null. The value for this parameter is an empty string."
+          },
+          "$is_unknown": {
+            "type": "string",
+            "description": "Value is null. The value for this parameter is an empty string."
+          },
+          "$more_than": {
+            "type": "integer",
+            "description": "Value is more days ago before the current date and time, e.g. more than `10` days ago."
+          },
+          "$less_than": {
+            "type": "integer",
+            "description": "Value is less days before the current date and time, e.g. less than `10` days ago."
+          }
+        }
       },
       "SegmentsCreateRequestBodyStatic": {
         "title": "Static Customer Segment",
@@ -492,6 +839,17 @@
             "description": "Defines a set of criteria for an `auto-update` or `passive` segment type."
           }
         }
+      }
+    },
+    "parameters": {
+      "limit": {
+        "name": "limit",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "$ref": "#/components/schemas/ParameterLimit"
+        },
+        "description": "Limits the number of objects to be returned. The limit can range between 1 and 100 items. If no limit is set, it returns 10 items."
       }
     },
     "securitySchemes": {
