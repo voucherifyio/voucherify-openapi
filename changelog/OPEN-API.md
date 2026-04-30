@@ -4,6 +4,11 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-04-30
+
+- Added GET `/v1/segments` endpoint documentation with the `SegmentsListResponseBody` schema
+- Updated the `Segment` schema to include the `updated_at` field.
+
 ## 2026-04-13
 
 - Update the `DiscountUnitVouchersEffectTypes` schema with `ADD_SAME_ITEMS` effect.
