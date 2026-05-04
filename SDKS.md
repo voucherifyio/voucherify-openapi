@@ -87,7 +87,7 @@ Checks if the OpenAPI schemas haven't changed after scripts refactoring.
 1. Init all submodules `git submodule update --init --recursive`.
 2. Create a new branch: `git checkout -b MY_BRANCH_NAME`
 3. Add changes in accordance with [CONTRIBUTING.md](./CONTRIBUTING.md).
-4. [Generate SDKs](#how-to-generate-sdk).
+4. [Generate SDKs](#how-to-generate-an-sdk).
 5. Create new ones for your changes and [ensure everything runs without errors](#running-tests).
 6. Commit all changes to the main repo and submodules.
 7. Push your branch and create a [pull request](https://docs.github.com/en/free-pro-team@latest/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request-from-a-fork) against the `main` branch.
