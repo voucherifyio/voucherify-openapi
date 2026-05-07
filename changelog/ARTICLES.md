@@ -5,6 +5,10 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-05-04
+
+Add `audit-logs.mdx` article.
+
 ## 2026-04-30
 
 Add `voucher-tracking.mdx` and `voucher-maintenance.mdx` articles.
@@ -16,6 +20,7 @@ Add `voucherify-docs-mcp.mdx` article.
 ## 2026-04-13
 
 Fixed `user (string)` in `distribution-webhooks.mdx` and `project-settings-webhooks.mdx`.
+
 ## 2026-04-08
 
 - Deleted `campaign-reporting.mdx`, because it was not needed and stale.
