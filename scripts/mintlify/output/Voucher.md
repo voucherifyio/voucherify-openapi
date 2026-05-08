@@ -55,7 +55,7 @@ One of:
 <p>Available values: <code>APPLY_TO_ORDER</code>, <code>APPLY_TO_ITEMS</code>, <code>APPLY_TO_ITEMS_PROPORTIONALLY</code>, <code>APPLY_TO_ITEMS_PROPORTIONALLY_BY_QUANTITY</code>, <code>APPLY_TO_ITEMS_BY_QUANTITY</code></p>
 
 ## Discount Unit Vouchers Effect Types
-<p>Available values: <code>ADD_MISSING_ITEMS</code>, <code>ADD_NEW_ITEMS</code>, <code>ADD_MANY_ITEMS</code></p>
+<p>Available values: <code>ADD_MISSING_ITEMS</code>, <code>ADD_NEW_ITEMS</code>, <code>ADD_MANY_ITEMS</code>, <code>ADD_SAME_ITEMS</code></p>
 
 ## Simple Product Discount Unit
 <table><thead><tr><th>Attributes</th><th>Description</th></tr></thead><tbody><tr><td><p>id<br/><code>string</code></p></td><td><p>Unique product ID, assigned by Voucherify.</p></td></tr><tr><td><p>source_id<br/><code>string</code></p></td><td><p>Product's source ID.</p></td></tr><tr><td><p>name<br/><code>string</code></p></td><td><p>Product name.</p></td></tr></tbody></table>
