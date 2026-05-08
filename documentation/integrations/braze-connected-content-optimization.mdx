@@ -1,0 +1,185 @@
+---
+title: "Optimize your Connected Content scripts"
+description: "Configure rate limiting, caching, and retry mechanisms for Braze Connected Content"
+keywords: ['integration', 'braze', 'connected content', 'security']
+---
+
+Use the following settings to optimize the performance of your Connected Content scripts. These settings reduce the number of API calls triggered by Braze and lower the risk of hitting the API rate limit, which can break message delivery.
+
+<Info>
+
+The examples below use the default API address `https://api.voucherify.io`.
+
+If your API endpoint is in a [different region](/integrations/braze-connected-content-overview#api-endpoints), remember to change it.
+
+</Info>
+
+## Rate limiter
+
+When configuring campaigns in Braze, [limit the number of messages](https://www.braze.com/docs/user_guide/engagement_tools/campaigns/building_campaigns/rate-limiting/#delivery-speed-rate-limiting) sent by Braze per minute.
+
+This protects both Braze and Voucherify APIs from excessive traffic. Set the sending rate based on your Voucherify [API rate limits](/guides/limits#api-limits) and account for other API call needs.
+
+## Add caching to calls
+
+Caching reduces the number of API calls triggered by Braze.
+
+Connected Content calls don't cache by default and make two API requests per call. This can quickly drain your hourly and monthly limits. Caching reduces this to one API call per request.
+
+Add caching to calls as follows:
+- Provide a caching key `cache_id={{cache_id}}` in the destination endpoint query parameter so Braze can identify a unique call. First, define the variable, then append the unique query string to your endpoint. In the example, this differentiates each publication by the `source_id`.
+- Add a `:cache_max_age` attribute. You can customize the duration using seconds. It can be set between 5 minutes to 4 hours. Example: `:cache_max_age 3600` will cache for 1 hour.
+
+<Info>
+
+   By default, the caching duration is 5 minutes.
+
+</Info>
+
+```liquid Caching in publications focus={5,16} lines wrap
+      {% assign braze_campaign_id = {{campaign.${api_id}}} %}
+      {% assign customer_id = {{${user_id}}} %}
+      {% assign source_id = braze_campaign_id | append: customer_id %}
+      {% assign voucherify_campaign_id = "camp_XXXXXXXXXXXXXXXXXXXXXXXX" %}
+      {% assign cache_id = source_id %}
+
+      {% connected_content 
+         https://api.voucherify.io/v1/publications?cache_id={{cache_id}}
+         :method post
+         :headers {
+            "X-App-Id": "12345678-90QW-ERTY-UIOP-asdfghjklzxc",
+            "X-App-Token": "MNBVCXZL-KJHG-FDSA-POIU-ytrewq098765"
+         }
+         :body campaign={{voucherify_campaign_id}}&customer={{customer_id}}&channel=Braze&source_id={{source_id}}
+         :content_type application/json
+         :cache_max_age
+         :retry
+         :save publication
+      %}
+```
+
+<Note>
+   
+   Braze caches API calls based on the URL. The unique string used as a query parameter is ignored by Voucherify, but it lets Braze distinguish different API requests and cache each one separately.
+   
+   Without this query parameter, every customer receives the same value (for publications, the same coupon code) for the cache duration.
+
+</Note>
+
+## Retry attribute
+
+Add a [retry](https://www.braze.com/docs/user_guide/personalization_and_dynamic_content/connected_content/connected_content_retries) attribute to your Connected Content script. Connected Content doesn't validate the Voucherify response, so without retry, a slow or failed request results in a message sent without data. With `:retry`, Braze retries up to 5 times before aborting the message.
+
+<Warning>
+
+   <Badge color="yellow">Publications without retry</Badge>
+
+   If you use the POST `v1/publications` endpoint without `:retry`, Braze sends the message even if Voucherify returns no response.
+   
+   This can result in emails without a published code.
+
+</Warning>
+
+```liquid Retry in publications focus={17} lines wrap
+      {% assign braze_campaign_id = {{campaign.${api_id}}} %}
+      {% assign customer_id = {{${user_id}}} %}
+      {% assign source_id = braze_campaign_id | append: customer_id %}
+      {% assign voucherify_campaign_id = "camp_XXXXXXXXXXXXXXXXXXXXXXXX" %}
+      {% assign cache_id = source_id %}
+
+      {% connected_content 
+         https://api.voucherify.io/v1/publications?cache_id={{cache_id}}
+         :method post
+         :headers {
+            "X-App-Id": "12345678-90QW-ERTY-UIOP-asdfghjklzxc",
+            "X-App-Token": "MNBVCXZL-KJHG-FDSA-POIU-ytrewq098765"
+         }
+         :body campaign={{voucherify_campaign_id}}&customer={{customer_id}}&channel=Braze&source_id={{source_id}}
+         :content_type application/json
+         :cache_max_age
+         :retry
+         :save publication
+      %}
+```
+
+## Unique publication per customer
+
+The `source_id` parameter in the script body ensures each customer receives only one unique code per Braze campaign. Even if Braze sends duplicate requests, the customer gets the same code that was published in the first message.
+
+```liquid Source ID in publications focus={3,14} lines wrap
+      {% assign braze_campaign_id = {{campaign.${api_id}}} %}
+      {% assign customer_id = {{${user_id}}} %}
+      {% assign source_id = braze_campaign_id | append: customer_id %}
+      {% assign voucherify_campaign_id = "camp_XXXXXXXXXXXXXXXXXXXXXXXX" %}
+      {% assign cache_id = source_id %}
+
+      {% connected_content 
+         https://api.voucherify.io/v1/publications?cache_id={{cache_id}}
+         :method post
+         :headers {
+            "X-App-Id": "12345678-90QW-ERTY-UIOP-asdfghjklzxc",
+            "X-App-Token": "MNBVCXZL-KJHG-FDSA-POIU-ytrewq098765"
+         }
+         :body campaign={{voucherify_campaign_id}}&customer={{customer_id}}&channel=Braze&source_id={{source_id}}
+         :content_type application/json
+         :cache_max_age
+         :retry
+         :save publication
+      %}
+```
+
+## Publication with customer can join only once
+
+If your Voucherify campaign is set to **Customers can join campaign only once**, remove `source_id` from the script body.
+
+Voucherify ensures that each Braze message to the same customer delivers the same code that was published in the first message.
+
+Your Connected Content script should be as follows:
+
+```liquid Customer can join only once publication script
+   {% assign braze_campaign_id = {{campaign.${api_id}}} %}
+   {% assign customer_id = {{${user_id}}} %}
+   {% assign cache_id = braze_campaign_id | append: customer_id %}
+   {% assign voucherify_campaign_id = "camp_XXXXXXXXXXXXXXXXXXXXXXXX" %}
+
+   {% connected_content 
+      https://api.voucherify.io/v1/publications?cache_id={{cache_id}}
+      :method post
+      :headers {
+            "X-App-Id": "12345678-90QW-ERTY-UIOP-asdfghjklzxc",
+            "X-App-Token": "MNBVCXZL-KJHG-FDSA-POIU-ytrewq098765"
+      }
+      :body campaign={{voucherify_campaign_id}}&customer={{customer_id}}&channel=Braze
+      :content_type application/json
+      :cache_max_age
+      :retry
+      :save publication
+   %}
+```
+
+## Source ID configurations
+
+You can modify `{{source_id}}` and its effect on publications with the following configurations.
+
+| Configuration | Effect |
+| ------------- | ------ |
+| `{{campaign.${dispatch_id}}}` | Ensures that all customers within a single send-out will use the same publication. |
+| `{{campaign.${api_id}}}` | Ensures that all customers within a single campaign will use the same publication. |
+| `{{${user_id}}}` or `{{${braze_id}}}` | Ensures that every customer uses the same publication regardless of which campaign is sent. `${user_id}` is the external ID and `${braze_id}` is the internal Braze ID. |
+| `{{campaign.${dispatch_id}}}` and `{{campaign.${user_id}}}` | Each customer within a single send-out will use the same unique publication. |
+
+
+## Converting Connected Content scripts to Canvas
+
+The examples above are prepared for Braze campaigns. However, you can use them in Braze Canvas as well.
+
+To use the script in Canvas, delete the line with `{% assign braze_campaign_id = {{campaign.${api_id}}} %}` and add `{% assign braze_id = canvas.${id} %}`.
+
+## Solving issues
+
+If your Connected Content script doesn't show data from the Voucherify API, go to **Audit logs** in Voucherify. Check for errors in the request and response payloads.
+
+
+## Next steps
+
+Once optimized, get inspired with the [Connected Content script reference](/integrations/braze-connected-content-reference): API endpoints, script templates, and parameter configurations.
