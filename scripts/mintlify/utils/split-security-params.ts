@@ -36,6 +36,11 @@ export const splitSecurityParams = (openapi: any) => {
                             "X-Client-Token": allSecurity["X-Client-Token"],
                           },
                           {
+                            "X-Management-Id": allSecurity["X-Management-Id"],
+                            "X-Management-Token":
+                              allSecurity["X-Management-Token"],
+                          },
+                          {
                             "X-Voucherify-OAuth":
                               allSecurity["X-Voucherify-OAuth"],
                           },
