@@ -1,0 +1,150 @@
+---
+title: "Distribute to Braze custom attributes"
+description: "Learn how to use distributions to push incentives to Braze custom attributes"
+keywords: ['integration', 'braze', 'custom', 'attribute']
+---
+
+<Info>
+
+    <Badge>Prerequisite: Add Braze credentials to Voucherify</Badge>
+
+    To send events to Braze, [connect your Voucherify project with Braze](/integrations/braze-overview#connect-voucherify-with-braze "Braze overview: Connect Voucherify with Braze instructions").
+
+</Info>
+
+Voucherify distributions let you assign incentive codes to custom attributes on Braze user profiles. You can then use these custom attributes in your Braze campaigns, for example in Connected Content scripts or message personalization.
+
+You can assign: 
+- Discount coupons
+- Gift cards
+- Loyalty cards
+- Referral codes
+- Promotion tiers
+
+You can distribute incentives to Braze using:
+- **Manual messages**: A one-time action that assigns random codes or sends promotion tier details to a chosen audience (a Voucherify segment or a single customer).
+- **Automated workflow**: Sends an incentive in response to a specific customer action.
+
+
+<Accordion title="Distribution triggers that can use Braze">
+
+    Voucherify can push codes or promotion tiers to Braze custom attributes automatically in response to the following triggers.
+    
+    Triggers that can push codes or promotion tiers:
+    - **Customer entered/left segment**: The message is sent when a customer joins or leaves a segment in Voucherify.
+    - **Successfully published**: The message is sent when the code from a campaign is published (assigned) to a customer in Voucherify.
+    - **Order status changed**: The message is sent when the order changes its status to created, updated, paid, or canceled.
+    - **Reward redemption**: The message is sent when a customer redeems a loyalty or referral reward.
+    - **Custom event**: The message is triggered once Voucherify receives a particular custom event.
+    - **Loyalty points adjusted**: The message is sent when loyalty points are added to or subtracted from the customer's profile.
+    - **Customer rewarded loyalty points**: The message is sent when a customer was rewarded loyalty points.
+
+</Accordion>
+
+If a Voucherify customer doesn't exist in Braze, the distribution creates a new Braze user profile. The Voucherify customer `source_id` is used as the Braze `user_id`.
+
+## Set up distribution
+
+In Voucherify, go to **Engagement** > **Distributions** to **Create distribution**.
+
+<Steps>
+
+  <Step title="Provide name and select Trigger">
+
+    Name your distribution and select the trigger.
+
+    For a relevant trigger, select required options:
+    - **Campaign**
+    - **Segment**
+    - **Validation rule**
+    - **Custom event**
+
+  </Step>
+
+  <Step title="Choose Action">
+
+    - **Notify customers about promotion**. Select **Promotion tier**.
+    - **Send and publish unique codes from campaign**. Select the campaign that will be the source of unique codes.
+
+    Voucherify sends the incentive data to Braze customer profiles. The data includes the environment it was sent from and the code in three formats: text, barcode, and QR.
+
+  </Step>
+
+  <Step title="Configure channels">
+
+    In **Channels**, choose Braze as a channel. Map custom fields that will be added to the user profile in Braze.
+    - For vouchers, map **Voucher code** to add the field representing the `code` of the published voucher, for example `voucherify_campaign_code`. The rest of the fields are optional.
+    - For promotion tiers, map **Promotion tier name** and **Promotion tier ID**. The rest of the fields are optional.
+
+    <Tip>
+
+    This is where you decide how you want to label Voucherify properties as custom attributes in Braze.
+
+    You don't have to add that custom attribute in Braze earlier, as these custom attributes will be mapped automatically to the defined key.
+
+    </Tip>
+
+  </Step>
+
+  <Step title="Review and send">
+
+    In **Summary**, verify the configuration. When ready, click **Save and send** to deliver the codes or promotion tiers to Braze user profiles.
+
+  </Step>
+
+</Steps>
+
+Manual distribution is sent after 10 minutes delay. You can edit your distribution details in the meantime.
+
+Automated distribution starts immediately and a message is sent whenever the triggering event occurs.
+
+Each message assigns a code or promotion tier as a custom attribute to a user profile in Braze.
+
+## Use Voucherify custom attributes in your Braze campaign
+
+Once the custom attribute with the code is added to the customer's custom attributes in Braze, you can use it in your Braze campaigns.
+
+Edit the message body and add the custom attribute defined in the Voucherify distribution, for example `voucherify_campaign_code`. To display the unique code, use the liquid code `{{custom_attribute.${voucherify_campaign_code}}}`.
+
+You can see the code in your message preview for a relevant user.
+
+## Related features
+
+Learn more about related features when using Braze custom attributes.
+
+<AccordionGroup>
+
+    <Accordion title="Customer segments in Voucherify">
+        
+    Before you use Braze custom attributes in Voucherify distributions for Customer entered/left segment, you need to add your Braze users to the Voucherify dashboard.
+    
+    To do this, you can:
+    - Use Braze connected content to synchronize users.
+    - [Synchronize customers with Braze Canvas](/integrations/send-data-from-braze#synchronize-customers-with-braze-canvas) on an ongoing basis
+    - Import [users through CSV in the Voucherify dashboard](/prepare/customers#csv-import).
+    - Import users through the [Import and Update Customers using CSV](/api-reference/customers/import-and-update-customers-using-csv) endpoint.
+
+    When importing Braze users to Voucherify, map the Braze `user_id` to the Voucherify `source_id`.
+
+    Once imported, create a [customer segment](/prepare/customer-segments) by filtering `source_id` with a condition like `starts with braze`. You can also filter by the `brazeAudiences` metadata field with a specific Braze `audience_id` stored in Voucherify customer profiles.
+
+    </Accordion>
+
+    <Accordion title="Use validation rules as guardrails">
+
+    Some distribution triggers in the automated workflow can use [validation rules](/optimize/validation-rules-reference). Validation rules work as additional conditions for triggering the incentive sendout.
+
+    For example:
+    - You can use a validation rule that will trigger the incentive sendout when the order status changes to "paid" and the order amount is above \$100.
+    - You can use a validation rule that requires the customer to belong to a VIP customer segment in Voucherify when a custom event is triggered.
+
+
+    You can use validation rules with the following distribution triggers:
+    - **Order status changed** to created, update, paid, or canceled.
+    - **Custom event**.
+
+    Experiment with what works best in your business scenario.
+
+    </Accordion>
+
+</AccordionGroup>

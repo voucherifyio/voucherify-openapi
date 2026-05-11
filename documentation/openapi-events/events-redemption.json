@@ -1,0 +1,2519 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Events - Events redemption",
+    "version": "2024-01-01",
+    "description": ""
+  },
+  "paths": {},
+  "components": {
+    "schemas": {
+      "EventRedemptionSucceededData": {
+        "title": "Event Redemption Succeeded",
+        "description": "Event data object schema for `redemption.succeeded`.",
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EventCustomerRedemption"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "created_at": {
+                "type": "string",
+                "example": "2024-01-01T11:11:11.111Z",
+                "description": "Timestamp representing the date and time when the redemption succeeded in the ISO 8601 format.",
+                "format": "date-time"
+              }
+            }
+          }
+        ]
+      },
+      "EventRedemptionFailedData": {
+        "title": "Event Redemption Failed",
+        "type": "object",
+        "description": "Event data object schema for `redemption.failed`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EventCustomerRedemption"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "created_at": {
+                "type": "string",
+                "example": "2024-01-01T11:11:11.111Z",
+                "description": "Timestamp representing the date and time when the redemption failed in the ISO 8601 format.",
+                "format": "date-time"
+              }
+            }
+          }
+        ]
+      },
+      "EventRedemptionRollbackSucceededData": {
+        "type": "object",
+        "title": "Event Redemption Rollback Succeeded",
+        "description": "Event data object schema for `redemption.rollback.succeeded`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EventCustomerRedemption"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "redemption_rollback": {
+                "$ref": "#/components/schemas/SimpleRedemption"
+              }
+            }
+          }
+        ]
+      },
+      "EventRedemptionRollbackFailedData": {
+        "type": "object",
+        "title": "Event Redemption Rollback Failed",
+        "description": "Event data object schema for `redemption.rollback.failed`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EventCustomerRedemption"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "redemption_rollback": {
+                "$ref": "#/components/schemas/SimpleRedemption"
+              }
+            }
+          }
+        ]
+      },
+      "EventCustomerRedemption": {
+        "title": "Event Customer Redemption",
+        "type": "object",
+        "properties": {
+          "customer": {
+            "nullable": true,
+            "$ref": "#/components/schemas/SimpleCustomer"
+          },
+          "order": {
+            "nullable": true,
+            "$ref": "#/components/schemas/SimpleOrder"
+          },
+          "campaign": {
+            "nullable": true,
+            "$ref": "#/components/schemas/SimpleCampaign"
+          },
+          "voucher": {
+            "nullable": true,
+            "$ref": "#/components/schemas/SimpleVoucher"
+          },
+          "holder": {
+            "nullable": true,
+            "allOf": [
+              {
+                "description": "Details about the redeemable holder.",
+                "$ref": "#/components/schemas/SimpleCustomer"
+              }
+            ]
+          },
+          "promotion_tier": {
+            "nullable": true,
+            "$ref": "#/components/schemas/SimplePromotionTier"
+          },
+          "promotion_stack": {
+            "nullable": true,
+            "$ref": "#/components/schemas/SimplePromotionStack"
+          },
+          "redemption": {
+            "nullable": true,
+            "$ref": "#/components/schemas/SimpleRedemption"
+          }
+        }
+      },
+      "SimpleRedemption": {
+        "type": "object",
+        "title": "Simple Redemption",
+        "description": "Simplified redemption data.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "r_0bc92f81a6801f9bca",
+            "description": "Unique redemption ID."
+          },
+          "customer_id": {
+            "type": "string",
+            "nullable": true,
+            "example": "cust_i8t5Tt6eiKG5K79KQlJ0Vs64",
+            "description": "Unique customer ID of the redeeming customer."
+          },
+          "tracking_id": {
+            "type": "string",
+            "description": "Hashed customer source ID."
+          },
+          "date": {
+            "type": "string",
+            "example": "2021-12-22T10:13:06.487Z",
+            "description": "Timestamp representing the date and time when the redemption was created in the ISO 8601 format.",
+            "format": "date-time"
+          },
+          "amount": {
+            "type": "integer",
+            "description": "For gift cards, this is a positive integer in the smallest currency unit (e.g. 100 cents for $1.00) representing the number of redeemed credits.\nFor loyalty cards, this is the number of loyalty points used in the transaction.\nIn the case of redemption rollback, the numbers are expressed as negative integers.",
+            "example": 10000
+          },
+          "order": {
+            "$ref": "#/components/schemas/SimpleOrder"
+          },
+          "reward": {
+            "$ref": "#/components/schemas/SimpleRedemptionRewardResult"
+          },
+          "customer": {
+            "$ref": "#/components/schemas/SimpleCustomer"
+          },
+          "result": {
+            "type": "string",
+            "enum": [
+              "SUCCESS",
+              "FAILURE"
+            ],
+            "description": "Redemption result."
+          },
+          "status": {
+            "type": "string",
+            "nullable": true,
+            "enum": [
+              "SUCCEEDED",
+              "FAILED",
+              "ROLLED BACK"
+            ]
+          },
+          "voucher": {
+            "description": "Defines the details of the voucher being redeemed.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SimpleVoucher"
+              }
+            ]
+          },
+          "promotion_tier": {
+            "$ref": "#/components/schemas/SimplePromotionTier"
+          },
+          "redemption": {
+            "type": "string",
+            "description": "Unique redemption ID of the parent redemption.",
+            "example": "r_0c656311b5878a2031"
+          },
+          "metadata": {
+            "type": "object",
+            "description": "The metadata object stores all custom attributes in the form of key/value pairs assigned to the redemption."
+          },
+          "failure_code": {
+            "type": "string",
+            "example": "customer_rules_violated",
+            "description": "If the result is `FAILURE`, this parameter will provide a generic reason as to why the redemption failed."
+          },
+          "failure_message": {
+            "type": "string",
+            "description": "If the result is `FAILURE`, this parameter will provide an expanded reason as to why the redemption failed."
+          },
+          "reason": {
+            "type": "string",
+            "description": "The reason for the redemption rollback."
+          },
+          "channel": {
+            "type": "object",
+            "description": "Defines the details of the channel through which the redemption was issued.",
+            "properties": {
+              "channel_id": {
+                "type": "string",
+                "description": "Unique channel ID of the user performing the redemption. This is either a user ID from a user using the Voucherify Dashboard, an X-APP-Id of a user using the API, or the reward assignment ID for automatic reward redemption."
+              },
+              "channel_type": {
+                "type": "string",
+                "description": "The source of the channel for the redemption:\n`USER` - the redemption was made in the Voucherify Dashboard by a user,\n `API` - redemption was made through the API,\n`AUTO_REDEEM - the redemption was made for a reward and it was made automatically.",
+                "enum": [
+                  "API",
+                  "AUTO_REDEEM",
+                  "USER"
+                ]
+              }
+            }
+          },
+          "object": {
+            "type": "string",
+            "description": "The type of the object represented by the JSON. This object stores information about the `redemption`.",
+            "default": "redemption"
+          }
+        },
+        "required": [
+          "id",
+          "date",
+          "metadata",
+          "status",
+          "object"
+        ]
+      },
+      "SimpleCustomer": {
+        "title": "Simple Customer",
+        "type": "object",
+        "description": "Simplified customer data.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier of an existing customer. It is assigned by Voucherify."
+          },
+          "name": {
+            "type": "string",
+            "description": "Customer's first and last name."
+          },
+          "email": {
+            "type": "string",
+            "description": "Customer's email address."
+          },
+          "source_id": {
+            "type": "string",
+            "description": "A unique identifier of the customer. It can be a customer ID or email from a CRM system, database, or a third-party service."
+          },
+          "metadata": {
+            "type": "object",
+            "description": "A set of custom key/value pairs that are attached to the customer. It stores all custom attributes assigned to the customer."
+          },
+          "object": {
+            "type": "string",
+            "description": "The type of the object represented by JSON.",
+            "enum": [
+              "customer"
+            ]
+          }
+        }
+      },
+      "SimpleOrder": {
+        "title": "Simple Order",
+        "type": "object",
+        "description": "Order information.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier of an existing order that will be linked to the redemption of this request."
+          },
+          "source_id": {
+            "type": "string",
+            "description": "Unique source identifier of an existing order that will be linked to the redemption of this request."
+          },
+          "status": {
+            "type": "string",
+            "description": "The order status.",
+            "enum": [
+              "CREATED",
+              "PAID",
+              "CANCELED",
+              "FULFILLED"
+            ]
+          },
+          "customer_id": {
+            "type": "string",
+            "nullable": true,
+            "description": "Unique customer identifier of the customer making the purchase. The ID is assigned by Voucherify.",
+            "example": "cust_7iUa6ICKyU6gH40dBU25kQU1"
+          },
+          "referrer_id": {
+            "type": "string",
+            "nullable": true,
+            "description": "Unique identifier of the referrer assigned by Voucherify.",
+            "example": "cust_nM4jqPiaXUvQdVSA6vTRUnix"
+          },
+          "amount": {
+            "type": "integer",
+            "description": "A positive integer in the smallest currency unit (e.g. 100 cents for $1.00) representing the total amount of the order. This is the sum of the order items' amounts."
+          },
+          "discount_amount": {
+            "type": "integer",
+            "description": "Sum of all order-level discounts applied to the order. It is expressed as an integer in the smallest currency unit (e.g. 100 cents for $1.00)."
+          },
+          "applied_discount_amount": {
+            "type": "integer",
+            "description": "This field shows the order-level discount applied. It is expressed as an integer in the smallest currency unit (e.g. 100 cents for $1.00)."
+          },
+          "items_discount_amount": {
+            "type": "integer",
+            "description": "Sum of all product-specific discounts applied to the order.  It is expressed as an integer in the smallest currency unit (e.g. 100 cents for $1.00)."
+          },
+          "items_applied_discount_amount": {
+            "type": "integer",
+            "description": "Sum of all product-specific discounts applied in a particular request. It is expressed as an integer in the smallest currency unit (e.g. 100 cents for $1.00).  \n`sum(items, i => i.applied_discount_amount)`"
+          },
+          "total_discount_amount": {
+            "type": "integer",
+            "description": "Sum of all order-level AND all product-specific discounts applied to the order. It is expressed as an integer in the smallest currency unit (e.g. 100 cents for $1.00)."
+          },
+          "total_applied_discount_amount": {
+            "type": "integer",
+            "description": "Sum of all order-level AND all product-specific discounts applied in a particular request. It is expressed as an integer in the smallest currency unit (e.g. 100 cents for $1.00).\n`total_applied_discount_amount` = `applied_discount_amount` + `items_applied_discount_amount`"
+          },
+          "total_amount": {
+            "type": "integer",
+            "description": "Order amount after undoing all the discounts through the rollback redemption. It is expressed as an integer in the smallest currency unit (e.g. 100 cents for $1.00)."
+          },
+          "items": {
+            "type": "array",
+            "description": "Array of items applied to the order. It can include up to 500 items.",
+            "items": {
+              "$ref": "#/components/schemas/SimpleOrderItem"
+            }
+          },
+          "metadata": {
+            "type": "object",
+            "description": "A set of custom key/value pairs that you can attach to an order. It can be useful for storing additional information about the order in a structured format. It can be used to define business validation rules or discount formulas."
+          },
+          "object": {
+            "type": "string",
+            "description": "The type of the object represented by JSON.",
+            "default": "order",
+            "enum": [
+              "order"
+            ]
+          }
+        },
+        "required": [
+          "object"
+        ]
+      },
+      "SimpleCampaign": {
+        "title": "Simple Campaign",
+        "type": "object",
+        "description": "Simplified campaign data.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Campaign ID."
+          },
+          "name": {
+            "type": "string",
+            "description": "Campaign name."
+          },
+          "campaign_type": {
+            "type": "string",
+            "description": "Type of campaign."
+          },
+          "type": {
+            "type": "string",
+            "description": "Defines whether the campaign can be updated with new vouchers after campaign creation or if the campaign consists of standalone vouchers.\n\n- `AUTO_UPDATE`: the campaign is dynamic, i.e. vouchers will generate based on set criteria\n-  `STATIC`: vouchers need to be manually published\n- `STANDALONE`: campaign for single vouchers",
+            "enum": [
+              "AUTO_UPDATE",
+              "STATIC",
+              "STANDALONE"
+            ]
+          },
+          "is_referral_code": {
+            "type": "boolean",
+            "description": "Flag indicating whether this voucher is a referral code; `true` for campaign type `REFERRAL_PROGRAM`."
+          },
+          "voucher": {
+            "$ref": "#/components/schemas/SimpleCampaignVoucher"
+          },
+          "referral_program": {
+            "$ref": "#/components/schemas/ReferralProgram"
+          },
+          "auto_join": {
+            "type": "boolean",
+            "description": "Indicates whether customers will be able to auto-join the campaign if any earning rule is fulfilled."
+          },
+          "join_once": {
+            "type": "boolean",
+            "description": "If this value is set to `true`, customers will be able to join the campaign only once. It is always `false` for standalone voucher campaigns and it cannot be changed in them. It is always `true` for loyalty campaigns."
+          },
+          "active": {
+            "type": "boolean",
+            "description": "Indicates whether the campaign is active."
+          },
+          "category_id": {
+            "nullable": true,
+            "type": "string",
+            "description": "The unique category ID that this campaign belongs to."
+          },
+          "category": {
+            "type": "string",
+            "description": "Unique category name."
+          },
+          "categories": {
+            "type": "array",
+            "description": "Contains details about the category.",
+            "items": {
+              "$ref": "#/components/schemas/Category"
+            }
+          },
+          "metadata": {
+            "type": "object",
+            "description": "A set of custom key/value pairs that you can attach to a campaign. The metadata object stores all custom attributes assigned to the campaign."
+          },
+          "start_date": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Activation timestamp defines when the campaign starts to be active in ISO 8601 format. Campaign is inactive *before* this date. ",
+            "example": "2022-09-20T00:00:00.000Z"
+          },
+          "expiration_date": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Expiration timestamp defines when the campaign expires in ISO 8601 format.  Campaign is inactive *after* this date.",
+            "example": "2022-09-30T00:00:00.000Z"
+          },
+          "description": {
+            "type": "string",
+            "description": "An optional field to keep extra textual information about the campaign such as a campaign description and details."
+          },
+          "created_at": {
+            "type": "string",
+            "example": "2024-01-01T11:11:11.111Z",
+            "description": "Timestamp representing the date and time when the campaign was created. The value is shown in the ISO 8601 format.",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "example": "2024-01-01T11:11:11.111Z",
+            "description": "Timestamp representing the date and time when the campaign was updated in the ISO 8601 format.",
+            "format": "date-time"
+          },
+          "object": {
+            "type": "string",
+            "default": "campaign",
+            "enum": [
+              "campaign"
+            ],
+            "description": "The type of the object represented by JSON. This object stores information about the campaign."
+          }
+        }
+      },
+      "SimpleVoucher": {
+        "type": "object",
+        "title": "Simple Voucher",
+        "description": "Simplified voucher data.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "A unique identifier that represents the voucher assigned by Voucherify."
+          },
+          "code": {
+            "type": "string",
+            "description": "Voucher code."
+          },
+          "gift": {
+            "description": "Gift object response.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Gift"
+              }
+            ]
+          },
+          "discount": {
+            "$ref": "#/components/schemas/Discount"
+          },
+          "loyalty_card": {
+            "description": "Defines the loyalty card details.",
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SimpleLoyaltyCard"
+              }
+            ]
+          },
+          "type": {
+            "type": "string",
+            "description": "Type of the voucher.",
+            "enum": [
+              "DISCOUNT_VOUCHER",
+              "LOYALTY_CARD",
+              "GIFT_VOUCHER"
+            ]
+          },
+          "campaign": {
+            "type": "string",
+            "description": "Campaign name."
+          },
+          "campaign_id": {
+            "type": "string",
+            "description": "Campaign unique ID."
+          },
+          "is_referral_code": {
+            "type": "boolean",
+            "description": "Flag indicating whether this voucher is a referral code; `true` for campaign type `REFERRAL_PROGRAM`."
+          },
+          "holder_id": {
+            "type": "string",
+            "example": "cust_eWgXlBBiY6THFRJwX45Iakv4",
+            "description": "Unique customer identifier of the redeemable holder. It equals to the customer ID assigned by Voucherify."
+          },
+          "referrer_id": {
+            "type": "string",
+            "description": "Unique identifier of the referrer assigned by Voucherify.",
+            "example": "cust_nM4jqPiaXUvQdVSA6vTRUnix"
+          },
+          "category_id": {
+            "type": "string",
+            "nullable": true,
+            "description": "Unique identifier of the category that this voucher belongs to.",
+            "example": "cat_0b6152ce12414820dc"
+          },
+          "categories": {
+            "type": "array",
+            "description": "Contains details about the category.",
+            "items": {
+              "$ref": "#/components/schemas/Category"
+            }
+          },
+          "active": {
+            "type": "boolean",
+            "description": "Shows whether the voucher is on or off. `true` indicates an *active* voucher and `false` indicates an *inactive* voucher."
+          },
+          "created_at": {
+            "type": "string",
+            "example": "2021-12-22T10:13:06.487Z",
+            "description": "Timestamp representing the date and time when the order was created in the ISO 8601 format.",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "example": "2024-01-01T11:11:11.111Z",
+            "description": "Timestamp representing the date and time when the order was created. The value is shown in the ISO 8601 format.",
+            "format": "date-time"
+          },
+          "redemption": {
+            "type": "object",
+            "description": "Defines the redemption limits on vouchers.",
+            "properties": {
+              "quantity": {
+                "type": "integer",
+                "nullable": true,
+                "description": "How many times a voucher can be redeemed. A `null` value means unlimited."
+              },
+              "redeemed_quantity": {
+                "type": "integer",
+                "example": 1,
+                "description": "How many times a voucher has already been redeemed."
+              }
+            },
+            "required": [
+              "quantity",
+              "redeemed_quantity"
+            ]
+          },
+          "start_date": {
+            "type": "string",
+            "example": "2021-12-01T00:00:00.000Z",
+            "format": "date-time",
+            "description": "Activation timestamp defines when the code starts to be active in ISO 8601 format. Voucher is *inactive before* this date."
+          },
+          "expiration_date": {
+            "type": "string",
+            "example": "2021-12-31T00:00:00.000Z",
+            "format": "date-time",
+            "description": "Expiration timestamp defines when the code expires in ISO 8601 format.  Voucher is *inactive after* this date."
+          },
+          "metadata": {
+            "type": "object",
+            "description": "A set of custom key/value pairs that you can attach to a voucher. The metadata object stores all custom attributes assigned to the voucher."
+          },
+          "object": {
+            "type": "string",
+            "description": "The type of the object represented by JSON.",
+            "default": "voucher",
+            "enum": [
+              "voucher"
+            ]
+          }
+        },
+        "required": [
+          "type",
+          "code",
+          "created_at",
+          "object"
+        ]
+      },
+      "SimplePromotionTier": {
+        "title": "Simple Promotion Tier",
+        "type": "object",
+        "description": "Simplified promotion tier data.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "promo_63fYCt81Aw0h7lzyRkrGZh9p",
+            "description": "Unique promotion tier ID."
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the promotion tier."
+          },
+          "banner": {
+            "type": "string",
+            "nullable": true,
+            "description": "Text to be displayed to your customers on your website."
+          },
+          "campaign": {
+            "$ref": "#/components/schemas/SimplePromotionTierCampaign"
+          },
+          "metadata": {
+            "type": "object",
+            "description": "A set of custom key/value pairs that you can attach to a promotion tier. The metadata object stores all custom attributes assigned to the promotion tier."
+          }
+        }
+      },
+      "SimplePromotionStack": {
+        "title": "Simple Promotion Stack",
+        "type": "object",
+        "description": "Simplified promotion stack data.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier of the promotion stack."
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the promotion stack."
+          },
+          "category_id": {
+            "type": "string",
+            "description": "Unique identifier of the category of the promotion stack."
+          },
+          "campaign": {
+            "type": "object",
+            "description": "Represents simplified promotion stack campaign data.",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Unique identifier of the campaign."
+              }
+            }
+          },
+          "tiers": {
+            "type": "object",
+            "required": [
+              "ids"
+            ],
+            "description": "Contains the tier configuration.",
+            "properties": {
+              "ids": {
+                "type": "array",
+                "minItems": 1,
+                "description": "Contains the list of tiers in a pre-defined sequence.",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "hierarchy_mode": {
+                "type": "string",
+                "default": "MANUAL",
+                "enum": [
+                  "MANUAL"
+                ]
+              }
+            }
+          }
+        }
+      },
+      "SimpleRedemptionRewardResult": {
+        "title": "Simple Redemption Reward Result",
+        "type": "object",
+        "description": "Simplified redemption reward result data",
+        "properties": {
+          "customer": {
+            "$ref": "#/components/schemas/SimpleCustomer"
+          },
+          "assignment_id": {
+            "type": "string",
+            "description": "Unique reward assignment ID assigned by Voucherify."
+          },
+          "voucher": {
+            "allOf": [
+              {
+                "description": "Defines the voucher reward.",
+                "$ref": "#/components/schemas/SimpleVoucher"
+              }
+            ]
+          },
+          "product": {
+            "allOf": [
+              {
+                "description": "Defines the product reward.",
+                "$ref": "#/components/schemas/SimpleProduct"
+              }
+            ]
+          },
+          "sku": {
+            "allOf": [
+              {
+                "description": "Defines the SKU reward.",
+                "$ref": "#/components/schemas/SimpleSku"
+              }
+            ]
+          },
+          "loyalty_tier_id": {
+            "type": "string",
+            "description": "Unique loyalty tier ID assigned by Voucherify."
+          },
+          "id": {
+            "type": "string",
+            "example": "rew_nIy4gHpQHle2c3pNMwuj7G6j",
+            "description": "Unique reward ID, assigned by Voucherify."
+          },
+          "object": {
+            "type": "string",
+            "default": "reward",
+            "enum": [
+              "reward"
+            ],
+            "description": "The type of the object represented by the JSON. This object stores information about the reward."
+          },
+          "name": {
+            "type": "string",
+            "description": "Reward name."
+          },
+          "created_at": {
+            "type": "string",
+            "description": "Timestamp representing the date and time when the reward was created in the ISO 8601 format.",
+            "example": "2024-01-01T11:11:11.111Z",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "nullable": true,
+            "description": "Timestamp representing the date and time when the reward was updated. The value is shown in the ISO 8601 format.",
+            "example": "2024-01-01T11:11:11.111Z",
+            "format": "date-time"
+          },
+          "parameters": {
+            "description": "Defines how the reward is generated.",
+            "type": "object",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/4_obj_reward_object_parameters_CAMPAIGN"
+              },
+              {
+                "$ref": "#/components/schemas/4_obj_reward_object_parameters_COIN"
+              },
+              {
+                "$ref": "#/components/schemas/4_obj_reward_object_parameters_MATERIAL"
+              }
+            ]
+          },
+          "metadata": {
+            "type": "object",
+            "description": "A set of custom key/value pairs that you can attach to a reward. The metadata object stores all custom attributes assigned to the reward."
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "CAMPAIGN",
+              "COIN",
+              "MATERIAL"
+            ],
+            "description": "Reward type."
+          }
+        }
+      },
+      "SimpleOrderItem": {
+        "type": "object",
+        "title": "Simple Order Item",
+        "description": "Simplified order item data.",
+        "properties": {
+          "object": {
+            "type": "string",
+            "default": "order_item",
+            "enum": [
+              "order_item"
+            ],
+            "description": "The type of the object represented by JSON. This object stores information about the `order_item`."
+          },
+          "source_id": {
+            "type": "string",
+            "description": "The merchant’s product/SKU ID (if it is different from the Voucherify product/SKU ID)."
+          },
+          "related_object": {
+            "type": "string",
+            "enum": [
+              "product",
+              "sku"
+            ],
+            "description": "Used along with the source_id property. It can be set to either SKU or product."
+          },
+          "product_id": {
+            "type": "string",
+            "description": "A unique product ID assigned by Voucherify."
+          },
+          "sku_id": {
+            "type": "string",
+            "description": "A unique SKU ID assigned by Voucherify."
+          },
+          "quantity": {
+            "type": "integer",
+            "description": "The quantity of the particular item in the cart."
+          },
+          "discount_quantity": {
+            "type": "integer",
+            "description": "Number of dicounted items."
+          },
+          "amount": {
+            "type": "integer",
+            "description": "The total amount of the order item (price * quantity)."
+          },
+          "discount_amount": {
+            "type": "integer",
+            "description": "The sum of all order-item-level discounts applied to the order."
+          },
+          "applied_discount_amount": {
+            "type": "integer",
+            "description": "The order-level discount applied."
+          },
+          "price": {
+            "type": "integer",
+            "description": "Unit price of an item. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $10 discount is written as 1000."
+          },
+          "subtotal_amount": {
+            "type": "integer",
+            "description": "Final order amount after the applied discount."
+          }
+        }
+      },
+      "SimpleCampaignVoucher": {
+        "type": "object",
+        "description": "Simplified campaign voucher data.",
+        "title": "Simple Campaign Voucher",
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "Type of the voucher.",
+            "enum": [
+              "DISCOUNT_VOUCHER",
+              "LOYALTY_CARD",
+              "GIFT_VOUCHER"
+            ]
+          },
+          "discount": {
+            "description": "Defines the voucher discount type and details. It will not be returned at all or it will return a `null` for `LOYALTY_CARD`.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Discount"
+              }
+            ]
+          },
+          "gift": {
+            "description": "Defines the voucher gift details. It will not be returned at all or it will return a `null` for `LOYALTY_CARD`.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Gift"
+              }
+            ]
+          },
+          "loyalty_card": {
+            "description": "Defines the voucher loyalty card details.  It will not be returned at all or it will return a `null` for `DISCOUNT_VOUCHER` or `GIFT_CARD`.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CampaignLoyaltyCard"
+              }
+            ]
+          },
+          "redemption": {
+            "type": "object",
+            "description": "Defines the redemption limits on vouchers.",
+            "properties": {
+              "quantity": {
+                "type": "integer",
+                "nullable": true,
+                "description": "How many times a voucher can be redeemed. A `null` value means unlimited."
+              },
+              "redeemed_quantity": {
+                "type": "integer",
+                "example": 1,
+                "description": "How many times a voucher has already been redeemed."
+              }
+            },
+            "required": [
+              "quantity",
+              "redeemed_quantity"
+            ]
+          },
+          "code_config": {
+            "$ref": "#/components/schemas/CodeConfigRequiredLengthCharsetPattern"
+          }
+        },
+        "required": [
+          "type",
+          "redemption",
+          "code_config"
+        ]
+      },
+      "ReferralProgram": {
+        "title": "Referral Program",
+        "description": "Defines the referee reward and the way a referral is triggered. Context: `REFERRAL_PROGRAM`.",
+        "type": "object",
+        "properties": {
+          "conversion_event_type": {
+            "type": "string",
+            "enum": [
+              "redemption",
+              "custom_event"
+            ],
+            "description": "Defines how a referral is triggered."
+          },
+          "custom_event": {
+            "type": "object",
+            "description": "Contains details about the custom event.",
+            "properties": {
+              "id": {
+                "type": "string",
+                "example": "ms_Ll9enAm2BCN0M1s4VxWobLFM",
+                "description": "Unique custom event ID."
+              },
+              "name": {
+                "type": "string",
+                "description": "Custom event name."
+              }
+            }
+          },
+          "referee_reward": {
+            "type": "object",
+            "description": "Defines the referee reward.",
+            "properties": {
+              "related_object_parent": {
+                "type": "object",
+                "description": "Details of the resource from which the reward originates.",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "example": "camp_kdxp3vf1clQ9CFs1jpqv3tZe",
+                    "description": "Unique identifier of the reward source."
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "Name of the reward source."
+                  },
+                  "object": {
+                    "type": "string",
+                    "default": "CAMPAIGN",
+                    "enum": [
+                      "CAMPAIGN"
+                    ],
+                    "description": "Type of resource represented by the source of the reward."
+                  }
+                }
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "DISCOUNT_VOUCHER",
+                  "LOYALTY_CARD",
+                  "GIFT_VOUCHER"
+                ],
+                "description": "Type of reward."
+              },
+              "amount": {
+                "type": "string",
+                "description": "Define the number of `points` to add to a loyalty card or `credits` to the balance on a gift card. In case of the gift card, the value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000."
+              }
+            }
+          }
+        }
+      },
+      "Category": {
+        "title": "Category",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique category ID assigned by Voucherify."
+          },
+          "name": {
+            "type": "string",
+            "description": "Category name."
+          },
+          "hierarchy": {
+            "type": "integer",
+            "description": "Category hierarchy."
+          },
+          "created_at": {
+            "type": "string",
+            "description": "Timestamp representing the date and time when the category was created in the ISO 8601 format.",
+            "example": "2024-01-01T11:11:11.111Z",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "description": "Timestamp representing the date and time when the category was updated in the ISO 8601 format.",
+            "example": "2024-01-01T11:11:11.111Z",
+            "format": "date-time"
+          },
+          "object": {
+            "type": "string",
+            "default": "category",
+            "enum": [
+              "category"
+            ],
+            "description": "The type of the object represented by the JSON. This object stores information about the category."
+          },
+          "stacking_rules_type": {
+            "type": "string",
+            "description": "The type of the stacking rule eligibility.",
+            "enum": [
+              "JOINT",
+              "EXCLUSIVE"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "hierarchy",
+          "created_at",
+          "object"
+        ]
+      },
+      "Gift": {
+        "title": "Gift",
+        "type": "object",
+        "additionalProperties": false,
+        "description": "Contains current gift card balance information.",
+        "properties": {
+          "amount": {
+            "type": "number",
+            "description": "Total gift card income over the lifetime of the card. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $10 amount is written as 1000."
+          },
+          "balance": {
+            "type": "number",
+            "description": "Available funds. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $10 amount is written as 1000."
+          },
+          "effect": {
+            "type": "string",
+            "description": "Defines how the credits are applied to the customer's order.",
+            "enum": [
+              "APPLY_TO_ORDER",
+              "APPLY_TO_ITEMS"
+            ]
+          }
+        },
+        "required": [
+          "amount",
+          "balance"
+        ]
+      },
+      "Discount": {
+        "title": "Discount",
+        "type": "object",
+        "description": "Contains information about discount.",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/DiscountAmount"
+          },
+          {
+            "$ref": "#/components/schemas/DiscountUnit"
+          },
+          {
+            "$ref": "#/components/schemas/DiscountUnitMultiple"
+          },
+          {
+            "$ref": "#/components/schemas/DiscountPercent"
+          },
+          {
+            "$ref": "#/components/schemas/DiscountFixed"
+          }
+        ]
+      },
+      "SimpleLoyaltyCard": {
+        "title": "Simple Loyalty Card",
+        "type": "object",
+        "description": "Simplified loyalty card data.",
+        "required": [
+          "points"
+        ],
+        "properties": {
+          "points": {
+            "type": "integer",
+            "description": "Total number of points added to the loyalty card over its lifespan."
+          },
+          "balance": {
+            "type": "integer",
+            "description": "Points available for reward redemption. This is calculated as follows: `balance` = `points` - `expired_points` - `subtracted_points` - `redemption.redeemed_points`."
+          },
+          "next_expiration_date": {
+            "type": "string",
+            "description": "The next closest date when the next set of points are due to expire."
+          },
+          "next_expiration_points": {
+            "type": "integer",
+            "description": "The amount of points that are set to expire next."
+          },
+          "pending_points": {
+            "type": "integer",
+            "description": "Shows the number of pending points that will be added to the loyalty card when they are activated automatically or manually."
+          },
+          "expired_points": {
+            "type": "integer",
+            "description": "Shows the total number of expired points over the lifetime of the loyalty card."
+          },
+          "subtracted_points": {
+            "type": "integer",
+            "description": "Shows the total number of subtracted points over the lifetime of the loyalty card."
+          }
+        }
+      },
+      "SimplePromotionTierCampaign": {
+        "title": "Simple Promotion Tier Campaign",
+        "type": "object",
+        "description": "Simplified promotion tier campaign data.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier of the campaign."
+          }
+        }
+      },
+      "SimpleProduct": {
+        "title": "Simple Product",
+        "type": "object",
+        "description": "Simplified product data.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique product ID."
+          },
+          "source_id": {
+            "type": "string",
+            "description": "Product source ID."
+          },
+          "name": {
+            "type": "string",
+            "description": "Product name."
+          }
+        }
+      },
+      "SimpleSku": {
+        "title": "Simple SKU",
+        "type": "object",
+        "description": "Simplified SKU data.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique SKU ID."
+          },
+          "source_id": {
+            "type": "string",
+            "description": "SKU source id."
+          },
+          "sku": {
+            "type": "string",
+            "description": "SKU name."
+          }
+        }
+      },
+      "4_obj_reward_object_parameters_CAMPAIGN": {
+        "title": "Campaign",
+        "type": "object",
+        "description": "These are parameters representing a Campaign reward. These can be in the form of discount coupons, gift card credits, or loyalty point credits.",
+        "properties": {
+          "campaign": {
+            "description": "Objects stores information about the campaign related to the reward.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/4_obj_reward_object_parameters_CAMPAIGN_DISCOUNT_COUPONS"
+              },
+              {
+                "$ref": "#/components/schemas/4_obj_reward_object_parameters_CAMPAIGN_GIFT_VOUCHERS"
+              },
+              {
+                "$ref": "#/components/schemas/4_obj_reward_object_parameters_CAMPAIGN_LOYALTY_PROGRAM"
+              }
+            ]
+          }
+        }
+      },
+      "4_obj_reward_object_parameters_COIN": {
+        "title": "Pay with Points",
+        "type": "object",
+        "description": "These are parameters representing a Pay with Points (COIN) reward. ",
+        "properties": {
+          "coin": {
+            "type": "object",
+            "description": "Defines the ratio by mapping the number of loyalty points in `points_ratio` to a predefined cash amount in `exchange_ratio`.",
+            "properties": {
+              "exchange_ratio": {
+                "type": "integer",
+                "description": "The cash equivalent of the points defined in the `points_ratio` property."
+              },
+              "points_ratio": {
+                "type": "integer",
+                "description": "The number of loyalty points that will map to the predefined cash amount defined by the `exchange_ratio` property."
+              }
+            }
+          }
+        }
+      },
+      "4_obj_reward_object_parameters_MATERIAL": {
+        "title": "Material",
+        "type": "object",
+        "description": "These are parameters representing products as a reward.",
+        "properties": {
+          "product": {
+            "type": "object",
+            "description": "Contains information about the product given as a reward.",
+            "properties": {
+              "id": {
+                "type": "string",
+                "example": "prod_0b7d7dfb05cbe5c616",
+                "description": "Unique identifier of the product assigned by Voucherify. "
+              },
+              "sku_id": {
+                "type": "string",
+                "nullable": true,
+                "description": "Unique identifier of the SKU assigned by Voucherify for the SKU given as a reward.",
+                "example": "sku_0b7d7dfb090be5c619"
+              }
+            }
+          }
+        }
+      },
+      "CampaignLoyaltyCard": {
+        "title": "Campaign Loyalty Card",
+        "type": "object",
+        "description": "Schema model for a campaign loyalty card.",
+        "properties": {
+          "points": {
+            "type": "integer",
+            "description": "The initial number of points to assign to the loyalty card. This is the current loyalty card score i.e. the number of loyalty points on the card."
+          },
+          "expiration_rules": {
+            "type": "object",
+            "description": "Defines the loyalty point expiration rule. This expiration rule applies when there are no `expiration_rules` defined for an earning rule.",
+            "properties": {
+              "period_type": {
+                "type": "string",
+                "description": "Type of period. Can be set for `MONTH` or `FIXED_DAY_OF_YEAR`. `MONTH` requires the `period_value` field. `FIXED_DAY_OF_YEAR` requires the `fixed_month` and `fixed_day` fields.",
+                "enum": [
+                  "FIXED_DAY_OF_YEAR",
+                  "MONTH"
+                ]
+              },
+              "period_value": {
+                "type": "integer",
+                "description": "Value of the period. Required for the `period_type: MONTH`."
+              },
+              "rounding_type": {
+                "type": "string",
+                "description": "Type of rounding of the expiration period. Optional  for the `period_type: MONTH`.",
+                "enum": [
+                  "END_OF_MONTH",
+                  "END_OF_QUARTER",
+                  "END_OF_HALF_YEAR",
+                  "END_OF_YEAR",
+                  "PARTICULAR_MONTH"
+                ]
+              },
+              "rounding_value": {
+                "type": "integer",
+                "description": "Value of rounding of the expiration period. Required for the `rounding_type`."
+              },
+              "fixed_month": {
+                "type": "integer",
+                "description": "Determines the month when the points expire; `1` is January, `2` is February, and so on. Required for the `period_type: FIXED_DAY_OF_YEAR`.",
+                "minimum": 1,
+                "maximum": 12
+              },
+              "fixed_day": {
+                "type": "integer",
+                "description": "Determines the day of the month when the points expire. Required for the `period_type: FIXED_DAY_OF_YEAR`.",
+                "minimum": 1,
+                "maximum": 31
+              }
+            },
+            "required": [
+              "period_type"
+            ]
+          }
+        },
+        "required": [
+          "points"
+        ]
+      },
+      "CodeConfigRequiredLengthCharsetPattern": {
+        "title": "Code Config Settings",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/CodeConfig"
+          }
+        ],
+        "required": [
+          "length",
+          "prefix",
+          "charset",
+          "pattern",
+          "postfix"
+        ]
+      },
+      "DiscountAmount": {
+        "type": "object",
+        "title": "Amount",
+        "properties": {
+          "type": {
+            "type": "string",
+            "default": "AMOUNT",
+            "enum": [
+              "AMOUNT"
+            ],
+            "description": "Defines the type of the voucher."
+          },
+          "amount_off": {
+            "type": "number",
+            "description": "Amount taken off the subtotal of a price. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $10 discount is written as 1000."
+          },
+          "amount_off_formula": {
+            "type": "string"
+          },
+          "aggregated_amount_limit": {
+            "type": "integer",
+            "description": "Maximum discount amount per order."
+          },
+          "effect": {
+            "description": "Defines how the discount is applied to the customer's order.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/DiscountAmountVouchersEffectTypes"
+              }
+            ]
+          },
+          "is_dynamic": {
+            "type": "boolean",
+            "description": "Flag indicating whether the discount was calculated using a formula."
+          }
+        },
+        "required": [
+          "type",
+          "amount_off"
+        ]
+      },
+      "DiscountUnit": {
+        "type": "object",
+        "title": "Unit",
+        "properties": {
+          "type": {
+            "type": "string",
+            "default": "UNIT",
+            "enum": [
+              "UNIT"
+            ],
+            "description": "Discount type."
+          },
+          "unit_off": {
+            "type": "integer",
+            "description": "Number of units granted a full value discount."
+          },
+          "unit_off_formula": {
+            "type": "string"
+          },
+          "effect": {
+            "description": "Defines how the unit is added to the customer's order.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/DiscountUnitVouchersEffectTypes"
+              }
+            ]
+          },
+          "unit_type": {
+            "type": "string",
+            "description": "The product deemed as free, chosen from product inventory (e.g. time, items)."
+          },
+          "product": {
+            "description": "Contains information about the product.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SimpleProductDiscountUnit"
+              }
+            ]
+          },
+          "sku": {
+            "$ref": "#/components/schemas/SimpleSkuDiscountUnit"
+          },
+          "is_dynamic": {
+            "type": "boolean",
+            "description": "Flag indicating whether the discount was calculated using a formula."
+          }
+        },
+        "required": [
+          "type",
+          "unit_type"
+        ]
+      },
+      "DiscountUnitMultiple": {
+        "type": "object",
+        "title": "Unit Multiple",
+        "properties": {
+          "type": {
+            "type": "string",
+            "default": "UNIT",
+            "enum": [
+              "UNIT"
+            ],
+            "description": "Discount type."
+          },
+          "effect": {
+            "type": "string",
+            "default": "ADD_MANY_ITEMS",
+            "enum": [
+              "ADD_MANY_ITEMS"
+            ],
+            "description": "Defines how the discount is applied to the customer's order."
+          },
+          "units": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DiscountUnitMultipleOneUnit"
+            }
+          }
+        },
+        "required": [
+          "type",
+          "units"
+        ]
+      },
+      "DiscountPercent": {
+        "type": "object",
+        "title": "Percent",
+        "properties": {
+          "type": {
+            "type": "string",
+            "default": "PERCENT",
+            "enum": [
+              "PERCENT"
+            ],
+            "description": "Defines the type of the voucher."
+          },
+          "percent_off": {
+            "type": "number",
+            "description": "The percent discount that the customer will receive."
+          },
+          "percent_off_formula": {
+            "type": "string"
+          },
+          "amount_limit": {
+            "type": "number",
+            "description": "Upper limit allowed to be applied as a discount. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $6 maximum discount is written as 600."
+          },
+          "aggregated_amount_limit": {
+            "type": "integer",
+            "description": "Maximum discount amount per order."
+          },
+          "effect": {
+            "description": "Defines how the discount is applied to the customer's order.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/DiscountPercentVouchersEffectTypes"
+              }
+            ]
+          },
+          "is_dynamic": {
+            "type": "boolean",
+            "description": "Flag indicating whether the discount was calculated using a formula."
+          }
+        },
+        "required": [
+          "type",
+          "percent_off"
+        ]
+      },
+      "DiscountFixed": {
+        "title": "Fixed",
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "default": "FIXED",
+            "enum": [
+              "FIXED"
+            ],
+            "description": "Defines the type of the voucher."
+          },
+          "fixed_amount": {
+            "type": "number",
+            "description": "Sets a fixed value for an order total or the item price. The value is multiplied by 100 to precisely represent 2 decimal places. For example, a $10 discount is written as 1000. If the fixed amount is calculated by the formula, i.e. the `fixed_amount_formula` parameter is present in the fixed amount definition, this value becomes the **fallback value**. As a result, if the formula cannot be calculated due to missing metadata, for example, this value will be used as the fixed value."
+          },
+          "fixed_amount_formula": {
+            "type": "string"
+          },
+          "effect": {
+            "description": "Defines how the discount is applied to the customer's order.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/DiscountFixedVouchersEffectTypes"
+              }
+            ]
+          },
+          "is_dynamic": {
+            "type": "boolean",
+            "description": "Flag indicating whether the discount was calculated using a formula."
+          }
+        },
+        "required": [
+          "type",
+          "fixed_amount"
+        ]
+      },
+      "4_obj_reward_object_parameters_CAMPAIGN_DISCOUNT_COUPONS": {
+        "title": "Discount Coupons",
+        "type": "object",
+        "description": "These are parameters representing a discount coupon, which is a subset of a Campaign reward.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier of the campaign assigned by Voucherify.",
+            "example": "camp_13BbZ0kQsNinhqsX3wUts2UP"
+          },
+          "type": {
+            "type": "string",
+            "description": "Campaign type.",
+            "default": "DISCOUNT_COUPONS",
+            "enum": [
+              "DISCOUNT_COUPONS"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "type"
+        ]
+      },
+      "4_obj_reward_object_parameters_CAMPAIGN_GIFT_VOUCHERS": {
+        "title": "Gift Vouchers",
+        "type": "object",
+        "description": "These are parameters representing a gift voucher, which is a subset of a Campaign reward.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier of the campaign assigned by Voucherify.",
+            "example": "camp_13BbZ0kQsNinhqsX3wUts2UP"
+          },
+          "balance": {
+            "type": "integer",
+            "description": "The incremental amout to be added to the current balance on the gift card. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000."
+          },
+          "type": {
+            "type": "string",
+            "description": "Campaign type.",
+            "default": "GIFT_VOUCHERS",
+            "enum": [
+              "GIFT_VOUCHERS"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "balance",
+          "type"
+        ]
+      },
+      "4_obj_reward_object_parameters_CAMPAIGN_LOYALTY_PROGRAM": {
+        "title": "Points on loyalty card",
+        "type": "object",
+        "description": "These are parameters representing points on a loyalty card, which is a subset of a Campaign reward.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier of the campaign assigned by Voucherify.",
+            "example": "camp_13BbZ0kQsNinhqsX3wUts2UP"
+          },
+          "balance": {
+            "type": "integer",
+            "description": "The incremental points to be added to the current balance on the loyalty card."
+          },
+          "type": {
+            "type": "string",
+            "description": "Campaign type.",
+            "default": "LOYALTY_PROGRAM",
+            "enum": [
+              "LOYALTY_PROGRAM"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "balance",
+          "type"
+        ]
+      },
+      "CodeConfig": {
+        "title": "Code Config",
+        "type": "object",
+        "description": "Schema containing information about config used for voucher. Defines the code pattern (prefix, suffix, length, charset, etc).",
+        "properties": {
+          "length": {
+            "type": "number",
+            "description": "Number of characters in a generated code (excluding prefix and postfix)."
+          },
+          "charset": {
+            "type": "string",
+            "description": "Characters that can appear in the code."
+          },
+          "prefix": {
+            "type": "string",
+            "description": "A text appended before the code."
+          },
+          "postfix": {
+            "type": "string",
+            "description": "A text appended after the code."
+          },
+          "pattern": {
+            "type": "string",
+            "description": "A pattern for codes where hashes (#) will be replaced with random characters. Overrides `length`."
+          },
+          "initial_count": {
+            "type": "integer",
+            "description": "The initial count."
+          }
+        }
+      },
+      "DiscountAmountVouchersEffectTypes": {
+        "title": "Discount Amount Vouchers Effect Types",
+        "enum": [
+          "APPLY_TO_ORDER",
+          "APPLY_TO_ITEMS",
+          "APPLY_TO_ITEMS_PROPORTIONALLY",
+          "APPLY_TO_ITEMS_PROPORTIONALLY_BY_QUANTITY",
+          "APPLY_TO_ITEMS_BY_QUANTITY"
+        ],
+        "type": "string"
+      },
+      "DiscountUnitVouchersEffectTypes": {
+        "title": "Discount Unit Vouchers Effect Types",
+        "enum": [
+          "ADD_MISSING_ITEMS",
+          "ADD_NEW_ITEMS",
+          "ADD_MANY_ITEMS"
+        ],
+        "type": "string"
+      },
+      "SimpleProductDiscountUnit": {
+        "type": "object",
+        "title": "Simple Product Discount Unit",
+        "description": "Simplified product discount unit data.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique product ID, assigned by Voucherify."
+          },
+          "source_id": {
+            "type": "string",
+            "description": "Product's source ID."
+          },
+          "name": {
+            "type": "string",
+            "description": "Product name."
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ]
+      },
+      "SimpleSkuDiscountUnit": {
+        "type": "object",
+        "title": "Simple SKU Discount Unit",
+        "description": "Simplified SKU discount unit data.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique SKU ID, assigned by Voucherify."
+          },
+          "source_id": {
+            "type": "string",
+            "description": "Product variant's source ID."
+          },
+          "name": {
+            "type": "string",
+            "description": "SKU name."
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ]
+      },
+      "DiscountUnitMultipleOneUnit": {
+        "type": "object",
+        "title": "One Unit",
+        "properties": {
+          "unit_off": {
+            "type": "number",
+            "description": "Number of units granted a full value discount."
+          },
+          "unit_off_formula": {
+            "type": "string"
+          },
+          "effect": {
+            "type": "string",
+            "enum": [
+              "ADD_NEW_ITEMS",
+              "ADD_MISSING_ITEMS"
+            ],
+            "description": "Defines how the unit is added to the customer's order."
+          },
+          "unit_type": {
+            "type": "string",
+            "description": "The product deemed as free, chosen from product inventory (e.g. time, items)."
+          },
+          "product": {
+            "description": "Contains information about the product.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SimpleProductDiscountUnit"
+              }
+            ]
+          },
+          "sku": {
+            "description": "Contains information about the sku.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SimpleSkuDiscountUnit"
+              }
+            ]
+          }
+        },
+        "required": [
+          "effect",
+          "unit_type"
+        ]
+      },
+      "DiscountPercentVouchersEffectTypes": {
+        "title": "Discount Percent Vouchers Effect Types",
+        "enum": [
+          "APPLY_TO_ORDER",
+          "APPLY_TO_ITEMS"
+        ],
+        "type": "string"
+      },
+      "DiscountFixedVouchersEffectTypes": {
+        "title": "Discount Fixed Vouchers Effect Types",
+        "enum": [
+          "APPLY_TO_ORDER",
+          "APPLY_TO_ITEMS"
+        ],
+        "type": "string"
+      }
+    }
+  },
+  "webhooks": {
+    "EVENTS.REDEMPTION.SUCCEEDED": {
+      "post": {
+        "operationId": "events-redemption-succeeded",
+        "summary": "Succeeded",
+        "description": "",
+        "tags": [
+          "Events redemption"
+        ],
+        "responses": {
+          "200": {
+            "description": "Webhook accepted"
+          },
+          "202": {
+            "description": "Webhook accepted"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EventRedemptionSucceededData"
+              },
+              "examples": {
+                "redemption.succeeded": {
+                  "value": {
+                    "customer": {
+                      "id": "cust_1g637SqVZnkdPNdAIZ7Ra879",
+                      "name": "Jane Doe",
+                      "email": "jane@jane.io",
+                      "source_id": "test_customer_id_2",
+                      "metadata": {
+                        "lang": "en",
+                        "test": true,
+                        "region": "EMEA"
+                      },
+                      "object": "customer"
+                    },
+                    "order": {
+                      "id": "ord_3VYCHwdV0YOOch2nm1RsTKNI",
+                      "source_id": null,
+                      "status": "PAID",
+                      "customer_id": "cust_1g637SqVZnkdPNdAIZ7Ra879",
+                      "referrer_id": null,
+                      "amount": 7000,
+                      "items_discount_amount": 1000,
+                      "items_applied_discount_amount": 1000,
+                      "total_discount_amount": 1000,
+                      "total_applied_discount_amount": 1000,
+                      "total_amount": 6000,
+                      "items": [
+                        {
+                          "object": "order_item",
+                          "source_id": "adv-mug",
+                          "related_object": "product",
+                          "quantity": 2,
+                          "discount_quantity": 1,
+                          "amount": 2000,
+                          "discount_amount": 1000,
+                          "applied_discount_amount": 1000,
+                          "price": 1000,
+                          "subtotal_amount": 1000
+                        },
+                        {
+                          "object": "order_item",
+                          "source_id": "star-th-bottle",
+                          "related_object": "product",
+                          "quantity": 2,
+                          "amount": 5000,
+                          "price": 2500,
+                          "subtotal_amount": 5000
+                        }
+                      ],
+                      "metadata": {},
+                      "created_at": "2024-01-15T12:20:38.596843Z",
+                      "object": "order"
+                    },
+                    "campaign": {
+                      "id": "camp_kwMyXFKquedx8FzXNpVPN7QU",
+                      "name": "Always add missing products",
+                      "campaign_type": "DISCOUNT_COUPONS",
+                      "type": "AUTO_UPDATE",
+                      "is_referral_code": false,
+                      "voucher": {
+                        "type": "DISCOUNT_VOUCHER",
+                        "discount": {
+                          "type": "UNIT",
+                          "units": null,
+                          "effect": "ADD_NEW_ITEMS",
+                          "unit_off": 1,
+                          "unit_type": "prod_0df14b3a6ad8f282a8"
+                        },
+                        "redemption": {
+                          "quantity": null,
+                          "redeemed_quantity": 0
+                        },
+                        "code_config": {
+                          "length": 1,
+                          "prefix": "Always-add-prods-",
+                          "charset": "0123456789",
+                          "pattern": "#",
+                          "postfix": ""
+                        }
+                      },
+                      "auto_join": false,
+                      "join_once": false,
+                      "active": true,
+                      "category_id": null,
+                      "created_at": "2023-12-08T13:54:29.003375Z",
+                      "updated_at": "2023-12-15T11:07:05.173502Z",
+                      "object": "campaign"
+                    },
+                    "voucher": {
+                      "id": "v_VZgTRbJvauZR7Ub7exOtAg0MqxXljPpA",
+                      "code": "Always-add-prods-5",
+                      "discount": {
+                        "type": "UNIT",
+                        "unit_off": 1,
+                        "unit_type": "prod_0df14b3a6ad8f282a8",
+                        "effect": "ADD_NEW_ITEMS"
+                      },
+                      "type": "DISCOUNT_VOUCHER",
+                      "campaign": "Always add missing products",
+                      "campaign_id": "camp_kwMyXFKquedx8FzXNpVPN7QU",
+                      "is_referral_code": false,
+                      "category_id": null,
+                      "active": true,
+                      "created_at": "2023-12-08T14:01:18.213000Z",
+                      "updated_at": "2024-01-15T12:20:38.624905Z",
+                      "object": "voucher"
+                    },
+                    "holder": null,
+                    "promotion_tier": null,
+                    "redemption": {
+                      "id": "r_0e2500291ae016adea",
+                      "customer_id": "cust_1g637SqVZnkdPNdAIZ7Ra879",
+                      "tracking_id": "track_Pw6r3ejnml43kIwNS4Zj09KZ67xOfLUy",
+                      "date": "2024-01-15T12:20:38.635000Z",
+                      "order": {
+                        "id": "ord_3VYCHwdV0YOOch2nm1RsTKNI",
+                        "source_id": null,
+                        "status": "PAID",
+                        "customer_id": "cust_1g637SqVZnkdPNdAIZ7Ra879",
+                        "referrer_id": null,
+                        "amount": 7000,
+                        "items_discount_amount": 1000,
+                        "items_applied_discount_amount": 1000,
+                        "total_discount_amount": 1000,
+                        "total_applied_discount_amount": 1000,
+                        "total_amount": 6000,
+                        "items": [
+                          {
+                            "object": "order_item",
+                            "source_id": "adv-mug",
+                            "related_object": "product",
+                            "quantity": 2,
+                            "discount_quantity": 1,
+                            "amount": 2000,
+                            "discount_amount": 1000,
+                            "applied_discount_amount": 1000,
+                            "price": 1000,
+                            "subtotal_amount": 1000
+                          },
+                          {
+                            "object": "order_item",
+                            "source_id": "star-th-bottle",
+                            "related_object": "product",
+                            "quantity": 2,
+                            "amount": 5000,
+                            "price": 2500,
+                            "subtotal_amount": 5000
+                          }
+                        ],
+                        "metadata": {},
+                        "created_at": "2024-01-15T12:20:38.596843Z",
+                        "object": "order"
+                      },
+                      "customer": {
+                        "id": "cust_1g637SqVZnkdPNdAIZ7Ra879",
+                        "name": "Jane Doe",
+                        "email": "jane@jane.io",
+                        "source_id": "test_customer_id_2",
+                        "metadata": {
+                          "lang": "en",
+                          "test": true,
+                          "region": "EMEA"
+                        },
+                        "object": "customer"
+                      },
+                      "result": "SUCCESS",
+                      "status": "SUCCEEDED",
+                      "voucher": {
+                        "id": "v_VZgTRbJvauZR7Ub7exOtAg0MqxXljPpA",
+                        "code": "Always-add-prods-5",
+                        "discount": {
+                          "type": "UNIT",
+                          "unit_off": 1,
+                          "unit_type": "prod_0df14b3a6ad8f282a8",
+                          "effect": "ADD_NEW_ITEMS"
+                        },
+                        "type": "DISCOUNT_VOUCHER",
+                        "campaign": "Always add missing products",
+                        "campaign_id": "camp_kwMyXFKquedx8FzXNpVPN7QU",
+                        "is_referral_code": false,
+                        "category_id": null,
+                        "active": true,
+                        "created_at": "2023-12-08T14:01:18.213000Z",
+                        "updated_at": "2024-01-15T12:20:38.624905Z",
+                        "object": "voucher"
+                      },
+                      "metadata": {},
+                      "object": "redemption"
+                    },
+                    "created_at": "2024-01-15T12:20:38.636Z"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "EVENTS.REDEMPTION.FAILED": {
+      "post": {
+        "operationId": "events-redemption-failed",
+        "summary": "Failed",
+        "description": "",
+        "tags": [
+          "Events redemption"
+        ],
+        "responses": {
+          "200": {
+            "description": "Webhook accepted"
+          },
+          "202": {
+            "description": "Webhook accepted"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EventRedemptionFailedData"
+              },
+              "examples": {
+                "redemption.failed": {
+                  "value": {
+                    "order": null,
+                    "holder": null,
+                    "voucher": null,
+                    "campaign": null,
+                    "customer": {
+                      "id": "cust_1g637SqVZnkdPNdAIZ7Ra879",
+                      "name": "Jane Doe",
+                      "email": "jane@jane.io",
+                      "object": "customer",
+                      "metadata": {
+                        "lang": "en",
+                        "region": "EMEA"
+                      },
+                      "source_id": "test_customer_id_2"
+                    },
+                    "created_at": "2024-02-02T12:12:12.919Z",
+                    "redemption": {
+                      "id": "rf_0e3ac5685ba431c104",
+                      "date": "2024-02-02T12:12:12.918Z",
+                      "object": "redemption",
+                      "result": "FAILURE",
+                      "status": "FAILED",
+                      "customer": {
+                        "id": "cust_1g637SqVZnkdPNdAIZ7Ra879",
+                        "name": "Jane Doe",
+                        "email": "jane@jane.io",
+                        "object": "customer",
+                        "metadata": {
+                          "lang": "en",
+                          "region": "EMEA"
+                        },
+                        "source_id": "test_customer_id_2"
+                      },
+                      "metadata": {},
+                      "customer_id": "cust_1g637SqVZnkdPNdAIZ7Ra879",
+                      "tracking_id": "track_Pw6r3ejnml43kIwNS4Zj09KZ67xOfLUy",
+                      "failure_code": "no_applicable_redeemables",
+                      "failure_message": "No applicable redeemables"
+                    },
+                    "promotion_tier": null
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "EVENTS.REDEMPTION.ROLLBACK.SUCCEEDED": {
+      "post": {
+        "operationId": "events-redemption-rollback-succeeded",
+        "summary": "Rollback succeeded",
+        "description": "",
+        "tags": [
+          "Events redemption"
+        ],
+        "responses": {
+          "200": {
+            "description": "Webhook accepted"
+          },
+          "202": {
+            "description": "Webhook accepted"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EventRedemptionRollbackSucceededData"
+              },
+              "examples": {
+                "redemption.rollback.succeeded": {
+                  "value": {
+                    "order": {
+                      "id": "ord_OPBS4bwowjzQ3odiMNk09WPL",
+                      "items": [],
+                      "object": "order",
+                      "status": "CANCELED",
+                      "metadata": {},
+                      "source_id": null,
+                      "created_at": "2024-02-01T08:45:31.967Z",
+                      "updated_at": "2024-02-01T10:23:52.507Z",
+                      "customer_id": "cust_IdgAFZxYwwHctOk9pPuMu308",
+                      "referrer_id": null
+                    },
+                    "holder": null,
+                    "voucher": {
+                      "id": "v_7JItZDjNzMjqSw0BZoxNEMBfdHHB9EHf",
+                      "code": "Refer-gift-90873378",
+                      "type": "DISCOUNT_VOUCHER",
+                      "active": true,
+                      "object": "voucher",
+                      "campaign": "Refer-gift",
+                      "discount": {
+                        "type": "AMOUNT",
+                        "amount_off": 0
+                      },
+                      "created_at": "2024-02-01T08:44:37.539Z",
+                      "redemption": {
+                        "quantity": null,
+                        "redeemed_quantity": 0
+                      },
+                      "updated_at": "2024-02-01T10:23:52.490Z",
+                      "campaign_id": "camp_QULf1Wzu4yvT3cJ3IzFp76nY",
+                      "category_id": null,
+                      "is_referral_code": true
+                    },
+                    "campaign": {
+                      "id": "camp_QULf1Wzu4yvT3cJ3IzFp76nY",
+                      "name": "Refer-gift",
+                      "type": "AUTO_UPDATE",
+                      "active": true,
+                      "object": "campaign",
+                      "voucher": {
+                        "gift": null,
+                        "type": "DISCOUNT_VOUCHER",
+                        "discount": {
+                          "type": "AMOUNT",
+                          "units": null,
+                          "amount_off": 0
+                        },
+                        "redemption": {
+                          "quantity": null,
+                          "redeemed_quantity": 0
+                        },
+                        "code_config": {
+                          "length": 8,
+                          "prefix": "Refer-gift-",
+                          "charset": "0123456789",
+                          "pattern": "########",
+                          "postfix": ""
+                        },
+                        "loyalty_card": null
+                      },
+                      "auto_join": false,
+                      "join_once": false,
+                      "created_at": "2024-02-01T08:44:36.722Z",
+                      "category_id": null,
+                      "campaign_type": "REFERRAL_PROGRAM",
+                      "is_referral_code": true,
+                      "referral_program": {
+                        "custom_event": {
+                          "id": "ms_f1r5Tcu5T0m3v3nT5ch3ma",
+                          "name": "sign_up"
+                        },
+                        "referee_reward": {
+                          "type": "GIFT_VOUCHER",
+                          "amount": 300,
+                          "related_object_parent": {
+                            "id": "camp_bfrwAVsP6Q1EM1ZjgHwheKYr",
+                            "name": "Gift programme",
+                            "object": "CAMPAIGN"
+                          }
+                        },
+                        "conversion_event_type": "custom_event"
+                      }
+                    },
+                    "customer": {
+                      "id": "cust_IdgAFZxYwwHctOk9pPuMu308",
+                      "name": "Jack Webhook",
+                      "email": null,
+                      "object": "customer",
+                      "metadata": {
+                        "region": "EMEA"
+                      },
+                      "source_id": "jck-wbhk"
+                    },
+                    "redemption": {
+                      "id": "r_0e3ab1f3fb99fee4b9",
+                      "date": "2024-02-01T08:45:32.014Z",
+                      "order": {
+                        "id": "ord_OPBS4bwowjzQ3odiMNk09WPL",
+                        "items": [],
+                        "object": "order",
+                        "status": "PAID",
+                        "metadata": {},
+                        "source_id": null,
+                        "created_at": "2024-02-01T08:45:31.967Z",
+                        "customer_id": "cust_IdgAFZxYwwHctOk9pPuMu308",
+                        "referrer_id": null
+                      },
+                      "object": "redemption",
+                      "result": "SUCCESS",
+                      "status": "SUCCEEDED",
+                      "voucher": {
+                        "id": "v_7JItZDjNzMjqSw0BZoxNEMBfdHHB9EHf",
+                        "code": "Refer-gift-90873378",
+                        "active": null,
+                        "object": "voucher",
+                        "campaign": "Refer-gift",
+                        "campaign_id": "camp_QULf1Wzu4yvT3cJ3IzFp76nY"
+                      },
+                      "customer": {
+                        "id": "cust_IdgAFZxYwwHctOk9pPuMu308",
+                        "name": "Jack Webhook",
+                        "email": null,
+                        "object": "customer",
+                        "metadata": {
+                          "region": "EMEA",
+                          "sign-up": "true"
+                        },
+                        "source_id": "jck-wbhk"
+                      },
+                      "metadata": {},
+                      "customer_id": "cust_IdgAFZxYwwHctOk9pPuMu308",
+                      "tracking_id": "track_8RFQINPxgc+pykybVOUEXQ=="
+                    },
+                    "promotion_tier": null,
+                    "redemption_rollback": {
+                      "id": "rr_0e3ac8762299fef1e3",
+                      "date": "2024-02-01T10:23:52.499Z",
+                      "order": {
+                        "id": "ord_OPBS4bwowjzQ3odiMNk09WPL",
+                        "items": [],
+                        "object": "order",
+                        "status": "CANCELED",
+                        "metadata": {},
+                        "source_id": null,
+                        "created_at": "2024-02-01T08:45:31.967Z",
+                        "updated_at": "2024-02-01T10:23:52.507Z",
+                        "customer_id": "cust_IdgAFZxYwwHctOk9pPuMu308",
+                        "referrer_id": null
+                      },
+                      "object": "redemption_rollback",
+                      "reason": "Fraud prevention",
+                      "result": "SUCCESS",
+                      "status": "SUCCEEDED",
+                      "voucher": {
+                        "id": "v_7JItZDjNzMjqSw0BZoxNEMBfdHHB9EHf",
+                        "code": "Refer-gift-90873378",
+                        "type": "DISCOUNT_VOUCHER",
+                        "active": true,
+                        "object": "voucher",
+                        "campaign": "Refer-gift",
+                        "discount": {
+                          "type": "AMOUNT",
+                          "amount_off": 0
+                        },
+                        "created_at": "2024-02-01T08:44:37.539Z",
+                        "redemption": {
+                          "quantity": null,
+                          "redeemed_quantity": 0
+                        },
+                        "updated_at": "2024-02-01T10:23:52.490Z",
+                        "campaign_id": "camp_QULf1Wzu4yvT3cJ3IzFp76nY",
+                        "category_id": null,
+                        "is_referral_code": true
+                      },
+                      "customer": {
+                        "id": "cust_IdgAFZxYwwHctOk9pPuMu308",
+                        "name": "Jack Webhook",
+                        "email": null,
+                        "object": "customer",
+                        "metadata": {
+                          "region": "EMEA",
+                          "sign-up": "true"
+                        },
+                        "source_id": "jck-wbhk"
+                      },
+                      "metadata": null,
+                      "redemption": "r_0e3ab1f3fb99fee4b9",
+                      "customer_id": "cust_IdgAFZxYwwHctOk9pPuMu308",
+                      "tracking_id": "track_8RFQINPxgc+pykybVOUEXQ=="
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "EVENTS.REDEMPTION.ROLLBACK.FAILED": {
+      "post": {
+        "operationId": "events-redemption-rollback-failed",
+        "summary": "Rollback failed",
+        "description": "",
+        "tags": [
+          "Events redemption"
+        ],
+        "responses": {
+          "200": {
+            "description": "Webhook accepted"
+          },
+          "202": {
+            "description": "Webhook accepted"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EventRedemptionRollbackFailedData"
+              },
+              "examples": {
+                "rollback.failed": {
+                  "value": {
+                    "order": null,
+                    "holder": null,
+                    "voucher": {
+                      "id": "v_7JItZDjNzMjqSw0BZoxNEMBfdHHB9EHf",
+                      "code": "Refer-gift-90873378",
+                      "type": "DISCOUNT_VOUCHER",
+                      "active": true,
+                      "object": "voucher",
+                      "campaign": "Refer-gift",
+                      "discount": {
+                        "type": "AMOUNT",
+                        "amount_off": 0
+                      },
+                      "created_at": "2024-02-01T08:44:37.539Z",
+                      "redemption": {
+                        "quantity": null,
+                        "redeemed_quantity": 0
+                      },
+                      "updated_at": "2024-02-01T10:23:52.490Z",
+                      "campaign_id": "camp_QULf1Wzu4yvT3cJ3IzFp76nY",
+                      "category_id": null,
+                      "is_referral_code": true
+                    },
+                    "campaign": {
+                      "id": "camp_QULf1Wzu4yvT3cJ3IzFp76nY",
+                      "name": "Refer-gift",
+                      "type": "AUTO_UPDATE",
+                      "active": true,
+                      "object": "campaign",
+                      "voucher": {
+                        "gift": null,
+                        "type": "DISCOUNT_VOUCHER",
+                        "discount": {
+                          "type": "AMOUNT",
+                          "units": null,
+                          "amount_off": 0
+                        },
+                        "redemption": {
+                          "quantity": null,
+                          "redeemed_quantity": 0
+                        },
+                        "code_config": {
+                          "length": 8,
+                          "prefix": "Refer-gift-",
+                          "charset": "0123456789",
+                          "pattern": "########",
+                          "postfix": ""
+                        },
+                        "loyalty_card": null
+                      },
+                      "auto_join": false,
+                      "join_once": false,
+                      "created_at": "2024-02-01T08:44:36.722Z",
+                      "category_id": null,
+                      "campaign_type": "REFERRAL_PROGRAM",
+                      "is_referral_code": true,
+                      "referral_program": {
+                        "custom_event": {
+                          "id": "ms_f1r5Tcu5T0m3v3nT5ch3ma",
+                          "name": "sign_up"
+                        },
+                        "referee_reward": {
+                          "type": "GIFT_VOUCHER",
+                          "amount": 300,
+                          "related_object_parent": {
+                            "id": "camp_bfrwAVsP6Q1EM1ZjgHwheKYr",
+                            "name": "Gift programme",
+                            "object": "CAMPAIGN"
+                          }
+                        },
+                        "conversion_event_type": "custom_event"
+                      }
+                    },
+                    "customer": {
+                      "id": "cust_IdgAFZxYwwHctOk9pPuMu308",
+                      "object": "customer",
+                      "metadata": {
+                        "region": "EMEA",
+                        "sign-up": "true"
+                      },
+                      "source_id": "jck-wbhk"
+                    },
+                    "redemption": {
+                      "id": "r_0e3ab1f3fb99fee4b9",
+                      "date": "2024-02-01T08:45:32.014Z",
+                      "order": {
+                        "id": "ord_OPBS4bwowjzQ3odiMNk09WPL",
+                        "items": [],
+                        "object": "order",
+                        "status": "PAID",
+                        "metadata": {},
+                        "source_id": null,
+                        "created_at": "2024-02-01T08:45:31.967Z",
+                        "customer_id": "cust_IdgAFZxYwwHctOk9pPuMu308",
+                        "referrer_id": null
+                      },
+                      "object": "redemption",
+                      "result": "SUCCESS",
+                      "status": "ROLLED_BACK",
+                      "voucher": {
+                        "id": "v_7JItZDjNzMjqSw0BZoxNEMBfdHHB9EHf",
+                        "code": "Refer-gift-90873378",
+                        "active": null,
+                        "object": "voucher",
+                        "campaign": "Refer-gift",
+                        "campaign_id": "camp_QULf1Wzu4yvT3cJ3IzFp76nY"
+                      },
+                      "customer": {
+                        "id": "cust_IdgAFZxYwwHctOk9pPuMu308",
+                        "name": "Jack Webhook",
+                        "email": null,
+                        "object": "customer",
+                        "metadata": {
+                          "region": "EMEA"
+                        },
+                        "source_id": "jck-wbhk"
+                      },
+                      "metadata": {},
+                      "customer_id": "cust_IdgAFZxYwwHctOk9pPuMu308",
+                      "tracking_id": "track_8RFQINPxgc+pykybVOUEXQ=="
+                    },
+                    "promotion_tier": null,
+                    "redemption_rollback": {
+                      "id": "rrf_0e3ac8beeea431c302",
+                      "date": "2024-02-01T10:25:07.002Z",
+                      "object": "redemption_rollback",
+                      "result": "FAILURE",
+                      "status": "FAILED",
+                      "voucher": {
+                        "id": "v_7JItZDjNzMjqSw0BZoxNEMBfdHHB9EHf",
+                        "code": "Refer-gift-90873378",
+                        "type": "DISCOUNT_VOUCHER",
+                        "active": true,
+                        "object": "voucher",
+                        "campaign": "Refer-gift",
+                        "discount": {
+                          "type": "AMOUNT",
+                          "amount_off": 0
+                        },
+                        "created_at": "2024-02-01T08:44:37.539Z",
+                        "redemption": {
+                          "quantity": null,
+                          "redeemed_quantity": 0
+                        },
+                        "updated_at": "2024-02-01T10:23:52.490Z",
+                        "campaign_id": "camp_QULf1Wzu4yvT3cJ3IzFp76nY",
+                        "category_id": null,
+                        "is_referral_code": true
+                      },
+                      "customer": {
+                        "id": "cust_IdgAFZxYwwHctOk9pPuMu308",
+                        "object": "customer",
+                        "metadata": {
+                          "region": "EMEA",
+                          "sign-up": "true"
+                        },
+                        "source_id": "jck-wbhk"
+                      },
+                      "metadata": null,
+                      "redemption": "r_0e3ab1f3fb99fee4b9",
+                      "customer_id": "cust_IdgAFZxYwwHctOk9pPuMu308",
+                      "tracking_id": "track_8RFQINPxgc+pykybVOUEXQ==",
+                      "failure_code": "already_rolled_back",
+                      "failure_message": "Already rolled back"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

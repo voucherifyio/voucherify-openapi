@@ -4,6 +4,81 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-04-30
+
+- Added GET `/v1/segments` endpoint documentation with the `SegmentsListResponseBody` schema
+- Updated the `Segment` schema to include the `updated_at` field.
+
+## 2026-04-13
+
+- Update the `DiscountUnitVouchersEffectTypes` schema with `ADD_SAME_ITEMS` effect.
+- Updated `EventPublicationSucceededData` schema in `OpenAPIWebhooks.json` regarding the `user` field.
+
+## 2026-04-02
+
+Update the `ApplicableTo` schema with settings for campaign budget limits.
+
+## 2026-04-01
+
+Update the `LoyaltiesQualificationsCheckEligibilityRequestBody` schema with missing data.
+
+## 2026-03-25
+
+Change descriptions of `assets`, `assets.cockpit_url`, and added `assets.cockpit_preference_center_url` in the `CustomerWithSummaryLoyaltyReferrals` schema.
+
+## 2026-03-09
+
+Update descriptions of validation rule schemas for new weekly redemption limits.
+
+## 2026-02-23
+
+- Add **PUT** `v1/product-collections/{productCollectionId}` endpoint
+
+## 2026-02-10
+
+- Removed the info about basic/advanced validation rules from the descriptions
+- Fixed cURL examples in the POST Create validation rule assignment endpoint
+
+## 2026-02-09
+
+Add `expand=json_template` query param to GET `/v1/templates/campaigns/{campaignTemplateId}`. Removed the param from SDK preparation script.
+
+## 2026-01-23
+
+- Add `filters` object to query params for GET `v1/vouchers`.
+
+## 2025-12-12
+
+- Changed description in POST `v1/redemptions` – removed detailed description of client-side redemption.
+- Added POST `v1/loyalties/{campaignId}/qualifications` endpoint.
+
+## 2025-11-04
+
+Remove `initial_sync_status` from the `Segment` schema.
+
+## 2025-10-31
+
+- Removed `created_at` from `OrdersImportCreateRequestBody` schema – internal request.
+
+## 2025-10-22
+
+- Mintlify launch: A lot of changes to documentation in [PR 915](https://github.com/voucherifyio/voucherify-openapi/pull/915)
+
+## 2025-09-09
+- Added `campaign_id` property to the `ExportVoucherBase` schema.
+
+## 2025-08-29
+- Added the `applicable_redeemables_category_limits` object to the `ManagementProjectsStackingRulesBase` and `StackingRules` schemas.
+- Changed `type` to `number` for `amount` in the `ReferralProgram` schema. Reverted that for SDKs.
+
+## 2025-08-28
+- Added `passive` to `Segment` and `SegmentsCreateRequestBodyDynamic` schemas.
+
+## 2025-07-16
+
+- Added `points_formula` to earning rule schemas.
+- Added `applicable_to` to earning rule schemas related to proportional calculation for order items.
+
 ## 2025-07-14
 
 - Added `limit` to the `Bundle` and `ValidationRuleBundleRules` schemas.
