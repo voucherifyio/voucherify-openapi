@@ -9,15 +9,13 @@
     {
       "url": "https://api.voucherify.io",
       "description": "Production"
-    },
-    {
-      "url": "http://localhost:8000",
-      "description": "Local development"
     }
   ],
   "security": [
     {
-      "bearerAuth": []
+      "bearerAuth": [],
+      "X-App-Id": [],
+      "X-App-Token": []
     }
   ],
   "tags": [
@@ -44,6 +42,10 @@
     {
       "name": "Rewards",
       "description": "CRUD, lifecycle operations, and activity history for reward definitions. Rewards can be material (product/SKU) or digital (discount coupons, gift vouchers)."
+    },
+    {
+      "name": "Examine",
+      "description": "Examines the earning of loyalty points for a loyalty program member."
     }
   ],
   "paths": {
@@ -2802,6 +2804,58 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/v2/loyalties/examine": {
+      "post": {
+        "summary": "Examine Earnings",
+        "description": "Performs a dry-run estimation of points and incentives a customer (or member) would earn for a given event, without actually triggering any earning rule processing or modifying balances.",
+        "operationId": "examineLoyaltyEarnings",
+        "tags": [
+          "Examine"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoyaltiesExamineRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful dry-run estimation.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoyaltiesExamineResponseBody"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid payload (e.g., mutual exclusivity violation).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Customer or member not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -5744,6 +5798,16 @@
         "type": "http",
         "scheme": "bearer",
         "bearerFormat": "JWT"
+      },
+      "X-App-Id": {
+        "type": "apiKey",
+        "name": "X-App-Id",
+        "in": "header"
+      },
+      "X-App-Token": {
+        "type": "apiKey",
+        "name": "X-App-Token",
+        "in": "header"
       }
     },
     "parameters": {
@@ -8193,6 +8257,288 @@
         "required": [
           "type"
         ]
+      },
+      "LoyaltiesExamineRequestBody": {
+        "type": "object",
+        "required": [
+          "event",
+          "customer_identification"
+        ],
+        "properties": {
+          "event": {
+            "type": "string",
+            "description": "Trigger event. Currently supported: `customer.order.paid` or `order.paid`.",
+            "example": "customer.order.paid"
+          },
+          "customer_identification": {
+            "$ref": "#/components/schemas/VLExamineCustomerIdentification"
+          },
+          "customer_order_paid": {
+            "$ref": "#/components/schemas/VLExamineCustomerOrderPaid"
+          }
+        }
+      },
+      "VLExamineCustomerIdentification": {
+        "type": "object",
+        "description": "Discriminated union identifying who is being evaluated.",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "customer_id",
+              "customer_source_id",
+              "member_id"
+            ],
+            "description": "Determines which ID field is evaluated and required."
+          },
+          "customer_id": {
+            "type": "string",
+            "description": "Internal customer ID (cust_*). Evaluates all programs."
+          },
+          "customer_source_id": {
+            "type": "string",
+            "description": "External customer source ID. Evaluates all programs."
+          },
+          "member_id": {
+            "type": "string",
+            "description": "Internal member ID (mloy_*). Scopes to a single program."
+          }
+        }
+      },
+      "VLExamineCustomerOrderPaid": {
+        "type": "object",
+        "description": "Event-specific payload for customer.order.paid containing context for rule evaluation.",
+        "properties": {
+          "customer": {
+            "type": "object",
+            "properties": {
+              "metadata": {
+                "type": "object",
+                "description": "Customer metadata overlay (merged onto the resolved customer, not persisted)."
+              }
+            }
+          },
+          "member": {
+            "type": "object",
+            "description": "Member metadata overlay. Only allowed when customer_identification.type is member_id.",
+            "properties": {
+              "metadata": {
+                "type": "object"
+              }
+            }
+          },
+          "order": {
+            "$ref": "#/components/schemas/VLExamineOrderParams"
+          }
+        }
+      },
+      "VLExamineOrderParams": {
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "integer",
+            "description": "Post-discount order amount (cents)."
+          },
+          "initial_amount": {
+            "type": "integer",
+            "description": "Pre-discount order amount (cents)."
+          },
+          "discount_amount": {
+            "type": "integer",
+            "description": "Total discount amount (cents)."
+          },
+          "metadata": {
+            "type": "object",
+            "description": "Order metadata for rule evaluation."
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/VLExamineOrderItemParams"
+            }
+          }
+        }
+      },
+      "VLExamineOrderItemParams": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "source_id": {
+            "type": "string"
+          },
+          "product_id": {
+            "type": "string"
+          },
+          "sku_id": {
+            "type": "string"
+          },
+          "related_object": {
+            "type": "string",
+            "enum": [
+              "product",
+              "sku"
+            ]
+          },
+          "amount": {
+            "type": "integer"
+          },
+          "discount_amount": {
+            "type": "integer"
+          },
+          "quantity": {
+            "type": "integer"
+          },
+          "price": {
+            "type": "integer"
+          },
+          "product": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "source_id": {
+                "type": "string"
+              },
+              "price": {
+                "type": "integer"
+              }
+            }
+          },
+          "sku": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "source_id": {
+                "type": "string"
+              },
+              "price": {
+                "type": "integer"
+              }
+            }
+          },
+          "metadata": {
+            "type": "object"
+          }
+        }
+      },
+      "LoyaltiesExamineResponseBody": {
+        "type": "object",
+        "properties": {
+          "event": {
+            "type": "string",
+            "description": "The trigger event that was examined."
+          },
+          "memberships": {
+            "type": "array",
+            "description": "List of earning opportunities per active membership.",
+            "items": {
+              "$ref": "#/components/schemas/VLExamineMemberEarningOpportunity"
+            }
+          },
+          "object": {
+            "type": "string",
+            "example": "earnings_examine_result"
+          }
+        }
+      },
+      "VLExamineMemberEarningOpportunity": {
+        "type": "object",
+        "properties": {
+          "member": {
+            "$ref": "#/components/schemas/MemberResponse"
+          },
+          "program": {
+            "$ref": "#/components/schemas/ProgramResponse"
+          },
+          "cards": {
+            "type": "array",
+            "description": "Per-card point estimations.",
+            "items": {
+              "$ref": "#/components/schemas/VLExamineCardEstimation"
+            }
+          },
+          "incentives": {
+            "type": "array",
+            "description": "Fulfillable incentives (digital, material).",
+            "items": {
+              "$ref": "#/components/schemas/LoyaltyIncentive"
+            }
+          },
+          "object": {
+            "type": "string",
+            "example": "member_earning_opportunity"
+          }
+        }
+      },
+      "VLExamineCardEstimation": {
+        "type": "object",
+        "properties": {
+          "card": {
+            "$ref": "#/components/schemas/VLCardReference"
+          },
+          "points_estimation": {
+            "type": "integer",
+            "description": "Total estimated points for this card (fixed + proportional + incentive points combined)."
+          }
+        }
+      },
+      "VLCardReference": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "card_definition_id": {
+            "type": "string",
+            "description": "Card definition identifier"
+          },
+          "card_type": {
+            "type": "string",
+            "description": "Type of the card definition"
+          },
+          "code": {
+            "type": "string",
+            "description": "Card code."
+          },
+          "object": {
+            "type": "string",
+            "const": "card"
+          }
+        }
+      },
+      "LoyaltyIncentive": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "DIGITAL",
+              "MATERIAL",
+              "POINTS"
+            ]
+          },
+          "status": {
+            "type": "string"
+          },
+          "object": {
+            "type": "string",
+            "example": "incentive"
+          }
+        }
       },
       "SpendingLimitsRequest": {
         "type": "object",
