@@ -4,6 +4,49 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-04-30
+
+- Added GET `/v1/segments` endpoint documentation with the `SegmentsListResponseBody` schema
+- Updated the `Segment` schema to include the `updated_at` field.
+
+## 2026-04-13
+
+- Update the `DiscountUnitVouchersEffectTypes` schema with `ADD_SAME_ITEMS` effect.
+- Updated `EventPublicationSucceededData` schema in `OpenAPIWebhooks.json` regarding the `user` field.
+
+## 2026-04-02
+
+Update the `ApplicableTo` schema with settings for campaign budget limits.
+
+## 2026-04-01
+
+Update the `LoyaltiesQualificationsCheckEligibilityRequestBody` schema with missing data.
+
+## 2026-03-25
+
+Change descriptions of `assets`, `assets.cockpit_url`, and added `assets.cockpit_preference_center_url` in the `CustomerWithSummaryLoyaltyReferrals` schema.
+
+## 2026-03-09
+
+Update descriptions of validation rule schemas for new weekly redemption limits.
+
+## 2026-02-23
+
+- Add **PUT** `v1/product-collections/{productCollectionId}` endpoint
+
+## 2026-02-10
+
+- Removed the info about basic/advanced validation rules from the descriptions
+- Fixed cURL examples in the POST Create validation rule assignment endpoint
+
+## 2026-02-09
+
+Add `expand=json_template` query param to GET `/v1/templates/campaigns/{campaignTemplateId}`. Removed the param from SDK preparation script.
+
+## 2026-01-23
+
+- Add `filters` object to query params for GET `v1/vouchers`.
+
 ## 2025-12-12
 
 - Changed description in POST `v1/redemptions` – removed detailed description of client-side redemption.
