@@ -5,6 +5,13 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-05-21
+
+Added:
+- `distributions-overview.mdx`
+- `create-distribution.mdx`
+- `promotion-tier-maintenance.mdx`
+
 ## 2026-05-04
 
 Add `audit-logs.mdx` article.
