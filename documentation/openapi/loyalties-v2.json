@@ -512,49 +512,6 @@
         }
       }
     },
-    "/v2/loyalties/card-definitions/{id}/deactivate": {
-      "post": {
-        "operationId": "deactivateCardDefinition",
-        "summary": "Deactivate Card Definition",
-        "description": "\u26a0\ufe0f **BETA endpoint**\n\nThis is a work-in-progress documentation of a BETA endpoint. The parameters, fields, request and response bodies, and other data may subject to change. If you want to share feedback or improvements, contact Voucherify support or your Technical Account Manager.\n\nTransitions the card definition to `INACTIVE` status.\n\nAllowed transitions: `ACTIVE` -> `INACTIVE`.\n",
-        "tags": [
-          "Card Definitions"
-        ],
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/CardDefinitionId"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Deactivated card definition",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CardDefinitionResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Invalid state transition",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "404": {
-            "$ref": "#/components/responses/NotFound"
-          },
-          "500": {
-            "$ref": "#/components/responses/InternalServerError"
-          }
-        }
-      }
-    },
     "/v2/loyalties/card-definitions/{id}/draft": {
       "post": {
         "operationId": "draftCardDefinition",
@@ -2808,7 +2765,7 @@
         }
       }
     },
-    "/v2/loyalties/examine": {
+    "/v2/loyalties/examine/earning-rules": {
       "post": {
         "summary": "Examine Earnings",
         "description": "\u26a0\ufe0f **BETA endpoint**\n\nThis is a work-in-progress documentation of a BETA endpoint. The parameters, fields, request and response bodies, and other data may subject to change. If you want to share feedback or improvements, contact Voucherify support or your Technical Account Manager.\n\nPerforms a dry-run estimation of points and incentives a customer (or member) would earn for a given event, without actually triggering any earning rule processing or modifying balances.",
@@ -2821,7 +2778,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/LoyaltiesExamineRequestBody"
+                "$ref": "#/components/schemas/LoyaltiesExamineEarningRulesRequestBody"
               }
             }
           }
@@ -2832,7 +2789,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/LoyaltiesExamineResponseBody"
+                  "$ref": "#/components/schemas/LoyaltiesExamineEarningRulesResponseBody"
                 }
               }
             }
@@ -8258,7 +8215,7 @@
           "type"
         ]
       },
-      "LoyaltiesExamineRequestBody": {
+      "LoyaltiesExamineEarningRulesRequestBody": {
         "type": "object",
         "required": [
           "event",
@@ -8429,7 +8386,7 @@
           }
         }
       },
-      "LoyaltiesExamineResponseBody": {
+      "LoyaltiesExamineEarningRulesResponseBody": {
         "type": "object",
         "properties": {
           "event": {
@@ -11565,6 +11522,14 @@
               "$ref": "#/components/schemas/EarningRuleEffect"
             },
             "description": "Effects to apply when rules pass (at least one required)."
+          },
+          "tier_rules": {
+            "description": "Defines earning rules based on member tiers. Has two modes: \n- `NO_REQUIREMENTS`: Member doesn't have to belong to a tier structure to receive earnings.\n- `ANY_OF`: Member has to belong to a defined tier structure to receive earnings.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/EarningRuleEarningsType"
+              }
+            ]
           }
         },
         "additionalProperties": false
@@ -11593,7 +11558,6 @@
             "enum": [
               "customer.segment",
               "customer.metadata",
-              "member.loyalty.tier",
               "order.amount",
               "order.initial_amount",
               "order.total_amount",
@@ -11613,7 +11577,7 @@
               "order.items.metadata",
               "custom_event.metadata"
             ],
-            "description": "Rule definition name. Available names depend on the trigger event:\n- `customer.order.paid`: All names except `custom_event.metadata`.\n- `customer.custom_event`: `customer.segment`, `customer.metadata`, `member.loyalty.tier`, `custom_event.metadata`.\n- `customer.segment.entered`: `customer.segment`, `customer.metadata`, `member.loyalty.tier`.\n"
+            "description": "Rule definition name. Available names depend on the trigger event:\n- `customer.order.paid`: All names except `custom_event.metadata`.\n- `customer.custom_event`: `customer.segment`, `customer.metadata`, `custom_event.metadata`.\n- `customer.segment.entered`: `customer.segment`, `customer.metadata`.\n"
           },
           "property": {
             "type": [
@@ -11852,7 +11816,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "Condition operators applied to the rule definition. Allowed operators depend on the rule name:\n- `customer.segment`, `member.loyalty.tier`: `$is`, `$is_not`\n- `order.items.every/any/none/cheapest/most_expensive`: `$is`, `$from`\n- `order.items.count`, `order.items.aggregated_quantity`, `order.items.quantity`: `$more_than`, `$is`, `$less_than`, `$less_than_or_equal`, `$more_than_or_equal`, `$in`, `$not_in`\n- `order.amount`, `order.initial_amount`, `order.total_amount`, `order.items.price_any`, `order.items.price_each`: `$more_than`, `$more_than_or_equal`, `$is`, `$less_than`, `$less_than_or_equal`\n- `order.items.aggregated_amount`, `order.items.price`: `$more_than_or_equal`, `$is`, `$less_than_or_equal`\n"
+        "description": "Condition operators applied to the rule definition. Allowed operators depend on the rule name:\n- `customer.segment`: `$is`, `$is_not`\n- `order.items.every/any/none/cheapest/most_expensive`: `$is`, `$from`\n- `order.items.count`, `order.items.aggregated_quantity`, `order.items.quantity`: `$more_than`, `$is`, `$less_than`, `$less_than_or_equal`, `$more_than_or_equal`, `$in`, `$not_in`\n- `order.amount`, `order.initial_amount`, `order.total_amount`, `order.items.price_any`, `order.items.price_each`: `$more_than`, `$more_than_or_equal`, `$is`, `$less_than`, `$less_than_or_equal`\n- `order.items.aggregated_amount`, `order.items.price`: `$more_than_or_equal`, `$is`, `$less_than_or_equal`\n"
       },
       "EarningRuleConditionObject": {
         "type": "object",
@@ -12209,6 +12173,67 @@
           }
         },
         "additionalProperties": false
+      },
+      "EarningRuleEarningsType": {
+        "oneOf": [
+          {
+            "type": "object",
+            "title": "No requirements",
+            "properties": {
+              "type": {
+                "type": "string",
+                "description": "Member doesn't have to belong to any tier structure to receive earnings.",
+                "enum": [
+                  "NO_REQUIREMENTS"
+                ]
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "title": "Any of",
+            "properties": {
+              "type": {
+                "type": "string",
+                "description": "Member has to belong to a tier structure to receive earnings.",
+                "enum": [
+                  "ANY_OF"
+                ]
+              },
+              "any_of": {
+                "type": "array",
+                "description": "Defines tier structures and tiers to which a member has to belong to receive earnings. The member has to belong to any of the defined tier structures or tiers.",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "tier_structure_id": {
+                      "type": "string",
+                      "description": "Unique tier structure identifier."
+                    },
+                    "tier_ids": {
+                      "type": "array",
+                      "description": "Array of unique tier identifiers.",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "required": [
+                    "tier_structure_id",
+                    "tier_ids"
+                  ]
+                }
+              }
+            },
+            "required": [
+              "type",
+              "any_of"
+            ]
+          }
+        ]
       },
       "PointsExpiration": {
         "type": "object",
@@ -12844,6 +12869,14 @@
             "items": {
               "$ref": "#/components/schemas/EarningRuleEffectDTO"
             }
+          },
+          "tier_rules": {
+            "description": "Defines earning rules based on member tiers. Has two modes: \n- `NO_REQUIREMENTS`: Member doesn't have to belong to a tier structure to receive earnings.\n- `ANY_OF`: Member has to belong to a defined tier structure to receive earnings.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/EarningRuleEarningsType"
+              }
+            ]
           }
         }
       },
