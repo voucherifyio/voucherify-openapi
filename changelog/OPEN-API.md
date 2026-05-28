@@ -8,6 +8,7 @@ Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
 - Add `STANDALONE` to `type` in the `CampaignsCreateBase` schema.
 - Removed remaining links to `support.voucherify.io`.
+- Fixed missing `conditions` in `ParameterFiltersListMemberTransactions` `ExportCampaignTransactionsFilters`, and `ExportCampaignTransactionsFilters` schemas.
 
 ## 2026-04-30
 
