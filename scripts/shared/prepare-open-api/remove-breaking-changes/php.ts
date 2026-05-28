@@ -247,31 +247,31 @@ const removePhpBreakingChanges = {
     );
     // Restore previous voucher_type filter
     openApi.components.schemas.ParameterFiltersListCampaigns.properties.voucher_type =
-      {
-        type: "object",
-        description: "Filter by voucher type",
-        properties: {
-          conditions: {
-            // @ts-ignore
-            $ref: "#/components/schemas/FilterConditionsString",
-          },
+    {
+      type: "object",
+      description: "Filter by voucher type",
+      properties: {
+        conditions: {
+          // @ts-ignore
+          $ref: "#/components/schemas/FilterConditionsString",
         },
-      };
+      },
+    };
     // Restore previous is_referral_code filter
     openApi.components.schemas.ParameterFiltersListCampaigns.properties.is_referral_code.properties =
-      {
-        // @ts-ignore
-        $is: {
-          type: "string",
-          description: "Value is exactly this value (single value).",
-          enum: ["TRUE", "FALSE"],
-        },
-        $is_not: {
-          type: "string",
-          description: "Results omit this value (single value).",
-          enum: ["TRUE", "FALSE"],
-        },
-      };
+    {
+      // @ts-ignore
+      $is: {
+        type: "string",
+        description: "Value is exactly this value (single value).",
+        enum: ["TRUE", "FALSE"],
+      },
+      $is_not: {
+        type: "string",
+        description: "Results omit this value (single value).",
+        enum: ["TRUE", "FALSE"],
+      },
+    };
     // Remove new conditions – $contains, $not_contain from FilterConditionsString
     delete openApi.components.schemas.FilterConditionsString.properties
       .$contains;
@@ -294,16 +294,45 @@ const removePhpBreakingChanges = {
     // Restore `created_at` to POST `v1/orders/import`
     // @ts-ignore
     openApi.components.schemas.OrdersImportCreateRequestBody.items.allOf[1].properties.created_at =
-      {
-        type: "string",
-        description:
-          "Timestamp representing the date and time when the order was created. The value is shown in the ISO 8601 format.",
-        format: "date-time",
-      };
+    {
+      type: "string",
+      description:
+        "Timestamp representing the date and time when the order was created. The value is shown in the ISO 8601 format.",
+      format: "date-time",
+    };
 
     openApi.paths["/v1/vouchers"].get.parameters = openApi.paths[
       "/v1/vouchers"
     ].get.parameters.filter((e) => e.name !== "filters");
+
+    // Gemini recommended so
+    const schemas = openApi.components.schemas as any;
+
+    // Make ExportCampaignTransactionsFilters faulty again
+    schemas.ExportCampaignTransactionsFilters.properties = {
+      "junction": {
+        "$ref": "#/components/schemas/Junction"
+      },
+      "created_at": {
+        "$ref": "#/components/schemas/FilterConditionsDateTime"
+      },
+      "voucher_id": {
+        "$ref": "#/components/schemas/FilterConditionsString"
+      }
+    };
+
+    // Make ParametersFiltersListCampaignTransactions faulty again
+    schemas.ParametersFiltersListCampaignTransactions.properties = {
+      "junction": {
+        "$ref": "#/components/schemas/Junction"
+      },
+      "id": {
+        "$ref": "#/components/schemas/FilterConditionsString"
+      },
+      "voucher_id": {
+        "$ref": "#/components/schemas/FilterConditionsString"
+      }
+    };
 
     return openApi;
   },
@@ -326,9 +355,9 @@ const removePhpBreakingChanges = {
       };
     });
     openApi.components.schemas.OrdersListResponseBody.properties.orders.items =
-      {
-        $ref: "#/components/schemas/OrderCalculated",
-      };
+    {
+      $ref: "#/components/schemas/OrderCalculated",
+    };
     openApi.components.schemas.LoyaltiesMembersPointsExpirationListResponseBody.properties.data.items =
       openApi.components.schemas.LoyaltyPointsBucket;
     openApi.components.schemas.LoyaltyCardTransaction.properties.details.properties.balance =
