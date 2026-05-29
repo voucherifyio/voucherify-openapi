@@ -5,6 +5,10 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-05-29
+
+- Clarified code samples and a warning in `bloomreach-engagement.mdx`
+
 ## 2026-05-21
 
 Added:
