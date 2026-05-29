@@ -42,29 +42,6 @@ const removeJavaBreakingChanges = {
       "/v1/vouchers"
     ].get.parameters.filter((e) => e.name !== "filters");
 
-    return openApi;
-  },
-  after: (_openApi: unknown): any => {
-    let openApi: any = _openApi;
-
-    openApi = removeRequiredFromRequestsAndResponses(
-      openApi as OpenAPISpec,
-    ).spec;
-
-    const addToRequestBodyIn = {
-      "/v1/vouchers/{code}": ["put"],
-      "/v1/vouchers/{code}/balance": ["post"],
-      "/v1/vouchers/import": ["post"],
-      "/v1/vouchers/bulk/async": ["post"],
-      "/v1/vouchers/metadata/async": ["post"],
-    };
-
-    for (const [path, methods] of Object.entries(addToRequestBodyIn)) {
-      for (const method of methods) {
-        openApi.paths[path][method].requestBody.required = true;
-      }
-    }
-
     // Gemini recommended so
     const schemas = openApi.components.schemas as any;
 
@@ -103,6 +80,29 @@ const removeJavaBreakingChanges = {
         "$ref": "#/components/schemas/FilterConditionsString"
       }
     };
+
+    return openApi;
+  },
+  after: (_openApi: unknown): any => {
+    let openApi: any = _openApi;
+
+    openApi = removeRequiredFromRequestsAndResponses(
+      openApi as OpenAPISpec,
+    ).spec;
+
+    const addToRequestBodyIn = {
+      "/v1/vouchers/{code}": ["put"],
+      "/v1/vouchers/{code}/balance": ["post"],
+      "/v1/vouchers/import": ["post"],
+      "/v1/vouchers/bulk/async": ["post"],
+      "/v1/vouchers/metadata/async": ["post"],
+    };
+
+    for (const [path, methods] of Object.entries(addToRequestBodyIn)) {
+      for (const method of methods) {
+        openApi.paths[path][method].requestBody.required = true;
+      }
+    }
 
     return openApi;
   },
