@@ -2768,7 +2768,7 @@
     "/v2/loyalties/examine/earning-rules": {
       "post": {
         "summary": "Examine Earnings",
-        "description": "\u26a0\ufe0f **BETA endpoint**\n\nThis is a work-in-progress documentation of a BETA endpoint. The parameters, fields, request and response bodies, and other data may subject to change. If you want to share feedback or improvements, contact Voucherify support or your Technical Account Manager.\n\nPerforms a dry-run estimation of points and incentives a customer (or member) would earn for a given event, without actually triggering any earning rule processing or modifying balances.",
+        "description": "\u26a0\ufe0f **BETA endpoint**\n\nThis is a work-in-progress documentation of a BETA endpoint. The parameters, fields, request and response bodies, and other data may subject to change. If you want to share feedback or improvements, contact Voucherify support or your Technical Account Manager.\n\nPerforms a dry-run estimation of points and incentives a customer (or member) would earn based on trigger events, without actually triggering any earning rule processing or modifying balances.\n\n**Trigger Modes**\n\n- **SPECIFIC**: Evaluates earning rules for a single trigger event type (order paid, segment entered, or custom event). Provide the corresponding event block with context.\n- **ALL**: Evaluates all active earning rules across all trigger types in a single call. Each event block carries independent metadata context, enabling multi-scenario what-if analysis.\n\n**Request Structure**\n\n- `trigger.type`: \"SPECIFIC\" or \"ALL\"\n- `trigger.specific.event` (SPECIFIC mode): One of `customer.order.paid`, `customer.segment.entered`, `customer.custom_event`\n- `customer_identification`: Customer or member identifier\n- Event blocks (conditional): Provide the block(s) corresponding to the trigger(s) you want to evaluate:\n  - `customer_order_paid`: Context for order-paid trigger\n  - `customer_segment_entered`: Context for segment-entered trigger\n  - `customer_custom_event`: Context for custom-event trigger (with ALL/SPECIFIC sub-mode)\n\n",
         "operationId": "examineLoyaltyEarnings",
         "tags": [
           "Examine"
@@ -2779,6 +2779,175 @@
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/LoyaltiesExamineEarningRulesRequestBody"
+              },
+              "examples": {
+                "SPECIFIC_mode_order_paid": {
+                  "summary": "SPECIFIC mode: Order Paid",
+                  "description": "Evaluates earning rules for a single order-paid trigger with order context.",
+                  "value": {
+                    "trigger": {
+                      "type": "SPECIFIC",
+                      "specific": {
+                        "event": "customer.order.paid"
+                      }
+                    },
+                    "customer_identification": {
+                      "type": "customer_id",
+                      "customer_id": "cust_abc123"
+                    },
+                    "customer_order_paid": {
+                      "customer": {
+                        "metadata": {
+                          "tier": "gold"
+                        }
+                      },
+                      "order": {
+                        "amount": 5000,
+                        "items": [
+                          {
+                            "amount": 5000,
+                            "quantity": 1,
+                            "product_id": "prod_001",
+                            "metadata": {
+                              "category": "electronics"
+                            }
+                          }
+                        ],
+                        "metadata": {
+                          "channel": "web"
+                        }
+                      }
+                    }
+                  }
+                },
+                "SPECIFIC_mode_segment_entered": {
+                  "summary": "SPECIFIC mode: Segment Entered",
+                  "description": "Evaluates earning rules for segment-entered trigger.",
+                  "value": {
+                    "trigger": {
+                      "type": "SPECIFIC",
+                      "specific": {
+                        "event": "customer.segment.entered"
+                      }
+                    },
+                    "customer_identification": {
+                      "type": "member_id",
+                      "member_id": "mlm_xyz789"
+                    },
+                    "customer_segment_entered": {
+                      "customer": {
+                        "metadata": {
+                          "is_premium": "true",
+                          "loyalty_score": 10
+                        }
+                      }
+                    }
+                  }
+                },
+                "SPECIFIC_mode_custom_event": {
+                  "summary": "SPECIFIC mode: Custom Event (SPECIFIC sub-mode)",
+                  "description": "Evaluates earning rules for a specific custom event schema.",
+                  "value": {
+                    "trigger": {
+                      "type": "SPECIFIC",
+                      "specific": {
+                        "event": "customer.custom_event"
+                      }
+                    },
+                    "customer_identification": {
+                      "type": "customer_source_id",
+                      "customer_source_id": "user_42"
+                    },
+                    "customer_custom_event": {
+                      "type": "SPECIFIC",
+                      "specific": {
+                        "schema_id": "ces_abc123",
+                        "customer": {
+                          "metadata": {
+                            "plan": "pro"
+                          }
+                        },
+                        "custom_event": {
+                          "metadata": {
+                            "source": "mobile",
+                            "score": 50
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "ALL_mode_full_payload": {
+                  "summary": "ALL mode: Full Payload",
+                  "description": "Evaluates all earning rules across all trigger types with independent metadata per event. Each event block provides its own customer metadata overlay.",
+                  "value": {
+                    "trigger": {
+                      "type": "ALL"
+                    },
+                    "customer_identification": {
+                      "type": "customer_id",
+                      "customer_id": "cust_abc123"
+                    },
+                    "customer_order_paid": {
+                      "customer": {
+                        "metadata": {
+                          "tier": "gold"
+                        }
+                      },
+                      "order": {
+                        "amount": 4000,
+                        "items": [
+                          {
+                            "amount": 4000,
+                            "quantity": 1
+                          }
+                        ],
+                        "metadata": {
+                          "channel": "web"
+                        }
+                      }
+                    },
+                    "customer_segment_entered": {
+                      "customer": {
+                        "metadata": {
+                          "is_premium": "true",
+                          "loyalty_score": 10,
+                          "tier": "gold"
+                        }
+                      }
+                    },
+                    "customer_custom_event": {
+                      "type": "ALL",
+                      "all": {
+                        "customer": {
+                          "metadata": {
+                            "plan": "pro"
+                          }
+                        },
+                        "custom_event": {
+                          "metadata": {
+                            "source": "mobile",
+                            "channel": "web",
+                            "score": 60
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "ALL_mode_minimal": {
+                  "summary": "ALL mode: Minimal (no event blocks)",
+                  "description": "Evaluates all earning rules but returns zero estimations without event context.",
+                  "value": {
+                    "trigger": {
+                      "type": "ALL"
+                    },
+                    "customer_identification": {
+                      "type": "customer_id",
+                      "customer_id": "cust_abc123"
+                    }
+                  }
+                }
               }
             }
           }
@@ -2790,6 +2959,149 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/LoyaltiesExamineEarningRulesResponseBody"
+                },
+                "example": {
+                  "Earning rule dry-run estimation": {
+                    "value": {
+                      "object": "earnings_examine_result",
+                      "customer": {
+                        "id": "cust_01HXXXXXXXXXXXX",
+                        "source_id": "user-source-001",
+                        "metadata": {},
+                        "object": "customer"
+                      },
+                      "earning_rules": [
+                        {
+                          "id": "leru_01HXXXXXXXXXXXX01",
+                          "name": "ER Inline Points + Incentive Points",
+                          "metadata": {},
+                          "object": "earning_rule"
+                        },
+                        {
+                          "id": "leru_01HXXXXXXXXXXXX02",
+                          "name": "ER Inline Proportional + Incentive Proportional",
+                          "metadata": {},
+                          "object": "earning_rule"
+                        }
+                      ],
+                      "memberships": [
+                        {
+                          "object": "member_earnings_opportunity",
+                          "member": {
+                            "id": "lmbr_01HXXXXXXXXXXXX",
+                            "customer_id": "cust_01HXXXXXXXXXXXX",
+                            "program_id": "lprg_01HXXXXXXXXXXXX",
+                            "metadata": {},
+                            "object": "member"
+                          },
+                          "program": {
+                            "id": "lprg_01HXXXXXXXXXXXX",
+                            "name": "Summer Loyalty Program",
+                            "metadata": {},
+                            "object": "program"
+                          },
+                          "cards": [
+                            {
+                              "object": "card_estimation",
+                              "card": {
+                                "id": "lcrd_01HXXXXXXXXXXXX01",
+                                "card_definition_id": "lcdef_01HXXXXXXXXXXXX01",
+                                "card_type": "INDIVIDUAL",
+                                "code": "ABC12345",
+                                "object": "card"
+                              },
+                              "points_estimation": 225,
+                              "earning_rules": [
+                                {
+                                  "object": "earning_rule_estimation",
+                                  "earning_rule": {
+                                    "id": "leru_01HXXXXXXXXXXXX01",
+                                    "object": "earning_rule"
+                                  },
+                                  "points_estimation": 150
+                                },
+                                {
+                                  "object": "earning_rule_estimation",
+                                  "earning_rule": {
+                                    "id": "leru_01HXXXXXXXXXXXX02",
+                                    "object": "earning_rule"
+                                  },
+                                  "points_estimation": 75
+                                }
+                              ]
+                            },
+                            {
+                              "object": "card_estimation",
+                              "card": {
+                                "id": "lcrd_01HXXXXXXXXXXXX02",
+                                "card_definition_id": "lcdef_01HXXXXXXXXXXXX02",
+                                "card_type": "INDIVIDUAL",
+                                "code": "XYZ67890",
+                                "object": "card"
+                              },
+                              "points_estimation": 300,
+                              "earning_rules": [
+                                {
+                                  "object": "earning_rule_estimation",
+                                  "earning_rule": {
+                                    "id": "leru_01HXXXXXXXXXXXX01",
+                                    "object": "earning_rule"
+                                  },
+                                  "points_estimation": 100
+                                },
+                                {
+                                  "object": "earning_rule_estimation",
+                                  "earning_rule": {
+                                    "id": "leru_01HXXXXXXXXXXXX02",
+                                    "object": "earning_rule"
+                                  },
+                                  "points_estimation": 200
+                                }
+                              ]
+                            }
+                          ],
+                          "incentives": [
+                            {
+                              "object": "incentive_estimation",
+                              "incentive": {
+                                "id": "linc_01HXXXXXXXXXXXX01",
+                                "name": "Incentive Digital",
+                                "type": "DIGITAL",
+                                "object": "incentive"
+                              },
+                              "earning_rules": [
+                                {
+                                  "object": "earning_rule_estimation",
+                                  "earning_rule": {
+                                    "id": "leru_01HXXXXXXXXXXXX01",
+                                    "object": "earning_rule"
+                                  }
+                                }
+                              ]
+                            },
+                            {
+                              "object": "incentive_estimation",
+                              "incentive": {
+                                "id": "linc_01HXXXXXXXXXXXX02",
+                                "name": "Incentive Material",
+                                "type": "MATERIAL",
+                                "object": "incentive"
+                              },
+                              "earning_rules": [
+                                {
+                                  "object": "earning_rule_estimation",
+                                  "earning_rule": {
+                                    "id": "leru_01HXXXXXXXXXXXX02",
+                                    "object": "earning_rule"
+                                  }
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  }
                 }
               }
             }
@@ -8218,20 +8530,66 @@
       "LoyaltiesExamineEarningRulesRequestBody": {
         "type": "object",
         "required": [
-          "event",
+          "trigger",
           "customer_identification"
         ],
         "properties": {
-          "event": {
-            "type": "string",
-            "description": "Trigger event. Currently supported: `customer.order.paid` or `order.paid`.",
-            "example": "customer.order.paid"
+          "trigger": {
+            "$ref": "#/components/schemas/VLExamineTrigger"
           },
           "customer_identification": {
             "$ref": "#/components/schemas/VLExamineCustomerIdentification"
           },
           "customer_order_paid": {
+            "description": "Event-specific payload for customer.order.paid. Required if trigger.type is SPECIFIC with event=customer.order.paid, or included in ALL mode to provide order context.",
             "$ref": "#/components/schemas/VLExamineCustomerOrderPaid"
+          },
+          "customer_segment_entered": {
+            "description": "Event-specific payload for customer.segment.entered. Required if trigger.type is SPECIFIC with event=customer.segment.entered, or included in ALL mode to provide segment context.",
+            "$ref": "#/components/schemas/VLExamineCustomerSegmentEntered"
+          },
+          "customer_custom_event": {
+            "description": "Event-specific payload for customer.custom_event. Required if trigger.type is SPECIFIC with event=customer.custom_event, or included in ALL mode.",
+            "$ref": "#/components/schemas/VLExamineCustomerCustomEvent"
+          }
+        }
+      },
+      "VLExamineTrigger": {
+        "type": "object",
+        "description": "Trigger configuration for examination. Discriminated union on `type`.",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "ALL",
+              "SPECIFIC"
+            ],
+            "description": "Trigger mode: ALL examines all earning rule triggers in a single call; SPECIFIC examines a single trigger event."
+          },
+          "specific": {
+            "description": "Required when type is SPECIFIC. Specifies the single event to examine.",
+            "$ref": "#/components/schemas/VLExamineTriggerSpecific"
+          }
+        }
+      },
+      "VLExamineTriggerSpecific": {
+        "type": "object",
+        "description": "Specific trigger event selection.",
+        "required": [
+          "event"
+        ],
+        "properties": {
+          "event": {
+            "type": "string",
+            "enum": [
+              "customer.order.paid",
+              "customer.segment.entered",
+              "customer.custom_event"
+            ],
+            "description": "Trigger event to examine."
           }
         }
       },
@@ -8386,64 +8744,410 @@
           }
         }
       },
+      "VLExamineCustomerSegmentEntered": {
+        "type": "object",
+        "description": "Event-specific payload for customer.segment.entered containing context for rule evaluation.",
+        "properties": {
+          "customer": {
+            "type": "object",
+            "description": "Customer context with optional metadata overlay.",
+            "properties": {
+              "metadata": {
+                "type": "object",
+                "description": "Customer metadata overlay (merged onto the resolved customer, not persisted)."
+              }
+            }
+          },
+          "member": {
+            "type": "object",
+            "description": "Member metadata overlay. Only allowed when customer_identification.type is member_id.",
+            "properties": {
+              "metadata": {
+                "type": "object",
+                "description": "Member metadata overlay."
+              }
+            }
+          }
+        }
+      },
+      "VLExamineCustomerCustomEvent": {
+        "type": "object",
+        "description": "Event-specific payload for customer.custom_event. Supports both SPECIFIC (single schema) and ALL (all schemas) sub-modes.",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "ALL",
+              "SPECIFIC"
+            ],
+            "description": "Custom event sub-mode: ALL matches all custom event schemas; SPECIFIC matches a single schema."
+          },
+          "all": {
+            "description": "Required when type is ALL. Provides context matched against all custom event schemas.",
+            "$ref": "#/components/schemas/VLExamineCustomerCustomEventAll"
+          },
+          "specific": {
+            "description": "Required when type is SPECIFIC. Provides context for a single custom event schema.",
+            "$ref": "#/components/schemas/VLExamineCustomerCustomEventSpecific"
+          }
+        }
+      },
+      "VLExamineCustomerCustomEventAll": {
+        "type": "object",
+        "description": "Custom event payload for ALL sub-mode (matches all custom event schemas).",
+        "properties": {
+          "customer": {
+            "type": "object",
+            "description": "Customer context with optional metadata overlay.",
+            "properties": {
+              "metadata": {
+                "type": "object",
+                "description": "Customer metadata overlay (merged onto the resolved customer, not persisted)."
+              }
+            }
+          },
+          "custom_event": {
+            "type": "object",
+            "description": "Custom event metadata for matching against all schemas.",
+            "properties": {
+              "metadata": {
+                "type": "object",
+                "description": "Custom event metadata."
+              }
+            }
+          }
+        }
+      },
+      "VLExamineCustomerCustomEventSpecific": {
+        "type": "object",
+        "description": "Custom event payload for SPECIFIC sub-mode (single schema).",
+        "required": [
+          "schema_id"
+        ],
+        "properties": {
+          "schema_id": {
+            "type": "string",
+            "description": "Custom event schema identifier (ces_*)."
+          },
+          "customer": {
+            "type": "object",
+            "description": "Customer context with optional metadata overlay.",
+            "properties": {
+              "metadata": {
+                "type": "object",
+                "description": "Customer metadata overlay."
+              }
+            }
+          },
+          "custom_event": {
+            "type": "object",
+            "description": "Custom event data matching the specified schema.",
+            "properties": {
+              "metadata": {
+                "type": "object",
+                "description": "Custom event metadata."
+              }
+            }
+          }
+        }
+      },
       "LoyaltiesExamineEarningRulesResponseBody": {
         "type": "object",
         "properties": {
-          "event": {
+          "object": {
             "type": "string",
-            "description": "The trigger event that was examined."
+            "const": "earnings_examine_result",
+            "description": "Identifies the object type."
+          },
+          "customer": {
+            "$ref": "#/components/schemas/VLExamineCustomerReference"
+          },
+          "earning_rules": {
+            "type": "array",
+            "description": "Catalog of earning rules that contributed to the estimation.",
+            "items": {
+              "$ref": "#/components/schemas/VLExamineEarningRuleDetail"
+            }
           },
           "memberships": {
             "type": "array",
             "description": "List of earning opportunities per active membership.",
             "items": {
-              "$ref": "#/components/schemas/VLExamineMemberEarningOpportunity"
+              "$ref": "#/components/schemas/VLExamineMemberEarningsOpportunity"
             }
-          },
-          "object": {
-            "type": "string",
-            "example": "earnings_examine_result"
           }
         }
       },
-      "VLExamineMemberEarningOpportunity": {
+      "VLExamineMemberEarningsOpportunity": {
         "type": "object",
         "properties": {
+          "object": {
+            "type": "string",
+            "const": "member_earnings_opportunity",
+            "description": "Identifies the object type."
+          },
           "member": {
-            "$ref": "#/components/schemas/MemberResponse"
+            "$ref": "#/components/schemas/VLExamineMemberReference"
           },
           "program": {
-            "$ref": "#/components/schemas/ProgramResponse"
+            "$ref": "#/components/schemas/VLExamineProgramReference"
           },
           "cards": {
             "type": "array",
-            "description": "Per-card point estimations.",
+            "description": "Per-card point estimations with earning rule breakdowns.",
             "items": {
               "$ref": "#/components/schemas/VLExamineCardEstimation"
             }
           },
           "incentives": {
             "type": "array",
-            "description": "Fulfillable incentives (digital, material).",
+            "description": "Fulfillable incentives (digital, material) with linked earning rules.",
             "items": {
-              "$ref": "#/components/schemas/LoyaltyIncentive"
+              "$ref": "#/components/schemas/VLExamineIncentiveEstimation"
             }
-          },
-          "object": {
-            "type": "string",
-            "example": "member_earning_opportunity"
           }
         }
       },
       "VLExamineCardEstimation": {
         "type": "object",
         "properties": {
+          "object": {
+            "type": "string",
+            "const": "card_estimation",
+            "description": "Identifies the object type."
+          },
           "card": {
-            "$ref": "#/components/schemas/VLCardReference"
+            "$ref": "#/components/schemas/VLExamineCardReference"
           },
           "points_estimation": {
             "type": "integer",
-            "description": "Total estimated points for this card (fixed + proportional + incentive points combined)."
+            "description": "Total estimated points for this card (fixed + proportional + incentive points combined). Equals the sum of nested earning_rules[].points_estimation."
+          },
+          "earning_rules": {
+            "type": "array",
+            "description": "Per-earning-rule point breakdown for this card.",
+            "items": {
+              "$ref": "#/components/schemas/VLExamineEarningRuleEstimation"
+            }
+          }
+        }
+      },
+      "VLExamineCustomerReference": {
+        "type": "object",
+        "description": "Customer reference in examine response.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Customer unique identifier assigned by Voucherify (cust_*)."
+          },
+          "source_id": {
+            "type": "string",
+            "description": "Customer external source identifier."
+          },
+          "metadata": {
+            "type": "object",
+            "description": "Customer metadata."
+          },
+          "object": {
+            "type": "string",
+            "const": "customer",
+            "description": "Identifies the object type."
+          }
+        }
+      },
+      "VLExamineEarningRuleDetail": {
+        "type": "object",
+        "description": "Earning rule detail in examine response catalog.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Earning rule unique identifier assigned by Voucherify."
+          },
+          "name": {
+            "type": "string",
+            "description": "Earning rule name."
+          },
+          "metadata": {
+            "type": "object",
+            "description": "Earning rule metadata."
+          },
+          "object": {
+            "type": "string",
+            "const": "earning_rule",
+            "description": "Identifies the object type."
+          }
+        }
+      },
+      "VLExamineMemberReference": {
+        "type": "object",
+        "description": "Lightweight member reference in examine response.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Member unique identifier assigned by Voucherify."
+          },
+          "customer_id": {
+            "type": "string",
+            "description": "Customer unique identifier assigned by Voucherify (cust_*)."
+          },
+          "program_id": {
+            "type": "string",
+            "description": "Program unique identifier assigned by Voucherify."
+          },
+          "metadata": {
+            "type": "object",
+            "description": "Member metadata."
+          },
+          "object": {
+            "type": "string",
+            "const": "member",
+            "description": "Identifies the object type."
+          }
+        }
+      },
+      "VLExamineProgramReference": {
+        "type": "object",
+        "description": "Lightweight program reference in examine response.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Program unique identifier assigned by Voucherify."
+          },
+          "name": {
+            "type": "string",
+            "description": "Program name."
+          },
+          "metadata": {
+            "type": "object",
+            "description": "Program metadata."
+          },
+          "object": {
+            "type": "string",
+            "const": "program",
+            "description": "Identifies the object type."
+          }
+        }
+      },
+      "VLExamineCardReference": {
+        "type": "object",
+        "description": "Card reference in examine response.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Card unique identifier assigned by Voucherify."
+          },
+          "card_definition_id": {
+            "type": "string",
+            "description": "Card definition unique identifier assigned by Voucherify."
+          },
+          "card_type": {
+            "type": "string",
+            "description": "Card type (e.g., INDIVIDUAL, BULK)."
+          },
+          "code": {
+            "type": "string",
+            "description": "Card code."
+          },
+          "object": {
+            "type": "string",
+            "const": "card",
+            "description": "Identifies the object type."
+          }
+        }
+      },
+      "VLExamineEarningRuleReference": {
+        "type": "object",
+        "description": "Earning rule reference in examine response.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Earning rule unique identifier assigned by Voucherify."
+          },
+          "object": {
+            "type": "string",
+            "const": "earning_rule",
+            "description": "Identifies the object type."
+          }
+        }
+      },
+      "VLExamineEarningRuleEstimation": {
+        "type": "object",
+        "description": "Per-earning-rule estimation with points breakdown.",
+        "properties": {
+          "object": {
+            "type": "string",
+            "const": "earning_rule_estimation",
+            "description": "Identifies the object type."
+          },
+          "earning_rule": {
+            "$ref": "#/components/schemas/VLExamineEarningRuleReference"
+          },
+          "points_estimation": {
+            "type": "integer",
+            "description": "Estimated points for this earning rule."
+          }
+        }
+      },
+      "VLExamineIncentiveEstimation": {
+        "type": "object",
+        "description": "Incentive estimation with linked earning rules.",
+        "properties": {
+          "object": {
+            "type": "string",
+            "const": "incentive_estimation",
+            "description": "Identifies the object type."
+          },
+          "incentive": {
+            "$ref": "#/components/schemas/VLExamineIncentiveReference"
+          },
+          "earning_rules": {
+            "type": "array",
+            "description": "Earning rules linked to this incentive.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "object": {
+                  "type": "string",
+                  "const": "earning_rule_estimation",
+                  "description": "Identifies the object type."
+                },
+                "earning_rule": {
+                  "$ref": "#/components/schemas/VLExamineEarningRuleReference"
+                }
+              }
+            }
+          }
+        }
+      },
+      "VLExamineIncentiveReference": {
+        "type": "object",
+        "description": "Incentive reference in examine response.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Incentive unique identifier assigned by Voucherify."
+          },
+          "name": {
+            "type": "string",
+            "description": "Incentive name."
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "DIGITAL",
+              "MATERIAL",
+              "POINTS",
+              "POINTS_PROPORTIONAL"
+            ],
+            "description": "Incentive type."
+          },
+          "object": {
+            "type": "string",
+            "const": "incentive",
+            "description": "Identifies the object type."
           }
         }
       },
