@@ -15,12 +15,51 @@ const removeJsBreakingChanges = {
     // Restore `created_at` to POST `v1/orders/import`
     // @ts-ignore
     openApi.components.schemas.OrdersImportCreateRequestBody.items.allOf[1].properties.created_at =
-      {
-        type: "string",
-        description:
-          "Timestamp representing the date and time when the order was created. The value is shown in the ISO 8601 format.",
-        format: "date-time",
-      };
+    {
+      type: "string",
+      description:
+        "Timestamp representing the date and time when the order was created. The value is shown in the ISO 8601 format.",
+      format: "date-time",
+    };
+
+    // Gemini recommended so
+    const schemas = openApi.components.schemas as any;
+
+    // Make ParameterFiltersListMemberTransactions faulty again
+    schemas.ParameterFiltersListMemberTransactions.properties = {
+      "created_at": {
+        "$ref": "#/components/schemas/FilterConditionsDateTime"
+      },
+      "id": {
+        "$ref": "#/components/schemas/FilterConditionsString"
+      }
+    };
+
+    // Make ExportCampaignTransactionsFilters faulty again
+    schemas.ExportCampaignTransactionsFilters.properties = {
+      "junction": {
+        "$ref": "#/components/schemas/Junction"
+      },
+      "created_at": {
+        "$ref": "#/components/schemas/FilterConditionsDateTime"
+      },
+      "voucher_id": {
+        "$ref": "#/components/schemas/FilterConditionsString"
+      }
+    };
+
+    // Make ParametersFiltersListCampaignTransactions faulty again
+    schemas.ParametersFiltersListCampaignTransactions.properties = {
+      "junction": {
+        "$ref": "#/components/schemas/Junction"
+      },
+      "id": {
+        "$ref": "#/components/schemas/FilterConditionsString"
+      },
+      "voucher_id": {
+        "$ref": "#/components/schemas/FilterConditionsString"
+      }
+    };
 
     return openApi;
   },
