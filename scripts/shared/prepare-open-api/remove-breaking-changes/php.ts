@@ -334,6 +334,68 @@ const removePhpBreakingChanges = {
       }
     };
 
+    // Restore branding cockpits
+    schemas.ManagementProjectsBrandingCreateRequestBody.properties = schemas.ManagementProjectsBrandingCreateRequestBody.properties || {};
+    schemas.ManagementProjectsBrandingCreateRequestBody.properties.cockpits = {
+      "type": "object",
+      "title": "Cockpit",
+      "description": "Defines customer cockpit details.",
+      "properties": {
+        "campaigns_overview_enabled": { "type": "boolean", "default": false, "nullable": true, "description": "Enables the campaign overview for customers." },
+        "loyalty_enabled": { "type": "boolean", "default": true, "nullable": true, "description": "Enables the loyalty campaign overview for customers." },
+        "gift_cards_enabled": { "type": "boolean", "default": true, "nullable": true, "description": "Enables the gift card overview for customers." },
+        "coupons_enabled": { "type": "boolean", "default": true, "nullable": true, "description": "Enables the discount coupon overview for customers." },
+        "referrals_enabled": { "type": "boolean", "default": true, "nullable": true, "description": "Enables the referral campaign overview for customers." },
+        "theme": { "type": "string", "default": "default", "description": "Determines the color scheme of the customer cockpit.", "enum": ["blue", "dark-green", "default", "green", "grey", "orange", "purple", "red"] },
+        "use_custom_double_opt_in_redirect_url": { "type": "boolean", "default": false, "nullable": true, "description": "Enables the double opt-in option. It must be a valid URL format." },
+        "custom_double_opt_in_redirect_url": { "type": "string", "nullable": true, "description": "Defines the URL for the double opt-in consent. It must be a valid URL format." }
+      }
+    };
+
+    schemas.ManagementProjectsBranding.properties = schemas.ManagementProjectsBranding.properties || {};
+    schemas.ManagementProjectsBranding.properties.cockpits = {
+      "type": "object",
+      "title": "Cockpit",
+      "description": "Defines customer cockpit details.",
+      "properties": {
+        "campaigns_overview_enabled": { "type": "boolean", "description": "Enables the campaign overview for customers." },
+        "loyalty_enabled": { "type": "boolean", "description": "Enables the loyalty campaign overview for customers." },
+        "gift_cards_enabled": { "type": "boolean", "description": "Enables the gift card overview for customers." },
+        "coupons_enabled": { "type": "boolean", "description": "Enables the discount coupon overview for customers." },
+        "referrals_enabled": { "type": "boolean", "description": "Enables the referral campaign overview for customers." },
+        "theme": { "type": "string", "description": "Determines the color scheme of the customer cockpit.", "enum": ["blue", "dark-green", "default", "green", "grey", "orange", "purple", "red"] },
+        "use_custom_double_opt_in_redirect_url": { "type": "boolean", "description": "Enables the double opt-in option. It must be a valid URL format." },
+        "custom_double_opt_in_redirect_url": { "type": "string", "nullable": true, "description": "Defines the URL for the double opt-in consent. It must be a valid URL format." }
+      },
+      "required": [
+        "campaigns_overview_enabled",
+        "loyalty_enabled",
+        "gift_cards_enabled",
+        "coupons_enabled",
+        "referrals_enabled",
+        "theme",
+        "use_custom_double_opt_in_redirect_url",
+        "custom_double_opt_in_redirect_url"
+      ]
+    };
+
+    schemas.ManagementProjectsBrandingUpdateRequestBody.properties = schemas.ManagementProjectsBrandingUpdateRequestBody.properties || {};
+    schemas.ManagementProjectsBrandingUpdateRequestBody.properties.cockpits = {
+      "type": "object",
+      "title": "Cockpit",
+      "description": "Defines customer cockpit details.",
+      "properties": {
+        "campaigns_overview_enabled": { "type": "boolean", "description": "Indicates if the campaign overview is turned on for customers." },
+        "loyalty_enabled": { "type": "boolean", "description": "Indicates if the loyalty campaign overview is turned on for customers." },
+        "gift_cards_enabled": { "type": "boolean", "description": "Indicates if the gift card overview is turned on for customers." },
+        "coupons_enabled": { "type": "boolean", "description": "Indicates if the discount coupon overview is turned on for customers." },
+        "referrals_enabled": { "type": "boolean", "description": "Indicates if the referral campaign overview is turned on for customers." },
+        "theme": { "type": "string", "description": "Determines the color scheme of the customer cockpit.", "enum": ["orange", "green", "dark-green", "blue", "purple", "red", "grey"] },
+        "use_custom_double_opt_in_redirect_url": { "type": "boolean", "description": "Indicates if the double opt-in option is turned on." },
+        "custom_double_opt_in_redirect_url": { "type": "string", "nullable": true, "description": "Defines the URL for the double opt-in consent." }
+      }
+    };
+
     return openApi;
   },
   after: (_openApi: unknown): any => {
