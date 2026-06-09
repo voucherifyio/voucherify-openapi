@@ -9,53 +9,95 @@ To integrate Voucherify's loyalty v2 with your platform, you'll need to fulfil s
 
 Loyalty v2 has a modular structure, so you can start small and scale your program up as it grows with your members. The modular structure also helps you to optimize your loyalty program with your other incentives, like discount coupons or gift cards.
 
-## Preparation: Technical implementation checklist
+## Preparation
 
-Prepare your Voucherify project for a functional loyalty v2 integration.
+Prepare your Voucherify account for a functional loyalty v2 integration.
 
-### Environment readiness (The Dashboard)
+<Steps>
+    <Step title="Prepare the project">
 
-[ ] Create a Dedicated Project: Ensure you are working in a Test/Sandbox project. v2 BETA features should be isolated from your production v1 loyalty programs.
+    Prepare your test environment in Voucherify, for example the Sandbox project.
 
-[ ] Configure a Loyalty v2 Program:
+    Use an existing new API key/token or or create a new pair. Go to **Project settings** > **Application keys** to get `X-App-Id` and `X-App-Token`.
 
-Create an architecture of what you need from the program: required vs additional modules. Start small, experiment,
+    Make sure the API key has the necessary campaign, voucher, and customer permissions.
+        
+    </Step>
 
-Navigate to Campaigns > Loyalty Programs.
+    <Step title="Create loyalty v2 program">
 
-Ensure the program type is v2 (Program-based).
+        <Info>
 
-Set the program status to ACTIVE.
+            <Badge color="gray">User guides</Badge>
+        
+            Read the [Loyalty v2 user guides](/build/) to learn how to create and configure a new loyalty v2 program.
 
-[ ] Define Card Assignments: In the program settings, verify that at least one Card Definition is assigned. (In v2, members cannot exist without at least one assigned loyalty card definition).
+        </Info>
 
-[ ] Set Up Earning Rules: Define at least one "Manual" or "Custom Event" earning rule to test point allocation.
+    Create the loyalty v2 program by going to **Loyalty hub** > **Designer**.
 
-### Authentication and Security
+    Design there the program architecture. You can start with a small program for earning and spending points. The required components are the point wallet and an earning rule. the components that you need from the program: required vs additional modules.
 
-`Possibly to be removed`
+    Copy your v2 program ID (`lprg_...`). This is required for all member-related API calls.
+    
+    Set the program status to `ACTIVE`.
 
-[ ] Retrieve API Keys: Collect your X-App-Id and X-App-Token from Project Settings > Application Keys.
+    <Warning>
+    
+        Once the program is active, you can experiment with additional earning rules, benefits, and rewards. However, you can't add or edit the point wallet or add tier structures.
 
-[ ] Identify Program ID: Capture the lprg_... ID of your v2 program. This is required for all member-related API calls.
+    </Warning>
+    
+    </Step>
 
-[ ] Check Permissions: Ensure your API key has "Write" access for the loyalties domain.
+    <Step title="Customer data">
 
-### Data preparation
+    Your loyalty program members must first exist as customers in Voucherify to have a Voucherify customer ID (`cust_...`).
 
-[ ] Customer Sync Strategy: Decide if you will use existing cust_... IDs or create new customers on-the-fly during member enrollment.
+    You can:
+    - Import your customer base with the [Customer import](/prepare/customers#data-import-and-synchronization) or [POST Import and Update Customers using CSV](/api-reference/customers/import-and-update-customers-using-csv) API endpoint.
+    - Use a CDP or CRM tool to synchronize your customers with Voucherify.
 
-[ ] Metadata Schema: If you plan to use custom metadata for Members or Cards, ensure the keys are defined in your Metadata Schema settings to avoid validation errors.
+    </Step>
 
-[ ] Custom events
+    <Step title="Data schemas: Metadata and custom events">
 
-[ ] Currency Alignment: Verify that your application handles loyalty points as integers. (Reminder: 1 point = 1 cent in the default cashback logic).
+    If you're going to combine the loyalty v2 program with metadata (custom attributes for point wallets, loyalty members, and more) or custom events (for example, to trigger when points are earned), you'll have to create relevant schemas.
+    
+    Read more about creating [metadata schemas](/prepare/metadata#define-new-metadata-schema) and [custom events](/prepare/custom-events#define-new-custom-event).
+
+    </Step>
+
+</Steps>
 
 ## Acquisition
 
-[ ] Enroll Member: Call POST /api/v2/loyalties/programs/{programId}/members and verify the lmbr_... ID is returned.
+Use the [POST Create member](/api-reference/programs/create-member) (`/api/v2/loyalties/programs/{programId}/members`) with the Voucherify customer ID to add the customer as a member to a loyalty v2 program.
 
-ACTIVE/INACTIVE
+By default, the customer is added as an `ACTIVE` member, who can earn immediately points and fully participate in the loyalty program.
+
+Optionally, you can add the customer as an `INACTIVE` member. An inactive member will have to be activated later with the [POST Activate member](/api-reference/programs/activate-member) (`/v2/loyalties/programs/{programId}/members/{memberId}/activate`) endpoint to participate in the loyalty program.
+
+<CodeGroup>
+
+```json Basic create member request lines
+{
+    "customer_id": "cust_V0uCh3r1fyId"
+}
+```
+
+```json Create inactive member request lines
+{
+    "customer_id": "cust_V0uCh3r1fyId",
+    "status": "INACTIVE",
+}
+```
+    
+</CodeGroup>
+
+
+
+and verify the lmbr_... ID is returned.
 
 [ ] Verify Card Generation: Confirm the response contains a cards array with at least one lcrd_... ID.
 
@@ -103,10 +145,13 @@ Expirations...
 
 ### List transactions
 
-
 ## Fullfillment
 
 ### Purchase reward
+
+## Going to production
+
+
 
 ## Troubleshooting
 
