@@ -95,36 +95,207 @@ Optionally, you can add the customer as an `INACTIVE` member. An inactive member
     
 </CodeGroup>
 
+The response will return (see the lines in the example below):
+- Loyalty program member ID with a unique member ID (`lmbr_...`) (line 2).
+- The loyalty card(s) generated for the member with a unique loyalty card ID (`lcrd_...`) and the point wallet (card definition) ID. If your program uses multiple point wallets, the member will receive a separate card for each card definition (lines 16, 17, 54, and 55).
 
+<Warning>
 
-and verify the lmbr_... ID is returned.
+<Badge color="yellow">Handle loyalty card code latency</Badge>
 
-[ ] Verify Card Generation: Confirm the response contains a cards array with at least one lcrd_... ID.
+Make sure your UI can handle `null` for the `cards.card.code` property. The `code` property is generated asynchronously after member creation (lines 19 and 57).
 
-[ ] Handle Card Code Latency: Ensure your UI can handle a null or "Generating" state for card codes, as v2 card codes are generated asynchronously after member creation.
+</Warning>
+
+In this response example, the loyalty program member receives two loyalty cards for two separate point wallets (card definitions).
+
+```json POST Create member: response example lines highlight={2,16,17,19,54,55,57} expandable
+{
+    "id": "lmbr_V0uCh3r1fyId1",
+    "customer_id": "cust_V0uCh3r1fyId2",
+    "program_id": "lprg_V0uCh3r1fyId3",
+    "status": "ACTIVE",
+    "metadata": {},
+    "created_at": "2026-06-06T06:06:06.006Z",
+    "updated_at": null,
+    "object": "member",
+    "cards": [
+        {
+            "member_role": "OWNER",
+            "created_at": "2026-06-06T06:06:06.006Z",
+            "tier_progress": null,
+            "card": {
+                "id": "lcrd_V0uCh3r1fyId4",
+                "card_definition_id": "lcdef_V0uCh3r1fyId5",
+                "card_type": "INDIVIDUAL",
+                "code": null,
+                "lifetime_bucket": {
+                    "points": {
+                        "total": 0,
+                        "earned": 0,
+                        "added": 0,
+                        "subtracted": 0,
+                        "expired": 0,
+                        "spent": 0,
+                        "refunded": 0,
+                        "returned": 0,
+                        "locked": 0,
+                        "unlocked": 0
+                    },
+                    "pending_points": {
+                        "total": 0,
+                        "activated": 0,
+                        "canceled": 0
+                    }
+                },
+                "balance": {
+                    "points": 0,
+                    "pending_points": 0
+                },
+                "next_expiration": null,
+                "next_activation": null,
+                "object": "card"
+            },
+            "object": "member_card"
+        },
+        {
+            "member_role": "OWNER",
+            "created_at": "2026-06-06T06:06:06.006Z",
+            "tier_progress": null,
+            "card": {
+                "id": "lcrd_V0uCh3r1fyId6",
+                "card_definition_id": "lcdef_V0uCh3r1fyId7",
+                "card_type": "INDIVIDUAL",
+                "code": null,
+                "lifetime_bucket": {
+                    "points": {
+                        "total": 0,
+                        "earned": 0,
+                        "added": 0,
+                        "subtracted": 0,
+                        "expired": 0,
+                        "spent": 0,
+                        "refunded": 0,
+                        "returned": 0,
+                        "locked": 0,
+                        "unlocked": 0
+                    },
+                    "pending_points": {
+                        "total": 0,
+                        "activated": 0,
+                        "canceled": 0
+                    }
+                },
+                "balance": {
+                    "points": 0,
+                    "pending_points": 0
+                },
+                "next_expiration": null,
+                "next_activation": null,
+                "object": "card"
+            },
+            "object": "member_card"
+        }
+    ]
+}
+```
 
 ## Discovery
 
-### List rewards
+Once you enroll your members, use the following endpoints so they can learn more about your loyalty program: How they can earn and spend their points.
 
 ### Examine earnings
 
-/v2/loyalties/examine/earning-rules
+<Info>
+
+Read the [POST Examine earnings](/api-reference/examine/examine-earnings) endpoint reference documentation to learn more about the exact request and response data.
+    
+</Info>
+
+Use the POST Examine earnings endpoint (`/v2/loyalties/examine/earning-rules`) to estimate how many points will a customer earn in a given situation. You can estimate either for a `SPECIFIC` event or for `ALL` events in all active earning rules. The earning rule events are:
+- Customer order paid
+- Customer segment entered
+- Custom event
+
+You can use the `SPECIFIC` events to filter the earning rules that are relevant in a specific context. For example:
+- Use `order.paid` when the customer is in their cart and they're about to complete their order.
+- Use `segment.entered` as an incentive for customers to reach a given segment and earn additional points or other benefits.
+- Use `customer.custom_event` to show customers what they need to achieve to trigger the custom event and earn points or benefits.
+
+The response returns details about the possible earnings.
+
+<CodeGroup>
+
+```json 
+
+```
+
+</CodeGroup>
 
 ### Examine rewards
 
 `AVAILABLE` vs `UNAVAILABLE`
 `unavailability_reasons`
 
+<Info>
+
+    <Badge color="gray">Prerequisite: Create and add rewards to point wallets</Badge>
+
+    Created rewards must be added to relevant point wallets to be redeemable by your members. When you add the reward to a point wallet, you also define its price in points.
+
+    You can create rewards through the dashboard or the API.
+
+</Info>
+
+
+
 ## Activity
+
+Your customers need to perform activities to meet earning rules and earn points or other benefits.
 
 ### Create order
 
-POST Create order?
+<Info>
 
-Pay with points TBD
+Read the [POST Create order](/api-reference/orders/create-order) endpoint reference documentation to learn more about the exact request and response data.
+    
+</Info>
 
-### POST Events (custom events)
+In the `customer.order.paid` event, Voucherify relies on the condition that the order payload `status` field must be set to `PAID`.
+
+When the Order API processes a payload with a `PAID` status (line 3), the loyalty engine evaluates the line items and order amount to add points. Submitting orders with other statuses (such as `CREATED` or `FULFILLED`) will fail to activate the loyalty assignment.
+
+```json Order paid request payload lines highlight={3} expandable
+{
+    "source_id": "coffee_order_77129",
+    "status": "PAID",
+    "amount": 3500,
+    "customer": {
+      "source_id": "cust_espresso_fan_99",
+      "email": "customer@coffeeclub.com"
+    },
+    "items": [
+      {
+        "source_id": "prod_colombian_supremo_1kg",
+        "related_object": "product",
+        "quantity": 1,
+        "price": 3500,
+        "amount": 3500,
+        "product": {
+          "name": "Colombian Supremo Coffee Beans",
+          "metadata": {
+            "roast": "medium",
+            "origin": "Colombia"
+          }
+        }
+      }
+    ]
+}
+```
+
+### Custom events
+
+### Enter segment
 
 ## Retention
 
