@@ -212,22 +212,709 @@ Read the [POST Examine earnings](/api-reference/examine/examine-earnings) endpoi
     
 </Info>
 
-Use the POST Examine earnings endpoint (`/v2/loyalties/examine/earning-rules`) to estimate how many points will a customer earn in a given situation. You can estimate either for a `SPECIFIC` event or for `ALL` events in all active earning rules. The earning rule events are:
-- Customer order paid
-- Customer segment entered
-- Custom event
+Use the POST Examine earnings endpoint (`/v2/loyalties/examine/earning-rules`) to estimate how many points will a customer earn in a given scenario. This simulation calculates the precise number of points and physical or digital incentives a customer can earn based on specific operational business triggers. Because this evaluation is a dry-run execution, Voucherify calculates these opportunities dynamically without writing transactions to card balances or modifying customer states.
 
-You can use the `SPECIFIC` events to filter the earning rules that are relevant in a specific context. For example:
-- Use `order.paid` when the customer is in their cart and they're about to complete their order.
-- Use `segment.entered` as an incentive for customers to reach a given segment and earn additional points or other benefits.
-- Use `customer.custom_event` to show customers what they need to achieve to trigger the custom event and earn points or benefits.
+You can configure the simulation engine using two distinct trigger modes:
+- `SPECIFIC` mode: Limits evaluation to one event context, like order paid, segment entered, or custom event.
+- `ALL` mode: Simulates a parallel "what-if" scenario across all active earning rule configurations simultaneously.
 
-The response returns details about the possible earnings.
+#### ALL trigger
+
+Use the trigger type `ALL` mode to create "Ways to earn" loyalty portals or customer dashboards. This option displays all available marketing paths to your customer simultaneously.
+
+When you pass the type `ALL`, Voucherify sets the top-level event parameter value to `null` (response line 2). Voucherify processes every earning rule active within the customer's program.
+
+The simulation lists all earning rules (in the response example, the array in lines 9–40) across distinct point wallets (the array in lines 56–128, loyalty cards with names `AnnualTime`, `AutumnTime`, `SummerTime`). The response displays the total number of points to be earned on a card (line 65) and for individual earning rules that trigger the earning (lines 72 and 80). Voucherify also lists physical rewards, such as the "Coffee sample Ethiopia" item, which is a `MATERIAL` benefit type (lines 130–136).
+
+<Note>
+
+    <Badge color="blue">Order paid earning rules with proportional calculation</Badge>
+
+    To return an estimation for order paid earning rules which calculate points proportionally, you need to pass the `customer_order_paid` object with required data, like `order.items` array.
+    
+</Note>
 
 <CodeGroup>
 
-```json 
+```json Trigger: All request lines wrap expandable
+{
+    "trigger": {
+        "type": "ALL"
+    },
+    "customer_identification": {
+        "type": "member_id",
+        "member_id": "lmbr_128f962dbc8c4ba5dc"
+    },
+    "customer_order_paid": {
+        "order": {
+            "items": [
+                {
+                    "quantity": 1,
+                    "price": 1000,
+                    "amount": 1000,
+                    "source_id": "vchrf-trckr-cp",
+                    "name": "Voucherify trucker cap",
+                    "related_object": "product",
+                    "product": {
+                        "metadata": {
+                            "brand": "Voucherify",
+                            "colour": "cobalt",
+                            "category": "cap"
+                        }
+                    }
+                },
+                {
+                    "quantity": 1,
+                    "price": 15000,
+                    "amount": 15000,
+                    "source_id": "vchrf-tshrt",
+                    "name": "Voucherify T-shirt",
+                    "related_object": "product",
+                    "product": {
+                        "metadata": {
+                            "brand": "Voucherify",
+                            "colour": "ultramarine",
+                            "category": "t-shirt"
+                        }
+                    }
+                },
+                {
+                    "quantity": 1,
+                    "price": 6500,
+                    "amount": 6500,
+                    "source_id": "vchrf-hd",
+                    "name": "Voucherify hoodie",
+                    "related_object": "product",
+                    "product": {
+                        "metadata": {
+                            "brand": "Voucherify",
+                            "colour": "regal crimson",
+                            "category": "hoodie"
+                        }
+                    }
+                },
+                {
+                    "quantity": 2,
+                    "price": 1500,
+                    "amount": 3000,
+                    "source_id": "vchrf-vncnt-plsh",
+                    "name": "Voucherify Vincent plushie",
+                    "related_object": "product",
+                    "product": {
+                        "metadata": {
+                            "brand": "Voucherify",
+                            "colour": "cobalt",
+                            "category": "plushie"
+                        }
+                    }
+                }
+            ]
+        }
+    },
+    "customer_segment_entered": {
+        "customer": {
+            "metadata": {
+                "VIP": false
+            }
+        }
+    },
+    "customer_custom_event": {
+        "type": "SPECIFIC",
+        "all": null,
+        "specific": {
+            "custom_event": {
+                "schema_id": "ms_oX8au6DostTnHdWBAVVFnTLP"
+            }
+        }
+    }
+}
 
+```
+
+```json Trigger: All response lines wrap expandable highlight={2,9-40,56-128,130-136}
+{
+    "event": null,
+    "customer": {
+        "id": "cust_6onRrs4kCnvSVrTs5YtDPFBG",
+        "source_id": "lx-rdmptr",
+        "metadata": {},
+        "object": "customer"
+    },
+    "earning_rules": [
+        {
+            "id": "lern_128f48ee44cc4bec34",
+            "name": "EarningRule-OrderPaid",
+            "metadata": {},
+            "object": "earning_rule"
+        },
+        {
+            "id": "lern_128f577bd4d47c8e12",
+            "name": "EnterVipSegment",
+            "metadata": {},
+            "object": "earning_rule"
+        },
+        {
+            "id": "lern_128f5822398c4bf78f",
+            "name": "AutumnPaid",
+            "metadata": {},
+            "object": "earning_rule"
+        },
+        {
+            "id": "lern_128f5834b30c4bf7a3",
+            "name": "SummerPaid",
+            "metadata": {},
+            "object": "earning_rule"
+        },
+        {
+            "id": "lern_128f57ec40cc4bf762",
+            "name": "Autumn Ethiopia",
+            "metadata": {},
+            "object": "earning_rule"
+        }
+    ],
+    "memberships": [
+        {
+            "member": {
+                "id": "lmbr_128f962dbc8c4ba5dc",
+                "customer_id": "cust_6onRrs4kCnvSVrTs5YtDPFBG",
+                "program_id": "lprg_128f58429f4c4bf7b2",
+                "metadata": {},
+                "object": "member"
+            },
+            "program": {
+                "id": "lprg_128f58429f4c4bf7b2",
+                "name": "AnnualProgram",
+                "metadata": {},
+                "object": "program"
+            },
+            "cards": [
+                {
+                    "card": {
+                        "id": "lcrd_128f962dbd8c4ba5e1",
+                        "card_definition_id": "lcdef_128f4a88414c4bed69",
+                        "card_type": "INDIVIDUAL",
+                        "code": "AnnualTime-7M7ShPGfme",
+                        "object": "card"
+                    },
+                    "points_estimation": 25650,
+                    "earning_rules": [
+                        {
+                            "earning_rule": {
+                                "id": "lern_128f48ee44cc4bec34",
+                                "object": "earning_rule"
+                            },
+                            "points_estimation": 25500,
+                            "object": "earning_rule_estimation"
+                        },
+                        {
+                            "earning_rule": {
+                                "id": "lern_128f577bd4d47c8e12",
+                                "object": "earning_rule"
+                            },
+                            "points_estimation": 150,
+                            "object": "earning_rule_estimation"
+                        }
+                    ],
+                    "object": "card_estimation"
+                },
+                {
+                    "card": {
+                        "id": "lcrd_128f962dbd8c4ba5e0",
+                        "card_definition_id": "lcdef_128f49963c0c4becb7",
+                        "card_type": "INDIVIDUAL",
+                        "code": "AutumnTime-R02hVARx33",
+                        "object": "card"
+                    },
+                    "points_estimation": 10,
+                    "earning_rules": [
+                        {
+                            "earning_rule": {
+                                "id": "lern_128f5822398c4bf78f",
+                                "object": "earning_rule"
+                            },
+                            "points_estimation": 10,
+                            "object": "earning_rule_estimation"
+                        }
+                    ],
+                    "object": "card_estimation"
+                },
+                {
+                    "card": {
+                        "id": "lcrd_128f962dbd8c4ba5df",
+                        "card_definition_id": "lcdef_128f495f720c4bec8c",
+                        "card_type": "INDIVIDUAL",
+                        "code": "SummerTime-7z8dWawICd",
+                        "object": "card"
+                    },
+                    "points_estimation": 10,
+                    "earning_rules": [
+                        {
+                            "earning_rule": {
+                                "id": "lern_128f5834b30c4bf7a3",
+                                "object": "earning_rule"
+                            },
+                            "points_estimation": 10,
+                            "object": "earning_rule_estimation"
+                        }
+                    ],
+                    "object": "card_estimation"
+                }
+            ],
+            "incentives": [
+                {
+                    "incentive": {
+                        "id": "linc_128f4bba81947c8542",
+                        "name": "Coffee sample Ethiopia",
+                        "type": "MATERIAL",
+                        "object": "incentive"
+                    },
+                    "earning_rules": [
+                        {
+                            "earning_rule": {
+                                "id": "lern_128f57ec40cc4bf762",
+                                "object": "earning_rule"
+                            },
+                            "object": "earning_rule_estimation"
+                        }
+                    ],
+                    "object": "incentive_estimation"
+                }
+            ],
+            "object": "member_earnings_opportunity"
+        }
+    ],
+    "object": "earnings_examine_result"
+}
+```
+</CodeGroup>
+
+#### SPECIFIC trigger: Order paid
+
+Use the `SPECIFIC` trigger type `customer.order.paid` inside digital shopping carts to estimate customer point collection right before final billing.
+
+The simulation isolates rules linked directly to `PAID` transaction states. Voucherify processes the order details from your request context, including items, metadata, catalog categories, and amount values.
+
+In the example, Voucherify resolves the `EarningRule-OrderPaid` rule (response example, lines 10–15) and returns an explicit balance projection of 25500 points for the primary `AnnualTime` loyalty card (line 53). Also, the response lists earnings for `AutumnPaid` and `SummerPaid` earning rules (lines 16–27) that are used for the `AutumnTime` and `SummerTime` loyalty cards (lines 74 and 95). The calculation reflects the current shopping cart properties without adding points to the active card yet.
+
+<CodeGroup>
+
+```json Trigger: Order paid request lines wrap expandable
+{
+    "trigger": {
+        "type": "SPECIFIC",
+        "specific": {
+            "event": "customer.order.paid"
+        }
+    },
+    "customer_identification": {
+        "type": "member_id",
+        "member_id": "lmbr_128f962dbc8c4ba5dc"
+    },
+    "customer_order_paid": {
+        "order": {
+            "items": [
+                {
+                    "quantity": 1,
+                    "price": 1000,
+                    "amount": 1000,
+                    "source_id": "vchrf-trckr-cp",
+                    "name": "Voucherify trucker cap",
+                    "related_object": "product",
+                    "product": {
+                        "metadata": {
+                            "brand": "Voucherify",
+                            "colour": "cobalt",
+                            "category": "cap"
+                        }
+                    }
+                },
+                {
+                    "quantity": 1,
+                    "price": 15000,
+                    "amount": 15000,
+                    "source_id": "vchrf-tshrt",
+                    "name": "Voucherify T-shirt",
+                    "related_object": "product",
+                    "product": {
+                        "metadata": {
+                            "brand": "Voucherify",
+                            "colour": "ultramarine",
+                            "category": "t-shirt"
+                        }
+                    }
+                },
+                {
+                    "quantity": 1,
+                    "price": 6500,
+                    "amount": 6500,
+                    "source_id": "vchrf-hd",
+                    "name": "Voucherify hoodie",
+                    "related_object": "product",
+                    "product": {
+                        "metadata": {
+                            "brand": "Voucherify",
+                            "colour": "regal crimson",
+                            "category": "hoodie"
+                        }
+                    }
+                },
+                {
+                    "quantity": 2,
+                    "price": 1500,
+                    "amount": 3000,
+                    "source_id": "vchrf-vncnt-plsh",
+                    "name": "Voucherify Vincent plushie",
+                    "related_object": "product",
+                    "product": {
+                        "metadata": {
+                            "brand": "Voucherify",
+                            "colour": "cobalt",
+                            "category": "plushie"
+                        }
+                    }
+                }
+            ]
+        }
+    }
+}
+```
+
+```json Trigger: Order paid response lines wrap expandable highlight={10-27,53,74,95}
+{
+    "event": "customer.order.paid",
+    "customer": {
+        "id": "cust_6onRrs4kCnvSVrTs5YtDPFBG",
+        "source_id": "lx-rdmptr",
+        "metadata": {},
+        "object": "customer"
+    },
+    "earning_rules": [
+        {
+            "id": "lern_128f48ee44cc4bec34",
+            "name": "EarningRule-OrderPaid",
+            "metadata": {},
+            "object": "earning_rule"
+        },
+        {
+            "id": "lern_128f5822398c4bf78f",
+            "name": "AutumnPaid",
+            "metadata": {},
+            "object": "earning_rule"
+        },
+        {
+            "id": "lern_128f5834b30c4bf7a3",
+            "name": "SummerPaid",
+            "metadata": {},
+            "object": "earning_rule"
+        }
+    ],
+    "memberships": [
+        {
+            "member": {
+                "id": "lmbr_128f962dbc8c4ba5dc",
+                "customer_id": "cust_6onRrs4kCnvSVrTs5YtDPFBG",
+                "program_id": "lprg_128f58429f4c4bf7b2",
+                "metadata": {},
+                "object": "member"
+            },
+            "program": {
+                "id": "lprg_128f58429f4c4bf7b2",
+                "name": "AnnualProgram",
+                "metadata": {},
+                "object": "program"
+            },
+            "cards": [
+                {
+                    "card": {
+                        "id": "lcrd_128f962dbd8c4ba5e1",
+                        "card_definition_id": "lcdef_128f4a88414c4bed69",
+                        "card_type": "INDIVIDUAL",
+                        "code": "AnnualTime-7M7ShPGfme",
+                        "object": "card"
+                    },
+                    "points_estimation": 25500,
+                    "earning_rules": [
+                        {
+                            "earning_rule": {
+                                "id": "lern_128f48ee44cc4bec34",
+                                "object": "earning_rule"
+                            },
+                            "points_estimation": 25500,
+                            "object": "earning_rule_estimation"
+                        }
+                    ],
+                    "object": "card_estimation"
+                },
+                {
+                    "card": {
+                        "id": "lcrd_128f962dbd8c4ba5e0",
+                        "card_definition_id": "lcdef_128f49963c0c4becb7",
+                        "card_type": "INDIVIDUAL",
+                        "code": "AutumnTime-R02hVARx33",
+                        "object": "card"
+                    },
+                    "points_estimation": 10,
+                    "earning_rules": [
+                        {
+                            "earning_rule": {
+                                "id": "lern_128f5822398c4bf78f",
+                                "object": "earning_rule"
+                            },
+                            "points_estimation": 10,
+                            "object": "earning_rule_estimation"
+                        }
+                    ],
+                    "object": "card_estimation"
+                },
+                {
+                    "card": {
+                        "id": "lcrd_128f962dbd8c4ba5df",
+                        "card_definition_id": "lcdef_128f495f720c4bec8c",
+                        "card_type": "INDIVIDUAL",
+                        "code": "SummerTime-7z8dWawICd",
+                        "object": "card"
+                    },
+                    "points_estimation": 10,
+                    "earning_rules": [
+                        {
+                            "earning_rule": {
+                                "id": "lern_128f5834b30c4bf7a3",
+                                "object": "earning_rule"
+                            },
+                            "points_estimation": 10,
+                            "object": "earning_rule_estimation"
+                        }
+                    ],
+                    "object": "card_estimation"
+                }
+            ],
+            "incentives": [],
+            "object": "member_earnings_opportunity"
+        }
+    ],
+    "object": "earnings_examine_result"
+}
+```
+
+</CodeGroup>
+
+#### SPECIFIC trigger: Customer entered segment
+
+<Info>
+
+    <Badge color="gray">Prerequisite: Customer segment</Badge>
+
+    This scenario requires an earning rule that uses a customer segment as a trigger.
+
+    Read the [Customer segments](/prepare/customer-segments) guide to learn more about customer segments.
+
+</Info>
+
+Use the `SPECIFIC` trigger type `customer.segment.entered` to forecast reward outcomes when a member moves into a high-tier profile segment, like a VIP club. You can display this as an achievable milestone in the member profile.
+
+The evaluation matches metadata configurations in the customer reference object. In this case, passing the metadata key-value pair `"VIP": true` simulates a segment transition (request example, line 15).
+
+Voucherify identifies the `EnterVipSegment` rule schema (response example, lines 12–17). The response isolates the member's `AnnualTime` loyalty card and lists a milestone award valuation of 150 points (line 43). Other purchase-dependent rules are omitted from the calculation automatically.
+
+<CodeGroup>
+
+```json Trigger: Customer entered segment request lines wrap expandable highlight={15}
+{
+    "trigger": {
+        "type": "SPECIFIC",
+        "specific": {
+            "event": "customer.segment.entered"
+        }
+    },
+    "customer_identification": {
+        "type": "member_id",
+        "member_id": "lmbr_128f962dbc8c4ba5dc"
+    },
+    "customer_segment_entered": {
+        "customer": {
+            "metadata": {
+                "VIP": true
+            }
+        }
+    }
+}
+```
+
+```json Trigger: Customer entered segment response lines wrap expandable highlight={12-17,43}
+{
+    "event": "customer.segment.entered",
+    "customer": {
+        "id": "cust_6onRrs4kCnvSVrTs5YtDPFBG",
+        "source_id": "lx-rdmptr",
+        "metadata": {
+            "VIP": true
+        },
+        "object": "customer"
+    },
+    "earning_rules": [
+        {
+            "id": "lern_128f577bd4d47c8e12",
+            "name": "EnterVipSegment",
+            "metadata": {},
+            "object": "earning_rule"
+        }
+    ],
+    "memberships": [
+        {
+            "member": {
+                "id": "lmbr_128f962dbc8c4ba5dc",
+                "customer_id": "cust_6onRrs4kCnvSVrTs5YtDPFBG",
+                "program_id": "lprg_128f58429f4c4bf7b2",
+                "metadata": {},
+                "object": "member"
+            },
+            "program": {
+                "id": "lprg_128f58429f4c4bf7b2",
+                "name": "AnnualProgram",
+                "metadata": {},
+                "object": "program"
+            },
+            "cards": [
+                {
+                    "card": {
+                        "id": "lcrd_128f962dbd8c4ba5e1",
+                        "card_definition_id": "lcdef_128f4a88414c4bed69",
+                        "card_type": "INDIVIDUAL",
+                        "code": "AnnualTime-7M7ShPGfme",
+                        "object": "card"
+                    },
+                    "points_estimation": 150,
+                    "earning_rules": [
+                        {
+                            "earning_rule": {
+                                "id": "lern_128f577bd4d47c8e12",
+                                "object": "earning_rule"
+                            },
+                            "points_estimation": 150,
+                            "object": "earning_rule_estimation"
+                        }
+                    ],
+                    "object": "card_estimation"
+                }
+            ],
+            "incentives": [],
+            "object": "member_earnings_opportunity"
+        }
+    ],
+    "object": "earnings_examine_result"
+}
+```
+</CodeGroup>
+
+#### SPECIFIC trigger: Custom event
+
+<Info>
+
+    <Badge color="gray">Prerequisite: Custom event schema</Badge>
+
+    This scenario requires an earning rule that uses a custom event as a trigger.
+
+    Read the [Custom events](/prepare/custom-events) guide to learn more about custom events.
+
+</Info>
+
+Use the `SPECIFIC` trigger type `customer.custom_event` to evaluate custom brand behaviors outside standard purchase workflows, such as writing product reviews, bringing reusable cups to a coffee shop, or using mobile apps.
+
+The calculation evaluates rules that trigger on unique business schemas rather than order parameters or segment fields. The custom event is passed as a `schema_id` inside the `customer_custom_event` object (request example, line 16).
+
+In the example below, the earning rule (response example, lines 10–15) awards a benefit rather than loyalty points on a card. As a result, the simulation bypasses regular point cards completely, meaning the `cards` array returns empty (line 32). Instead, the response populates the `incentives` array, certifying that completing this action yields a physical fulfillment item named "Coffee sample Ethiopia" (lines 34–40).
+
+<Tip>
+
+    <Badge color="green">"ALL" type for custom events</Badge>
+
+    In the `customer_custom_event` you can pass `"type": "ALL"` to return a point estimation for all earning rules that are based on custom events. Use this type if your program runs many earnings that trigger when a member performs an action based on a custom event.
+
+</Tip>
+
+<CodeGroup>
+
+```json Trigger: Custom event request lines wrap expandable highlight={16}
+{
+    "trigger": {
+        "type": "SPECIFIC",
+        "specific": {
+            "event": "customer.custom_event"
+        }
+    },
+    "customer_identification": {
+        "type": "member_id",
+        "member_id": "lmbr_128f962dbc8c4ba5dc"
+    },
+    "customer_custom_event": {
+        "type": "SPECIFIC",
+        "specific": {
+            "custom_event": {
+                "schema_id": "ms_oX8au6DostTnHdWBAVVFnTLP"
+            }
+        }
+    }
+}
+```
+
+```json Trigger: Custom event response lines wrap expandable highlight={10-15,32,34-40}
+{
+    "event": "customer.custom_event",
+    "customer": {
+        "id": "cust_6onRrs4kCnvSVrTs5YtDPFBG",
+        "source_id": "lx-rdmptr",
+        "metadata": {},
+        "object": "customer"
+    },
+    "earning_rules": [
+        {
+            "id": "lern_128f57ec40cc4bf762",
+            "name": "Autumn Ethiopia",
+            "metadata": {},
+            "object": "earning_rule"
+        }
+    ],
+    "memberships": [
+        {
+            "member": {
+                "id": "lmbr_128f962dbc8c4ba5dc",
+                "customer_id": "cust_6onRrs4kCnvSVrTs5YtDPFBG",
+                "program_id": "lprg_128f58429f4c4bf7b2",
+                "metadata": {},
+                "object": "member"
+            },
+            "program": {
+                "id": "lprg_128f58429f4c4bf7b2",
+                "name": "AnnualProgram",
+                "metadata": {},
+                "object": "program"
+            },
+            "cards": [],
+            "incentives": [
+                {
+                    "incentive": {
+                        "id": "linc_128f4bba81947c8542",
+                        "name": "Coffee sample Ethiopia",
+                        "type": "MATERIAL",
+                        "object": "incentive"
+                    },
+                    "earning_rules": [
+                        {
+                            "earning_rule": {
+                                "id": "lern_128f57ec40cc4bf762",
+                                "object": "earning_rule"
+                            },
+                            "object": "earning_rule_estimation"
+                        }
+                    ],
+                    "object": "incentive_estimation"
+                }
+            ],
+            "object": "member_earnings_opportunity"
+        }
+    ],
+    "object": "earnings_examine_result"
+}
 ```
 
 </CodeGroup>
@@ -246,7 +933,6 @@ The response returns details about the possible earnings.
     You can create rewards through the dashboard or the API.
 
 </Info>
-
 
 
 ## Activity
