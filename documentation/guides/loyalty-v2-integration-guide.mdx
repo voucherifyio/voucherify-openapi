@@ -212,7 +212,7 @@ Read the [POST Examine earnings](/api-reference/examine/examine-earnings) endpoi
     
 </Info>
 
-Use the POST Examine earnings endpoint (`/v2/loyalties/examine/earning-rules`) to estimate how many points will a customer earn in a given scenario. This simulation calculates the precise number of points and physical or digital incentives a customer can earn based on specific operational business triggers. Because this evaluation is a dry-run execution, Voucherify calculates these opportunities dynamically without writing transactions to card balances or modifying customer states.
+Use the POST Examine earnings endpoint (`/v2/loyalties/examine/earning-rules`) to estimate how many points will a customer earn in a given scenario. This simulation calculates the precise number of points and physical or digital benefits a customer can earn based on specific operational business triggers. Because this evaluation is a dry-run execution, Voucherify calculates these opportunities dynamically without writing transactions to card balances or modifying customer states.
 
 You can configure the simulation engine using two distinct trigger modes:
 - `SPECIFIC` mode: Limits evaluation to one event context, like order paid, segment entered, or custom event.
@@ -934,6 +934,186 @@ In the example below, the earning rule (response example, lines 10–15) awards 
 
 </Info>
 
+<Info>
+
+    Read the [POST Examine rewards](/api-reference/examine/examine-rewards) endpoint    reference documentation to learn more about the exact request and response data structures.
+    
+</Info>
+
+Use the POST Examine rewards endpoint (`/v2/loyalties/examine/rewards`) to verify which benefits, digital discount coupons or gift card credits, and material rewards are available to a member across their active loyalty program memberships. This simulation calculates the precise point costs using specific spending rules rules and evaluates stock availability in real time. Because this evaluation is a dry-run execution, the Voucherify engine processes these opportunities without writing ledger transactions to card balances.
+
+You can use this endpoint in your user interface to build dynamic reward catalogs or member portals that show customers exactly what rewards they can unlock with their current point balance, as well as the specific actions required to unlock restricted rewards.
+
+The Voucherify simulation engine evaluates every reward assignment and classifies the reward under one of two distinct operational states within the `rewards` array. The endpoint returns only active rewards (response example, lines 8–30) and draft rewards are ignored.
+
+#### AVAILABLE status
+
+When a reward returns an `AVAILABLE` status, the loyalty program member meets all eligibility criteria for reward redemption. This status guarantees that:
+- The member has an active loyalty card belonging to the required card definition.
+- The current point balance on that specific loyalty card is equal to or greater than the resolved point cost.
+- The reward assignment has sufficient stock and is currently active.
+
+In the response example below, the loyalty card `AnnualTime-7M7ShPGfme` contains two `AVAILABLE` reward opportunities: the "Free item coupon" (requiring 300 points; lines 91–102) and the "Minas Gerais 500" material reward (requiring 150 points; lines 103–114).
+
+#### UNAVAILABLE status
+
+When a reward returns an `UNAVAILABLE` status, the member can't redeem it at that moment. To prevent integration guesswork and support frontend user guidance, the Voucherify API provides a structured `unavailability_reasons` array detailing the exact failure point.
+
+The evaluation engine identifies five primary reasons for reward unavailability:
+- `insufficient_balance`: The loyalty card balance is lower than the required reward cost. The API returns explicit context in the `details` object showing `required`, `available`, and `missing` point values.
+- `out_of_stock`: The reward assignment stock is completely exhausted.
+- `no_matching_cost`: No applicable point cost configuration is found or the cost configuration is locked.
+- `no_card_for_cost`: The member profile lacks an active card for the required card definition.
+- `reward_inactive`: The parent reward object is paused or inactive.
+
+In the response example below, the "Carioca cap" reward on the loyalty card `SummerTime-7z8dWawICd` is marked `UNAVAILABLE` (line 61) due to `insufficient_balance` because the member possesses only 50 points out of the required 250 points (lines 66–75).
+
+<Tip>
+
+    <Badge color="green">UX best practice</Badge>
+
+    Use the `missing` property inside the `insufficient_balance` details object to calculate and display progress bars or "points needed" callouts directly on your e-commerce checkout page or QSR mobile application.
+    
+</Tip>
+
+<CodeGroup>
+
+```json Examine rewards request lines wrap expandable
+{
+    "customer_identification": {
+        "type": "member_id",
+        "member_id": "lmbr_128f962dbc8c4ba5dc"
+    }
+}
+```
+
+```json Examine rewards response lines wrap highlight={8-30,61,66-75,91-114} expandable
+{
+    "customer": {
+        "id": "cust_6onRrs4kCnvSVrTs5YtDPFBG",
+        "source_id": "lx-rdmptr",
+        "metadata": {},
+        "object": "customer"
+    },
+    "rewards": [
+        {
+            "id": "lrew_128f4cefbad47c863e",
+            "name": "Carioca cap",
+            "type": "MATERIAL",
+            "metadata": {},
+            "object": "reward"
+        },
+        {
+            "id": "lrew_128f4cab04147c8608",
+            "name": "Free item coupon",
+            "type": "DIGITAL",
+            "metadata": {},
+            "object": "reward"
+        },
+        {
+            "id": "lrew_128f4c6710947c85d1",
+            "name": "Minas Gerais 500",
+            "type": "MATERIAL",
+            "metadata": {},
+            "object": "reward"
+        }
+    ],
+    "memberships": [
+        {
+            "member": {
+                "id": "lmbr_128f962dbc8c4ba5dc",
+                "customer_id": "cust_6onRrs4kCnvSVrTs5YtDPFBG",
+                "program_id": "lprg_128f58429f4c4bf7b2",
+                "metadata": {},
+                "object": "member"
+            },
+            "program": {
+                "id": "lprg_128f58429f4c4bf7b2",
+                "name": "AnnualProgram",
+                "metadata": {},
+                "object": "program"
+            },
+            "cards": [
+                {
+                    "card": {
+                        "id": "lcrd_128f962dbd8c4ba5df",
+                        "card_definition_id": "lcdef_128f495f720c4bec8c",
+                        "card_type": "INDIVIDUAL",
+                        "code": "SummerTime-7z8dWawICd",
+                        "object": "card"
+                    },
+                    "rewards": [
+                        {
+                            "reward": {
+                                "id": "lrew_128f4cefbad47c863e",
+                                "object": "reward"
+                            },
+                            "status": "UNAVAILABLE",
+                            "cost": {
+                                "points": 250,
+                                "object": "reward_cost"
+                            },
+                            "unavailability_reasons": [
+                                {
+                                    "reason": "insufficient_balance",
+                                    "details": {
+                                        "required": 250,
+                                        "available": 50,
+                                        "missing": 200
+                                    },
+                                    "object": "reward_unavailability_reason"
+                                }
+                            ],
+                            "object": "reward_estimation"
+                        }
+                    ],
+                    "object": "card_estimation"
+                },
+                {
+                    "card": {
+                        "id": "lcrd_128f962dbd8c4ba5e1",
+                        "card_definition_id": "lcdef_128f4a88414c4bed69",
+                        "card_type": "INDIVIDUAL",
+                        "code": "AnnualTime-7M7ShPGfme",
+                        "object": "card"
+                    },
+                    "rewards": [
+                        {
+                            "reward": {
+                                "id": "lrew_128f4cab04147c8608",
+                                "object": "reward"
+                            },
+                            "status": "AVAILABLE",
+                            "cost": {
+                                "points": 300,
+                                "object": "reward_cost"
+                            },
+                            "object": "reward_estimation"
+                        },
+                        {
+                            "reward": {
+                                "id": "lrew_128f4c6710947c85d1",
+                                "object": "reward"
+                            },
+                            "status": "AVAILABLE",
+                            "cost": {
+                                "points": 150,
+                                "object": "reward_cost"
+                            },
+                            "object": "reward_estimation"
+                        }
+                    ],
+                    "object": "card_estimation"
+                }
+            ],
+            "object": "member_rewards_opportunity"
+        }
+    ],
+    "object": "rewards_examine_result"
+}
+```
+</CodeGroup>
+
 
 ## Activity
 
@@ -943,13 +1123,13 @@ Your customers need to perform activities to meet earning rules and earn points 
 
 <Info>
 
-Read the [POST Create order](/api-reference/orders/create-order) endpoint reference documentation to learn more about the exact request and response data.
+    Read the [POST Create order](/api-reference/orders/create-order) endpoint reference documentation to learn more about the exact request and response data.
     
 </Info>
 
-In the `customer.order.paid` event, Voucherify relies on the condition that the order payload `status` field must be set to `PAID`.
+If your customers earn points or benefits when they finalize transaction in your system (`customer.order.paid` event), Voucherify relies on the condition that the order payload `status` field must be set to `PAID`.
 
-When the Order API processes a payload with a `PAID` status (line 3), the loyalty engine evaluates the line items and order amount to add points. Submitting orders with other statuses (such as `CREATED` or `FULFILLED`) will fail to activate the loyalty assignment.
+When the Order API processes a payload with a `PAID` status (line 3), the loyalty engine evaluates the line items and order amount to add points or benefits. Submitting orders with other statuses (such as `CREATED` or `FULFILLED`) will fail to activate the earnings.
 
 ```json Order paid request payload lines highlight={3} expandable
 {
@@ -981,7 +1161,37 @@ When the Order API processes a payload with a `PAID` status (line 3), the loyalt
 
 ### Custom events
 
+<Info>
+
+    Read the [POST Track custom event](/api-reference/events/track-custom-event) endpoint reference documentation to learn more about the exact request and response data.
+    
+</Info>
+
+If your customers earn points or benefits when performing specific custom activities, like subscribing to a newsletter, leaving a review, or unlocking a daily perk, use the POST Track custom event endpoint (`/v1/events`).
+
+The request payload must include:
+- `customer.id` and/or `customer.source_id` (lines 3 and 4) to link the event to a specific customer in Voucherify database. The customer must be a member in the loyalty program.
+- Name of the custom event that triggers the earning rule passed as the value of the `event` property (line 6).
+
+<CodeGroup>
+
+```json Track custom event request payload lines wrap expandable highlight={3,4,6}
+{
+    "customer": {
+        "id": "cust_6onRrs4kCnvSVrTs5YtDPFBG",
+        "source_id": "lx-rdmptr"
+    },
+    "event": "example_custom_event_name"
+}
+```
+
+When Voucherify registers the custom event, the earning rule will trigger and issue points or benefit to the member as defined in its earnings.
+
+</CodeGroup>
+
 ### Enter segment
+
+
 
 ## Retention
 
