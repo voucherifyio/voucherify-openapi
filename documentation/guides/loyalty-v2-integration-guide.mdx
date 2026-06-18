@@ -1382,26 +1382,26 @@ With the Get member endpoint you can create a member profile that lists points a
                 "code": "AnnualTime-7M7ShPGfme",
                 "lifetime_bucket": {
                     "points": {
-                        "total": 684000,
-                        "earned": 684000,
+                        "total": 650,
+                        "earned": 650,
                         "added": 0,
-                        "subtracted": 683750,
+                        "subtracted": 0,
                         "expired": 0,
-                        "spent": 0,
+                        "spent": 150,
                         "refunded": 0,
                         "returned": 0,
                         "locked": 0,
                         "unlocked": 0
                     },
                     "pending_points": {
-                        "total": 684150,
-                        "activated": 684000,
+                        "total": 550,
+                        "activated": 400,
                         "canceled": 0
                     }
                 },
                 "balance": {
-                    "points": 250,
-                    "pending_points": 150
+                    "points": 500,
+                    "pending_points": 200
                 },
                 "next_expiration": {
                     "points": 250,
@@ -1487,26 +1487,26 @@ In this configuration, the tiers are based on the member's current point balance
                 "code": "AnnualTime-7M7ShPGfme",
                 "lifetime_bucket": {
                     "points": {
-                        "total": 684000,
-                        "earned": 684000,
+                        "total": 650,
+                        "earned": 650,
                         "added": 0,
-                        "subtracted": 683750,
+                        "subtracted": 0,
                         "expired": 0,
-                        "spent": 0,
+                        "spent": 150,
                         "refunded": 0,
                         "returned": 0,
                         "locked": 0,
                         "unlocked": 0
                     },
                     "pending_points": {
-                        "total": 684150,
-                        "activated": 684000,
+                        "total": 550,
+                        "activated": 400,
                         "canceled": 0
                     }
                 },
                 "balance": {
-                    "points": 250,
-                    "pending_points": 150
+                    "points": 500,
+                    "pending_points": 200
                 },
                 "next_expiration": {
                     "points": 250,
@@ -1527,11 +1527,160 @@ In this configuration, the tiers are based on the member's current point balance
 
 ### List transactions
 
+<Info>
+
+    Read the [GET Get list transactions](/api-reference/programs/list-card-transactions) endpoint reference documentation to learn more about the exact request and response data.
+    
+</Info>
+
+Use the GET List card transactions (`/v2/loyalties/programs/{programId}/members/{memberId}/cards/{cardId}/transactions`) endpoint to extend the member profile in your system with details about all point movements on a member's card. If your loyalty program uses several point wallets, create a separate transaction list for each card that's governed by a given wallet.
+
+The list card transactions endpoint lists many types (`type`) of transactions to match your business case. The transactions list the date of occurrence (`created_at`), number of points affected (`points` object), and other details. In a simple loyalty program, the key transactions types are:
+- `POINTS_SPENT_ON_REWARD`: Points spent to buy a reward. The `details` object lists the number of points and the `reward.id` (lines 11–24)
+- `POINTS_EXPIRED`: Points that expired under the point wallet settings.
+- `PENDING_POINTS_ADDED`: Pending points that were added to the loyalty card under the point wallet settings.
+- `PENDING_POINTS_ACTIVATED`
+- `POINTS_EARNED`: Points earned and instantly added to the loyalty card (point earned example, line 21–24).
+
+<CodeGroup>
+
+```json Example: List card transactions response wrap expandable lines highlight={11-24,89}
+{
+    "data": [
+        {
+            "id": "lctx_129748dbafe65ae86d",
+            "card_id": "lcrd_128f962dbd8c4ba5e1",
+            "program_id": "lprg_128f58429f4c4bf7b2",
+            "member_id": "lmbr_128f962dbc8c4ba5dc",
+            "card_definition_id": "lcdef_128f4a88414c4bed69",
+            "card_type": "INDIVIDUAL",
+            "type": "POINTS_SPENT_ON_REWARD",
+            "details": {
+                "reason": "Points spent on reward",
+                "rejection": null,
+                "metadata": {},
+                "points": {
+                    "total": 150
+                },
+                "reward": {
+                    "id": "lrew_128f4c6710947c85d1"
+                },
+                "reward_transaction": {
+                    "id": "lrtx_129748dbafe65ae86e"
+                }
+            },
+            "status": "APPROVED",
+            "created_at": "2026-06-17T15:29:43.104Z",
+            "updated_at": "2026-06-17T15:29:45.622Z",
+            "object": "card_transaction"
+        },
+        {
+            "id": "lctx_128f9a03c6cc4ba8e7",
+            "card_id": "lcrd_128f962dbd8c4ba5e1",
+            "program_id": "lprg_128f58429f4c4bf7b2",
+            "member_id": "lmbr_128f962dbc8c4ba5dc",
+            "card_definition_id": "lcdef_128f4a88414c4bed69",
+            "card_type": "INDIVIDUAL",
+            "type": "PENDING_POINTS_ACTIVATED",
+            "details": {
+                "reason": "Manual points activation",
+                "rejection": null,
+                "metadata": {},
+                "points": {
+                    "total": 400,
+                    "date": "2026-06-21",
+                    "type": "PERIOD_BASED"
+                }
+            },
+            "status": "APPROVED",
+            "created_at": "2026-06-11T16:16:26.907Z",
+            "updated_at": "2026-06-11T16:16:27.291Z",
+            "object": "card_transaction"
+        },
+        {
+            "id": "lctx_128f9821be4fd14efd",
+            "card_id": "lcrd_128f962dbd8c4ba5e1",
+            "program_id": "lprg_128f58429f4c4bf7b2",
+            "member_id": "lmbr_128f962dbc8c4ba5dc",
+            "card_definition_id": "lcdef_128f4a88414c4bed69",
+            "card_type": "INDIVIDUAL",
+            "type": "PENDING_POINTS_ADDED",
+            "details": {
+                "reason": "AnnualProgram / EarningRule-OrderPaid",
+                "rejection": null,
+                "metadata": {
+                    "event_id": "evcus_128f981fced47cbe9b",
+                    "member_id": "lmbr_128f962dbc8c4ba5dc",
+                    "program_id": "lprg_128f58429f4c4bf7b2",
+                    "earning_item_id": "lernei_128f48ee3fcc4bec33",
+                    "earning_rule_id": "lern_128f48ee44cc4bec34"
+                },
+                "points": {
+                    "total": 400,
+                    "date": "2026-06-21",
+                    "type": "PERIOD_BASED"
+                }
+            },
+            "status": "APPROVED",
+            "created_at": "2026-06-11T16:08:13.305Z",
+            "updated_at": "2026-06-11T16:08:14.170Z",
+            "object": "card_transaction"
+        }
+    ],
+    "cursor": {
+        "next": "lcrsctx_12989e71c62b6d5baf",
+        "expires_at": "2026-06-18T16:32:07.896Z"
+    },
+    "object": "list"
+}
+```
+
+```json Point earned response wrap lines expandable higlight={21-24}
+{
+    "data": [
+        {
+            "id": "lctx_1298a2ae5ba25c6454",
+            "card_id": "lcrd_1298a287482b6d5e90",
+            "program_id": "lprg_1298a2068ad09df2dc",
+            "member_id": "lmbr_1298a28746eb6d5e8d",
+            "card_definition_id": "lcdef_1298a22790509df2f8",
+            "card_type": "INDIVIDUAL",
+            "type": "POINTS_EARNED",
+            "details": {
+                "reason": "Pointexpire / EXPIRE_EARNING_RULE",
+                "rejection": null,
+                "metadata": {
+                    "event_id": "evcus_1298a2abb06b6d5ec2",
+                    "member_id": "lmbr_1298a28746eb6d5e8d",
+                    "program_id": "lprg_1298a2068ad09df2dc",
+                    "earning_item_id": "lernei_1298a23b9f509df311",
+                    "earning_rule_id": "lern_1298a23baf509df312"
+                },
+                "points": {
+                    "total": 50,
+                    "expiration_date": "2026-06-19"
+                }
+            },
+            "status": "APPROVED",
+            "created_at": "2026-06-18T16:40:38.510Z",
+            "updated_at": "2026-06-18T16:40:39.402Z",
+            "object": "card_transaction"
+        }
+    ],
+    "cursor": null,
+    "object": "list"
+}
+```
+
+</CodeGroup>
 
 
 ## Fullfillment
 
+
+
 ### Purchase reward
+
 
 ## Going to production
 
