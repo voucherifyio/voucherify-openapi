@@ -72,7 +72,7 @@ Prepare your Voucherify account for a functional loyalty v2 integration.
 
 ## Acquisition
 
-Use the [POST Create member](/api-reference/programs/create-member) (`/api/v2/loyalties/programs/{programId}/members`) with the Voucherify customer ID to add the customer as a member to a loyalty v2 program.
+Use the [POST Create member](/api-reference/programs/create-member) (`/api/v2/loyalties/programs/{programId}/members`) or [POST Create member in batch](/api-reference/programs/create-member-in-batch) (`/api/v2/loyalties/programs/{programId}/members/batch`; asynchronous action) with the Voucherify customer ID to add the customer as a member to a loyalty v2 program.
 
 By default, the customer is added as an `ACTIVE` member, who can earn immediately points and fully participate in the loyalty program.
 
@@ -95,9 +95,11 @@ Optionally, you can add the customer as an `INACTIVE` member. An inactive member
     
 </CodeGroup>
 
-The response will return (see the lines in the example below):
+The response for creating an individual member will return (see the lines in the example below):
 - Loyalty program member ID with a unique member ID (`lmbr_...`) (line 2).
 - The loyalty card(s) generated for the member with a unique loyalty card ID (`lcrd_...`) and the point wallet (card definition) ID. If your program uses multiple point wallets, the member will receive a separate card for each card definition (lines 16, 17, 54, and 55).
+
+The response for creating a batch of new members returns an ID of an asynchronous action. Use the ID in the [GET Get async action](/api-reference/async-actions/get-async-action) endpoint to check the processing status of the action.
 
 <Warning>
 
@@ -108,6 +110,8 @@ Make sure your UI can handle `null` for the `cards.card.code` property. The `cod
 </Warning>
 
 In this response example, the loyalty program member receives two loyalty cards for two separate point wallets (card definitions).
+
+<CodeGroup>
 
 ```json POST Create member: response example lines highlight={2,16,17,19,54,55,57} expandable
 {
@@ -199,6 +203,14 @@ In this response example, the loyalty program member receives two loyalty cards 
     ]
 }
 ```
+
+```json Batch create member: response lines wrap
+{
+  "async_action_id": "aa_abc123def456"
+}
+```
+
+</CodeGroup>
 
 ## Discovery
 
@@ -1537,14 +1549,14 @@ Use the GET List card transactions (`/v2/loyalties/programs/{programId}/members/
 
 The list card transactions endpoint lists many types (`type`) of transactions to match your business case. The transactions list the date of occurrence (`created_at`), number of points affected (`points` object), and other details. In a simple loyalty program, the key transactions types are:
 - `POINTS_SPENT_ON_REWARD`: Points spent to buy a reward. The `details` object lists the number of points and the `reward.id` (lines 11–24)
-- `POINTS_EXPIRED`: Points that expired under the point wallet settings.
 - `PENDING_POINTS_ADDED`: Pending points that were added to the loyalty card under the point wallet settings.
 - `PENDING_POINTS_ACTIVATED`: Points that were in a pending state, but they were activated manually or automatically as set in the point wallet configuration (lines 38–47).
+- `POINTS_EXPIRED`: Points that expired under the point wallet settings (lines 90–108).
 - `POINTS_EARNED`: Points earned and instantly added to the loyalty card (point earned example, line 21–24).
 
 <CodeGroup>
 
-```json Example: List card transactions response wrap expandable lines highlight={11-24,38-47,89}
+```json Example: List card transactions response wrap expandable lines highlight={11-24,38-47,90-108}
 {
     "data": [
         {
@@ -1625,6 +1637,38 @@ The list card transactions endpoint lists many types (`type`) of transactions to
             "created_at": "2026-06-11T16:08:13.305Z",
             "updated_at": "2026-06-11T16:08:14.170Z",
             "object": "card_transaction"
+        },
+        {
+            "id": "lctx_129a515e9aa3f9dd93",
+            "card_id": "lcrd_128f962dbd8c4ba5df",
+            "program_id": "lprg_128f58429f4c4bf7b2",
+            "member_id": "lmbr_128f962dbc8c4ba5dc",
+            "card_definition_id": "lcdef_128f495f720c4bec8c",
+            "card_type": "INDIVIDUAL",
+            "type": "POINTS_EXPIRED",
+            "details": {
+                "reason": "Points expired automatically",
+                "rejection": null,
+                "metadata": {},
+                "points": {
+                    "total": 50
+                },
+                "date": "2026-06-09",
+                "buckets": [
+                    {
+                        "id": "lcpeb_1299ec455b625c31e1",
+                        "points": {
+                            "total": 50
+                        },
+                        "expiration_date": "2026-06-09",
+                        "expiration_type": "ROLLING_EXPIRATION"
+                    }
+                ]
+            },
+            "status": "APPROVED",
+            "created_at": "2026-06-10T00:02:20.906Z",
+            "updated_at": "2026-06-10T00:02:20.975Z",
+            "object": "card_transaction"
         }
     ],
     "cursor": {
@@ -1682,9 +1726,9 @@ The list card transactions endpoint lists many types (`type`) of transactions to
     
 </Info>
 
-Use the GET List reward purchases (`v2/loyalties/programs/{programId}/members/{memberId}/rewards/purchases`) endpoint to show your members the rewards they have purchased. This endpoint lists purchases for all cards 
+Use the GET List reward purchases (`v2/loyalties/programs/{programId}/members/{memberId}/rewards/purchases`) endpoint to show your members the rewards they have purchased. This endpoint lists purchases for all cards the member has.
 
-```json
+```json List transactions response lines wrap
 {
     "data": [
         {
@@ -1763,10 +1807,11 @@ Use the GET List reward purchases (`v2/loyalties/programs/{programId}/members/{m
 }
 ```
 
-
 ## Fullfillment
 
-
+Your loyalty program needs a way for your members to spend the loyalty points they've earned. In a typical loyalty program, members can spend points to:
+- Purchase rewards
+- Use the points as currency to pay for their orders.
 
 ### Pay with points
 
@@ -1774,12 +1819,88 @@ TBD!
 
 ### Purchase reward
 
+<Info>
 
+    Read the [POST Purchase reward](/api-reference/programs/purchase-reward) endpoint reference documentation to learn more about the exact request and response data.
+    
+</Info>
+
+Use the POST Purchase reward (`/v2/loyalties/programs/{programId}/members/{memberId}/rewards/purchases`) endpoint to create a store where your loyalty program members can buy rewards.
+
+In the request body, send the reward ID (`reward_id`) to be purchased. Since rewards are assigned to specific point wallets, Voucherify will subtract the required number of points from a loyalty card that's governed by the point wallet.
+
+Use the `details` object (response lines 11–19) to display how many points were spent on the reward purchase. If the loyalty program uses several point wallets, use the `card_id` (line 4) to tie the purchase to a specific loyalty card.
+
+<CodeGroup>
+
+```json Purchase reward: Request lines wrap
+{
+    "reward_id": "lrew_128f4cefbad47c863e"
+}
+```
+
+```json Purchase reward: Response lines wrap expandable highlight={4,11-19}
+{
+  "transaction": {
+    "id": "lrtx_1299a9ded817f57b90",
+    "card_id": "lcrd_128f962dbd8c4ba5df",
+    "card_transaction_id": "lctx_1299a9ded817f57b8f",
+    "program_id": "lprg_128f58429f4c4bf7b2",
+    "member_id": "lmbr_128f962dbc8c4ba5dc",
+    "reward_id": "lrew_128f4cefbad47c863e",
+    "status": "PENDING",
+    "type": "PURCHASE",
+    "details": {
+      "reason": "Points spent on reward",
+      "rejection": null,
+      "metadata": {},
+      "points": {
+        "total": 250
+      },
+      "result": null
+    },
+    "created_at": "2026-06-19T11:50:32.033Z",
+    "updated_at": null,
+    "object": "reward_transaction"
+  },
+  "status": "TRANSACTION_CREATED",
+  "message": "Reward purchase transaction created"
+}
+```
+
+</CodeGroup>
+
+## Cancellation
+
+### Deactivate
+
+### Delete
 
 ## Going to production
 
-
+IDEAS:
+- Ideate what features you really need
+- Check if IDs are input correctly
+- Check if CRM connection is correct
+- Check member e2e scenario: signup, earning, spending, deactivation
+- 
 
 ## Troubleshooting
 
-TBD!
+Solve common problems.
+
+<AccordionGroup>
+
+    <Accordion title="Resource not found">
+        
+    Check if IDs are correct.
+
+    </Accordion>
+
+    <Accordion title="Check audit logs">
+
+    Check audit logs
+
+    </Accordion>
+    
+</AccordionGroup>
