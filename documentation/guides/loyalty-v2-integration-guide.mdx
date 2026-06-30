@@ -1,11 +1,11 @@
 ---
 title: "Integration guide to Loyalty v2"
 description: "Learn how to integrate with Voucherify's new loyalty v2 API"
-keywords: []
+keywords: ["loyalty integration", "point wallets", "examine earnings", "examine rewards", "pay with points", "voucherify v2"]
 tag: "NEW"
 ---
 
-To integrate Voucherify's loyalty v2 with your platform, you'll need to fulfil several steps. You'll have to prepare your customer data, build the loyalty program with required modules, and create the loyalty member journey.
+To integrate Voucherify's loyalty v2 with your platform, you'll need to complete several steps. You'll have to prepare your customer data, build the loyalty program with required modules, and create the loyalty member journey.
 
 Loyalty v2 has a modular structure, so you can start small and scale your program up as it grows with your members. The modular structure also helps you to optimize your loyalty program with your other incentives, like discount coupons or gift cards.
 
@@ -18,7 +18,7 @@ Prepare your Voucherify account for a functional loyalty v2 integration.
 
     Prepare your test environment in Voucherify, for example the Sandbox project.
 
-    Use an existing API key/token or or create a new pair. Go to **Project settings** > **Application keys** to get `X-App-Id` and `X-App-Token`.
+    Use an existing API key/token or create a new pair. Go to **Project settings** > **Application keys** to get `X-App-Id` and `X-App-Token`.
 
     Make sure the API key has the necessary campaign, voucher, and customer permissions.
         
@@ -60,6 +60,16 @@ Prepare your Voucherify account for a functional loyalty v2 integration.
 
     </Step>
 
+    <Step title="Product data">
+
+    If you plan to use products as loyalty program rewards, you have to create them in Voucherify first.
+
+    You can:
+    - Import your product database with the [Product import](/prepare/products#bulk-import-with-csv) in the Voucherify dashboard.
+    - Use the API with [POST Import Products using CSV](/api-reference/products/import-products-using-csv) and [POST Update products in bulk](/api-reference/products/update-products-in-bulk) endpoints.
+
+    </Step>
+
     <Step title="Data schemas: Metadata and custom events">
 
     If you're going to combine the loyalty v2 program with metadata (custom attributes for point wallets, loyalty members, and more) or custom events (for example, to trigger when points are earned), you'll have to create relevant schemas.
@@ -74,7 +84,7 @@ Prepare your Voucherify account for a functional loyalty v2 integration.
 
 Use the [POST Create member](/api-reference/programs/create-member) or [POST Create member in batch](/api-reference/programs/create-member-in-batch) (asynchronous action) with the Voucherify customer ID to add the customer as a member to a loyalty v2 program.
 
-By default, the customer is added as an `ACTIVE` member, who can earn immediately points and fully participate in the loyalty program.
+By default, the customer is added as an `ACTIVE` member, who can immediately earn points and fully participate in the loyalty program.
 
 Optionally, you can add the customer as an `INACTIVE` member. An inactive member will have to be activated later with the [POST Activate member](/api-reference/programs/activate-member) endpoint to participate in the loyalty program.
 
@@ -218,7 +228,7 @@ Once you enroll your members, use the following endpoints so the members can lea
 
 ### Examine earnings
 
-Use the [POST Examine earnings](/api-reference/examine/examine-earnings) endpoint to estimate how many points will a customer earn in a given scenario. This simulation calculates the precise number of points and physical or digital benefits a customer can earn based on specific operational business triggers. Because this evaluation is a dry-run execution, Voucherify calculates these opportunities dynamically without writing transactions to card balances or modifying customer states.
+Use the [POST Examine earnings](/api-reference/examine/examine-earnings) endpoint to estimate how many points a customer will earn in a given scenario. This simulation calculates the precise number of points and physical or digital benefits a customer can earn based on specific operational business triggers. Because this evaluation is a dry-run execution, Voucherify calculates these opportunities dynamically without writing transactions to card balances or modifying customer states.
 
 You can configure the simulation engine using two distinct trigger modes:
 - `ALL` mode: Simulates a parallel "what-if" scenario across all active earning rule configurations simultaneously.
@@ -466,13 +476,13 @@ The simulation lists all earning rules (in the response example, the array in li
                     "object": "card_estimation"
                 }
             ],
-            "incentives": [
+            "benefits": [
                 {
-                    "incentive": {
+                    "benefit": {
                         "id": "linc_128f4bba81947c8542",
                         "name": "Coffee sample Ethiopia",
                         "type": "MATERIAL",
-                        "object": "incentive"
+                        "object": "benefit"
                     },
                     "earning_rules": [
                         {
@@ -483,7 +493,7 @@ The simulation lists all earning rules (in the response example, the array in li
                             "object": "earning_rule_estimation"
                         }
                     ],
-                    "object": "incentive_estimation"
+                    "object": "benefit_estimation"
                 }
             ],
             "object": "member_earnings_opportunity"
@@ -694,7 +704,7 @@ In the example, Voucherify resolves the `EarningRule-OrderPaid` rule (response e
                     "object": "card_estimation"
                 }
             ],
-            "incentives": [],
+            "benefits": [],
             "object": "member_earnings_opportunity"
         }
     ],
@@ -803,7 +813,7 @@ Voucherify identifies the `EnterVipSegment` rule schema (response example, lines
                     "object": "card_estimation"
                 }
             ],
-            "incentives": [],
+            "benefits": [],
             "object": "member_earnings_opportunity"
         }
     ],
@@ -828,7 +838,7 @@ Use the `SPECIFIC` trigger type `customer.custom_event` to evaluate custom behav
 
 The calculation evaluates rules that trigger on unique business schemas rather than order parameters or segment fields. The custom event is passed as a `schema_id` inside the `customer_custom_event` object (request example, line 16).
 
-In the example below, the earning rule (response example, lines 10–15) awards a benefit rather than loyalty points on a card. As a result, the simulation bypasses regular point cards completely, meaning the `cards` array returns empty (line 32). Instead, the response populates the `incentives` array, certifying that completing this action yields a physical fulfillment item named "Coffee sample Ethiopia" (lines 34–40).
+In the example below, the earning rule (response example, lines 10–15) awards a benefit rather than loyalty points on a card. As a result, the simulation bypasses regular point cards completely, meaning the `cards` array returns empty (line 32). Instead, the response fills the `benefits` array, which shows that once this action is completed, the member will receive the "Coffee sample Ethiopia" product (lines 34–40).
 
 <Tip>
 
@@ -896,13 +906,13 @@ In the example below, the earning rule (response example, lines 10–15) awards 
                 "object": "program"
             },
             "cards": [],
-            "incentives": [
+            "benefits": [
                 {
-                    "incentive": {
+                    "benefit": {
                         "id": "linc_128f4bba81947c8542",
                         "name": "Coffee sample Ethiopia",
                         "type": "MATERIAL",
-                        "object": "incentive"
+                        "object": "benefit"
                     },
                     "earning_rules": [
                         {
@@ -913,7 +923,7 @@ In the example below, the earning rule (response example, lines 10–15) awards 
                             "object": "earning_rule_estimation"
                         }
                     ],
-                    "object": "incentive_estimation"
+                    "object": "benefit_estimation"
                 }
             ],
             "object": "member_earnings_opportunity"
@@ -969,7 +979,7 @@ In the response example below, the "Carioca cap" reward on the loyalty card `Sum
 
     <Badge color="green">UX best practice</Badge>
 
-    Use the `missing` property inside the `insufficient_balance` details object to calculate and display progress bars or "points needed" callouts directly on your e-commerce checkout page or QSR mobile application.
+    Use the `missing` property inside the `insufficient_balance` details object to calculate and display progress bars or "points needed" callouts directly on your e-commerce checkout page or mobile application.
     
 </Tip>
 
@@ -1200,7 +1210,7 @@ The earning rule triggers automatically when Voucherify registers the member has
 
 ## Retention
 
-Use the following endpoints and data to create a member profile in your system and which helps retaining your member base and keeps it engaged.
+Use the following endpoints and data to create a member profile which helps retaining your member base and keeps them engaged.
 
 ### Get member
 
@@ -1212,7 +1222,7 @@ Use the [GET member](/api-reference/programs/get-member) endpoint to create a me
 
 #### Points
 
-With the Get member endpoint you can create a member profile that lists points available to a member. Each of the member's loyalty card is returned in the `cards` array (starting in line 10). The details regarding points are stored in the following objects:
+With the Get member endpoint you can create a member profile that lists points available to a member. Each of the member's loyalty cards is returned in the `cards` array (starting in line 10). The details regarding points are stored in the following objects:
 - `lifetime_bucket` stores historical details regarding `points` and `pending_points` (lines 20–38). For example, you can use the data to show how many points were `earned`, `spent`, `expired`, and so on.
 - `balance` stores the details about the current number of available points (`balance.points`) for spending and the current number of `pending_points` (lines 40, 41)
 - `next_expiration` stores the details about the number of points that are about to expire and the nearest date (lines 44–45). If you configured point expiration, you can use this data to nudge your members to spend the points before they expire.
@@ -1401,7 +1411,7 @@ With the Get member endpoint you can create a member profile that lists points a
 
 #### Tiers
 
-If your program runs loyalty tiers, you can also use the Get member endpoint to return the details about the current tier progress for a given loyalty card. Use the data from `tier_progress` object (starting at line 14) to build a member profile that will display the active tier, and also risks and opportunities:
+If your program runs loyalty tiers, you can also use the Get member endpoint to return the details about the current tier progress for a given loyalty card. Use the data from the `tier_progress` object (starting at line 14) to build a member profile that will display the active tier, and also risks and opportunities:
 - `current` returns the loyalty tier the member is currently on, including the tier ID, name, when the member achieved it and the point range (lines 15–25).
 - `risks` returns data for tier expiration and downgrade. In the example, the member will fall to a lower tier (`tier_id`) on a specified date (lines 31–35).
 - `opportunities` returns the number of points the member must earn to reach higher tiers (lines 38–47).
@@ -1764,15 +1774,11 @@ The `details` (lines 12–33 and 47–68) object lists more information about th
 }
 ```
 
-## Fullfillment
+## Fulfillment
 
 Your loyalty program needs a way for your members to spend the loyalty points they've earned. In a typical loyalty program, members can spend points to:
 - Purchase rewards
 - Use the points as currency to pay for their orders.
-
-### Pay with points
-
-TBD!
 
 ### Purchase reward
 
@@ -1823,7 +1829,7 @@ Use the `details` object (response lines 11–19) to display how many points wer
 
 ## Cancellation
 
-Your loyalty program should also support situations when a member wants to stop participating in the program, have their member profile deleted altogether, or cases when you need to teomporarily suspend member activity when suspecting program fraud.
+Your loyalty program should also support situations when a member wants to stop participating in the program, have their member profile deleted altogether, or cases when you need to temporarily suspend member activity when suspecting program fraud.
 
 ### Deactivate
 
@@ -1841,7 +1847,7 @@ A suspended member can't earn points or spend them on rewards or orders.
 
 ### Delete
 
-If you need to have macheanism for deleting member data, use the [DELETE Member](/api-reference/programs/delete-member) endpoint to soft-delete the member and all their associated cards within the program.
+If you need to have mechanism for deleting member data, use the [DELETE Member](/api-reference/programs/delete-member) endpoint to soft-delete the member and all their associated cards within the program.
 
 <Note>
 
@@ -1855,29 +1861,95 @@ If you need to have macheanism for deleting member data, use the [DELETE Member]
 
 ## Going to production
 
-IDEAS:
-- Ideate what features you really need
-- Check if IDs are input correctly
-- Check if CRM connection is correct
-- Check member e2e scenario: signup, earning, spending, deactivation
-- 
+Moving your Voucherify loyalty v2 integration from a Sandbox environment to a live production environment requires more than simply swapping your API keys. Because Voucherify projects are completely isolated from one another, your configuration data does not automatically migrate. You must recreate your entire program setup from scratch in your live Production project before routing live customer traffic.
+
+Use this step-by-step checklist to ensure a seamless launch and avoid transaction failures.
+
+<Steps>
+    <Step title="Use a live production project and extract keys">
+        
+        Use your production project or create a dedicated one for your live store data. 
+        
+        Go to **Project settings** > **Application keys** in the production project to retrieve your production credentials (`X-App-Id` and `X-App-Token`). Update your infrastructure environment variables with these live keys. Ensure your system points to the correct regional API base URL.
+        
+        <Warning>
+            Voucherify Sandbox and Production projects share zero database records. Attempting to pass production keys along with sandbox resource IDs (such as sandbox program IDs or member IDs) will cause the Voucherify API to return `404 Resource Not Found` errors.
+        </Warning>
+
+    </Step>
+
+    <Step title="Recreate your data schemas">
+
+        Before your live system sends transaction data to the Voucherify API, you must manually rebuild your custom data structures in the new production project:
+        - Re-define all **Metadata schemas** used for custom attributes on point wallets, loyalty members, orders, and other data.
+        - Re-create all **Custom event schemas** that trigger loyalty earning rules (such as writing product reviews or downloading your mobile app).
+
+    </Step>
+
+    <Step title="Rebuild and activate the loyalty v2 program">
+        
+        Go to the **Loyalty hub** > **Designer** in the production project to rebuild your loyalty architecture:
+        - Set up your point wallets and define your tier structures exactly as you designed them in your Sandbox project.
+        - Re-create your earning rules, rewards, and benefits.
+        - Once verified, set the program status to `ACTIVE`.
+        
+        Copy the new live loyalty program ID (`lprg_...`) and update your backend environment data. Your code must use this new live identifier for all member-related API calls.
+
+    </Step>
+
+    <Step title="Sync your customer base and product catalog">
+
+        Ensure your live customer profiles and store products exist inside the new production project so transactions map correctly:
+        - Import your live customer database into the production project using a CSV upload or the [POST Import and Update Customers](/api-reference/customers/import-and-update-customers-using-csv) API endpoint.
+        - If you use a CDP or CRM system, check if customer data is synchronized correctly.
+        - Synchronize your product catalog, matching your online store or POS menu item IDs to the Voucherify product engine fields (`source_id`).
+
+    </Step>
+
+    <Step title="Run an end-to-end live sanity test">
+        
+        Before turning the real customer traffic on the production project, perform a final transaction walkthrough using a controlled production user profile.
+        
+        Check the following:
+        1. Enrollment: Create a test live member using a production customer ID.
+        2. Earning: Submit a live order with a `PAID` status and verify that points are successfully added to the member's wallet balance.
+        3. Redemption: Purchase a low-cost or test reward to confirm the point deduction and reward redemption flows operate without latency errors.
+
+    </Step>
+</Steps>
 
 ## Troubleshooting
 
-Solve common problems.
+Resolve operational friction points, API structural anomalies, and edge cases commonly encountered by system integrators during the deployment.
 
 <AccordionGroup>
 
-    <Accordion title="Resource not found">
+    <Accordion title="HTTP 404: Resource not found">
+
+        The Voucherify API returns an HTTP `404 Not Found` response code if the identifiers provided in the path parameters do not match database entries.
         
-    Check if IDs are correct.
-
+        Solutions:
+        - ID confusion: Check if the client request payload has a Voucherify loyalty program member ID (`lmbr_...`) rather than a standard Voucherify Customer ID (`cust_...`) when querying member-specific states like `GET member`. This also applies to the new IDs of the recreated loyalty v2 program in your production environment.
+        - Cross-project scope separation: Verify that the request headers (`X-App-Id` and `X-App-Token`) point to the identical dashboard environment containing the referenced loyalty program ID (`lprg_...`).
     </Accordion>
 
-    <Accordion title="Check audit logs">
+    <Accordion title="Frontend synchronization errors caused by asynchronous code generation">
 
-    Check audit logs
-
+        The Voucherify database assigns loyalty card code fields asynchronously. Immediately after triggering POST Create member, the response payload may expose `cards[].card.code` as a `null` value.
+        
+        Solutions:
+        - Avoid immediate code dependency: Never configure client-side user interfaces to rely on a synchronous card code return when processing post-enrollment UI views.
+        - Fallback payload strategies: Rely cleanly on the unique Voucherify loyalty member ID (`lmbr_...`) or the card ID (`lcrd_...`) for all secondary client-side calculations.
     </Accordion>
+
+    <Accordion title="Troubleshoot with Activity tabs and Audit log">
+
+    Use **Activity** tabs in loyalty v2 components, like point wallets, members, rewards, to debug any errors or misconfigurations. The **Activity** tabs list all events that occurred for a given resource, including the request and response bodies.
     
+    Additionally, use the [Audit log](/analyze/audit-logs) to check the full history of your Voucherify project.
+
+    </Accordion>
+
 </AccordionGroup>
+
+If you have a problem that can't be easily resolved, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.
