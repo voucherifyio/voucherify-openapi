@@ -1,0 +1,1961 @@
+---
+title: "Integration guide to Loyalty v2"
+description: "Learn how to integrate with Voucherify's new loyalty v2 API"
+keywords: ["loyalty integration", "point wallets", "examine earnings", "examine rewards", "pay with points", "voucherify v2"]
+tag: "NEW"
+---
+
+To integrate Voucherify's loyalty v2 with your platform, you'll need to complete several steps. You'll have to prepare your customer data, build the loyalty program with required modules, and create the loyalty member journey.
+
+Loyalty v2 has a modular structure, so you can start small and scale your program up as it grows with your members. The modular structure also helps you to optimize your loyalty program with your other incentives, like discount coupons or gift cards.
+
+## Preparation
+
+Prepare your Voucherify account for a functional loyalty v2 integration.
+
+<Steps>
+    <Step title="Prepare the project">
+
+    Prepare your test environment in Voucherify, for example the Sandbox project.
+
+    Use an existing API key/token or create a new pair. Go to **Project settings** > **Application keys** to get `X-App-Id` and `X-App-Token`.
+
+    Make sure the API key has the necessary campaign, voucher, and customer permissions.
+        
+    </Step>
+
+    <Step title="Create loyalty v2 program">
+
+        <Info>
+
+            <Badge color="gray">User guides</Badge>
+        
+            Read the [Loyalty v2 user guides](/build/) to learn how to create and configure a new loyalty v2 program.
+
+        </Info>
+
+    Create the loyalty v2 program by going to **Loyalty hub** > **Designer**.
+
+    Design there the program architecture. You can start with a small program for earning and spending points. The required components are the point wallet and an earning rule.
+
+    Copy your v2 program ID (`lprg_...`). This is required for all member-related API calls.
+    
+    Set the program status to `ACTIVE`.
+
+    <Warning>
+    
+        Once the program is active, you can experiment with additional earning rules, benefits, and rewards. However, you can't add or edit point wallets or add tier structures.
+
+    </Warning>
+    
+    </Step>
+
+    <Step title="Customer data">
+
+    Your loyalty program members must first exist as customers in Voucherify to have a Voucherify customer ID (`cust_...`).
+
+    You can:
+    - Import your customer base with the [Customer import](/prepare/customers#data-import-and-synchronization) or [POST Import and Update Customers using CSV](/api-reference/customers/import-and-update-customers-using-csv) API endpoint.
+    - Use a CDP or CRM tool to synchronize your customers with Voucherify.
+
+    </Step>
+
+    <Step title="Product data">
+
+    If you plan to use products as loyalty program rewards, you have to create them in Voucherify first.
+
+    You can:
+    - Import your product database with the [Product import](/prepare/products#bulk-import-with-csv) in the Voucherify dashboard.
+    - Use the API with [POST Import Products using CSV](/api-reference/products/import-products-using-csv) and [POST Update products in bulk](/api-reference/products/update-products-in-bulk) endpoints.
+
+    </Step>
+
+    <Step title="Data schemas: Metadata and custom events">
+
+    If you're going to combine the loyalty v2 program with metadata (custom attributes for point wallets, loyalty members, and more) or custom events (for example, to trigger when points are earned), you'll have to create relevant schemas.
+    
+    Read more about creating [metadata schemas](/prepare/metadata#define-new-metadata-schema) and [custom events](/prepare/custom-events#define-new-custom-event).
+
+    </Step>
+
+</Steps>
+
+## Acquisition
+
+Use the [POST Create member](/api-reference/programs/create-member) or [POST Create member in batch](/api-reference/programs/create-member-in-batch) (asynchronous action) with the Voucherify customer ID to add the customer as a member to a loyalty v2 program.
+
+By default, the customer is added as an `ACTIVE` member, who can immediately earn points and fully participate in the loyalty program.
+
+Optionally, you can add the customer as an `INACTIVE` member. An inactive member will have to be activated later with the [POST Activate member](/api-reference/programs/activate-member) endpoint to participate in the loyalty program.
+
+<CodeGroup>
+
+```json Basic create member request lines
+{
+    "customer_id": "cust_V0uCh3r1fyId"
+}
+```
+
+```json Create inactive member request lines
+{
+    "customer_id": "cust_V0uCh3r1fyId",
+    "status": "INACTIVE",
+}
+```
+    
+</CodeGroup>
+
+The response for creating an individual member will return (see the lines in the example below):
+- Loyalty program member ID with a unique member ID (`lmbr_...`) (line 2).
+- The loyalty card(s) generated for the member with a unique loyalty card ID (`lcrd_...`) and the point wallet (card definition) ID. If your program uses multiple point wallets, the member will receive a separate card for each card definition (lines 16, 17, 54, and 55).
+
+The response for creating a batch of new members returns an ID of an asynchronous action. Use the ID in the [GET Get async action](/api-reference/async-actions/get-async-action) endpoint to check the processing status of the action.
+
+<Warning>
+
+<Badge color="yellow">Handle loyalty card code latency</Badge>
+
+Make sure your UI can handle `null` for the `cards.card.code` property. The `code` property is generated asynchronously after member creation (lines 19 and 57).
+
+</Warning>
+
+In this response example, the loyalty program member receives two loyalty cards for two separate point wallets (card definitions).
+
+<CodeGroup>
+
+```json POST Create member: response example lines highlight={2,16,17,19,54,55,57} expandable
+{
+    "id": "lmbr_V0uCh3r1fyId1",
+    "customer_id": "cust_V0uCh3r1fyId2",
+    "program_id": "lprg_V0uCh3r1fyId3",
+    "status": "ACTIVE",
+    "metadata": {},
+    "created_at": "2026-06-06T06:06:06.006Z",
+    "updated_at": null,
+    "object": "member",
+    "cards": [
+        {
+            "member_role": "OWNER",
+            "created_at": "2026-06-06T06:06:06.006Z",
+            "tier_progress": null,
+            "card": {
+                "id": "lcrd_V0uCh3r1fyId4",
+                "card_definition_id": "lcdef_V0uCh3r1fyId5",
+                "card_type": "INDIVIDUAL",
+                "code": null,
+                "lifetime_bucket": {
+                    "points": {
+                        "total": 0,
+                        "earned": 0,
+                        "added": 0,
+                        "subtracted": 0,
+                        "expired": 0,
+                        "spent": 0,
+                        "refunded": 0,
+                        "returned": 0,
+                        "locked": 0,
+                        "unlocked": 0
+                    },
+                    "pending_points": {
+                        "total": 0,
+                        "activated": 0,
+                        "canceled": 0
+                    }
+                },
+                "balance": {
+                    "points": 0,
+                    "pending_points": 0
+                },
+                "next_expiration": null,
+                "next_activation": null,
+                "object": "card"
+            },
+            "object": "member_card"
+        },
+        {
+            "member_role": "OWNER",
+            "created_at": "2026-06-06T06:06:06.006Z",
+            "tier_progress": null,
+            "card": {
+                "id": "lcrd_V0uCh3r1fyId6",
+                "card_definition_id": "lcdef_V0uCh3r1fyId7",
+                "card_type": "INDIVIDUAL",
+                "code": null,
+                "lifetime_bucket": {
+                    "points": {
+                        "total": 0,
+                        "earned": 0,
+                        "added": 0,
+                        "subtracted": 0,
+                        "expired": 0,
+                        "spent": 0,
+                        "refunded": 0,
+                        "returned": 0,
+                        "locked": 0,
+                        "unlocked": 0
+                    },
+                    "pending_points": {
+                        "total": 0,
+                        "activated": 0,
+                        "canceled": 0
+                    }
+                },
+                "balance": {
+                    "points": 0,
+                    "pending_points": 0
+                },
+                "next_expiration": null,
+                "next_activation": null,
+                "object": "card"
+            },
+            "object": "member_card"
+        }
+    ]
+}
+```
+
+```json Batch create member: response lines wrap
+{
+  "async_action_id": "aa_abc123def456"
+}
+```
+
+</CodeGroup>
+
+## Discovery
+
+Once you enroll your members, use the following endpoints so the members can learn more about your loyalty program: How they can earn and spend their points.
+
+### Examine earnings
+
+Use the [POST Examine earnings](/api-reference/examine/examine-earnings) endpoint to estimate how many points a customer will earn in a given scenario. This simulation calculates the precise number of points and physical or digital benefits a customer can earn based on specific operational business triggers. Because this evaluation is a dry-run execution, Voucherify calculates these opportunities dynamically without writing transactions to card balances or modifying customer states.
+
+You can configure the simulation engine using two distinct trigger modes:
+- `ALL` mode: Simulates a parallel "what-if" scenario across all active earning rule configurations simultaneously.
+- `SPECIFIC` mode: Limits evaluation to one event context, like order paid, segment entered, or custom event.
+
+#### ALL trigger
+
+Use the trigger type `ALL` mode to create "Ways to earn" loyalty portals or customer dashboards. This option displays all available marketing paths to your customer simultaneously.
+
+When you pass the type `ALL`, Voucherify sets the top-level event parameter value to `null` (response line 2). Voucherify processes every earning rule active within the customer's program.
+
+The simulation lists all earning rules (in the response example, the array in lines 9–40) across distinct point wallets (the array in lines 56–128, loyalty cards with names `AnnualTime`, `AutumnTime`, `SummerTime`). The response displays the total number of points to be earned on a card (line 65) and for individual earning rules that trigger the earning (lines 72 and 80). Voucherify also lists physical rewards, such as the "Coffee sample Ethiopia" item, which is a `MATERIAL` benefit type (lines 130–136).
+
+<Note>
+
+    <Badge color="blue">Order paid earning rules with proportional calculation</Badge>
+
+    To return an estimation for order paid earning rules which calculate points proportionally, you need to pass the `customer_order_paid` object with required data, like `order.items` array.
+    
+</Note>
+
+<CodeGroup>
+
+```json Trigger: All request lines wrap expandable
+{
+    "trigger": {
+        "type": "ALL"
+    },
+    "customer_identification": {
+        "type": "member_id",
+        "member_id": "lmbr_128f962dbc8c4ba5dc"
+    },
+    "customer_order_paid": {
+        "order": {
+            "items": [
+                {
+                    "quantity": 1,
+                    "price": 1000,
+                    "amount": 1000,
+                    "source_id": "vchrf-trckr-cp",
+                    "name": "Voucherify trucker cap",
+                    "related_object": "product",
+                    "product": {
+                        "metadata": {
+                            "brand": "Voucherify",
+                            "colour": "cobalt",
+                            "category": "cap"
+                        }
+                    }
+                },
+                {
+                    "quantity": 1,
+                    "price": 15000,
+                    "amount": 15000,
+                    "source_id": "vchrf-tshrt",
+                    "name": "Voucherify T-shirt",
+                    "related_object": "product",
+                    "product": {
+                        "metadata": {
+                            "brand": "Voucherify",
+                            "colour": "ultramarine",
+                            "category": "t-shirt"
+                        }
+                    }
+                },
+                {
+                    "quantity": 1,
+                    "price": 6500,
+                    "amount": 6500,
+                    "source_id": "vchrf-hd",
+                    "name": "Voucherify hoodie",
+                    "related_object": "product",
+                    "product": {
+                        "metadata": {
+                            "brand": "Voucherify",
+                            "colour": "regal crimson",
+                            "category": "hoodie"
+                        }
+                    }
+                },
+                {
+                    "quantity": 2,
+                    "price": 1500,
+                    "amount": 3000,
+                    "source_id": "vchrf-vncnt-plsh",
+                    "name": "Voucherify Vincent plushie",
+                    "related_object": "product",
+                    "product": {
+                        "metadata": {
+                            "brand": "Voucherify",
+                            "colour": "cobalt",
+                            "category": "plushie"
+                        }
+                    }
+                }
+            ]
+        }
+    },
+    "customer_segment_entered": {
+        "customer": {
+            "metadata": {
+                "VIP": false
+            }
+        }
+    },
+    "customer_custom_event": {
+        "type": "SPECIFIC",
+        "all": null,
+        "specific": {
+            "custom_event": {
+                "schema_id": "ms_oX8au6DostTnHdWBAVVFnTLP"
+            }
+        }
+    }
+}
+
+```
+
+```json Trigger: All response lines wrap expandable highlight={2,9-40,56-128,130-136}
+{
+    "event": null,
+    "customer": {
+        "id": "cust_6onRrs4kCnvSVrTs5YtDPFBG",
+        "source_id": "lx-rdmptr",
+        "metadata": {},
+        "object": "customer"
+    },
+    "earning_rules": [
+        {
+            "id": "lern_128f48ee44cc4bec34",
+            "name": "EarningRule-OrderPaid",
+            "metadata": {},
+            "object": "earning_rule"
+        },
+        {
+            "id": "lern_128f577bd4d47c8e12",
+            "name": "EnterVipSegment",
+            "metadata": {},
+            "object": "earning_rule"
+        },
+        {
+            "id": "lern_128f5822398c4bf78f",
+            "name": "AutumnPaid",
+            "metadata": {},
+            "object": "earning_rule"
+        },
+        {
+            "id": "lern_128f5834b30c4bf7a3",
+            "name": "SummerPaid",
+            "metadata": {},
+            "object": "earning_rule"
+        },
+        {
+            "id": "lern_128f57ec40cc4bf762",
+            "name": "Autumn Ethiopia",
+            "metadata": {},
+            "object": "earning_rule"
+        }
+    ],
+    "memberships": [
+        {
+            "member": {
+                "id": "lmbr_128f962dbc8c4ba5dc",
+                "customer_id": "cust_6onRrs4kCnvSVrTs5YtDPFBG",
+                "program_id": "lprg_128f58429f4c4bf7b2",
+                "metadata": {},
+                "object": "member"
+            },
+            "program": {
+                "id": "lprg_128f58429f4c4bf7b2",
+                "name": "AnnualProgram",
+                "metadata": {},
+                "object": "program"
+            },
+            "cards": [
+                {
+                    "card": {
+                        "id": "lcrd_128f962dbd8c4ba5e1",
+                        "card_definition_id": "lcdef_128f4a88414c4bed69",
+                        "card_type": "INDIVIDUAL",
+                        "code": "AnnualTime-7M7ShPGfme",
+                        "object": "card"
+                    },
+                    "points_estimation": 25650,
+                    "earning_rules": [
+                        {
+                            "earning_rule": {
+                                "id": "lern_128f48ee44cc4bec34",
+                                "object": "earning_rule"
+                            },
+                            "points_estimation": 25500,
+                            "object": "earning_rule_estimation"
+                        },
+                        {
+                            "earning_rule": {
+                                "id": "lern_128f577bd4d47c8e12",
+                                "object": "earning_rule"
+                            },
+                            "points_estimation": 150,
+                            "object": "earning_rule_estimation"
+                        }
+                    ],
+                    "object": "card_estimation"
+                },
+                {
+                    "card": {
+                        "id": "lcrd_128f962dbd8c4ba5e0",
+                        "card_definition_id": "lcdef_128f49963c0c4becb7",
+                        "card_type": "INDIVIDUAL",
+                        "code": "AutumnTime-R02hVARx33",
+                        "object": "card"
+                    },
+                    "points_estimation": 10,
+                    "earning_rules": [
+                        {
+                            "earning_rule": {
+                                "id": "lern_128f5822398c4bf78f",
+                                "object": "earning_rule"
+                            },
+                            "points_estimation": 10,
+                            "object": "earning_rule_estimation"
+                        }
+                    ],
+                    "object": "card_estimation"
+                },
+                {
+                    "card": {
+                        "id": "lcrd_128f962dbd8c4ba5df",
+                        "card_definition_id": "lcdef_128f495f720c4bec8c",
+                        "card_type": "INDIVIDUAL",
+                        "code": "SummerTime-7z8dWawICd",
+                        "object": "card"
+                    },
+                    "points_estimation": 10,
+                    "earning_rules": [
+                        {
+                            "earning_rule": {
+                                "id": "lern_128f5834b30c4bf7a3",
+                                "object": "earning_rule"
+                            },
+                            "points_estimation": 10,
+                            "object": "earning_rule_estimation"
+                        }
+                    ],
+                    "object": "card_estimation"
+                }
+            ],
+            "benefits": [
+                {
+                    "benefit": {
+                        "id": "linc_128f4bba81947c8542",
+                        "name": "Coffee sample Ethiopia",
+                        "type": "MATERIAL",
+                        "object": "benefit"
+                    },
+                    "earning_rules": [
+                        {
+                            "earning_rule": {
+                                "id": "lern_128f57ec40cc4bf762",
+                                "object": "earning_rule"
+                            },
+                            "object": "earning_rule_estimation"
+                        }
+                    ],
+                    "object": "benefit_estimation"
+                }
+            ],
+            "object": "member_earnings_opportunity"
+        }
+    ],
+    "object": "earnings_examine_result"
+}
+```
+</CodeGroup>
+
+#### SPECIFIC trigger: Order paid
+
+Use the `SPECIFIC` trigger type `customer.order.paid` inside digital shopping carts to estimate customer point collection right before final billing.
+
+The simulation isolates rules linked directly to `PAID` transaction states. Voucherify processes the order details from your request context, including items, metadata, catalog categories, and amount values.
+
+In the example, Voucherify resolves the `EarningRule-OrderPaid` rule (response example, lines 10–15) and returns an explicit balance projection of 25500 points for the primary `AnnualTime` loyalty card (line 53). Also, the response lists earnings for `AutumnPaid` and `SummerPaid` earning rules (lines 16–27) that are used for the `AutumnTime` and `SummerTime` loyalty cards (lines 74 and 95). The calculation reflects the current shopping cart properties without adding points to the active card yet.
+
+<CodeGroup>
+
+```json Trigger: Order paid request lines wrap expandable
+{
+    "trigger": {
+        "type": "SPECIFIC",
+        "specific": {
+            "event": "customer.order.paid"
+        }
+    },
+    "customer_identification": {
+        "type": "member_id",
+        "member_id": "lmbr_128f962dbc8c4ba5dc"
+    },
+    "customer_order_paid": {
+        "order": {
+            "items": [
+                {
+                    "quantity": 1,
+                    "price": 1000,
+                    "amount": 1000,
+                    "source_id": "vchrf-trckr-cp",
+                    "name": "Voucherify trucker cap",
+                    "related_object": "product",
+                    "product": {
+                        "metadata": {
+                            "brand": "Voucherify",
+                            "colour": "cobalt",
+                            "category": "cap"
+                        }
+                    }
+                },
+                {
+                    "quantity": 1,
+                    "price": 15000,
+                    "amount": 15000,
+                    "source_id": "vchrf-tshrt",
+                    "name": "Voucherify T-shirt",
+                    "related_object": "product",
+                    "product": {
+                        "metadata": {
+                            "brand": "Voucherify",
+                            "colour": "ultramarine",
+                            "category": "t-shirt"
+                        }
+                    }
+                },
+                {
+                    "quantity": 1,
+                    "price": 6500,
+                    "amount": 6500,
+                    "source_id": "vchrf-hd",
+                    "name": "Voucherify hoodie",
+                    "related_object": "product",
+                    "product": {
+                        "metadata": {
+                            "brand": "Voucherify",
+                            "colour": "regal crimson",
+                            "category": "hoodie"
+                        }
+                    }
+                },
+                {
+                    "quantity": 2,
+                    "price": 1500,
+                    "amount": 3000,
+                    "source_id": "vchrf-vncnt-plsh",
+                    "name": "Voucherify Vincent plushie",
+                    "related_object": "product",
+                    "product": {
+                        "metadata": {
+                            "brand": "Voucherify",
+                            "colour": "cobalt",
+                            "category": "plushie"
+                        }
+                    }
+                }
+            ]
+        }
+    }
+}
+```
+
+```json Trigger: Order paid response lines wrap expandable highlight={10-27,53,74,95}
+{
+    "event": "customer.order.paid",
+    "customer": {
+        "id": "cust_6onRrs4kCnvSVrTs5YtDPFBG",
+        "source_id": "lx-rdmptr",
+        "metadata": {},
+        "object": "customer"
+    },
+    "earning_rules": [
+        {
+            "id": "lern_128f48ee44cc4bec34",
+            "name": "EarningRule-OrderPaid",
+            "metadata": {},
+            "object": "earning_rule"
+        },
+        {
+            "id": "lern_128f5822398c4bf78f",
+            "name": "AutumnPaid",
+            "metadata": {},
+            "object": "earning_rule"
+        },
+        {
+            "id": "lern_128f5834b30c4bf7a3",
+            "name": "SummerPaid",
+            "metadata": {},
+            "object": "earning_rule"
+        }
+    ],
+    "memberships": [
+        {
+            "member": {
+                "id": "lmbr_128f962dbc8c4ba5dc",
+                "customer_id": "cust_6onRrs4kCnvSVrTs5YtDPFBG",
+                "program_id": "lprg_128f58429f4c4bf7b2",
+                "metadata": {},
+                "object": "member"
+            },
+            "program": {
+                "id": "lprg_128f58429f4c4bf7b2",
+                "name": "AnnualProgram",
+                "metadata": {},
+                "object": "program"
+            },
+            "cards": [
+                {
+                    "card": {
+                        "id": "lcrd_128f962dbd8c4ba5e1",
+                        "card_definition_id": "lcdef_128f4a88414c4bed69",
+                        "card_type": "INDIVIDUAL",
+                        "code": "AnnualTime-7M7ShPGfme",
+                        "object": "card"
+                    },
+                    "points_estimation": 25500,
+                    "earning_rules": [
+                        {
+                            "earning_rule": {
+                                "id": "lern_128f48ee44cc4bec34",
+                                "object": "earning_rule"
+                            },
+                            "points_estimation": 25500,
+                            "object": "earning_rule_estimation"
+                        }
+                    ],
+                    "object": "card_estimation"
+                },
+                {
+                    "card": {
+                        "id": "lcrd_128f962dbd8c4ba5e0",
+                        "card_definition_id": "lcdef_128f49963c0c4becb7",
+                        "card_type": "INDIVIDUAL",
+                        "code": "AutumnTime-R02hVARx33",
+                        "object": "card"
+                    },
+                    "points_estimation": 10,
+                    "earning_rules": [
+                        {
+                            "earning_rule": {
+                                "id": "lern_128f5822398c4bf78f",
+                                "object": "earning_rule"
+                            },
+                            "points_estimation": 10,
+                            "object": "earning_rule_estimation"
+                        }
+                    ],
+                    "object": "card_estimation"
+                },
+                {
+                    "card": {
+                        "id": "lcrd_128f962dbd8c4ba5df",
+                        "card_definition_id": "lcdef_128f495f720c4bec8c",
+                        "card_type": "INDIVIDUAL",
+                        "code": "SummerTime-7z8dWawICd",
+                        "object": "card"
+                    },
+                    "points_estimation": 10,
+                    "earning_rules": [
+                        {
+                            "earning_rule": {
+                                "id": "lern_128f5834b30c4bf7a3",
+                                "object": "earning_rule"
+                            },
+                            "points_estimation": 10,
+                            "object": "earning_rule_estimation"
+                        }
+                    ],
+                    "object": "card_estimation"
+                }
+            ],
+            "benefits": [],
+            "object": "member_earnings_opportunity"
+        }
+    ],
+    "object": "earnings_examine_result"
+}
+```
+
+</CodeGroup>
+
+#### SPECIFIC trigger: Customer entered segment
+
+<Info>
+
+    <Badge color="gray">Prerequisite: Customer segment</Badge>
+
+    This scenario requires an earning rule that uses a customer segment as a trigger.
+
+    Read the [Customer segments](/prepare/customer-segments) guide to learn more about customer segments.
+
+</Info>
+
+Use the `SPECIFIC` trigger type `customer.segment.entered` to forecast reward outcomes when a member moves into a high-tier profile segment, like a VIP club. You can display this as an achievable milestone in the member profile.
+
+The evaluation matches metadata configurations in the customer reference object. In this case, passing the metadata key-value pair `"VIP": true` simulates a segment transition (request example, line 15).
+
+Voucherify identifies the `EnterVipSegment` rule schema (response example, lines 12–17). The response isolates the member's `AnnualTime` loyalty card and lists a milestone award valuation of 150 points (line 43). Other purchase-dependent rules are omitted from the calculation automatically.
+
+<CodeGroup>
+
+```json Trigger: Customer entered segment request lines wrap expandable highlight={15}
+{
+    "trigger": {
+        "type": "SPECIFIC",
+        "specific": {
+            "event": "customer.segment.entered"
+        }
+    },
+    "customer_identification": {
+        "type": "member_id",
+        "member_id": "lmbr_128f962dbc8c4ba5dc"
+    },
+    "customer_segment_entered": {
+        "customer": {
+            "metadata": {
+                "VIP": true
+            }
+        }
+    }
+}
+```
+
+```json Trigger: Customer entered segment response lines wrap expandable highlight={12-17,43}
+{
+    "event": "customer.segment.entered",
+    "customer": {
+        "id": "cust_6onRrs4kCnvSVrTs5YtDPFBG",
+        "source_id": "lx-rdmptr",
+        "metadata": {
+            "VIP": true
+        },
+        "object": "customer"
+    },
+    "earning_rules": [
+        {
+            "id": "lern_128f577bd4d47c8e12",
+            "name": "EnterVipSegment",
+            "metadata": {},
+            "object": "earning_rule"
+        }
+    ],
+    "memberships": [
+        {
+            "member": {
+                "id": "lmbr_128f962dbc8c4ba5dc",
+                "customer_id": "cust_6onRrs4kCnvSVrTs5YtDPFBG",
+                "program_id": "lprg_128f58429f4c4bf7b2",
+                "metadata": {},
+                "object": "member"
+            },
+            "program": {
+                "id": "lprg_128f58429f4c4bf7b2",
+                "name": "AnnualProgram",
+                "metadata": {},
+                "object": "program"
+            },
+            "cards": [
+                {
+                    "card": {
+                        "id": "lcrd_128f962dbd8c4ba5e1",
+                        "card_definition_id": "lcdef_128f4a88414c4bed69",
+                        "card_type": "INDIVIDUAL",
+                        "code": "AnnualTime-7M7ShPGfme",
+                        "object": "card"
+                    },
+                    "points_estimation": 150,
+                    "earning_rules": [
+                        {
+                            "earning_rule": {
+                                "id": "lern_128f577bd4d47c8e12",
+                                "object": "earning_rule"
+                            },
+                            "points_estimation": 150,
+                            "object": "earning_rule_estimation"
+                        }
+                    ],
+                    "object": "card_estimation"
+                }
+            ],
+            "benefits": [],
+            "object": "member_earnings_opportunity"
+        }
+    ],
+    "object": "earnings_examine_result"
+}
+```
+</CodeGroup>
+
+#### SPECIFIC trigger: Custom event
+
+<Info>
+
+    <Badge color="gray">Prerequisite: Custom event schema</Badge>
+
+    This scenario requires an earning rule that uses a custom event as a trigger.
+
+    Read the [Custom events](/prepare/custom-events) guide to learn more about custom events.
+
+</Info>
+
+Use the `SPECIFIC` trigger type `customer.custom_event` to evaluate custom behaviors outside standard purchase workflows, such as writing product reviews, bringing reusable cups to a coffee shop, or using mobile apps.
+
+The calculation evaluates rules that trigger on unique business schemas rather than order parameters or segment fields. The custom event is passed as a `schema_id` inside the `customer_custom_event` object (request example, line 16).
+
+In the example below, the earning rule (response example, lines 10–15) awards a benefit rather than loyalty points on a card. As a result, the simulation bypasses regular point cards completely, meaning the `cards` array returns empty (line 32). Instead, the response fills the `benefits` array, which shows that once this action is completed, the member will receive the "Coffee sample Ethiopia" product (lines 34–40).
+
+<Tip>
+
+    <Badge color="green">"ALL" type for custom events</Badge>
+
+    In the `customer_custom_event` you can pass `"type": "ALL"` to return a point estimation for all earning rules that are based on custom events. Use this type if your program runs many earnings that trigger when a member performs an action based on a custom event.
+
+</Tip>
+
+<CodeGroup>
+
+```json Trigger: Custom event request lines wrap expandable highlight={16}
+{
+    "trigger": {
+        "type": "SPECIFIC",
+        "specific": {
+            "event": "customer.custom_event"
+        }
+    },
+    "customer_identification": {
+        "type": "member_id",
+        "member_id": "lmbr_128f962dbc8c4ba5dc"
+    },
+    "customer_custom_event": {
+        "type": "SPECIFIC",
+        "specific": {
+            "custom_event": {
+                "schema_id": "ms_oX8au6DostTnHdWBAVVFnTLP"
+            }
+        }
+    }
+}
+```
+
+```json Trigger: Custom event response lines wrap expandable highlight={10-15,32,34-40}
+{
+    "event": "customer.custom_event",
+    "customer": {
+        "id": "cust_6onRrs4kCnvSVrTs5YtDPFBG",
+        "source_id": "lx-rdmptr",
+        "metadata": {},
+        "object": "customer"
+    },
+    "earning_rules": [
+        {
+            "id": "lern_128f57ec40cc4bf762",
+            "name": "Autumn Ethiopia",
+            "metadata": {},
+            "object": "earning_rule"
+        }
+    ],
+    "memberships": [
+        {
+            "member": {
+                "id": "lmbr_128f962dbc8c4ba5dc",
+                "customer_id": "cust_6onRrs4kCnvSVrTs5YtDPFBG",
+                "program_id": "lprg_128f58429f4c4bf7b2",
+                "metadata": {},
+                "object": "member"
+            },
+            "program": {
+                "id": "lprg_128f58429f4c4bf7b2",
+                "name": "AnnualProgram",
+                "metadata": {},
+                "object": "program"
+            },
+            "cards": [],
+            "benefits": [
+                {
+                    "benefit": {
+                        "id": "linc_128f4bba81947c8542",
+                        "name": "Coffee sample Ethiopia",
+                        "type": "MATERIAL",
+                        "object": "benefit"
+                    },
+                    "earning_rules": [
+                        {
+                            "earning_rule": {
+                                "id": "lern_128f57ec40cc4bf762",
+                                "object": "earning_rule"
+                            },
+                            "object": "earning_rule_estimation"
+                        }
+                    ],
+                    "object": "benefit_estimation"
+                }
+            ],
+            "object": "member_earnings_opportunity"
+        }
+    ],
+    "object": "earnings_examine_result"
+}
+```
+
+</CodeGroup>
+
+### Examine rewards
+
+<Info>
+
+    <Badge color="gray">Prerequisite: Create and add rewards to point wallets</Badge>
+
+    Created rewards must be added to relevant point wallets to be redeemable by your members. When you add the reward to a point wallet, you also define its price in points.
+
+    You can create rewards through the dashboard or the API.
+
+</Info>
+
+Use the [POST Examine rewards](/api-reference/examine/examine-rewards) endpoint to verify which benefits, digital discount coupons or gift card credits, and material rewards are available to a member across their active loyalty program memberships. This simulation calculates the precise point costs using specific spending rules rules and evaluates stock availability in real time. Because this evaluation is a dry-run execution, the Voucherify engine processes these opportunities without writing transactions to card balances.
+
+You can use this endpoint in your user interface to build dynamic reward catalogs or member portals that show customers exactly what rewards they can unlock with their current point balance, as well as the specific actions required to unlock restricted rewards.
+
+The Voucherify simulation engine evaluates every reward assignment and classifies the reward under one of two distinct operational states within the `rewards` array. The endpoint returns only active rewards (response example, lines 8–30) and draft rewards are ignored.
+
+#### AVAILABLE status
+
+When a reward returns an `AVAILABLE` status, the loyalty program member meets all eligibility criteria for reward redemption. This status guarantees that:
+- The member has an active loyalty card belonging to the required card definition.
+- The current point balance on that specific loyalty card is equal to or greater than the resolved point cost.
+- The reward assignment has sufficient stock and is currently active.
+
+In the response example below, the loyalty card `AnnualTime-7M7ShPGfme` contains two `AVAILABLE` reward opportunities: the "Free item coupon" (requiring 300 points; lines 91–102) and the "Minas Gerais 500" material reward (requiring 150 points; lines 103–114).
+
+#### UNAVAILABLE status
+
+When a reward returns an `UNAVAILABLE` status, the member can't redeem it at that moment. To prevent integration guesswork and support frontend user guidance, the Voucherify API provides a structured `unavailability_reasons` array detailing the exact failure point.
+
+The evaluation engine identifies five primary reasons for reward unavailability:
+- `insufficient_balance`: The loyalty card balance is lower than the required reward cost. The API returns explicit context in the `details` object showing `required`, `available`, and `missing` point values.
+- `out_of_stock`: The reward assignment stock is depleted.
+- `no_matching_cost`: No applicable point cost configuration is found or the cost configuration is locked.
+- `no_card_for_cost`: The member profile lacks an active card for the required card definition.
+- `reward_inactive`: The parent reward object is paused or inactive.
+
+In the response example below, the "Carioca cap" reward on the loyalty card `SummerTime-7z8dWawICd` is marked `UNAVAILABLE` (line 61) due to `insufficient_balance` because the member possesses only 50 points out of the required 250 points (lines 66–75).
+
+<Tip>
+
+    <Badge color="green">UX best practice</Badge>
+
+    Use the `missing` property inside the `insufficient_balance` details object to calculate and display progress bars or "points needed" callouts directly on your e-commerce checkout page or mobile application.
+    
+</Tip>
+
+<CodeGroup>
+
+```json Examine rewards request lines wrap
+{
+    "customer_identification": {
+        "type": "member_id",
+        "member_id": "lmbr_128f962dbc8c4ba5dc"
+    }
+}
+```
+
+```json Examine rewards response lines wrap highlight={8-30,61,66-75,91-114} expandable
+{
+    "customer": {
+        "id": "cust_6onRrs4kCnvSVrTs5YtDPFBG",
+        "source_id": "lx-rdmptr",
+        "metadata": {},
+        "object": "customer"
+    },
+    "rewards": [
+        {
+            "id": "lrew_128f4cefbad47c863e",
+            "name": "Carioca cap",
+            "type": "MATERIAL",
+            "metadata": {},
+            "object": "reward"
+        },
+        {
+            "id": "lrew_128f4cab04147c8608",
+            "name": "Free item coupon",
+            "type": "DIGITAL",
+            "metadata": {},
+            "object": "reward"
+        },
+        {
+            "id": "lrew_128f4c6710947c85d1",
+            "name": "Minas Gerais 500",
+            "type": "MATERIAL",
+            "metadata": {},
+            "object": "reward"
+        }
+    ],
+    "memberships": [
+        {
+            "member": {
+                "id": "lmbr_128f962dbc8c4ba5dc",
+                "customer_id": "cust_6onRrs4kCnvSVrTs5YtDPFBG",
+                "program_id": "lprg_128f58429f4c4bf7b2",
+                "metadata": {},
+                "object": "member"
+            },
+            "program": {
+                "id": "lprg_128f58429f4c4bf7b2",
+                "name": "AnnualProgram",
+                "metadata": {},
+                "object": "program"
+            },
+            "cards": [
+                {
+                    "card": {
+                        "id": "lcrd_128f962dbd8c4ba5df",
+                        "card_definition_id": "lcdef_128f495f720c4bec8c",
+                        "card_type": "INDIVIDUAL",
+                        "code": "SummerTime-7z8dWawICd",
+                        "object": "card"
+                    },
+                    "rewards": [
+                        {
+                            "reward": {
+                                "id": "lrew_128f4cefbad47c863e",
+                                "object": "reward"
+                            },
+                            "status": "UNAVAILABLE",
+                            "cost": {
+                                "points": 250,
+                                "object": "reward_cost"
+                            },
+                            "unavailability_reasons": [
+                                {
+                                    "reason": "insufficient_balance",
+                                    "details": {
+                                        "required": 250,
+                                        "available": 50,
+                                        "missing": 200
+                                    },
+                                    "object": "reward_unavailability_reason"
+                                }
+                            ],
+                            "object": "reward_estimation"
+                        }
+                    ],
+                    "object": "card_estimation"
+                },
+                {
+                    "card": {
+                        "id": "lcrd_128f962dbd8c4ba5e1",
+                        "card_definition_id": "lcdef_128f4a88414c4bed69",
+                        "card_type": "INDIVIDUAL",
+                        "code": "AnnualTime-7M7ShPGfme",
+                        "object": "card"
+                    },
+                    "rewards": [
+                        {
+                            "reward": {
+                                "id": "lrew_128f4cab04147c8608",
+                                "object": "reward"
+                            },
+                            "status": "AVAILABLE",
+                            "cost": {
+                                "points": 300,
+                                "object": "reward_cost"
+                            },
+                            "object": "reward_estimation"
+                        },
+                        {
+                            "reward": {
+                                "id": "lrew_128f4c6710947c85d1",
+                                "object": "reward"
+                            },
+                            "status": "AVAILABLE",
+                            "cost": {
+                                "points": 150,
+                                "object": "reward_cost"
+                            },
+                            "object": "reward_estimation"
+                        }
+                    ],
+                    "object": "card_estimation"
+                }
+            ],
+            "object": "member_rewards_opportunity"
+        }
+    ],
+    "object": "rewards_examine_result"
+}
+```
+</CodeGroup>
+
+
+## Activity
+
+Your customers need to perform activities to meet earning rules and earn points or other benefits.
+
+### Create order
+
+If your customers earn points or benefits when they finalize transaction in your system (`customer.order.paid` event), Voucherify relies on the condition that the [POST Create order](/api-reference/orders/create-order) request has the `status` field set to `PAID`.
+
+When the Order API processes a payload with a `PAID` status (line 3), the loyalty engine evaluates the line items and order amount to add points or benefits. Submitting orders with other statuses (such as `CREATED` or `FULFILLED`) will fail to activate the earnings.
+
+```json Order paid request payload lines highlight={3} expandable
+{
+    "source_id": "coffee_order_77129",
+    "status": "PAID",
+    "amount": 3500,
+    "customer": {
+      "source_id": "cust_espresso_fan_99",
+      "email": "customer@coffeeclub.com"
+    },
+    "items": [
+      {
+        "source_id": "prod_colombian_supremo_1kg",
+        "related_object": "product",
+        "quantity": 1,
+        "price": 3500,
+        "amount": 3500,
+        "product": {
+          "name": "Colombian Supremo Coffee Beans",
+          "metadata": {
+            "roast": "medium",
+            "origin": "Colombia"
+          }
+        }
+      }
+    ]
+}
+```
+
+### Custom events
+
+If your members earn points or benefits when performing specific custom activities, like subscribing to a newsletter, leaving a review, or unlocking a daily perk, use the [POST Track custom event](/api-reference/events/track-custom-event) endpoint (`/v1/events`).
+
+The request payload must include:
+- `customer.id` and/or `customer.source_id` (lines 3 and 4) to link the event to a specific customer in Voucherify database. The customer must be a member in the loyalty program.
+- Name of the custom event that triggers the earning rule passed as the value of the `event` property (line 6).
+
+<CodeGroup>
+
+```json Track custom event request payload lines wrap highlight={3,4,6}
+{
+    "customer": {
+        "id": "cust_6onRrs4kCnvSVrTs5YtDPFBG",
+        "source_id": "lx-rdmptr"
+    },
+    "event": "example_custom_event_name"
+}
+```
+
+When Voucherify registers the custom event, the earning rule will trigger and issue points or benefit to the member as defined in its earnings.
+
+</CodeGroup>
+
+### Enter segment
+
+<Info>
+
+    Read the [Customer segments](/prepare/customer-segments) article to learn more about customer segments and how to create them.
+
+</Info>
+
+If your members earn points or benefits when they join a segment of VIP customers, for example, you don't have to send any specific API requests.
+
+The earning rule triggers automatically when Voucherify registers the member has joined the defined dynamic customer segment.
+
+<Tip>
+
+    <Badge color="green">Customer segment suggestions</Badge>
+
+    You can define segments on the basis of various customer properties, like total amount of all orders, birth date, or your own custom attributes (metadata). Here are some ideas for customer segments:
+    - Customers who have birthday today.
+    - VIP customers who spent more than $1000 USD in your store.
+    - Customers with a defined metadata `"pet_owner": true`.
+    - Customers who performed an activity "Collect June badge" defined as a custom event less than 5 days ago.
+    
+</Tip>
+
+## Retention
+
+Use the following endpoints and data to create a member profile which helps retaining your member base and keeps them engaged.
+
+### Get member
+
+Use the [GET member](/api-reference/programs/get-member) endpoint to create a member profile that will show:
+- All cards the member has in the program.
+- Current point balance, pending points, and other life time point data.
+- Dates for point expiration and activation.
+- Current progress in the tier structure.
+
+#### Points
+
+With the Get member endpoint you can create a member profile that lists points available to a member. Each of the member's loyalty cards is returned in the `cards` array (starting in line 10). The details regarding points are stored in the following objects:
+- `lifetime_bucket` stores historical details regarding `points` and `pending_points` (lines 20–38). For example, you can use the data to show how many points were `earned`, `spent`, `expired`, and so on.
+- `balance` stores the details about the current number of available points (`balance.points`) for spending and the current number of `pending_points` (lines 40, 41)
+- `next_expiration` stores the details about the number of points that are about to expire and the nearest date (lines 44–45). If you configured point expiration, you can use this data to nudge your members to spend the points before they expire.
+- `next_activation` stores the details about the date and number of points that are about to be activated from the pending state as well as the type of the activation (lines 48–50)
+
+```json Get member response: Points wrap lines expandable highlight={10,20-38,40,41,44,45,48-50}
+{
+    "id": "lmbr_128f962dbc8c4ba5dc",
+    "customer_id": "cust_6onRrs4kCnvSVrTs5YtDPFBG",
+    "program_id": "lprg_128f58429f4c4bf7b2",
+    "status": "ACTIVE",
+    "metadata": {},
+    "created_at": "2026-06-11T15:59:41.298Z",
+    "updated_at": null,
+    "object": "member",
+    "cards": [
+        {
+            "member_role": "OWNER",
+            "created_at": "2026-06-11T15:59:41.303Z",
+            "tier_progress": null,
+            "card": {
+                "id": "lcrd_128f962dbd8c4ba5df",
+                "card_definition_id": "lcdef_128f495f720c4bec8c",
+                "card_type": "INDIVIDUAL",
+                "code": "SummerTime-7z8dWawICd",
+                "lifetime_bucket": {
+                    "points": {
+                        "total": 50,
+                        "earned": 0,
+                        "added": 50,
+                        "subtracted": 0,
+                        "expired": 0,
+                        "spent": 0,
+                        "refunded": 0,
+                        "returned": 0,
+                        "locked": 0,
+                        "unlocked": 0
+                    },
+                    "pending_points": {
+                        "total": 40,
+                        "activated": 0,
+                        "canceled": 0
+                    }
+                },
+                "balance": {
+                    "points": 50,
+                    "pending_points": 40
+                },
+                "next_expiration": {
+                    "points": 50,
+                    "date": "2026-07-15"
+                },
+                "next_activation": {
+                    "points": 40,
+                    "type": "PERIOD_BASED",
+                    "date": "2026-06-21"
+                },
+                "object": "card"
+            },
+            "object": "member_card"
+        },
+        {
+            "member_role": "OWNER",
+            "created_at": "2026-06-11T15:59:41.303Z",
+            "tier_progress": null,
+            "card": {
+                "id": "lcrd_128f962dbd8c4ba5e0",
+                "card_definition_id": "lcdef_128f49963c0c4becb7",
+                "card_type": "INDIVIDUAL",
+                "code": "AutumnTime-R02hVARx33",
+                "lifetime_bucket": {
+                    "points": {
+                        "total": 50,
+                        "earned": 0,
+                        "added": 50,
+                        "subtracted": 0,
+                        "expired": 0,
+                        "spent": 0,
+                        "refunded": 0,
+                        "returned": 0,
+                        "locked": 0,
+                        "unlocked": 0
+                    },
+                    "pending_points": {
+                        "total": 40,
+                        "activated": 0,
+                        "canceled": 0
+                    }
+                },
+                "balance": {
+                    "points": 50,
+                    "pending_points": 40
+                },
+                "next_expiration": {
+                    "points": 50,
+                    "date": "2026-12-23"
+                },
+                "next_activation": {
+                    "points": 40,
+                    "type": "FIXED_DATES",
+                    "date": "2026-12-23"
+                },
+                "object": "card"
+            },
+            "object": "member_card"
+        },
+        {
+            "member_role": "OWNER",
+            "created_at": "2026-06-11T15:59:41.303Z",
+            "tier_progress": {
+                "current": {
+                    "id": "lt_128f4b466a0c4bee03",
+                    "name": "Gold",
+                    "activated_at": "2026-06-15T18:36:23.073Z",
+                    "expires_at": null,
+                    "points": {
+                        "current": 250,
+                        "min": 200,
+                        "max": 299
+                    }
+                },
+                "tier_structure": {
+                    "id": "lts_128f4b460e4c4bedf6",
+                    "object": "tier_structure"
+                },
+                "risks": [
+                    {
+                        "type": "TIER_DOWNGRADE",
+                        "date": "2026-01-31T00:00:00.000Z",
+                        "tier_id": "lt_128f4b46558c4bedff"
+                    }
+                ],
+                "opportunities": [
+                    {
+                        "valid_until": null,
+                        "tier_id": "lt_128f4b46808c4bee07",
+                        "points": 50
+                    }
+                ],
+                "object": "member_tier_progress"
+            },
+            "card": {
+                "id": "lcrd_128f962dbd8c4ba5e1",
+                "card_definition_id": "lcdef_128f4a88414c4bed69",
+                "card_type": "INDIVIDUAL",
+                "code": "AnnualTime-7M7ShPGfme",
+                "lifetime_bucket": {
+                    "points": {
+                        "total": 650,
+                        "earned": 650,
+                        "added": 0,
+                        "subtracted": 0,
+                        "expired": 0,
+                        "spent": 150,
+                        "refunded": 0,
+                        "returned": 0,
+                        "locked": 0,
+                        "unlocked": 0
+                    },
+                    "pending_points": {
+                        "total": 550,
+                        "activated": 400,
+                        "canceled": 0
+                    }
+                },
+                "balance": {
+                    "points": 500,
+                    "pending_points": 200
+                },
+                "next_expiration": {
+                    "points": 250,
+                    "date": "2026-12-31"
+                },
+                "next_activation": {
+                    "points": 150,
+                    "type": "PERIOD_BASED",
+                    "date": "2026-06-25"
+                },
+                "object": "card"
+            },
+            "object": "member_card"
+        }
+    ]
+}
+```
+
+#### Tiers
+
+If your program runs loyalty tiers, you can also use the Get member endpoint to return the details about the current tier progress for a given loyalty card. Use the data from the `tier_progress` object (starting at line 14) to build a member profile that will display the active tier, and also risks and opportunities:
+- `current` returns the loyalty tier the member is currently on, including the tier ID, name, when the member achieved it and the point range (lines 15–25).
+- `risks` returns data for tier expiration and downgrade. In the example, the member will fall to a lower tier (`tier_id`) on a specified date (lines 31–35).
+- `opportunities` returns the number of points the member must earn to reach higher tiers (lines 38–47).
+
+In this configuration, the tiers are based on the member's current point balance, but tier downgrade has a grace period of one month.
+
+```json Get member response: Loyalty tiers wrap lines expandable highlight={14,15-25,31-35,38-47}
+{
+    "id": "lmbr_128f962dbc8c4ba5dc",
+    "customer_id": "cust_6onRrs4kCnvSVrTs5YtDPFBG",
+    "program_id": "lprg_128f58429f4c4bf7b2",
+    "status": "ACTIVE",
+    "metadata": {},
+    "created_at": "2026-06-11T15:59:41.298Z",
+    "updated_at": null,
+    "object": "member",
+    "cards": [
+        {
+            "member_role": "OWNER",
+            "created_at": "2026-06-11T15:59:41.303Z",
+            "tier_progress": {
+                "current": {
+                    "id": "lt_128f4b46558c4bedff",
+                    "name": "Silver",
+                    "activated_at": "2026-06-17T15:05:35.347Z",
+                    "expires_at": null,
+                    "points": {
+                        "current": 199,
+                        "min": 100,
+                        "max": 199
+                    }
+                },
+                "tier_structure": {
+                    "id": "lts_128f4b460e4c4bedf6",
+                    "object": "tier_structure"
+                },
+                "risks": [
+                    {
+                        "type": "TIER_DOWNGRADE",
+                        "date": "2026-06-30T00:00:00.000Z",
+                        "tier_id": "lt_128f4b46400c4bedfb"
+                    }
+                ],
+                "opportunities": [
+                    {
+                        "valid_until": null,
+                        "tier_id": "lt_128f4b466a0c4bee03",
+                        "points": 1
+                    },
+                    {
+                        "valid_until": null,
+                        "tier_id": "lt_128f4b46808c4bee07",
+                        "points": 101
+                    }
+                ],
+                "object": "member_tier_progress"
+            },
+            "card": {
+                "id": "lcrd_128f962dbd8c4ba5e1",
+                "card_definition_id": "lcdef_128f4a88414c4bed69",
+                "card_type": "INDIVIDUAL",
+                "code": "AnnualTime-7M7ShPGfme",
+                "lifetime_bucket": {
+                    "points": {
+                        "total": 650,
+                        "earned": 650,
+                        "added": 0,
+                        "subtracted": 0,
+                        "expired": 0,
+                        "spent": 150,
+                        "refunded": 0,
+                        "returned": 0,
+                        "locked": 0,
+                        "unlocked": 0
+                    },
+                    "pending_points": {
+                        "total": 550,
+                        "activated": 400,
+                        "canceled": 0
+                    }
+                },
+                "balance": {
+                    "points": 500,
+                    "pending_points": 200
+                },
+                "next_expiration": {
+                    "points": 250,
+                    "date": "2026-12-31"
+                },
+                "next_activation": {
+                    "points": 150,
+                    "type": "PERIOD_BASED",
+                    "date": "2026-06-25"
+                },
+                "object": "card"
+            },
+            "object": "member_card"
+        }
+    ]
+}
+```
+
+### List transactions
+
+Use the [GET List transactions](/api-reference/programs/list-card-transactions) endpoint to extend the member profile in your system with details about all point movements on a member's card. If your loyalty program uses several point wallets, create a separate transaction list for each card that's governed by a given wallet.
+
+The list card transactions endpoint lists many types (`type`) of transactions to match your business case. The transactions list the date of occurrence (`created_at`), number of points affected (`points` object), and other details. In a simple loyalty program, the key transactions types are:
+- `POINTS_SPENT_ON_REWARD`: Points spent to buy a reward. The `details` object lists the number of points and the `reward.id` (lines 11–24)
+- `PENDING_POINTS_ACTIVATED`: Points that were in a pending state, but they were activated manually or automatically as set in the point wallet configuration (lines 38–47).
+- `PENDING_POINTS_ADDED`: Pending points that were added to the loyalty card under the point wallet settings (lines 61–67).
+- `POINTS_EXPIRED`: Points that expired under the point wallet settings (lines 90–108).
+- `POINTS_EARNED`: Points earned and instantly added to the loyalty card (point earned example, line 11–24).
+
+<CodeGroup>
+
+```json Example: List card transactions response wrap expandable lines highlight={11-24,38-47,61-67,90-108}
+{
+    "data": [
+        {
+            "id": "lctx_129748dbafe65ae86d",
+            "card_id": "lcrd_128f962dbd8c4ba5e1",
+            "program_id": "lprg_128f58429f4c4bf7b2",
+            "member_id": "lmbr_128f962dbc8c4ba5dc",
+            "card_definition_id": "lcdef_128f4a88414c4bed69",
+            "card_type": "INDIVIDUAL",
+            "type": "POINTS_SPENT_ON_REWARD",
+            "details": {
+                "reason": "Points spent on reward",
+                "rejection": null,
+                "metadata": {},
+                "points": {
+                    "total": 150
+                },
+                "reward": {
+                    "id": "lrew_128f4c6710947c85d1"
+                },
+                "reward_transaction": {
+                    "id": "lrtx_129748dbafe65ae86e"
+                }
+            },
+            "status": "APPROVED",
+            "created_at": "2026-06-17T15:29:43.104Z",
+            "updated_at": "2026-06-17T15:29:45.622Z",
+            "object": "card_transaction"
+        },
+        {
+            "id": "lctx_128f9a03c6cc4ba8e7",
+            "card_id": "lcrd_128f962dbd8c4ba5e1",
+            "program_id": "lprg_128f58429f4c4bf7b2",
+            "member_id": "lmbr_128f962dbc8c4ba5dc",
+            "card_definition_id": "lcdef_128f4a88414c4bed69",
+            "card_type": "INDIVIDUAL",
+            "type": "PENDING_POINTS_ACTIVATED",
+            "details": {
+                "reason": "Manual points activation",
+                "rejection": null,
+                "metadata": {},
+                "points": {
+                    "total": 400,
+                    "date": "2026-06-21",
+                    "type": "PERIOD_BASED"
+                }
+            },
+            "status": "APPROVED",
+            "created_at": "2026-06-11T16:16:26.907Z",
+            "updated_at": "2026-06-11T16:16:27.291Z",
+            "object": "card_transaction"
+        },
+        {
+            "id": "lctx_128f9821be4fd14efd",
+            "card_id": "lcrd_128f962dbd8c4ba5e1",
+            "program_id": "lprg_128f58429f4c4bf7b2",
+            "member_id": "lmbr_128f962dbc8c4ba5dc",
+            "card_definition_id": "lcdef_128f4a88414c4bed69",
+            "card_type": "INDIVIDUAL",
+            "type": "PENDING_POINTS_ADDED",
+            "details": {
+                "reason": "AnnualProgram / EarningRule-OrderPaid",
+                "rejection": null,
+                "metadata": {
+                    "event_id": "evcus_128f981fced47cbe9b",
+                    "member_id": "lmbr_128f962dbc8c4ba5dc",
+                    "program_id": "lprg_128f58429f4c4bf7b2",
+                    "earning_item_id": "lernei_128f48ee3fcc4bec33",
+                    "earning_rule_id": "lern_128f48ee44cc4bec34"
+                },
+                "points": {
+                    "total": 400,
+                    "date": "2026-06-21",
+                    "type": "PERIOD_BASED"
+                }
+            },
+            "status": "APPROVED",
+            "created_at": "2026-06-11T16:08:13.305Z",
+            "updated_at": "2026-06-11T16:08:14.170Z",
+            "object": "card_transaction"
+        },
+        {
+            "id": "lctx_129a515e9aa3f9dd93",
+            "card_id": "lcrd_128f962dbd8c4ba5df",
+            "program_id": "lprg_128f58429f4c4bf7b2",
+            "member_id": "lmbr_128f962dbc8c4ba5dc",
+            "card_definition_id": "lcdef_128f495f720c4bec8c",
+            "card_type": "INDIVIDUAL",
+            "type": "POINTS_EXPIRED",
+            "details": {
+                "reason": "Points expired automatically",
+                "rejection": null,
+                "metadata": {},
+                "points": {
+                    "total": 50
+                },
+                "date": "2026-06-09",
+                "buckets": [
+                    {
+                        "id": "lcpeb_1299ec455b625c31e1",
+                        "points": {
+                            "total": 50
+                        },
+                        "expiration_date": "2026-06-09",
+                        "expiration_type": "ROLLING_EXPIRATION"
+                    }
+                ]
+            },
+            "status": "APPROVED",
+            "created_at": "2026-06-10T00:02:20.906Z",
+            "updated_at": "2026-06-10T00:02:20.975Z",
+            "object": "card_transaction"
+        }
+    ],
+    "cursor": {
+        "next": "lcrsctx_12989e71c62b6d5baf",
+        "expires_at": "2026-06-18T16:32:07.896Z"
+    },
+    "object": "list"
+}
+```
+
+```json Point earned response wrap lines expandable highlight={11-24}
+{
+    "data": [
+        {
+            "id": "lctx_1298a2ae5ba25c6454",
+            "card_id": "lcrd_1298a287482b6d5e90",
+            "program_id": "lprg_1298a2068ad09df2dc",
+            "member_id": "lmbr_1298a28746eb6d5e8d",
+            "card_definition_id": "lcdef_1298a22790509df2f8",
+            "card_type": "INDIVIDUAL",
+            "type": "POINTS_EARNED",
+            "details": {
+                "reason": "Pointexpire / EXPIRE_EARNING_RULE",
+                "rejection": null,
+                "metadata": {
+                    "event_id": "evcus_1298a2abb06b6d5ec2",
+                    "member_id": "lmbr_1298a28746eb6d5e8d",
+                    "program_id": "lprg_1298a2068ad09df2dc",
+                    "earning_item_id": "lernei_1298a23b9f509df311",
+                    "earning_rule_id": "lern_1298a23baf509df312"
+                },
+                "points": {
+                    "total": 50,
+                    "expiration_date": "2026-06-19"
+                }
+            },
+            "status": "APPROVED",
+            "created_at": "2026-06-18T16:40:38.510Z",
+            "updated_at": "2026-06-18T16:40:39.402Z",
+            "object": "card_transaction"
+        }
+    ],
+    "cursor": null,
+    "object": "list"
+}
+```
+
+</CodeGroup>
+
+### List reward purchases
+
+Use the [GET List reward purchases](/api-reference/api-reference/programs/list-reward-purchases) endpoint to show your members the rewards they have purchased. This endpoint lists purchases for all cards the member has.
+
+The `details` (lines 12–33 and 47–68) object lists more information about the reward purchase, like the number of points spent or the reward `type`.
+
+```json List transactions response lines wrap highlight={12-33,47-68}
+{
+    "data": [
+        {
+            "id": "lrtx_1299a9ded817f57b90",
+            "card_id": "lcrd_128f962dbd8c4ba5df",
+            "card_transaction_id": "lctx_1299a9ded817f57b8f",
+            "program_id": "lprg_128f58429f4c4bf7b2",
+            "member_id": "lmbr_128f962dbc8c4ba5dc",
+            "reward_id": "lrew_128f4cefbad47c863e",
+            "status": "APPROVED",
+            "type": "PURCHASE",
+            "details": {
+                "reason": "Points spent on reward",
+                "rejection": null,
+                "metadata": {},
+                "points": {
+                    "total": 250
+                },
+                "result": {
+                    "reward": {
+                        "id": "lrew_128f4cefbad47c863e",
+                        "type": "MATERIAL"
+                    },
+                    "quantity": 1,
+                    "material": {
+                        "type": "PRODUCT",
+                        "product": {
+                            "id": "prod_128f4cd0a94c4bef25"
+                        }
+                    },
+                    "digital": null
+                }
+            },
+            "created_at": "2026-06-19T11:50:32.033Z",
+            "updated_at": "2026-06-19T11:50:33.387Z",
+            "object": "reward_transaction"
+        },
+        {
+            "id": "lrtx_129748dbafe65ae86e",
+            "card_id": "lcrd_128f962dbd8c4ba5e1",
+            "card_transaction_id": "lctx_129748dbafe65ae86d",
+            "program_id": "lprg_128f58429f4c4bf7b2",
+            "member_id": "lmbr_128f962dbc8c4ba5dc",
+            "reward_id": "lrew_128f4c6710947c85d1",
+            "status": "APPROVED",
+            "type": "PURCHASE",
+            "details": {
+                "reason": "Points spent on reward",
+                "rejection": null,
+                "metadata": {},
+                "points": {
+                    "total": 150
+                },
+                "result": {
+                    "reward": {
+                        "id": "lrew_128f4c6710947c85d1",
+                        "type": "MATERIAL"
+                    },
+                    "quantity": 1,
+                    "material": {
+                        "type": "PRODUCT",
+                        "product": {
+                            "id": "prod_128f4c2edf547c859e"
+                        }
+                    },
+                    "digital": null
+                }
+            },
+            "created_at": "2026-06-17T15:29:43.104Z",
+            "updated_at": "2026-06-17T15:29:44.542Z",
+            "object": "reward_transaction"
+        }
+    ],
+    "cursor": null,
+    "object": "list"
+}
+```
+
+## Fulfillment
+
+Your loyalty program needs a way for your members to spend the loyalty points they've earned. In a typical loyalty program, members can spend points to:
+- Purchase rewards
+- Use the points as currency to pay for their orders.
+
+### Purchase reward
+
+Use the [POST Purchase reward](/api-reference/programs/purchase-reward) endpoint to create a store where your loyalty program members can buy rewards.
+
+In the request body, send the reward ID (`reward_id`) to be purchased. Since rewards are assigned to specific point wallets, Voucherify will subtract the required number of points from a loyalty card that's governed by the point wallet.
+
+Use the `details` object (response lines 11–19) to display how many points were spent on the reward purchase. If the loyalty program uses several point wallets, use the `card_id` (line 4) to tie the purchase to a specific loyalty card.
+
+<CodeGroup>
+
+```json Purchase reward: Request lines wrap
+{
+    "reward_id": "lrew_128f4cefbad47c863e"
+}
+```
+
+```json Purchase reward: Response lines wrap expandable highlight={4,11-19}
+{
+  "transaction": {
+    "id": "lrtx_1299a9ded817f57b90",
+    "card_id": "lcrd_128f962dbd8c4ba5df",
+    "card_transaction_id": "lctx_1299a9ded817f57b8f",
+    "program_id": "lprg_128f58429f4c4bf7b2",
+    "member_id": "lmbr_128f962dbc8c4ba5dc",
+    "reward_id": "lrew_128f4cefbad47c863e",
+    "status": "PENDING",
+    "type": "PURCHASE",
+    "details": {
+      "reason": "Points spent on reward",
+      "rejection": null,
+      "metadata": {},
+      "points": {
+        "total": 250
+      },
+      "result": null
+    },
+    "created_at": "2026-06-19T11:50:32.033Z",
+    "updated_at": null,
+    "object": "reward_transaction"
+  },
+  "status": "TRANSACTION_CREATED",
+  "message": "Reward purchase transaction created"
+}
+```
+
+</CodeGroup>
+
+## Cancellation
+
+Your loyalty program should also support situations when a member wants to stop participating in the program, have their member profile deleted altogether, or cases when you need to temporarily suspend member activity when suspecting program fraud.
+
+### Deactivate
+
+Use the [POST Deactivate member](/api-reference/programs/deactivate-member) endpoint to suspend a member's participation in the program.
+
+A suspended member can't earn points or spend them on rewards or orders.
+
+<Tip>
+
+    <Badge color="green">Activating member again</Badge>
+
+    If you need to reactivate the member, so that they can participate in the loyalty program again, use the [POST Activate member](/api-reference/programs/activate-member) endpoint.
+
+</Tip>
+
+### Delete
+
+If you need to have mechanism for deleting member data, use the [DELETE Member](/api-reference/programs/delete-member) endpoint to soft-delete the member and all their associated cards within the program.
+
+<Note>
+
+    <Badge color="blue">Customer data in Voucherify</Badge>
+
+    The DELETE Member endpoint deletes only the data regarding the member profile. However, the member still has a customer profile in Voucherify.
+
+    Read how to [delete customer](https://docs.voucherify.io/prepare/customers#delete-customers) data from Voucherify.
+
+</Note>
+
+## Going to production
+
+Moving your Voucherify loyalty v2 integration from a Sandbox environment to a live production environment requires more than simply swapping your API keys. Because Voucherify projects are completely isolated from one another, your configuration data does not automatically migrate. You must recreate your entire program setup from scratch in your live Production project before routing live customer traffic.
+
+Use this step-by-step checklist to ensure a seamless launch and avoid transaction failures.
+
+<Steps>
+    <Step title="Use a live production project and extract keys">
+        
+        Use your production project or create a dedicated one for your live store data. 
+        
+        Go to **Project settings** > **Application keys** in the production project to retrieve your production credentials (`X-App-Id` and `X-App-Token`). Update your infrastructure environment variables with these live keys. Ensure your system points to the correct regional API base URL.
+        
+        <Warning>
+            Voucherify Sandbox and Production projects share zero database records. Attempting to pass production keys along with sandbox resource IDs (such as sandbox program IDs or member IDs) will cause the Voucherify API to return `404 Resource Not Found` errors.
+        </Warning>
+
+    </Step>
+
+    <Step title="Recreate your data schemas">
+
+        Before your live system sends transaction data to the Voucherify API, you must manually rebuild your custom data structures in the new production project:
+        - Re-define all **Metadata schemas** used for custom attributes on point wallets, loyalty members, orders, and other data.
+        - Re-create all **Custom event schemas** that trigger loyalty earning rules (such as writing product reviews or downloading your mobile app).
+
+    </Step>
+
+    <Step title="Sync your customer base and product catalog">
+
+        Ensure your live customer profiles and store products exist inside the new production project so transactions map correctly:
+        - Import your live customer database into the production project using a CSV upload or the [POST Import and Update Customers](/api-reference/customers/import-and-update-customers-using-csv) API endpoint.
+        - If you use a CDP or CRM system, check if customer data is synchronized correctly.
+        - Synchronize your product catalog, matching your online store or POS menu item IDs to the Voucherify product engine fields (`source_id`).
+
+    </Step>
+
+    <Step title="Recreate campaigns for rewards">
+
+    If your loyalty program is going to issue discount vouchers or gift card credits as rewards or benefits, create relevant Voucherify campaigns.
+
+    </Step>
+
+    <Step title="Rebuild and activate the loyalty v2 program">
+        
+        Go to the **Loyalty hub** > **Designer** in the production project to rebuild your loyalty architecture:
+        - Set up your point wallets and define your tier structures exactly as you designed them in your Sandbox project.
+        - Re-create your earning rules, rewards, and benefits.
+        - Once verified, set the program status to `ACTIVE`.
+        
+        Copy the new live loyalty program ID (`lprg_...`) and update your backend environment data. Your code must use this new live identifier for all member-related API calls.
+
+    </Step>
+
+    <Step title="Run an end-to-end live sanity test">
+        
+        Before turning the real customer traffic on the production project, perform a final transaction walkthrough using a controlled production user profile.
+        
+        Check the following:
+        1. Enrollment: Create a test live member using a production customer ID.
+        2. Earning: Submit a live order with a `PAID` status and verify that points are successfully added to the member's wallet balance.
+        3. Redemption: Purchase a low-cost or test reward to confirm the point deduction and reward redemption flows operate without latency errors.
+
+    </Step>
+</Steps>
+
+## Troubleshooting
+
+Resolve operational friction points, API structural anomalies, and edge cases commonly encountered by system integrators during the deployment.
+
+<AccordionGroup>
+
+    <Accordion title="HTTP 404: Resource not found">
+
+        The Voucherify API returns an HTTP `404 Not Found` response code if the identifiers provided in the path parameters do not match database entries.
+        
+        Solutions:
+        - ID confusion: Check if the client request payload has a Voucherify loyalty program member ID (`lmbr_...`) rather than a standard Voucherify Customer ID (`cust_...`) when querying member-specific states like `GET member`. This also applies to the new IDs of the recreated loyalty v2 program in your production environment.
+        - Cross-project scope separation: Verify that the request headers (`X-App-Id` and `X-App-Token`) point to the identical dashboard environment containing the referenced loyalty program ID (`lprg_...`).
+    </Accordion>
+
+    <Accordion title="Frontend synchronization errors caused by asynchronous code generation">
+
+        The Voucherify database assigns loyalty card code fields asynchronously. Immediately after triggering POST Create member, the response payload may expose `cards[].card.code` as a `null` value.
+        
+        Solutions:
+        - Avoid immediate code dependency: Never configure client-side user interfaces to rely on a synchronous card code return when processing post-enrollment UI views.
+        - Fallback payload strategies: Rely cleanly on the unique Voucherify loyalty member ID (`lmbr_...`) or the card ID (`lcrd_...`) for all secondary client-side calculations.
+    </Accordion>
+
+    <Accordion title="Troubleshoot with Activity tabs and Audit log">
+
+    Use **Activity** tabs in loyalty v2 components, like point wallets, members, rewards, to debug any errors or misconfigurations. The **Activity** tabs list all events that occurred for a given resource, including the request and response bodies.
+    
+    Additionally, use the [Audit log](/analyze/audit-logs) to check the full history of your Voucherify project.
+
+    </Accordion>
+
+</AccordionGroup>
+
+If you have a problem that can't be easily resolved, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.
