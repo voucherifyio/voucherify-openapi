@@ -5,6 +5,15 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-06-17
+
+- Renamed `dynamic-formula-builder.mdx` to `dynamic-formula-reference.mdx`
+- Added `create-dynamic-formulas.mdx`
+
+## 2026-05-29
+
+- Clarified code samples and a warning in `bloomreach-engagement.mdx`
+
 ## 2026-05-21
 
 Added:

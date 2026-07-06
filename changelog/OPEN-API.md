@@ -4,6 +4,16 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-06-03
+
+Deleted `cockpits` object from the `ManagementProjectsBrandingCreateRequestBody`, `ManagementProjectsBranding`, `ManagementProjectsBrandingUpdateRequestBody`
+
+## 2026-05-28
+
+- Add `STANDALONE` to `type` in the `CampaignsCreateBase` schema.
+- Removed remaining links to `support.voucherify.io`.
+- Fixed missing `conditions` in `ParameterFiltersListMemberTransactions` `ExportCampaignTransactionsFilters`, and `ExportCampaignTransactionsFilters` schemas.
+
 ## 2026-04-30
 
 - Added GET `/v1/segments` endpoint documentation with the `SegmentsListResponseBody` schema
