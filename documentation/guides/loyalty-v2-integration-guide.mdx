@@ -1784,8 +1784,60 @@ The `details` (lines 12–33 and 47–68) object lists more information about th
 ## Fulfillment
 
 Your loyalty program needs a way for your members to spend the loyalty points they've earned. In a typical loyalty program, members can spend points to:
-- Purchase rewards
 - Use the points as currency to pay for their orders.
+- Purchase rewards
+
+### Pay with points
+
+<Info>
+
+    <Badge color="gray">Prerequisite: Settings of pay with points in the oint wallet</Badge>
+
+    The point-to-currency exchange ratio is defined in the point wallet that governs the behavior of the loyalty card.
+
+    You can create a simple exchange ratio (for example, \$0.01 equals 5 points) or build a dynamic formula to calculate the exchange ratio based on defined conditions (for example, if the member is in the VIP segment, \$0.01 equals 1 point; for other members, it equals 5 points).
+
+</Info>
+
+To allow your members to use points as currency and pay for their purchases, you'll need two endpoints:
+- [POST Create order](/api-reference/orders/create-order "Create order API reference page") to create an order in Voucherify.
+- [POST Pay for an order with points](/api-reference/programs/pay-for-an-order-with-points "Pay for an order with points API reference") to use the existing order ID in this endpoint.
+
+<Note>
+
+    <Badge color="blue">Qualifying, validating, and redeeming incentives</Badge>
+
+    If you want to combine your loyalty program with [qualification](/api-reference/qualifications/check-eligibility), [validation](/api-reference/validations/validate-stackable-discounts), and [redemption](/api-reference/redemptions/redeem-stackable-discounts) of incentives, these should happen before the POST Pay with points endpoint is used.
+
+    If you use the redemption endpoint (POST `v1/redemptions`), it can create an order in Voucherify if an `order` object is passed. You can then skip the POST Create order endpoint, but you'll need to retrieve the order ID from the `v1/redemptions` response.
+
+</Note>
+
+{/*
+
+<Tip>
+
+    <Badge color="green">Order management system</Badge>
+
+    Sth sth sth how to get order.source_id from a third-party system
+
+</Tip>
+
+*/}
+
+The POST Pay for an order with points endpoint has:
+- Two required fields:
+    - The `card_id` string of the loyalty card (`lcrd_...`) where the points to be spent on the order are stored.
+    - The `order` object that contains the `id` or `source_id` of the order to be paid.
+- Two optional fields:
+    - The `payment_limit` object that defines a limit on the transaction by providing a `type`:
+        - `CARD_BALANCE` default that allows the automatic payment up to the maximum of the total balance of the loyalty card.
+        - `POINTS_LIMIT` that uses the `points_limit` object to define how many points will be spent in the transaction.
+        - `AMOUNT_LIMIT` that uses the `amount_limit` object to define how much of the order amount can be paid for with points.
+    - The `mode` string that defines if the request is used to simulate the transaction or to actually pay for ther order. Pass the following values:
+        - `DRY_RUN` to perform a simulation of the transaction. No points are spent from the member loyalty card.
+        - `TRANSACTION` to create an actual transaction. Points are spent to lower the total amount of the order.
+
 
 ### Purchase reward
 
@@ -1921,7 +1973,7 @@ Use this step-by-step checklist to ensure a seamless launch and avoid transactio
 
     <Step title="Run an end-to-end live sanity test">
         
-        Before turning the real customer traffic on the production project, perform a final transaction walkthrough using a controlled production user profile.
+        Before turning the real customer traffic on the production project, perform a final transaction walkthrough using a controlled production member profile.
         
         Check the following:
         1. Enrollment: Create a test live member using a production customer ID.
