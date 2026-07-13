@@ -1791,11 +1791,9 @@ Your loyalty program needs a way for your members to spend the loyalty points th
 
 <Info>
 
-    <Badge color="gray">Prerequisite: Settings of pay with points in the oint wallet</Badge>
+    <Badge color="gray">Prerequisite: Settings of pay with points in the point wallet</Badge>
 
     The point-to-currency exchange ratio is defined in the point wallet that governs the behavior of the loyalty card.
-
-    You can create a simple exchange ratio (for example, \$0.01 equals 5 points) or build a dynamic formula to calculate the exchange ratio based on defined conditions (for example, if the member is in the VIP segment, \$0.01 equals 1 point; for other members, it equals 5 points).
 
 </Info>
 
@@ -1827,17 +1825,197 @@ To allow your members to use points as currency and pay for their purchases, you
 
 The POST Pay for an order with points endpoint has:
 - Two required fields:
-    - The `card_id` string of the loyalty card (`lcrd_...`) where the points to be spent on the order are stored.
-    - The `order` object that contains the `id` or `source_id` of the order to be paid.
+    - The `card_id` string of the loyalty card (`lcrd_...`) whose points will be used in the transaction (line 2 in the examples).
+    - The `order` object that contains the `id` or `source_id` of the order to be paid (line 4).
 - Two optional fields:
-    - The `payment_limit` object that defines a limit on the transaction by providing a `type`:
-        - `CARD_BALANCE` default that allows the automatic payment up to the maximum of the total balance of the loyalty card.
-        - `POINTS_LIMIT` that uses the `points_limit` object to define how many points will be spent in the transaction.
-        - `AMOUNT_LIMIT` that uses the `amount_limit` object to define how much of the order amount can be paid for with points.
-    - The `mode` string that defines if the request is used to simulate the transaction or to actually pay for ther order. Pass the following values:
-        - `DRY_RUN` to perform a simulation of the transaction. No points are spent from the member loyalty card.
+    - The `mode` string that defines if the request is used to simulate the transaction or to actually pay for ther order (line 6). Pass the following values:
+        - `DRY_RUN` to perform a simulation of the transaction. No points are spent from the member loyalty card and no transaction records are created.
         - `TRANSACTION` to create an actual transaction. Points are spent to lower the total amount of the order.
+    - The `payment_limit` object that defines a limit on the transaction by providing a `type` (line 6):
+        - `CARD_BALANCE`: Default setting that allows the automatic payment up to the maximum of the total balance of the loyalty card. This setting is used when no `payment_limit` object is sent.
+        - `POINTS_LIMIT`: Uses the `points_limit` object to define how many points will be spent in the transaction. In the example below, the amount to be spent equals `100` points (line 10). If the card has fewer points than the set value for `max`, all available points will be used.
+        - `AMOUNT_LIMIT`: Uses the `amount_limit` object to define how much of the order amount can be paid for with points. The `max` value is defined in the smallest currency amount (line 10), so `100` means \$1, for example.
 
+See the request examples below.
+
+<CodeGroup>
+    
+    ```json Pay with points request: Card balance limit lines wrap expandable highlight={2,4,6,8}
+        {
+            "card_id": "lcrd_128f962dbd8c4ba5e1",
+            "order": {
+                "id": "ord_12b4cdf5f30c158825"
+            },
+            "mode": "TRANSACTION",
+            "payment_limit": {
+                "type": "CARD_BALANCE"
+            }
+        }
+    ```
+
+    ```json Pay with points request: Point limit lines wrap expandable highlight={2,4,6,8,10}
+        {
+            "card_id": "lcrd_128f962dbd8c4ba5e1",
+            "order": {
+                "id": "ord_12b4cdf5f30c158826"
+                },
+            "mode": "TRANSACTION",
+            "payment_limit": {
+                "type": "POINTS_LIMIT",
+                "points_limit": {
+                    "max": 100
+                }
+            }
+        }
+    ```
+
+    ```json Pay with points request: Amount limit lines wrap expandable highlight={2,4,6,8,10}
+        {
+            "card_id": "lcrd_128f962dbd8c4ba5e1",
+            "order": {
+                "id": "ord_12b4cdf5f30c158827"
+            },
+            "mode": "TRANSACTION",
+            "payment_limit": {
+                "type": "AMOUNT_LIMIT",
+                "amount_limit": {
+                    "max": 2000
+                }
+            }
+        }
+    ```
+
+</CodeGroup>
+
+The response differs depending on the `mode` used:
+- `200` for the `DRY_RUN` mode.
+- `202` for the `TRANSACTION` mode. Usually, returns a `PENDING` transaction to be processed asynchronously.
+
+The table below describes how individual schema properties differ between the two execution response structures.
+
+| JSON Property | `DRY_RUN` mode (simulation) | `TRANSACTION` mode (live) | Notes |
+| :--- | :--- | :--- | :--- |
+| `status` | `"DRY_RUN"` | `"TRANSACTION_CREATED"` | Indicates the processing method used by Voucherify. |
+| `message` | `"Dry run mode. No transaction was created..."` | `"Pay with points transaction created"` | Returns a mode-specific descriptive system notification. |
+| `transaction.id` | *Omitted* | `"lotx_12b8dbf787c67de367"` | Unique identifier generated only for live, persistent records. |
+| `transaction.card_transaction_id` | `null` | `"lctx_12b8dbf787c67de366"` | Populates with a tracking ID during live balance changes. |
+| `transaction.status` | `"SIMULATED"` | `"PENDING"` | Reflects workflow state tracking (mock engine vs. active processing queue). |
+| `transaction.created_at` | *Omitted* | `"2026-07-13T17:22:19.296Z"` | Generated exclusively when the state transaction object is written to the database. |
+
+The transaction details regarding the point or amount limit and the actual number of points spent (or to be spent for the `DRY_RUN`) are returned in the `details.payment` object (lines 18–22).
+
+<CodeGroup>
+
+    ```json Pay with points response: Card balance type lines wrap expandable highlight={16-21}
+        {
+            "transaction": {
+                "id": "lotx_12b8861fdd0dd35462",
+                "program_id": "lprg_128f58429f4c4bf7b2",
+                "member_id": "lmbr_128f962dbc8c4ba5dc",
+                "card_id": "lcrd_128f962dbd8c4ba5e1",
+                "card_definition_id": "lcdef_128f4a88414c4bed69",
+                "card_transaction_id": "lctx_12b8861fdd0dd35461",
+                "order_id": "ord_12b4cdf5f30c158825",
+                "status": "PENDING",
+                "type": "PAY_WITH_POINTS",
+                "details": {
+                    "reason": "Points spent on order payment",
+                    "rejection": null,
+                    "metadata": {},
+                    "payment": {
+                        "amount": 200,
+                        "points_spent": 200,
+                        "exchange_ratio": 1
+                    }
+                },
+                "created_at": "2026-07-13T11:07:16.212Z",
+                "updated_at": null,
+                "object": "order_transaction"
+            },
+            "status": "TRANSACTION_CREATED",
+            "message": "Pay with points transaction created"
+        }
+    ```
+
+    ```json Pay with points response: Point limit type lines wrap expandable highlight={18-22}
+        {
+            "transaction": {
+                "id": "lotx_12b884c72b0dd352b9",
+                "program_id": "lprg_128f58429f4c4bf7b2",
+                "member_id": "lmbr_128f962dbc8c4ba5dc",
+                "card_id": "lcrd_128f962dbd8c4ba5e1",
+                "card_definition_id": "lcdef_128f4a88414c4bed69",
+                "card_transaction_id": "lctx_12b884c72b0dd352b8",
+                "order_id": "ord_12b4cdf5f30c158826",
+                "status": "PENDING",
+                "type": "PAY_WITH_POINTS",
+                "details": {
+                    "reason": "Points spent on order payment",
+                    "rejection": null,
+                    "metadata": {
+                        "points_limit": 12
+                    },
+                    "payment": {
+                        "amount": 12,
+                        "points_spent": 12,
+                        "exchange_ratio": 1
+                    }
+                },
+                "created_at": "2026-07-13T11:01:23.245Z",
+                "updated_at": null,
+                "object": "order_transaction"
+            },
+            "status": "TRANSACTION_CREATED",
+            "message": "Pay with points transaction created"
+        }
+    ```
+
+    ```json Pay with points response: Amount limit type lines wrap expandable highlight={18-22}
+        {
+            "transaction": {
+                "id": "lotx_12b8939fd78dd3657f",
+                "program_id": "lprg_128f58429f4c4bf7b2",
+                "member_id": "lmbr_128f962dbc8c4ba5dc",
+                "card_id": "lcrd_128f962dbd8c4ba5e1",
+                "card_definition_id": "lcdef_128f4a88414c4bed69",
+                "card_transaction_id": "lctx_12b8939fd78dd3657e",
+                "order_id": "ord_12b4cdf5f30c158827",
+                "status": "PENDING",
+                "type": "PAY_WITH_POINTS",
+                "details": {
+                    "reason": "Points spent on order payment",
+                    "rejection": null,
+                    "metadata": {
+                        "amount_limit": 2000
+                    },
+                    "payment": {
+                        "amount": 2000,
+                        "points_spent": 2000,
+                        "exchange_ratio": 1
+                    }
+                },
+                "created_at": "2026-07-13T12:06:15.135Z",
+                "updated_at": null,
+                "object": "order_transaction"
+            },
+            "status": "TRANSACTION_CREATED",
+            "message": "Pay with points transaction created"
+        }
+    ```
+
+</CodeGroup>
+
+If the loyalty card has no points, Voucherify returns error code `423` – "Card balance is zero".
+
+```json Pay with points response: No balance – error 423 lines wrap expandable highlight={}
+    {
+        "code": 423,
+        "key": "zero_card_balance",
+        "message": "Card balance is zero",
+        "details": "Operation requires a positive card balance",
+        "request_id": "v-12b8894b3ec1a59873"
+    }
+```
 
 ### Purchase reward
 
