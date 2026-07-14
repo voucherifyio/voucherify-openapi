@@ -1,0 +1,141 @@
+---
+title: "Take Loyalty v2 to production"
+description: "Move your Voucherify Loyalty v2 integration from Sandbox to Production, and solve most frequent issues"
+keywords: ["loyalty integration", "production", "go-live", "troubleshooting", "voucherify v2"]
+tag: "NEW"
+---
+
+{/*
+REVIEWER NOTE (mintlify): This page was split off from `loyalty-v2-integration-guide.mdx`
+and contains only the "Going to production" checklist and "Troubleshooting" section.
+Content was NOT rewritten — only outright errors were fixed. The rest of the lifecycle
+lives in `loyalty-v2-integrate.mdx`.
+
+Items flagged for your attention (not auto-changed):
+  - The error catalogue in Troubleshooting only covers HTTP 404. Consider adding
+    401/403 (auth), 409 (duplicate member), 422 (validation), 429 (rate limit).
+  - No idempotency / retry / poll guidance for the async endpoints referenced
+    from the integrate page (batch create member, pay-with-points TRANSACTION mode,
+    async card code generation).
+  - No webhook / event subscription pointer for a go-live checklist.
+*/}
+
+## Going to production
+
+Moving your Voucherify loyalty v2 integration from a Sandbox environment to a live production environment requires more than simply swapping your API keys. Because Voucherify projects are completely isolated from one another, your configuration data does not automatically migrate. You must recreate your entire program setup from scratch in your live Production project before routing live customer traffic.
+
+Use this step-by-step checklist to ensure a seamless launch and avoid transaction failures.
+
+<Steps>
+    <Step title="Use a live production project and extract keys">
+        
+        Use your production project or create a dedicated one for your live store data. 
+        
+        Go to **Project settings** > **Application keys** in the production project to retrieve your production credentials (`X-App-Id` and `X-App-Token`). Update your infrastructure environment variables with these live keys. Ensure your system points to the correct regional API base URL.
+        
+        <Warning>
+            Voucherify Sandbox and Production projects share zero database records. Attempting to pass production keys along with sandbox resource IDs (such as sandbox program IDs or member IDs) will cause the Voucherify API to return `404 Resource Not Found` errors.
+        </Warning>
+
+    </Step>
+
+    <Step title="Recreate your data schemas">
+
+        Before your live system sends transaction data to the Voucherify API, you must manually rebuild your custom data structures in the new production project:
+        - Re-define all **Metadata schemas** used for custom attributes on point wallets, loyalty members, orders, and other data.
+        - Re-create all **Custom event schemas** that trigger loyalty earning rules (such as writing product reviews or downloading your mobile app).
+
+    </Step>
+
+    <Step title="Sync your customer base and product catalog">
+
+        Ensure your live customer profiles and store products exist inside the new production project so transactions map correctly:
+        - Import your live customer database into the production project using a CSV upload or the [POST Import and Update Customers](/api-reference/customers/import-and-update-customers-using-csv) API endpoint.
+        - If you use a CDP or CRM system, check if customer data is synchronized correctly.
+        - Synchronize your product catalog, matching your online store or POS menu item IDs to the Voucherify product engine fields (`source_id`).
+
+    </Step>
+
+    <Step title="Recreate campaigns for rewards">
+
+    If your loyalty program is going to issue discount vouchers or gift card credits as rewards or benefits, create relevant Voucherify campaigns.
+
+    </Step>
+
+    <Step title="Rebuild and activate the loyalty v2 program">
+        
+        Go to the **Loyalty hub** > **Designer** in the production project to rebuild your loyalty architecture:
+        - Set up your point wallets and define your tier structures exactly as you designed them in your Sandbox project.
+        - Re-create your earning rules, rewards, and benefits.
+        - Once verified, set the program status to `ACTIVE`.
+        
+        Copy the new live loyalty program ID (`lprg_...`) and update your backend environment data. Your code must use this new live identifier for all member-related API calls.
+
+    </Step>
+
+    <Step title="Run an end-to-end live sanity test">
+        
+        Before turning the real customer traffic on the production project, perform a final transaction walkthrough using a controlled production member profile.
+        
+        Check the following:
+        1. Enrollment: Create a test live member using a production customer ID.
+        2. Earning: Submit a live order with a `PAID` status and verify that points are successfully added to the member's wallet balance.
+        3. Redemption: Purchase a low-cost or test reward to confirm the point deduction and reward redemption flows operate without latency errors.
+
+    </Step>
+</Steps>
+
+## Troubleshooting
+
+Resolve operational friction points, API structural anomalies, and edge cases commonly encountered by system integrators during the deployment.
+
+<AccordionGroup>
+
+    <Accordion title="HTTP 404: Resource not found">
+
+        The Voucherify API returns an HTTP `404 Not Found` response code if the identifiers provided in the path parameters do not match database entries.
+        
+        Solutions:
+        - ID confusion: Check if the client request payload has a Voucherify loyalty program member ID (`lmbr_...`) rather than a standard Voucherify Customer ID (`cust_...`) when querying member-specific states like `GET member`. This also applies to the new IDs of the recreated loyalty v2 program in your production environment.
+        - Cross-project scope separation: Verify that the request headers (`X-App-Id` and `X-App-Token`) point to the identical dashboard environment containing the referenced loyalty program ID (`lprg_...`).
+    </Accordion>
+
+    <Accordion title="HTTP 409: Conflict – resource already exists">
+        The Voucherify API returns an HTTP `409 Conflict` response code if a resource already exists in a loyalty program.
+
+        The most frequent case is an attempt to assign a customer to a loyalty program campaign when that customer profile is already an active member of that specific campaign.
+    
+        Solutions:
+        - Verify ID uniqueness: Ensure that the integration request payload contains a unique, non-registered customer ID that is not currently associated with the program. If you use several loyalty programs, verify that the program IDs are not duplicated in the request.
+        - Implement get-before-create (read-first pattern): Before registering a customer, query the Voucherify memberships API (`GET /v2/loyalties/memberships/{customerId}`) to check if the customer profile already is a member for the target loyalty program ID.
+        - Graceful client-side redirection (soft-catch): Intercept the HTTP `409` error code on your backend integration layer. Instead of returning an error to the user interface, treat the conflict as a validation that the user is registered. Retrieve their existing active loyalty member data and transition the user interface directly to the active loyalty program dashboard.
+    </Accordion>
+
+    <Accordion title="HTTP 423: Locked – resource state constraint">
+
+        The Voucherify API returns an HTTP `423 Locked` response code if you attempt to perform an action on a resource that is restricted due to the resource's current status, active validity rules, or balance limitations.
+        
+        Solutions:
+        - Reward validity window: Verify that you are attempting to redeem or purchase the reward within the reward's scheduled active time frame. If the transaction occurs outside of the reward's configured validity dates and hours, Voucherify blocks the request. You can adjust the active dates of the reward in the **Loyalty hub**.
+        - **Zero card balance**: Check if the gift card or loyalty card has a positive balance before executing the transaction. If the card balance is zero, the operation fails, and you must add funds to the card or select a different payment card.
+    
+    </Accordion>
+
+    <Accordion title="Frontend synchronization errors caused by asynchronous code generation">
+
+        The Voucherify database assigns loyalty card code fields asynchronously. Immediately after triggering POST Create member, the response payload may expose `cards[].card.code` as a `null` value.
+        
+        Solutions:
+        - Avoid immediate code dependency: Never configure client-side user interfaces to rely on a synchronous card code return when processing post-enrollment UI views.
+        - Fallback payload strategies: Rely cleanly on the unique Voucherify loyalty member ID (`lmbr_...`) or the card ID (`lcrd_...`) for all secondary client-side calculations.
+    </Accordion>
+
+    <Accordion title="Troubleshoot with Activity tabs and Audit log">
+
+    Use **Activity** tabs in loyalty v2 components, like point wallets, members, rewards, to debug any errors or misconfigurations. The **Activity** tabs list all events that occurred for a given resource, including the request and response bodies.
+    
+    Additionally, use the [Audit log](/analyze/audit-logs) to check the full history of your Voucherify project.
+
+    </Accordion>
+
+</AccordionGroup>
