@@ -1223,37 +1223,45 @@ The earning rule triggers automatically when Voucherify registers the member has
 
 Use the following endpoints and data to create a member profile which helps retaining your member base and keeps them engaged.
 
-### Get member
+### Get membership
 
-Use the [GET member](/api-reference/programs/get-member) endpoint to create a member profile that will show:
-- All cards the member has in the program.
+Use the [GET membership](/api-reference/programs/get-membership) endpoint (`GET /v2/loyalties/programs/{programId}/memberships/{memberId}?identification_type=member_id`) to create a member profile that will show:
+- The member's identity and status in the program.
+- All loyalty cards the member has in the program.
 - Current point balance, pending points, and other life time point data.
 - Dates for point expiration and activation.
 - Current progress in the tier structure.
 
-#### Points
+The response is a `membership` object that groups three top-level fields:
+- `member`: The member's profile in the program (lines 3–10).
+- `program`: A summary of the loyalty program the member belongs to (lines 13–17). This is useful when your integration handles several programs and needs to identify the program referred to in the response.
+- `cards`: The list of loyalty cards issued to the member (starting at line 19), used to render points and tier progress.
 
-With the Get member endpoint you can create a member profile that lists points available to a member. Each of the member's loyalty cards is returned in the `cards` array (starting in line 10). The details regarding points are stored in the following objects:
-- `lifetime_bucket` stores historical details regarding `points` and `pending_points` (lines 20–38). For example, you can use the data to show how many points were `earned`, `spent`, `expired`, and so on.
-- `balance` stores the details about the current number of available points (`balance.points`) for spending and the current number of `pending_points` (lines 40, 41)
-- `next_expiration` stores the details about the number of points that are about to expire and the nearest date (lines 44–45). If you configured point expiration, you can use this data to nudge your members to spend the points before they expire.
-- `next_activation` stores the details about the date and number of points that are about to be activated from the pending state as well as the type of the activation (lines 48–50)
+The response example is used in the *Member*, *Points*, and *Tiers* sections below.
 
-```json Get member response: Points wrap lines expandable highlight={10,20-38,40,41,44,45,48-50}
+```json Get membership response wrap lines expandable highlight={3-10,13-17,19,29-47,50,51,54,55,58-60,115-151}
 {
-    "id": "lmbr_128f962dbc8c4ba5dc",
-    "customer_id": "cust_6onRrs4kCnvSVrTs5YtDPFBG",
-    "program_id": "lprg_128f58429f4c4bf7b2",
-    "status": "ACTIVE",
-    "metadata": {},
-    "created_at": "2026-06-11T15:59:41.298Z",
-    "updated_at": null,
-    "object": "member",
+    "member": {
+        "id": "lmbr_128f962dbc8c4ba5dc",
+        "customer_id": "cust_6onRrs4kCnvSVrTs5YtDPFBG",
+        "program_id": "lprg_128f58429f4c4bf7b2",
+        "status": "ACTIVE",
+        "metadata": {},
+        "created_at": "2026-06-11T15:59:41.298Z",
+        "updated_at": null,
+        "object": "member"
+    },
+    "program": {
+        "id": "lprg_128f58429f4c4bf7b2",
+        "name": "AnnualProgram",
+        "status": "ACTIVE",
+        "metadata": {},
+        "object": "program"
+    },
     "cards": [
         {
             "member_role": "OWNER",
             "created_at": "2026-06-11T15:59:41.303Z",
-            "tier_progress": null,
             "card": {
                 "id": "lcrd_128f962dbd8c4ba5df",
                 "card_definition_id": "lcdef_128f495f720c4bec8c",
@@ -1261,35 +1269,37 @@ With the Get member endpoint you can create a member profile that lists points a
                 "code": "SummerTime-7z8dWawICd",
                 "lifetime_bucket": {
                     "points": {
-                        "total": 50,
-                        "earned": 0,
-                        "added": 50,
-                        "subtracted": 0,
-                        "expired": 0,
-                        "spent": 0,
+                        "total": 740,
+                        "earned": 40,
+                        "added": 700,
+                        "purchased": 0,
+                        "purchased_reversed": 0,
+                        "subtracted": 30,
+                        "expired": 300,
+                        "spent": 250,
                         "refunded": 0,
                         "returned": 0,
-                        "locked": 0,
-                        "unlocked": 0
+                        "locked": 250,
+                        "unlocked": 250
                     },
                     "pending_points": {
-                        "total": 40,
-                        "activated": 0,
+                        "total": 50,
+                        "activated": 40,
                         "canceled": 0
                     }
                 },
                 "balance": {
-                    "points": 50,
-                    "pending_points": 40
+                    "points": 160,
+                    "pending_points": 10
                 },
                 "next_expiration": {
-                    "points": 50,
-                    "date": "2026-07-15"
+                    "points": 160,
+                    "date": "2026-08-08"
                 },
                 "next_activation": {
-                    "points": 40,
+                    "points": 10,
                     "type": "PERIOD_BASED",
-                    "date": "2026-06-21"
+                    "date": "2026-07-20"
                 },
                 "object": "card"
             },
@@ -1298,7 +1308,6 @@ With the Get member endpoint you can create a member profile that lists points a
         {
             "member_role": "OWNER",
             "created_at": "2026-06-11T15:59:41.303Z",
-            "tier_progress": null,
             "card": {
                 "id": "lcrd_128f962dbd8c4ba5e0",
                 "card_definition_id": "lcdef_128f49963c0c4becb7",
@@ -1309,6 +1318,8 @@ With the Get member endpoint you can create a member profile that lists points a
                         "total": 50,
                         "earned": 0,
                         "added": 50,
+                        "purchased": 0,
+                        "purchased_reversed": 0,
                         "subtracted": 0,
                         "expired": 0,
                         "spent": 0,
@@ -1318,21 +1329,21 @@ With the Get member endpoint you can create a member profile that lists points a
                         "unlocked": 0
                     },
                     "pending_points": {
-                        "total": 40,
+                        "total": 50,
                         "activated": 0,
                         "canceled": 0
                     }
                 },
                 "balance": {
                     "points": 50,
-                    "pending_points": 40
+                    "pending_points": 50
                 },
                 "next_expiration": {
                     "points": 50,
                     "date": "2026-12-23"
                 },
                 "next_activation": {
-                    "points": 40,
+                    "points": 50,
                     "type": "FIXED_DATES",
                     "date": "2026-12-23"
                 },
@@ -1345,137 +1356,37 @@ With the Get member endpoint you can create a member profile that lists points a
             "created_at": "2026-06-11T15:59:41.303Z",
             "tier_progress": {
                 "current": {
-                    "id": "lt_128f4b466a0c4bee03",
-                    "name": "Gold",
-                    "activated_at": "2026-06-15T18:36:23.073Z",
+                    "id": "lt_128f4b46400c4bedfb",
+                    "name": "Bronze",
+                    "activated_at": "2026-07-13T17:22:22.626Z",
                     "expires_at": null,
                     "points": {
-                        "current": 250,
-                        "min": 200,
-                        "max": 299
+                        "current": 0,
+                        "min": 0,
+                        "max": 99
                     }
                 },
+                "deferred": [],
                 "tier_structure": {
                     "id": "lts_128f4b460e4c4bedf6",
                     "object": "tier_structure"
                 },
-                "risks": [
-                    {
-                        "type": "TIER_DOWNGRADE",
-                        "date": "2026-01-31T00:00:00.000Z",
-                        "tier_id": "lt_128f4b46558c4bedff"
-                    }
-                ],
+                "risks": [],
                 "opportunities": [
                     {
                         "valid_until": null,
-                        "tier_id": "lt_128f4b46808c4bee07",
-                        "points": 50
-                    }
-                ],
-                "object": "member_tier_progress"
-            },
-            "card": {
-                "id": "lcrd_128f962dbd8c4ba5e1",
-                "card_definition_id": "lcdef_128f4a88414c4bed69",
-                "card_type": "INDIVIDUAL",
-                "code": "AnnualTime-7M7ShPGfme",
-                "lifetime_bucket": {
-                    "points": {
-                        "total": 650,
-                        "earned": 650,
-                        "added": 0,
-                        "subtracted": 0,
-                        "expired": 0,
-                        "spent": 150,
-                        "refunded": 0,
-                        "returned": 0,
-                        "locked": 0,
-                        "unlocked": 0
+                        "tier_id": "lt_128f4b46558c4bedff",
+                        "points": 100
                     },
-                    "pending_points": {
-                        "total": 550,
-                        "activated": 400,
-                        "canceled": 0
-                    }
-                },
-                "balance": {
-                    "points": 500,
-                    "pending_points": 200
-                },
-                "next_expiration": {
-                    "points": 250,
-                    "date": "2026-12-31"
-                },
-                "next_activation": {
-                    "points": 150,
-                    "type": "PERIOD_BASED",
-                    "date": "2026-06-25"
-                },
-                "object": "card"
-            },
-            "object": "member_card"
-        }
-    ]
-}
-```
-
-#### Tiers
-
-If your program runs loyalty tiers, you can also use the Get member endpoint to return the details about the current tier progress for a given loyalty card. Use the data from the `tier_progress` object (starting at line 14) to build a member profile that will display the active tier, and also risks and opportunities:
-- `current` returns the loyalty tier the member is currently on, including the tier ID, name, when the member achieved it and the point range (lines 15–25).
-- `risks` returns data for tier expiration and downgrade. In the example, the member will fall to a lower tier (`tier_id`) on a specified date (lines 31–35).
-- `opportunities` returns the number of points the member must earn to reach higher tiers (lines 38–47).
-
-In this configuration, the tiers are based on the member's current point balance, but tier downgrade has a grace period of one month.
-
-```json Get member response: Loyalty tiers wrap lines expandable highlight={14,15-25,31-35,38-47}
-{
-    "id": "lmbr_128f962dbc8c4ba5dc",
-    "customer_id": "cust_6onRrs4kCnvSVrTs5YtDPFBG",
-    "program_id": "lprg_128f58429f4c4bf7b2",
-    "status": "ACTIVE",
-    "metadata": {},
-    "created_at": "2026-06-11T15:59:41.298Z",
-    "updated_at": null,
-    "object": "member",
-    "cards": [
-        {
-            "member_role": "OWNER",
-            "created_at": "2026-06-11T15:59:41.303Z",
-            "tier_progress": {
-                "current": {
-                    "id": "lt_128f4b46558c4bedff",
-                    "name": "Silver",
-                    "activated_at": "2026-06-17T15:05:35.347Z",
-                    "expires_at": null,
-                    "points": {
-                        "current": 199,
-                        "min": 100,
-                        "max": 199
-                    }
-                },
-                "tier_structure": {
-                    "id": "lts_128f4b460e4c4bedf6",
-                    "object": "tier_structure"
-                },
-                "risks": [
-                    {
-                        "type": "TIER_DOWNGRADE",
-                        "date": "2026-06-30T00:00:00.000Z",
-                        "tier_id": "lt_128f4b46400c4bedfb"
-                    }
-                ],
-                "opportunities": [
                     {
                         "valid_until": null,
                         "tier_id": "lt_128f4b466a0c4bee03",
-                        "points": 1
+                        "points": 200
                     },
                     {
                         "valid_until": null,
                         "tier_id": "lt_128f4b46808c4bee07",
-                        "points": 101
+                        "points": 300
                     }
                 ],
                 "object": "member_tier_progress"
@@ -1487,43 +1398,70 @@ In this configuration, the tiers are based on the member's current point balance
                 "code": "AnnualTime-7M7ShPGfme",
                 "lifetime_bucket": {
                     "points": {
-                        "total": 650,
-                        "earned": 650,
-                        "added": 0,
-                        "subtracted": 0,
+                        "total": 1250,
+                        "earned": 250,
+                        "added": 1000,
+                        "purchased": 0,
+                        "purchased_reversed": 0,
+                        "subtracted": 1000,
                         "expired": 0,
                         "spent": 150,
                         "refunded": 0,
                         "returned": 0,
-                        "locked": 0,
-                        "unlocked": 0
+                        "locked": 10,
+                        "unlocked": 10
                     },
                     "pending_points": {
-                        "total": 550,
-                        "activated": 400,
+                        "total": 300,
+                        "activated": 250,
                         "canceled": 0
                     }
                 },
                 "balance": {
-                    "points": 500,
-                    "pending_points": 200
+                    "points": 100,
+                    "pending_points": 50
                 },
-                "next_expiration": {
-                    "points": 250,
-                    "date": "2026-12-31"
-                },
+                "next_expiration": null,
                 "next_activation": {
-                    "points": 150,
+                    "points": 50,
                     "type": "PERIOD_BASED",
-                    "date": "2026-06-25"
+                    "date": "2026-07-20"
                 },
                 "object": "card"
             },
             "object": "member_card"
         }
-    ]
+    ],
+    "object": "membership"
 }
 ```
+
+#### Member
+
+The `member` object (lines 2–11 of the response above) holds the profile data you use to identify the member in your system and reflect their status in the program:
+- `id`: The loyalty member ID assigned by Voucherify (line 3). Store it alongside your own customer record and pass it back on subsequent calls to this endpoint.
+- `customer_id`: Links the member to a Voucherify customer (line 4), which you can use to correlate loyalty activity with the customer profile in your CRM.
+- `program_id`: Identifies the loyalty program the member belongs to (line 5). Combined with the top-level `program` object, this lets you support integrations that manage several programs at once.
+- `status`: Shows whether the member is `ACTIVE` or `INACTIVE` (line 6). Use it to gate loyalty features in your UI. For example, hide the "Redeem points" action for inactive members.
+- `metadata`: Returns any custom attributes you added to the member (line 7), such as an internal loyalty tier from another system or the enrollment channel.
+- `created_at` and `updated_at` are timestamps for when the member was created and last modified (lines 8, 9).
+
+#### Points
+
+With the Get membership endpoint you can create a member profile that lists points available to a member. Each of the member's loyalty cards is returned in the `cards` array (starting at line 19). The details regarding points are stored in the following objects (referenced here from the first card, `SummerTime-7z8dWawICd`):
+- `lifetime_bucket`: Stores historical details regarding `points` and `pending_points` (lines 29–47). For example, you can use the data to show how many points were `earned`, `spent`, `expired`, and so on.
+- `balance`: Stores the details about the current number of available points (`balance.points`) for spending and the current number of `pending_points` (lines 50, 51).
+- `next_expiration`: Stores the details about the number of points that are about to expire and the nearest date (lines 54, 55). If you configured point expiration, you can use this data to nudge your members to spend the points before they expire.
+- `next_activation`: Stores the details about the date and number of points that are about to be activated from the pending state as well as the type of the activation (lines 58–60).
+
+#### Tiers
+
+If your program runs loyalty tiers, you can also use the Get membership endpoint to return the details about the current tier progress for a given loyalty card.
+
+Use the data from the `tier_progress` object on the relevant card in the `cards` array (lines 115–151 of the response above, on the third card `AnnualTime-7M7ShPGfme`) to build a member profile that will display the active tier, and also risks and opportunities:
+- `current`: Returns the loyalty tier the member is currently on, including the tier ID, name, when the member achieved it and the point range (lines 116–126).
+- `risks`: Returns data for tier expiration and downgrade (line 132). In this example the array is empty, meaning the member is not scheduled to lose their current tier.
+- `opportunities`: Returns the number of points the member must earn to reach higher tiers (lines 133–149).
 
 ### List transactions
 
