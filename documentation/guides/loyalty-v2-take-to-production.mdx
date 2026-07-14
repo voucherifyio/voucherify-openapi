@@ -1,6 +1,6 @@
 ---
 title: "Take Loyalty v2 to production"
-description: "Move your Voucherify Loyalty v2 integration from Sandbox to Production, plus troubleshooting."
+description: "Move your Voucherify Loyalty v2 integration from Sandbox to Production, and solve most frequent issues"
 keywords: ["loyalty integration", "production", "go-live", "troubleshooting", "voucherify v2"]
 tag: "NEW"
 ---
@@ -100,6 +100,27 @@ Resolve operational friction points, API structural anomalies, and edge cases co
         - Cross-project scope separation: Verify that the request headers (`X-App-Id` and `X-App-Token`) point to the identical dashboard environment containing the referenced loyalty program ID (`lprg_...`).
     </Accordion>
 
+    <Accordion title="HTTP 409: Conflict – resource already exists">
+        The Voucherify API returns an HTTP `409 Conflict` response code if a resource already exists in a loyalty program.
+
+        The most frequent case is an attempt to assign a customer to a loyalty program campaign when that customer profile is already an active member of that specific campaign.
+    
+        Solutions:
+        - Verify ID uniqueness: Ensure that the integration request payload contains a unique, non-registered customer ID that is not currently associated with the program. If you use several loyalty programs, verify that the program IDs are not duplicated in the request.
+        - Implement get-before-create (read-first pattern): Before registering a customer, query the Voucherify memberships API (`GET /v2/loyalties/memberships/{customerId}`) to check if the customer profile already is a member for the target loyalty program ID.
+        - Graceful client-side redirection (soft-catch): Intercept the HTTP `409` error code on your backend integration layer. Instead of returning an error to the user interface, treat the conflict as a validation that the user is registered. Retrieve their existing active loyalty member data and transition the user interface directly to the active loyalty program dashboard.
+    </Accordion>
+
+    <Accordion title="HTTP 423: Locked – resource state constraint">
+
+        The Voucherify API returns an HTTP `423 Locked` response code if you attempt to perform an action on a resource that is restricted due to the resource's current status, active validity rules, or balance limitations.
+        
+        Solutions:
+        - Reward validity window: Verify that you are attempting to redeem or purchase the reward within the reward's scheduled active time frame. If the transaction occurs outside of the reward's configured validity dates and hours, Voucherify blocks the request. You can adjust the active dates of the reward in the **Loyalty hub**.
+        - **Zero card balance**: Check if the gift card or loyalty card has a positive balance before executing the transaction. If the card balance is zero, the operation fails, and you must add funds to the card or select a different payment card.
+    
+    </Accordion>
+
     <Accordion title="Frontend synchronization errors caused by asynchronous code generation">
 
         The Voucherify database assigns loyalty card code fields asynchronously. Immediately after triggering POST Create member, the response payload may expose `cards[].card.code` as a `null` value.
@@ -118,4 +139,3 @@ Resolve operational friction points, API structural anomalies, and edge cases co
     </Accordion>
 
 </AccordionGroup>
-
