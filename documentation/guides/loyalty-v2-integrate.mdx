@@ -1225,21 +1225,21 @@ Use the following endpoints and data to create a member profile which helps reta
 
 ### Get membership
 
-Use the [GET membership](/api-reference/programs/get-membership) endpoint (`GET /v2/loyalties/programs/{programId}/memberships/{memberId}`) to create a member profile that will show:
+Use the [GET membership](/api-reference/programs/get-membership) endpoint (`GET /v2/loyalties/programs/{programId}/memberships/{memberId}?identification_type=member_id`) to create a member profile that will show:
 - The member's identity and status in the program.
-- All cards the member has in the program.
+- All loyalty cards the member has in the program.
 - Current point balance, pending points, and other life time point data.
 - Dates for point expiration and activation.
 - Current progress in the tier structure.
 
 The response is a `membership` object that groups three top-level fields:
-- `member` — the member's profile in the program (lines 2–11).
-- `program` — a summary of the loyalty program the member belongs to (lines 12–18). This is useful when your integration handles several programs and needs to disambiguate which program the response refers to.
-- `cards` — the list of loyalty cards issued to the member (starting at line 19), used to render points and tier progress.
+- `member`: The member's profile in the program (lines 3–10).
+- `program`: A summary of the loyalty program the member belongs to (lines 13–17). This is useful when your integration handles several programs and needs to identify the program referred to in the response.
+- `cards`: The list of loyalty cards issued to the member (starting at line 19), used to render points and tier progress.
 
-Use the same response for the `#### Member`, `#### Points`, and `#### Tiers` subsections below.
+The response example is used in the *Member*, *Points*, and *Tiers* sections below.
 
-```json Get membership response wrap lines expandable
+```json Get membership response wrap lines expandable highlight={3-10,13-17,19,29-47,50,51,54,55,58-60,115-151}
 {
     "member": {
         "id": "lmbr_128f962dbc8c4ba5dc",
@@ -1398,32 +1398,32 @@ Use the same response for the `#### Member`, `#### Points`, and `#### Tiers` sub
                 "code": "AnnualTime-7M7ShPGfme",
                 "lifetime_bucket": {
                     "points": {
-                        "total": 90690887,
-                        "earned": 684150,
-                        "added": 90006737,
+                        "total": 1250,
+                        "earned": 250,
+                        "added": 1000,
                         "purchased": 0,
                         "purchased_reversed": 0,
-                        "subtracted": 90686642,
+                        "subtracted": 1000,
                         "expired": 0,
-                        "spent": 4245,
+                        "spent": 150,
                         "refunded": 0,
                         "returned": 0,
-                        "locked": 49733,
-                        "unlocked": 49733
+                        "locked": 10,
+                        "unlocked": 10
                     },
                     "pending_points": {
-                        "total": 687149,
-                        "activated": 684150,
+                        "total": 300,
+                        "activated": 250,
                         "canceled": 0
                     }
                 },
                 "balance": {
-                    "points": 0,
-                    "pending_points": 2999
+                    "points": 100,
+                    "pending_points": 50
                 },
                 "next_expiration": null,
                 "next_activation": {
-                    "points": 2999,
+                    "points": 50,
                     "type": "PERIOD_BASED",
                     "date": "2026-07-20"
                 },
@@ -1438,28 +1438,30 @@ Use the same response for the `#### Member`, `#### Points`, and `#### Tiers` sub
 
 #### Member
 
-The `member` object (lines 2–11 of the response above) holds the profile data you use to identify the member in your system and reflect their standing in the program:
-- `id` is the loyalty member ID assigned by Voucherify (line 3). Store it alongside your own customer record and pass it back on subsequent calls to this endpoint.
-- `customer_id` links the member to a Voucherify customer (line 4), which you can use to correlate loyalty activity with the customer profile in your CRM.
-- `program_id` identifies the loyalty program the member belongs to (line 5). Combined with the top-level `program` object, this lets you support integrations that manage several programs at once.
-- `status` shows whether the member is `ACTIVE` or `INACTIVE` (line 6). Use it to gate loyalty features in your UI — for example, hide the "Redeem points" action for inactive members.
-- `metadata` returns any custom attributes you added to the member (line 7), such as an internal loyalty tier from another system or the enrollment channel.
+The `member` object (lines 2–11 of the response above) holds the profile data you use to identify the member in your system and reflect their status in the program:
+- `id`: The loyalty member ID assigned by Voucherify (line 3). Store it alongside your own customer record and pass it back on subsequent calls to this endpoint.
+- `customer_id`: Links the member to a Voucherify customer (line 4), which you can use to correlate loyalty activity with the customer profile in your CRM.
+- `program_id`: Identifies the loyalty program the member belongs to (line 5). Combined with the top-level `program` object, this lets you support integrations that manage several programs at once.
+- `status`: Shows whether the member is `ACTIVE` or `INACTIVE` (line 6). Use it to gate loyalty features in your UI. For example, hide the "Redeem points" action for inactive members.
+- `metadata`: Returns any custom attributes you added to the member (line 7), such as an internal loyalty tier from another system or the enrollment channel.
 - `created_at` and `updated_at` are timestamps for when the member was created and last modified (lines 8, 9).
 
 #### Points
 
 With the Get membership endpoint you can create a member profile that lists points available to a member. Each of the member's loyalty cards is returned in the `cards` array (starting at line 19). The details regarding points are stored in the following objects (referenced here from the first card, `SummerTime-7z8dWawICd`):
-- `lifetime_bucket` stores historical details regarding `points` and `pending_points` (lines 28–48). For example, you can use the data to show how many points were `earned`, `spent`, `expired`, and so on.
-- `balance` stores the details about the current number of available points (`balance.points`) for spending and the current number of `pending_points` (lines 50, 51).
-- `next_expiration` stores the details about the number of points that are about to expire and the nearest date (lines 54, 55). If you configured point expiration, you can use this data to nudge your members to spend the points before they expire.
-- `next_activation` stores the details about the date and number of points that are about to be activated from the pending state as well as the type of the activation (lines 58–60).
+- `lifetime_bucket`: Stores historical details regarding `points` and `pending_points` (lines 29–47). For example, you can use the data to show how many points were `earned`, `spent`, `expired`, and so on.
+- `balance`: Stores the details about the current number of available points (`balance.points`) for spending and the current number of `pending_points` (lines 50, 51).
+- `next_expiration`: Stores the details about the number of points that are about to expire and the nearest date (lines 54, 55). If you configured point expiration, you can use this data to nudge your members to spend the points before they expire.
+- `next_activation`: Stores the details about the date and number of points that are about to be activated from the pending state as well as the type of the activation (lines 58–60).
 
 #### Tiers
 
-If your program runs loyalty tiers, you can also use the Get membership endpoint to return the details about the current tier progress for a given loyalty card. Use the data from the `tier_progress` object on the relevant card in the `cards` array (lines 115–151 of the response above, on the third card `AnnualTime-7M7ShPGfme`) to build a member profile that will display the active tier, and also risks and opportunities:
-- `current` returns the loyalty tier the member is currently on, including the tier ID, name, when the member achieved it and the point range (lines 116–126).
-- `risks` returns data for tier expiration and downgrade (line 132). In this example the array is empty, meaning the member is not scheduled to lose their current tier.
-- `opportunities` returns the number of points the member must earn to reach higher tiers (lines 133–149).
+If your program runs loyalty tiers, you can also use the Get membership endpoint to return the details about the current tier progress for a given loyalty card.
+
+Use the data from the `tier_progress` object on the relevant card in the `cards` array (lines 115–151 of the response above, on the third card `AnnualTime-7M7ShPGfme`) to build a member profile that will display the active tier, and also risks and opportunities:
+- `current`: Returns the loyalty tier the member is currently on, including the tier ID, name, when the member achieved it and the point range (lines 116–126).
+- `risks`: Returns data for tier expiration and downgrade (line 132). In this example the array is empty, meaning the member is not scheduled to lose their current tier.
+- `opportunities`: Returns the number of points the member must earn to reach higher tiers (lines 133–149).
 
 ### List transactions
 
