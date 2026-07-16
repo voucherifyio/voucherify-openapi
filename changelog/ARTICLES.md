@@ -5,6 +5,10 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-07-06
+
+- Deleted `team-management.mdx` as it was outdated and duplicated fresh content.
+
 ## 2026-06-17
 
 - Renamed `dynamic-formula-builder.mdx` to `dynamic-formula-reference.mdx`
