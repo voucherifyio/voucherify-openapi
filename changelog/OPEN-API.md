@@ -8,6 +8,10 @@ Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
 Changed ReadMe callouts to Mintlify ones in the `OpenAPI.json` file.
 
+## 2026-07-16
+
+Add info about caching to `v1/qualifications` and `/client/v1/qualifications`.
+
 ## 2026-06-03
 
 Deleted `cockpits` object from the `ManagementProjectsBrandingCreateRequestBody`, `ManagementProjectsBranding`, `ManagementProjectsBrandingUpdateRequestBody`
