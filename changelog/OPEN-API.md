@@ -4,6 +4,10 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-07-21
+
+Deprecated all `v1/loyalties` methods
+
 ## 2026-07-17
 
 Changed ReadMe callouts to Mintlify ones in the `OpenAPI.json` file.
