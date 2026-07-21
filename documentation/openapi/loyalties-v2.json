@@ -1843,7 +1843,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MemberWithCards"
+                  "$ref": "#/components/schemas/MemberCreateResponse"
                 },
                 "examples": {
                   "Member added to the program": {
@@ -2232,7 +2232,7 @@
           "Programs"
         ],
         "summary": "Batch create program members",
-        "description": "\n<Warning>\n\n<Badge color=\"yellow\">BETA endpoint</Badge>\n\nThis is a work-in-progress documentation of a BETA endpoint. The parameters, fields, request and response bodies, and other data may be subject to change. If you want to share feedback or improvements, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Warning>\n\nSchedules asynchronous batch creation of program members. The request body is a\nJSON array of member entries (maximum body size 10485760 bytes / 10 MB). The\nrequest is processed asynchronously in batches of 100 entries.\n\nThe program must exist (404) and be in `ACTIVE` status (423). Each entry is\nvalidated during background processing the same way as single member creation;\nentries that fail validation (missing/invalid `customer_id`, unknown customer,\ninvalid `status`, member already exists) are reported per-entry in the async action\nresult and do not fail the whole batch (conflicting members are skipped).\n\nReturns 202 with the identifier of the scheduled async action.",
+        "description": "\n<Warning>\n\n<Badge color=\"yellow\">BETA endpoint</Badge>\n\nThis is a work-in-progress documentation of a BETA endpoint. The parameters, fields, request and response bodies, and other data may be subject to change. If you want to share feedback or improvements, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Warning>\n\nSchedules asynchronous batch creation of program members. The request body is a JSON array of member entries (maximum body size is 10 MB). The request is processed asynchronously in batches of 100 entries.\n\nThe program must exist (otherwise, it returns a `404` error) and be in `ACTIVE` status (otherwise, it returns a `423` error). Each entry is validated during background processing the same way as single member creation. Entries that fail validation (missing/invalid `customer_id`, unknown customer, invalid `status`, member already exists) are reported per-entry in the async action result and do not fail the whole batch (conflicting members are skipped).\n\nReturns `202` status with the identifier of the scheduled async action. Use the [GET Async Action](/api-reference/async-actions/get-async-action) endpoint to check the status of the batch creation. You can also check the processing status and the result in the Audit log – [Background tasks](/analyze/audit-logs#background-tasks) in the Voucherify dashboard.",
         "parameters": [
           {
             "name": "programId",
@@ -2261,37 +2261,37 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MemberBatchScheduleResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Validation error - request body or query parameters failed validation, or the operation is not allowed in the current resource state.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                  "$ref": "#/components/schemas/MemberBatchCreateResponse"
+                },
+                "examples": {
+                  "Create members in batch: Async action": {
+                    "value": {
+                      "async_action_id": "aa_12c30928a207efcc66"
+                    }
+                  }
                 }
               }
             }
           },
           "404": {
-            "description": "Resource not found.",
+            "description": "Resource not found - the program ID could not be found.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Program not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find program with id lprg_128f5829f4c4bf7b2",
+                      "request_id": "v-12c31c59130a67bb28",
+                      "resource_id": "lprg_128f5829f4c4bf7b2",
+                      "resource_type": "program"
+                  }
+                  }
                 }
               }
             }
@@ -12325,7 +12325,14 @@
       },
       "MemberCreateRequest": {
         "type": "object",
+        "title": "Create program member request",
         "description": "Request body for creating a program member. No additional properties are allowed.",
+        "allOf": [{
+          "$ref": "#/components/schemas/MemberCreate"
+        }]
+      },
+      "MemberCreate": {
+        "type": "object",
         "properties": {
           "customer_id": {
             "type": "string",
@@ -12366,56 +12373,17 @@
         ],
         "additionalProperties": false
       },
+      "MemberCreateResponse": {
+        "$ref": "#/components/schemas/MemberWithCards"
+      },
       "MemberBatchCreateRequest": {
         "type": "array",
-        "description": "Request body for batch member creation - a JSON array of member entries. The raw\nbody is limited to 10485760 bytes (10 MB) and is processed asynchronously in\nbatches of 100 entries. Each entry is validated like a single member creation\nrequest during background processing; per-entry failures (invalid customer_id\nformat, unknown customer, invalid status, member already exists) are reported in\nthe async action result.",
+        "description": "Request body for batch member creation - a JSON array of member entries. The raw body is limited to 10485760 bytes (10 MB) and is processed asynchronously in batches of 100 entries. Each entry is validated like a single member creation request during background processing; per-entry failures (invalid customer_id format, unknown customer, invalid status, member already exists) are reported in the async action result.",
         "items": {
-          "$ref": "#/components/schemas/MemberBatchCreateItem"
+          "$ref": "#/components/schemas/MemberCreate"
         }
       },
-      "MemberBatchCreateItem": {
-        "type": "object",
-        "description": "A single member entry of the batch creation payload.",
-        "properties": {
-          "customer_id": {
-            "type": "string",
-            "pattern": "^cust_[a-zA-Z0-9]+",
-            "description": "ID of an existing customer to enroll as a member. Required per entry."
-          },
-          "status": {
-            "description": "Initial member status. Defaults to `ACTIVE` when omitted.",
-            "oneOf": [
-              {
-                "type": "string",
-                "enum": [
-                  "ACTIVE",
-                  "INACTIVE"
-                ]
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "default": "ACTIVE"
-          },
-          "metadata": {
-            "description": "Free-form metadata attached to the member. Defaults to an empty object.",
-            "oneOf": [
-              {
-                "type": "object"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "default": {}
-          }
-        },
-        "required": [
-          "customer_id"
-        ]
-      },
-      "MemberBatchScheduleResponse": {
+      "MemberBatchCreateResponse": {
         "type": "object",
         "description": "Result of scheduling the members batch creation.",
         "properties": {
