@@ -10,19 +10,19 @@ Iterable is a cross-channel marketing platform that powers unified customer expe
 
 Voucherify can boost customer experience by adding a voucher with a unique coupon code to each message sent to a customer. This voucher can encourage the customer to make a purchase or distribute referral codes to referrers.
 
-You can use Voucherify’s Publication request as a data feed in Iterable to track customers who received the voucher from you. You can use this action to start the validity period of the voucher or specify that only the voucher holders can use it.
+You can use Voucherify's Publication request as a data feed in Iterable to track customers who received the voucher from you. You can use this action to start the validity period of the voucher or specify that only the voucher holders can use it.
 
 In this article, you will learn how to configure the integration between Voucherify and Iterable.
 
 <Note>
-The integration with Iterable uses [API limits](/guides/limits#api-limits) for Data Feed.
+The integration with Iterable uses [API limits](/guides/limits#api-limits) for Data Feed.
 </Note>
 
 ## Configuration
 
-Voucherify offers different API requests that can be integrated with tools that understand REST APIs. Iterable works similarly: you can add the APIs as data feeds and use the feeds in a template. The data feeds must use Voucherify’s API keys for Iterable.
+Voucherify offers different API requests that can be integrated with tools that understand REST APIs. Iterable works similarly: you can add the APIs as data feeds and use the feeds in a template. The data feeds must use Voucherify's API keys for Iterable.
 
-To generate the keys, go to the **Project Settings**. In the **General** tab, scroll down to **Integration Keys** and create a new integration API key for Iterable. In the **Name** field, enter the name for your key. In the drop-down lists, select **User** in **Role** and **Iterable** in **Integration**.
+To generate the keys, go to the **Project Settings**. In the **General** tab, scroll down to **Integration Keys** and create a new integration API key for Iterable. In the **Name** field, enter the name for your key. In the drop-down lists, select **User** in **Role** and **Iterable** in **Integration**.
 
 <ApiKey />
 
@@ -30,9 +30,9 @@ Once the API keys are generated, you can create data feeds in Iterable. Go to yo
 
 Select the **CREATE NEW FEED** button in the upper right part of the screen to create a new data feed.
 
-The data feed will use Voucherify’s publication mechanisms that assign a voucher to a customer. To add this mechanism to Iterable send-outs, you need to combine:
+The data feed will use Voucherify's publication mechanisms that assign a voucher to a customer. To add this mechanism to Iterable send-outs, you need to combine:
 
-*   Voucherify’s publication endpoint URL,
+*   Voucherify's publication endpoint URL,
 *   The application keys,
 *   A parameter that identifies the customer in Iterable,
 *   The Voucherify campaign that is the source of the vouchers.
@@ -49,7 +49,7 @@ Use the table below to find your endpoint for publications.
 | **United States**  | `https://us1.api.voucherify.io/v1/publications/create`            |
 | **Asia (Singapore)** | `https://as1.api.voucherify.io/v1/publications/create`          |
 
-The API URL must contain not only the customer’s ID as a parameter but also the name of the campaign. In this section, you will see how to receive a voucher from the Welcome Codes campaign.
+The API URL must contain not only the customer's ID as a parameter but also the name of the campaign. In this section, you will see how to receive a voucher from the Welcome Codes campaign.
 
 Here is an example of a URL: `https://api.voucherify.io/v1/publications/create?customer[source_id]={{#urlEncode}}{{source_id}}{{/urlEncode}}&campaign[name]=Welcome Codes`
 
@@ -65,7 +65,7 @@ Once the data feed is saved, you can use it in the templates.
 
 Select this option if your data feed returns the **same result for all recipients**. For example, a feed that provides the current list of active promotions.
 
-When enabled, Iterable **caches the feed’s response for one hour**.
+When enabled, Iterable **caches the feed's response for one hour**.
 
 *   If the same feed URL is requested again within that hour, Iterable uses the cached response.
 *   If not, Iterable sends a new request to the feed.
@@ -80,7 +80,7 @@ When adding your Voucherify code variable to an Iterable message template, you c
 
 If your setup involves **a single Voucherify campaign** connected to a single Iterable data feed (the most common and recommended scenario), use: `[[voucher.code]]`
 
-This variable will automatically populate with each recipient’s unique code published from Voucherify.
+This variable will automatically populate with each recipient's unique code published from Voucherify.
 
 Example:
 > Use your exclusive code [[voucher.code]] to get 10% off your next order!
@@ -162,9 +162,17 @@ In Iterable, create a **triggered email campaign**:
 - No data feed should be selected
 - The campaign is triggered directly using an Iterable API endpoint
 
-You can use dynamic fields, such as `couponCode`, in the email template. 
+You can reference dynamic fields sent from Voucherify directly in the email template, using Iterable's Handlebars syntax: double curly braces around the field name.
 
-These fields are filled with values sent from Voucherify.
+For example, if the webhook payload includes a `couponCode` field inside `dataFields`, add the following to the template:
+
+`{{couponCode}}`
+
+At send time, Iterable replaces this with the actual value passed in the webhook request.
+
+<Note>
+This syntax only works because the campaign is *triggered* by the same API call that carries the data. If you reference the field anywhere else, for example in a blast campaign, it won't resolve.
+</Note>
 
 ### Generate an Iterable API key
 
@@ -176,7 +184,11 @@ To allow Voucherify to send requests to Iterable:
   </Step>
 
   <Step title="Create an API key">
-    Create a new **API key**.
+    Create a new **API key**, and set its type to **Server-side**.
+
+    <Note>
+    Server-side keys have full read/write access and are meant to be used only in server-to-server calls, like the webhook Voucherify sends here. Don't use a client-side key for this integration.
+    </Note>
   </Step>
 
   <Step title="Save the API key">
@@ -203,11 +215,24 @@ It is used only to trigger a custom webhook.
 In the distribution action, configure a **custom webhook**.
 
 <Steps>
+  <Step title="Target URL">
+    Set the webhook's target URL to Iterable's campaign trigger endpoint:
+
+    - **US-hosted (USDC) projects:** `https://api.iterable.com/api/campaigns/trigger`
+    - **EU-hosted (EDC) projects:** `https://api.eu.iterable.com/api/campaigns/trigger`
+
+    Use the base URL that matches the data center your Iterable project is hosted on. An API key from one data center won't authenticate against the other's endpoint. If you're not sure which one your project uses, check with your Iterable account administrator or your Iterable representative.
+  </Step>
+
   <Step title="Headers">
     Add an authorization header using the Iterable API key:
 
-    - Header name: `Api-Key`
+    - Header name: `api-key`
     - Header value: `<ITERABLE_API_KEY>`
+
+    <Note>
+    Voucherify's header-name field requires lowercase. Entering `Api-Key` (capitalized) will be rejected and won't let you proceed. This doesn't affect Iterable's side. HTTP header names are case-insensitive, so `api-key` is delivered and read the same way as `Api-Key` would be.
+    </Note>
   </Step>
 
   <Step title="Payload">
