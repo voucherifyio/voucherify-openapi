@@ -2232,7 +2232,7 @@
           "Programs"
         ],
         "summary": "Batch create program members",
-        "description": "\n<Warning>\n\n<Badge color=\"yellow\">BETA endpoint</Badge>\n\nThis is a work-in-progress documentation of a BETA endpoint. The parameters, fields, request and response bodies, and other data may be subject to change. If you want to share feedback or improvements, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Warning>\n\nSchedules asynchronous batch creation of program members. The request body is a JSON array of member entries (maximum body size is 10 MB). The request is processed asynchronously in batches of 100 entries.\n\nThe program must exist (otherwise, it returns a `404` error) and be in `ACTIVE` status (otherwise, it returns a `423` error). Supported member fields are validated during background processing using the same domain validation rules as single member creation. Entries that fail validation (missing/invalid `customer_id`, unknown customer, invalid `status`, member already exists) are reported per-entry  individually in the report linked from the async action result. The failed entries do not fail the whole batch (conflicting members are skipped).\n\nReturns `202` status with the identifier of the scheduled async action. Use the [GET Async Action](/api-reference/async-actions/get-async-action) endpoint to check the status of the batch creation. You can also check the processing status and the result in the Audit log – [Background tasks](/analyze/audit-logs#background-tasks) in the Voucherify dashboard.",
+        "description": "\n<Warning>\n\n<Badge color=\"yellow\">BETA endpoint</Badge>\n\nThis is a work-in-progress documentation of a BETA endpoint. The parameters, fields, request and response bodies, and other data may be subject to change. If you want to share feedback or improvements, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Warning>\n\nSchedules asynchronous batch creation of program members. The request body is a JSON array of member entries (maximum body size is 10 MB). The request is processed asynchronously in batches of 100 entries.\n\nThe program must exist (otherwise, it returns a `404` error) and be in `ACTIVE` status (otherwise, it returns a `423` error). Supported member fields are validated during background processing using the same domain validation rules as single member creation. Entries that fail validation (missing/invalid `customer_id`, unknown customer, invalid `status`, duplicate `customer_id` within the same batch, member already exists) are reported per-entry  individually in the report linked from the async action result. The failed entries do not fail the whole batch (conflicting members are skipped).\n\nReturns `202` status with the identifier of the scheduled async action. Use the [GET Async Action](/api-reference/async-actions/get-async-action) endpoint to check the status of the batch creation. You can also check the processing status and the result in the Audit log – [Background tasks](/analyze/audit-logs#background-tasks) in the Voucherify dashboard.",
         "parameters": [
           {
             "name": "programId",
@@ -2296,12 +2296,42 @@
               }
             }
           },
+          "413": {
+            "description": "Payload too large - the request body exceeds the 10 MB limit.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequest"
+                },
+                "examples": {
+                  "Request Entity Too Large": {
+                    "value": {
+                      "statusCode": 413,
+                      "error": "Request Entity Too Large",
+                      "message": "Payload content length greater than maximum allowed: 10485760"
+                    }
+                  }
+                }
+              }
+            }
+          },
           "423": {
             "description": "Resource locked - a related resource is in a state that prevents this operation.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Non-active program": {
+                    "value": {
+                      "code": 423,
+                      "key": "non_active_program",
+                      "message": "Invalid program status",
+                      "details": "Cannot create members when program status is not ACTIVE",
+                      "request_id": "v-12c31c59130a67bb28"
+                    }
+                  }
                 }
               }
             }
@@ -10132,6 +10162,24 @@
           }
         }
       },
+      "BadRequest": {
+        "type": "object",
+        "description": "Framework-level error returned when the raw request payload is rejected before reaching domain validation (for example, when it exceeds a configured size limit).",
+        "properties": {
+          "statusCode": {
+            "type": "integer",
+            "description": "HTTP status code of the error."
+          },
+          "error": {
+            "type": "string",
+            "description": "Short, human-readable description of the HTTP status."
+          },
+          "message": {
+            "type": "string",
+            "description": "Human-readable message with more details about the error."
+          }
+        }
+      },
       "ProgramValidityDailyHoursUpsert": {
         "type": "object",
         "description": "A single daily validity-hours window definition.",
@@ -12661,8 +12709,7 @@
         },
         "required": [
           "customer_id"
-        ],
-        "additionalProperties": false
+        ]
       },
       "MemberCreateResponse": {
         "$ref": "#/components/schemas/MemberWithCards"
