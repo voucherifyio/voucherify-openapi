@@ -1,0 +1,43 @@
+---
+title: "Members overview"
+description: "Understand how customers are enrolled as members of a Loyalty v2 program, and how their loyalty cards, points, rewards, and payments are managed."
+keywords: ['loyalty v2', 'loyalty members', 'loyalty cards', 'pending points', 'reward purchases', 'pay with points']
+---
+
+A member is a Voucherify customer enrolled in a specific loyalty program. Membership is program-scoped: the same customer can be a member of several programs at once, but only once per program — a second enrollment attempt for the same customer is rejected. The customer must already exist in Voucherify, and the target program must be `ACTIVE` before it can accept new members.
+
+## Enrollment
+
+Members can be created one at a time, or in bulk through a batch endpoint that processes up to 10 MB of entries asynchronously in batches of 100, tracked as an [async action](/api-reference/async-actions/async-action-object). When a member is created, Voucherify automatically issues one loyalty card for every active card definition assigned to the program, so a member can start with several point wallets at once. Card `code` generation happens asynchronously, so a newly created card's `code` may briefly be `null`.
+
+## Member lifecycle
+
+A member is typically `ACTIVE` on creation, but can also be created as `INACTIVE`. Use the activate and deactivate endpoints to move a member between these two states — an inactive member can't earn or spend points. Deleting a member soft-deletes the member and its cards.
+
+## Loyalty cards and points
+
+Each of a member's loyalty cards tracks its own balance, lifetime point counters, and upcoming activation or expiration events. Beyond the automatic earning and spending flows, several endpoints let you manage points on a specific card directly:
+- Manually add or subtract points, which records an admin credit or debit transaction.
+- List, and optionally manually activate or cancel, **pending points** buckets before their scheduled activation date.
+- List, and optionally manually expire, **expiring points** buckets before their scheduled expiration date.
+- List the full transaction history of a card, or pull an aggregated daily points report for a date range.
+
+## Rewards and payments
+
+Members spend points in two ways, both scoped to a member's card:
+- **Purchasing a reward** — spends points from the card tied to the reward's cost configuration, and can later be refunded, which returns the points to the card.
+- **Paying for an order with points** — spends points based on the card definition's pay-with-points exchange ratio, capped by the card balance or an optional payment limit, and can be run as a dry run before committing to a real transaction.
+
+Members also expose read-only history for benefit fulfillments and tier transitions (joins, upgrades, downgrades, prolongations, and exits), so you can build a complete activity feed for a member without combining several other endpoints.
+
+## Member vs. membership
+
+Two related endpoints return a member's data from different angles: get member returns the member together with its cards within one program, while get membership additionally enriches each card with tier progress. Use membership whenever your integration needs to show a member's progress toward the next loyalty tier.
+
+## Related resources
+
+- [Programs overview](/api-reference/loyalty-v2-programs-overview)
+- [Card Definitions overview](/api-reference/loyalty-v2-card-definitions-overview)
+- [Rewards overview](/api-reference/loyalty-v2-rewards-overview)
+- [Tier Structures overview](/api-reference/loyalty-v2-tier-structures-overview)
+- [Integrate loyalty v2](/guides/loyalty-v2-integrate) for a step-by-step member integration walkthrough

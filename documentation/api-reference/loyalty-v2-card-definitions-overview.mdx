@@ -1,0 +1,41 @@
+---
+title: "Card Definitions overview"
+description: "Understand how card definitions configure the loyalty cards (point wallets) that store and govern a member's points in Loyalty v2."
+keywords: ['loyalty v2', 'card definitions', 'point wallets', 'points expiration', 'earning limits', 'spending limits']
+---
+
+A card definition is the configuration blueprint for a loyalty card. In the **Loyalty hub** dashboard, this same resource is called a **point wallet**. Every loyalty card a member holds is generated from a card definition, which controls how points on that card are earned, held, spent, and eventually expire.
+
+A loyalty program can reference multiple card definitions. When a customer becomes a member of a program, Voucherify automatically creates one loyalty card for each active card definition assigned to that program, so a member can hold several point balances at once (for example, a standard points wallet and a separate seasonal-promotion wallet).
+
+## What a card definition controls
+
+Besides `name` and `type`, a card definition groups several independent configuration sections. Any section left out on creation falls back to a permissive default:
+- `code_config` — the pattern used to generate loyalty card codes (defaults to a 10-character alphanumeric pattern).
+- `points_expiration` — whether and how points expire (defaults to `NO_EXPIRATION`).
+- `pending_points` — whether newly earned points are available immediately or held back for a period, until a fixed date, or until an activation event (defaults to `IMMEDIATE`).
+- `earning_limits` and `spending_limits` — global and per-transaction caps on how many points a member can earn or spend (default to `NO_LIMIT`).
+- `refunds` — what happens to earned or spent points when a related order is refunded (default to `NONE`).
+- `balance_settings` — whether the card balance is allowed to go negative (defaults to disallowed).
+- `pay_with_points` — the exchange ratio formula used when members pay for orders with points.
+
+## Lifecycle
+
+A card definition is created in `DRAFT` status by default. Use the activate and draft endpoints to move it between `DRAFT` and `ACTIVE`:
+- `DRAFT` → `ACTIVE`: makes the card definition eligible to be assigned to a program and used for new loyalty cards.
+- `ACTIVE` → `DRAFT`: takes the card definition out of circulation for new assignments.
+
+Once a card definition is in use — for example assigned to a program that already issued cards from it — most configuration sections become locked to protect existing point balances. Only `name`, `metadata`, and `pay_with_points` can always be updated regardless of usage; other sections may be rejected with a resource-locked error until the card definition is no longer referenced.
+
+## How card definitions fit into a program
+
+Card definitions are standalone resources, created and managed independently of any single program, then connected through the [Programs](/api-reference/loyalty-v2-programs-overview) assignment endpoints. A program needs at least one active card definition before it can itself become `ACTIVE`. Deleting a card definition or removing its assignment does not delete the loyalty cards already issued from it, but it does stop new cards from that definition being created for future members.
+
+Every activity performed on a card definition — creation, updates, status transitions, and program assignments — is recorded and available through its activity history endpoint, which is useful for auditing configuration changes over time.
+
+## Related resources
+
+- [Point wallet builder](/build/point-wallet-builder) for the point wallet concept as presented in the dashboard.
+- [Programs overview](/api-reference/loyalty-v2-programs-overview) to see how card definitions are assigned to a program.
+- [Members overview](/api-reference/loyalty-v2-members-overview) to see how loyalty cards are issued to members from active card definitions.
+- [Integrate loyalty v2](/guides/loyalty-v2-integrate) for an end-to-end integration walkthrough.
