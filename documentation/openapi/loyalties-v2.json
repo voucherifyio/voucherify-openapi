@@ -25,7 +25,7 @@
   "tags": [
     {
       "name": "Programs",
-      "description": "Loyalty program CRUD, lifecycle management, program-scoped resource assignments (card definitions, earning rules, rewards, tier structures), member management (create, list, get, activate, deactivate, delete), card operations (points adjustment, pending points, expiring points, transactions), reward purchases, and activity history."
+      "description": "Loyalty program CRUD, lifecycle management, program-scoped resource assignments (card definitions, earning rules, rewards, tier structures), member management (create, list, get, activate, deactivate, delete), membership retrieval (member + program + cards with tier progress, by customer ID, customer source ID, or member ID), card operations (points adjustment, pending points, expiring points, transactions), reward purchases, and activity history."
     },
     {
       "name": "Card Definitions",
@@ -2290,7 +2290,7 @@
                       "request_id": "v-12c31c59130a67bb28",
                       "resource_id": "lprg_128f5829f4c4bf7b2",
                       "resource_type": "program"
-                  }
+                    }
                   }
                 }
               }
@@ -2325,7 +2325,7 @@
         "tags": [
           "Programs"
         ],
-        "summary": "Get a program member",
+        "summary": "Get program member",
         "description": "\n<Warning>\n\n<Badge color=\"yellow\">BETA endpoint</Badge>\n\nThis is a work-in-progress documentation of a BETA endpoint. The parameters, fields, request and response bodies, and other data may be subject to change. If you want to share feedback or improvements, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Warning>\n\nReturns a single member of the program together with all its loyalty cards.\nEach card includes the current balance, lifetime bucket counters, and next\nexpiration/activation info.\n\nCard `code` may be `null` shortly after member creation because card code\ngeneration is asynchronous.\n\nReturns 404 when the program or member does not exist.",
         "parameters": [
           {
@@ -2612,6 +2612,254 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v2/loyalties/programs/{programId}/memberships/{customerId}": {
+      "parameters": [
+        {
+          "name": "programId",
+          "in": "path",
+          "required": true,
+          "description": "Unique loyalty program ID (format `lprg_[a-f0-9]+`) assigned by Voucherify.",
+          "schema": {
+            "type": "string",
+            "pattern": "^lprg_[a-f0-9]+$"
+          }
+        },
+        {
+          "name": "customerId",
+          "in": "path",
+          "required": true,
+          "description": "Identifier of the customer or member, interpreted according to `identification_type`: a Voucherify customer ID (`cust_...`), a customer `source_id`, or a loyalty member ID (`lmbr_...`).",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "operationId": "getProgramMembership",
+        "tags": [
+          "Programs"
+        ],
+        "summary": "Get program membership",
+        "description": "\n<Warning>\n\n<Badge color=\"yellow\">BETA endpoint</Badge>\n\nThis is a work-in-progress documentation of a BETA endpoint. The parameters, fields, request and response bodies, and other data may be subject to change. If you want to share feedback or improvements, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Warning>\n\nReturns a single membership - the member's full loyalty profile within the program, combining the member, the program, and the member's loyalty cards enriched with tier progress. Use `identification_type` to choose how the `customerId` path value is interpreted.\n\nReturns 404 when the program does not exist, or when the customer/member has no membership in the program.",
+        "parameters": [
+          {
+            "name": "identification_type",
+            "in": "query",
+            "required": false,
+            "description": "Defines how the `customerId` path value is interpreted. `customer_id` - Voucherify customer ID (default). `customer_source_id` - customer's `source_id`. `member_id` - loyalty member ID.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "customer_id",
+                "customer_source_id",
+                "member_id"
+              ],
+              "default": "customer_id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The membership in the program.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Membership"
+                },
+                "examples": {
+                  "Get membership": {
+                    "value": {
+                      "member": {
+                        "id": "lmbr_128f962dbc8c4ba5dc",
+                        "customer_id": "cust_6onRrs4kCnvSVrTs5YtDPFBG",
+                        "program_id": "lprg_128f58429f4c4bf7b2",
+                        "status": "ACTIVE",
+                        "metadata": {},
+                        "created_at": "2026-06-11T15:59:41.298Z",
+                        "updated_at": null,
+                        "object": "member"
+                      },
+                      "program": {
+                        "id": "lprg_128f58429f4c4bf7b2",
+                        "name": "Summer Rewards",
+                        "status": "ACTIVE",
+                        "metadata": {},
+                        "object": "program"
+                      },
+                      "cards": [
+                        {
+                          "member_role": "OWNER",
+                          "created_at": "2026-06-11T15:59:41.303Z",
+                          "tier_progress": {
+                            "current": {
+                              "id": "lt_128f4a88414c4bed6a",
+                              "name": "Gold",
+                              "activated_at": "2026-06-15T00:00:00.000Z",
+                              "expires_at": "2027-06-15T00:00:00.000Z",
+                              "points": {
+                                "current": 740,
+                                "min": 500,
+                                "max": 1500
+                              }
+                            },
+                            "tier_structure": {
+                              "id": "lts_128f4a88414c4bed69",
+                              "object": "tier_structure"
+                            },
+                            "deferred": [],
+                            "risks": [
+                              {
+                                "type": "TIER_DOWNGRADE",
+                                "date": "2026-09-01T00:00:00.000Z",
+                                "tier_id": "lt_128f4a88414c4bed68"
+                              }
+                            ],
+                            "opportunities": [],
+                            "object": "member_tier_progress"
+                          },
+                          "card": {
+                            "id": "lcrd_128f962dbd8c4ba5df",
+                            "card_definition_id": "lcdef_128f495f720c4bec8c",
+                            "card_type": "INDIVIDUAL",
+                            "code": "SummerTime-7z8dWawICd",
+                            "lifetime_bucket": {
+                              "points": {
+                                "total": 740,
+                                "earned": 40,
+                                "added": 700,
+                                "purchased": 0,
+                                "purchased_reversed": 0,
+                                "subtracted": 30,
+                                "expired": 300,
+                                "spent": 250,
+                                "refunded": 0,
+                                "returned": 0,
+                                "locked": 250,
+                                "unlocked": 250
+                              },
+                              "pending_points": {
+                                "total": 160,
+                                "activated": 40,
+                                "canceled": 0
+                              }
+                            },
+                            "balance": {
+                              "points": 160,
+                              "pending_points": 120
+                            },
+                            "next_expiration": {
+                              "points": 160,
+                              "date": "2026-08-08"
+                            },
+                            "next_activation": {
+                              "points": 10,
+                              "type": "PERIOD_BASED",
+                              "date": "2026-07-20"
+                            },
+                            "object": "card"
+                          },
+                          "object": "member_card"
+                        },
+                        {
+                          "member_role": "OWNER",
+                          "created_at": "2026-06-11T15:59:41.303Z",
+                          "card": {
+                            "id": "lcrd_128f962dbd8c4ba5e0",
+                            "card_definition_id": "lcdef_128f49963c0c4becb7",
+                            "card_type": "INDIVIDUAL",
+                            "code": "AutumnTime-R02hVARx33",
+                            "lifetime_bucket": {
+                              "points": {
+                                "total": 50,
+                                "earned": 0,
+                                "added": 50,
+                                "purchased": 0,
+                                "purchased_reversed": 0,
+                                "subtracted": 0,
+                                "expired": 0,
+                                "spent": 0,
+                                "refunded": 0,
+                                "returned": 0,
+                                "locked": 0,
+                                "unlocked": 0
+                              },
+                              "pending_points": {
+                                "total": 160,
+                                "activated": 0,
+                                "canceled": 0
+                              }
+                            },
+                            "balance": {
+                              "points": 50,
+                              "pending_points": 160
+                            },
+                            "next_expiration": {
+                              "points": 50,
+                              "date": "2026-12-23"
+                            },
+                            "next_activation": {
+                              "points": 160,
+                              "type": "FIXED_DATES",
+                              "date": "2026-12-23"
+                            },
+                            "object": "card"
+                          },
+                          "object": "member_card"
+                        }
+                      ],
+                      "object": "membership"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error - `identification_type` has an unsupported value.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found - the program does not exist, or the customer/member has no membership in the program.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Member not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find member with id cust_6onRrs4kCnvSVrTs5YtDPFBG",
+                      "request_id": "v-12bdef050f2cb1ef71",
+                      "resource_id": "cust_6onRrs4kCnvSVrTs5YtDPFBG",
+                      "resource_type": "member"
+                    }
+                  }
                 }
               }
             }
@@ -8951,7 +9199,7 @@
         "tags": [
           "Rewards"
         ],
-        "summary": "Get a reward by ID",
+        "summary": "Get reward by ID",
         "description": "\n<Warning>\n\n<Badge color=\"yellow\">BETA endpoint</Badge>\n\nThis is a work-in-progress documentation of a BETA endpoint. The parameters, fields, request and response bodies, and other data may be subject to change. If you want to share feedback or improvements, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Warning>\n\nReturns a single reward by its ID.",
         "parameters": [
           {
@@ -9920,7 +10168,7 @@
       },
       "ProgramValidityHoursUpsert": {
         "type": "object",
-        "description": "Validity hours configuration. When `type` is `ANY_TIME`, `daily` must be omitted or null.\nWhen `type` is `DAILY`, `daily` is required and must contain at least one window.",
+        "description": "Validity hours configuration. When `type` is `ANY_TIME`, `daily` must be omitted or `null`.\nWhen `type` is `DAILY`, `daily` is required and must contain at least one window.",
         "properties": {
           "type": {
             "type": "string",
@@ -10617,7 +10865,7 @@
               "null"
             ],
             "format": "date-time",
-            "description": "Program validity start date (ISO 8601), or null when not set."
+            "description": "Program validity start date (ISO 8601), or `null` when not set."
           },
           "end_date": {
             "type": [
@@ -10625,7 +10873,7 @@
               "null"
             ],
             "format": "date-time",
-            "description": "Program validity end date (ISO 8601), or null when not set."
+            "description": "Program validity end date (ISO 8601), or `null` when not set."
           },
           "validity_hours": {
             "$ref": "#/components/schemas/ProgramValidityHours",
@@ -10646,7 +10894,7 @@
               "null"
             ],
             "format": "date-time",
-            "description": "Last update timestamp (ISO 8601), or null when never updated."
+            "description": "Last update timestamp (ISO 8601), or `null` when never updated."
           },
           "object": {
             "type": "string",
@@ -10654,6 +10902,47 @@
             "const": "program"
           }
         }
+      },
+      "ProgramSimple": {
+        "type": "object",
+        "description": "A loyalty program in its simple representation, as embedded in membership responses.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique program identifier assigned by Voucherify.",
+            "pattern": "^lprg_[a-f0-9]+$"
+          },
+          "name": {
+            "type": "string",
+            "description": "Program name."
+          },
+          "status": {
+            "type": "string",
+            "description": "Program status.",
+            "enum": [
+              "DRAFT",
+              "ACTIVE",
+              "INACTIVE",
+              "DELETED"
+            ]
+          },
+          "metadata": {
+            "type": "object",
+            "description": "User-defined key-value metadata. Defaults to `{}`."
+          },
+          "object": {
+            "type": "string",
+            "description": "Object type marker. Always `program`.",
+            "const": "program"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "status",
+          "metadata",
+          "object"
+        ]
       },
       "ProgramCreateAssignedCardDefinition": {
         "type": "object",
@@ -10713,7 +11002,7 @@
             "type": "object",
             "properties": {
               "card_definitions": {
-                "description": "Card definitions assigned at creation, or null when none were provided.",
+                "description": "Card definitions assigned at creation, or `null` when none were provided.",
                 "oneOf": [
                   {
                     "type": "array",
@@ -10727,7 +11016,7 @@
                 ]
               },
               "earning_rules": {
-                "description": "Earning rules assigned at creation, or null when none were provided.",
+                "description": "Earning rules assigned at creation, or `null` when none were provided.",
                 "oneOf": [
                   {
                     "type": "array",
@@ -10741,7 +11030,7 @@
                 ]
               },
               "rewards": {
-                "description": "Rewards assigned at creation, or null when none were provided.",
+                "description": "Rewards assigned at creation, or `null` when none were provided.",
                 "oneOf": [
                   {
                     "type": "array",
@@ -10755,7 +11044,7 @@
                 ]
               },
               "tier_structures": {
-                "description": "Tier structures assigned at creation, or null when none were provided.",
+                "description": "Tier structures assigned at creation, or `null` when none were provided.",
                 "oneOf": [
                   {
                     "type": "array",
@@ -10804,7 +11093,7 @@
             }
           },
           "cursor": {
-            "description": "Pagination cursor, or null when there are no more results.",
+            "description": "Pagination cursor, or `null` when there are no more results.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/ProgramListCursor"
@@ -10861,7 +11150,7 @@
             }
           },
           "cursor": {
-            "description": "Pagination cursor, or null when there are no more results.",
+            "description": "Pagination cursor, or `null` when there are no more results.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/ProgramListCursor"
@@ -10878,7 +11167,7 @@
         "description": "Result of a card definition assignment batch. Keys are null when the corresponding operation list was not provided.",
         "properties": {
           "assigned": {
-            "description": "Assignments created by the batch, or null when no assign operations were requested.",
+            "description": "Assignments created by the batch, or `null` when no assign operations were requested.",
             "oneOf": [
               {
                 "type": "array",
@@ -10892,7 +11181,7 @@
             ]
           },
           "unassigned": {
-            "description": "Assignments removed by the batch, or null when no unassign operations were requested.",
+            "description": "Assignments removed by the batch, or `null` when no unassign operations were requested.",
             "oneOf": [
               {
                 "type": "array",
@@ -10945,7 +11234,7 @@
             }
           },
           "cursor": {
-            "description": "Pagination cursor, or null when there are no more results.",
+            "description": "Pagination cursor, or `null` when there are no more results.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/ProgramListCursor"
@@ -10962,7 +11251,7 @@
         "description": "Result of an earning rule assignment batch. Keys are null when the corresponding operation list was not provided.",
         "properties": {
           "assigned": {
-            "description": "Assignments created by the batch, or null when no assign operations were requested.",
+            "description": "Assignments created by the batch, or `null` when no assign operations were requested.",
             "oneOf": [
               {
                 "type": "array",
@@ -10976,7 +11265,7 @@
             ]
           },
           "unassigned": {
-            "description": "Assignments removed by the batch, or null when no unassign operations were requested.",
+            "description": "Assignments removed by the batch, or `null` when no unassign operations were requested.",
             "oneOf": [
               {
                 "type": "array",
@@ -11029,7 +11318,7 @@
             }
           },
           "cursor": {
-            "description": "Pagination cursor, or null when there are no more results.",
+            "description": "Pagination cursor, or `null` when there are no more results.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/ProgramListCursor"
@@ -11046,7 +11335,7 @@
         "description": "Result of a tier structure assignment batch. Keys are null when the corresponding operation list was not provided.",
         "properties": {
           "assigned": {
-            "description": "Assignments created by the batch, or null when no assign operations were requested.",
+            "description": "Assignments created by the batch, or `null` when no assign operations were requested.",
             "oneOf": [
               {
                 "type": "array",
@@ -11060,7 +11349,7 @@
             ]
           },
           "unassigned": {
-            "description": "Assignments removed by the batch, or null when no unassign operations were requested.",
+            "description": "Assignments removed by the batch, or `null` when no unassign operations were requested.",
             "oneOf": [
               {
                 "type": "array",
@@ -11103,7 +11392,7 @@
               "null"
             ],
             "format": "date-time",
-            "description": "Last update timestamp (ISO 8601), or null when never updated."
+            "description": "Last update timestamp (ISO 8601), or `null` when never updated."
           },
           "object": {
             "type": "string",
@@ -11129,7 +11418,7 @@
             }
           },
           "cursor": {
-            "description": "Pagination cursor, or null when there are no more results.",
+            "description": "Pagination cursor, or `null` when there are no more results.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/ProgramListCursor"
@@ -11146,7 +11435,7 @@
         "description": "Result of a reward assignment batch. Keys are null when the corresponding operation list was not provided.",
         "properties": {
           "assigned": {
-            "description": "Assignments created by the batch, or null when no assign operations were requested.",
+            "description": "Assignments created by the batch, or `null` when no assign operations were requested.",
             "oneOf": [
               {
                 "type": "array",
@@ -11160,7 +11449,7 @@
             ]
           },
           "unassigned": {
-            "description": "Assignments removed by the batch, or null when no unassign operations were requested.",
+            "description": "Assignments removed by the batch, or `null` when no unassign operations were requested.",
             "oneOf": [
               {
                 "type": "array",
@@ -11289,7 +11578,7 @@
             }
           },
           "cursor": {
-            "description": "Pagination cursor, or null when there are no more results.",
+            "description": "Pagination cursor, or `null` when there are no more results.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/ProgramListCursor"
@@ -12327,9 +12616,11 @@
         "type": "object",
         "title": "Create program member request",
         "description": "Request body for creating a program member. No additional properties are allowed.",
-        "allOf": [{
-          "$ref": "#/components/schemas/MemberCreate"
-        }]
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MemberCreate"
+          }
+        ]
       },
       "MemberCreate": {
         "type": "object",
@@ -12503,6 +12794,59 @@
           }
         ]
       },
+      "Membership": {
+        "type": "object",
+        "description": "A loyalty membership - the member's full loyalty profile within a program, combining the member, the program, and the member's loyalty cards with tier progress.",
+        "properties": {
+          "member": {
+            "$ref": "#/components/schemas/Member",
+            "description": "The loyalty program member."
+          },
+          "program": {
+            "$ref": "#/components/schemas/ProgramSimple",
+            "description": "The loyalty program the member belongs to."
+          },
+          "cards": {
+            "type": "array",
+            "description": "Member's loyalty cards - one per card definition assigned to the program, each enriched with tier progress. Card codes are generated asynchronously, so `card.code` may be `null` right after member creation.",
+            "items": {
+              "$ref": "#/components/schemas/MembershipCard"
+            }
+          },
+          "object": {
+            "type": "string",
+            "const": "membership",
+            "description": "Object type marker, always `membership`."
+          }
+        },
+        "required": [
+          "member",
+          "program",
+          "cards",
+          "object"
+        ]
+      },
+      "MembershipCard": {
+        "type": "object",
+        "description": "A membership's loyalty card - the member's assignment to the card (`member_role`, `created_at`) combined with the card details in the `card` object and the member's tier progress on this card.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MemberCard"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "tier_progress": {
+                "$ref": "#/components/schemas/MemberTierProgress",
+                "description": "The member's tier progress on this card. Omitted on endpoints that don't enrich cards with tier progress."
+              }
+            },
+            "required": [
+              "tier_progress"
+            ]
+          }
+        ]
+      },
       "MemberCard": {
         "type": "object",
         "description": "A member's loyalty card - the member's assignment to the card (`member_role`, `created_at`) combined with the card details in the `card` object.",
@@ -12521,7 +12865,7 @@
             "description": "Timestamp when the card was assigned to the member (ISO 8601)."
           },
           "card": {
-            "description": "The loyalty card details, or null when the card is not available.",
+            "description": "The loyalty card details, or `null` when the card is not available.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/CardSimple"
@@ -12549,7 +12893,7 @@
         "description": "Member's tier progress on a card.",
         "properties": {
           "current": {
-            "description": "The member's current tier, or null.",
+            "description": "The member's current tier, or `null`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/MemberTierProgressCurrent"
@@ -12560,7 +12904,7 @@
             ]
           },
           "tier_structure": {
-            "description": "Reference to the tier structure the progress relates to, or null.",
+            "description": "Reference to the tier structure the progress relates to, or `null`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/MemberTierProgressTierStructure"
@@ -12569,6 +12913,13 @@
                 "type": "null"
               }
             ]
+          },
+          "deferred": {
+            "type": "array",
+            "description": "Upcoming tier assignments scheduled to start later, when the tier structure defers tier changes. The member will be assigned to the deferred tier at the start date.",
+            "items": {
+              "$ref": "#/components/schemas/MemberTierProgressDeferred"
+            }
           },
           "risks": {
             "type": "array",
@@ -12579,7 +12930,7 @@
           },
           "opportunities": {
             "type": "array",
-            "description": "Opportunities to reach higher tiers.",
+            "description": "Opportunities to reach higher tiers. Deferred tiers are not included in this list.",
             "items": {
               "$ref": "#/components/schemas/MemberTierProgressOpportunity"
             }
@@ -12593,6 +12944,7 @@
         "required": [
           "current",
           "tier_structure",
+          "deferred",
           "risks",
           "opportunities",
           "object"
@@ -12618,6 +12970,38 @@
           "object"
         ]
       },
+      "MemberTierProgressDeferred": {
+        "type": "object",
+        "description": "A tier assignment deferred to a future date.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^lt_[a-f0-9]+$",
+            "description": "ID of the deferred tier."
+          },
+          "start_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time",
+            "description": "Timestamp when the deferred tier starts (ISO 8601), or `null`."
+          },
+          "expires_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time",
+            "description": "Timestamp when the deferred tier expires (ISO 8601), or `null`."
+          }
+        },
+        "required": [
+          "id",
+          "start_at",
+          "expires_at"
+        ]
+      },
       "MemberTierProgressCurrent": {
         "type": "object",
         "description": "The member's current tier.",
@@ -12625,7 +13009,7 @@
           "id": {
             "type": "string",
             "pattern": "^lt_[a-f0-9]+$",
-            "description": "Tier ID."
+            "description": "Unique Voucherify ID of the tier."
           },
           "name": {
             "type": "string",
@@ -12637,7 +13021,7 @@
               "null"
             ],
             "format": "date-time",
-            "description": "Timestamp when the tier was activated for the member (ISO 8601), or null."
+            "description": "Timestamp when the tier was activated for the member (ISO 8601), or `null`."
           },
           "expires_at": {
             "type": [
@@ -12645,10 +13029,10 @@
               "null"
             ],
             "format": "date-time",
-            "description": "Timestamp when the member's tier expires (ISO 8601), or null."
+            "description": "Timestamp when the member's tier expires (ISO 8601), or `null`."
           },
           "points": {
-            "description": "Member's points position within the tier's points range, or null.",
+            "description": "Member's points position within the tier's points range, or `null`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/MemberTierProgressPoints"
@@ -12681,13 +13065,12 @@
           },
           "max": {
             "type": "number",
-            "description": "Maximum points of the tier's range."
+            "description": "Maximum points of the tier's range. Absent if this is the highest tier in the tier structure."
           }
         },
         "required": [
           "current",
-          "min",
-          "max"
+          "min"
         ]
       },
       "MemberTierProgressRisk": {
@@ -12708,14 +13091,14 @@
               "null"
             ],
             "format": "date-time",
-            "description": "Date when the risk materializes (ISO 8601), or null."
+            "description": "Date when the risk materializes (ISO 8601), or `null`."
           },
           "tier_id": {
             "type": [
               "string",
               "null"
             ],
-            "description": "ID of the tier the member would be downgraded to (`lt_[a-f0-9]+`), or null for `TIER_LEFT`."
+            "description": "ID of the tier the member would be downgraded to (`lt_[a-f0-9]+`), or `null` for `TIER_LEFT`."
           }
         },
         "required": [
@@ -12734,14 +13117,14 @@
               "null"
             ],
             "format": "date-time",
-            "description": "Deadline for taking advantage of the opportunity (ISO 8601), or null."
+            "description": "Deadline for taking advantage of the opportunity (ISO 8601), or `null`."
           },
           "tier_id": {
             "type": [
               "string",
               "null"
             ],
-            "description": "ID of the tier that can be reached (`lt_[a-f0-9]+`), or null."
+            "description": "ID of the tier that can be reached (`lt_[a-f0-9]+`), or `null`."
           },
           "points": {
             "type": "number",
@@ -13041,7 +13424,7 @@
             }
           },
           "cursor": {
-            "description": "Pagination cursor, or null when there are no more results.",
+            "description": "Pagination cursor, or `null` when there are no more results.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/MemberListCursor"
@@ -13628,7 +14011,7 @@
             }
           },
           "cursor": {
-            "description": "Pagination cursor, or null when there are no more results.",
+            "description": "Pagination cursor, or `null` when there are no more results.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/MemberListCursor"
@@ -14071,7 +14454,7 @@
             }
           },
           "cursor": {
-            "description": "Pagination cursor, or null when there are no more results.",
+            "description": "Pagination cursor, or `null` when there are no more results.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/MemberListCursor"
@@ -14454,7 +14837,7 @@
         "description": "Result of a manual card points adjustment.",
         "properties": {
           "transaction": {
-            "description": "The created card transaction (`ADMIN_CREDIT` or `ADMIN_DEBIT`), or null when no transaction was created (status `NO_CHANGE`).",
+            "description": "The created card transaction (`ADMIN_CREDIT` or `ADMIN_DEBIT`), or `null` when no transaction was created (status `NO_CHANGE`).",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/CardTransaction"
@@ -14488,7 +14871,7 @@
         "description": "Result of a manual pending points activation. This endpoint always returns\nstatus `TRANSACTION_CREATED` on success.",
         "properties": {
           "transaction": {
-            "description": "The created `PENDING_POINTS_ACTIVATED` card transaction, or null.",
+            "description": "The created `PENDING_POINTS_ACTIVATED` card transaction, or `null`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/CardTransaction"
@@ -14522,7 +14905,7 @@
         "description": "Result of a pending points cancellation. This endpoint always returns status\n`TRANSACTION_CREATED` on success.",
         "properties": {
           "transaction": {
-            "description": "The created `PENDING_POINTS_CANCELED` card transaction, or null.",
+            "description": "The created `PENDING_POINTS_CANCELED` card transaction, or `null`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/CardTransaction"
@@ -14556,7 +14939,7 @@
         "description": "Result of a manual points bucket expiration. This endpoint always returns status\n`TRANSACTION_CREATED` on success.",
         "properties": {
           "transaction": {
-            "description": "The created `ADMIN_POINTS_EXPIRATION` card transaction, or null.",
+            "description": "The created `ADMIN_POINTS_EXPIRATION` card transaction, or `null`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/CardTransaction"
@@ -14597,7 +14980,7 @@
             }
           },
           "cursor": {
-            "description": "Pagination cursor, or null when there are no more results.",
+            "description": "Pagination cursor, or `null` when there are no more results.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/MemberListCursor"
@@ -14707,7 +15090,7 @@
               "null"
             ],
             "format": "date-time",
-            "description": "Timestamp when the transaction was last updated (ISO 8601), or null."
+            "description": "Timestamp when the transaction was last updated (ISO 8601), or `null`."
           },
           "object": {
             "type": "string",
@@ -14742,7 +15125,7 @@
             "description": "Reason for the transaction (e.g. the reason provided in a manual adjustment request)."
           },
           "rejection": {
-            "description": "Rejection details when the transaction was rejected, or null.",
+            "description": "Rejection details when the transaction was rejected, or `null`.",
             "oneOf": [
               {
                 "type": "object",
@@ -14780,7 +15163,7 @@
                   "null"
                 ],
                 "format": "date",
-                "description": "Expiration date of the affected points (`YYYY-MM-DD`), or null."
+                "description": "Expiration date of the affected points (`YYYY-MM-DD`), or `null`."
               },
               "expiration_type": {
                 "type": [
@@ -14794,7 +15177,7 @@
                   "SLIDING_EXPIRATION",
                   null
                 ],
-                "description": "Points expiration type of the affected points, or null."
+                "description": "Points expiration type of the affected points, or `null`."
               },
               "date": {
                 "type": "string",
@@ -14830,7 +15213,7 @@
             "description": "Expiration date (`POINTS_EXPIRED` only, `YYYY-MM-DD`)."
           },
           "reward": {
-            "description": "Reference to the reward involved, or null.",
+            "description": "Reference to the reward involved, or `null`.",
             "oneOf": [
               {
                 "type": "object",
@@ -14847,7 +15230,7 @@
             ]
           },
           "reward_transaction": {
-            "description": "Reference to the related reward transaction, or null.",
+            "description": "Reference to the related reward transaction, or `null`.",
             "oneOf": [
               {
                 "type": "object",
@@ -14864,7 +15247,7 @@
             ]
           },
           "card_transaction": {
-            "description": "Reference to the linked card transaction (e.g. the spend side of a points purchase), or null.",
+            "description": "Reference to the linked card transaction (e.g. the spend side of a points purchase), or `null`.",
             "oneOf": [
               {
                 "type": "object",
@@ -14881,7 +15264,7 @@
             ]
           },
           "purchase": {
-            "description": "References to the original purchase transactions (reversal/return variants), or null.",
+            "description": "References to the original purchase transactions (reversal/return variants), or `null`.",
             "oneOf": [
               {
                 "type": "object",
@@ -14926,7 +15309,7 @@
             ]
           },
           "order": {
-            "description": "Reference to the order paid with points (`POINTS_SPENT_ON_ORDER` only), or null.",
+            "description": "Reference to the order paid with points (`POINTS_SPENT_ON_ORDER` only), or `null`.",
             "oneOf": [
               {
                 "type": "object",
@@ -14943,7 +15326,7 @@
             ]
           },
           "order_transaction": {
-            "description": "Reference to the related order transaction (`POINTS_SPENT_ON_ORDER` only), or null.",
+            "description": "Reference to the related order transaction (`POINTS_SPENT_ON_ORDER` only), or `null`.",
             "oneOf": [
               {
                 "type": "object",
@@ -14960,7 +15343,7 @@
             ]
           },
           "target_card": {
-            "description": "Reference to the target card credited by a points purchase (`POINTS_SPENT_ON_REWARD` only), or null.",
+            "description": "Reference to the target card credited by a points purchase (`POINTS_SPENT_ON_REWARD` only), or `null`.",
             "oneOf": [
               {
                 "type": "object",
@@ -14977,7 +15360,7 @@
             ]
           },
           "purchase_transaction": {
-            "description": "Reference to the linked purchase card transaction (`POINTS_SPENT_ON_REWARD` only), or null.",
+            "description": "Reference to the linked purchase card transaction (`POINTS_SPENT_ON_REWARD` only), or `null`.",
             "oneOf": [
               {
                 "type": "object",
@@ -15152,7 +15535,7 @@
             }
           },
           "cursor": {
-            "description": "Pagination cursor, or null when there are no more results.",
+            "description": "Pagination cursor, or `null` when there are no more results.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/MemberListCursor"
@@ -15259,7 +15642,7 @@
               "null"
             ],
             "format": "date-time",
-            "description": "Timestamp when the bucket was last updated (ISO 8601), or null."
+            "description": "Timestamp when the bucket was last updated (ISO 8601), or `null`."
           },
           "object": {
             "type": "string",
@@ -15295,7 +15678,7 @@
             }
           },
           "cursor": {
-            "description": "Pagination cursor, or null when there are no more results.",
+            "description": "Pagination cursor, or `null` when there are no more results.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/MemberListCursor"
@@ -15406,7 +15789,7 @@
               "null"
             ],
             "format": "date-time",
-            "description": "Timestamp when the bucket was last updated (ISO 8601), or null."
+            "description": "Timestamp when the bucket was last updated (ISO 8601), or `null`."
           },
           "object": {
             "type": "string",
@@ -15504,7 +15887,7 @@
         "description": "Request body for refunding a reward purchase. May be empty; defaults are applied.",
         "properties": {
           "policies": {
-            "description": "Refund policies. When omitted or null, defaults are applied.",
+            "description": "Refund policies. When omitted or `null`, defaults are applied.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/RewardPurchaseRefundPolicies"
@@ -16350,7 +16733,7 @@
             ]
           },
           "mode": {
-            "description": "Payment mode. `TRANSACTION` creates a PENDING order transaction processed asynchronously (HTTP 202). `DRY_RUN` only simulates the payment and returns the calculation result (HTTP 200); no transaction is created. Defaults to `TRANSACTION` when omitted or null.",
+            "description": "Payment mode. `TRANSACTION` creates a PENDING order transaction processed asynchronously (HTTP 202). `DRY_RUN` only simulates the payment and returns the calculation result (HTTP 200); no transaction is created. Defaults to `TRANSACTION` when omitted or `null`.",
             "oneOf": [
               {
                 "type": "string",
@@ -18805,7 +19188,7 @@
       },
       "CardDefinitionEarningLimitsGlobalInput": {
         "type": "object",
-        "description": "Global (per card) earning limits. When `type` is `NO_LIMIT`, `limits` must be\nempty or null; when `type` is `LIMITED`, `limits` must contain exactly 1 limit.",
+        "description": "Global (per card) earning limits. When `type` is `NO_LIMIT`, `limits` must be\nempty or `null`; when `type` is `LIMITED`, `limits` must contain exactly 1 limit.",
         "properties": {
           "type": {
             "type": "string",
@@ -18951,7 +19334,7 @@
       },
       "CardDefinitionEarningLimitsTransactionsInput": {
         "type": "object",
-        "description": "Per-transaction earning limits. When `type` is `NO_LIMIT`, `limits` must be\nempty or null; when `type` is `LIMITED`, `limits` must contain at least 1 limit.\nEach limit `type` may appear at most once in the array.",
+        "description": "Per-transaction earning limits. When `type` is `NO_LIMIT`, `limits` must be\nempty or `null`; when `type` is `LIMITED`, `limits` must contain at least 1 limit.\nEach limit `type` may appear at most once in the array.",
         "properties": {
           "type": {
             "type": "string",
@@ -19046,7 +19429,7 @@
       },
       "CardDefinitionSpendingLimitsGlobalInput": {
         "type": "object",
-        "description": "Global (per card) spending limits. When `type` is `NO_LIMIT`, `limits` must be\nempty or null; when `type` is `LIMITED`, `limits` must contain exactly 1 limit.",
+        "description": "Global (per card) spending limits. When `type` is `NO_LIMIT`, `limits` must be\nempty or `null`; when `type` is `LIMITED`, `limits` must contain exactly 1 limit.",
         "properties": {
           "type": {
             "type": "string",
@@ -19192,7 +19575,7 @@
       },
       "CardDefinitionSpendingLimitsTransactionsInput": {
         "type": "object",
-        "description": "Per-transaction spending limits. When `type` is `NO_LIMIT`, `limits` must be\nempty or null; when `type` is `LIMITED`, `limits` must contain exactly 1 limit.",
+        "description": "Per-transaction spending limits. When `type` is `NO_LIMIT`, `limits` must be\nempty or `null`; when `type` is `LIMITED`, `limits` must contain exactly 1 limit.",
         "properties": {
           "type": {
             "type": "string",
@@ -19267,7 +19650,7 @@
       },
       "CardDefinitionRefundsSpentPointsInput": {
         "type": "object",
-        "description": "How points spent on a refunded order are handled. When `type` is `NONE`,\n`methods` must be empty or null; when `type` is `REFUNDABLE`, `methods`\nmust contain exactly 1 method.",
+        "description": "How points spent on a refunded order are handled. When `type` is `NONE`,\n`methods` must be empty or `null`; when `type` is `REFUNDABLE`, `methods`\nmust contain exactly 1 method.",
         "properties": {
           "type": {
             "type": "string",
@@ -19329,7 +19712,7 @@
       },
       "CardDefinitionRefundsEarnedPointsInput": {
         "type": "object",
-        "description": "How points earned on a refunded order are handled. When `type` is `NONE`,\n`methods` must be empty or null; when `type` is `REFUNDABLE`, `methods`\nmust contain exactly 1 method.",
+        "description": "How points earned on a refunded order are handled. When `type` is `NONE`,\n`methods` must be empty or `null`; when `type` is `REFUNDABLE`, `methods`\nmust contain exactly 1 method.",
         "properties": {
           "type": {
             "type": "string",
@@ -26442,7 +26825,7 @@
               "null"
             ],
             "format": "date-time",
-            "description": "Last update timestamp (ISO 8601), or null if never updated."
+            "description": "Last update timestamp (ISO 8601), or `null` if never updated."
           },
           "object": {
             "type": "string",
@@ -26689,7 +27072,7 @@
             }
           },
           "cursor": {
-            "description": "Pagination cursor for fetching the next page, or null when there are no more\nresults.",
+            "description": "Pagination cursor for fetching the next page, or `null` when there are no more\nresults.",
             "oneOf": [
               {
                 "type": "object",
@@ -26764,7 +27147,7 @@
               "null"
             ],
             "format": "date-time",
-            "description": "Last update timestamp (ISO 8601), or null if never updated."
+            "description": "Last update timestamp (ISO 8601), or `null` if never updated."
           },
           "object": {
             "type": "string",
@@ -26855,7 +27238,7 @@
             }
           },
           "cursor": {
-            "description": "Pagination cursor for fetching the next page, or null when there are no more\nresults.",
+            "description": "Pagination cursor for fetching the next page, or `null` when there are no more\nresults.",
             "oneOf": [
               {
                 "type": "object",
@@ -27027,7 +27410,7 @@
             }
           },
           "cursor": {
-            "description": "Pagination cursor for fetching the next page, or null when there are no more\nresults.",
+            "description": "Pagination cursor for fetching the next page, or `null` when there are no more\nresults.",
             "oneOf": [
               {
                 "type": "object",
@@ -28208,7 +28591,7 @@
       },
       "BenefitCreateRequest": {
         "type": "object",
-        "description": "Request body for creating a benefit. Exactly one type-specific configuration object\nis required, matching the `type`; the remaining type-specific properties must be\nomitted or null.",
+        "description": "Request body for creating a benefit. Exactly one type-specific configuration object\nis required, matching the `type`; the remaining type-specific properties must be\nomitted or `null`.",
         "properties": {
           "name": {
             "type": "string",
@@ -28514,7 +28897,7 @@
       },
       "BenefitPointsProportional": {
         "type": "object",
-        "description": "Proportional points effect - points are calculated from an order amount, order items,\nor a metadata property. Exactly one calculation source object (`order`, `customer`,\n`custom_event`, or `order_items`) is required, determined by `calculation_type`;\nthe remaining source properties must be omitted or null.",
+        "description": "Proportional points effect - points are calculated from an order amount, order items,\nor a metadata property. Exactly one calculation source object (`order`, `customer`,\n`custom_event`, or `order_items`) is required, determined by `calculation_type`;\nthe remaining source properties must be omitted or `null`.",
         "properties": {
           "calculation_type": {
             "type": "string",
@@ -29014,7 +29397,7 @@
       },
       "BenefitPointsProportionalApplicableTo": {
         "type": "object",
-        "description": "A single applicability rule. Exactly one of `product`, `sku`, or `products_collection`\nis required, matching the `type`; the other two must be omitted or null.",
+        "description": "A single applicability rule. Exactly one of `product`, `sku`, or `products_collection`\nis required, matching the `type`; the other two must be omitted or `null`.",
         "properties": {
           "type": {
             "type": "string",
@@ -29188,7 +29571,7 @@
       },
       "BenefitMaterial": {
         "type": "object",
-        "description": "Material benefit - a physical product or SKU. Exactly one of `product` or `sku` is\nrequired, matching the `type`; the other must be omitted or null.",
+        "description": "Material benefit - a physical product or SKU. Exactly one of `product` or `sku` is\nrequired, matching the `type`; the other must be omitted or `null`.",
         "properties": {
           "type": {
             "type": "string",
@@ -29312,7 +29695,7 @@
       },
       "BenefitDigital": {
         "type": "object",
-        "description": "Digital benefit - a reward sourced from a Voucherify campaign. Exactly one of\n`gift_vouchers` or `discount_coupons` is required, matching the `type`; the other must\nbe omitted or null. The referenced campaign must exist and its campaign type must match\nthe benefit's digital type.",
+        "description": "Digital benefit - a reward sourced from a Voucherify campaign. Exactly one of\n`gift_vouchers` or `discount_coupons` is required, matching the `type`; the other must\nbe omitted or `null`. The referenced campaign must exist and its campaign type must match\nthe benefit's digital type.",
         "properties": {
           "type": {
             "type": "string",
@@ -29437,7 +29820,7 @@
       },
       "BenefitStock": {
         "type": "object",
-        "description": "Stock configuration of the benefit. When `type` is `LIMITED` the `limited` object is\nrequired; when `type` is `UNLIMITED` the `limited` object must be omitted or null.",
+        "description": "Stock configuration of the benefit. When `type` is `LIMITED` the `limited` object is\nrequired; when `type` is `UNLIMITED` the `limited` object must be omitted or `null`.",
         "properties": {
           "type": {
             "type": "string",
@@ -30950,7 +31333,7 @@
             "description": "Initial status of the reward. Defaults to DRAFT behavior when omitted."
           },
           "validity_hours": {
-            "description": "Hours during which the reward can be purchased. Defaults to `{ \"type\": \"ANY_TIME\" }` when omitted or null.",
+            "description": "Hours during which the reward can be purchased. Defaults to `{ \"type\": \"ANY_TIME\" }` when omitted or `null`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/RewardValidityHoursRequest"
@@ -32536,7 +32919,7 @@
               "null"
             ],
             "format": "date-time",
-            "description": "Date from which the reward is available, or null when not set."
+            "description": "Date from which the reward is available, or `null` when not set."
           },
           "end_date": {
             "type": [
@@ -32544,7 +32927,7 @@
               "null"
             ],
             "format": "date-time",
-            "description": "Date until which the reward is available, or null when not set."
+            "description": "Date until which the reward is available, or `null` when not set."
           },
           "validity_hours": {
             "$ref": "#/components/schemas/RewardValidityHoursResponse",
@@ -32584,7 +32967,7 @@
               "null"
             ],
             "format": "date-time",
-            "description": "Timestamp when the reward was last updated (ISO-8601), or null when never updated."
+            "description": "Timestamp when the reward was last updated (ISO-8601), or `null` when never updated."
           },
           "object": {
             "type": "string",
@@ -32835,7 +33218,7 @@
               "array",
               "null"
             ],
-            "description": "Points spending definitions, or null when none are defined.",
+            "description": "Points spending definitions, or `null` when none are defined.",
             "items": {
               "$ref": "#/components/schemas/RewardCostSpendingResponse"
             }
@@ -32931,7 +33314,7 @@
             }
           },
           "cursor": {
-            "description": "Pagination cursor, or null when there are no more results.",
+            "description": "Pagination cursor, or `null` when there are no more results.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/RewardListCursor"
@@ -33012,7 +33395,7 @@
               "string",
               "null"
             ],
-            "description": "Identifier grouping related activities recorded together. Omitted or null when the activity is not part of a group."
+            "description": "Identifier grouping related activities recorded together. Omitted or `null` when the activity is not part of a group."
           },
           "source": {
             "$ref": "#/components/schemas/RewardActivitySource",
@@ -33123,7 +33506,7 @@
             }
           },
           "cursor": {
-            "description": "Pagination cursor, or null when there are no more results.",
+            "description": "Pagination cursor, or `null` when there are no more results.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/RewardListCursor"
