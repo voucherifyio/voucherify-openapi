@@ -1,7 +1,7 @@
 ---
 title: "Integrate loyalty v2"
 description: "Learn how to integrate with Voucherify's new loyalty v2 API"
-keywords: ["loyalty integration", "point wallets", "examine earnings", "examine rewards", "pay with points", "voucherify v2"]
+keywords: ["loyalty integration", "point wallets", "examine earning rules", "examine rewards", "pay with points", "voucherify v2"]
 tag: "NEW"
 ---
 
@@ -18,9 +18,11 @@ Prepare your Voucherify account for a functional loyalty v2 integration.
 
     Prepare your test environment in Voucherify, for example the Sandbox project.
 
-    Use an existing API key/token or create a new pair. Go to **Project settings** > **Application keys** to get `X-App-Id` and `X-App-Token`.
+    Use an existing API key/token or create a new pair. Go to **Project settings** > **Application keys** to get `X-App-Id` and `X-App-Token`. Keep these keys on the server side only. See [Authentication](/guides/authentication) and [Security](/guides/security).
 
-    Make sure the API key has the necessary campaign, voucher, and customer permissions.
+    Make sure the API key can call loyalty, campaign, voucher, customer, product, and order endpoints used by your integration.
+
+    Choose the correct regional API base URL from [API overview](/guides/api-overview#choose-the-right-api-endpoint) (Europe, United States, or Asia).
         
     </Step>
 
@@ -30,7 +32,7 @@ Prepare your Voucherify account for a functional loyalty v2 integration.
 
             <Badge color="gray">User guides</Badge>
 
-            Read the [Loyalty v2 user guides](/build/loyalty-overview) to learn how to create and configure a new loyalty v2 program.
+            Follow [Tutorial – Create basic program](/build/create-loyalty-campaign-v2) for a step-by-step dashboard setup. Read the [Loyalty v2 overview](/build/loyalty-overview) for the program model and rollout context.
 
         </Info>
 
@@ -82,11 +84,11 @@ Prepare your Voucherify account for a functional loyalty v2 integration.
 
 ## Acquisition
 
-Use the [POST Create member](/api-reference/programs/create-member) or [POST Create member in batch](/api-reference/programs/batch-create-program-members) (asynchronous action) with the Voucherify customer ID to add the customer as a member to a loyalty v2 program.
+Use the [POST Create member](/api-reference/programs/create-program-member) or [POST Create member in batch](/api-reference/programs/batch-create-program-members) (asynchronous action) with the Voucherify customer ID to add the customer as a member to a loyalty v2 program.
 
 By default, the customer is added as an `ACTIVE` member, who can immediately earn points and fully participate in the loyalty program.
 
-Optionally, you can add the customer as an `INACTIVE` member. An inactive member will have to be activated later with the [POST Activate member](/api-reference/programs/activate-member) endpoint to participate in the loyalty program.
+Optionally, you can add the customer as an `INACTIVE` member. An inactive member will have to be activated later with the [POST Activate member](/api-reference/programs/activate-program-member) endpoint to participate in the loyalty program.
 
 <CodeGroup>
 
@@ -240,13 +242,13 @@ In this response example, the loyalty program member receives two loyalty cards 
 
 Once you enroll your members, use the following endpoints so the members can learn more about your loyalty program: How they can earn and spend their points.
 
-### Examine earnings
+### Examine earning rules
 
-Use the [POST Examine earnings](/api-reference/examine/examine-earnings) endpoint to estimate how many points a customer will earn in a given scenario. This simulation calculates the precise number of points and material or digital benefits a customer can earn based on specific operational business triggers. Because this evaluation is a dry-run execution, Voucherify calculates these opportunities dynamically without writing transactions to card balances or modifying customer states.
+Use the [POST Examine earning rules](/api-reference/examine/examine-earning-rules) endpoint to estimate how many points a customer will earn in a given scenario. This simulation calculates the precise number of points and material or digital benefits a customer can earn based on specific operational business triggers. Because this evaluation is a dry-run execution, Voucherify calculates these opportunities dynamically without writing transactions to card balances or modifying customer states.
 
 <Note>
     
-    The POST Examine earnings endpoint is an estimation of points to be earned. It doesn't take into account additional earning rule triggers that may occur. For example, this can happen when a member pays for an order, earns points, and reaches a higher loyalty tier that will trigger additional points.
+    The POST Examine earning rules endpoint is an estimation of points to be earned. It doesn't take into account additional earning rule triggers that may occur. For example, this can happen when a member pays for an order, earns points, and reaches a higher loyalty tier that will trigger additional points.
 
 </Note>
 
@@ -980,7 +982,7 @@ When a reward returns an `AVAILABLE` status, the loyalty program member meets al
 - The current point balance on that specific loyalty card is equal to or greater than the resolved point cost.
 - The reward assignment has sufficient stock and is currently active.
 
-In the response example below, the loyalty card `AnnualTime-7M7ShPGfme` contains two `AVAILABLE` reward opportunities: the "Free item coupon" (requiring 300 points; the `memberships[].cards[].card.rewards` object lines 91–102) and the "Minas Gerais 500" material reward (requiring 150 points; <Visibility for="agents">the `memberships[].cards[].card.rewards` object in</Visibility> lines 103–114).
+In the response example below, the loyalty card `AnnualTime-7M7ShPGfme` contains two `AVAILABLE` reward opportunities: the "Free item coupon" (requiring 300 points; the `memberships[].cards[].card.rewards` object lines 91–102) and the "Minas Gerais 500" material reward (requiring 150 points; the `memberships[].cards[].card.rewards` object in lines 103–114).
 
 #### UNAVAILABLE status
 
@@ -1239,7 +1241,7 @@ Use the following endpoints and data to create a member profile which helps reta
 
 ### Get membership
 
-Use the [GET membership](/api-reference/programs/get-program-membership) endpoint (GET `/v2/loyalties/programs/{programId}/memberships/{memberId}?identification_type=member_id`) to create a member profile that will show:
+Use the [GET membership](/api-reference/programs/get-program-membership) endpoint (GET `/v2/loyalties/programs/{programId}/memberships/{customerId}?identification_type=member_id`) to create a member profile that will show:
 - The member's identity and status in the program.
 - All loyalty cards the member has in the program.
 - Current point balance, pending points, and other life time point data.
@@ -1255,11 +1257,10 @@ The response is a `membership` object that groups three top-level fields:
 
     <Badge>Similar endpoints</Badge>
 
-    The Get membership works in a similar way to two other endpoints:
-    - [Get member](/api-reference/programs/get-program-member): Returns member details in the context of a loyalty program. It uses only the member ID as the path parameter and it doesn't return `tier_progress` data.
-    - [Get memberships](): Returns all details about membership to all programs the customer participates in. However, it doesn't return `tier_progress` data.
+    The Get membership endpoint works in a similar way to [Get member](/api-reference/programs/get-program-member). Get member returns member details in the context of a loyalty program. It uses only the member ID as the path parameter and it doesn't return `tier_progress` data.
 
-    If your program runs loyalty tiers, it's recommended to the Get membership endpoint.
+
+    If your program runs loyalty tiers, use the Get membership endpoint.
 
     Check the documentation of these endpoints to learn more about their differences and similarities.
 
@@ -1668,7 +1669,7 @@ The list card transactions endpoint lists many types (`type`) of transactions to
 
 ### List reward purchases
 
-Use the [GET List reward purchases](/api-reference/programs/list-reward-purchases) endpoint to show your members the rewards they have purchased. This endpoint lists purchases for all cards the member has.
+Use the [GET List reward purchases](/api-reference/programs/list-member-reward-purchases) endpoint to show your members the rewards they have purchased. This endpoint lists purchases for all cards the member has.
 
 The `details` (lines 12–33 and 47–68) object lists more information about the reward purchase, like the number of points spent or the reward `type`.
 
@@ -1977,7 +1978,7 @@ If the loyalty card has no points, Voucherify returns error code `423` – "Card
 
 ### Purchase reward
 
-Use the [POST Purchase reward](/api-reference/programs/purchase-reward) endpoint to create a store where your loyalty program members can buy rewards.
+Use the [POST Purchase reward](/api-reference/programs/purchase-a-reward-with-points) endpoint to create a store where your loyalty program members can buy rewards.
 
 In the request body, send the reward ID (`reward_id`) to be purchased. Since rewards are assigned to specific card definitions, Voucherify will subtract the required number of points from a loyalty card that's governed by the card definition.
 
@@ -2028,7 +2029,7 @@ Your loyalty program should also support situations when a member wants to stop 
 
 ### Deactivate
 
-Use the [POST Deactivate member](/api-reference/programs/deactivate-member) endpoint to suspend a member's participation in the program.
+Use the [POST Deactivate member](/api-reference/programs/deactivate-program-member) endpoint to suspend a member's participation in the program.
 
 A suspended member can't earn points or spend them on rewards or orders.
 
@@ -2036,13 +2037,13 @@ A suspended member can't earn points or spend them on rewards or orders.
 
     <Badge color="green">Activating member again</Badge>
 
-    If you need to reactivate the member, so that they can participate in the loyalty program again, use the [POST Activate member](/api-reference/programs/activate-member) endpoint.
+    If you need to reactivate the member, so that they can participate in the loyalty program again, use the [POST Activate member](/api-reference/programs/activate-program-member) endpoint.
 
 </Tip>
 
 ### Delete
 
-If you need a mechanism for deleting member data, use the [DELETE Member](/api-reference/programs/delete-member) endpoint to soft-delete the member and all their associated cards within the program.
+If you need a mechanism for deleting member data, use the [DELETE Member](/api-reference/programs/delete-program-member) endpoint to soft-delete the member and all their associated cards within the program.
 
 <Note>
 
