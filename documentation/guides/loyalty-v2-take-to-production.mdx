@@ -18,7 +18,9 @@ Use this step-by-step checklist to ensure a seamless launch and avoid transactio
         
         Use your production project or create a dedicated one for your live store data. 
         
-        Go to **Project settings** > **Application keys** in the production project to retrieve your production credentials (`X-App-Id` and `X-App-Token`). Update your infrastructure environment variables with these live keys. Ensure your system points to the correct regional API base URL.
+        Go to **Project settings** > **Application keys** in the production project to retrieve your production credentials (`X-App-Id` and `X-App-Token`). Update your infrastructure environment variables with these live keys. Keep application keys on the server side only. See [Authentication](/guides/authentication) and [Security](/guides/security).
+
+        Point your system to the correct regional API base URL from [API overview](/guides/api-overview#choose-the-right-api-endpoint). Confirm the production project has the `LOYALTY_V2` entitlement.
         
         <Warning>
             Voucherify Sandbox and Production projects share zero database records. Attempting to pass production keys along with sandbox resource IDs (such as sandbox program IDs or member IDs) will cause the Voucherify API to return `404 Resource Not Found` errors.
@@ -65,9 +67,12 @@ Use this step-by-step checklist to ensure a seamless launch and avoid transactio
         Before turning the real customer traffic on the production project, perform a final transaction walkthrough using a controlled production member profile.
         
         Check the following:
-        1. Enrollment: Create a test live member using a production customer ID.
+        1. Enrollment: Create a test live member using a production customer ID. Confirm get-before-create and `409 member_already_exists` handling.
         2. Earning: Submit a live order with a `PAID` status and verify that points are successfully added to the member's wallet balance.
-        3. Redemption: Purchase a low-cost or test reward to confirm the point deduction and reward redemption flows operate without latency errors.
+        3. Discovery: Call examine earnings and examine rewards for the test member.
+        4. Redemption: Purchase a low-cost or test reward and poll until the reward transaction is `APPROVED` or `REJECTED`.
+        5. Pay with points: Run a `DRY_RUN`, then a live `TRANSACTION` payment, and poll [list member order payments](/api-reference/programs/list-member-order-payments) until the status is terminal.
+        6. Profile: Refresh [GET membership](/api-reference/programs/get-program-membership) and confirm balances, pending points, and transaction history.
 
     </Step>
 </Steps>
@@ -90,11 +95,11 @@ Resolve operational friction points, API structural anomalies, and edge cases co
     <Accordion title="HTTP 409: Conflict – resource already exists">
         The Voucherify API returns an HTTP `409 Conflict` response code if a resource already exists in a loyalty program.
 
-        The most frequent case is an attempt to assign a customer to a loyalty program campaign when that customer profile is already an active member of that specific campaign.
+        The most frequent case is an attempt to enroll a customer in a loyalty program when that customer is already a member of that program.
     
         Solutions:
         - Verify ID uniqueness: Ensure that the integration request payload contains a unique, non-registered customer ID that is not currently associated with the program. If you use several loyalty programs, verify that the program IDs are not duplicated in the request.
-        - Implement get-before-create (read-first pattern): Before registering a customer, query the Voucherify memberships API (`GET /v2/loyalties/memberships/{customerId}`) to check if the customer profile already is a member for the target loyalty program ID.
+        - Implement get-before-create (read-first pattern): Before registering a customer, query the Voucherify memberships API (`GET /v2/loyalties/programs/{programId}/memberships/{customerId}`) to check if the customer profile already is a member of the target loyalty program.
         - Graceful client-side redirection (soft-catch): Intercept the HTTP `409` error code on your backend integration layer. Instead of returning an error to the user interface, treat the conflict as a validation that the user is registered. Retrieve their existing active loyalty member data and transition the user interface directly to the active loyalty program dashboard.
     </Accordion>
 
@@ -104,7 +109,7 @@ Resolve operational friction points, API structural anomalies, and edge cases co
         
         Solutions:
         - Reward validity window: Verify that you are attempting to redeem or purchase the reward within the reward's scheduled active time frame. If the transaction occurs outside of the reward's configured validity dates and hours, Voucherify blocks the request. You can adjust the active dates of the reward in the **Loyalty hub**.
-        - **Zero card balance**: Check if the gift card or loyalty card has a positive balance before executing the transaction. If the card balance is zero, the operation fails, and you must add funds to the card or select a different payment card.
+        - **Zero card balance**: Check if the loyalty card has a positive point balance before pay with points or reward purchase. If the balance is zero, the operation fails with `zero_card_balance` until points are earned or added.
     
     </Accordion>
 
