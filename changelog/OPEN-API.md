@@ -4,6 +4,38 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-07-21
+
+Deprecated all `v1/loyalties` methods
+
+## 2026-07-17
+
+Changed ReadMe callouts to Mintlify ones in the `OpenAPI.json` file.
+
+## 2026-07-16
+
+Add info about caching to `v1/qualifications` and `/client/v1/qualifications`.
+
+## 2026-06-03
+
+Deleted `cockpits` object from the `ManagementProjectsBrandingCreateRequestBody`, `ManagementProjectsBranding`, `ManagementProjectsBrandingUpdateRequestBody`
+
+## 2026-05-28
+
+- Add `STANDALONE` to `type` in the `CampaignsCreateBase` schema.
+- Removed remaining links to `support.voucherify.io`.
+- Fixed missing `conditions` in `ParameterFiltersListMemberTransactions` `ExportCampaignTransactionsFilters`, and `ExportCampaignTransactionsFilters` schemas.
+
+## 2026-04-30
+
+- Added GET `/v1/segments` endpoint documentation with the `SegmentsListResponseBody` schema
+- Updated the `Segment` schema to include the `updated_at` field.
+
+## 2026-04-13
+
+- Update the `DiscountUnitVouchersEffectTypes` schema with `ADD_SAME_ITEMS` effect.
+- Updated `EventPublicationSucceededData` schema in `OpenAPIWebhooks.json` regarding the `user` field.
+
 ## 2026-04-02
 
 Update the `ApplicableTo` schema with settings for campaign budget limits.
