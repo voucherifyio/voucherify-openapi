@@ -16816,6 +16816,7 @@
         "description": "Result of a reward purchase request in dry-run mode.",
         "properties": {
           "transaction": {
+            "type": "object",
             "description": "The simulated reward transaction.",
             "properties": {
               "card_id": {
@@ -16852,31 +16853,18 @@
               },
               "details": {
                 "description": "Transaction details. For a dry run purchase, it's always `PURCHASE`.",
-                "oneOf": [
-                  {
-                    "$ref": "#/components/schemas/RewardPurchaseTransactionDetailsPurchase"
-                  },
-                  {
-                    "type": "null"
-                  }
-                ]
+                "$ref": "#/components/schemas/RewardPurchaseTransactionDetailsPurchase"
               },
               "updated_at": {
                 "type": "null",
-                "format": "date-time",
-                "description": "Timestamp when the transaction was last updated (ISO 8601), or `null`."
+                "description": "For `DRY_RUN` transactions, this is always `null`."
               },
               "object": {
                 "type": "string",
                 "const": "reward_transaction",
                 "description": "Object type marker. Always `reward_transaction`."
               }
-            },
-            "required": [
-              "transaction",
-              "status",
-              "message"
-            ]
+            }
           },
           "status": {
             "type": "string",
@@ -16889,92 +16877,102 @@
             "type": "string",
             "description": "Human-readable result message. `DRY_RUN` mode: \"Dry run mode. No transaction was created. This is only a simulation.\"."
           }
-        }
+        },
+        "required": [
+          "transaction",
+          "status",
+          "message"
+        ]
       },
       "RewardPurchaseCreateTransactionResponse": {
         "type": "object",
         "description": "Result of a reward purchase request.",
         "properties": {
           "transaction": {
-            "description": "The created reward transaction.",
-            "oneOf": [
-              {
-                "type": "object",
-                "description": "A reward transaction. Represents a reward purchase transaction.",
-                "properties": {
-                  "id": {
-                    "type": "string",
-                    "description": "Unique reward transaction identifier (format `lrtx_...`)."
-                  },
-                  "card_id": {
-                    "type": "string",
-                    "description": "Unique identifier of the loyalty card the points were spent from (format `lcrd_...`)."
-                  },
-                  "card_transaction_id": {
-                    "type": "string",
-                    "description": "Unique identifier of the underlying card transaction (format `lctx_...`)."
-                  },
-                  "program_id": {
-                    "type": "string",
-                    "description": "Unique identifier of the loyalty program (format `lprg_...`)."
-                  },
-                  "member_id": {
-                    "type": "string",
-                    "description": "Unique identifier of the program member (format `lmbr_...`)."
-                  },
-                  "reward_id": {
-                    "type": "string",
-                    "description": "Unique identifier of the purchased reward (format `lrew_...`)."
-                  },
-                  "status": {
-                    "type": "string",
-                    "enum": [
-                      "PENDING",
-                      "PROCESSING",
-                      "APPROVED",
-                      "REJECTED"
-                    ],
-                    "description": "Transaction status:\n\n- `PENDING`: Created and awaiting processing.\n\n- `PROCESSING`: Being processed.\n\n- `APPROVED`: Completed successfully.\n\n- `REJECTED`: Rejected (see `details.rejection`)."
-                  },
-                  "type": {
-                    "type": "string",
-                    "enum": "PURCHASE",
-                    "description": "Transaction type."
-                  },
-                  "details": {
-                    "description": "Transaction details. Shape depends on `type` — purchase details for `PURCHASE`.",
-                    "oneOf": [
-                      {
-                        "$ref": "#/components/schemas/RewardPurchaseTransactionDetailsPurchase"
-                      },
-                      {
-                        "type": "null"
-                      }
-                    ]
-                  },
-                  "created_at": {
-                    "type": "string",
-                    "format": "date-time",
-                    "description": "Timestamp when the transaction was created (ISO 8601)."
-                  },
-                  "updated_at": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "format": "date-time",
-                    "description": "Timestamp when the transaction was last updated (ISO 8601), or `null`."
-                  },
-                  "object": {
-                    "type": "string",
-                    "const": "reward_transaction",
-                    "description": "Object type marker. Always `reward_transaction`."
-                  }
-                }
+            "type": "object",
+            "description": "A reward transaction. Represents a reward purchase transaction.",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Unique reward transaction identifier (format `lrtx_...`)."
               },
-              {
-                "type": "null"
+              "card_id": {
+                "type": "string",
+                "description": "Unique identifier of the loyalty card the points were spent from (format `lcrd_...`)."
+              },
+              "card_transaction_id": {
+                "type": "string",
+                "description": "Unique identifier of the underlying card transaction (format `lctx_...`)."
+              },
+              "program_id": {
+                "type": "string",
+                "description": "Unique identifier of the loyalty program (format `lprg_...`)."
+              },
+              "member_id": {
+                "type": "string",
+                "description": "Unique identifier of the program member (format `lmbr_...`)."
+              },
+              "reward_id": {
+                "type": "string",
+                "description": "Unique identifier of the purchased reward (format `lrew_...`)."
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "PENDING"
+                ],
+                "description": "Transaction status:\n\n- `PENDING`: Created and awaiting processing."
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "PURCHASE"
+                ],
+                "description": "Transaction type."
+              },
+              "details": {
+                "description": "Transaction details. Shape depends on `type` — purchase details for `PURCHASE`.",
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/RewardPurchaseTransactionDetailsPurchase"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "created_at": {
+                "type": "string",
+                "format": "date-time",
+                "description": "Timestamp when the transaction was created (ISO 8601)."
+              },
+              "updated_at": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "format": "date-time",
+                "description": "Timestamp when the transaction was last updated (ISO 8601), or `null`."
+              },
+              "object": {
+                "type": "string",
+                "const": "reward_transaction",
+                "description": "Object type marker. Always `reward_transaction`."
               }
+            },
+            "required": [
+              "id",
+              "card_id",
+              "card_transaction_id",
+              "program_id",
+              "member_id",
+              "reward_id",
+              "status",
+              "type",
+              "details",
+              "created_at",
+              "updated_at",
+              "object"
             ]
           },
           "status": {
