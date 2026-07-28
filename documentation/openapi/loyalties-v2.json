@@ -17724,17 +17724,28 @@
         "properties": {
           "reason": {
             "type": "string",
-            "description": "Machine-readable rejection reason. Order-side values include `ORDER_NOT_FOUND` and `PAYMENT_EXCEEDS_ORDER_TOTAL_AMOUNT`. Card-side reasons may also appear when the linked card transaction is rejected first (for example `NOT_ENOUGH_BALANCE`, `GLOBAL_LIMIT_EXCEEDED`, `TRANSACTION_POINTS_LIMIT_EXCEEDED`, `GLOBAL_SPENDING_LIMIT_EXCEEDED`, `TRANSACTION_SPENDING_LIMIT_EXCEEDED`)."
+            "description": "Machine-readable rejection reason. Order-side: `ORDER_NOT_FOUND`, `PAYMENT_EXCEEDS_ORDER_TOTAL_AMOUNT`. Card-side (when the linked card transaction fails first): `NOT_ENOUGH_BALANCE`, `GLOBAL_SPENDING_LIMIT_EXCEEDED`, `TRANSACTION_SPENDING_LIMIT_EXCEEDED`."
           },
           "details": {
-            "description": "Additional rejection details. May be a string or an object depending on the rejection source; omitted or `null` when not set.",
+            "description": "Structured rejection context. Omitted when the reason carries no extra data (`ORDER_NOT_FOUND`, `PAYMENT_EXCEEDS_ORDER_TOTAL_AMOUNT`, `NOT_ENOUGH_BALANCE`). For `GLOBAL_SPENDING_LIMIT_EXCEEDED`: `type`, `limit`, `spendings`. For `TRANSACTION_SPENDING_LIMIT_EXCEEDED`: `type`, `limit`.",
             "oneOf": [
               {
-                "type": "string"
-              },
-              {
                 "type": "object",
-                "additionalProperties": true
+                "additionalProperties": true,
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "description": "Spending cap type that was exceeded."
+                  },
+                  "limit": {
+                    "type": "number",
+                    "description": "Configured spending limit."
+                  },
+                  "spendings": {
+                    "type": "number",
+                    "description": "Projected total spendings that exceeded the limit. Present for `GLOBAL_SPENDING_LIMIT_EXCEEDED`."
+                  }
+                }
               },
               {
                 "type": "null"
