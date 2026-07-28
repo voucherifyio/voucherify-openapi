@@ -4833,7 +4833,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/RewardPurchaseCreateResponse"
+                  "$ref": "#/components/schemas/RewardPurchaseCreateDryRunResponse"
                 },
                 "examples": {
                   "Reward purchase dry run": {
@@ -4871,7 +4871,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/RewardPurchaseCreateResponse"
+                  "$ref": "#/components/schemas/RewardPurchaseCreateTransactionResponse"
                 },
                 "examples": {
                   "Reward purchase transaction created": {
@@ -16756,7 +16756,108 @@
           }
         }
       },
-      "RewardPurchaseCreateResponse": {
+      "RewardPurchaseCreateDryRunResponse": {
+        "type": "object",
+        "description": "Result of a reward purchase request in dry-run mode.",
+        "properties": {
+          "transaction": {
+            "description": "The simulated reward transaction.",
+            "oneOf": [
+              {
+                "type": "object",
+                "description": "A simulation of a reward transaction.",
+                "properties": {
+                  "card_id": {
+                    "type": "string",
+                    "description": "Unique identifier of the loyalty card the points are to be spent from (format `lcrd_...`)."
+                  },
+                  "card_transaction_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Unique identifier of the underlying card transaction (format `lctx_...`). `null` for `DRY_RUN` (SIMULATED) transactions."
+                  },
+                  "program_id": {
+                    "type": "string",
+                    "description": "Unique identifier of the loyalty program (format `lprg_...`)."
+                  },
+                  "member_id": {
+                    "type": "string",
+                    "description": "Unique identifier of the program member (format `lmbr_...`)."
+                  },
+                  "reward_id": {
+                    "type": "string",
+                    "description": "Unique identifier of the purchased reward (format `lrew_...`)."
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      
+                      "SIMULATED"
+                      
+                    ],
+                    "description": "Transaction status is `SIMULATED` for a dry-run result that is not persisted."
+                  },
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "PURCHASE",
+                      "REFUND"
+                    ],
+                    "description": "Transaction type."
+                  },
+                  "details": {
+                    "description": "Transaction details. For a dry run purchase, it's always `PURCHASE`.",
+                    "oneOf": [
+                      {
+                        "$ref": "#/components/schemas/RewardPurchaseTransactionDetailsPurchase"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "created_at": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "Timestamp when the transaction was created (ISO 8601)."
+                  },
+                  "updated_at": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "format": "date-time",
+                    "description": "Timestamp when the transaction was last updated (ISO 8601), or `null`."
+                  },
+                  "object": {
+                    "type": "string",
+                    "const": "reward_transaction",
+                    "description": "Object type marker. Always `reward_transaction`."
+                  }
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+
+              "DRY_RUN"
+            ],
+            "description": "Result status. Always `DRY_RUN` for the dry-run mode."
+          },
+          "message": {
+            "type": "string",
+            "description": "Human-readable result message. `DRY_RUN` mode: \"Dry run mode. No transaction was created. This is only a simulation.\"."
+          }
+        }
+      },
+      "RewardPurchaseCreateTransactionResponse": {
         "type": "object",
         "description": "Result of a reward purchase request.",
         "properties": {
@@ -16774,14 +16875,13 @@
           "status": {
             "type": "string",
             "enum": [
-              "TRANSACTION_CREATED",
-              "DRY_RUN"
+              "TRANSACTION_CREATED"
             ],
-            "description": "Result status. `TRANSACTION_CREATED` for `TRANSACTION` mode, `DRY_RUN` for the dry-run mode."
+            "description": "Result status. `TRANSACTION_CREATED` for `TRANSACTION` mode."
           },
           "message": {
             "type": "string",
-            "description": "Human-readable result message. `TRANSACTION` mode: \"Reward purchase transaction created\". `DRY_RUN` mode: \"Dry run mode. No transaction was created. This is only a simulation.\"."
+            "description": "Human-readable result message. `TRANSACTION` mode: \"Reward purchase transaction created\"."
           }
         }
       },
