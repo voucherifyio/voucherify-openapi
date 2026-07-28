@@ -5006,25 +5006,26 @@
     },
     "/v2/loyalties/programs/{programId}/members/{memberId}/orders/payments": {
       "parameters": [
-          {
-            "name": "programId",
-            "in": "path",
-            "required": true,
-            "description": "Unique loyalty program identifier (format: `lprg_` followed by hexadecimal characters).",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "memberId",
-            "in": "path",
-            "required": true,
-            "description": "Program member ID (format `lmbr_[a-f0-9]+`).",
-            "schema": {
-              "type": "string",
-              "pattern": "^lmbr_[a-f0-9]+$"
-            }
+        {
+          "name": "programId",
+          "in": "path",
+          "required": true,
+          "description": "Identifies the loyalty program (`lprg_` followed by hexadecimal characters).",
+          "schema": {
+            "type": "string",
+            "pattern": "^lprg_[a-f0-9]+$"
           }
+        },
+        {
+          "name": "memberId",
+          "in": "path",
+          "required": true,
+          "description": "Identifies the program member (`lmbr_[a-f0-9]+`).",
+          "schema": {
+            "type": "string",
+            "pattern": "^lmbr_[a-f0-9]+$"
+          }
+        }
       ],
       "get": {
         "operationId": "listMemberOrderPayments",
@@ -5032,7 +5033,7 @@
           "Programs"
         ],
         "summary": "List member order payments",
-        "description": "Lists order transactions (pay-with-points payments) for the given program member, with cursor-based pagination. Supports filtering by transaction `id` and `created_at` date.",
+        "description": "Lists persisted order transactions (pay-with-points payments) for the given program member, with cursor-based pagination. Supports filtering by transaction `id` and `created_at` date. Dry-run (`SIMULATED`) results from create are never persisted and do not appear in this list.",
         "parameters": [
           {
             "name": "limit",
@@ -5053,7 +5054,7 @@
             "name": "order",
             "in": "query",
             "required": false,
-            "description": "Sort order. A field name, optionally prefixed with `-` for descending order. May be provided multiple times (array). The same field cannot be used in both ascending and descending order at once. Default: `-created_at`.",
+            "description": "Sorts results by a field name, optionally prefixed with `-` for descending order. May be provided multiple times (array). The same field cannot be used in both ascending and descending order at once. Default: `-created_at`.",
             "schema": {
               "oneOf": [
                 {
@@ -5098,7 +5099,7 @@
             "required": false,
             "style": "deepObject",
             "explode": true,
-            "description": "Field filters, e.g. `filters[id][conditions][$is]=lotx_...`. Each field accepts a `conditions` object with condition operators.",
+            "description": "Filters results by field, e.g. `filters[id][conditions][$is]=lotx_...`. Each field accepts a `conditions` object with condition operators.",
             "schema": {
               "$ref": "#/components/schemas/OrderPaymentListFilters"
             }
@@ -5106,111 +5107,112 @@
         ],
         "responses": {
           "200": {
-            "description": "Paginated list of order payment transactions.",
+            "description": "Returns a paginated list of persisted order payment transactions.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/OrderPaymentListResponse"
                 },
-                "examples":{
+                "examples": {
                   "Member pay-with-points transactions": {
                     "value": {
                       "data": [
-                          {
-                              "id": "lotx_12b8dbf787c67de367",
-                              "program_id": "lprg_128f58429f4c4bf7b2",
-                              "member_id": "lmbr_128f962dbc8c4ba5dc",
-                              "card_id": "lcrd_128f962dbd8c4ba5e1",
-                              "card_definition_id": "lcdef_128f4a88414c4bed69",
-                              "card_transaction_id": "lctx_12b8dbf787c67de366",
-                              "order_id": "ord_12b4cdf5f30c158825",
-                              "status": "APPROVED",
-                              "type": "PAY_WITH_POINTS",
-                              "details": {
-                                  "reason": "Points spent on order payment",
-                                  "rejection": null,
-                                  "metadata": {
-                                      "points_limit": 150
-                                  },
-                                  "payment": {
-                                      "id": "ordpay_12b8dbf8d6939c4cd3",
-                                      "amount": 100,
-                                      "points_spent": 100,
-                                      "exchange_ratio": 1
-                                  }
-                              },
-                              "created_at": "2026-07-13T17:22:19.296Z",
-                              "updated_at": "2026-07-13T17:22:20.630Z",
-                              "object": "order_transaction"
+                        {
+                          "id": "lotx_12b8dbf787c67de367",
+                          "program_id": "lprg_128f58429f4c4bf7b2",
+                          "member_id": "lmbr_128f962dbc8c4ba5dc",
+                          "card_id": "lcrd_128f962dbd8c4ba5e1",
+                          "card_definition_id": "lcdef_128f4a88414c4bed69",
+                          "card_transaction_id": "lctx_12b8dbf787c67de366",
+                          "order_id": "ord_12b4cdf5f30c158825",
+                          "status": "APPROVED",
+                          "type": "PAY_WITH_POINTS",
+                          "details": {
+                            "reason": "Points spent on order payment",
+                            "rejection": null,
+                            "metadata": {
+                              "points_limit": 150
+                            },
+                            "payment": {
+                              "id": "ordpay_12b8dbf8d6939c4cd3",
+                              "amount": 100,
+                              "points_spent": 100,
+                              "exchange_ratio": 1
+                            }
                           },
-                          {
-                              "id": "lotx_12b8d2573e96b6af3b",
-                              "program_id": "lprg_128f58429f4c4bf7b2",
-                              "member_id": "lmbr_128f962dbc8c4ba5dc",
-                              "card_id": "lcrd_128f962dbd8c4ba5e1",
-                              "card_definition_id": "lcdef_128f4a88414c4bed69",
-                              "card_transaction_id": "lctx_12b8d2573e96b6af3a",
-                              "order_id": "ord_12b4cdf5f30c158825",
-                              "status": "APPROVED",
-                              "type": "PAY_WITH_POINTS",
-                              "details": {
-                                  "reason": "Points spent on order payment",
-                                  "rejection": null,
-                                  "metadata": {
-                                      "points_limit": 100
-                                  },
-                                  "payment": {
-                                      "id": "ordpay_12b8d25896d39c45e0",
-                                      "amount": 100,
-                                      "points_spent": 100,
-                                      "exchange_ratio": 1
-                                  }
-                              },
-                              "created_at": "2026-07-13T16:40:15.866Z",
-                              "updated_at": "2026-07-13T16:40:17.237Z",
-                              "object": "order_transaction"
+                          "created_at": "2026-07-13T17:22:19.296Z",
+                          "updated_at": "2026-07-13T17:22:20.630Z",
+                          "object": "order_transaction"
+                        },
+                        {
+                          "id": "lotx_12b8d2573e96b6af3b",
+                          "program_id": "lprg_128f58429f4c4bf7b2",
+                          "member_id": "lmbr_128f962dbc8c4ba5dc",
+                          "card_id": "lcrd_128f962dbd8c4ba5e1",
+                          "card_definition_id": "lcdef_128f4a88414c4bed69",
+                          "card_transaction_id": "lctx_12b8d2573e96b6af3a",
+                          "order_id": "ord_12b4cdf5f30c158825",
+                          "status": "APPROVED",
+                          "type": "PAY_WITH_POINTS",
+                          "details": {
+                            "reason": "Points spent on order payment",
+                            "rejection": null,
+                            "metadata": {
+                              "points_limit": 100
+                            },
+                            "payment": {
+                              "id": "ordpay_12b8d25896d39c45e0",
+                              "amount": 100,
+                              "points_spent": 100,
+                              "exchange_ratio": 1
+                            }
                           },
-                          {
-                              "id": "lotx_12b8d23e9016b6af18",
-                              "program_id": "lprg_128f58429f4c4bf7b2",
-                              "member_id": "lmbr_128f962dbc8c4ba5dc",
-                              "card_id": "lcrd_128f962dbd8c4ba5e1",
-                              "card_definition_id": "lcdef_128f4a88414c4bed69",
-                              "card_transaction_id": "lctx_12b8d23e9016b6af17",
-                              "order_id": "ord_12b4cdf5f30c158825",
-                              "status": "REJECTED",
-                              "type": "PAY_WITH_POINTS",
-                              "details": {
-                                  "reason": "Points spent on order payment",
-                                  "rejection": {
-                                      "reason": "PAYMENT_EXCEEDS_ORDER_TOTAL_AMOUNT"
-                                  },
-                                  "metadata": {
-                                      "amount_limit": 2000
-                                  },
-                                  "payment": {
-                                      "amount": 2000,
-                                      "points_spent": 2000,
-                                      "exchange_ratio": 1
-                                  }
-                              },
-                              "created_at": "2026-07-13T16:39:50.592Z",
-                              "updated_at": "2026-07-13T16:39:52.240Z",
-                              "object": "order_transaction"
-                          }
+                          "created_at": "2026-07-13T16:40:15.866Z",
+                          "updated_at": "2026-07-13T16:40:17.237Z",
+                          "object": "order_transaction"
+                        },
+                        {
+                          "id": "lotx_12b8d23e9016b6af18",
+                          "program_id": "lprg_128f58429f4c4bf7b2",
+                          "member_id": "lmbr_128f962dbc8c4ba5dc",
+                          "card_id": "lcrd_128f962dbd8c4ba5e1",
+                          "card_definition_id": "lcdef_128f4a88414c4bed69",
+                          "card_transaction_id": "lctx_12b8d23e9016b6af17",
+                          "order_id": "ord_12b4cdf5f30c158825",
+                          "status": "REJECTED",
+                          "type": "PAY_WITH_POINTS",
+                          "details": {
+                            "reason": "Points spent on order payment",
+                            "rejection": {
+                              "reason": "PAYMENT_EXCEEDS_ORDER_TOTAL_AMOUNT"
+                            },
+                            "metadata": {
+                              "amount_limit": 2000
+                            },
+                            "payment": {
+                              "amount": 2000,
+                              "points_spent": 2000,
+                              "exchange_ratio": 1
+                            }
+                          },
+                          "created_at": "2026-07-13T16:39:50.592Z",
+                          "updated_at": "2026-07-13T16:39:52.240Z",
+                          "object": "order_transaction"
+                        }
                       ],
                       "cursor": {
-                          "next": "lcrsotx_12cbca76e282083066",
-                          "expires_at": "2026-07-28T10:26:59.530Z"
+                        "next": "lcrsotx_12cbca76e282083066",
+                        "expires_at": "2026-07-28T10:26:59.530Z"
                       },
                       "object": "list"
+                    }
                   }
-                }}
+                }
               }
             }
           },
           "400": {
-            "description": "Validation error - request body failed validation, or the operation is not allowed in the current resource state.",
+            "description": "Validation error — query parameters failed validation, or the operation is not allowed in the current resource state.",
             "content": {
               "application/json": {
                 "schema": {
@@ -5220,14 +5222,14 @@
             }
           },
           "404": {
-            "description": "Resource not found.",
+            "description": "Program or member not found.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
                 },
-                "examples" :{
-                  "Member not found":{
+                "examples": {
+                  "Member not found": {
                     "value": {
                       "code": 404,
                       "key": "not_found",
@@ -5236,7 +5238,7 @@
                       "request_id": "v-12cbd13b05da398de1",
                       "resource_id": "lmbr_128962dbc8c4ba5dc",
                       "resource_type": "member"
-                  }
+                    }
                   },
                   "Program not found": {
                     "value": {
@@ -5247,7 +5249,7 @@
                       "request_id": "v-12cbd12127da398dac",
                       "resource_id": "lprg_128f8429f4c4bf7b2",
                       "resource_type": "program"
-                  }
+                    }
                   }
                 }
               }
@@ -17573,11 +17575,11 @@
       },
       "OrderPaymentTransaction": {
         "type": "object",
-        "description": "An order transaction. Represents a pay-with-points payment.",
+        "description": "An order transaction representing a pay-with-points payment. List endpoints return only persisted transactions; `SIMULATED` appears only on dry-run create responses.",
         "properties": {
           "id": {
             "type": "string",
-            "description": "Unique order transaction identifier (format `lotx_...`). Absent for DRY_RUN (SIMULATED) transactions, which are never persisted."
+            "description": "Identifies the order transaction (`lotx_...`). Absent on dry-run (`SIMULATED`) create responses, which are never persisted. Always present in list responses."
           },
           "program_id": {
             "type": "string",
@@ -17615,14 +17617,14 @@
               "REJECTED",
               "SIMULATED"
             ],
-            "description": "Transaction status. `PENDING` — created, awaiting processing; `PROCESSING` — being processed; `APPROVED` — completed successfully; `REJECTED` — rejected (see `details.rejection`); `SIMULATED` — dry-run result, not persisted."
+            "description": "Transaction status. `PENDING` — created, awaiting processing; `PROCESSING` — being processed; `APPROVED` — completed successfully; `REJECTED` — rejected (see `details.rejection`); `SIMULATED` — dry-run create result, not persisted (not returned by list)."
           },
           "type": {
             "type": "string",
             "enum": [
               "PAY_WITH_POINTS"
             ],
-            "description": "Transaction type."
+            "description": "Defines the transaction type. Always `PAY_WITH_POINTS`."
           },
           "details": {
             "description": "Transaction details for the `PAY_WITH_POINTS` type.",
@@ -17704,7 +17706,7 @@
           },
           "amount": {
             "type": "number",
-            "description": "Order amount paid with points."
+            "description": "Amount of the order paid with points."
           },
           "points_spent": {
             "type": "number",
@@ -17718,15 +17720,26 @@
       },
       "OrderPaymentRejection": {
         "type": "object",
-        "description": "Rejection details.",
+        "description": "Rejection details for a rejected order payment transaction.",
         "properties": {
           "reason": {
             "type": "string",
-            "description": "Machine-readable rejection reason."
+            "description": "Machine-readable rejection reason. Order-side values include `ORDER_NOT_FOUND` and `PAYMENT_EXCEEDS_ORDER_TOTAL_AMOUNT`. Card-side reasons may also appear when the linked card transaction is rejected first (for example `NOT_ENOUGH_BALANCE`, `GLOBAL_LIMIT_EXCEEDED`, `TRANSACTION_POINTS_LIMIT_EXCEEDED`, `GLOBAL_SPENDING_LIMIT_EXCEEDED`, `TRANSACTION_SPENDING_LIMIT_EXCEEDED`)."
           },
           "details": {
-            "type": "string",
-            "description": "Additional human-readable details about the rejection."
+            "description": "Additional rejection details. May be a string or an object depending on the rejection source; omitted or `null` when not set.",
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "object",
+                "additionalProperties": true
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         }
       },
@@ -17764,7 +17777,7 @@
         "description": "Filters for listing order payments.",
         "properties": {
           "junction": {
-            "description": "Logical junction between the field filters. Defaults to AND behavior.",
+            "description": "Joins field filters with `AND` or `OR`. Defaults to `AND`.",
             "oneOf": [
               {
                 "type": "string",
@@ -18696,12 +18709,12 @@
                 "properties": {
                   "next": {
                     "type": "string",
-                    "description": "Cursor to pass as the `cursor` query parameter to fetch the next page (format `lcrsotx_...`)."
+                    "description": "Pass as the `cursor` query parameter to fetch the next page (format `lcrsotx_...`)."
                   },
                   "expires_at": {
                     "type": "string",
                     "format": "date-time",
-                    "description": "Timestamp when the cursor expires."
+                    "description": "Timestamp when the cursor expires (ISO 8601)."
                   }
                 }
               },
