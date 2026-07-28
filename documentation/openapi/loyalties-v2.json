@@ -5273,55 +5273,265 @@
           "Programs"
         ],
         "summary": "Pay for an order with points",
-        "description": "\n<Warning>\n\n<Badge color=\"yellow\">BETA endpoint</Badge>\n\nThis is a work-in-progress documentation of a BETA endpoint. The parameters, fields, request and response bodies, and other data may be subject to change. If you want to share feedback or improvements, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Warning>\n\nPays for an order using points from the specified member loyalty card. The payment amount\nand points to spend are calculated from the card definition's pay-with-points exchange\nratio formula, capped by the card balance and the optional `payment_limit`.\n\nRequires an ACTIVE program, an ACTIVE member, and a card definition with pay-with-points\nenabled and a configured exchange ratio formula.\n\nModes:\n- `TRANSACTION` (default) — creates a PENDING order transaction (and an underlying card\n  transaction) processed asynchronously. Returns HTTP 202.\n- `DRY_RUN` — simulates the payment without creating any transaction. Returns HTTP 200\n  with a SIMULATED transaction payload.",
-        "parameters": [
-          {
-            "name": "programId",
-            "in": "path",
-            "required": true,
-            "description": "Unique loyalty program identifier (format: `lprg_` followed by hexadecimal characters).",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "memberId",
-            "in": "path",
-            "required": true,
-            "description": "Program member ID (format `lmbr_[a-f0-9]+`).",
-            "schema": {
-              "type": "string",
-              "pattern": "^lmbr_[a-f0-9]+$"
-            }
-          }
-        ],
+        "description": "Pays for an order using points from the specified member loyalty card. The payment amount and points to spend are calculated from the card definition's pay-with-points exchange ratio formula, capped by the card balance and the optional `payment_limit`.\n\nRequires an `ACTIVE` program, an `ACTIVE` member, and a card definition with pay-with-points enabled, and a configured exchange ratio formula. Also, it requires an existing order in Voucherify with order `id` or order `source_id`.\n\nModes:\n- `TRANSACTION` (default) — creates a `PENDING` order transaction (and an underlying card transaction) processed asynchronously. Returns HTTP `202`.\n- `DRY_RUN` — simulates the payment without creating any transaction. Returns HTTP `200` with a `SIMULATED` transaction payload.",
+        "parameters": [],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/OrderPaymentCreateRequest"
+              },
+              "examples": {
+                "Card balance type": {
+                  "value": {
+                    "payment_limit": {
+                      "type": "CARD_BALANCE"
+                    },
+                    "mode": "TRANSACTION",
+                    "card_id": "lcrd_128f962dbd8c4ba5e1",
+                    "order": {
+                      "id": "ord_12b4cdf5f30c158825"
+                    }
+                  }
+                },
+                "Point limit type": {
+                  "value": {
+                    "payment_limit": {
+                      "type": "POINTS_LIMIT",
+                      "points_limit": {
+                        "max": 150
+                      }
+                    },
+                    "mode": "TRANSACTION",
+                    "card_id": "lcrd_128f962dbd8c4ba5e1",
+                    "order": {
+                      "id": "ord_12b4cdf5f30c158825"
+                    }
+                  }
+                },
+                "Amount limit type": {
+                  "value": {
+                    "payment_limit": {
+                      "type": "AMOUNT_LIMIT",
+                      "amount_limit": {
+                        "max": 2000
+                      }
+                    },
+                    "mode": "TRANSACTION",
+                    "card_id": "lcrd_128f962dbd8c4ba5e1",
+                    "order": {
+                      "id": "ord_12b4cdf5f30c158825"
+                    }
+                  }
+                }
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Dry run result (mode `DRY_RUN`). No transaction was created; the returned transaction has status SIMULATED and no `id`.",
+            "description": "Dry run result (mode `DRY_RUN`). No transaction was created; the returned transaction has status `SIMULATED` and no `id`.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/OrderPaymentCreateResponse"
+                },
+                "examples": {
+                  "Dry run: Point limit": {
+                    "value": {
+                      "transaction": {
+                        "program_id": "lprg_128f58429f4c4bf7b2",
+                        "member_id": "lmbr_128f962dbc8c4ba5dc",
+                        "card_id": "lcrd_128f962dbd8c4ba5e1",
+                        "card_definition_id": "lcdef_128f4a88414c4bed69",
+                        "card_transaction_id": null,
+                        "order_id": "ord_12b4cdf5f30c158825",
+                        "status": "SIMULATED",
+                        "type": "PAY_WITH_POINTS",
+                        "details": {
+                          "reason": "Points spent on order payment",
+                          "rejection": null,
+                          "metadata": {
+                            "points_limit": 150
+                          },
+                          "payment": {
+                            "amount": 150,
+                            "points_spent": 150,
+                            "exchange_ratio": 1
+                          }
+                        },
+                        "updated_at": null,
+                        "object": "order_transaction"
+                      },
+                      "status": "DRY_RUN",
+                      "message": "Dry run mode. No transaction was created. This is only a simulation."
+                    }
+                  },
+                  "Dry run: Amount limit": {
+                    "value": {
+                      "transaction": {
+                        "program_id": "lprg_128f58429f4c4bf7b2",
+                        "member_id": "lmbr_128f962dbc8c4ba5dc",
+                        "card_id": "lcrd_128f962dbd8c4ba5e1",
+                        "card_definition_id": "lcdef_128f4a88414c4bed69",
+                        "card_transaction_id": null,
+                        "order_id": "ord_12b4cdf5f30c158825",
+                        "status": "SIMULATED",
+                        "type": "PAY_WITH_POINTS",
+                        "details": {
+                          "reason": "Points spent on order payment",
+                          "rejection": null,
+                          "metadata": {
+                            "amount_limit": 2000
+                          },
+                          "payment": {
+                            "amount": 650,
+                            "points_spent": 650,
+                            "exchange_ratio": 1
+                          }
+                        },
+                        "updated_at": null,
+                        "object": "order_transaction"
+                      },
+                      "status": "DRY_RUN",
+                      "message": "Dry run mode. No transaction was created. This is only a simulation."
+                    }
+                  },
+                  "Dry run: Card balance": {
+                    "value": {
+                      "transaction": {
+                        "program_id": "lprg_128f58429f4c4bf7b2",
+                        "member_id": "lmbr_128f962dbc8c4ba5dc",
+                        "card_id": "lcrd_128f962dbd8c4ba5e1",
+                        "card_definition_id": "lcdef_128f4a88414c4bed69",
+                        "card_transaction_id": null,
+                        "order_id": "ord_12b4cdf5f30c158825",
+                        "status": "SIMULATED",
+                        "type": "PAY_WITH_POINTS",
+                        "details": {
+                          "reason": "Points spent on order payment",
+                          "rejection": null,
+                          "metadata": {},
+                          "payment": {
+                            "amount": 650,
+                            "points_spent": 650,
+                            "exchange_ratio": 1
+                          }
+                        },
+                        "updated_at": null,
+                        "object": "order_transaction"
+                      },
+                      "status": "DRY_RUN",
+                      "message": "Dry run mode. No transaction was created. This is only a simulation."
+                    }
+                  }
                 }
               }
             }
           },
           "202": {
-            "description": "Payment accepted (mode `TRANSACTION`). A PENDING order transaction was created and will be processed asynchronously.",
+            "description": "Payment accepted (mode `TRANSACTION`). A `PENDING` order transaction was created and will be processed asynchronously.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/OrderPaymentCreateResponse"
+                },
+                "examples": {
+                  "Transaction created: Point limit": {
+                    "value": {
+                      "transaction": {
+                        "id": "lotx_12b884c72b0dd352b9",
+                        "program_id": "lprg_128f58429f4c4bf7b2",
+                        "member_id": "lmbr_128f962dbc8c4ba5dc",
+                        "card_id": "lcrd_128f962dbd8c4ba5e1",
+                        "card_definition_id": "lcdef_128f4a88414c4bed69",
+                        "card_transaction_id": "lctx_12b884c72b0dd352b8",
+                        "order_id": "ord_12b4cdf5f30c158825",
+                        "status": "PENDING",
+                        "type": "PAY_WITH_POINTS",
+                        "details": {
+                          "reason": "Points spent on order payment",
+                          "rejection": null,
+                          "metadata": {
+                            "points_limit": 12
+                          },
+                          "payment": {
+                            "amount": 12,
+                            "points_spent": 12,
+                            "exchange_ratio": 1
+                          }
+                        },
+                        "created_at": "2026-07-13T11:01:23.245Z",
+                        "updated_at": null,
+                        "object": "order_transaction"
+                      },
+                      "status": "TRANSACTION_CREATED",
+                      "message": "Pay with points transaction created"
+                    }
+                  },
+                  "Transaction created: Amount limit": {
+                    "value": {
+                      "transaction": {
+                        "id": "lotx_12b8939fd78dd3657f",
+                        "program_id": "lprg_128f58429f4c4bf7b2",
+                        "member_id": "lmbr_128f962dbc8c4ba5dc",
+                        "card_id": "lcrd_128f962dbd8c4ba5e1",
+                        "card_definition_id": "lcdef_128f4a88414c4bed69",
+                        "card_transaction_id": "lctx_12b8939fd78dd3657e",
+                        "order_id": "ord_12b4cdf5f30c158825",
+                        "status": "PENDING",
+                        "type": "PAY_WITH_POINTS",
+                        "details": {
+                          "reason": "Points spent on order payment",
+                          "rejection": null,
+                          "metadata": {
+                            "amount_limit": 2000
+                          },
+                          "payment": {
+                            "amount": 2000,
+                            "points_spent": 2000,
+                            "exchange_ratio": 1
+                          }
+                        },
+                        "created_at": "2026-07-13T12:06:15.135Z",
+                        "updated_at": null,
+                        "object": "order_transaction"
+                      },
+                      "status": "TRANSACTION_CREATED",
+                      "message": "Pay with points transaction created"
+                    }
+                  },
+                  "Transaction created: Card balance": {
+                    "value": {
+                      "transaction": {
+                        "id": "lotx_12b8861fdd0dd35462",
+                        "program_id": "lprg_128f58429f4c4bf7b2",
+                        "member_id": "lmbr_128f962dbc8c4ba5dc",
+                        "card_id": "lcrd_128f962dbd8c4ba5e1",
+                        "card_definition_id": "lcdef_128f4a88414c4bed69",
+                        "card_transaction_id": "lctx_12b8861fdd0dd35461",
+                        "order_id": "ord_12b4cdf5f30c158825",
+                        "status": "PENDING",
+                        "type": "PAY_WITH_POINTS",
+                        "details": {
+                          "reason": "Points spent on order payment",
+                          "rejection": null,
+                          "metadata": {},
+                          "payment": {
+                            "amount": 200,
+                            "points_spent": 200,
+                            "exchange_ratio": 1
+                          }
+                        },
+                        "created_at": "2026-07-13T11:07:16.212Z",
+                        "updated_at": null,
+                        "object": "order_transaction"
+                      },
+                      "status": "TRANSACTION_CREATED",
+                      "message": "Pay with points transaction created"
+                    }
+                  }
                 }
               }
             }
@@ -5342,26 +5552,52 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Card not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find card with id lcrd_128f962bd8c4ba5e1",
+                      "request_id": "v-12cc33659a5a39c1f1",
+                      "resource_id": "lcrd_128f962bd8c4ba5e1",
+                      "resource_type": "card"
+                  }
+                  },
+                  "Member not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find member with id lmbr_128f962db8c4ba5dc",
+                      "request_id": "v-12cc3350135a39c1c3",
+                      "resource_id": "lmbr_128f962db8c4ba5dc",
+                      "resource_type": "member"
+                  }
+                  },
+                  "Order not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find order with id ord_12b4cdf5f30c58825",
+                      "request_id": "v-12cc3377e7da39c211",
+                      "resource_id": "ord_12b4cdf5f30c58825",
+                      "resource_type": "order"
+                  }
+                  },
+                  "Program not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find program with id lprg_128f5849f4c4bf7b2",
+                      "request_id": "v-12cc332f6fda39c18b",
+                      "resource_id": "lprg_128f5849f4c4bf7b2",
+                      "resource_type": "program"
+                  }
+                  }
                 }
               }
             }
@@ -5383,6 +5619,16 @@
                       "request_id": "v-12b8894b3ec1a59873"
                     }
                   }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
