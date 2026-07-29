@@ -5335,7 +5335,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OrderPaymentCreateResponse"
+                  "$ref": "#/components/schemas/OrderPaymentCreateDryRunResponse"
                 },
                 "examples": {
                   "Dry run: Point limit": {
@@ -5435,7 +5435,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OrderPaymentCreateResponse"
+                  "$ref": "#/components/schemas/OrderPaymentCreateTransactionResponse"
                 },
                 "examples": {
                   "Transaction created: Point limit": {
@@ -5617,6 +5617,15 @@
                       "message": "Card balance is zero",
                       "details": "Operation requires a positive card balance",
                       "request_id": "v-12b8894b3ec1a59873"
+                    }
+                  },
+                  "Pay with points is not enabled": {
+                    "value": {
+                      "code": 423,
+                      "key": "pay_with_points_not_enabled",
+                      "message": "Pay with points is not enabled",
+                      "details": "Card definition does not have pay with points enabled",
+                      "request_id": "v-12cd00d6722df1bf7e"
                     }
                   }
                 }
@@ -17924,7 +17933,7 @@
           },
           "metadata": {
             "type": "object",
-            "description": "Transaction metadata. For pay-with-points transactions this contains the flattened payment limits used for the calculation: `amount_limit` and/or `points_limit` (omitted when the default `CARD_BALANCE` limit was used). Empty object when not set.",
+            "description": "Transaction metadata. For pay-with-points transactions this contains the flattened payment limits used for the calculation: `amount_limit` for the `AMOUNT_LIMIT` type and/or `points_limit` for the `POINTS_LIMIT` type. Omitted when the default `CARD_BALANCE` limit was used. Empty object when not set.",
             "properties": {
               "amount_limit": {
                 "type": "integer",
@@ -18000,7 +18009,97 @@
           }
         }
       },
-      "OrderPaymentCreateResponse": {
+      "OrderPaymentCreateDryRunResponse": {
+        "type": "object",
+        "description": "Result of a pay-with-points request.",
+        "properties": {
+          "transaction": {
+            "description": "The created (or simulated) order transaction.",
+            "oneOf": [
+              {
+                "program_id": {
+                  "type": "string",
+                  "description": "Unique identifier of the loyalty program (format `lprg_...`)."
+                },
+                "member_id": {
+                  "type": "string",
+                  "description": "Unique identifier of the program member (format `lmbr_...`)."
+                },
+                "card_id": {
+                  "type": "string",
+                  "description": "Unique identifier of the loyalty card the points were spent from (format `lcrd_...`)."
+                },
+                "card_definition_id": {
+                  "type": "string",
+                  "description": "Unique identifier of the card definition (format `lcdef_...`)."
+                },
+                "order_id": {
+                  "type": "string",
+                  "description": "Unique identifier of the paid order (format `ord_...`)."
+                },
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "SIMULATED"
+                  ],
+                  "description": "Transaction status. `SIMULATED` — dry-run create result, not persisted (not returned by list)."
+                },
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "PAY_WITH_POINTS"
+                  ],
+                  "description": "Defines the transaction type. Always `PAY_WITH_POINTS`."
+                },
+                "details": {
+                  "description": "Transaction details for the `PAY_WITH_POINTS` type.",
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/OrderPaymentTransactionDetails"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "created_at": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "Timestamp when the transaction was created (ISO 8601)."
+                },
+                "updated_at": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "format": "date-time",
+                  "description": "Timestamp when the transaction was last updated (ISO 8601), or `null`."
+                },
+                "object": {
+                  "type": "string",
+                  "const": "order_transaction",
+                  "description": "Object type marker. Always `order_transaction`."
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "DRY_RUN"
+            ],
+            "description": "Result status. `DRY_RUN` for dry-run mode."
+          },
+          "message": {
+            "type": "string",
+            "description": "Human-readable result message. `DRY_RUN` mode: \"Dry run mode. No transaction was created. This is only a simulation.\"."
+          }
+        }
+      },
+      "OrderPaymentCreateTransactionResponse": {
         "type": "object",
         "description": "Result of a pay-with-points request.",
         "properties": {
