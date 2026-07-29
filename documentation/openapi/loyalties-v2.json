@@ -10549,13 +10549,176 @@
         ],
         "operationId": "examineEarningRules",
         "summary": "Examine earning rules",
-        "description": "\n<Warning>\n\n<Badge color=\"yellow\">BETA endpoint</Badge>\n\nThis is a work-in-progress documentation of a BETA endpoint. The parameters, fields, request and response bodies, and other data may be subject to change. If you want to share feedback or improvements, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Warning>\n\nEstimates earning opportunities for a customer without triggering any actual earning.\nThe `trigger` selects whether all trigger events or one specific event is examined.\nWhen a specific event is selected, exactly one matching context object is required:\n`customer_order_paid` for `customer.order.paid`, `customer_segment_entered` for\n`customer.segment.entered`, and `customer_custom_event` for `customer.custom_event`\n(the other context objects must not be present).",
+        "description": "Estimates earning opportunities for a customer without triggering any actual earning for loyalty v2 earning rules. The `trigger` selects whether all trigger events or one specific event is examined. When a specific event is selected, exactly one matching context object is required: `customer_order_paid` for `customer.order.paid`, `customer_segment_entered` for `customer.segment.entered`, and `customer_custom_event` for `customer.custom_event`. The other context objects must not be present.\n\nThis endpoint can examine earning rules for all loyalty programs the customer belongs to by using `customer_identification` with `customer_id` or `source_id`. To examine earning rules only for one program, use `member_id` in `customer_identification`, as `member_id` is loyalty program-specific.",
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/ExamineEarningRulesRequest"
+              },
+              "examples": {
+                "All triggers": {
+                  "value": {
+                    "trigger": {
+                      "type": "ALL"
+                    },
+                    "customer_identification": {
+                      "type": "member_id",
+                      "member_id": "lmbr_128f962dbc8c4ba5dc"
+                    },
+                    "customer_order_paid": {
+                      "customer": {
+                        "metadata": {
+                          "tier": "gold"
+                        }
+                      },
+                      "member": {
+                        "metadata": {
+                          "channel": "mobile"
+                        }
+                      },
+                      "order": {
+                        "amount": 10000,
+                        "metadata": {
+                          "source": "pos"
+                        }
+                      }
+                    },
+                    "customer_segment_entered": {
+                      "customer": {
+                        "metadata": {
+                          "is_premium": "true",
+                          "loyalty_score": 10
+                        }
+                      }
+                    },
+                    "customer_custom_event": {
+                      "type": "ALL",
+                      "all": {
+                        "customer": {
+                          "metadata": {
+                            "plan": "pro"
+                          }
+                        },
+                        "custom_event": {
+                          "metadata": {
+                            "source": "mobile",
+                            "score": 40
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "Order paid": {
+                  "value": {
+                    "trigger": {
+                      "type": "SPECIFIC",
+                      "specific": {
+                        "event": "customer.order.paid"
+                      }
+                    },
+                    "customer_identification": {
+                      "type": "member_id",
+                      "member_id": "lmbr_128f962dbc8c4ba5dc"
+                    },
+                    "customer_order_paid": {
+                      "customer": {
+                        "metadata": {
+                          "tier": "gold"
+                        }
+                      },
+                      "member": {
+                        "metadata": {
+                          "channel": "mobile"
+                        }
+                      },
+                      "order": {
+                        "amount": 10000,
+                        "initial_amount": 10000,
+                        "items": [
+                          {
+                            "quantity": 1,
+                            "price": 10000,
+                            "product": {
+                              "id": "prod_0ba86913fb8b47f7cb"
+                            },
+                            "metadata": {
+                              "category": "electronics"
+                            }
+                          }
+                        ],
+                        "metadata": {
+                          "source": "pos"
+                        }
+                      }
+                    }
+                  }
+                },
+                "Customer entered segment": {
+                  "value": {
+                    "trigger": {
+                      "type": "SPECIFIC",
+                      "specific": {
+                        "event": "customer.segment.entered"
+                      }
+                    },
+                    "customer_identification": {
+                      "type": "member_id",
+                      "member_id": "lmbr_128f962dbc8c4ba5dc"
+                    },
+                    "customer_segment_entered": {
+                      "customer": {
+                        "metadata": {
+                          "is_premium": "true",
+                          "loyalty_score": 10
+                        }
+                      },
+                      "member": {
+                        "metadata": {
+                          "channel": "mobile"
+                        }
+                      }
+                    }
+                  }
+                },
+                "Custom event": {
+                  "value": {
+                    "trigger": {
+                      "type": "SPECIFIC",
+                      "specific": {
+                        "event": "customer.custom_event"
+                      }
+                    },
+                    "customer_identification": {
+                      "type": "member_id",
+                      "member_id": "lmbr_128f962dbc8c4ba5dc"
+                    },
+                    "customer_custom_event": {
+                      "type": "SPECIFIC",
+                      "specific": {
+                        "customer": {
+                          "metadata": {
+                            "plan": "pro"
+                          }
+                        },
+                        "member": {
+                          "metadata": {
+                            "channel": "mobile"
+                          }
+                        },
+                        "custom_event": {
+                          "schema_id": "ms_68d7e3b1c2a04f19bd",
+                          "metadata": {
+                            "source": "mobile",
+                            "score": 40
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
               }
             }
           }
@@ -10567,16 +10730,599 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ExamineEarningRulesResponse"
+                },
+                "examples": {
+                  "All triggers without additional data": {
+                    "value": {
+                      "event": null,
+                      "customer": {
+                        "id": "cust_6onRrs4kCnvSVrTs5YtDPFBG",
+                        "source_id": "lx-rdmptr",
+                        "metadata": {
+                          "VIP": true
+                        },
+                        "object": "customer"
+                      },
+                      "earning_rules": [
+                        {
+                          "id": "lern_128f577bd4d47c8e12",
+                          "name": "EnterVipSegment",
+                          "metadata": {},
+                          "object": "earning_rule"
+                        },
+                        {
+                          "id": "lern_128f5822398c4bf78f",
+                          "name": "AutumnPaid",
+                          "metadata": {},
+                          "object": "earning_rule"
+                        },
+                        {
+                          "id": "lern_128f5834b30c4bf7a3",
+                          "name": "SummerPaid",
+                          "metadata": {},
+                          "object": "earning_rule"
+                        },
+                        {
+                          "id": "lern_128f57ec40cc4bf762",
+                          "name": "Autumn Ethiopia",
+                          "metadata": {},
+                          "object": "earning_rule"
+                        },
+                        {
+                          "id": "lern_12cd26a685db3e63d8",
+                          "name": "Birthday in more than 90 days",
+                          "metadata": {},
+                          "object": "earning_rule"
+                        }
+                      ],
+                      "memberships": [
+                        {
+                          "member": {
+                            "id": "lmbr_128f962dbc8c4ba5dc",
+                            "customer_id": "cust_6onRrs4kCnvSVrTs5YtDPFBG",
+                            "program_id": "lprg_128f58429f4c4bf7b2",
+                            "metadata": {},
+                            "object": "member"
+                          },
+                          "program": {
+                            "id": "lprg_128f58429f4c4bf7b2",
+                            "name": "AnnualProgram",
+                            "metadata": {},
+                            "object": "program"
+                          },
+                          "cards": [
+                            {
+                              "card": {
+                                "id": "lcrd_128f962dbd8c4ba5e1",
+                                "card_definition_id": "lcdef_128f4a88414c4bed69",
+                                "card_type": "INDIVIDUAL",
+                                "code": "AnnualTime-7M7ShPGfme",
+                                "object": "card"
+                              },
+                              "points_estimation": 150,
+                              "earning_rules": [
+                                {
+                                  "earning_rule": {
+                                    "id": "lern_128f577bd4d47c8e12",
+                                    "object": "earning_rule"
+                                  },
+                                  "points_estimation": 150,
+                                  "object": "earning_rule_estimation"
+                                }
+                              ],
+                              "object": "card_estimation"
+                            },
+                            {
+                              "card": {
+                                "id": "lcrd_128f962dbd8c4ba5e0",
+                                "card_definition_id": "lcdef_128f49963c0c4becb7",
+                                "card_type": "INDIVIDUAL",
+                                "code": "AutumnTime-R02hVARx33",
+                                "object": "card"
+                              },
+                              "points_estimation": 10,
+                              "earning_rules": [
+                                {
+                                  "earning_rule": {
+                                    "id": "lern_128f5822398c4bf78f",
+                                    "object": "earning_rule"
+                                  },
+                                  "points_estimation": 10,
+                                  "object": "earning_rule_estimation"
+                                }
+                              ],
+                              "object": "card_estimation"
+                            },
+                            {
+                              "card": {
+                                "id": "lcrd_128f962dbd8c4ba5df",
+                                "card_definition_id": "lcdef_128f495f720c4bec8c",
+                                "card_type": "INDIVIDUAL",
+                                "code": "SummerTime-7z8dWawICd",
+                                "object": "card"
+                              },
+                              "points_estimation": 10,
+                              "earning_rules": [
+                                {
+                                  "earning_rule": {
+                                    "id": "lern_128f5834b30c4bf7a3",
+                                    "object": "earning_rule"
+                                  },
+                                  "points_estimation": 10,
+                                  "object": "earning_rule_estimation"
+                                }
+                              ],
+                              "object": "card_estimation"
+                            }
+                          ],
+                          "benefits": [
+                            {
+                              "benefit": {
+                                "id": "lben_128f4bba81947c8542",
+                                "name": "Coffee sample Ethiopia",
+                                "type": "MATERIAL",
+                                "object": "benefit"
+                              },
+                              "earning_rules": [
+                                {
+                                  "earning_rule": {
+                                    "id": "lern_128f57ec40cc4bf762",
+                                    "object": "earning_rule"
+                                  },
+                                  "object": "earning_rule_estimation"
+                                },
+                                {
+                                  "earning_rule": {
+                                    "id": "lern_12cd26a685db3e63d8",
+                                    "object": "earning_rule"
+                                  },
+                                  "object": "earning_rule_estimation"
+                                }
+                              ],
+                              "object": "benefit_estimation"
+                            }
+                          ],
+                          "object": "member_earnings_opportunity"
+                        }
+                      ],
+                      "object": "earnings_examine_result"
+                    }
+                  },
+                  "All triggers with additional data": {
+                    "value": {
+                      "event": null,
+                      "customer": {
+                        "id": "cust_6onRrs4kCnvSVrTs5YtDPFBG",
+                        "source_id": "lx-rdmptr",
+                        "metadata": {
+                          "VIP": true
+                        },
+                        "object": "customer"
+                      },
+                      "earning_rules": [
+                        {
+                          "id": "lern_128f48ee44cc4bec34",
+                          "name": "EarningRule-OrderPaid",
+                          "metadata": {},
+                          "object": "earning_rule"
+                        },
+                        {
+                          "id": "lern_128f577bd4d47c8e12",
+                          "name": "EnterVipSegment",
+                          "metadata": {},
+                          "object": "earning_rule"
+                        },
+                        {
+                          "id": "lern_128f5822398c4bf78f",
+                          "name": "AutumnPaid",
+                          "metadata": {},
+                          "object": "earning_rule"
+                        },
+                        {
+                          "id": "lern_128f5834b30c4bf7a3",
+                          "name": "SummerPaid",
+                          "metadata": {},
+                          "object": "earning_rule"
+                        },
+                        {
+                          "id": "lern_128f57ec40cc4bf762",
+                          "name": "Autumn Ethiopia",
+                          "metadata": {},
+                          "object": "earning_rule"
+                        },
+                        {
+                          "id": "lern_12cd26a685db3e63d8",
+                          "name": "Birthday in more than 90 days",
+                          "metadata": {},
+                          "object": "earning_rule"
+                        }
+                      ],
+                      "memberships": [
+                        {
+                          "member": {
+                            "id": "lmbr_128f962dbc8c4ba5dc",
+                            "customer_id": "cust_6onRrs4kCnvSVrTs5YtDPFBG",
+                            "program_id": "lprg_128f58429f4c4bf7b2",
+                            "metadata": {},
+                            "object": "member"
+                          },
+                          "program": {
+                            "id": "lprg_128f58429f4c4bf7b2",
+                            "name": "AnnualProgram",
+                            "metadata": {},
+                            "object": "program"
+                          },
+                          "cards": [
+                            {
+                              "card": {
+                                "id": "lcrd_128f962dbd8c4ba5e1",
+                                "card_definition_id": "lcdef_128f4a88414c4bed69",
+                                "card_type": "INDIVIDUAL",
+                                "code": "AnnualTime-7M7ShPGfme",
+                                "object": "card"
+                              },
+                              "points_estimation": 171150,
+                              "earning_rules": [
+                                {
+                                  "earning_rule": {
+                                    "id": "lern_128f48ee44cc4bec34",
+                                    "object": "earning_rule"
+                                  },
+                                  "points_estimation": 171000,
+                                  "object": "earning_rule_estimation"
+                                },
+                                {
+                                  "earning_rule": {
+                                    "id": "lern_128f577bd4d47c8e12",
+                                    "object": "earning_rule"
+                                  },
+                                  "points_estimation": 150,
+                                  "object": "earning_rule_estimation"
+                                }
+                              ],
+                              "object": "card_estimation"
+                            },
+                            {
+                              "card": {
+                                "id": "lcrd_128f962dbd8c4ba5e0",
+                                "card_definition_id": "lcdef_128f49963c0c4becb7",
+                                "card_type": "INDIVIDUAL",
+                                "code": "AutumnTime-R02hVARx33",
+                                "object": "card"
+                              },
+                              "points_estimation": 10,
+                              "earning_rules": [
+                                {
+                                  "earning_rule": {
+                                    "id": "lern_128f5822398c4bf78f",
+                                    "object": "earning_rule"
+                                  },
+                                  "points_estimation": 10,
+                                  "object": "earning_rule_estimation"
+                                }
+                              ],
+                              "object": "card_estimation"
+                            },
+                            {
+                              "card": {
+                                "id": "lcrd_128f962dbd8c4ba5df",
+                                "card_definition_id": "lcdef_128f495f720c4bec8c",
+                                "card_type": "INDIVIDUAL",
+                                "code": "SummerTime-7z8dWawICd",
+                                "object": "card"
+                              },
+                              "points_estimation": 10,
+                              "earning_rules": [
+                                {
+                                  "earning_rule": {
+                                    "id": "lern_128f5834b30c4bf7a3",
+                                    "object": "earning_rule"
+                                  },
+                                  "points_estimation": 10,
+                                  "object": "earning_rule_estimation"
+                                }
+                              ],
+                              "object": "card_estimation"
+                            }
+                          ],
+                          "benefits": [
+                            {
+                              "benefit": {
+                                "id": "lben_128f4bba81947c8542",
+                                "name": "Coffee sample Ethiopia",
+                                "type": "MATERIAL",
+                                "object": "benefit"
+                              },
+                              "earning_rules": [
+                                {
+                                  "earning_rule": {
+                                    "id": "lern_128f57ec40cc4bf762",
+                                    "object": "earning_rule"
+                                  },
+                                  "object": "earning_rule_estimation"
+                                },
+                                {
+                                  "earning_rule": {
+                                    "id": "lern_12cd26a685db3e63d8",
+                                    "object": "earning_rule"
+                                  },
+                                  "object": "earning_rule_estimation"
+                                }
+                              ],
+                              "object": "benefit_estimation"
+                            }
+                          ],
+                          "object": "member_earnings_opportunity"
+                        }
+                      ],
+                      "object": "earnings_examine_result"
+                    }
+                  },
+                  "Order paid trigger": {
+                    "value": {
+                      "event": "customer.order.paid",
+                      "customer": {
+                        "id": "cust_6onRrs4kCnvSVrTs5YtDPFBG",
+                        "source_id": "lx-rdmptr",
+                        "metadata": {
+                          "VIP": true
+                        },
+                        "object": "customer"
+                      },
+                      "earning_rules": [
+                        {
+                          "id": "lern_128f48ee44cc4bec34",
+                          "name": "EarningRule-OrderPaid",
+                          "metadata": {},
+                          "object": "earning_rule"
+                        },
+                        {
+                          "id": "lern_128f5822398c4bf78f",
+                          "name": "AutumnPaid",
+                          "metadata": {},
+                          "object": "earning_rule"
+                        },
+                        {
+                          "id": "lern_128f5834b30c4bf7a3",
+                          "name": "SummerPaid",
+                          "metadata": {},
+                          "object": "earning_rule"
+                        }
+                      ],
+                      "memberships": [
+                        {
+                          "member": {
+                            "id": "lmbr_128f962dbc8c4ba5dc",
+                            "customer_id": "cust_6onRrs4kCnvSVrTs5YtDPFBG",
+                            "program_id": "lprg_128f58429f4c4bf7b2",
+                            "metadata": {},
+                            "object": "member"
+                          },
+                          "program": {
+                            "id": "lprg_128f58429f4c4bf7b2",
+                            "name": "AnnualProgram",
+                            "metadata": {},
+                            "object": "program"
+                          },
+                          "cards": [
+                            {
+                              "card": {
+                                "id": "lcrd_128f962dbd8c4ba5e1",
+                                "card_definition_id": "lcdef_128f4a88414c4bed69",
+                                "card_type": "INDIVIDUAL",
+                                "code": "AnnualTime-7M7ShPGfme",
+                                "object": "card"
+                              },
+                              "points_estimation": 171000,
+                              "earning_rules": [
+                                {
+                                  "earning_rule": {
+                                    "id": "lern_128f48ee44cc4bec34",
+                                    "object": "earning_rule"
+                                  },
+                                  "points_estimation": 171000,
+                                  "object": "earning_rule_estimation"
+                                }
+                              ],
+                              "object": "card_estimation"
+                            },
+                            {
+                              "card": {
+                                "id": "lcrd_128f962dbd8c4ba5e0",
+                                "card_definition_id": "lcdef_128f49963c0c4becb7",
+                                "card_type": "INDIVIDUAL",
+                                "code": "AutumnTime-R02hVARx33",
+                                "object": "card"
+                              },
+                              "points_estimation": 10,
+                              "earning_rules": [
+                                {
+                                  "earning_rule": {
+                                    "id": "lern_128f5822398c4bf78f",
+                                    "object": "earning_rule"
+                                  },
+                                  "points_estimation": 10,
+                                  "object": "earning_rule_estimation"
+                                }
+                              ],
+                              "object": "card_estimation"
+                            },
+                            {
+                              "card": {
+                                "id": "lcrd_128f962dbd8c4ba5df",
+                                "card_definition_id": "lcdef_128f495f720c4bec8c",
+                                "card_type": "INDIVIDUAL",
+                                "code": "SummerTime-7z8dWawICd",
+                                "object": "card"
+                              },
+                              "points_estimation": 10,
+                              "earning_rules": [
+                                {
+                                  "earning_rule": {
+                                    "id": "lern_128f5834b30c4bf7a3",
+                                    "object": "earning_rule"
+                                  },
+                                  "points_estimation": 10,
+                                  "object": "earning_rule_estimation"
+                                }
+                              ],
+                              "object": "card_estimation"
+                            }
+                          ],
+                          "benefits": [],
+                          "object": "member_earnings_opportunity"
+                        }
+                      ],
+                      "object": "earnings_examine_result"
+                    }
+                  },
+                  "Customer entered segment": {
+                    "value": {
+                      "event": "customer.segment.entered",
+                      "customer": {
+                        "id": "cust_gFpoezLGF4YHnPPyUCHuuMv4",
+                        "source_id": "d-brnd",
+                        "metadata": {
+                          "ghost": false,
+                          "VIP": true
+                        },
+                        "object": "customer"
+                      },
+                      "earning_rules": [
+                        {
+                          "id": "lern_128f577bd4d47c8e12",
+                          "name": "EnterVipSegment",
+                          "metadata": {},
+                          "object": "earning_rule"
+                        }
+                      ],
+                      "memberships": [
+                        {
+                          "member": {
+                            "id": "lmbr_128f95ee624c4ba553",
+                            "customer_id": "cust_gFpoezLGF4YHnPPyUCHuuMv4",
+                            "program_id": "lprg_128f58429f4c4bf7b2",
+                            "metadata": {},
+                            "object": "member"
+                          },
+                          "program": {
+                            "id": "lprg_128f58429f4c4bf7b2",
+                            "name": "AnnualProgram",
+                            "metadata": {},
+                            "object": "program"
+                          },
+                          "cards": [
+                            {
+                              "card": {
+                                "id": "lcrd_128f95ee63cc4ba558",
+                                "card_definition_id": "lcdef_128f4a88414c4bed69",
+                                "card_type": "INDIVIDUAL",
+                                "code": "AnnualTime-QANzXdzjLs",
+                                "object": "card"
+                              },
+                              "points_estimation": 150,
+                              "earning_rules": [
+                                {
+                                  "earning_rule": {
+                                    "id": "lern_128f577bd4d47c8e12",
+                                    "object": "earning_rule"
+                                  },
+                                  "points_estimation": 150,
+                                  "object": "earning_rule_estimation"
+                                }
+                              ],
+                              "object": "card_estimation"
+                            }
+                          ],
+                          "benefits": [],
+                          "object": "member_earnings_opportunity"
+                        }
+                      ],
+                      "object": "earnings_examine_result"
+                    }
+                  },
+                  "Custom event": {
+                    "value": {
+                      "event": "customer.custom_event",
+                      "customer": {
+                        "id": "cust_6onRrs4kCnvSVrTs5YtDPFBG",
+                        "source_id": "lx-rdmptr",
+                        "metadata": {
+                          "VIP": true
+                        },
+                        "object": "customer"
+                      },
+                      "earning_rules": [
+                        {
+                          "id": "lern_128f57ec40cc4bf762",
+                          "name": "Autumn Ethiopia",
+                          "metadata": {},
+                          "object": "earning_rule"
+                        }
+                      ],
+                      "memberships": [
+                        {
+                          "member": {
+                            "id": "lmbr_128f962dbc8c4ba5dc",
+                            "customer_id": "cust_6onRrs4kCnvSVrTs5YtDPFBG",
+                            "program_id": "lprg_128f58429f4c4bf7b2",
+                            "metadata": {},
+                            "object": "member"
+                          },
+                          "program": {
+                            "id": "lprg_128f58429f4c4bf7b2",
+                            "name": "AnnualProgram",
+                            "metadata": {},
+                            "object": "program"
+                          },
+                          "cards": [],
+                          "benefits": [
+                            {
+                              "benefit": {
+                                "id": "lben_128f4bba81947c8542",
+                                "name": "Coffee sample Ethiopia",
+                                "type": "MATERIAL",
+                                "object": "benefit"
+                              },
+                              "earning_rules": [
+                                {
+                                  "earning_rule": {
+                                    "id": "lern_128f57ec40cc4bf762",
+                                    "object": "earning_rule"
+                                  },
+                                  "object": "earning_rule_estimation"
+                                }
+                              ],
+                              "object": "benefit_estimation"
+                            }
+                          ],
+                          "object": "member_earnings_opportunity"
+                        }
+                      ],
+                      "object": "earnings_examine_result"
+                    }
+                  }
                 }
               }
             }
           },
           "400": {
-            "description": "Validation error - request body or query parameters failed validation, or the operation is not allowed in the current resource state.",
+            "description": "Validation error - request body failed validation, or the operation is not allowed in the current resource state.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Invalid payload": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_payload",
+                      "message": "Invalid payload",
+                      "details": "Property .trigger.type must be equal to one of the allowed values [ ALL, SPECIFIC ]",
+                      "request_id": "v-12cd3b16ae1a39a820"
+                    }
+                  }
                 }
               }
             }
@@ -10587,16 +11333,19 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Member not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find member with id lmbr_128f962db8c4ba5dc",
+                      "request_id": "v-12cd3ae8271a39a7c6",
+                      "resource_id": "lmbr_128f962db8c4ba5dc",
+                      "resource_type": "member"
+                    }
+                  }
                 }
               }
             }
@@ -10621,7 +11370,7 @@
         ],
         "operationId": "examineRewards",
         "summary": "Examine rewards",
-        "description": "Evaluates rewards assigned to a customer's active Loyalty v2 program memberships. Use `member_id` to examine one membership only. Applies temporary customer and member metadata overrides without updating stored data. Returns reward availability by card, including points costs and applicable unavailability reasons.",
+        "description": "Evaluates rewards assigned to a customer's active Loyalty v2 program memberships. Applies temporary customer and member metadata overrides without updating stored data. Returns reward availability by card, including points costs and applicable unavailability reasons.\n\nThis endpoint can examine rewards for all loyalty programs the customer belongs to by using `customer_identification` with `customer_id` or `source_id`. To examine rewards only for one program, use `member_id` in `customer_identification`, as `member_id` is loyalty program-specific.",
         "requestBody": {
           "required": true,
           "content": {
@@ -21973,7 +22722,7 @@
               "null"
             ],
             "format": "date-time",
-            "description": "Last update timestamp (ISO 8601). Null when the card definition has never been updated."
+            "description": "Last update timestamp (ISO 8601). `null` when the card definition has never been updated."
           },
           "object": {
             "type": "string",
@@ -22081,7 +22830,7 @@
                 "type": "null"
               }
             ],
-            "description": "Rounding applied to the calculated expiration date. Null when not configured."
+            "description": "Rounding applied to the calculated expiration date. `null` when not configured."
           }
         },
         "required": [
@@ -22819,7 +23568,7 @@
                 "type": "null"
               }
             ],
-            "description": "Pagination cursor. Null when there are no more results."
+            "description": "Pagination cursor. `null` when there are no more results."
           },
           "object": {
             "type": "string",
@@ -22983,7 +23732,7 @@
                 "type": "null"
               }
             ],
-            "description": "Pagination cursor. Null when there are no more results."
+            "description": "Pagination cursor. `null` when there are no more results."
           },
           "object": {
             "type": "string",
@@ -23051,7 +23800,7 @@
             "description": "Initial status. Only `DRAFT` and `ACTIVE` are allowed at creation. Defaults to `DRAFT`."
           },
           "error": {
-            "description": "Default error returned when rule validation fails. Nullable.",
+            "description": "Default error returned when rule validation fails. Can be `null`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/EarningRuleError"
@@ -23062,7 +23811,7 @@
             ]
           },
           "validity_hours": {
-            "description": "Hours during which the rule is active. Defaults to `{ \"type\": \"ANY_TIME\" }` when omitted. Nullable.",
+            "description": "Hours during which the rule is active. Defaults to `{ \"type\": \"ANY_TIME\" }` when omitted. Can be `null`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/EarningRuleValidityHours"
@@ -23078,7 +23827,7 @@
               "null"
             ],
             "format": "date-time",
-            "description": "Date-time from which the rule is active. Nullable."
+            "description": "Date-time from which the rule is active. Can be `null`."
           },
           "end_date": {
             "type": [
@@ -23086,10 +23835,10 @@
               "null"
             ],
             "format": "date-time",
-            "description": "Date-time until which the rule is active. Nullable."
+            "description": "Date-time until which the rule is active. Can be `null`."
           },
           "metadata": {
-            "description": "Arbitrary key-value metadata. Nullable.",
+            "description": "Arbitrary key-value metadata. Can be `null`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/Metadata"
@@ -23100,7 +23849,7 @@
             ]
           },
           "trigger_limits": {
-            "description": "Cooldown and frequency limits for the trigger. Defaults to `{ \"cooldown\": { \"type\": \"NO_COOLDOWN\" }, \"frequency\": { \"type\": \"NO_LIMIT\" } }` when omitted. Nullable.",
+            "description": "Cooldown and frequency limits for the trigger. Defaults to `{ \"cooldown\": { \"type\": \"NO_COOLDOWN\" }, \"frequency\": { \"type\": \"NO_LIMIT\" } }` when omitted. Can be `null`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/EarningRuleTriggerLimits"
@@ -23140,7 +23889,7 @@
             }
           },
           "error": {
-            "description": "Default error returned when rule validation fails. Nullable.",
+            "description": "Default error returned when rule validation fails. Can be `null`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/EarningRuleError"
@@ -23151,7 +23900,7 @@
             ]
           },
           "validity_hours": {
-            "description": "Hours during which the rule is active. Nullable.",
+            "description": "Hours during which the rule is active. Can be `null`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/EarningRuleValidityHours"
@@ -23167,7 +23916,7 @@
               "null"
             ],
             "format": "date-time",
-            "description": "Date-time from which the rule is active. Nullable."
+            "description": "Date-time from which the rule is active. Can be `null`."
           },
           "end_date": {
             "type": [
@@ -23175,10 +23924,10 @@
               "null"
             ],
             "format": "date-time",
-            "description": "Date-time until which the rule is active. Nullable."
+            "description": "Date-time until which the rule is active. Can be `null`."
           },
           "metadata": {
-            "description": "Arbitrary key-value metadata. Nullable.",
+            "description": "Arbitrary key-value metadata. Can be `null`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/Metadata"
@@ -23189,7 +23938,7 @@
             ]
           },
           "trigger_limits": {
-            "description": "Cooldown and frequency limits for the trigger. Nullable.",
+            "description": "Cooldown and frequency limits for the trigger. Can be `null`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/EarningRuleTriggerLimits"
@@ -23345,7 +24094,7 @@
         "description": "A single earning definition combining optional validation rules with effects.",
         "properties": {
           "rules": {
-            "description": "Validation rules group evaluated before applying effects. Nullable.",
+            "description": "Validation rules group evaluated before applying effects. Can be `null`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/EarningRuleRulesGroup"
@@ -23369,10 +24118,10 @@
               "null"
             ],
             "maxLength": 200,
-            "description": "Optional earning item name. Nullable."
+            "description": "Optional earning item name. Can be `null`."
           },
           "tier_rules": {
-            "description": "Tier requirements restricting which members can earn. Nullable.",
+            "description": "Tier requirements restricting which members can earn. Can be `null`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/EarningRuleTierRules"
@@ -23398,7 +24147,7 @@
             "description": "Existing earning item ID (`lernei_...`). Omit to create a new item."
           },
           "rules": {
-            "description": "Validation rules group evaluated before applying effects. Nullable.",
+            "description": "Validation rules group evaluated before applying effects. Can be `null`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/EarningRuleRulesGroup"
@@ -23422,10 +24171,10 @@
               "null"
             ],
             "maxLength": 200,
-            "description": "Optional earning item name. Nullable."
+            "description": "Optional earning item name. Can be `null`."
           },
           "tier_rules": {
-            "description": "Tier requirements restricting which members can earn. Nullable.",
+            "description": "Tier requirements restricting which members can earn. Can be `null`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/EarningRuleTierRules"
@@ -23496,17 +24245,17 @@
               "string",
               "null"
             ],
-            "description": "Metadata property name the rule applies to (for metadata-based rules). Nullable."
+            "description": "Metadata property name the rule applies to (for metadata-based rules). Can be `null`."
           },
           "schema_id": {
             "type": [
               "string",
               "null"
             ],
-            "description": "Custom event schema ID for custom_event.metadata rules. Nullable."
+            "description": "Custom event schema ID for custom_event.metadata rules. Can be `null`."
           },
           "error": {
-            "description": "Error returned when this specific rule fails. Nullable.",
+            "description": "Error returned when this specific rule fails. Can be `null`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/EarningRuleError"
@@ -23517,7 +24266,7 @@
             ]
           },
           "rules": {
-            "description": "Nested rule group (recursive). Nullable.",
+            "description": "Nested rule group (recursive). Can be `null`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/EarningRuleRulesGroup"
@@ -23592,14 +24341,14 @@
               "string",
               "null"
             ],
-            "description": "Source ID of the referenced object. Nullable."
+            "description": "Source ID of the referenced object. Can be `null`."
           },
           "type": {
             "type": [
               "string",
               "null"
             ],
-            "description": "Additional object subtype. Nullable."
+            "description": "Additional object subtype. Can be `null`."
           }
         },
         "additionalProperties": false
@@ -23743,7 +24492,7 @@
             "description": "Card definition ID (`lcdef_...`) the points are awarded to."
           },
           "points_expiration": {
-            "description": "Optional expiration override for the awarded points. Nullable.",
+            "description": "Optional expiration override for the awarded points. Can be `null`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/EarningRuleEffectPointsExpiration"
@@ -23784,7 +24533,7 @@
             "description": "Card definition ID (`lcdef_...`) the points are awarded to."
           },
           "points_expiration": {
-            "description": "Optional expiration override for the awarded points. Nullable.",
+            "description": "Optional expiration override for the awarded points. Can be `null`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/EarningRuleEffectPointsExpiration"
@@ -24381,7 +25130,7 @@
             "description": "Points expiration type."
           },
           "rolling_expiration": {
-            "description": "Rolling expiration configuration. Nullable.",
+            "description": "Rolling expiration configuration. Can be `null`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/EarningRuleEffectPointsExpirationRollingExpiration"
@@ -24392,7 +25141,7 @@
             ]
           },
           "calendar_expiration": {
-            "description": "Calendar expiration configuration. Nullable.",
+            "description": "Calendar expiration configuration. Can be `null`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/EarningRuleEffectPointsExpirationCalendarExpiration"
@@ -24403,7 +25152,7 @@
             ]
           },
           "sliding_expiration": {
-            "description": "Sliding expiration configuration. Nullable.",
+            "description": "Sliding expiration configuration. Can be `null`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/EarningRuleEffectPointsExpirationSlidingExpiration"
@@ -24528,7 +25277,7 @@
             "$ref": "#/components/schemas/EarningRuleEffectPointsExpirationRollingExpirationPeriod"
           },
           "rounding": {
-            "description": "Optional rounding of the calculated expiration date. Nullable.",
+            "description": "Optional rounding of the calculated expiration date. Can be `null`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/EarningRuleEffectPointsExpirationRollingExpirationRounding"
@@ -24643,7 +25392,7 @@
             "description": "Rounding type."
           },
           "value": {
-            "description": "Month number (1-12), only for `END_OF_PARTICULAR_MONTH`. Nullable otherwise.",
+            "description": "Month number (1-12), only for `END_OF_PARTICULAR_MONTH`. `null`able otherwise.",
             "oneOf": [
               {
                 "type": "integer",
@@ -24838,7 +25587,7 @@
             "description": "Whether the listed custom activity types reset the expiration window."
           },
           "custom_activity_types": {
-            "description": "Custom activity type names. Required (1-10 unique items) when `custom_activity` is true. Nullable.",
+            "description": "Custom activity type names. Required (1-10 unique items) when `custom_activity` is true. Can be `null`.",
             "oneOf": [
               {
                 "type": "array",
@@ -24985,7 +25734,7 @@
             "description": "Tier requirement type."
           },
           "any_of": {
-            "description": "Tier structure/tier combinations, any of which satisfies the requirement. Nullable.",
+            "description": "Tier structure/tier combinations, any of which satisfies the requirement. Can be `null`.",
             "oneOf": [
               {
                 "type": "array",
@@ -25086,7 +25835,7 @@
             "description": "Validity hours type."
           },
           "daily": {
-            "description": "Daily validity windows. Nullable.",
+            "description": "Daily validity windows. Can be `null`.",
             "oneOf": [
               {
                 "type": "array",
@@ -25186,7 +25935,7 @@
         "description": "Cooldown and frequency limits applied to the earning rule trigger.",
         "properties": {
           "cooldown": {
-            "description": "Cooldown configuration. Nullable (defaults to `NO_COOLDOWN`).",
+            "description": "Cooldown configuration. `null`able (defaults to `NO_COOLDOWN`).",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/EarningRuleTriggerLimitsCooldown"
@@ -25197,7 +25946,7 @@
             ]
           },
           "frequency": {
-            "description": "Frequency limit configuration. Nullable (defaults to `NO_LIMIT`).",
+            "description": "Frequency limit configuration. `null`able (defaults to `NO_LIMIT`).",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/EarningRuleTriggerLimitsFrequency"
@@ -25223,7 +25972,7 @@
             "description": "Cooldown type."
           },
           "fixed_cooldown": {
-            "description": "Fixed cooldown configuration. Nullable.",
+            "description": "Fixed cooldown configuration. Can be `null`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/EarningRuleTriggerLimitsCooldownFixedCooldown"
@@ -25425,7 +26174,7 @@
             "description": "Frequency limit type."
           },
           "limits": {
-            "description": "Frequency limits (at most one). Nullable.",
+            "description": "Frequency limits (at most one). Can be `null`.",
             "oneOf": [
               {
                 "type": "null"
@@ -25551,7 +26300,7 @@
             "description": "Period type."
           },
           "current_period": {
-            "description": "Current calendar period configuration. Nullable.",
+            "description": "Current calendar period configuration. Can be `null`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/EarningRuleTriggerLimitsFrequencyLimitTimeBasedCurrentPeriod"
@@ -25641,7 +26390,7 @@
               "null"
             ],
             "maxLength": 200,
-            "description": "Earning item name. Nullable."
+            "description": "Earning item name. Can be `null`."
           },
           "rules": {
             "description": "Validation rules group. Absent when the earning has no rules.",
@@ -25728,7 +26477,7 @@
               "null"
             ],
             "format": "date-time",
-            "description": "Date-time from which the rule is active. Nullable."
+            "description": "Date-time from which the rule is active. Can be `null`."
           },
           "end_date": {
             "type": [
@@ -25736,7 +26485,7 @@
               "null"
             ],
             "format": "date-time",
-            "description": "Date-time until which the rule is active. Nullable."
+            "description": "Date-time until which the rule is active. Can be `null`."
           },
           "trigger_limits": {
             "description": "Cooldown and frequency limits. In responses, `frequency.limits` is always an array (empty for `NO_LIMIT`).",
@@ -25764,7 +26513,7 @@
               "null"
             ],
             "format": "date-time",
-            "description": "Last update timestamp (ISO 8601). Null when never updated."
+            "description": "Last update timestamp (ISO 8601). `null` when never updated."
           },
           "object": {
             "type": "string",
@@ -25778,7 +26527,7 @@
           "object",
           "null"
         ],
-        "description": "Pagination cursor. Null when there are no more results.",
+        "description": "Pagination cursor. `null` when there are no more results.",
         "properties": {
           "next": {
             "type": "string",
@@ -25817,7 +26566,7 @@
         "description": "Filters for listing earning rules. Each field carries a required `conditions` object; condition values may be passed as a single string or as an array. Conditions not allowed for the field type are rejected.",
         "properties": {
           "junction": {
-            "description": "How multiple field filters are combined. Defaults to AND behaviour. Nullable.",
+            "description": "How multiple field filters are combined. Defaults to AND behaviour. Can be `null`.",
             "oneOf": [
               {
                 "type": "string",
@@ -25832,7 +26581,7 @@
             ]
           },
           "id": {
-            "description": "ID filter. Allowed conditions: `$is`, `$is_not` (single value), `$in`, `$not_in` (up to 100 values). Values must match `^lern_[a-f0-9]+$`. Nullable.",
+            "description": "ID filter. Allowed conditions: `$is`, `$is_not` (single value), `$in`, `$not_in` (up to 100 values). Values must match `^lern_[a-f0-9]+$`. Can be `null`.",
             "oneOf": [
               {
                 "type": "object",
@@ -25928,7 +26677,7 @@
             ]
           },
           "name": {
-            "description": "Name filter (string type). Allowed conditions: `$is`, `$is_not`, `$contains`, `$not_contain`, `$starts_with`, `$ends_with` (single value), `$in`, `$not_in` (up to 10 values), `$has_value`, `$is_unknown`. Nullable.",
+            "description": "Name filter (string type). Allowed conditions: `$is`, `$is_not`, `$contains`, `$not_contain`, `$starts_with`, `$ends_with` (single value), `$in`, `$not_in` (up to 10 values), `$has_value`, `$is_unknown`. Can be `null`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/EarningRuleStringFilterConditions"
@@ -25939,7 +26688,7 @@
             ]
           },
           "status": {
-            "description": "Status filter (enum type). Allowed conditions: `$is`, `$is_not` (single value), `$in`, `$not_in` (up to 10 values). Allowed values: `ACTIVE`, `INACTIVE`, `DRAFT`. Nullable.",
+            "description": "Status filter (enum type). Allowed conditions: `$is`, `$is_not` (single value), `$in`, `$not_in` (up to 10 values). Allowed values: `ACTIVE`, `INACTIVE`, `DRAFT`. Can be `null`.",
             "oneOf": [
               {
                 "type": "object",
@@ -26067,7 +26816,7 @@
             ]
           },
           "created_at": {
-            "description": "Creation date filter. Nullable.",
+            "description": "Creation date filter. Can be `null`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/EarningRuleDateFilterConditions"
@@ -26375,7 +27124,7 @@
         "description": "Filters for listing earning rule activities.",
         "properties": {
           "junction": {
-            "description": "How multiple field filters are combined. Nullable.",
+            "description": "How multiple field filters are combined. Can be `null`.",
             "oneOf": [
               {
                 "type": "string",
@@ -26390,7 +27139,7 @@
             ]
           },
           "id": {
-            "description": "Activity ID filter. Allowed conditions: `$is`, `$is_not` (single value), `$in`, `$not_in` (up to 100 values). Values must match `^laer_[a-f0-9]+$`. Nullable.",
+            "description": "Activity ID filter. Allowed conditions: `$is`, `$is_not` (single value), `$in`, `$not_in` (up to 100 values). Values must match `^laer_[a-f0-9]+$`. Can be `null`.",
             "oneOf": [
               {
                 "type": "object",
@@ -26486,7 +27235,7 @@
             ]
           },
           "type": {
-            "description": "Activity type filter (enum type). Allowed conditions: `$is`, `$is_not` (single value), `$in`, `$not_in` (up to 10 values). Nullable.",
+            "description": "Activity type filter (enum type). Allowed conditions: `$is`, `$is_not` (single value), `$in`, `$not_in` (up to 10 values). Can be `null`.",
             "oneOf": [
               {
                 "type": "object",
@@ -26574,7 +27323,7 @@
             ]
           },
           "created_at": {
-            "description": "Creation date filter. Nullable.",
+            "description": "Creation date filter. Can be `null`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/EarningRuleDateFilterConditions"
@@ -26698,7 +27447,7 @@
               "object",
               "null"
             ],
-            "description": "Pagination cursor. Null when there are no more results.",
+            "description": "Pagination cursor. `null` when there are no more results.",
             "properties": {
               "next": {
                 "type": "string",
@@ -31039,7 +31788,7 @@
               "null"
             ],
             "format": "date-time",
-            "description": "Timestamp of the last update, in ISO 8601 format. Null when the benefit was never updated."
+            "description": "Timestamp of the last update, in ISO 8601 format. `null` when the benefit was never updated."
           },
           "object": {
             "type": "string",
@@ -31068,7 +31817,7 @@
             }
           },
           "cursor": {
-            "description": "Pagination cursor. Null when there are no more results.",
+            "description": "Pagination cursor. `null` when there are no more results.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/BenefitListCursor"
@@ -31246,7 +31995,7 @@
             }
           },
           "cursor": {
-            "description": "Pagination cursor. Null when there are no more results.",
+            "description": "Pagination cursor. `null` when there are no more results.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/BenefitListCursor"
@@ -34611,7 +35360,7 @@
               "number",
               "null"
             ],
-            "description": "Customer source ID. May be provided as a string or a number. Required when `type` is `customer_source_id`."
+            "description": "Customer source ID, e.g. from an external system. May be provided as a string or a number. Required when `type` is `customer_source_id`."
           },
           "member_id": {
             "type": [
@@ -34706,7 +35455,7 @@
       },
       "ExamineEarningRulesRequest": {
         "type": "object",
-        "description": "Request body for examining earning rules.\nWhen `trigger.type` is `SPECIFIC`, the context object matching the specific event is\nrequired and the other context objects must not be present:\n`customer.order.paid` -> `customer_order_paid`,\n`customer.segment.entered` -> `customer_segment_entered`,\n`customer.custom_event` -> `customer_custom_event`.",
+        "description": "Request body for examining earning rules. When `trigger.type` is `SPECIFIC`, the context object matching the specific event is required and the other context objects must not be present: `customer.order.paid` > `customer_order_paid`, `customer.segment.entered` > `customer_segment_entered`, `customer.custom_event` > `customer_custom_event`.",
         "properties": {
           "trigger": {
             "$ref": "#/components/schemas/ExamineEarningRulesTrigger"
@@ -34860,7 +35609,7 @@
       },
       "ExamineEarningRulesTrigger": {
         "type": "object",
-        "description": "Which trigger events to examine. With `ALL`, all trigger events are examined and `specific` must be null/absent. With `SPECIFIC`, `specific` is required.",
+        "description": "Which trigger events to examine. With `ALL`, all trigger events are examined and `specific` must be `null`/absent. With `SPECIFIC`, `specific` is required.",
         "properties": {
           "type": {
             "type": "string",
@@ -34871,7 +35620,7 @@
             "description": "Trigger examination mode."
           },
           "specific": {
-            "description": "Specific event selection. Nullable.",
+            "description": "Specific event selection. Can be `null`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/ExamineEarningRulesTriggerSpecific"
@@ -34950,7 +35699,7 @@
         "description": "Customer metadata overrides used during examination.",
         "properties": {
           "metadata": {
-            "description": "Customer metadata overrides. Nullable.",
+            "description": "Customer metadata overrides. Can be `null`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/Metadata"
@@ -34968,7 +35717,7 @@
         "description": "Member metadata overrides used during examination.",
         "properties": {
           "metadata": {
-            "description": "Member metadata overrides. Nullable.",
+            "description": "Member metadata overrides. Can be `null`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/Metadata"
@@ -34991,7 +35740,7 @@
               "number",
               "null"
             ],
-            "description": "Product ID. May be provided as a string or a number. Nullable."
+            "description": "Product ID. May be provided as a string or a number. Can be `null`."
           },
           "source_id": {
             "type": [
@@ -34999,7 +35748,7 @@
               "number",
               "null"
             ],
-            "description": "Product source ID. May be provided as a string or a number. Nullable."
+            "description": "Product source ID. May be provided as a string or a number. Can be `null`."
           },
           "price": {
             "type": [
@@ -35007,7 +35756,7 @@
               "number",
               "null"
             ],
-            "description": "Product price - an integer amount of at most 9007199254740991. May be provided as a string or a number. Nullable."
+            "description": "Product price - an integer amount. May be provided as a string or a number. Can be `null`."
           }
         },
         "additionalProperties": false
@@ -35022,7 +35771,7 @@
               "number",
               "null"
             ],
-            "description": "SKU ID. May be provided as a string or a number. Nullable."
+            "description": "SKU ID. May be provided as a string or a number. Can be `null`."
           },
           "source_id": {
             "type": [
@@ -35030,7 +35779,7 @@
               "number",
               "null"
             ],
-            "description": "SKU source ID. May be provided as a string or a number. Nullable."
+            "description": "SKU source ID. May be provided as a string or a number. Can be `null`."
           },
           "price": {
             "type": [
@@ -35038,7 +35787,7 @@
               "number",
               "null"
             ],
-            "description": "SKU price - an integer amount of at most 9007199254740991. May be provided as a string or a number. Nullable."
+            "description": "SKU price - an integer amount. May be provided as a string or a number. Can be `null`."
           }
         },
         "additionalProperties": false
@@ -35052,7 +35801,7 @@
               "string",
               "null"
             ],
-            "description": "Order item ID. Nullable."
+            "description": "Order item ID assigned by Voucherify. Can be `null`."
           },
           "source_id": {
             "type": [
@@ -35060,7 +35809,7 @@
               "number",
               "null"
             ],
-            "description": "Order item source ID. May be provided as a string or a number. Nullable."
+            "description": "Order item source ID, e.g. from an external system. May be provided as a string or a number. Can be `null`."
           },
           "product_id": {
             "type": [
@@ -35068,7 +35817,7 @@
               "number",
               "null"
             ],
-            "description": "Product ID. May be provided as a string or a number. Nullable."
+            "description": "Product ID. May be provided as a string or a number. Can be `null`."
           },
           "sku_id": {
             "type": [
@@ -35076,10 +35825,10 @@
               "number",
               "null"
             ],
-            "description": "SKU ID. May be provided as a string or a number. Nullable."
+            "description": "SKU ID. May be provided as a string or a number. Can be `null`."
           },
           "related_object": {
-            "description": "Whether the item refers to a product or a SKU. Nullable.",
+            "description": "Whether the item refers to a product or a SKU. Can be `null`.",
             "oneOf": [
               {
                 "type": "string",
@@ -35099,7 +35848,7 @@
               "number",
               "null"
             ],
-            "description": "Item amount before discounts - a non-negative integer. May be provided as a string or a number. Nullable."
+            "description": "Item amount before discounts - a non-negative integer. May be provided as a string or a number. Can be `null`."
           },
           "discount_amount": {
             "type": [
@@ -35107,7 +35856,7 @@
               "number",
               "null"
             ],
-            "description": "Item discount amount - a non-negative integer. May be provided as a string or a number. Nullable."
+            "description": "Item discount amount - a non-negative integer. May be provided as a string or a number. Can be `null`."
           },
           "quantity": {
             "type": [
@@ -35115,7 +35864,7 @@
               "number",
               "null"
             ],
-            "description": "Item quantity - a positive integer. May be provided as a string or a number. Nullable."
+            "description": "Item quantity - a positive integer. May be provided as a string or a number. Can be `null`."
           },
           "price": {
             "type": [
@@ -35123,10 +35872,10 @@
               "number",
               "null"
             ],
-            "description": "Item unit price - a non-negative integer. May be provided as a string or a number. Nullable."
+            "description": "Item unit price - a non-negative integer. May be provided as a string or a number. Can be `null`."
           },
           "product": {
-            "description": "Product details. Nullable.",
+            "description": "Product details. Can be `null`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/ExamineEarningRulesOrderItemProduct"
@@ -35137,7 +35886,7 @@
             ]
           },
           "sku": {
-            "description": "SKU details. Nullable.",
+            "description": "SKU details. Can be `null`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/ExamineEarningRulesOrderItemSku"
@@ -35148,7 +35897,7 @@
             ]
           },
           "metadata": {
-            "description": "Order item metadata. Nullable.",
+            "description": "Order item metadata. Can be `null`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/Metadata"
@@ -35171,7 +35920,7 @@
               "number",
               "null"
             ],
-            "description": "Order amount after discounts - a non-negative integer. May be provided as a string or a number. Nullable."
+            "description": "Order amount after discounts - a non-negative integer. May be provided as a string or a number. Can be `null`."
           },
           "initial_amount": {
             "type": [
@@ -35179,7 +35928,7 @@
               "number",
               "null"
             ],
-            "description": "Order amount before discounts - a non-negative integer. May be provided as a string or a number. Nullable."
+            "description": "Order amount before discounts - a non-negative integer. May be provided as a string or a number. Can be `null`."
           },
           "discount_amount": {
             "type": [
@@ -35187,7 +35936,7 @@
               "number",
               "null"
             ],
-            "description": "Total discount amount - a non-negative integer. May be provided as a string or a number. Nullable."
+            "description": "Total discount amount - a non-negative integer. May be provided as a string or a number. Can be `null`."
           },
           "items": {
             "type": [
@@ -35195,13 +35944,13 @@
               "null"
             ],
             "maxItems": 500,
-            "description": "Order line items (up to 500). Nullable.",
+            "description": "Order line items (up to 500). Can be `null`.",
             "items": {
               "$ref": "#/components/schemas/ExamineEarningRulesOrderItem"
             }
           },
           "metadata": {
-            "description": "Order metadata. Nullable.",
+            "description": "Order metadata. Can be `null`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/Metadata"
@@ -35232,7 +35981,7 @@
       },
       "ExamineEarningRulesCustomerSegmentEntered": {
         "type": "object",
-        "description": "Context for examining `customer.segment.entered` earning rules.",
+        "description": "Context for examining `customer.segment.entered` earning rules. Examine earning rule will work only for dynamic segments whose entry criteria are based on customer or member metadata, among other criteria. However, earning rules based on segments can be checked with the `ALL` scenario.",
         "properties": {
           "customer": {
             "$ref": "#/components/schemas/ExamineEarningRulesCustomer"
@@ -35253,7 +36002,7 @@
             "description": "Custom event schema ID (`ms_...`)."
           },
           "metadata": {
-            "description": "Custom event metadata. Nullable.",
+            "description": "Custom event metadata. Can be `null`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/Metadata"
@@ -35274,7 +36023,7 @@
         "description": "Metadata applied when examining all custom events.",
         "properties": {
           "metadata": {
-            "description": "Custom event metadata. Nullable.",
+            "description": "Custom event metadata. Can be `null`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/Metadata"
@@ -35324,7 +36073,7 @@
       },
       "ExamineEarningRulesCustomerCustomEvent": {
         "type": "object",
-        "description": "Context for examining `customer.custom_event` earning rules. With `type` = `ALL`, `all` is required and `specific` must be null/absent. With `SPECIFIC`, `specific` is required and `all` must be null/absent.",
+        "description": "Context for examining `customer.custom_event` earning rules. With `type` = `ALL`, `all` is required and `specific` must be `null`/absent. With `SPECIFIC`, `specific` is required and `all` must be null/absent.",
         "properties": {
           "type": {
             "type": "string",
@@ -35335,7 +36084,7 @@
             "description": "Whether to examine all custom events or one specific event."
           },
           "all": {
-            "description": "Context for all custom events. Nullable.",
+            "description": "Context for all custom events. Can be `null`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/ExamineEarningRulesCustomerCustomEventAll"
@@ -35346,7 +36095,7 @@
             ]
           },
           "specific": {
-            "description": "Context for a specific custom event. Nullable.",
+            "description": "Context for a specific custom event. Can be `null`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/ExamineEarningRulesCustomerCustomEventSpecific"
@@ -35721,11 +36470,13 @@
       },
       "ExamineEarningRulesResponse": {
         "type": "object",
-        "description": "Earning rules examination result.",
         "properties": {
           "event": {
-            "type": "string",
-            "description": "Examined trigger event (e.g. `customer.order.paid`, `customer.segment.entered`, `customer.custom_event`)."
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Examined trigger event (e.g. `customer.order.paid`, `customer.segment.entered`, `customer.custom_event`). `null` when `trigger.type` is `ALL`."
           },
           "customer": {
             "$ref": "#/components/schemas/ExamineCustomerReference"
