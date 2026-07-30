@@ -465,6 +465,7 @@ function sanitizeTagName(tag: string): string {
 async function splitSecurityParamsThenSplitOpenapiByTags(
   openApiSpec: OpenAPISpec,
   destination: string,
+  keepFiles: string[] = [],
 ): Promise<void> {
   const OUTPUT_FOLDER = path.join(
     __dirname,
@@ -472,41 +473,27 @@ async function splitSecurityParamsThenSplitOpenapiByTags(
   );
 
   try {
-    const oldOutputFolder = OUTPUT_FOLDER + "-to-delete";
-    try {
-      await fs.access(OUTPUT_FOLDER); // Check if OUTPUT_FOLDER exists
-      console.log(
-        `Existing output folder found at ${OUTPUT_FOLDER}. Renaming it to ${oldOutputFolder} for deletion.`,
-      );
-      await fs.rename(OUTPUT_FOLDER, oldOutputFolder); // Rename it
-      // Start deletion in the background, no need to await
-      fs.rm(oldOutputFolder, { recursive: true, force: true })
-        .then(() =>
-          console.log(
-            `Successfully deleted old output folder: ${oldOutputFolder}`,
-          ),
-        )
-        .catch((err) =>
-          console.error(
-            `Error deleting old output folder ${oldOutputFolder}:`,
-            err,
-          ),
-        );
-    } catch (error: any) {
-      if (error.code === "ENOENT") {
-        // Folder does not exist, which is fine, continue
-        console.log(
-          `Output folder not found at ${OUTPUT_FOLDER}. Proceeding with creation.`,
-        );
-      } else {
-        // Other error, re-throw
-        console.error(`Error accessing output folder ${OUTPUT_FOLDER}:`, error);
-        throw error;
-      }
-    }
-
-    // Create output directory
+    // Make sure the output folder exists.
     await fs.mkdir(OUTPUT_FOLDER, { recursive: true });
+
+    // Clear the folder contents instead of deleting the whole folder, so that
+    // manually maintained files listed in `keepFiles` (e.g. loyalties-v2.json)
+    // are preserved across runs.
+    const keepSet = new Set(keepFiles);
+    const existingEntries = await fs.readdir(OUTPUT_FOLDER, {
+      withFileTypes: true,
+    });
+
+    await Promise.all(
+      existingEntries.map(async (entry) => {
+        if (keepSet.has(entry.name)) {
+          console.log(`Keeping whitelisted file: ${entry.name}`);
+          return;
+        }
+        const entryPath = path.join(OUTPUT_FOLDER, entry.name);
+        await fs.rm(entryPath, { recursive: true, force: true });
+      }),
+    );
 
     // Extract endpoints and webhooks grouped by tags
     const endpointTagGroups = extractEndpointsByTags(openApiSpec);
@@ -577,6 +564,9 @@ async function splitSecurityParamsThenSplitOpenapiByTags(
     await splitSecurityParamsThenSplitOpenapiByTags(
       splitSecurityParams(openApi) as unknown as OpenAPISpec,
       "/../documentation/openapi",
+      // Manually maintained files that are not generated from tags and must be
+      // preserved when the folder is regenerated.
+      ["loyalties-v2.json"],
     );
     await splitSecurityParamsThenSplitOpenapiByTags(
       openApiWebhooks,

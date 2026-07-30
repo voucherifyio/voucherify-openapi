@@ -5,6 +5,62 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-07-06
+
+- Deleted `team-management.mdx` as it was outdated and duplicated fresh content.
+
+## 2026-06-17
+
+- Renamed `dynamic-formula-builder.mdx` to `dynamic-formula-reference.mdx`
+- Added `create-dynamic-formulas.mdx`
+
+## 2026-05-29
+
+- Clarified code samples and a warning in `bloomreach-engagement.mdx`
+
+## 2026-05-21
+
+Added:
+- `distributions-overview.mdx`
+- `create-distribution.mdx`
+- `promotion-tier-maintenance.mdx`
+
+## 2026-05-04
+
+Add `audit-logs.mdx` article.
+
+## 2026-04-30
+
+Add `voucher-tracking.mdx` and `voucher-maintenance.mdx` articles.
+
+## 2026-04-22
+
+Add `voucherify-docs-mcp.mdx` article.
+
+## 2026-04-13
+
+Fixed `user (string)` in `distribution-webhooks.mdx` and `project-settings-webhooks.mdx`.
+
+## 2026-04-08
+
+- Deleted `campaign-reporting.mdx`, because it was not needed and stale.
+- Added `campaign-analytics.mdx` to `Analyze` section.
+
+## 2026-04-01
+
+Updated `voucherify-core-mcp` with info about estimate loyalty points.
+
+## 2026-03-19
+
+Published:
+- `geofencing.mdx`
+- `orchestrate-overview.mdx`
+
+Updated `voucherify-user-guide.mdx`
+
+## 2026-03-18
+
+Published `campaign-maintenance.mdx`.
 
 ## 2026-03-11
 

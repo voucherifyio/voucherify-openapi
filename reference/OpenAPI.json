@@ -1132,11 +1132,24 @@
       "ParameterFiltersListMemberTransactions": {
         "type": "object",
         "properties": {
+          "junction": {
+            "$ref": "#/components/schemas/Junction"
+          },
           "created_at": {
-            "$ref": "#/components/schemas/FilterConditionsDateTime"
+            "type": "object",
+            "properties": {
+              "conditions": {
+                "$ref": "#/components/schemas/FilterConditionsDateTime"
+              }
+            }
           },
           "id": {
-            "$ref": "#/components/schemas/FilterConditionsString"
+            "type": "object",
+            "properties": {
+              "conditions": {
+                "$ref": "#/components/schemas/FilterConditionsString"
+              }
+            }
           }
         }
       },
@@ -2166,6 +2179,111 @@
           }
         }
       },
+      "ParameterFiltersListSegments": {
+        "type": "object",
+        "properties": {
+          "junction": {
+            "$ref": "#/components/schemas/Junction"
+          },
+          "id": {
+            "type": "object",
+            "description": "Unique segment ID.",
+            "properties": {
+              "conditions": {
+                "$ref": "#/components/schemas/FilterConditionsString"
+              }
+            }
+          },
+          "name": {
+            "type": "object",
+            "description": "Unique user-defined segment name.",
+            "properties": {
+              "conditions": {
+                "$ref": "#/components/schemas/FilterConditionsString"
+              }
+            }
+          },
+          "type": {
+            "type": "object",
+            "description": "Segment type.",
+            "properties": {
+              "conditions": {
+                "type": "object",
+                "description": "Data filters used to narrow down the data records to be returned in the result.",
+                "properties": {
+                  "$in": {
+                    "type": "array",
+                    "description": "Array of resource values that should be included in the results (multiple values).",
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "auto-update",
+                        "passive",
+                        "static"
+                      ]
+                    }
+                  },
+                  "$not_in": {
+                    "type": "array",
+                    "description": "Array of resource values that should be included in the results (multiple values).",
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "auto-update",
+                        "passive",
+                        "static"
+                      ]
+                    }
+                  },
+                  "$is": {
+                    "type": "string",
+                    "description": "Value is exactly this value (single value).",
+                    "enum": [
+                      "auto-update",
+                      "passive",
+                      "static"
+                    ]
+                  },
+                  "$is_not": {
+                    "type": "string",
+                    "description": "Results omit this value (single value).",
+                    "enum": [
+                      "auto-update",
+                      "passive",
+                      "static"
+                    ]
+                  },
+                  "$has_value": {
+                    "type": "string",
+                    "description": "Value is NOT null. The value for this parameter is an empty string."
+                  },
+                  "$is_unknown": {
+                    "type": "string",
+                    "description": "Value is null. The value for this parameter is an empty string."
+                  },
+                  "$starts_with": {
+                    "type": "string",
+                    "description": "Value starts with the specified string."
+                  },
+                  "$ends_with": {
+                    "type": "string",
+                    "description": "Value ends with the specified string."
+                  }
+                }
+              }
+            }
+          },
+          "created_at": {
+            "description": "Timestamp representing the date and time when the segment was created. The value is shown in the ISO 8601 format.",
+            "type": "object",
+            "properties": {
+              "conditions": {
+                "$ref": "#/components/schemas/FilterConditionsDateTime"
+              }
+            }
+          }
+        }
+      },
       "ParametersFiltersListTransactions": {
         "type": "object",
         "properties": {
@@ -2190,10 +2308,20 @@
             "$ref": "#/components/schemas/Junction"
           },
           "id": {
-            "$ref": "#/components/schemas/FilterConditionsString"
+            "type": "object",
+            "properties": {
+              "conditions": {
+                "$ref": "#/components/schemas/FilterConditionsString"
+              }
+            }
           },
           "voucher_id": {
-            "$ref": "#/components/schemas/FilterConditionsString"
+            "type": "object",
+            "properties": {
+              "conditions": {
+                "$ref": "#/components/schemas/FilterConditionsString"
+              }
+            }
           }
         }
       },
@@ -3438,11 +3566,15 @@
               },
               "assets": {
                 "type": "object",
-                "description": "Contains information about the customer's cockpit.",
+                "description": "Contains information about the customer's cockpit.\n\n⚠️ Warning: Customer cockpits were removed. The customer cockpit URLs redirect to customer preference center.",
                 "properties": {
                   "cockpit_url": {
                     "type": "string",
-                    "description": "Customer's cockpit URL address."
+                    "description": "URL address to customer preference center. Previously, a customer's cockpit URL address."
+                  },
+                  "cockpit_preference_center_url": {
+                    "type": "string",
+                    "description": "URL address to customer preference center."
                   }
                 }
               },
@@ -4714,7 +4846,8 @@
         "enum": [
           "ADD_MISSING_ITEMS",
           "ADD_NEW_ITEMS",
-          "ADD_MANY_ITEMS"
+          "ADD_MANY_ITEMS",
+          "ADD_SAME_ITEMS"
         ],
         "type": "string"
       },
@@ -9549,10 +9682,11 @@
           },
           "type": {
             "type": "string",
-            "description": "Defines whether the campaign can be updated with new vouchers after campaign creation or if the campaign consists of generic (standalone) vouchers.\n\n- `AUTO_UPDATE`: the campaign is dynamic, i.e. vouchers will generate based on set criteria\n-  `STATIC`: vouchers need to be manually published",
+            "description": "Defines whether the campaign can be updated with new vouchers after campaign creation or if the campaign consists of generic (standalone) vouchers.\n\n- `AUTO_UPDATE`: the campaign is dynamic, i.e. vouchers will generate based on set criteria\n-  `STATIC`: vouchers need to be manually published\n- `STANDALONE`: the campaign is a generic (standalone) one with a single voucher for public use (only for discount and gift card campaigns)",
             "enum": [
               "AUTO_UPDATE",
-              "STATIC"
+              "STATIC",
+              "STANDALONE"
             ]
           },
           "join_once": {
@@ -12513,7 +12647,7 @@
             "description": "The merchant's publication ID if it is different from the Voucherify publication ID. It's an optional tracking identifier of a publication. It is really useful in case of an integration between multiple systems. It can be a publication ID from a CRM system, database or 3rd-party service.\nIf `source_id` is provided only 1 voucher can be published per request."
           },
           "customer": {
-            "description": "Contains information about the customer to whom the publication was directed.",
+            "description": "Contains information about the customer to whom the publication was directed. Use `customer.id`, `customer.source_id`, or both to identify the customer; at least one of them is required.",
             "allOf": [
               {
                 "$ref": "#/components/schemas/Customer"
@@ -12570,7 +12704,7 @@
             "type": "integer",
             "description": "Number of vouchers to be published to customer.",
             "minimum": 1,
-            "maximum": 20
+            "maximum": 50
           }
         },
         "required": [
@@ -16209,7 +16343,7 @@
           },
           "redeemables": {
             "type": "array",
-            "description": "Lists validation results of each redeemable. If  `redeemables_application_mode` is `PARTIAL` in the `stacking_rules` object, all redeemables here will be `APPLICABLE`. Read more in [the Stacking rules article](https://support.voucherify.io/article/604-stacking-rules).",
+            "description": "Lists validation results of each redeemable. If  `redeemables_application_mode` is `PARTIAL` in the `stacking_rules` object, all redeemables here will be `APPLICABLE`. Read more in [the Stacking rules article]/orchestrate/stacking-rules.",
             "items": {
               "title": "Validations Validate All Response Body Redeemables Item",
               "oneOf": [
@@ -16287,7 +16421,7 @@
             "$ref": "#/components/schemas/Session"
           },
           "stacking_rules": {
-            "description": "Defines stacking rules for redeemables. Read more in the [Stacking Rule Documentation](https://support.voucherify.io/article/604-stacking-rules).",
+            "description": "Defines stacking rules for redeemables. Read more in the [Stacking Rule Documentation](/orchestrate/stacking-rules).",
             "allOf": [
               {
                 "$ref": "#/components/schemas/StackingRules"
@@ -26604,20 +26738,224 @@
           },
           "order": {
             "type": "object",
-            "description": "Details regarding the order being processed.",
+            "description": "Details regarding the order being processed. You can provide either `source_id` of an existing order or an inline order/cart object (for example `amount`, `items`, or `metadata`). When both are provided, inline order data takes precedence.",
             "properties": {
+              "id": {
+                "type": "string",
+                "description": "Unique ID assigned by Voucherify of an existing order."
+              },
               "source_id": {
                 "type": "string",
-                "description": "The unique ID assigned by Voucherify of an existing order that will be linked to the loyalty point estimation (qualification). This property can be also sent as `id` instead."
+                "description": "The unique ID of an existing order to be linked to the loyalty point estimation (qualification). This property can also be sent as `id`. If inline order fields are provided as well, the inline order data takes precedence."
               },
-              "metadata": {
-                "type": "object",
-                "description": "A set of custom key/value pairs that you can attach to an order. It can be useful for storing additional information about the order in a structured format. ",
-                "additionalProperties": true
+              "status": {
+                "type": "string",
+                "description": "The order status.",
+                "enum": [
+                  "CREATED",
+                  "PAID",
+                  "CANCELED",
+                  "FULFILLED"
+                ]
               },
               "amount": {
                 "type": "integer",
-                "description": "A positive integer in the smallest currency unit (e.g. 100 cents for $1.00) representing the total amount of the order. Use if the related order doesn't have an amount value calculated."
+                "description": "A positive integer in the smallest currency unit (e.g. 100 cents for $1.00) representing the total amount of the order. This is the sum of the order items' amounts."
+              },
+              "initial_amount": {
+                "type": "integer",
+                "description": "A positive integer in the smallest currency unit (e.g. 100 cents for $1.00) representing the total amount of the order. This is the sum of the order items' amounts."
+              },
+              "discount_amount": {
+                "type": "integer",
+                "description": "Sum of all order-level discounts applied to the order. It is expressed as an integer in the smallest currency unit (e.g. 100 cents for $1.00)."
+              },
+              "items": {
+                "type": "array",
+                "description": "Array of items applied to the order. It can include up to 500 items.",
+                "items": {
+                  "type": "object",
+                  "title": "Order Item Calculated",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "Unique identifier of the order line item."
+                    },
+                    "sku_id": {
+                      "type": "string",
+                      "description": "Unique identifier of the SKU. It is assigned by Voucherify."
+                    },
+                    "product_id": {
+                      "type": "string",
+                      "description": "Unique identifier of the product. It is assigned by Voucherify."
+                    },
+                    "related_object": {
+                      "type": "string",
+                      "enum": [
+                        "product",
+                        "sku"
+                      ],
+                      "description": "Used along with the source_id property, can be set to either sku or product."
+                    },
+                    "source_id": {
+                      "type": "string",
+                      "description": "The merchant's product/SKU ID (if it is different from the Voucherify product/SKU ID). It is useful in the integration between multiple systems. It can be an ID from an eCommerce site, a database, or a third-party service."
+                    },
+                    "quantity": {
+                      "type": "integer",
+                      "description": "The quantity of the particular item in the cart."
+                    },
+                    "discount_quantity": {
+                      "type": "integer",
+                      "description": "Number of dicounted items."
+                    },
+                    "initial_quantity": {
+                      "type": "integer",
+                      "description": "A positive integer in the smallest unit quantity representing the total amount of the order; this is the sum of the order items' quantity."
+                    },
+                    "amount": {
+                      "type": "integer",
+                      "description": "The total amount of the order item (price * quantity)."
+                    },
+                    "discount_amount": {
+                      "type": "integer",
+                      "description": "Sum of all order-item-level discounts applied to the order."
+                    },
+                    "applied_discount_amount": {
+                      "type": "integer",
+                      "description": "This field shows the order-level discount applied."
+                    },
+                    "applied_discount_quantity": {
+                      "type": "integer",
+                      "description": "Number of the discounted items applied in the transaction."
+                    },
+                    "applied_quantity": {
+                      "type": "integer",
+                      "description": "Quantity of items changed by the application of a new quantity items. It can be positive when an item is added or negative if an item is replaced."
+                    },
+                    "applied_quantity_amount": {
+                      "type": "integer",
+                      "description": "Amount for the items changed by the application of a new quantity items. It can be positive when an item is added or negative if an item is replaced."
+                    },
+                    "initial_amount": {
+                      "type": "integer",
+                      "description": "A positive integer in the smallest currency unit (e.g. 100 cents for $1.00) representing the total amount of the order. This is the sum of the order items' amounts."
+                    },
+                    "price": {
+                      "type": "integer",
+                      "description": "Unit price of an item. The value is multiplied by 100 to represent 2 decimal places. For example `10000 cents` for `$100.00`."
+                    },
+                    "subtotal_amount": {
+                      "type": "integer",
+                      "description": "Final order item amount after the applied item-level discount.  If there are no item-level discounts applied, this item is equal to the `amount`.   \n`subtotal_amount`=`amount`-`applied_discount_amount`"
+                    },
+                    "product": {
+                      "type": "object",
+                      "description": "An object containing details of the related product.",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "description": "A unique identifier that represents the product and is assigned by Voucherify."
+                        },
+                        "source_id": {
+                          "type": "string",
+                          "description": "The merchant's product ID (if it is different than Voucherify's product ID). It is really useful in case of integration between multiple systems. It can be an ID from an eCommerce site, a database or a 3rd party service."
+                        },
+                        "override": {
+                          "type": "boolean",
+                          "description": "The override set to `true` is used to store the product information in the system. If the product does not exist, it will be created with a source_id; if it does exist, the provided values for the name, price, and metadata will replace those already stored in the system."
+                        },
+                        "name": {
+                          "type": "string",
+                          "description": "Product name."
+                        },
+                        "metadata": {
+                          "type": "object",
+                          "description": "A set of custom key/value pairs that you can attach to a product. It can be useful for storing additional information about the product in a structured format. It can be used to create product collections."
+                        },
+                        "price": {
+                          "type": "number",
+                          "description": "Product price. A positive integer in the smallest currency unit (e.g. 100 cents for $1.00)."
+                        }
+                      }
+                    },
+                    "sku": {
+                      "type": "object",
+                      "description": "An object containing details of the related SKU.",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "description": "A unique identifier that represents the SKU and is assigned by Voucherify."
+                        },
+                        "source_id": {
+                          "type": "string",
+                          "description": "The merchant's SKU ID (if it is different than Voucherify's SKU ID). It is really useful in case of integration between multiple systems. It can be an ID from an eCommerce site, a database or a 3rd party service."
+                        },
+                        "override": {
+                          "type": "boolean",
+                          "description": "The override set to `true` is used to store the product information in the system. If the product does not exist, it will be created with a source_id; if it does exist, the provided values for the name, price, and metadata will replace those already stored in the system."
+                        },
+                        "sku": {
+                          "type": "string",
+                          "description": "The SKU name."
+                        },
+                        "price": {
+                          "type": "number",
+                          "description": "SKU price. A positive integer in the smallest currency unit (e.g. 100 cents for $1.00)."
+                        },
+                        "metadata": {
+                          "type": "object",
+                          "description": "A set of custom key/value pairs that you can attach to an SKU. It can be useful for storing additional information about the SKU in a structured format. It can be used to create product collections."
+                        }
+                      }
+                    },
+                    "object": {
+                      "type": "string",
+                      "default": "order_item",
+                      "enum": [
+                        "order_item"
+                      ],
+                      "description": "The type of the object represented by JSON."
+                    },
+                    "metadata": {
+                      "type": "object",
+                      "description": "A set of custom key/value pairs that you can attach to an item object. It can be useful for storing additional information about the item in a structured format. It can be used to define business validation rules or discount formulas."
+                    }
+                  },
+                  "required": [
+                    "object"
+                  ]
+                }
+              },
+              "customer_id": {
+                "type": "string",
+                "nullable": true,
+                "description": "Unique customer identifier of the customer making the purchase. The ID is assigned by Voucherify.",
+                "example": "cust_7iUa6ICKyU6gH40dBU25kQU1"
+              },
+              "referrer_id": {
+                "type": "string",
+                "nullable": true,
+                "description": "Unique referrer ID.",
+                "example": "cust_nM4jqPiaXUvQdVSA6vTRUnix"
+              },
+              "customer": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/CustomerId"
+                  }
+                ]
+              },
+              "referrer": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/ReferrerId"
+                  }
+                ]
+              },
+              "metadata": {
+                "type": "object",
+                "description": "A set of custom key/value pairs that you can attach to an order. It can be useful for storing additional information about the order in a structured format. It can be used to define business validation rules or discount formulas."
               }
             }
           }
@@ -32059,6 +32397,12 @@
             "description": "Timestamp representing the date and time when the segment was created. The value is shown in the ISO 8601 format.",
             "format": "date-time"
           },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2022-10-03T12:24:58.008Z",
+            "description": "Timestamp in ISO 8601 format indicating when the segment was updated."
+          },
           "type": {
             "type": "string",
             "enum": [
@@ -32084,9 +32428,49 @@
         },
         "description": "This is an object representing a customer segment."
       },
+      "SegmentsListResponseBody": {
+        "title": "List Customer Segments Response Body",
+        "description": "Response body schema for **GET** `v1/segments`.",
+        "type": "object",
+        "properties": {
+          "object": {
+            "type": "string",
+            "default": "list",
+            "enum": [
+              "list"
+            ],
+            "description": "The type of the object represented by JSON. This object stores information about segments."
+          },
+          "data_ref": {
+            "type": "string",
+            "default": "data",
+            "enum": [
+              "data"
+            ],
+            "description": "Identifies the name of the attribute that contains the array of segments."
+          },
+          "segments": {
+            "type": "array",
+            "description": "An array of segment objects. Returns an empty array if there are no results matching query parameters.",
+            "items": {
+              "$ref": "#/components/schemas/Segment"
+            }
+          },
+          "total": {
+            "type": "integer",
+            "description": "Total number of segments returned for given filters and query parameters with the exception of `limit`."
+          }
+        },
+        "required": [
+          "object",
+          "data_ref",
+          "data",
+          "total"
+        ]
+      },
       "SegmentsGetResponseBody": {
         "title": "Create Customer Segment Response Body",
-        "description": "Response body schema for **GET** `v1/v1/segments/{segmentId}`.",
+        "description": "Response body schema for **GET** `v1/segments/{segmentId}`.",
         "allOf": [
           {
             "$ref": "#/components/schemas/Segment"
@@ -35593,7 +35977,7 @@
       "StackingRules": {
         "type": "object",
         "title": "Stacking Rules",
-        "description": "Defines stacking rules for redeemables. Read more in the [Stacking Rule Documentation](https://support.voucherify.io/article/604-stacking-rules).",
+        "description": "Defines stacking rules for redeemables. Read more in the [Stacking Rule Documentation](/orchestrate/stacking-rules).",
         "properties": {
           "redeemables_limit": {
             "type": "integer",
@@ -39874,10 +40258,20 @@
             "$ref": "#/components/schemas/Junction"
           },
           "created_at": {
-            "$ref": "#/components/schemas/FilterConditionsDateTime"
+            "type": "object",
+            "properties": {
+              "conditions": {
+                "$ref": "#/components/schemas/FilterConditionsDateTime"
+              }
+            }
           },
           "voucher_id": {
-            "$ref": "#/components/schemas/FilterConditionsString"
+            "type": "object",
+            "properties": {
+              "conditions": {
+                "$ref": "#/components/schemas/FilterConditionsString"
+              }
+            }
           }
         }
       },
@@ -42033,6 +42427,70 @@
           "aggregated_amount_limit": {
             "type": "integer",
             "description": "Maximum discount amount per order. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $6 maximum discount on the entire order is written as 600. This value is definable for the following discount effects:\n- `APPLY_TO_ITEMS` (each item subtotal is discounted equally)\n- `APPLY_TO_ITEMS_BY_QUANTITY` (each unit of matched products has the same discount value)"
+          },
+          "product_campaign_quantity_limit": {
+            "type": "integer",
+            "description": "Limits the number of discounted item units (product, SKU, collection) that all customers can receive in a given campaign. If a product is selected, the limit covers all discounts across all SKUs belonging to that product. If a product collection is selected, the limit covers all products/SKUs within the collection.\n\nThis limit is available on demand as part of campaign budget limits. Contact [Voucherify support](https://www.voucherify.io/contact-support) or your account manager to learn more."
+          },
+          "product_campaign_quantity_limit_formula": {
+            "type": "string",
+            "description": "Formula used to dynamically calculate the maximum units per campaign.\n\nThis limit is available on demand as part of campaign budget limits. Contact [Voucherify support](https://www.voucherify.io/contact-support) or your account manager to learn more."
+          },
+          "product_customer_campaign_quantity_limit": {
+            "type": "integer",
+            "description": "Limits the number of discounted item units (product, SKU, collection) that one customer can receive in a given campaign.\n\nThis limit is available on demand as part of campaign budget limits. Contact [Voucherify support](https://www.voucherify.io/contact-support) or your account manager to learn more."
+          },
+          "product_customer_campaign_quantity_limit_formula": {
+            "type": "string",
+            "description": "Formula used to dynamically calculate the maximum units per customer in a campaign.\n\nThis limit is available on demand as part of campaign budget limits. Contact [Voucherify support](https://www.voucherify.io/contact-support) or your account manager to learn more."
+          },
+          "product_in_collection_campaign_quantity_limit": {
+            "type": "integer",
+            "description": "Limits the number of discounted item units of a given product in a collection that all customers can receive in a given campaign.\n\nThis limit is available on demand as part of campaign budget limits. Contact [Voucherify support](https://www.voucherify.io/contact-support) or your account manager to learn more."
+          },
+          "product_in_collection_campaign_quantity_limit_formula": {
+            "type": "string",
+            "description": "Formula used to dynamically calculate the maximum units per campaign for a product in a collection.\n\nThis limit is available on demand as part of campaign budget limits. Contact [Voucherify support](https://www.voucherify.io/contact-support) or your account manager to learn more."
+          },
+          "product_in_collection_customer_campaign_quantity_limit": {
+            "type": "integer",
+            "description": "Limits the number of discounted item units of a given product in a collection that one customer can receive in a campaign.\n\nThis limit is available on demand as part of campaign budget limits. Contact [Voucherify support](https://www.voucherify.io/contact-support) or your account manager to learn more."
+          },
+          "product_in_collection_customer_campaign_quantity_limit_formula": {
+            "type": "string",
+            "description": "Formula used to dynamically calculate the maximum units per customer for a product in a collection.\n\nThis limit is available on demand as part of campaign budget limits. Contact [Voucherify support](https://www.voucherify.io/contact-support) or your account manager to learn more."
+          },
+          "product_promotion_tier_quantity_limit": {
+            "type": "integer",
+            "description": "Limits the number of discounted item units that all customers can receive in a promotion tier.\n\nThis limit is available on demand as part of campaign budget limits. Contact [Voucherify support](https://www.voucherify.io/contact-support) or your account manager to learn more."
+          },
+          "product_promotion_tier_quantity_limit_formula": {
+            "type": "string",
+            "description": "Formula used to dynamically calculate the maximum units per promotion tier.\n\nThis limit is available on demand as part of campaign budget limits. Contact [Voucherify support](https://www.voucherify.io/contact-support) or your account manager to learn more."
+          },
+          "product_customer_promotion_tier_quantity_limit": {
+            "type": "integer",
+            "description": "Limits the number of discounted item units that one customer can receive in a given promotion tier.\n\nThis limit is available on demand as part of campaign budget limits. Contact [Voucherify support](https://www.voucherify.io/contact-support) or your account manager to learn more."
+          },
+          "product_customer_promotion_tier_quantity_limit_formula": {
+            "type": "string",
+            "description": "Formula used to dynamically calculate the maximum units per customer in a promotion tier.\n\nThis limit is available on demand as part of campaign budget limits. Contact [Voucherify support](https://www.voucherify.io/contact-support) or your account manager to learn more."
+          },
+          "product_in_collection_promotion_tier_quantity_limit": {
+            "type": "integer",
+            "description": "Limits the number of discounted item units of a given product in a collection that all customers can receive in a given promotion tier.\n\nThis limit is available on demand as part of campaign budget limits. Contact [Voucherify support](https://www.voucherify.io/contact-support) or your account manager to learn more."
+          },
+          "product_in_collection_promotion_tier_quantity_limit_formula": {
+            "type": "string",
+            "description": "Formula used to dynamically calculate the maximum units per promotion tier for a product in a collection.\n\nThis limit is available on demand as part of campaign budget limits. Contact [Voucherify support](https://www.voucherify.io/contact-support) or your account manager to learn more."
+          },
+          "product_in_collection_customer_promotion_tier_quantity_limit": {
+            "type": "integer",
+            "description": "Limits the number of discounted item units of a given product in a collection that one customer can receive in a promotion tier.\n\nThis limit is available on demand as part of campaign budget limits. Contact [Voucherify support](https://www.voucherify.io/contact-support) or your account manager to learn more."
+          },
+          "product_in_collection_customer_promotion_tier_quantity_limit_formula": {
+            "type": "string",
+            "description": "Formula used to dynamically calculate the maximum units per customer in a promotion tier for a product in a collection.\n\nThis limit is available on demand as part of campaign budget limits. Contact [Voucherify support](https://www.voucherify.io/contact-support) or your account manager to learn more."
           },
           "order_item_indices": {
             "type": "array",
@@ -48049,69 +48507,6 @@
             "required": [
               "email"
             ]
-          },
-          "cockpits": {
-            "type": "object",
-            "title": "Cockpit",
-            "description": "Defines customer cockpit details.",
-            "properties": {
-              "campaigns_overview_enabled": {
-                "type": "boolean",
-                "default": false,
-                "nullable": true,
-                "description": "Enables the campaign overview for customers."
-              },
-              "loyalty_enabled": {
-                "type": "boolean",
-                "default": true,
-                "nullable": true,
-                "description": "Enables the loyalty campaign overview for customers."
-              },
-              "gift_cards_enabled": {
-                "type": "boolean",
-                "default": true,
-                "nullable": true,
-                "description": "Enables the gift card overview for customers."
-              },
-              "coupons_enabled": {
-                "type": "boolean",
-                "default": true,
-                "nullable": true,
-                "description": "Enables the discount coupon overview for customers."
-              },
-              "referrals_enabled": {
-                "type": "boolean",
-                "default": true,
-                "nullable": true,
-                "description": "Enables the referral campaign overview for customers."
-              },
-              "theme": {
-                "type": "string",
-                "default": "default",
-                "description": "Determines the color scheme of the customer cockpit.",
-                "enum": [
-                  "blue",
-                  "dark-green",
-                  "default",
-                  "green",
-                  "grey",
-                  "orange",
-                  "purple",
-                  "red"
-                ]
-              },
-              "use_custom_double_opt_in_redirect_url": {
-                "type": "boolean",
-                "default": false,
-                "nullable": true,
-                "description": "Enables the double opt-in option. It must be a valid URL format."
-              },
-              "custom_double_opt_in_redirect_url": {
-                "type": "string",
-                "nullable": true,
-                "description": "Defines the URL for the double opt-in consent. It must be a valid URL format."
-              }
-            }
           }
         },
         "required": [
@@ -48250,74 +48645,13 @@
               "email",
               "phone"
             ]
-          },
-          "cockpits": {
-            "type": "object",
-            "title": "Cockpit",
-            "description": "Defines customer cockpit details.",
-            "properties": {
-              "campaigns_overview_enabled": {
-                "type": "boolean",
-                "description": "Enables the campaign overview for customers."
-              },
-              "loyalty_enabled": {
-                "type": "boolean",
-                "description": "Enables the loyalty campaign overview for customers."
-              },
-              "gift_cards_enabled": {
-                "type": "boolean",
-                "description": "Enables the gift card overview for customers."
-              },
-              "coupons_enabled": {
-                "type": "boolean",
-                "description": "Enables the discount coupon overview for customers."
-              },
-              "referrals_enabled": {
-                "type": "boolean",
-                "description": "Enables the referral campaign overview for customers."
-              },
-              "theme": {
-                "type": "string",
-                "description": "Determines the color scheme of the customer cockpit.",
-                "enum": [
-                  "blue",
-                  "dark-green",
-                  "default",
-                  "green",
-                  "grey",
-                  "orange",
-                  "purple",
-                  "red"
-                ]
-              },
-              "use_custom_double_opt_in_redirect_url": {
-                "type": "boolean",
-                "description": "Enables the double opt-in option. It must be a valid URL format."
-              },
-              "custom_double_opt_in_redirect_url": {
-                "type": "string",
-                "nullable": true,
-                "description": "Defines the URL for the double opt-in consent. It must be a valid URL format."
-              }
-            },
-            "required": [
-              "campaigns_overview_enabled",
-              "loyalty_enabled",
-              "gift_cards_enabled",
-              "coupons_enabled",
-              "referrals_enabled",
-              "theme",
-              "use_custom_double_opt_in_redirect_url",
-              "custom_double_opt_in_redirect_url"
-            ]
           }
         },
         "required": [
           "id",
           "brand",
           "address",
-          "contact",
-          "cockpits"
+          "contact"
         ]
       },
       "ManagementProjectsBrandingListResponseBody": {
@@ -48434,55 +48768,6 @@
                 "type": "string",
                 "nullable": true,
                 "description": "Defines the brand's phone number."
-              }
-            }
-          },
-          "cockpits": {
-            "type": "object",
-            "title": "Cockpit",
-            "description": "Defines customer cockpit details.",
-            "properties": {
-              "campaigns_overview_enabled": {
-                "type": "boolean",
-                "description": "Indicates if the campaign overview is turned on for customers."
-              },
-              "loyalty_enabled": {
-                "type": "boolean",
-                "description": "Indicates if the loyalty campaign overview is turned on for customers."
-              },
-              "gift_cards_enabled": {
-                "type": "boolean",
-                "description": "Indicates if the gift card overview is turned on for customers."
-              },
-              "coupons_enabled": {
-                "type": "boolean",
-                "description": "Indicates if the discount coupon overview is turned on for customers."
-              },
-              "referrals_enabled": {
-                "type": "boolean",
-                "description": "Indicates if the referral campaign overview is turned on for customers."
-              },
-              "theme": {
-                "type": "string",
-                "description": "Determines the color scheme of the customer cockpit.",
-                "enum": [
-                  "orange",
-                  "green",
-                  "dark-green",
-                  "blue",
-                  "purple",
-                  "red",
-                  "grey"
-                ]
-              },
-              "use_custom_double_opt_in_redirect_url": {
-                "type": "boolean",
-                "description": "Indicates if the double opt-in option is turned on."
-              },
-              "custom_double_opt_in_redirect_url": {
-                "type": "string",
-                "nullable": true,
-                "description": "Defines the URL for the double opt-in consent."
               }
             }
           }
@@ -49187,7 +49472,7 @@
             "name": "customer",
             "in": "query",
             "required": true,
-            "description": "Contains information about the customer to whom the publication was directed.",
+            "description": "Contains information about the customer to whom the publication was directed. Use `customer.id`, `customer.source_id`, or both to identify the customer; at least one of them is required.",
             "style": "deepObject",
             "explode": true,
             "schema": {
@@ -49432,7 +49717,7 @@
           "Qualifications"
         ],
         "summary": "Check Eligibility",
-        "description": "\n> 🚧 The Qualifications endpoint ignores the rules checking:\n> \n> - Limit of total redeemed discount amount per campaign\n> - Limit of total redemptions count per campaign\n> - Redemptions per customer\n> - Redemptions per customer in a campaign \n\nGenerate a list of redeemables that are applicable in the context of the customer and order.\n\nThe new qualifications method is an improved version of [Campaign Qualifications](/api-reference/campaigns/examine-campaign-qualification), [Voucher Qualifications](/api-reference/vouchers/examine-voucher-qualification) API requests. The new qualification method introduces the following improvements:\n\n- Qualification results are returned faster\n- No limit on the number of returned redeemables\n- Introduces new qualification scenarios, not available in the previous version\n\n> 👍 Scenario Guide\n>\n> Read [the dedicated guide](/guides/checking-eligibility) to learn about some use cases this endpoint can cover.\n\n## Paging \n\nThe Voucherify Qualifications API request will return to you all of the redeemables available for the customer in batches of up to 50 redeemables per page. To get the next batch of redeemables, you need to use the `starting_after` cursor.\n\nTo process of paging the redeemables works in the following manner:\n\n- You send the first API request for Qualifications without the `starting_after` parameter.\n- The response will contain a parameter named `has_more`. If the parameter's value is set to `true`, then more redeemables are available.\n- Get the value of the `created_at` parameter of the last returned redeemable. The value of this parameter will be used as a cursor to retrieve the next page of redeemables.\n- Send another API request for Qualification with the `starting_after` parameter set to the value taken from the `created_at` parameter from the last returned redeemable.\n- Voucherify will return the next page of redeemables.\n- If the `has_more` parameter is set to `true`, apply steps 3-5 to get the next page of redeemables.",
+        "description": "\n> 🚧 The Qualifications endpoint ignores the rules checking:\n> \n> - Limit of total redeemed discount amount per campaign\n> - Limit of total redemptions count per campaign\n> - Redemptions per customer\n> - Redemptions per customer in a campaign\n>- Total amount before discount \n\nGenerate a list of redeemables that are applicable in the context of the customer and order.\n\nThe new qualifications method is an improved version of [Campaign Qualifications](/api-reference/campaigns/examine-campaign-qualification), [Voucher Qualifications](/api-reference/vouchers/examine-voucher-qualification) API requests. The new qualification method introduces the following improvements:\n\n- Qualification results are returned faster\n- No limit on the number of returned redeemables\n- Introduces new qualification scenarios, not available in the previous version\n\n> 👍 Scenario Guide\n>\n> Read [the dedicated guide](/guides/checking-eligibility) to learn about some use cases this endpoint can cover.\n\n## Paging \n\nThe Voucherify Qualifications API request will return to you all of the redeemables available for the customer in batches of up to 50 redeemables per page. To get the next batch of redeemables, you need to use the `starting_after` cursor.\n\nTo process of paging the redeemables works in the following manner:\n\n- You send the first API request for Qualifications without the `starting_after` parameter.\n- The response will contain a parameter named `has_more`. If the parameter's value is set to `true`, then more redeemables are available.\n- Get the value of the `created_at` parameter of the last returned redeemable. The value of this parameter will be used as a cursor to retrieve the next page of redeemables.\n- Send another API request for Qualification with the `starting_after` parameter set to the value taken from the `created_at` parameter from the last returned redeemable.\n- Voucherify will return the next page of redeemables.\n- If the `has_more` parameter is set to `true`, apply steps 3-5 to get the next page of redeemables.\n\n## Caching\n\nQualification has a 5-minute cache for the returned results. If you change your campaign settings or validation rules, the changes will apply to qualification results after the cache refreshes.",
         "parameters": [],
         "security": [
           {
@@ -49874,7 +50159,7 @@
         },
         "responses": {
           "200": {
-            "description": "Depending on your project settings: all redeemables must be valid or just one must be valid to result as valid validation. Read more in the [Stacking Rule Documentation](https://support.voucherify.io/article/604-stacking-rules).",
+            "description": "Depending on your project settings: all redeemables must be valid or just one must be valid to result as valid validation. Read more in the [Stacking Rule Documentation](/orchestrate/stacking-rules).",
             "content": {
               "application/json": {
                 "schema": {
@@ -51131,7 +51416,7 @@
         },
         "responses": {
           "200": {
-            "description": "Depending on your project settings: all redeemables must be valid or just one must be valid to result as valid redemption. Read more in the [Stacking Rule Documentation](https://support.voucherify.io/article/604-stacking-rules).",
+            "description": "Depending on your project settings: all redeemables must be valid or just one must be valid to result as valid redemption. Read more in the [Stacking Rule Documentation](/orchestrate/stacking-rules).",
             "content": {
               "application/json": {
                 "schema": {
@@ -51382,7 +51667,7 @@
           "Vouchers"
         ],
         "summary": "Generate Random Code",
-        "description": "Create a generic (standalone) vouchers. You can choose to create a `GIFT_VOUCHER`, a `DISCOUNT_VOUCHER`, or a `LOYALTY_CARD`. \n\nWhen you create a new voucher, you can specify a type to create it.\nCreating a new voucher will create a new generic (standalone) vouchers if no `campaign` name or `campaign_id` is provided. However, if an ID or name of a campaign with the `type` set to `STANDALONE` is provided, the voucher will be added to such campaign. In case of the loyalty card, a campaign name is required.\n\nYou can optionally use the `code` parameter to define a specific code or the `code_config` parameter to design rules for Voucherify API to create a random code. If neither of the two parameters are passed, then a random code is generated by the Voucherify API.\n\nThis method will return an error when trying to create a voucher that already exists.\n\n>🚧 Standalone Vouchers and Campaigns\n>\n>In version [v20241004](https://support.voucherify.io/article/23-whats-new-in-voucherify#v20241004), generic (standalone) vouchers created through the Voucherify dashboard create a campaign for that voucher. However, vouchers created through the API do not have a campaign attached, so the values for `campaign` and `campaign_id` are `null`.\n>\n>Voucherify developers work on adding an optional feature to create a generic (standalone) vouchers campaign through the API.\n>\n>Follow the [Voucherify Release Notes](https://support.voucherify.io/article/23-whats-new-in-voucherify) for more details about released features.",
+        "description": "Create a generic (standalone) vouchers. You can choose to create a `GIFT_VOUCHER`, a `DISCOUNT_VOUCHER`, or a `LOYALTY_CARD`. \n\nWhen you create a new voucher, you can specify a type to create it.\nCreating a new voucher will create a new generic (standalone) vouchers if no `campaign` name or `campaign_id` is provided. However, if an ID or name of a campaign with the `type` set to `STANDALONE` is provided, the voucher will be added to such campaign. In case of the loyalty card, a campaign name is required.\n\nYou can optionally use the `code` parameter to define a specific code or the `code_config` parameter to design rules for Voucherify API to create a random code. If neither of the two parameters are passed, then a random code is generated by the Voucherify API.\n\nThis method will return an error when trying to create a voucher that already exists.\n\n>🚧 Standalone Vouchers and Campaigns\n>\n>Generic (standalone) vouchers created through the Voucherify dashboard always create a campaign for that voucher. The vouchers created with POST Create voucher and POST Generate random code endpoints do not have a campaign attached, so the values for `campaign` and `campaign_id` are `null`.\n>\n>To create a generic (standalone) voucher with a `\"type\": \"STANDALONE\"`, use the [POST Create campaign](/api-reference/campaigns/create-campaign) endpoint.",
         "parameters": [],
         "security": [
           {
@@ -53109,7 +53394,7 @@
           "Vouchers"
         ],
         "summary": "Create Voucher",
-        "description": "Create a generic (standalone) vouchers. You can choose to create a `GIFT_VOUCHER`, a `DISCOUNT_VOUCHER`, or a `LOYALTY_CARD`. The code path parameter can use all letters of the English alphabet, Arabic numerals and special characters.\n\nWhen you create a new voucher, you can specify a type to create it.\nCreating a new voucher will create a new generic (standalone) vouchers if no `campaign` name or `campaign_id` is provided. However, if an ID or name of a campaign with the `type` set to `STANDALONE` is provided, the voucher will be added to such campaign. In the case of the loyalty card, a campaign name or ID is required.\n\n>🚧 Standalone Vouchers and Campaigns\n>\n>In version [v20241004](https://support.voucherify.io/article/23-whats-new-in-voucherify#v20241004), generic (standalone) vouchers created through the Voucherify dashboard create a campaign for that voucher. However, vouchers created through the API do not have a campaign attached, so the values for `campaign` and `campaign_id` are `null`.\n>\n>Voucherify developers work on adding an optional feature to create a generic (standalone) vouchers campaign through the API.\n>\n>Follow the [Voucherify Release Notes](https://support.voucherify.io/article/23-whats-new-in-voucherify) for more details about released features.",
+        "description": "Create a generic (standalone) voucher or a voucher in a campaign. You can choose to create a `GIFT_VOUCHER`, a `DISCOUNT_VOUCHER`, or a `LOYALTY_CARD`. The code path parameter can use all letters of the English alphabet, Arabic numerals and special characters.\n\nWhen you create a new voucher, you can specify a type to create it.\nIf no `campaign` name or `campaign_id` is provided, the new voucher will be a generic (standalone) one. However, if an ID or name of a campaign with the `type` set to `STANDALONE` is provided, the voucher will be added to this campaign. For a loyalty card, a campaign name or ID is required.\n\n>🚧 Standalone Vouchers and Campaigns\n>\n>Generic (standalone) vouchers created through the Voucherify dashboard always create a campaign for that voucher. However, vouchers created through The vouchers created with POST Create voucher and POST Generate random code endpoints do not have a campaign attached, so the values for `campaign` and `campaign_id` are `null`.\n>\n>To create a generic (standalone) voucher with a `\"type\": \"STANDALONE\"`, use the [POST Create campaign](/api-reference/campaigns/create-campaign) endpoint.",
         "parameters": [],
         "security": [
           {
@@ -54480,7 +54765,7 @@
           "Vouchers"
         ],
         "summary": "Import Vouchers",
-        "description": "Import generic (standalone) vouchers and gift cards into the repository.\nYou can upload up to 100,000 codes to a campaign, as a campaign can have up to 100,000 codes by default. \n Also, the request can include up to **10 MB** of data.\n\n\n> 📘 Important notes\n>\n> - **Start and expiration dates** need to be provided in compliance with the ISO 8601 standard. For example, 2020-03-11T09:00:00.000Z.\n> - Custom code attributes (not supported by-default) need to be added as code **metadata**.\n> - You **cannot import the same codes** to a single Voucherify Project.\n\nAny parameters not provided in the payload will be left blank or null.\n\nFor both **standalone discount vouchers and gift cards**, you can import the following fields:  \n\n- code\n- category\n- active\n- type\n- start_date\n- expiration_date\n- redemption.quantity\n- additional_info\n- metadata\n\nFor **gift cards**, you can also import the following field:\n\n- gift.amount\n\nFor **discount vouchers**, you can import the `discount` object. The object will slightly vary depending on the type of discount. Each discount type **requires** the `type` to be defined in the import.\n\n| **Discount Type** | **Required fields** |\n|:---|:---|\n| Amount | amount_off, effect |\n| Percent | percent_off, effect |\n| Fixed | fixed_amount, effect |\n| Unit - One item | unit_off, unit_type, effect |\n| Unit - Multiple items | unit_off, unit_type, effect |\n| Shipping | unit_off, unit_type, effect |\n\nFields other than the ones listed above won't be imported. Even if provided, they will be silently skipped.\n\nThis API request starts a process that affects Voucherify data in bulk. \n\nIn case of small jobs (like bulk update) the request is put into a queue and processed once every other bulk request placed in the queue prior to this request is finished. However, when the job takes a longer time (like vouchers generation) then it is processed in small portions in a round-robin fashion. When there is a list of vouchers generation scheduled, then they will all have the `IN_PROGRESS` status shortly. This way, small jobs added just after scheduling big jobs of the same type will be processed in a short time window. \n\nThe result will return the async ID. You can verify the status of your request via this [API request](/api-reference/async-actions/get-async-action).\n\n>🚧 Standalone Vouchers and Campaigns\n>\n>In version [v20241004](https://support.voucherify.io/article/23-whats-new-in-voucherify#v20241004), generic (standalone) vouchers created through the Voucherify dashboard create a campaign for that voucher. However, vouchers imported through the dashboard in the Vouchers section or through the API do not have a campaign attached, so the values for `campaign` and `campaign_id` are `null`.",
+        "description": "Import generic (standalone) vouchers and gift cards into the repository.\nYou can upload up to 100,000 codes to a campaign, as a campaign can have up to 100,000 codes by default. \n Also, the request can include up to **10 MB** of data.\n\n\n> 📘 Important notes\n>\n> - **Start and expiration dates** need to be provided in compliance with the ISO 8601 standard. For example, 2020-03-11T09:00:00.000Z.\n> - Custom code attributes (not supported by-default) need to be added as code **metadata**.\n> - You **cannot import the same codes** to a single Voucherify Project.\n\nAny parameters not provided in the payload will be left blank or null.\n\nFor both **standalone discount vouchers and gift cards**, you can import the following fields:  \n\n- code\n- category\n- active\n- type\n- start_date\n- expiration_date\n- redemption.quantity\n- additional_info\n- metadata\n\nFor **gift cards**, you can also import the following field:\n\n- gift.amount\n\nFor **discount vouchers**, you can import the `discount` object. The object will slightly vary depending on the type of discount. Each discount type **requires** the `type` to be defined in the import.\n\n| **Discount Type** | **Required fields** |\n|:---|:---|\n| Amount | amount_off, effect |\n| Percent | percent_off, effect |\n| Fixed | fixed_amount, effect |\n| Unit - One item | unit_off, unit_type, effect |\n| Unit - Multiple items | unit_off, unit_type, effect |\n| Shipping | unit_off, unit_type, effect |\n\nFields other than the ones listed above won't be imported. Even if provided, they will be silently skipped.\n\nThis API request starts a process that affects Voucherify data in bulk. \n\nIn case of small jobs (like bulk update) the request is put into a queue and processed once every other bulk request placed in the queue prior to this request is finished. However, when the job takes a longer time (like vouchers generation) then it is processed in small portions in a round-robin fashion. When there is a list of vouchers generation scheduled, then they will all have the `IN_PROGRESS` status shortly. This way, small jobs added just after scheduling big jobs of the same type will be processed in a short time window. \n\nThe result will return the async ID. You can verify the status of your request via this [API request](/api-reference/async-actions/get-async-action).\n\n>🚧 Standalone Vouchers and Campaigns\n>\n>Generic (standalone) vouchers created through the Voucherify dashboard always create a campaign for that voucher. However, vouchers imported through the dashboard in the Vouchers section or through the API do not have a campaign attached, so the values for `campaign` and `campaign_id` are `null`.\n>\n>To create a generic (standalone) voucher with a `\"type\": \"STANDALONE\"`, use the [POST Create campaign](/api-reference/campaigns/create-campaign) endpoint.",
         "parameters": [],
         "security": [
           {
@@ -54757,7 +55042,7 @@
           "Vouchers"
         ],
         "summary": "Import Vouchers using CSV",
-        "description": "Import generic (standalone) vouchers into the repository using a CSV file.\n\nThe CSV file has to include headers in the first line. All properties listed in the file headers that cannot be mapped to standard voucher fields will be added to the metadata object.\nYou can upload up to 100,000 codes to a campaign, as a campaign can have up to 100,000 codes by default. \n Also, the request can include a max. **10 MB** CSV file.\n\nYou can find an example CSV file [here](https://support.voucherify.io/article/45-import-codes-and-share-them-digitally#coupons).\n___\n\n```cURL cURL example\ncurl -X **POST** \\\n  https://api.voucherify.io/v1/vouchers/importCSV \\\n  -F file=@/path/to/vouchers.csv \\\n  -F webhooks_enable=true\\\n  -H \"X-App-Id: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx\" \\\n  -H \"X-App-Token: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx\"\n```\n\n\n\n> 📘 Standard voucher fields mapping\n>\n> - Go to the [import vouchers](/api-reference/vouchers/import-vouchers) endpoint to see all standard CSV fields description (body params section).\n> - Supported CSV file headers: Code,Voucher Type,Value,Discount Type,Category,Start Date,Expiration Date,Redemption Limit,Redeemed Quantity, Redeemed Amount,Active,Additional Info,Custom Metadata Property Name\n>- **Start and expiration dates** need to be provided in compliance with the ISO 8601 standard. For example, 2020-03-11T09:00:00.000Z.  \n>    - `YYYY-MM-DD`\n>    - `YYYY-MM-DDTHH`\n>    - `YYYY-MM-DDTHH:mm`\n>    - `YYYY-MM-DDTHH:mm:ss`\n>    - `YYYY-MM-DDTHH:mm:ssZ`\n>    - `YYYY-MM-DDTHH:mm:ssZ`\n>    - `YYYY-MM-DDTHH:mm:ss.SSSZ`\n> - Custom code attributes (not supported by-default) need to be added as code **metadata**.\n> - You **cannot import the same codes** to a single Voucherify project.\n> - You can, however, upload the same codes to update them.\n\n\n\n> 📘 Categories\n>\n> In the structure representing your data, you can define a category that the voucher belongs to. You can later use the category of a voucher to group and search by specific criteria in the Dashboard and using the [List Vouchers](/api-reference/vouchers/list-vouchers) endpoint.\n\nThis API request starts a process that affects Voucherify data in bulk. \n\nIn case of small jobs (like bulk update) the request is put into a queue and processed once every other bulk request placed in the queue prior to this request is finished. However, when the job takes a longer time (like vouchers generation) then it is processed in small portions in a round-robin fashion. When there is a list of vouchers generation scheduled, then they will all have the `IN_PROGRESS` status shortly. This way, small jobs added just after scheduling big jobs of the same type will be processed in a short time window. \n\nThe result will return the async ID. You can verify the status of your request via this [API request](/api-reference/async-actions/get-async-action).\n\nYou can pass the `webhooks_enable=true` parameter to trigger a webhook sendout for created or updated vouchers. Configure the [respective webhooks](/api-reference/introduction-to-webhooks) in Project settings. For updated webhooks, a webhook is sent even if the voucher hasn't been changed in the CSV file.\n\n>🚧 Generic (standalone) vouchers and campaigns\n>\n>In version [v20241004](https://support.voucherify.io/article/23-whats-new-in-voucherify#v20241004), generic (standalone) vouchers created through the Voucherify dashboard create a campaign for that voucher. However, vouchers imported through the dashboard in the Vouchers section or through the API do not have a campaign attached, so the values for `campaign` and `campaign_id` are `null`.",
+        "description": "Import generic (standalone) vouchers into the repository using a CSV file.\n\nThe CSV file has to include headers in the first line. All properties listed in the file headers that cannot be mapped to standard voucher fields will be added to the metadata object.\nYou can upload up to 100,000 codes to a campaign, as a campaign can have up to 100,000 codes by default. \n Also, the request can include a max. **10 MB** CSV file.\n\nYou can find an example CSV file [here](/build/discount-code-import).\n___\n\n```cURL cURL example\ncurl -X **POST** \\\n  https://api.voucherify.io/v1/vouchers/importCSV \\\n  -F file=@/path/to/vouchers.csv \\\n  -F webhooks_enable=true\\\n  -H \"X-App-Id: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx\" \\\n  -H \"X-App-Token: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx\"\n```\n\n\n\n> 📘 Standard voucher fields mapping\n>\n> - Go to the [import vouchers](/api-reference/vouchers/import-vouchers) endpoint to see all standard CSV fields description (body params section).\n> - Supported CSV file headers: Code,Voucher Type,Value,Discount Type,Category,Start Date,Expiration Date,Redemption Limit,Redeemed Quantity, Redeemed Amount,Active,Additional Info,Custom Metadata Property Name\n>- **Start and expiration dates** need to be provided in compliance with the ISO 8601 standard. For example, 2020-03-11T09:00:00.000Z.  \n>    - `YYYY-MM-DD`\n>    - `YYYY-MM-DDTHH`\n>    - `YYYY-MM-DDTHH:mm`\n>    - `YYYY-MM-DDTHH:mm:ss`\n>    - `YYYY-MM-DDTHH:mm:ssZ`\n>    - `YYYY-MM-DDTHH:mm:ssZ`\n>    - `YYYY-MM-DDTHH:mm:ss.SSSZ`\n> - Custom code attributes (not supported by-default) need to be added as code **metadata**.\n> - You **cannot import the same codes** to a single Voucherify project.\n> - You can, however, upload the same codes to update them.\n\n\n\n> 📘 Categories\n>\n> In the structure representing your data, you can define a category that the voucher belongs to. You can later use the category of a voucher to group and search by specific criteria in the Dashboard and using the [List Vouchers](/api-reference/vouchers/list-vouchers) endpoint.\n\nThis API request starts a process that affects Voucherify data in bulk. \n\nIn case of small jobs (like bulk update) the request is put into a queue and processed once every other bulk request placed in the queue prior to this request is finished. However, when the job takes a longer time (like vouchers generation) then it is processed in small portions in a round-robin fashion. When there is a list of vouchers generation scheduled, then they will all have the `IN_PROGRESS` status shortly. This way, small jobs added just after scheduling big jobs of the same type will be processed in a short time window. \n\nThe result will return the async ID. You can verify the status of your request via this [API request](/api-reference/async-actions/get-async-action).\n\nYou can pass the `webhooks_enable=true` parameter to trigger a webhook sendout for created or updated vouchers. Configure the [respective webhooks](/api-reference/introduction-to-webhooks) in Project settings. For updated webhooks, a webhook is sent even if the voucher hasn't been changed in the CSV file.\n\n>🚧 Generic (standalone) vouchers and campaigns\n>\n>Generic (standalone) vouchers created through the Voucherify dashboard always create a campaign for that voucher. However, vouchers imported through the dashboard in the Vouchers section or through the API do not have a campaign attached, so the values for `campaign` and `campaign_id` are `null`.",
         "parameters": [],
         "security": [
           {
@@ -55025,7 +55310,7 @@
           "Vouchers"
         ],
         "summary": "Release Validation Session",
-        "description": "Manually release a validation session that has been set up for the voucher. This method undoes the actions that are explained in the [Locking validation session](/guides/locking-validation-session) guide. \n\n> 📘 Release session in the Dashboard\n>\n> You can also use the [Validations Manager](https://support.voucherify.io/article/16-dashboard-sections#sessions) in the Dashboard to unlock sessions.",
+        "description": "Manually release a validation session that has been set up for the voucher. This method undoes the actions that are explained in the [Locking validation session](/guides/locking-validation-session) guide. \n\n> 📘 Release session in the Dashboard\n>\n> You can also use the [Validations Manager](/optimize/validations-and-redemptions#sessions) in the Dashboard to unlock sessions.",
         "parameters": [],
         "security": [
           {
@@ -55085,7 +55370,7 @@
           "Campaigns"
         ],
         "summary": "Create Campaign",
-        "description": "Method to create a batch of vouchers aggregated in one campaign. You can choose a variety of voucher types and define a unique pattern for generating codes.  \n\n\n> 📘 Global uniqueness\n>\n> All campaign codes are unique across the whole project. Voucherify will not allow you to generate 2 campaigns with the same coupon code.  \n\n> 🚧 Code generation status\n>\n> This is an asynchronous action; you can't read or modify a newly created campaign until the code generation is completed. See the `creation_status` field in the [campaign object](/api-reference/campaigns/campaign-object) description.\n\n>🚧 Standalone Vouchers and Campaigns\n>\n>In version [v20241004](https://support.voucherify.io/article/23-whats-new-in-voucherify#v20241004), generic (standalone) vouchers created through the Voucherify dashboard create a campaign for that voucher. However, you cannot create a standalone discount or gift voucher campaign with the `\"type\": \"STANDALONE\"` through the API. Voucherify developers work on adding that feature.\n>\n>Follow the [Voucherify Release Notes](https://support.voucherify.io/article/23-whats-new-in-voucherify) for more details about released features.",
+        "description": "Method to create a batch of vouchers aggregated in one campaign. You can choose a variety of voucher types and define a unique pattern for generating codes.  \n\n\n> 📘 Global uniqueness\n>\n> All campaign codes are unique across the whole project. Voucherify will not allow you to generate 2 campaigns with the same coupon code.  \n\n> 🚧 Code generation status\n>\n> This is an asynchronous action; you can't read or modify a newly created campaign until the code generation is completed. See the `creation_status` field in the [campaign object](/api-reference/campaigns/campaign-object) description.",
         "parameters": [],
         "security": [
           {
@@ -57846,7 +58131,7 @@
           "Campaigns"
         ],
         "summary": "Get Campaign Summary",
-        "description": "Returns data for campaign analytics, covering validations, redemptions, publications, and other details specific to a given campaign type.\n\nUse `start_date` and `end_date` to narrow down the data to specific periods.\n\n>🚧 Campaigns created before v20250602 version\n>\n>This endpoint returns analytics data for campaigns that were created after the [v20250602 version](https://support.voucherify.io/article/23-whats-new-in-voucherify#v20250602) was released on 17 June 2025. Older campaigns return empty data.",
+        "description": "Returns data for campaign analytics, covering validations, redemptions, publications, and other details specific to a given campaign type.\n\nUse `start_date` and `end_date` to narrow down the data to specific periods.\n\n>🚧 Campaigns created before 17 June 2025\n>\n>This endpoint returns analytics data for campaigns that were created after 17 June 2025. Older campaigns return empty data.",
         "parameters": [
           {
             "name": "start_date",
@@ -80463,7 +80748,7 @@
           "Loyalties"
         ],
         "summary": "Estimate loyalty points",
-        "description": "Estimates the number of points a customer will receive for a given order in the loyalty campaign under its earning rules.\n\nThis endpoint returns only an estimation, not a precise point value.\n\nAlso, this estimation works only for the Order paid earning rules. If a campaign includes tiers, mappings, and multiple earning rules, the calculation becomes more complex. During final calculation, a customer may change tiers and earn more or fewer points depending on other factors.",
+        "description": "Estimates the number of points a customer will receive for a given order in the loyalty campaign under its earning rules. This endpoint also returns point estimation for created transactions (orders with status `PAID`)\n\nThis endpoint returns only an estimation, not a precise point value.\n\nAlso, this estimation works only for the Order paid earning rules. If a campaign includes tiers, mappings, and multiple earning rules, the calculation becomes more complex. During final calculation, a customer may change tiers and earn more or fewer points depending on other factors.",
         "parameters": [],
         "security": [
           {
@@ -80660,7 +80945,7 @@
               "$ref": "#/components/schemas/ParameterString"
             },
             "in": "query",
-            "description": "Filter customers by the segment id.",
+            "description": "Filter customers by the segment ID.\n\nWarning: Passing additional query parameter filters that are in conflict with the segment filters may return unexpected results.",
             "name": "segment_id"
           },
           {
@@ -81699,7 +81984,7 @@
           "Customers"
         ],
         "summary": "Update Customers' Metadata in Bulk",
-        "description": "Updates metadata parameters for a list of customers. Every resource in the list will receive the metadata defined in the request.\n\nThe request can include up to **10 MB** of data.\n\nThe response returns a unique asynchronous action ID. Use this ID in the query paramater of the [GET Async Action](/api-reference/async-actions/get-async-action) endpoint to check, e.g.:\n\n- The status of your request (in queue, in progress, done, or failed)\n\n- Resources that failed to be updated\n\n- The report file with details about the update\n\nIf a product object is not found, it is **upserted**. This is shown in the report file in the **GET** Async Action endpoint. The upserted resources have value `false` in the `found` column and `true` in the `updated` column.\n\nThis API request starts a process that affects Voucherify data in bulk. In the case of small jobs (like bulk update), the request is put into a queue and processed when every other bulk request placed in the queue prior to this request is finished.",
+        "description": "Updates metadata parameters for a list of customers. Every resource in the list will receive the metadata defined in the request.\n\nThe request can include up to **10 MB** of data.\n\nThe response returns a unique asynchronous action ID. Use this ID in the query paramater of the [GET Async Action](/api-reference/async-actions/get-async-action) endpoint to check, e.g.:\n\n- The status of your request (in queue, in progress, done, or failed)\n\n- Resources that failed to be updated\n\n- The report file with details about the update\n\nIf a customer object is not found, it is **upserted**. This is shown in the report file in the **GET** Async Action endpoint. The upserted resources have value `false` in the `found` column and `true` in the `updated` column.\n\nThis API request starts a process that affects Voucherify data in bulk. In the case of small jobs (like bulk update), the request is put into a queue and processed when every other bulk request placed in the queue prior to this request is finished.",
         "parameters": [],
         "security": [
           {
@@ -87403,7 +87688,7 @@
           "Segments"
         ],
         "summary": "Get Segment",
-        "description": "Retrieves the segment with a given segment ID.",
+        "description": "Retrieves the segment with a given segment ID.\n\nThis method doesn't return the customers that belong to the segment. To return a list of customers who belong to a segment, use [GET List customers](/api-reference/customers/list-customers) endpoint with the `segment_id` query parameter.",
         "parameters": [],
         "security": [
           {
@@ -87522,6 +87807,150 @@
       }
     },
     "/v1/segments": {
+      "get": {
+        "operationId": "list-segment",
+        "tags": [
+          "Segments"
+        ],
+        "summary": "List segments",
+        "description": "Retrieves a list of segments.\n\nThe list doesn't include the customers that belong to respective segments. To return a list of customers who belong to a segment, use [GET List customers](/api-reference/customers/list-customers) endpoint with the `segment_id` query parameter.\n\nTo return a list of different results, use the `filters[created_at][conditions][$before]` and `filters[created_at][conditions][$after]` query parameters as pagination.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/limit"
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterOrderCreatedAt"
+            },
+            "in": "query",
+            "name": "order",
+            "description": "Apply this filter to order the segments according the date and time when they were created. By default, lists the segments from the newest to the oldest. Use `created_at` to list from the oldest to the newest."
+          },
+          {
+            "name": "filters",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/ParameterFiltersListSegments"
+            },
+            "description": "Filters for listing templates.",
+            "style": "deepObject",
+            "explode": true
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterIds"
+            },
+            "in": "query",
+            "name": "ids",
+            "description": "Contains the list of segments in the sequence defined by the `order` parameter."
+          }
+        ],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": [],
+            "X-Voucherify-OAuth": [
+              "api",
+              "segments"
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns a `data` array with segment objects.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SegmentsListResponseBody"
+                },
+                "examples": {
+                  "List of segments": {
+                    "value": {
+                      "object": "list",
+                      "data_ref": "data",
+                      "data": [
+                        {
+                          "id": "seg_5ix74s3gM3N7",
+                          "name": "Customers with placed order",
+                          "created_at": "2023-08-03T10:37:49.285Z",
+                          "updated_at": null,
+                          "type": "auto-update",
+                          "filter": {
+                            "junction": "and",
+                            "events.payment_placed.count": {
+                              "conditions": {
+                                "$more_than": [
+                                  "0"
+                                ]
+                              }
+                            }
+                          },
+                          "object": "segment"
+                        },
+                        {
+                          "id": "seg_fi47Ds3gM3N7",
+                          "name": "Newsletter subscribers",
+                          "created_at": "2023-08-03T10:37:49.264Z",
+                          "updated_at": null,
+                          "type": "auto-update",
+                          "filter": {
+                            "junction": "and",
+                            "events.newsletter_subscribed.count": {
+                              "conditions": {
+                                "$more_than": [
+                                  "0"
+                                ]
+                              }
+                            }
+                          },
+                          "object": "segment"
+                        },
+                        {
+                          "id": "seg_f0r4hs3gM3N7",
+                          "name": "Reviewers",
+                          "created_at": "2023-08-03T10:37:49.244Z",
+                          "updated_at": null,
+                          "type": "auto-update",
+                          "filter": {
+                            "junction": "and",
+                            "events.review_left.count": {
+                              "conditions": {
+                                "$more_than": [
+                                  "0"
+                                ]
+                              }
+                            }
+                          },
+                          "object": "segment"
+                        },
+                        {
+                          "id": "seg_t4ir0Ds3gM3N7",
+                          "name": "Sign up customers",
+                          "created_at": "2023-08-03T10:37:49.225Z",
+                          "updated_at": null,
+                          "type": "auto-update",
+                          "filter": {
+                            "junction": "and",
+                            "events.sign_up.count": {
+                              "conditions": {
+                                "$more_than": [
+                                  "0"
+                                ]
+                              }
+                            }
+                          },
+                          "object": "segment"
+                        }
+                      ],
+                      "total": 99
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
       "post": {
         "operationId": "create-segment",
         "tags": [
@@ -87798,7 +88227,7 @@
           "Async Actions"
         ],
         "summary": "List Async Actions",
-        "description": "Track asynchronous operations scheduled in your project.  \n\nThe table below lists the possible types of async actions. The types are different for each endpoint generating the async action. If you would like to learn more about importing data into Voucherify, read more [here](https://support.voucherify.io/article/574-data-import).\n\n| **Types by Context** | **Endpoint** |\n|:---|:---|\n| **CAMPAIGN** |  |\n| CAMPAIGN.VOUCHERS_IMPORT | **POST**   [`/campaigns/{campaignId}/import`](/api-reference/campaigns/import-vouchers-to-campaign) |\n| CAMPAIGN.VOUCHERS_IMPORT_CSV | **POST**   [`/campaigns/{campaignId}/importCSV`](/api-reference/campaigns/import-vouchers-to-campaign-by-csv) |\n| CAMPAIGN.VOUCHERS_UPDATE | **PUT** [`/campaigns/{campaignId}`](/api-reference/campaigns/update-campaign) |\n| CAMPAIGN.VOUCHERS_DELETE | **DELETE** [`/campaigns/{campaignId}`](/api-reference/campaigns/delete-campaign) |\n| CAMPAIGN.VOUCHERS_GENERATE | <ul><li>**POST** [`/campaigns`](/api-reference/campaigns/create-campaign): asynchronous for campaigns with more than 1 voucher, synchronous for campaign with 1 voucher</li><li>**POST**    [`/campaigns/{campaignId}/vouchers`](/api-reference/campaigns/add-vouchers-to-campaign)</li></ul> |\n| **CUSTOMERS** |  |\n| CUSTOMERS.IMPORT_CSV | **POST** [`/customers/importCSV`](/api-reference/customers/import-and-update-customers-using-csv) |\n| CUSTOMERS.BULK_UPDATE | **POST** [`/customers/bulk/async`](/api-reference/customers/update-customers-in-bulk) |\n| CUSTOMERS.METADATA_UPDATE | **POST** [`/customers/metadata/async`](/api-reference/customers/update-customers-metadata-in-bulk) |\n| **PRODUCTS** |  |\n| PRODUCTS.BULK_UPDATE | **POST** [`/products/bulk/async`](/api-reference/products/update-products-in-bulk)<br /> |\n| PRODUCTS.METADATA_UPDATE | **POST** [`/products/metadata/async`](/api-reference/products/update-products-metadata-in-bulk) |\n| PRODUCTS.IMPORT_CSV | **POST** [`/products/importCSV`](/api-reference/products/import-products-using-csv) |\n| SKUS.IMPORT_CSV | **POST** [`/skus/importCSV`](/api-reference/products/import-skus-using-csv) |\n| **VOUCHERS** |  |\n| VOUCHERS.IMPORT | **POST** [`/vouchers/import`](/api-reference/vouchers/import-vouchers) |\n| VOUCHERS.IMPORT_CSV | **POST** [`/vouchers/importCSV`](/api-reference/vouchers/import-vouchers-using-csv) |\n| VOUCHERS.BULK_UPDATE | **POST** [`/vouchers/bulk/async`](/api-reference/vouchers/update-vouchers-in-bulk)<br /> |\n| VOUCHERS.METADATA_UPDATE | **POST** [`/vouchers/metadata/async`](/api-reference/vouchers/update-vouchers-metadata-in-bulk) | \n| **ORDERS** |  |\n| ORDERS.IMPORT | **POST** [`/orders/import`](/api-reference/orders/import-orders) |\n| **METADATA KEY PURGE** |  |\n| CAMPAIGNS.METADATA_KEY_PURGE<br />CUSTOMERS.METADATA_KEY_PURGE<br />PRODUCTS.METADATA_KEY_PURGE<br />VOUCHERS.METADATA_KEY_PURGE<br />ORDERS.METADATA_KEY_PURGE | No API endpoint equivalent. You can perform this action through the Dashboard. See Dashboard documentation: Dashboard > [Project Settings](/prepare/metadata#maintenance) |",
+        "description": "Track asynchronous operations scheduled in your project.  \n\nThe table below lists the possible types of async actions. The types are different for each endpoint generating the async action.\n\n| **Types by Context** | **Endpoint** |\n|:---|:---|\n| **CAMPAIGN** |  |\n| CAMPAIGN.VOUCHERS_IMPORT | **POST**   [`/campaigns/{campaignId}/import`](/api-reference/campaigns/import-vouchers-to-campaign) |\n| CAMPAIGN.VOUCHERS_IMPORT_CSV | **POST**   [`/campaigns/{campaignId}/importCSV`](/api-reference/campaigns/import-vouchers-to-campaign-by-csv) |\n| CAMPAIGN.VOUCHERS_UPDATE | **PUT** [`/campaigns/{campaignId}`](/api-reference/campaigns/update-campaign) |\n| CAMPAIGN.VOUCHERS_DELETE | **DELETE** [`/campaigns/{campaignId}`](/api-reference/campaigns/delete-campaign) |\n| CAMPAIGN.VOUCHERS_GENERATE | <ul><li>**POST** [`/campaigns`](/api-reference/campaigns/create-campaign): asynchronous for campaigns with more than 1 voucher, synchronous for campaign with 1 voucher</li><li>**POST**    [`/campaigns/{campaignId}/vouchers`](/api-reference/campaigns/add-vouchers-to-campaign)</li></ul> |\n| **CUSTOMERS** |  |\n| CUSTOMERS.IMPORT_CSV | **POST** [`/customers/importCSV`](/api-reference/customers/import-and-update-customers-using-csv) |\n| CUSTOMERS.BULK_UPDATE | **POST** [`/customers/bulk/async`](/api-reference/customers/update-customers-in-bulk) |\n| CUSTOMERS.METADATA_UPDATE | **POST** [`/customers/metadata/async`](/api-reference/customers/update-customers-metadata-in-bulk) |\n| **PRODUCTS** |  |\n| PRODUCTS.BULK_UPDATE | **POST** [`/products/bulk/async`](/api-reference/products/update-products-in-bulk)<br /> |\n| PRODUCTS.METADATA_UPDATE | **POST** [`/products/metadata/async`](/api-reference/products/update-products-metadata-in-bulk) |\n| PRODUCTS.IMPORT_CSV | **POST** [`/products/importCSV`](/api-reference/products/import-products-using-csv) |\n| SKUS.IMPORT_CSV | **POST** [`/skus/importCSV`](/api-reference/products/import-skus-using-csv) |\n| **VOUCHERS** |  |\n| VOUCHERS.IMPORT | **POST** [`/vouchers/import`](/api-reference/vouchers/import-vouchers) |\n| VOUCHERS.IMPORT_CSV | **POST** [`/vouchers/importCSV`](/api-reference/vouchers/import-vouchers-using-csv) |\n| VOUCHERS.BULK_UPDATE | **POST** [`/vouchers/bulk/async`](/api-reference/vouchers/update-vouchers-in-bulk)<br /> |\n| VOUCHERS.METADATA_UPDATE | **POST** [`/vouchers/metadata/async`](/api-reference/vouchers/update-vouchers-metadata-in-bulk) | \n| **ORDERS** |  |\n| ORDERS.IMPORT | **POST** [`/orders/import`](/api-reference/orders/import-orders) |\n| **METADATA KEY PURGE** |  |\n| CAMPAIGNS.METADATA_KEY_PURGE<br />CUSTOMERS.METADATA_KEY_PURGE<br />PRODUCTS.METADATA_KEY_PURGE<br />VOUCHERS.METADATA_KEY_PURGE<br />ORDERS.METADATA_KEY_PURGE | No API endpoint equivalent. You can perform this action through the Dashboard. See Dashboard documentation: Dashboard > [Project Settings](/prepare/metadata#maintenance) |",
         "parameters": [
           {
             "schema": {
@@ -87910,7 +88339,7 @@
           "Async Actions"
         ],
         "summary": "Get Async Action",
-        "description": "Check the result of a scheduled asynchronous operation.  \n\nThe table below lists the possible types of async actions. The types are different for each endpoint generating the async action. If you would like to learn more about importing data into Voucherify, read more [here](https://support.voucherify.io/article/574-data-import).\n\n| **Types by Context** | **Endpoint** |\n|:---|:---|\n| **CAMPAIGN** |  |\n| CAMPAIGN.VOUCHERS_IMPORT | **POST**   [`/campaigns/{campaignId}/import`](/api-reference/campaigns/import-vouchers-to-campaign) |\n| CAMPAIGN.VOUCHERS_IMPORT_CSV | **POST**   [`/campaigns/{campaignId}/importCSV`](/api-reference/campaigns/import-vouchers-to-campaign-by-csv) |\n| CAMPAIGN.VOUCHERS_UPDATE | **PUT** [`/campaigns/{campaignId}`](/api-reference/campaigns/update-campaign) |\n| CAMPAIGN.VOUCHERS_DELETE | **DELETE** [`/campaigns/{campaignId}`](/api-reference/campaigns/delete-campaign) |\n| CAMPAIGN.VOUCHERS_GENERATE | <ul><li>**POST** [`/campaigns`](/api-reference/campaigns/create-campaign): asynchronous for campaigns with more than 1 voucher, synchronous for campaign with 1 voucher</li><li>**POST**    [`/campaigns/{campaignId}/vouchers`](/api-reference/campaigns/add-vouchers-to-campaign)</li></ul> |\n| **CUSTOMERS** |  |\n| CUSTOMERS.IMPORT_CSV | **POST** [`/customers/importCSV`](/api-reference/customers/import-and-update-customers-using-csv) |\n| CUSTOMERS.BULK_UPDATE | **POST** [`/customers/bulk/async`](/api-reference/customers/update-customers-in-bulk) |\n| CUSTOMERS.METADATA_UPDATE | **POST** [`/customers/metadata/async`](/api-reference/customers/update-customers-metadata-in-bulk) |\n| **PRODUCTS** |  |\n| PRODUCTS.BULK_UPDATE | **POST** [`/products/bulk/async`](/api-reference/products/update-products-in-bulk)<br /> |\n| PRODUCTS.METADATA_UPDATE | **POST** [`/products/metadata/async`](/api-reference/products/update-products-metadata-in-bulk) |\n| PRODUCTS.IMPORT_CSV | **POST** [`/products/importCSV`](/api-reference/products/import-products-using-csv) |\n| SKUS.IMPORT_CSV | **POST** [`/skus/importCSV`](/api-reference/products/import-skus-using-csv) |\n| **VOUCHERS** |  |\n| VOUCHERS.IMPORT | **POST** [`/vouchers/import`](/api-reference/vouchers/import-vouchers) |\n| VOUCHERS.IMPORT_CSV | **POST** [`/vouchers/importCSV`](/api-reference/vouchers/import-vouchers-using-csv) |\n| VOUCHERS.BULK_UPDATE | **POST** [`/vouchers/bulk/async`](/api-reference/vouchers/update-vouchers-in-bulk)<br /> |\n| VOUCHERS.METADATA_UPDATE | **POST** [`/vouchers/metadata/async`](/api-reference/vouchers/update-vouchers-metadata-in-bulk) | \n| **ORDERS** |  |\n| ORDERS.IMPORT | **POST** [`/orders/import`](/api-reference/orders/import-orders) |\n| **METADATA KEY PURGE** |  |\n| CAMPAIGNS.METADATA_KEY_PURGE<br />CUSTOMERS.METADATA_KEY_PURGE<br />PRODUCTS.METADATA_KEY_PURGE<br />VOUCHERS.METADATA_KEY_PURGE<br />ORDERS.METADATA_KEY_PURGE | No API endpoint equivalent. You can perform this action through the Dashboard. See Dashboard documentation: Dashboard > [Project Settings](/prepare/metadata#maintenance) |",
+        "description": "Check the result of a scheduled asynchronous operation.  \n\nThe table below lists the possible types of async actions. The types are different for each endpoint generating the async action. \n\n| **Types by Context** | **Endpoint** |\n|:---|:---|\n| **CAMPAIGN** |  |\n| CAMPAIGN.VOUCHERS_IMPORT | **POST**   [`/campaigns/{campaignId}/import`](/api-reference/campaigns/import-vouchers-to-campaign) |\n| CAMPAIGN.VOUCHERS_IMPORT_CSV | **POST**   [`/campaigns/{campaignId}/importCSV`](/api-reference/campaigns/import-vouchers-to-campaign-by-csv) |\n| CAMPAIGN.VOUCHERS_UPDATE | **PUT** [`/campaigns/{campaignId}`](/api-reference/campaigns/update-campaign) |\n| CAMPAIGN.VOUCHERS_DELETE | **DELETE** [`/campaigns/{campaignId}`](/api-reference/campaigns/delete-campaign) |\n| CAMPAIGN.VOUCHERS_GENERATE | <ul><li>**POST** [`/campaigns`](/api-reference/campaigns/create-campaign): asynchronous for campaigns with more than 1 voucher, synchronous for campaign with 1 voucher</li><li>**POST**    [`/campaigns/{campaignId}/vouchers`](/api-reference/campaigns/add-vouchers-to-campaign)</li></ul> |\n| **CUSTOMERS** |  |\n| CUSTOMERS.IMPORT_CSV | **POST** [`/customers/importCSV`](/api-reference/customers/import-and-update-customers-using-csv) |\n| CUSTOMERS.BULK_UPDATE | **POST** [`/customers/bulk/async`](/api-reference/customers/update-customers-in-bulk) |\n| CUSTOMERS.METADATA_UPDATE | **POST** [`/customers/metadata/async`](/api-reference/customers/update-customers-metadata-in-bulk) |\n| **PRODUCTS** |  |\n| PRODUCTS.BULK_UPDATE | **POST** [`/products/bulk/async`](/api-reference/products/update-products-in-bulk)<br /> |\n| PRODUCTS.METADATA_UPDATE | **POST** [`/products/metadata/async`](/api-reference/products/update-products-metadata-in-bulk) |\n| PRODUCTS.IMPORT_CSV | **POST** [`/products/importCSV`](/api-reference/products/import-products-using-csv) |\n| SKUS.IMPORT_CSV | **POST** [`/skus/importCSV`](/api-reference/products/import-skus-using-csv) |\n| **VOUCHERS** |  |\n| VOUCHERS.IMPORT | **POST** [`/vouchers/import`](/api-reference/vouchers/import-vouchers) |\n| VOUCHERS.IMPORT_CSV | **POST** [`/vouchers/importCSV`](/api-reference/vouchers/import-vouchers-using-csv) |\n| VOUCHERS.BULK_UPDATE | **POST** [`/vouchers/bulk/async`](/api-reference/vouchers/update-vouchers-in-bulk)<br /> |\n| VOUCHERS.METADATA_UPDATE | **POST** [`/vouchers/metadata/async`](/api-reference/vouchers/update-vouchers-metadata-in-bulk) | \n| **ORDERS** |  |\n| ORDERS.IMPORT | **POST** [`/orders/import`](/api-reference/orders/import-orders) |\n| **METADATA KEY PURGE** |  |\n| CAMPAIGNS.METADATA_KEY_PURGE<br />CUSTOMERS.METADATA_KEY_PURGE<br />PRODUCTS.METADATA_KEY_PURGE<br />VOUCHERS.METADATA_KEY_PURGE<br />ORDERS.METADATA_KEY_PURGE | No API endpoint equivalent. You can perform this action through the Dashboard. See Dashboard documentation: Dashboard > [Project Settings](/prepare/metadata#maintenance) |",
         "parameters": [],
         "security": [
           {
@@ -94953,7 +95382,7 @@
           "Management"
         ],
         "summary": "Create Stacking Rules",
-        "description": "Overwrites the default stacking rules.\n\nIf new stacking rules have been created for the project earlier (e.g. in the user interface), it returns an error. Use [Update stacking rules](/api-reference/management/update-stacking-rules) endpoint to change the rules.\n\n> 📘 Stacking rules documentation\n>\n> Read [the Stacking rules article](https://support.voucherify.io/article/604-stacking-rules) to learn how they work.",
+        "description": "Overwrites the default stacking rules.\n\nIf new stacking rules have been created for the project earlier (e.g. in the user interface), it returns an error. Use [Update stacking rules](/api-reference/management/update-stacking-rules) endpoint to change the rules.\n\n> 📘 Stacking rules documentation\n>\n> Read [the Stacking rules article]/orchestrate/stacking-rules to learn how they work.",
         "parameters": [],
         "security": [
           {
@@ -95135,7 +95564,7 @@
           "Management"
         ],
         "summary": "List Stacking Rules",
-        "description": "Lists all stacking rules.\n\nReturns always a list with one item.\n\nThis endpoint can be used to retrieve the default stacking rules. The default stacking rules do not have an ID that could be used with the [Get Stacking Rules](/api-reference/management/get-stacking-rules) or [Update Stacking Rules](/api-reference/management/update-stacking-rules) endpoints.\n\n> 📘 Stacking Rules Documentation\n>\n> Read [the Stacking Rules article](https://support.voucherify.io/article/604-stacking-rules) to learn how they work.",
+        "description": "Lists all stacking rules.\n\nReturns always a list with one item.\n\nThis endpoint can be used to retrieve the default stacking rules. The default stacking rules do not have an ID that could be used with the [Get Stacking Rules](/api-reference/management/get-stacking-rules) or [Update Stacking Rules](/api-reference/management/update-stacking-rules) endpoints.\n\n> 📘 Stacking Rules Documentation\n>\n> Read [the Stacking Rules article]/orchestrate/stacking-rules to learn how they work.",
         "parameters": [],
         "security": [
           {
@@ -95290,7 +95719,7 @@
           "Management"
         ],
         "summary": "Get Stacking Rules",
-        "description": "Retrieves the stacking rules for the project.\n\n> 📘 Stacking Rules Documentation\n>\n> Read [the Stacking Rules article](https://support.voucherify.io/article/604-stacking-rules) to learn how they work.",
+        "description": "Retrieves the stacking rules for the project.\n\n> 📘 Stacking Rules Documentation\n>\n> Read [the Stacking Rules article]/orchestrate/stacking-rules to learn how they work.",
         "parameters": [],
         "security": [
           {
@@ -95420,7 +95849,7 @@
           "Management"
         ],
         "summary": "Update Stacking Rules",
-        "description": "Updates the stacking rules.\n\nOnly the provided fields will be updated. However, if you update an array, the content of the array is overwritten. This means that if you want to add new values to an array and retain existing ones, you need to provide both the existing and new values in the request.\n\n> 📘 Stacking Rules Documentation\n>\n> Read [the Stacking Rules article](https://support.voucherify.io/article/604-stacking-rules) to learn how they work.",
+        "description": "Updates the stacking rules.\n\nOnly the provided fields will be updated. However, if you update an array, the content of the array is overwritten. This means that if you want to add new values to an array and retain existing ones, you need to provide both the existing and new values in the request.\n\n> 📘 Stacking Rules Documentation\n>\n> Read [the Stacking Rules article]/orchestrate/stacking-rules to learn how they work.",
         "parameters": [],
         "security": [
           {
@@ -95582,7 +96011,7 @@
           "Management"
         ],
         "summary": "Delete Stacking Rules",
-        "description": "Deletes permanently the current settings for the stacking rules.\n\nThe stacking rules are restored to default values.\n\n> 📘 Stacking Rules Documentation\n>\n> Read [the Stacking Rules article](https://support.voucherify.io/article/604-stacking-rules) to learn how they work.",
+        "description": "Deletes permanently the current settings for the stacking rules.\n\nThe stacking rules are restored to default values.\n\n> 📘 Stacking Rules Documentation\n>\n> Read [the Stacking Rules article]/orchestrate/stacking-rules to learn how they work.",
         "parameters": [],
         "security": [
           {
@@ -97895,16 +98324,6 @@
                     "contact": {
                       "email": "support@voucherify.io",
                       "phone": null
-                    },
-                    "cockpits": {
-                      "campaigns_overview_enabled": false,
-                      "loyalty_enabled": true,
-                      "gift_cards_enabled": true,
-                      "coupons_enabled": true,
-                      "referrals_enabled": true,
-                      "theme": "default",
-                      "use_custom_double_opt_in_redirect_url": false,
-                      "custom_double_opt_in_redirect_url": null
                     }
                   }
                 }
@@ -97942,16 +98361,6 @@
                       "contact": {
                         "email": "support@voucherify.io",
                         "phone": null
-                      },
-                      "cockpits": {
-                        "campaigns_overview_enabled": false,
-                        "loyalty_enabled": true,
-                        "gift_cards_enabled": true,
-                        "coupons_enabled": true,
-                        "referrals_enabled": true,
-                        "theme": "default",
-                        "use_custom_double_opt_in_redirect_url": false,
-                        "custom_double_opt_in_redirect_url": null
                       }
                     }
                   }
@@ -98106,16 +98515,6 @@
                           "contact": {
                             "email": "support@voucherify.io",
                             "phone": null
-                          },
-                          "cockpits": {
-                            "campaigns_overview_enabled": false,
-                            "loyalty_enabled": true,
-                            "gift_cards_enabled": true,
-                            "coupons_enabled": true,
-                            "referrals_enabled": true,
-                            "theme": "default",
-                            "use_custom_double_opt_in_redirect_url": false,
-                            "custom_double_opt_in_redirect_url": null
                           }
                         }
                       ],
@@ -98251,16 +98650,6 @@
                       "contact": {
                         "email": "support@voucherify.io",
                         "phone": null
-                      },
-                      "cockpits": {
-                        "campaigns_overview_enabled": false,
-                        "loyalty_enabled": true,
-                        "gift_cards_enabled": true,
-                        "coupons_enabled": true,
-                        "referrals_enabled": true,
-                        "theme": "default",
-                        "use_custom_double_opt_in_redirect_url": false,
-                        "custom_double_opt_in_redirect_url": null
                       }
                     }
                   }
@@ -98386,16 +98775,6 @@
                       "contact": {
                         "email": "your_email@your-domain.com",
                         "phone": null
-                      },
-                      "cockpits": {
-                        "campaigns_overview_enabled": false,
-                        "loyalty_enabled": true,
-                        "gift_cards_enabled": true,
-                        "coupons_enabled": true,
-                        "referrals_enabled": true,
-                        "theme": "default",
-                        "use_custom_double_opt_in_redirect_url": false,
-                        "custom_double_opt_in_redirect_url": null
                       }
                     }
                   }
@@ -98794,7 +99173,7 @@
           "Client-side"
         ],
         "summary": "Check Eligibility (client-side)",
-        "description": "Generate a list of redeemables that are applicable in the context of the customer and order.\n\nThe new qualifications method is an improved version of [Campaign Qualifications](/api-reference/campaigns/examine-campaign-qualification), [Voucher Qualifications](/api-reference/vouchers/examine-voucher-qualification) API requests. The new qualification method introduces the following improvements:\n\n- Qualification results are returned faster\n- No limit on the number of returned redeemables\n- Introduces new qualification scenarios, not available in the previous version\n\n> 👍 Scenario Guide\n>\n> Read our dedicated guide to learn about some use cases this endpoint can cover [here](/guides/checking-eligibility).\n\n## Paging \n\nThe Voucherify Qualifications API request will return to you all of the redeemables available for the customer in batches of up to 50 redeemables per page. To get the next batch of redeemables, you need to use the `starting_after` cursor.\n\nTo process of paging the redeemables works in the following manner:\n\n- You send the first API request for Qualifications without the `starting_after` parameter.\n- The response will contain a parameter named `has_more`. If the parameter's value is set to `true`, then more redeemables are available.\n- Get the value of the `created_at` parameter of the last returned redeemable. The value of this parameter will be used as a cursor to retrieve the next page of redeemables.\n- Send another API request for Qualification with the `starting_after` parameter set to the value taken from the `created_at` parameter from the last returned redeemable.\n- Voucherify will return the next page of redeemables.\n- If the `has_more` parameter is set to `true`, apply steps 3-5 to get the next page of redeemables.",
+        "description": "Generate a list of redeemables that are applicable in the context of the customer and order.\n\nThe new qualifications method is an improved version of [Campaign Qualifications](/api-reference/campaigns/examine-campaign-qualification), [Voucher Qualifications](/api-reference/vouchers/examine-voucher-qualification) API requests. The new qualification method introduces the following improvements:\n\n- Qualification results are returned faster\n- No limit on the number of returned redeemables\n- Introduces new qualification scenarios, not available in the previous version\n\n> 👍 Scenario Guide\n>\n> Read our dedicated guide to learn about some use cases this endpoint can cover [here](/guides/checking-eligibility).\n\n## Paging \n\nThe Voucherify Qualifications API request will return to you all of the redeemables available for the customer in batches of up to 50 redeemables per page. To get the next batch of redeemables, you need to use the `starting_after` cursor.\n\nTo process of paging the redeemables works in the following manner:\n\n- You send the first API request for Qualifications without the `starting_after` parameter.\n- The response will contain a parameter named `has_more`. If the parameter's value is set to `true`, then more redeemables are available.\n- Get the value of the `created_at` parameter of the last returned redeemable. The value of this parameter will be used as a cursor to retrieve the next page of redeemables.\n- Send another API request for Qualification with the `starting_after` parameter set to the value taken from the `created_at` parameter from the last returned redeemable.\n- Voucherify will return the next page of redeemables.\n- If the `has_more` parameter is set to `true`, apply steps 3-5 to get the next page of redeemables.\n\n## Caching\n\nQualification has a 5-minute cache for the returned results. If you change your campaign settings or validation rules, the changes will apply to qualification results after the cache refreshes.",
         "parameters": [],
         "security": [
           {
@@ -99170,7 +99549,7 @@
         },
         "responses": {
           "200": {
-            "description": "Depending on your project settings: all redeemables must be valid or just one must be valid to result as valid redemption. Read more in the [Stacking Rule Documentation](https://support.voucherify.io/article/604-stacking-rules).",
+            "description": "Depending on your project settings: all redeemables must be valid or just one must be valid to result as valid redemption. Read more in the [Stacking Rule Documentation](/orchestrate/stacking-rules).",
             "content": {
               "application/json": {
                 "schema": {
@@ -99333,7 +99712,7 @@
         },
         "responses": {
           "200": {
-            "description": "Depending on your project settings: all redeemables must be valid or just one must be valid to result as valid validation. Read more in the [Stacking Rule Documentation](https://support.voucherify.io/article/604-stacking-rules).",
+            "description": "Depending on your project settings: all redeemables must be valid or just one must be valid to result as valid validation. Read more in the [Stacking Rule Documentation](/orchestrate/stacking-rules).",
             "content": {
               "application/json": {
                 "schema": {
