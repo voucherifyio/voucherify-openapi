@@ -1,0 +1,149 @@
+---
+title: "Loyalty v2 developer overview"
+description: "Learn basics about your loyalty v2 integration: API surface, core objects, and the member journey"
+keywords: ["loyalty v2", "developer", "integration", "API overview", "loyalties", "system integrator"]
+tag: "NEW"
+---
+
+If you build loyalty v2 flows against `/v2/loyalties`, connect ecommerce, POS, CRM, or CDP systems, or need a map of endpoints and identifiers before diving into reference docs, this overview is for you.
+
+## Documentation highlights
+
+If you're looking for specific information, start with the resources below.
+
+| Goal | Start here |
+| --- | --- |
+| Understand the program model, roadmap, and differences from legacy loyalty | [Loyalty program overview](/build/loyalty-overview) |
+| Learn terms: point wallets, earning rules, rewards, tiers, benefits | [Loyalty key concepts](/build/loyalty-key-concepts) |
+| Integrate the member journey with request and response examples | [Integrate loyalty v2](/guides/loyalty-v2-integrate) |
+| Move from Sandbox to production and troubleshoot common errors | [Take loyalty v2 to production](/guides/loyalty-v2-take-to-production) |
+| Look up methods, schemas, and parameters | [Loyalty v2 API reference](/api-reference/programs/list-programs) |
+
+Legacy `/v1/loyalties` remains in maintenance mode. For new integrations, use loyalty v2. See [Legacy loyalty API](/api-reference/loyalties/introduction-to-legacy-loyalty).
+
+## Integration journey
+
+A typical loyalty v2 integration follows the member journey. Each stage has dedicated endpoints; many stages also depend on shared platform APIs such as customers, orders, and custom events.
+
+| Stage | What your system does | Primary API areas |
+| --- | --- | --- |
+| **Preparation** | Authenticate, choose region, create an `ACTIVE` program, sync customers and products, define metadata and custom event schemas | Auth, programs, customers, products, metadata, events |
+| **Acquisition** | Enroll customers as members; handle inactive enrollment and batch create | [Members](/api-reference/programs/create-program-member) |
+| **Discovery** | Estimate earnings and reward availability without writing balances | [Examine earning rules](/api-reference/examine/examine-earning-rules), [Examine rewards](/api-reference/examine/examine-rewards) |
+| **Activity** | Trigger earnings through paid orders, custom events, or segment entry | [Create order](/api-reference/orders/create-order), [Track custom event](/api-reference/events/track-custom-event) |
+| **Retention** | Render member profile, balances, tiers, transactions, and purchase history | [Get membership](/api-reference/programs/get-program-membership), [List card transactions](/api-reference/programs/list-card-transactions), [List reward purchases](/api-reference/programs/list-member-reward-purchases) |
+| **Fulfillment** | Spend points on orders or purchase rewards | [Pay with points](/api-reference/programs/pay-for-an-order-with-points), [Purchase reward](/api-reference/programs/purchase-a-reward-with-points) |
+| **Cancellation** | Suspend or soft-delete members | [Deactivate member](/api-reference/programs/deactivate-program-member), [Delete member](/api-reference/programs/delete-program-member) |
+
+Work through these stages in detail in [Integrate loyalty v2](/guides/loyalty-v2-integrate).
+
+## Core objects and identifiers
+
+Loyalty v2 uses program-scoped resources. Store these IDs in your system and pass the correct type on each call.
+
+| Object | ID prefix | Role in the integration |
+| --- | --- | --- |
+| Program | `lprg_` | Parent container for wallets, rules, rewards, and members |
+| Card definition (point wallet) | `lcdef_` | Defines how points behave on cards issued from that wallet |
+| Member | `lmbr_` | Program-specific enrollment of a Voucherify customer |
+| Loyalty card | `lcrd_` | Point balance for one wallet on one member |
+| Earning rule | `lern_` | Trigger and effects that grant points or benefits |
+| Reward | `lrew_` | Catalog item members can purchase with points |
+| Benefit | `lben_` | Automatic grant (material or digital) from an earning rule |
+| Tier structure / tier | `lts_` / `lt_` | Levels and progress tied to a point wallet |
+| Customer (shared) | `cust_` | Must exist before enrollment; not loyalty-specific |
+
+<Warning>
+
+Do not interchange `cust_…` and `lmbr_…`. Member endpoints expect a member ID. Membership lookup can use a customer ID with the correct identification type. Mixing IDs is a common cause of `404` responses. See [Take loyalty v2 to production](/guides/loyalty-v2-take-to-production#troubleshooting).
+
+</Warning>
+
+A member can hold multiple loyalty cards when the program uses multiple point wallets. Card codes (`cards[].card.code`) can be `null` right after enrollment because code generation is asynchronous. Prefer `lcrd_…` and `lmbr_…` for follow-up calls.
+
+## API surface
+
+The Loyalty v2 API lives under `/v2/loyalties`. Use the groups below as a map into the reference.
+
+<CardGroup cols={2}>
+
+<Card title="Programs" icon="layer-group" href="/api-reference/programs/list-programs">
+  Create and manage programs, assign wallets, earning rules, tiers, and rewards, and read program reports.
+</Card>
+
+<Card title="Members" icon="user" href="/api-reference/programs/create-program-member">
+  Enroll members, read memberships, adjust points, list transactions, pay with points, and purchase rewards.
+</Card>
+
+<Card title="Examine" icon="magnifying-glass" href="/api-reference/examine/examine-earning-rules">
+  Dry-run earning and reward evaluation for member portals and checkout previews.
+</Card>
+
+<Card title="Card definitions" icon="wallet" href="/api-reference/card-definitions/list-card-definitions">
+  Configure point wallets: pending points, expiration, limits, and pay-with-points exchange.
+</Card>
+
+<Card title="Earning rules" icon="bolt" href="/api-reference/earning-rules/list-earning-rules">
+  Define triggers and earnings for orders, custom events, and segment entry.
+</Card>
+
+<Card title="Rewards" icon="gift" href="/api-reference/rewards/list-rewards-v2">
+  Build the reward catalog members can purchase with points.
+</Card>
+
+<Card title="Benefits" icon="box-open" href="/api-reference/benefits/list-benefits">
+  Define automatic material or digital grants from earning rules.
+</Card>
+
+<Card title="Tier structures" icon="ranking-star" href="/api-reference/tier-structures/list-tier-structures">
+  Configure tier levels and read tier progress on memberships.
+</Card>
+
+</CardGroup>
+
+Program setup can be done in the dashboard (**Loyalty hub**) or through these APIs. Many integrations create the program in the dashboard, then automate only the runtime member journey.
+
+## Shared platform dependencies
+
+Loyalty v2 does not replace the rest of the Voucherify API. Runtime flows still use:
+
+- [Authentication](/guides/authentication) and regional base URLs from [API overview](/guides/api-overview#choose-the-right-api-endpoint).
+- [Customers](/api-reference/customers/create-customer): Required before membership.
+- [Orders](/api-reference/orders/create-order) with `status: PAID`: Trigger order-paid earning rules; required before pay with points.
+- [Custom events](/api-reference/events/track-custom-event): Triggers event-based earning rules.
+- Discount or gift [campaigns](/build/campaign-overview): When rewards or benefits issue vouchers or credits.
+- [Async actions](/api-reference/async-actions/get-async-action): For background enrollment.
+
+Keep application keys on the server. See [Security](/guides/security).
+
+## Design constraints that affect integrations
+
+Account for these constraints early:
+
+- **Active program lock**: After a program is `ACTIVE`, you cannot add or edit point wallets or add tier structures. Experiment in Sandbox before activation. However, you can still add and edit earning rules, rewards, and benefits. Details: [Integrate loyalty v2](/guides/loyalty-v2-integrate#preparation).
+- **Program limits**: Up to 10 wallets, 100 rewards, 100 earning rules, one tier structure (up to 10 levels), and 100,000 members per program. See [Loyalty program overview](/build/loyalty-overview#program-limits).
+- **Async outcomes**: Batch member create, card code generation, pay-with-points `TRANSACTION` mode, and reward purchases can complete asynchronously. Poll the relevant get, list or async-action endpoints until the status is terminal.
+- **Examine is dry-run**: Examine endpoints estimate earnings and reward availability without changing balances.
+- **Projects are isolated**: Sandbox and production do not share programs, members, or IDs. Recreate configuration when you go live.
+
+## What's next?
+
+<CardGroup cols={2}>
+
+<Card title="Integrate loyalty v2" icon="code" href="/guides/loyalty-v2-integrate">
+  Walk through preparation, enrollment, discovery, earning, retention, fulfillment, and cancellation with example payloads.
+</Card>
+
+<Card title="Take to production" icon="rocket" href="/guides/loyalty-v2-take-to-production">
+  Recreate the program in production, run a go-live checklist, and resolve common HTTP errors.
+</Card>
+
+<Card title="Loyalty program overview" icon="book" href="/build/loyalty-overview">
+  Read the product model, rollout phases, and differences from legacy loyalty campaigns.
+</Card>
+
+<Card title="API reference" icon="square-terminal" href="/api-reference/programs/list-programs">
+  Open the Loyalty v2 endpoint reference for request and response schemas.
+</Card>
+
+</CardGroup>
