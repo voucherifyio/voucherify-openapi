@@ -1,6 +1,9 @@
 import * as OpenAPI from "../../../../reference/OpenAPI.json";
 import { removeRequiredFromRequestsAndResponses } from "../remove-required-from-request-and-responses";
-import { fixOrderCalculated } from "./utils";
+import {
+  fixOrderCalculated,
+  restoreLoyaltyExpirationRulesPeriodTypeDefault,
+} from "./utils";
 
 const removeRubyBreakingChanges = {
   before: (_openApi: unknown): typeof OpenAPI => {
@@ -393,6 +396,14 @@ const removeRubyBreakingChanges = {
         "custom_double_opt_in_redirect_url": { "type": "string", "nullable": true, "description": "Defines the URL for the double opt-in consent." }
       }
     };
+
+    restoreLoyaltyExpirationRulesPeriodTypeDefault(
+      openApi.components.schemas.CampaignLoyaltyCard.properties
+        .expiration_rules as any,
+    );
+    restoreLoyaltyExpirationRulesPeriodTypeDefault(
+      openApi.components.schemas.EarningRuleExpirationRules as any,
+    );
 
     return openApi;
   },
