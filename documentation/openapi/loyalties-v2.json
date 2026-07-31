@@ -25,7 +25,7 @@
   "tags": [
     {
       "name": "Programs",
-      "description": "Loyalty program CRUD, lifecycle management, program-scoped resource assignments (card definitions, earning rules, rewards, tier structures), member management (create, list, get, activate, deactivate, delete), card operations (points adjustment, pending points, expiring points, transactions), reward purchases, and activity history."
+      "description": "Loyalty program CRUD, lifecycle management, program-scoped resource assignments (card definitions, earning rules, rewards, tier structures), member management (create, list, get, update, activate, deactivate, delete), card operations (points adjustment, pending points, expiring points, transactions), reward purchases, and activity history."
     },
     {
       "name": "Card Definitions",
@@ -1844,7 +1844,9 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/MemberWithCards"
-                }}}
+                }
+              }
+            }
           },
           "400": {
             "description": "Validation error - request body or query parameters failed validation, or the operation is not allowed in the current resource state.",
@@ -2372,7 +2374,131 @@
                       "resource_id": "lmbr_128f962dbc8c4ba5d",
                       "resource_type": "member"
                     }
-                  }}
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "operationId": "updateProgramMember",
+        "tags": [
+          "Programs"
+        ],
+        "summary": "Update program member",
+        "description": "\n<Warning>\n\n<Badge color=\"yellow\">BETA endpoint</Badge>\n\nThis is a work-in-progress documentation of a BETA endpoint. The parameters, fields, request and response bodies, and other data may subject to change. If you want to share feedback or improvements, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Warning>\n\nUpdates a program member's metadata. Provided object keys are merged into the existing metadata; omitted keys are preserved. Pass `metadata: null` to clear all metadata (sets it to an empty object).\n\nThis endpoint cannot change `status`. Use [Activate a program member](/api-reference/programs/activate-a-program-member) or [Deactivate a program member](/api-reference/programs/deactivate-a-program-member) for status transitions.\n\nRecords a `vl.member.updated` activity. Returns the updated member without the `cards` array. Returns `404` when the program or member does not exist. Returns `400` when the request body fails validation or the project `vl_member` metadata schema rejects the payload.",
+        "parameters": [
+          {
+            "name": "programId",
+            "in": "path",
+            "required": true,
+            "description": "Loyalty program ID (format `lprg_[a-f0-9]+`).",
+            "schema": {
+              "type": "string",
+              "pattern": "^lprg_[a-f0-9]+$"
+            }
+          },
+          {
+            "name": "memberId",
+            "in": "path",
+            "required": true,
+            "description": "Program member ID (format `lmbr_[a-f0-9]+`).",
+            "schema": {
+              "type": "string",
+              "pattern": "^lmbr_[a-f0-9]+$"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MemberUpdateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The updated member (without cards).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Member"
+                },
+                "examples": {
+                  "Updated member metadata": {
+                    "value": {
+                      "id": "lmbr_128f962dbc8c4ba5dc",
+                      "customer_id": "cust_6onRrs4kCnvSVrTs5YtDPFBG",
+                      "program_id": "lprg_128f58429f4c4bf7b2",
+                      "status": "ACTIVE",
+                      "metadata": {
+                        "tier_note": "gold",
+                        "source": "crm"
+                      },
+                      "created_at": "2026-06-11T15:59:41.298Z",
+                      "updated_at": "2026-07-30T10:15:22.401Z",
+                      "object": "member"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error - request body failed validation.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Member not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find member with id lmbr_128f92dbc8c4ba5dc",
+                      "request_id": "v-12cf8bce66569748e7",
+                      "resource_id": "lmbr_128f92dbc8c4ba5dc",
+                      "resource_type": "member"
+                    }
+                  },
+                  "Program not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find program with id lprg_12858429f4c4bf7b2",
+                      "request_id": "v-12cf8b960f5adeeb76",
+                      "resource_id": "lprg_12858429f4c4bf7b2",
+                      "resource_type": "program"
+                    }
+                  }
+                }
               }
             }
           },
@@ -12050,6 +12176,27 @@
         ],
         "additionalProperties": false
       },
+      "MemberUpdateRequest": {
+        "type": "object",
+        "description": "Request body for updating a program member. Only metadata is updatable. No additional properties are allowed.",
+        "properties": {
+          "metadata": {
+            "description": "Member metadata to apply. Object keys are merged into existing metadata (omitted keys are preserved). Validated against the `vl_member` metadata schema when configured. Pass `null` to clear all metadata.",
+            "oneOf": [
+              {
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "metadata"
+        ],
+        "additionalProperties": false
+      },
       "MemberBatchCreateRequest": {
         "type": "array",
         "description": "Request body for batch member creation - a JSON array of member entries. The raw\nbody is limited to 10485760 bytes (10 MB) and is processed asynchronously in\nbatches of 100 entries. Each entry is validated like a single member creation\nrequest during background processing; per-entry failures (invalid customer_id\nformat, unknown customer, invalid status, member already exists) are reported in\nthe async action result.",
@@ -12206,7 +12353,7 @@
             "type": "object",
             "properties": {
               "cards": {
-                "description": "Member's loyalty cards - one per card definition assigned to the program. Card codes are generated asynchronously, so `card.code` may be `null` right after member creation.",                
+                "description": "Member's loyalty cards - one per card definition assigned to the program. Card codes are generated asynchronously, so `card.code` may be `null` right after member creation.",
                 "type": "array",
                 "items": {
                   "$ref": "#/components/schemas/MemberCard"
@@ -13384,6 +13531,7 @@
             "type": "string",
             "enum": [
               "vl.member.created",
+              "vl.member.updated",
               "vl.member.deleted",
               "vl.member.activated",
               "vl.member.deactivated",
@@ -13633,6 +13781,7 @@
                     "type": "string",
                     "enum": [
                       "vl.member.created",
+                      "vl.member.updated",
                       "vl.member.deleted",
                       "vl.member.activated",
                       "vl.member.deactivated",
@@ -13646,6 +13795,7 @@
                       "type": "string",
                       "enum": [
                         "vl.member.created",
+                        "vl.member.updated",
                         "vl.member.deleted",
                         "vl.member.activated",
                         "vl.member.deactivated",
@@ -13668,6 +13818,7 @@
                     "type": "string",
                     "enum": [
                       "vl.member.created",
+                      "vl.member.updated",
                       "vl.member.deleted",
                       "vl.member.activated",
                       "vl.member.deactivated",
@@ -13681,6 +13832,7 @@
                       "type": "string",
                       "enum": [
                         "vl.member.created",
+                        "vl.member.updated",
                         "vl.member.deleted",
                         "vl.member.activated",
                         "vl.member.deactivated",
@@ -13703,6 +13855,7 @@
                     "type": "string",
                     "enum": [
                       "vl.member.created",
+                      "vl.member.updated",
                       "vl.member.deleted",
                       "vl.member.activated",
                       "vl.member.deactivated",
@@ -13716,6 +13869,7 @@
                       "type": "string",
                       "enum": [
                         "vl.member.created",
+                        "vl.member.updated",
                         "vl.member.deleted",
                         "vl.member.activated",
                         "vl.member.deactivated",
@@ -13738,6 +13892,7 @@
                     "type": "string",
                     "enum": [
                       "vl.member.created",
+                      "vl.member.updated",
                       "vl.member.deleted",
                       "vl.member.activated",
                       "vl.member.deactivated",
@@ -13751,6 +13906,7 @@
                       "type": "string",
                       "enum": [
                         "vl.member.created",
+                        "vl.member.updated",
                         "vl.member.deleted",
                         "vl.member.activated",
                         "vl.member.deactivated",
