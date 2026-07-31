@@ -5,7 +5,7 @@ keywords: ["loyalty integration", "production", "go-live", "troubleshooting", "v
 tag: "NEW"
 ---
 
-Once your integration is ready as described in [Integrate loyalty v2](/guides/loyalty-v2-integrate), you can prepare your environment for a successful launch. For orientation on objects, IDs, and the API surface, see the [Loyalty v2 developer overview](/guides/loyalty-v2-overview).
+Once your integration is ready as described in [Integrate loyalty v2](/guides/loyalty-v2-integrate), you can prepare your environment for a successful launch.
 
 ## Going to production
 
@@ -69,13 +69,39 @@ Use this step-by-step checklist to ensure a seamless launch and avoid transactio
         Check the following:
         1. Enrollment: Create a test live member using a production customer ID. Confirm get-before-create and `409 member_already_exists` handling.
         2. Earning: Submit a live order with a `PAID` status and verify that points are successfully added to the member's wallet balance.
-        3. Discovery: Call examine earnings and examine rewards for the test member.
+        3. Discovery: Call examine earning rules and examine rewards for the test member.
         4. Redemption: Purchase a low-cost or test reward and poll until the reward transaction is `APPROVED` or `REJECTED`.
         5. Pay with points: Run a `DRY_RUN`, then a live `TRANSACTION` payment, and poll [list member order payments](/api-reference/programs/list-member-order-payments) until the status is terminal.
         6. Profile: Refresh [GET membership](/api-reference/programs/get-program-membership) and confirm balances, pending points, and transaction history.
 
     </Step>
 </Steps>
+
+## Operational readiness
+
+Before you route live traffic, confirm these operational controls.
+
+### Retries and rate limits
+
+Use the following guidelines to handle retries and rate limits:
+- Retry only safe reads and failed requests that did not create a transaction ID.
+- Use exponential backoff for `429` and `5xx` responses. See [Limits](/guides/limits).
+- Do not automatically replay pay-with-points or reward-purchase POSTs after a `202` response. Poll the transaction list instead.
+
+### Monitoring and reconciliation
+
+Use the following guidelines to monitor and reconcile your loyalty program:
+- Alert on elevated `404`, `409`, `423`, `429`, and `5xx` rates for loyalty endpoints.
+- Reconcile daily: memberships created, points earned, points spent, reward purchases, and rejected transactions.
+- Use **Activity** tabs in Loyalty hub and the [Audit log](/analyze/audit-logs) when investigating mismatches.
+
+### Rollback and kill switch
+
+Use the following guidelines to rollback and kill switch your loyalty program:
+- Keep a way to disable loyalty spend in your checkout (feature flag) without redeploying.
+- For incorrect reward purchases, use [Refund a reward purchase](/api-reference/programs/refund-a-reward-purchase) when your support process allows refunds. Confirm the refund flow in Sandbox before production use.
+- To stop a member from earning or spending, [deactivate the member](/api-reference/programs/deactivate-a-program-member). To pause the whole program, deactivate the program in **Loyalty hub** after you understand the impact on active members.
+- Partial refunds by item or amount for point wallets are not supported yet. Plan support workflows around full refund behavior configured in the point wallet.
 
 ## Troubleshooting
 
