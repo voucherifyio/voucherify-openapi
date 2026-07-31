@@ -3351,15 +3351,38 @@
         "tags": [
           "Programs"
         ],
-        "summary": "Add or subtract card points",
-        "description": "Manually adjusts the points balance of the member's card. A positive `points` value creates an `ADMIN_CREDIT` card transaction (points addition; the added points get an expiration date calculated from the card definition's point expiration settings). A negative `points` value creates an `ADMIN_DEBIT` card transaction (points subtraction). When `points` is `0`, no transaction is created and the result status is `NO_CHANGE`.\n\nThe transaction is created with status `PENDING` and processed asynchronously. Both the program and the member must be in `ACTIVE` status (`423` otherwise). Returns `404` when the program, member, or card does not exist.",
+        "summary": "Adjust card points",
+        "description": "Manually adjusts the points balance of the member's card.\n\nA positive `points` value creates an `ADMIN_CREDIT` card transaction (point addition). The added points get an expiration date calculated from the card definition's point expiration settings).\n\nA negative `points` value creates an `ADMIN_DEBIT` card transaction (point subtraction).\n\nWhen `points` is `0`, no transaction is created and the result status is `NO_CHANGE`.\n\nThe transaction is created with status `PENDING` and processed asynchronously. Both the program and the member must be in `ACTIVE` status (`423` otherwise). Returns `404` when the program, member, or card does not exist.",
         "parameters": [],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CardPointsRequest"
+                "$ref": "#/components/schemas/AdjustCardPointsRequest"
+              },
+              "examples": {
+                "Add points": {
+                  "value": {
+                    "points": 100
+                  }
+                },
+                "Subtract points": {
+                  "value": {
+                    "points": -100
+                  }
+                },
+                "No change": {
+                  "value": {
+                    "points": 0
+                  }
+                },
+                "Add points with reason": {
+                  "value": {
+                    "points": 100,
+                    "reason": "Sorry points for late delivery."
+                  }
+                }
               }
             }
           }
@@ -3370,17 +3393,94 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CardPointsAdjustmentResult"
+                  "$ref": "#/components/schemas/AdjustCardPointsResponse"
+                },
+                "examples": {
+                  "Points added: Result": {
+                    "value": {
+                      "transaction": {
+                        "id": "lctx_12cfcfd67c8725bb92",
+                        "card_id": "lcrd_128f962dbd8c4ba5df",
+                        "program_id": "lprg_128f58429f4c4bf7b2",
+                        "member_id": "lmbr_128f962dbc8c4ba5dc",
+                        "card_definition_id": "lcdef_128f495f720c4bec8c",
+                        "card_type": "INDIVIDUAL",
+                        "type": "ADMIN_CREDIT",
+                        "details": {
+                          "reason": null,
+                          "rejection": null,
+                          "metadata": {},
+                          "points": {
+                            "total": 1,
+                            "expiration_date": "2026-08-31"
+                          }
+                        },
+                        "status": "PENDING",
+                        "created_at": "2026-07-31T13:14:23.602Z",
+                        "updated_at": null,
+                        "object": "card_transaction"
+                      },
+                      "status": "TRANSACTION_CREATED",
+                      "message": "Points addition transaction created"
+                    }
+                  },
+                  "Points subtracted: Result": {
+                    "value": {
+                      "transaction": {
+                        "transaction": {
+                          "id": "lctx_12cfcfeab40725bbae",
+                          "card_id": "lcrd_128f962dbd8c4ba5df",
+                          "program_id": "lprg_128f58429f4c4bf7b2",
+                          "member_id": "lmbr_128f962dbc8c4ba5dc",
+                          "card_definition_id": "lcdef_128f495f720c4bec8c",
+                          "card_type": "INDIVIDUAL",
+                          "type": "ADMIN_DEBIT",
+                          "details": {
+                            "reason": "Mistake",
+                            "rejection": null,
+                            "metadata": {},
+                            "points": {
+                              "total": -1
+                            }
+                          },
+                          "status": "PENDING",
+                          "created_at": "2026-07-31T13:14:44.304Z",
+                          "updated_at": null,
+                          "object": "card_transaction"
+                        },
+                        "status": "TRANSACTION_CREATED",
+                        "message": "Points subtraction transaction created"
+                      }
+                    }
+                  },
+                  "No change: Result": {
+                    "value": {
+                      "transaction": null,
+                      "status": "NO_CHANGE",
+                      "message": "Provided amount is zero, transaction was not created"
+                    }
+                  }
                 }
               }
             }
           },
           "400": {
-            "description": "Validation error - request body or query parameters failed validation, or the operation is not allowed in the current resource state.",
+            "description": "Validation error – request body failed validation.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Point adjustment: Invalid payload": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_payload",
+                      "message": "Invalid payload",
+                      "details": "Payload must have required property 'points'",
+                      "request_id": "v-12cfd2c0055ade85d7"
+                    }
+                  }
                 }
               }
             }
@@ -3391,6 +3491,41 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Program not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find program with id lprg_12858429f4c4bf7b2",
+                      "request_id": "v-12cfd2fbbc1ade865f",
+                      "resource_id": "lprg_12858429f4c4bf7b2",
+                      "resource_type": "program"
+                    }
+                  },
+                  "Member not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find member with id lmr_128f962dbc8c4ba5dc",
+                      "request_id": "v-12cfd31da59ade86a1",
+                      "resource_id": "lmr_128f962dbc8c4ba5dc",
+                      "resource_type": "member"
+                    }
+                  },
+                  "Card not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find card with id lcrd_128f92dbd8c4ba5df",
+                      "request_id": "v-12cfd327b75ade86be",
+                      "resource_id": "lcrd_128f92dbd8c4ba5df",
+                      "resource_type": "card"
+                    }
+                  }
                 }
               }
             }
@@ -3401,6 +3536,17 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Member inactive": {
+                    "value": {
+                      "code": 423,
+                      "key": "non_active_member",
+                      "message": "Cannot adjust member's card points when member status is not ACTIVE",
+                      "details": "Invalid member status",
+                      "request_id": "v-12cfd18761d697612d"
+                    }
+                  }
                 }
               }
             }
@@ -14307,15 +14453,15 @@
           "async_action_id"
         ]
       },
-      "CardPointsRequest": {
+      "AdjustCardPointsRequest": {
         "type": "object",
-        "description": "Request body for a manual card points adjustment. No additional properties are\nallowed.",
+        "description": "Request body for a manual card points adjustment. No additional properties are allowed.",
         "properties": {
           "points": {
             "type": "integer",
             "minimum": -9007199254740991,
             "maximum": 9007199254740991,
-            "description": "Number of points to adjust. Positive values add points (`ADMIN_CREDIT`\ntransaction), negative values subtract points (`ADMIN_DEBIT` transaction),\nzero results in no transaction (`NO_CHANGE`). Required."
+            "description": "Number of points to adjust. Positive values add points (`ADMIN_CREDIT` transaction), negative values subtract points (`ADMIN_DEBIT` transaction), zero results in no transaction (`NO_CHANGE`)."
           },
           "reason": {
             "type": "string",
@@ -16466,20 +16612,12 @@
         ],
         "additionalProperties": false
       },
-      "CardPointsAdjustmentResult": {
+      "AdjustCardPointsResponse": {
         "type": "object",
-        "description": "Result of a manual card points adjustment.",
         "properties": {
           "transaction": {
             "description": "The created card transaction (`ADMIN_CREDIT` or `ADMIN_DEBIT`), or `null` when no transaction was created (status `NO_CHANGE`).",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/CardTransaction"
-              },
-              {
-                "type": "null"
-              }
-            ]
+            "$ref": "#/components/schemas/CardTransaction"
           },
           "status": {
             "type": "string",
@@ -16491,7 +16629,7 @@
           },
           "message": {
             "type": "string",
-            "description": "Human-readable result message - \"Points addition transaction created\", \"Points subtraction transaction created\" or \"Provided amount is zero, transaction was not created\"."
+            "description": "Human-readable result message:\n- \"Points addition transaction created\",\n- \"Points subtraction transaction created\",\n- \"Provided amount is zero, transaction was not created\"."
           }
         },
         "required": [
