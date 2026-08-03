@@ -2821,9 +2821,11 @@
                           "created_at": "2026-06-11T15:59:41.303Z",
                           "tier_progress": {
                             "current": {
-                              "id": "lt_128f4a88414c4bed6a",
-                              "name": "Gold",
-                              "activated_at": "2026-06-15T00:00:00.000Z",
+                              "tier": {
+                                "id": "lt_128f4a88414c4bed6a",
+                                "name": "Gold"
+                              },
+                              "start_at": "2026-06-15T00:00:00.000Z",
                               "expires_at": "2027-06-15T00:00:00.000Z",
                               "points": {
                                 "current": 740,
@@ -2840,7 +2842,10 @@
                               {
                                 "type": "TIER_DOWNGRADE",
                                 "date": "2026-09-01T00:00:00.000Z",
-                                "tier_id": "lt_128f4a88414c4bed68"
+                                "tier": {
+                                  "id": "lt_128f4b46558c4bedff",
+                                  "name": "Silver"
+                                }
                               }
                             ],
                             "opportunities": [],
@@ -6528,6 +6533,275 @@
         }
       }
     },
+    "/v2/loyalties/programs/{programId}/reports/tiers/daily": {
+      "parameters": [
+        {
+          "name": "programId",
+          "in": "path",
+          "required": true,
+          "description": "Unique loyalty program identifier (format: `lprg_` followed by hexadecimal characters).",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "operationId": "getProgramTiersDailyReport",
+        "tags": [
+          "Programs"
+        ],
+        "summary": "Get program tiers daily report",
+        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nReturns aggregated daily tier-movement statistics for the program over the given\ndate range and resolution, optionally filtered by tier structure and tier.\n\nThe date range is limited per resolution:\nmaximum 90 days for `day`, 12 weeks for `week`, 12 months for `month`, 4 quarters\nfor `quarter`.",
+        "parameters": [
+          {
+            "name": "start_date",
+            "in": "query",
+            "required": true,
+            "description": "Start of the report date range (inclusive), in `YYYY-MM-DD` format.",
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+            }
+          },
+          {
+            "name": "end_date",
+            "in": "query",
+            "required": true,
+            "description": "End of the report date range, in `YYYY-MM-DD` format.",
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+            }
+          },
+          {
+            "name": "resolution",
+            "in": "query",
+            "required": true,
+            "description": "Aggregation resolution of the report. The allowed date range depends on the resolution: `day` — max 90 days, `week` — max 12 weeks, `month` — max 12 months, `quarter` — max 4 quarters.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "day",
+                "week",
+                "month",
+                "quarter"
+              ]
+            }
+          },
+          {
+            "name": "filters",
+            "in": "query",
+            "required": false,
+            "style": "deepObject",
+            "explode": true,
+            "description": "Field filters, e.g. `filters[tier_structure_id][conditions][$is]=lts_...` or `filters[tier_id][conditions][$is]=lt_...`. Each field accepts a `conditions` object with condition operators.",
+            "schema": {
+              "$ref": "#/components/schemas/TiersReportListFilters"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Program tiers daily report.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TiersReportDailyResponse"
+                },
+                "examples": {
+                  "Daily tiers report": {
+                    "value": {
+                      "data": [
+                        {
+                          "date": "2026-07-01",
+                          "tier_structure_id": "lts_128f4a88414c4bed69",
+                          "tier_id": "lt_128f4a88414c4bed6a",
+                          "joins": 1,
+                          "upgrades": 0,
+                          "downgrades": 0,
+                          "lefts": 0,
+                          "prolongs": 0,
+                          "object": "program_tiers_daily_report"
+                        }
+                      ],
+                      "object": "report"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error - query parameters failed validation, or the operation is not allowed in the current resource state.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v2/loyalties/programs/{programId}/reports/tiers/summary": {
+      "parameters": [
+        {
+          "name": "programId",
+          "in": "path",
+          "required": true,
+          "description": "Unique loyalty program identifier (format: `lprg_` followed by hexadecimal characters).",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "operationId": "getProgramTiersSummaryReport",
+        "tags": [
+          "Programs"
+        ],
+        "summary": "Get program tiers summary report",
+        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nReturns total tier-movement statistics for the program (all time), optionally\nfiltered by tier structure and tier.\n\nResults are capped by `limit` (default `100`) and sorted by `order` (default `-id`).",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "description": "Maximum number of report entries to return. Minimum: 1, maximum: 100. Defaults to 100 when omitted.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 100
+            }
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "description": "Sort order. A single field or an array of fields. Prefix a field with `-` for descending order. Defaults to `-id`. Allowed values: `id`, `-id`.",
+            "schema": {
+              "oneOf": [
+                {
+                  "type": "string",
+                  "enum": [
+                    "id",
+                    "-id"
+                  ]
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "enum": [
+                      "id",
+                      "-id"
+                    ]
+                  }
+                }
+              ],
+              "default": "-id"
+            }
+          },
+          {
+            "name": "filters",
+            "in": "query",
+            "required": false,
+            "style": "deepObject",
+            "explode": true,
+            "description": "Field filters, e.g. `filters[tier_structure_id][conditions][$is]=lts_...` or `filters[tier_id][conditions][$is]=lt_...`. Each field accepts a `conditions` object with condition operators.",
+            "schema": {
+              "$ref": "#/components/schemas/TiersReportListFilters"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Program tiers summary report.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TiersReportSummaryResponse"
+                },
+                "examples": {
+                  "Summary tiers report": {
+                    "value": {
+                      "data": [
+                        {
+                          "id": "lptrs_128f4a88414c4bed70",
+                          "tier_structure_id": "lts_128f4a88414c4bed69",
+                          "tier_id": "lt_128f4a88414c4bed6a",
+                          "joins": 1,
+                          "upgrades": 0,
+                          "downgrades": 0,
+                          "lefts": 0,
+                          "prolongs": 0,
+                          "object": "program_tiers_summary_report"
+                        }
+                      ],
+                      "object": "report"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error - request body or query parameters failed validation, or the operation is not allowed in the current resource state.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v2/loyalties/card-definitions": {
       "get": {
         "operationId": "listCardDefinitions",
@@ -10129,6 +10403,64 @@
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/RewardCreateRequest"
+              },
+              "examples": {
+                "Create reward with purchase limits": {
+                  "value": {
+                    "name": "Daily coffee voucher",
+                    "type": "MATERIAL",
+                    "status": "DRAFT",
+                    "material": {
+                      "type": "PRODUCT",
+                      "product": {
+                        "id": "prod_0ba649b6893cf33a80"
+                      }
+                    },
+                    "costs": [
+                      {
+                        "spending": [
+                          {
+                            "name": "Standard cost",
+                            "points": 100,
+                            "card_definition_id": "lcdef_128f495f720c4bec8c"
+                          }
+                        ],
+                        "tier_rules": {
+                          "type": "NO_REQUIREMENTS"
+                        }
+                      }
+                    ],
+                    "purchase_limits": {
+                      "cooldown": {
+                        "type": "FIXED_COOLDOWN",
+                        "fixed_cooldown": {
+                          "period": {
+                            "value": 1,
+                            "unit": "DAY"
+                          }
+                        }
+                      },
+                      "frequency": {
+                        "type": "LIMITED",
+                        "limits": [
+                          {
+                            "type": "TIME_BASED",
+                            "period": {
+                              "type": "CURRENT_PERIOD",
+                              "current_period": {
+                                "unit": "DAY"
+                              }
+                            },
+                            "triggers": {
+                              "max": 1
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "metadata": {}
+                  }
+                }
               }
             }
           }
@@ -10140,6 +10472,75 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/RewardResponse"
+                },
+                "examples": {
+                  "Created reward": {
+                    "value": {
+                      "id": "lrew_12cad1abefa2311e10",
+                      "name": "Daily coffee voucher",
+                      "type": "MATERIAL",
+                      "status": "DRAFT",
+                      "start_date": null,
+                      "end_date": null,
+                      "validity_hours": {
+                        "type": "ANY_TIME"
+                      },
+                      "material": {
+                        "type": "PRODUCT",
+                        "product": {
+                          "id": "prod_0ba649b6893cf33a80"
+                        }
+                      },
+                      "refunds": {
+                        "type": "NONE"
+                      },
+                      "costs": [
+                        {
+                          "id": "lrcst_12cad1abefa2311e11",
+                          "spending": [
+                            {
+                              "id": "lrspn_12cad1abefa2311e12",
+                              "name": "Standard cost",
+                              "points": 100,
+                              "card_definition_id": "lcdef_128f495f720c4bec8c"
+                            }
+                          ]
+                        }
+                      ],
+                      "purchase_limits": {
+                        "cooldown": {
+                          "type": "FIXED_COOLDOWN",
+                          "fixed_cooldown": {
+                            "period": {
+                              "value": 1,
+                              "unit": "DAY"
+                            }
+                          }
+                        },
+                        "frequency": {
+                          "type": "LIMITED",
+                          "limits": [
+                            {
+                              "type": "TIME_BASED",
+                              "period": {
+                                "type": "CURRENT_PERIOD",
+                                "current_period": {
+                                  "unit": "DAY"
+                                }
+                              },
+                              "triggers": {
+                                "max": 1
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      "metadata": {},
+                      "created_at": "2026-07-27T16:09:59.999Z",
+                      "updated_at": null,
+                      "object": "reward"
+                    }
+                  }
                 }
               }
             }
@@ -10214,6 +10615,75 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/RewardResponse"
+                },
+                "examples": {
+                  "Get reward": {
+                    "value": {
+                      "id": "lrew_12cad1abefa2311e10",
+                      "name": "Daily coffee voucher",
+                      "type": "MATERIAL",
+                      "status": "DRAFT",
+                      "start_date": null,
+                      "end_date": null,
+                      "validity_hours": {
+                        "type": "ANY_TIME"
+                      },
+                      "material": {
+                        "type": "PRODUCT",
+                        "product": {
+                          "id": "prod_0ba649b6893cf33a80"
+                        }
+                      },
+                      "refunds": {
+                        "type": "NONE"
+                      },
+                      "costs": [
+                        {
+                          "id": "lrcst_12cad1abefa2311e11",
+                          "spending": [
+                            {
+                              "id": "lrspn_12cad1abefa2311e12",
+                              "name": "Standard cost",
+                              "points": 100,
+                              "card_definition_id": "lcdef_128f495f720c4bec8c"
+                            }
+                          ]
+                        }
+                      ],
+                      "purchase_limits": {
+                        "cooldown": {
+                          "type": "FIXED_COOLDOWN",
+                          "fixed_cooldown": {
+                            "period": {
+                              "value": 1,
+                              "unit": "DAY"
+                            }
+                          }
+                        },
+                        "frequency": {
+                          "type": "LIMITED",
+                          "limits": [
+                            {
+                              "type": "TIME_BASED",
+                              "period": {
+                                "type": "CURRENT_PERIOD",
+                                "current_period": {
+                                  "unit": "DAY"
+                                }
+                              },
+                              "triggers": {
+                                "max": 1
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      "metadata": {},
+                      "created_at": "2026-07-27T16:09:59.999Z",
+                      "updated_at": null,
+                      "object": "reward"
+                    }
+                  }
                 }
               }
             }
@@ -10285,6 +10755,40 @@
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/RewardUpdateRequest"
+              },
+              "examples": {
+                "Update purchase limits": {
+                  "value": {
+                    "purchase_limits": {
+                      "cooldown": {
+                        "type": "FIXED_COOLDOWN",
+                        "fixed_cooldown": {
+                          "period": {
+                            "value": 1,
+                            "unit": "DAY"
+                          }
+                        }
+                      },
+                      "frequency": {
+                        "type": "LIMITED",
+                        "limits": [
+                          {
+                            "type": "TIME_BASED",
+                            "period": {
+                              "type": "CURRENT_PERIOD",
+                              "current_period": {
+                                "unit": "DAY"
+                              }
+                            },
+                            "triggers": {
+                              "max": 1
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
               }
             }
           }
@@ -10296,6 +10800,75 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/RewardResponse"
+                },
+                "examples": {
+                  "Updated reward": {
+                    "value": {
+                      "id": "lrew_12cad1abefa2311e10",
+                      "name": "Daily coffee voucher",
+                      "type": "MATERIAL",
+                      "status": "DRAFT",
+                      "start_date": null,
+                      "end_date": null,
+                      "validity_hours": {
+                        "type": "ANY_TIME"
+                      },
+                      "material": {
+                        "type": "PRODUCT",
+                        "product": {
+                          "id": "prod_0ba649b6893cf33a80"
+                        }
+                      },
+                      "refunds": {
+                        "type": "NONE"
+                      },
+                      "costs": [
+                        {
+                          "id": "lrcst_12cad1abefa2311e11",
+                          "spending": [
+                            {
+                              "id": "lrspn_12cad1abefa2311e12",
+                              "name": "Standard cost",
+                              "points": 100,
+                              "card_definition_id": "lcdef_128f495f720c4bec8c"
+                            }
+                          ]
+                        }
+                      ],
+                      "purchase_limits": {
+                        "cooldown": {
+                          "type": "FIXED_COOLDOWN",
+                          "fixed_cooldown": {
+                            "period": {
+                              "value": 1,
+                              "unit": "DAY"
+                            }
+                          }
+                        },
+                        "frequency": {
+                          "type": "LIMITED",
+                          "limits": [
+                            {
+                              "type": "TIME_BASED",
+                              "period": {
+                                "type": "CURRENT_PERIOD",
+                                "current_period": {
+                                  "unit": "DAY"
+                                }
+                              },
+                              "triggers": {
+                                "max": 1
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      "metadata": {},
+                      "created_at": "2026-07-27T16:09:59.999Z",
+                      "updated_at": "2026-07-28T10:00:00.000Z",
+                      "object": "reward"
+                    }
+                  }
                 }
               }
             }
@@ -11651,35 +12224,99 @@
                           "name": "Free item coupon",
                           "type": "DIGITAL",
                           "metadata": {},
-                          "object": "reward"
+                          "object": "reward",
+                          "purchase_limits": {
+                            "cooldown": {
+                              "type": "FIXED_COOLDOWN",
+                              "fixed_cooldown": {
+                                "period": {
+                                  "value": 1,
+                                  "unit": "DAY"
+                                }
+                              }
+                            },
+                            "frequency": {
+                              "type": "LIMITED",
+                              "limits": [
+                                {
+                                  "type": "TIME_BASED",
+                                  "period": {
+                                    "type": "CURRENT_PERIOD",
+                                    "current_period": {
+                                      "unit": "DAY"
+                                    }
+                                  },
+                                  "triggers": {
+                                    "max": 1
+                                  }
+                                }
+                              ]
+                            }
+                          }
                         },
                         {
                           "id": "lrew_128f4c6710947c85d1",
                           "name": "Minas Gerais 500",
                           "type": "MATERIAL",
                           "metadata": {},
-                          "object": "reward"
+                          "object": "reward",
+                          "purchase_limits": {
+                            "cooldown": {
+                              "type": "NO_COOLDOWN"
+                            },
+                            "frequency": {
+                              "type": "NO_LIMIT",
+                              "limits": []
+                            }
+                          }
                         },
                         {
                           "id": "lrew_1294cebb458e4904a0",
                           "name": "Carioca shirt",
                           "type": "MATERIAL",
                           "metadata": {},
-                          "object": "reward"
+                          "object": "reward",
+                          "purchase_limits": {
+                            "cooldown": {
+                              "type": "NO_COOLDOWN"
+                            },
+                            "frequency": {
+                              "type": "NO_LIMIT",
+                              "limits": []
+                            }
+                          }
                         },
                         {
                           "id": "lrew_12b22d6ef31184e002",
                           "name": "Carioca shorts",
                           "type": "MATERIAL",
                           "metadata": {},
-                          "object": "reward"
+                          "object": "reward",
+                          "purchase_limits": {
+                            "cooldown": {
+                              "type": "NO_COOLDOWN"
+                            },
+                            "frequency": {
+                              "type": "NO_LIMIT",
+                              "limits": []
+                            }
+                          }
                         },
                         {
                           "id": "lrew_12bb65405edf8d3dec",
                           "name": "Carioca longsleeve",
                           "type": "MATERIAL",
                           "metadata": {},
-                          "object": "reward"
+                          "object": "reward",
+                          "purchase_limits": {
+                            "cooldown": {
+                              "type": "NO_COOLDOWN"
+                            },
+                            "frequency": {
+                              "type": "NO_LIMIT",
+                              "limits": []
+                            }
+                          }
                         }
                       ],
                       "memberships": [
@@ -14755,10 +15392,16 @@
         "type": "object",
         "description": "A tier assignment deferred to a future date.",
         "properties": {
-          "id": {
-            "type": "string",
-            "pattern": "^lt_[a-f0-9]+$",
-            "description": "ID of the deferred tier."
+          "tier": {
+            "description": "Deferred tier reference, or `null`.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/MemberTierProgressTier"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "start_at": {
             "type": [
@@ -14778,7 +15421,7 @@
           }
         },
         "required": [
-          "id",
+          "tier",
           "start_at",
           "expires_at"
         ]
@@ -14787,22 +15430,24 @@
         "type": "object",
         "description": "The member's current tier.",
         "properties": {
-          "id": {
-            "type": "string",
-            "pattern": "^lt_[a-f0-9]+$",
-            "description": "Unique Voucherify ID of the tier."
+          "tier": {
+            "description": "Current tier reference, or `null` when the member has no current tier.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/MemberTierProgressTier"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
-          "name": {
-            "type": "string",
-            "description": "Tier name."
-          },
-          "activated_at": {
+          "start_at": {
             "type": [
               "string",
               "null"
             ],
             "format": "date-time",
-            "description": "Timestamp when the tier was activated for the member (ISO 8601), or `null`."
+            "description": "Timestamp when the current tier started for the member (ISO 8601), or `null`."
           },
           "expires_at": {
             "type": [
@@ -14825,9 +15470,8 @@
           }
         },
         "required": [
-          "id",
-          "name",
-          "activated_at",
+          "tier",
+          "start_at",
           "expires_at",
           "points"
         ]
@@ -14874,18 +15518,22 @@
             "format": "date-time",
             "description": "Date when the risk materializes (ISO 8601), or `null`."
           },
-          "tier_id": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "description": "ID of the tier the member would be downgraded to (`lt_[a-f0-9]+`), or `null` for `TIER_LEFT`."
+          "tier": {
+            "description": "Tier the member would be downgraded to, or `null` for `TIER_LEFT`.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/MemberTierProgressTier"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         },
         "required": [
           "type",
           "date",
-          "tier_id"
+          "tier"
         ]
       },
       "MemberTierProgressOpportunity": {
@@ -14900,12 +15548,16 @@
             "format": "date-time",
             "description": "Deadline for taking advantage of the opportunity (ISO 8601), or `null`."
           },
-          "tier_id": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "description": "ID of the tier that can be reached (`lt_[a-f0-9]+`), or `null`."
+          "tier": {
+            "description": "Tier that can be reached, or `null`.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/MemberTierProgressTier"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "points": {
             "type": "number",
@@ -14914,7 +15566,7 @@
         },
         "required": [
           "valid_until",
-          "tier_id",
+          "tier",
           "points"
         ]
       },
@@ -33462,6 +34114,17 @@
               "$ref": "#/components/schemas/RewardCostCreateRequest"
             }
           },
+          "purchase_limits": {
+            "description": "Optional purchase limits. When omitted, defaults to no cooldown and no frequency limit.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/RewardPurchaseLimitsInput"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "refunds": {
             "description": "Refund policy for the reward. Defaults to `{ \"type\": \"NONE\" }` when omitted.",
             "oneOf": [
@@ -33574,6 +34237,17 @@
             "items": {
               "$ref": "#/components/schemas/RewardCostUpdateRequest"
             }
+          },
+          "purchase_limits": {
+            "description": "Purchase limits. Omit to leave unchanged; send `null` to reset to no cooldown and no frequency limit.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/RewardPurchaseLimitsInput"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "metadata": {
             "type": [
@@ -33910,6 +34584,19 @@
         "type": "object",
         "description": "Points spending definition for a cost.",
         "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^lrspn_[a-f0-9]+$",
+            "description": "Optional spending identifier, prefixed with `lrspn_`. Provide on update to keep the same spending entry; omit on create to auto-assign."
+          },
+          "name": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 200,
+            "description": "Optional display name of the spending definition (max 200 characters), or `null`."
+          },
           "points": {
             "type": "integer",
             "minimum": 1,
@@ -35024,6 +35711,10 @@
               "$ref": "#/components/schemas/RewardCostResponse"
             }
           },
+          "purchase_limits": {
+            "$ref": "#/components/schemas/RewardPurchaseLimits",
+            "description": "Purchase limits. Always present; defaults to `{ \"cooldown\": { \"type\": \"NO_COOLDOWN\" }, \"frequency\": { \"type\": \"NO_LIMIT\", \"limits\": [] } }`."
+          },
           "metadata": {
             "type": "object",
             "description": "Arbitrary key-value metadata attached to the reward. Empty object when not set."
@@ -35055,6 +35746,7 @@
           "validity_hours",
           "refunds",
           "costs",
+          "purchase_limits",
           "metadata",
           "created_at",
           "object"
@@ -35304,6 +35996,19 @@
         "type": "object",
         "description": "Points spending definition.",
         "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^lrspn_[a-f0-9]+$",
+            "description": "Unique spending identifier, prefixed with `lrspn_`. Assigned by the API when omitted on create/update."
+          },
+          "name": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 200,
+            "description": "Optional display name of the spending definition, or `null`."
+          },
           "points": {
             "type": "integer",
             "description": "Number of points the member must spend."
@@ -35315,6 +36020,7 @@
           }
         },
         "required": [
+          "id",
           "points",
           "card_definition_id"
         ]
@@ -36870,6 +37576,10 @@
             "type": "string",
             "const": "reward",
             "description": "Object type marker. Always `reward`."
+          },
+          "purchase_limits": {
+            "$ref": "#/components/schemas/RewardPurchaseLimits",
+            "description": "Purchase limits configured on the reward. Present when the reward has purchase limits configured."
           }
         },
         "required": [
@@ -37100,6 +37810,721 @@
           "memberships",
           "object"
         ]
+      },
+      "TiersReportFilterTierStructureIdConditions": {
+        "type": "object",
+        "description": "ID filter conditions for tier structure id. Values must match pattern `^lts_[a-f0-9]+$`. `$is`/`$is_not` accept a single value (string or 1-element array); `$in`/`$not_in` accept a string or an array of 1-100 values.",
+        "properties": {
+          "conditions": {
+            "type": "object",
+            "minProperties": 1,
+            "additionalProperties": false,
+            "properties": {
+              "$is": {
+                "description": "Matches rows whose tier structure id equals the given value.",
+                "oneOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^lts_[a-f0-9]+$"
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "pattern": "^lts_[a-f0-9]+$"
+                    },
+                    "minItems": 1,
+                    "maxItems": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "$is_not": {
+                "description": "Matches rows whose tier structure id does not equal the given value.",
+                "oneOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^lts_[a-f0-9]+$"
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "pattern": "^lts_[a-f0-9]+$"
+                    },
+                    "minItems": 1,
+                    "maxItems": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "$in": {
+                "description": "Matches rows whose tier structure id is one of the given values.",
+                "oneOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^lts_[a-f0-9]+$"
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "pattern": "^lts_[a-f0-9]+$"
+                    },
+                    "minItems": 1,
+                    "maxItems": 100
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "$not_in": {
+                "description": "Matches rows whose tier structure id is not one of the given values.",
+                "oneOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^lts_[a-f0-9]+$"
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "pattern": "^lts_[a-f0-9]+$"
+                    },
+                    "minItems": 1,
+                    "maxItems": 100
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "required": [
+          "conditions"
+        ],
+        "additionalProperties": false
+      },
+      "TiersReportFilterTierIdConditions": {
+        "type": "object",
+        "description": "ID filter conditions for tier id. Values must match pattern `^lt_[a-f0-9]+$`. `$is`/`$is_not` accept a single value (string or 1-element array); `$in`/`$not_in` accept a string or an array of 1-100 values.",
+        "properties": {
+          "conditions": {
+            "type": "object",
+            "minProperties": 1,
+            "additionalProperties": false,
+            "properties": {
+              "$is": {
+                "description": "Matches rows whose tier id equals the given value.",
+                "oneOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^lt_[a-f0-9]+$"
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "pattern": "^lt_[a-f0-9]+$"
+                    },
+                    "minItems": 1,
+                    "maxItems": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "$is_not": {
+                "description": "Matches rows whose tier id does not equal the given value.",
+                "oneOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^lt_[a-f0-9]+$"
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "pattern": "^lt_[a-f0-9]+$"
+                    },
+                    "minItems": 1,
+                    "maxItems": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "$in": {
+                "description": "Matches rows whose tier id is one of the given values.",
+                "oneOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^lt_[a-f0-9]+$"
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "pattern": "^lt_[a-f0-9]+$"
+                    },
+                    "minItems": 1,
+                    "maxItems": 100
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "$not_in": {
+                "description": "Matches rows whose tier id is not one of the given values.",
+                "oneOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^lt_[a-f0-9]+$"
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "pattern": "^lt_[a-f0-9]+$"
+                    },
+                    "minItems": 1,
+                    "maxItems": 100
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "required": [
+          "conditions"
+        ],
+        "additionalProperties": false
+      },
+      "TiersReportListFilters": {
+        "type": "object",
+        "description": "Filters for program tiers reports.",
+        "properties": {
+          "junction": {
+            "description": "Logical junction between the field filters. Defaults to AND behavior.",
+            "oneOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "AND",
+                  "OR"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "tier_structure_id": {
+            "description": "Filter by tier structure id.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/TiersReportFilterTierStructureIdConditions"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "tier_id": {
+            "description": "Filter by tier id.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/TiersReportFilterTierIdConditions"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "TiersReportDailyEntry": {
+        "type": "object",
+        "description": "Aggregated daily program tier-movement statistics for one period, tier structure, and tier. All numeric fields default to 0.",
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date",
+            "description": "Date of the aggregation period (`YYYY-MM-DD`)."
+          },
+          "tier_structure_id": {
+            "type": "string",
+            "pattern": "^lts_[a-f0-9]+$",
+            "description": "Unique identifier of the tier structure (format `lts_...`)."
+          },
+          "tier_id": {
+            "type": "string",
+            "pattern": "^lt_[a-f0-9]+$",
+            "description": "Unique identifier of the tier (format `lt_...`)."
+          },
+          "joins": {
+            "type": "number",
+            "description": "Number of members who joined this tier in the period."
+          },
+          "upgrades": {
+            "type": "number",
+            "description": "Number of upgrades into this tier in the period."
+          },
+          "downgrades": {
+            "type": "number",
+            "description": "Number of downgrades into this tier in the period."
+          },
+          "lefts": {
+            "type": "number",
+            "description": "Number of members who left this tier in the period."
+          },
+          "prolongs": {
+            "type": "number",
+            "description": "Number of tier prolongations in the period."
+          },
+          "object": {
+            "type": "string",
+            "const": "program_tiers_daily_report",
+            "description": "Object type marker. Always `program_tiers_daily_report`."
+          }
+        }
+      },
+      "TiersReportDailyResponse": {
+        "type": "object",
+        "description": "Program tiers daily report result.",
+        "properties": {
+          "data": {
+            "type": "array",
+            "description": "Report entries, one per aggregation period, tier structure, and tier.",
+            "items": {
+              "$ref": "#/components/schemas/TiersReportDailyEntry"
+            }
+          },
+          "object": {
+            "type": "string",
+            "const": "report",
+            "description": "Object type marker. Always `report`."
+          }
+        }
+      },
+      "TiersReportSummaryEntry": {
+        "type": "object",
+        "description": "Total program tier-movement statistics for one tier structure and tier. All numeric fields default to 0.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier of the summary row."
+          },
+          "tier_structure_id": {
+            "type": "string",
+            "pattern": "^lts_[a-f0-9]+$",
+            "description": "Unique identifier of the tier structure (format `lts_...`)."
+          },
+          "tier_id": {
+            "type": "string",
+            "pattern": "^lt_[a-f0-9]+$",
+            "description": "Unique identifier of the tier (format `lt_...`)."
+          },
+          "joins": {
+            "type": "number",
+            "description": "Total number of members who joined this tier."
+          },
+          "upgrades": {
+            "type": "number",
+            "description": "Total number of upgrades into this tier."
+          },
+          "downgrades": {
+            "type": "number",
+            "description": "Total number of downgrades into this tier."
+          },
+          "lefts": {
+            "type": "number",
+            "description": "Total number of members who left this tier."
+          },
+          "prolongs": {
+            "type": "number",
+            "description": "Total number of tier prolongations."
+          },
+          "object": {
+            "type": "string",
+            "const": "program_tiers_summary_report",
+            "description": "Object type marker. Always `program_tiers_summary_report`."
+          }
+        }
+      },
+      "TiersReportSummaryResponse": {
+        "type": "object",
+        "description": "Program tiers summary report result.",
+        "properties": {
+          "data": {
+            "type": "array",
+            "description": "Report entries, one per tier structure and tier.",
+            "items": {
+              "$ref": "#/components/schemas/TiersReportSummaryEntry"
+            }
+          },
+          "object": {
+            "type": "string",
+            "const": "report",
+            "description": "Object type marker. Always `report`."
+          }
+        }
+      },
+      "MemberTierProgressTier": {
+        "type": "object",
+        "description": "Tier reference with id and name.",
+        "properties": {
+          "id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "pattern": "^lt_[a-f0-9]+$",
+            "description": "Unique Voucherify ID of the tier (`lt_...`), or `null`."
+          },
+          "name": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Tier name, or `null`."
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ]
+      },
+      "RewardPurchaseLimitsCooldownFixedCooldownPeriod": {
+        "type": "object",
+        "description": "Fixed cooldown period after a reward purchase.",
+        "properties": {
+          "value": {
+            "type": "integer",
+            "description": "Length of the cooldown period.",
+            "minimum": 1
+          },
+          "unit": {
+            "type": "string",
+            "enum": [
+              "HOUR",
+              "DAY",
+              "WEEK",
+              "MONTH",
+              "YEAR"
+            ],
+            "description": "Unit of the cooldown period."
+          }
+        },
+        "required": [
+          "value",
+          "unit"
+        ]
+      },
+      "RewardPurchaseLimitsCooldownFixedCooldown": {
+        "type": "object",
+        "description": "Fixed cooldown configuration.",
+        "properties": {
+          "period": {
+            "$ref": "#/components/schemas/RewardPurchaseLimitsCooldownFixedCooldownPeriod",
+            "description": "Cooldown period."
+          }
+        },
+        "required": [
+          "period"
+        ]
+      },
+      "RewardPurchaseLimitsCooldown": {
+        "type": "object",
+        "description": "Purchase cooldown limits for a reward.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "NO_COOLDOWN",
+              "FIXED_COOLDOWN"
+            ],
+            "description": "Cooldown type. `NO_COOLDOWN` - no cooldown. `FIXED_COOLDOWN` - wait a fixed period after each purchase."
+          },
+          "fixed_cooldown": {
+            "description": "Fixed cooldown details. Present when `type` is `FIXED_COOLDOWN`; omitted or `null` for `NO_COOLDOWN`.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/RewardPurchaseLimitsCooldownFixedCooldown"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "type"
+        ]
+      },
+      "RewardPurchaseLimitsFrequencyLimitTriggers": {
+        "type": "object",
+        "description": "Maximum number of purchases allowed in the period.",
+        "properties": {
+          "max": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Maximum number of purchases in the configured period."
+          }
+        },
+        "required": [
+          "max"
+        ]
+      },
+      "RewardPurchaseLimitsFrequencyLimit": {
+        "type": "object",
+        "description": "A frequency limit. Currently only `TIME_BASED` is supported.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "TIME_BASED",
+            "description": "Limit type. Always `TIME_BASED`."
+          },
+          "period": {
+            "$ref": "#/components/schemas/CardDefinitionLimitTimeBasedPeriod",
+            "description": "Time period that resets the purchase counter. Reuses the card-definition time-based period shape."
+          },
+          "triggers": {
+            "$ref": "#/components/schemas/RewardPurchaseLimitsFrequencyLimitTriggers",
+            "description": "Purchase count limit within the period."
+          }
+        },
+        "required": [
+          "type",
+          "period",
+          "triggers"
+        ]
+      },
+      "RewardPurchaseLimitsFrequency": {
+        "type": "object",
+        "description": "Purchase frequency limits for a reward.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "NO_LIMIT",
+              "LIMITED"
+            ],
+            "description": "Frequency limit type. `NO_LIMIT` - unlimited purchases. `LIMITED` - limited by the `limits` array."
+          },
+          "limits": {
+            "type": "array",
+            "description": "Frequency limit definitions. Empty array when `type` is `NO_LIMIT`; one entry when `type` is `LIMITED`.",
+            "items": {
+              "$ref": "#/components/schemas/RewardPurchaseLimitsFrequencyLimit"
+            }
+          }
+        },
+        "required": [
+          "type",
+          "limits"
+        ]
+      },
+      "RewardPurchaseLimits": {
+        "type": "object",
+        "description": "Limits on how often a member can purchase the reward. Always present on reward responses; defaults to no cooldown and no frequency limit.",
+        "properties": {
+          "cooldown": {
+            "$ref": "#/components/schemas/RewardPurchaseLimitsCooldown",
+            "description": "Cooldown after a purchase."
+          },
+          "frequency": {
+            "$ref": "#/components/schemas/RewardPurchaseLimitsFrequency",
+            "description": "How many times the reward can be purchased in a period."
+          }
+        }
+      },
+      "RewardPurchaseLimitsCooldownFixedCooldownPeriodInput": {
+        "type": "object",
+        "description": "Fixed cooldown period after a reward purchase.",
+        "properties": {
+          "value": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Length of the cooldown period. Max depends on `unit`: HOUR 24, DAY 90, WEEK 52, MONTH 12, YEAR 1."
+          },
+          "unit": {
+            "type": "string",
+            "enum": [
+              "HOUR",
+              "DAY",
+              "WEEK",
+              "MONTH",
+              "YEAR"
+            ],
+            "description": "Unit of the cooldown period."
+          }
+        },
+        "required": [
+          "value",
+          "unit"
+        ],
+        "additionalProperties": false
+      },
+      "RewardPurchaseLimitsCooldownFixedCooldownInput": {
+        "type": "object",
+        "description": "Fixed cooldown configuration.",
+        "properties": {
+          "period": {
+            "$ref": "#/components/schemas/RewardPurchaseLimitsCooldownFixedCooldownPeriodInput",
+            "description": "Cooldown period."
+          }
+        },
+        "required": [
+          "period"
+        ],
+        "additionalProperties": false
+      },
+      "RewardPurchaseLimitsCooldownInput": {
+        "type": "object",
+        "description": "Purchase cooldown limits for a reward.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "NO_COOLDOWN",
+              "FIXED_COOLDOWN"
+            ],
+            "description": "Cooldown type. `NO_COOLDOWN` requires `fixed_cooldown` to be null/omitted. `FIXED_COOLDOWN` requires `fixed_cooldown`."
+          },
+          "fixed_cooldown": {
+            "description": "Fixed cooldown details. Required when `type` is `FIXED_COOLDOWN`; must be null when `type` is `NO_COOLDOWN`.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/RewardPurchaseLimitsCooldownFixedCooldownInput"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "additionalProperties": false
+      },
+      "RewardPurchaseLimitsFrequencyLimitTriggersInput": {
+        "type": "object",
+        "description": "Maximum number of purchases allowed in the period.",
+        "properties": {
+          "max": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Maximum number of purchases in the configured period."
+          }
+        },
+        "required": [
+          "max"
+        ],
+        "additionalProperties": false
+      },
+      "RewardPurchaseLimitsFrequencyLimitInput": {
+        "type": "object",
+        "description": "A frequency limit. Currently only `TIME_BASED` is supported.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "TIME_BASED",
+            "description": "Limit type. Always `TIME_BASED`."
+          },
+          "period": {
+            "$ref": "#/components/schemas/CardDefinitionSpendingLimitsGlobalTimeBasedPeriodInput",
+            "description": "Time period that resets the purchase counter. Reuses the card-definition time-based period input shape."
+          },
+          "triggers": {
+            "$ref": "#/components/schemas/RewardPurchaseLimitsFrequencyLimitTriggersInput",
+            "description": "Purchase count limit within the period."
+          }
+        },
+        "required": [
+          "type",
+          "period",
+          "triggers"
+        ],
+        "additionalProperties": false
+      },
+      "RewardPurchaseLimitsFrequencyInput": {
+        "type": "object",
+        "description": "Purchase frequency limits for a reward.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "NO_LIMIT",
+              "LIMITED"
+            ],
+            "description": "Frequency limit type. `NO_LIMIT` allows empty/null `limits`. `LIMITED` requires exactly one limit."
+          },
+          "limits": {
+            "description": "Frequency limit definitions. Empty or null when `type` is `NO_LIMIT`; exactly one entry when `type` is `LIMITED`.",
+            "oneOf": [
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/RewardPurchaseLimitsFrequencyLimitInput"
+                },
+                "minItems": 0,
+                "maxItems": 1
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "additionalProperties": false
+      },
+      "RewardPurchaseLimitsInput": {
+        "type": "object",
+        "description": "Limits on how often a member can purchase the reward. On create, omitted values default to no cooldown and no frequency limit. On update, omit to leave unchanged; send `null` to reset to defaults.",
+        "properties": {
+          "cooldown": {
+            "description": "Cooldown after a purchase.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/RewardPurchaseLimitsCooldownInput"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "frequency": {
+            "description": "How many times the reward can be purchased in a period.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/RewardPurchaseLimitsFrequencyInput"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false
       }
     },
     "securitySchemes": {
