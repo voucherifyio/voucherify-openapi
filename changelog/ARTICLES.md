@@ -5,6 +5,10 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-07-30
+
+- Remove `user-guide-migration.mdx` from navigation, but keeping the file for some time yet.
+
 ## 2026-07-16
 
 Add info about caching to `checking-eligibility.mdx`.

@@ -36,6 +36,32 @@ However, the following list API methods use the `starting_after_id` query parame
 
 The response to these methods may include a `more_starting_after` key that takes a string value with an ID. Use this ID with the `starting_after_id` query parameter to display another page of results.
 
+## Cursor pagination (Loyalty v2)
+
+Loyalty v2 list endpoints use cursor pagination instead of `page` or `starting_after_id`.
+
+Typical response shape:
+
+```json
+{
+  "data": [],
+  "cursor": {
+    "next": "lcrsctx_12989e71c62b6d5baf",
+    "expires_at": "2026-06-18T16:32:07.896Z"
+  },
+  "object": "list"
+}
+```
+
+How to page results:
+
+1. Call the list endpoint without `cursor` to get the first page.
+2. If `cursor.next` is present, call the same endpoint again with `?cursor={cursor.next}`.
+3. Stop when `cursor` is `null` or `cursor.next` is missing.
+4. Treat `cursor.expires_at` as the validity window for that cursor value. Request a new first page if the cursor expires.
+
+Cursor prefixes differ by resource (for example `lcrsctx_` for card transactions and `lcrsmbr_` for members). Always pass the exact `cursor.next` value returned by the previous response. See the Loyalty v2 endpoint pages under API reference for resource-specific cursor patterns.
+
 ## Response format
 
 The listing method returns a dictionary with a data property that contains an array of resources. The maximum number of resources returned is determined by the `limit` query parameter. If no more resources are available, the resulting array on a given page will be empty. The result can be narrowed down according to the specified (or default) filters.
