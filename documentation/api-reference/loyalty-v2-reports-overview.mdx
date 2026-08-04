@@ -1,0 +1,57 @@
+---
+title: "Reports: Overview"
+description: "Understand how Loyalty v2 report endpoints return aggregated spending, earnings, tier movements, and earning-rule statistics for programs and members"
+keywords: ['loyalty v2', 'loyalty reports', 'points spending', 'points earnings', 'tier reports', 'earning rule reports']
+---
+
+Reports return read-only, aggregated statistics for a loyalty program or for a specific member within that program. Use them for dashboards, operational monitoring, and analytics – not for reconstructing individual transactions. Transaction and activity list endpoints are for per-event details.
+
+Every report endpoint is scoped under a program (`programId`). Member-scoped reports additionally require `memberId` and either a card or an earning rule identifier.
+
+## Program reports
+
+Program reports cover four metric families. Each family exposes a daily breakdown over a date range and an all-time summary.
+
+| Metric family | What it measures | Optional filters |
+| --- | --- | --- |
+| Spending | Points spent across the program | Card definition |
+| Points earnings | Points earned across the program | Earning rule, card definition |
+| Tiers | Tier movements (joins, upgrades, downgrades, and related events) | Tier structure, tier |
+| Earning rules | Earning-rule evaluation outcomes, including success and failure counts with a failures breakdown | Earning rule |
+
+Daily endpoints require `start_date`, `end_date`, and `resolution`. Summary endpoints return totals for the lifetime of the program (subject to any filters you pass).
+
+## Member reports
+
+There are two member-scoped daily reports:
+- [Card daily points](/api-reference/programs/get-card-daily-points-report): Aggregated points statistics for one of the member's loyalty cards over a date range and resolution.
+- [Earning-rule daily](/api-reference/programs/get-member-earning-rule-daily-report): Aggregated usage statistics for one earning rule and one member over a date range and resolution.
+
+These endpoints do not have summary counterparts in the Reports group. For per-transaction detail on a card, use the card transactions list under [Members](/api-reference/loyalty-v2-members-overview).
+
+## Date range and resolution
+
+Daily reports share the same resolution options and range caps.
+
+| `resolution` | Maximum date range |
+| --- | --- |
+| `day` | 90 days |
+| `week` | 12 weeks |
+| `month` | 12 months |
+| `quarter` | 4 quarters |
+
+`start_date` and `end_date` use `YYYY-MM-DD`. `end_date` must be after `start_date`. Requests that exceed the resolution's range limit are rejected.
+
+## Filters
+
+Program reports accept optional `filters` query parameters that narrow results by resource ID. For example, `filters[card_definition_id][conditions][$is]=lcdef_…` can be used with spending reports, or `filters[tier_id][conditions][$is]=lt_…` with tier reports. Filters use the same condition-operator shape as other Loyalty v2 and general Voucherify API list endpoints.
+
+The tiers summary report also accepts `limit` and `order` to page and sort its result set (defaults: `limit=100`, `order=-id`).
+
+## Related resources
+
+- [Programs overview](/api-reference/loyalty-v2-programs-overview) for the program container these reports aggregate.
+- [Members overview](/api-reference/loyalty-v2-members-overview) for card transactions and member activity.
+- [Earning Rules overview](/api-reference/loyalty-v2-earning-rules-overview) for the rules measured by earning-rule reports.
+- [Tier Structures overview](/api-reference/loyalty-v2-tier-structures-overview) for the tiers measured by tier reports.
+- [Loyalty v2 developer overview](/guides/loyalty-v2-overview) for a map of the full API surface.
