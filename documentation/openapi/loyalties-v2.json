@@ -4100,68 +4100,99 @@
       }
     },
     "/v2/loyalties/programs/{programId}/members/{memberId}/cards/{cardId}/pending-points/{bucketId}/activate": {
+      "parameters": [
+        {
+          "name": "programId",
+          "in": "path",
+          "required": true,
+          "description": "Unique loyalty program ID (format `lprg_[a-f0-9]+`).",
+          "schema": {
+            "type": "string",
+            "pattern": "^lprg_[a-f0-9]+$"
+          }
+        },
+        {
+          "name": "memberId",
+          "in": "path",
+          "required": true,
+          "description": "Program member ID (format `lmbr_[a-f0-9]+`), assigned by Voucherify.",
+          "schema": {
+            "type": "string",
+            "pattern": "^lmbr_[a-f0-9]+$"
+          }
+        },
+        {
+          "name": "cardId",
+          "in": "path",
+          "required": true,
+          "description": "Loyalty card ID (format `lcrd_[a-f0-9]+`), assigned by Voucherify.",
+          "schema": {
+            "type": "string",
+            "pattern": "^lcrd_[a-f0-9]+$"
+          }
+        },
+        {
+          "name": "bucketId",
+          "in": "path",
+          "required": true,
+          "description": "Pending points bucket ID (format `lcppb_[a-f0-9]+`).",
+          "schema": {
+            "type": "string",
+            "pattern": "^lcppb_[a-f0-9]+$"
+          }
+        }
+      ],
       "post": {
         "operationId": "activateCardPendingPointsBucket",
         "tags": [
           "Programs"
         ],
         "summary": "Activate pending point bucket",
-        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nManually activates a pending points bucket before its scheduled activation date,\ncreating a `PENDING_POINTS_ACTIVATED` card transaction (status `PENDING`, processed\nasynchronously). No request body.\n\nThe program and member must be in `ACTIVE` status, the card definition must have\npending points enabled, the bucket must be in `PENDING` status, and the bucket's\nactivation date must be in the future (423 otherwise). Returns 404 when the\nprogram, member, card or bucket does not exist.",
-        "parameters": [
-          {
-            "name": "programId",
-            "in": "path",
-            "required": true,
-            "description": "Unique loyalty program ID (format `lprg_[a-f0-9]+`).",
-            "schema": {
-              "type": "string",
-              "pattern": "^lprg_[a-f0-9]+$"
-            }
-          },
-          {
-            "name": "memberId",
-            "in": "path",
-            "required": true,
-            "description": "Program member ID (format `lmbr_[a-f0-9]+`), assigned by Voucherify.",
-            "schema": {
-              "type": "string",
-              "pattern": "^lmbr_[a-f0-9]+$"
-            }
-          },
-          {
-            "name": "cardId",
-            "in": "path",
-            "required": true,
-            "description": "Loyalty card ID (format `lcrd_[a-f0-9]+`), assigned by Voucherify.",
-            "schema": {
-              "type": "string",
-              "pattern": "^lcrd_[a-f0-9]+$"
-            }
-          },
-          {
-            "name": "bucketId",
-            "in": "path",
-            "required": true,
-            "description": "Pending points bucket ID (format `lcppb_[a-f0-9]+`).",
-            "schema": {
-              "type": "string",
-              "pattern": "^lcppb_[a-f0-9]+$"
-            }
-          }
-        ],
+        "description": "Manually activates a pending points bucket before its scheduled activation date, creating a `PENDING_POINTS_ACTIVATED` card transaction (status `PENDING`, processed asynchronously). No request body.\n\nThe program and member must be in `ACTIVE` status, the card definition must have pending points enabled, the bucket must be in `PENDING` status, and the bucket's activation date must be in the future (`423` otherwise). Returns `404` when the program, member, card or bucket does not exist.",
         "responses": {
           "200": {
             "description": "Result of the pending points activation.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CardPendingPointsActivationResult"
+                  "$ref": "#/components/schemas/CardPendingPointsActivationResponse"
+                },
+                "examples": {
+                  "Pending points bucket activated": {
+                    "value": {
+                      "transaction": {
+                        "id": "lctx_12d7831b16c4e9243f",
+                        "card_id": "lcrd_128f962dbd8c4ba5df",
+                        "program_id": "lprg_128f58429f4c4bf7b2",
+                        "member_id": "lmbr_128f962dbc8c4ba5dc",
+                        "card_definition_id": "lcdef_128f495f720c4bec8c",
+                        "card_type": "INDIVIDUAL",
+                        "type": "PENDING_POINTS_ACTIVATED",
+                        "details": {
+                          "reason": "Manual points activation",
+                          "rejection": null,
+                          "metadata": {},
+                          "points": {
+                            "total": 70,
+                            "date": "2026-08-16",
+                            "type": "PERIOD_BASED"
+                          }
+                        },
+                        "status": "PENDING",
+                        "created_at": "2026-08-06T12:46:59.675Z",
+                        "updated_at": null,
+                        "object": "card_transaction"
+                      },
+                      "status": "TRANSACTION_CREATED",
+                      "message": "Points activation transaction created"
+                    }
+                  }
                 }
               }
             }
           },
           "400": {
-            "description": "Validation error - request body or query parameters failed validation, or the operation is not allowed in the current resource state.",
+            "description": "Validation error.",
             "content": {
               "application/json": {
                 "schema": {
@@ -4176,26 +4207,73 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Program not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find program with id lpr_128f58429f4c4bf7b2",
+                      "request_id": "v-12d782064b07858c3c",
+                      "resource_id": "lpr_128f58429f4c4bf7b2",
+                      "resource_type": "program"
+                    }
+                  },
+                  "Member not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find member with id lmbr_128962dbc8c4ba5dc",
+                      "request_id": "v-12d78211422d461324",
+                      "resource_id": "lmbr_128962dbc8c4ba5dc",
+                      "resource_type": "member"
+                    }
+                  },
+                  "Card not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find card with id lcrd_128f962bd8c4ba5df",
+                      "request_id": "v-12d7821a6a47858c67",
+                      "resource_id": "lcrd_128f962bd8c4ba5df",
+                      "resource_type": "card"
+                    }
+                  },
+                  "Bucket not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find card_pending_points_bucket with id lcppb_12db4ebb0483a1409",
+                      "request_id": "v-12d782e1852d4614ef",
+                      "resource_id": "lcppb_12db4ebb0483a1409",
+                      "resource_type": "card_pending_points_bucket"
+                    }
+                  }
                 }
               }
             }
           },
           "423": {
-            "description": "Resource locked - a related resource is in a state that prevents this operation.",
+            "description": "Resource locked – The pending points bucket is already activated.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Bucket already activated": {
+                    "value": {
+                      "code": 423,
+                      "key": "invalid_pending_points_bucket_status",
+                      "message": "Invalid pending points bucket status",
+                      "details": "Pending points bucket must be in PENDING status in order to be activated",
+                      "request_id": "v-12d782251047858c7e"
+                    }
+                  }
                 }
               }
             }
@@ -18019,9 +18097,9 @@
           "message"
         ]
       },
-      "CardPendingPointsActivationResult": {
+      "CardPendingPointsActivationResponse": {
         "type": "object",
-        "description": "Result of a manual pending points activation. This endpoint always returns\nstatus `TRANSACTION_CREATED` on success.",
+        "description": "Result of a manual pending points activation. This endpoint always returns status `TRANSACTION_CREATED` on success.",
         "properties": {
           "transaction": {
             "description": "The created `PENDING_POINTS_ACTIVATED` card transaction, or `null`.",
