@@ -4148,7 +4148,7 @@
           "Programs"
         ],
         "summary": "Activate pending point bucket",
-        "description": "Manually activates a pending points bucket before its scheduled activation date, creating a `PENDING_POINTS_ACTIVATED` card transaction (status `PENDING`, processed asynchronously). No request body.\n\nThe program and member must be in `ACTIVE` status, the card definition must have pending points enabled, the bucket must be in `PENDING` status, and the bucket's activation date must be in the future (`423` otherwise). Returns `404` when the program, member, card or bucket does not exist.",
+        "description": "Manually activates a pending points bucket before its scheduled activation date, creating a `PENDING_POINTS_ACTIVATED` card transaction (status `PENDING`, processed asynchronously). No request body.\n\nThe program and member must be in `ACTIVE` status now, the card definition must have pending points enabled, the bucket must be in `PENDING` status, and the bucket's activation date must be in the future (`423` otherwise). Returns `404` when the program, member, card or bucket does not exist.",
         "responses": {
           "200": {
             "description": "Result of the pending points activation.",
@@ -4191,16 +4191,6 @@
               }
             }
           },
-          "400": {
-            "description": "Validation error.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
           "404": {
             "description": "Resource not found.",
             "content": {
@@ -4214,9 +4204,9 @@
                       "code": 404,
                       "key": "not_found",
                       "message": "Resource not found",
-                      "details": "Cannot find program with id lpr_128f58429f4c4bf7b2",
+                      "details": "Cannot find program with id lprg_128f58429f4c4bf7b2",
                       "request_id": "v-12d782064b07858c3c",
-                      "resource_id": "lpr_128f58429f4c4bf7b2",
+                      "resource_id": "lprg_128f58429f4c4bf7b2",
                       "resource_type": "program"
                     }
                   },
@@ -4258,7 +4248,7 @@
             }
           },
           "423": {
-            "description": "Resource locked – The pending points bucket is already activated.",
+            "description": "Resource locked. Returned when activation is not allowed (inactive program/member, pending points disabled, bucket not `PENDING`, activation date not in the future, or program outside its validity window).",
             "content": {
               "application/json": {
                 "schema": {
@@ -18289,7 +18279,7 @@
             "description": "Transaction type."
           },
           "details": {
-            "description": "Transaction details; the shape depends on the transaction `type`.",
+            "description": "Card transaction details. `reason`, `rejection` and `metadata` are present on all variants; the remaining fields depend on the transaction `type`:\n\n- `ADMIN_CREDIT`: `points` (`total`, `expiration_date`)\n- `ADMIN_DEBIT`: `points` (`total`)\n- `ADMIN_POINTS_EXPIRATION`: `bucket` (the expired points bucket)\n- `POINTS_EARNED`: `points` (`total`, `expiration_date`)\n- `POINTS_EXPIRED`: `points` (`total`), `date`, `buckets`\n- `POINTS_SPENT_ON_REWARD`: `points` (`total`), `reward`, `reward_transaction`,`target_card`, `purchase_transaction`\n- `POINTS_PURCHASED`: `points` (`total`, `expiration_date`, `expiration_type`), `reward`, `reward_transaction`, `card_transaction`\n- `POINTS_PURCHASE_REVERSED`: `points` (`total`, `expiration_date`,\n  `expiration_type`), `reward`, `purchase`, `reward_transaction`\n- `POINTS_SPENT_ON_ORDER`: `points` (`total`), `order`, `order_transaction`\n- `POINTS_REFUNDED`: `points` (`total`)\n- `POINTS_RETURNED`: `points` (`total`, `expiration_date`, `expiration_type`), `reward`, `purchase`, `reward_transaction`\n- `PENDING_POINTS_ADDED` / `PENDING_POINTS_ACTIVATED` / `PENDING_POINTS_CANCELED`: `points` (`total`, `date`, `type`)",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/CardTransactionDetails"
@@ -18345,7 +18335,7 @@
       },
       "CardTransactionDetails": {
         "type": "object",
-        "description": "Card transaction details. `reason`, `rejection` and `metadata` are present on all variants; the remaining fields depend on the transaction `type`:\n\n- `ADMIN_CREDIT`: `points` (`total`, `expiration_date`)\n- `ADMIN_DEBIT`: `points` (`total`)\n- `ADMIN_POINTS_EXPIRATION`: `bucket` (the expired points bucket)\n- `POINTS_EARNED`: `points` (`total`, `expiration_date`)\n- `POINTS_EXPIRED`: `points` (`total`), `date`, `buckets`\n- `POINTS_SPENT_ON_REWARD`: `points` (`total`), `reward`, `reward_transaction`,`target_card`, `purchase_transaction`\n- `POINTS_PURCHASED`: `points` (`total`, `expiration_date`, `expiration_type`), `reward`, `reward_transaction`, `card_transaction`\n- `POINTS_PURCHASE_REVERSED`: `points` (`total`, `expiration_date`,\n  `expiration_type`), `reward`, `purchase`, `reward_transaction`\n- `POINTS_SPENT_ON_ORDER`: `points` (`total`), `order`, `order_transaction`\n- `POINTS_REFUNDED`: `points` (`total`)\n- `POINTS_RETURNED`: `points` (`total`, `expiration_date`, `expiration_type`), `reward`, `purchase`, `reward_transaction`\n- `PENDING_POINTS_ADDED` / `PENDING_POINTS_ACTIVATED` / `PENDING_POINTS_CANCELED`: `points` (`total`, `date`, `type`)",
+        "description": "Card transaction details. Variant-dependent fields are not present on all variants.",
         "properties": {
           "reason": {
             "type": [
@@ -18381,7 +18371,7 @@
           },
           "points": {
             "type": "object",
-            "description": "Points affected by the transaction (variant-dependent fields).",
+            "description": "Points affected by the transaction (variant-dependent fields; pending points don't return `expiration_date` and `expiration_type`.).",
             "properties": {
               "total": {
                 "type": "number",
