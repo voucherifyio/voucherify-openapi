@@ -33,6 +33,7 @@ import removePhpBreakingChanges from "./remove-breaking-changes/php";
 import removeJavaBreakingChanges from "./remove-breaking-changes/java";
 import removeDotnetBreakingChanges from "./remove-breaking-changes/dotnet";
 import removeJsBreakingChanges from "./remove-breaking-changes/js";
+import shortenRubySchemaTitles from "./shorten-ruby-schema-titles";
 
 const options = minimist(process.argv.slice(2));
 
@@ -276,6 +277,11 @@ const main = async (languageOptions: LanguageOptions) => {
   newOpenApiFile.components.schemas = fixSchemasTitles(
     _.cloneDeep(newOpenApiFile.components.schemas),
   );
+
+
+  if (languageOptions.name === "ruby") {
+    shortenRubySchemaTitles(newOpenApiFile.components.schemas);
+  }
 
   await savePreparedOpenApiFile(languageOptions.name, newOpenApiFile);
 };

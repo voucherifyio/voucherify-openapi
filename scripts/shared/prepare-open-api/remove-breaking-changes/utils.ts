@@ -1,3 +1,22 @@
+/** Ruby SDK: keep `fixed_month` / `fixed_day` from OpenAPI; only restore `period_type` default `MONTH`. */
+export const restoreLoyaltyExpirationRulesPeriodTypeDefault = (schema: {
+  properties?: {
+    period_type?: Record<string, unknown>;
+    fixed_month?: unknown;
+    fixed_day?: unknown;
+    [key: string]: unknown;
+  };
+}) => {
+  const periodType = schema?.properties?.period_type;
+  if (!periodType || typeof periodType !== "object") {
+    return;
+  }
+  schema.properties!.period_type = {
+    ...periodType,
+    default: "MONTH",
+  };
+};
+
 export const fixOrderCalculated = (object: any) => {
   if (Array.isArray(object)) {
     return object.map((value) => fixOrderCalculated(value));
