@@ -3918,7 +3918,7 @@
           "Programs"
         ],
         "summary": "List card pending point buckets",
-        "description": "Returns a cursor-paginated list of pending point buckets of the member's card. Pending points are earned points waiting for activation (period-based, fixed-dates or event-based activation, per the card definition's pending points settings). Results can be ordered by activation `date`. Returns `404` when the program, member or card does not exist.",
+        "description": "Returns a cursor-paginated list of pending point buckets (`status` is `PENDING`) of the member's card. Pending points are earned points waiting for activation (period-based, fixed-dates or event-based activation, per the card definition's pending points settings).\n\nResults can be ordered by activation `date`.\n\nReturns `404` when the program, member, or card does not exist.\n\nUse this endpoint to get the list of IDs of pending point bucket to use the [POST Activate pending point bucket](/api-reference/programs/activate-pending-point-bucket) or [POST Cancel pending point bucket](/api-reference/programs/cancel-a-pending-points-bucket).",
         "parameters": [
           {
             "name": "limit",
@@ -4021,11 +4021,22 @@
             }
           },
           "400": {
-            "description": "Validation error - path or query parameters failed validation",
+            "description": "Validation error or the cursor is invalid or expired.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Invalid cursor": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_or_expired_cursor",
+                      "message": "Invalid or expired cursor",
+                      "details": "The provided cursor is invalid or has expired",
+                      "request_id": "v-12d75fbdd02d464373"
+                    }
+                  }
                 }
               }
             }
@@ -4094,7 +4105,7 @@
         "tags": [
           "Programs"
         ],
-        "summary": "Activate a pending points bucket",
+        "summary": "Activate pending point bucket",
         "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nManually activates a pending points bucket before its scheduled activation date,\ncreating a `PENDING_POINTS_ACTIVATED` card transaction (status `PENDING`, processed\nasynchronously). No request body.\n\nThe program and member must be in `ACTIVE` status, the card definition must have\npending points enabled, the bucket must be in `PENDING` status, and the bucket's\nactivation date must be in the future (423 otherwise). Returns 404 when the\nprogram, member, card or bucket does not exist.",
         "parameters": [
           {
@@ -4208,7 +4219,7 @@
         "tags": [
           "Programs"
         ],
-        "summary": "Cancel a pending points bucket",
+        "summary": "Cancel pending point bucket",
         "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nCancels a pending points bucket so its points are never activated, creating a\n`PENDING_POINTS_CANCELED` card transaction (status `PENDING`, processed\nasynchronously). No request body.\n\nThe program and member must be in `ACTIVE` status, the card definition must have\npending points enabled, the bucket must be in `PENDING` status, and the bucket's\nactivation date must be in the future (423 otherwise). Returns 404 when the\nprogram, member, card or bucket does not exist.",
         "parameters": [
           {
@@ -4323,7 +4334,7 @@
           "Programs"
         ],
         "summary": "List card expiring points buckets",
-        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nReturns a cursor-paginated list of points expiration buckets of the member's card.\nEach bucket groups active points sharing the same expiration date and expiration\ntype. Results can be ordered by `expiration_date`. Returns 404 when the program,\nmember or card does not exist.",
+        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nReturns a cursor-paginated list of points expiration buckets of the member's card.\nEach bucket groups active points sharing the same expiration date and expiration\ntype. Results can be ordered by `expiration_date`. Returns 404 when the program,\nmember, or card does not exist.",
         "parameters": [
           {
             "name": "programId",
@@ -18734,7 +18745,6 @@
           "type": {
             "type": "string",
             "enum": [
-              "IMMEDIATE",
               "PERIOD_BASED",
               "FIXED_DATES",
               "EVENT_BASED"
