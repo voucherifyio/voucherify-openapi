@@ -4,6 +4,22 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-08-10
+
+Published Loyalty v2 API reference overview pages:
+
+- `loyalty-v2-api-overview.mdx`
+- `loyalty-v2-members-overview.mdx`
+- `loyalty-v2-examine-overview.mdx`
+- `loyalty-v2-reports-overview.mdx`
+- `loyalty-v2-card-definitions-overview.mdx`
+- `loyalty-v2-programs-overview.mdx`
+- `loyalty-v2-earning-rules-overview.mdx`
+- `loyalty-v2-tier-structures-overview.mdx`
+- `loyalty-v2-benefits-overview.mdx`
+- `loyalty-v2-rewards-overview.mdx`
+- `introduction-to-legacy-loyalty.mdx`
+
 ## 2026-07-21
 
 Deprecated all `v1/loyalties` methods
