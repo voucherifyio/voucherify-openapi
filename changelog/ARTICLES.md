@@ -5,6 +5,30 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-08-10
+
+Published Loyalty v2 guides and Build articles:
+
+- `loyalty-v2-overview.mdx`
+- `loyalty-v2-integrate.mdx`
+- `loyalty-v2-take-to-production.mdx`
+- `loyalty-overview.mdx`
+- `loyalty-key-concepts.mdx`
+- `create-loyalty-program.mdx`
+- `create-point-wallets.mdx`
+- `create-tier-structures.mdx`
+- `create-earning-rules.mdx`
+- `create-benefits.mdx`
+- `create-loyalty-rewards.mdx`
+
+## 2026-07-30
+
+- Remove `user-guide-migration.mdx` from navigation, but keeping the file for some time yet.
+
+## 2026-07-16
+
+Add info about caching to `checking-eligibility.mdx`.
+
 ## 2026-07-06
 
 - Deleted `team-management.mdx` as it was outdated and duplicated fresh content.
