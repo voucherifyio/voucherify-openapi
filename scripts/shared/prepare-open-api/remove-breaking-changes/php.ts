@@ -396,6 +396,29 @@ const removePhpBreakingChanges = {
       }
     };
 
+    // Restore management webhook event spellings (`*_added`) so PHP constants stay
+    // EVENTS_*_ADDED with values matching the live API / previous SDK releases.
+    // Spec currently has typos (`*_aded`) that rename/remove public constants.
+    const webhookEvents =
+      schemas.ManagementProjectsWebhookBase?.properties?.events?.items?.enum;
+    if (Array.isArray(webhookEvents)) {
+      schemas.ManagementProjectsWebhookBase.properties.events.items.enum =
+        webhookEvents.map((event: string) =>
+          event
+            .replace(/\.balance_aded$/, ".balance_added")
+            .replace(/\.points_aded$/, ".points_added")
+            .replace(/\.pending_points\.aded$/, ".pending_points.added")
+            .replace(/\.vouchers\.aded$/, ".vouchers.added"),
+        );
+    }
+
+    // Keep importVouchersUsingCsv($file, $contentType) signature stable.
+    // Adding webhooks_enable before $contentType is a positional breaking change in PHP.
+    if (schemas.VouchersImportCSVRequestBody?.allOf?.[1]?.properties) {
+      delete schemas.VouchersImportCSVRequestBody.allOf[1].properties
+        .webhooks_enable;
+    }
+
     return openApi;
   },
   after: (_openApi: unknown): any => {
