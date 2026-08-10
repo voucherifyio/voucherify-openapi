@@ -28980,13 +28980,6 @@
             "format": "date-time",
             "nullable": true
           },
-          "updated_at": {
-            "type": "string",
-            "format": "date-time",
-            "example": "2022-10-03T12:24:58.008Z",
-            "description": "Timestamp in ISO 8601 format indicating when the segment was updated.",
-            "nullable": true
-          },
           "type": {
             "type": "string",
             "enum": [
@@ -29009,6 +29002,13 @@
             "enum": [
               "segment"
             ],
+            "nullable": true
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2022-10-03T12:24:58.008Z",
+            "description": "Timestamp in ISO 8601 format indicating when the segment was updated.",
             "nullable": true
           }
         },
@@ -29036,13 +29036,6 @@
             "format": "date-time",
             "nullable": true
           },
-          "updated_at": {
-            "type": "string",
-            "format": "date-time",
-            "example": "2022-10-03T12:24:58.008Z",
-            "description": "Timestamp in ISO 8601 format indicating when the segment was updated.",
-            "nullable": true
-          },
           "type": {
             "type": "string",
             "enum": [
@@ -29065,6 +29058,13 @@
             "enum": [
               "segment"
             ],
+            "nullable": true
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2022-10-03T12:24:58.008Z",
+            "description": "Timestamp in ISO 8601 format indicating when the segment was updated.",
             "nullable": true
           }
         },
@@ -33829,6 +33829,65 @@
             "description": "Maximum discount amount per order. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $6 maximum discount on the entire order is written as 600. This value is definable for the following discount effects:\n- `APPLY_TO_ITEMS` (each item subtotal is discounted equally)\n- `APPLY_TO_ITEMS_BY_QUANTITY` (each unit of matched products has the same discount value)",
             "nullable": true
           },
+          "order_item_indices": {
+            "title": "ApplicableToOrderItemIndices",
+            "type": "array",
+            "description": "Lists which order lines are (not) covered by the discount. The order in the array is determined by the sequence of applied discounts, while the numbers correspond to the order lines sent in the `order` object in the request. The first order line is assigned `0`, the second order line is assigned `1`, and so on.",
+            "items": {
+              "title": "ApplicableToOrderItemIndicesItem",
+              "type": "integer"
+            },
+            "nullable": true
+          },
+          "order_item_units": {
+            "title": "ApplicableToOrderItemUnits",
+            "type": "array",
+            "description": "Lists which units within order lines are covered by the discount. The order line items are listed according to sequence of applied discounts while the `index` corresponds to the order line sent in the `order` object in the request.",
+            "items": {
+              "title": "ApplicableToOrderItemUnitsItem",
+              "type": "object",
+              "properties": {
+                "index": {
+                  "type": "integer",
+                  "description": "Number assigned to the order line item in accordance with the order sent in the request.",
+                  "minimum": 0
+                },
+                "units": {
+                  "title": "ApplicableToOrderItemUnitsItemUnits",
+                  "type": "array",
+                  "description": "Numbers of units in the order line covered by the discount; e.g. `2, 5, 8` for 10 units with the setting `\"skip_initially\": 1`, `\"repeat\": 3`. The counting of units starts from `1`. The maximum quantity of all handled units is 1000. If the quantity of all order items exceeds 1000, this array is not returned, but `units_limit_exceeded: true`. However, the discount is calculated properly for all relevant units.",
+                  "items": {
+                    "title": "ApplicableToOrderItemUnitsItemUnitsItem",
+                    "type": "integer"
+                  }
+                },
+                "units_limit_exceeded": {
+                  "type": "boolean",
+                  "description": "Returned as `true` only when the sum total of `quantity` of all order items exceeds 1000."
+                }
+              }
+            },
+            "nullable": true
+          },
+          "repeat": {
+            "type": "integer",
+            "description": "Determines the recurrence of the discount, e.g. `\"repeat\": 3` means that the discount is applied to every third item.",
+            "nullable": true
+          },
+          "skip_initially": {
+            "type": "integer",
+            "description": "Determines how many items are skipped before the discount is applied.",
+            "nullable": true
+          },
+          "target": {
+            "type": "string",
+            "description": "Determines to which kinds of objects the discount is applicable. `ITEM` includes products and SKUs. `UNIT` means particular units within an order line.",
+            "enum": [
+              "ITEM",
+              "UNIT"
+            ],
+            "nullable": true
+          },
           "product_campaign_quantity_limit": {
             "type": "integer",
             "description": "Limits the number of discounted item units (product, SKU, collection) that all customers can receive in a given campaign. If a product is selected, the limit covers all discounts across all SKUs belonging to that product. If a product collection is selected, the limit covers all products/SKUs within the collection.\n\nThis limit is available on demand as part of campaign budget limits. Contact [Voucherify support](https://www.voucherify.io/contact-support) or your account manager to learn more.",
@@ -33907,65 +33966,6 @@
           "product_in_collection_customer_promotion_tier_quantity_limit_formula": {
             "type": "string",
             "description": "Formula used to dynamically calculate the maximum units per customer in a promotion tier for a product in a collection.\n\nThis limit is available on demand as part of campaign budget limits. Contact [Voucherify support](https://www.voucherify.io/contact-support) or your account manager to learn more.",
-            "nullable": true
-          },
-          "order_item_indices": {
-            "title": "ApplicableToOrderItemIndices",
-            "type": "array",
-            "description": "Lists which order lines are (not) covered by the discount. The order in the array is determined by the sequence of applied discounts, while the numbers correspond to the order lines sent in the `order` object in the request. The first order line is assigned `0`, the second order line is assigned `1`, and so on.",
-            "items": {
-              "title": "ApplicableToOrderItemIndicesItem",
-              "type": "integer"
-            },
-            "nullable": true
-          },
-          "order_item_units": {
-            "title": "ApplicableToOrderItemUnits",
-            "type": "array",
-            "description": "Lists which units within order lines are covered by the discount. The order line items are listed according to sequence of applied discounts while the `index` corresponds to the order line sent in the `order` object in the request.",
-            "items": {
-              "title": "ApplicableToOrderItemUnitsItem",
-              "type": "object",
-              "properties": {
-                "index": {
-                  "type": "integer",
-                  "description": "Number assigned to the order line item in accordance with the order sent in the request.",
-                  "minimum": 0
-                },
-                "units": {
-                  "title": "ApplicableToOrderItemUnitsItemUnits",
-                  "type": "array",
-                  "description": "Numbers of units in the order line covered by the discount; e.g. `2, 5, 8` for 10 units with the setting `\"skip_initially\": 1`, `\"repeat\": 3`. The counting of units starts from `1`. The maximum quantity of all handled units is 1000. If the quantity of all order items exceeds 1000, this array is not returned, but `units_limit_exceeded: true`. However, the discount is calculated properly for all relevant units.",
-                  "items": {
-                    "title": "ApplicableToOrderItemUnitsItemUnitsItem",
-                    "type": "integer"
-                  }
-                },
-                "units_limit_exceeded": {
-                  "type": "boolean",
-                  "description": "Returned as `true` only when the sum total of `quantity` of all order items exceeds 1000."
-                }
-              }
-            },
-            "nullable": true
-          },
-          "repeat": {
-            "type": "integer",
-            "description": "Determines the recurrence of the discount, e.g. `\"repeat\": 3` means that the discount is applied to every third item.",
-            "nullable": true
-          },
-          "skip_initially": {
-            "type": "integer",
-            "description": "Determines how many items are skipped before the discount is applied.",
-            "nullable": true
-          },
-          "target": {
-            "type": "string",
-            "description": "Determines to which kinds of objects the discount is applicable. `ITEM` includes products and SKUs. `UNIT` means particular units within an order line.",
-            "enum": [
-              "ITEM",
-              "UNIT"
-            ],
             "nullable": true
           }
         },
@@ -46606,6 +46606,65 @@
             "description": "Maximum discount amount per order. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $6 maximum discount on the entire order is written as 600. This value is definable for the following discount effects:\n- `APPLY_TO_ITEMS` (each item subtotal is discounted equally)\n- `APPLY_TO_ITEMS_BY_QUANTITY` (each unit of matched products has the same discount value)",
             "nullable": true
           },
+          "order_item_indices": {
+            "title": "InapplicableToOrderItemIndices",
+            "type": "array",
+            "description": "Lists which order lines are (not) covered by the discount. The order in the array is determined by the sequence of applied discounts, while the numbers correspond to the order lines sent in the `order` object in the request. The first order line is assigned `0`, the second order line is assigned `1`, and so on.",
+            "items": {
+              "title": "InapplicableToOrderItemIndicesItem",
+              "type": "integer"
+            },
+            "nullable": true
+          },
+          "order_item_units": {
+            "title": "InapplicableToOrderItemUnits",
+            "type": "array",
+            "description": "Lists which units within order lines are covered by the discount. The order line items are listed according to sequence of applied discounts while the `index` corresponds to the order line sent in the `order` object in the request.",
+            "items": {
+              "title": "InapplicableToOrderItemUnitsItem",
+              "type": "object",
+              "properties": {
+                "index": {
+                  "type": "integer",
+                  "description": "Number assigned to the order line item in accordance with the order sent in the request.",
+                  "minimum": 0
+                },
+                "units": {
+                  "title": "InapplicableToOrderItemUnitsItemUnits",
+                  "type": "array",
+                  "description": "Numbers of units in the order line covered by the discount; e.g. `2, 5, 8` for 10 units with the setting `\"skip_initially\": 1`, `\"repeat\": 3`. The counting of units starts from `1`. The maximum quantity of all handled units is 1000. If the quantity of all order items exceeds 1000, this array is not returned, but `units_limit_exceeded: true`. However, the discount is calculated properly for all relevant units.",
+                  "items": {
+                    "title": "InapplicableToOrderItemUnitsItemUnitsItem",
+                    "type": "integer"
+                  }
+                },
+                "units_limit_exceeded": {
+                  "type": "boolean",
+                  "description": "Returned as `true` only when the sum total of `quantity` of all order items exceeds 1000."
+                }
+              }
+            },
+            "nullable": true
+          },
+          "repeat": {
+            "type": "integer",
+            "description": "Determines the recurrence of the discount, e.g. `\"repeat\": 3` means that the discount is applied to every third item.",
+            "nullable": true
+          },
+          "skip_initially": {
+            "type": "integer",
+            "description": "Determines how many items are skipped before the discount is applied.",
+            "nullable": true
+          },
+          "target": {
+            "type": "string",
+            "description": "Determines to which kinds of objects the discount is applicable. `ITEM` includes products and SKUs. `UNIT` means particular units within an order line.",
+            "enum": [
+              "ITEM",
+              "UNIT"
+            ],
+            "nullable": true
+          },
           "product_campaign_quantity_limit": {
             "type": "integer",
             "description": "Limits the number of discounted item units (product, SKU, collection) that all customers can receive in a given campaign. If a product is selected, the limit covers all discounts across all SKUs belonging to that product. If a product collection is selected, the limit covers all products/SKUs within the collection.\n\nThis limit is available on demand as part of campaign budget limits. Contact [Voucherify support](https://www.voucherify.io/contact-support) or your account manager to learn more.",
@@ -46684,65 +46743,6 @@
           "product_in_collection_customer_promotion_tier_quantity_limit_formula": {
             "type": "string",
             "description": "Formula used to dynamically calculate the maximum units per customer in a promotion tier for a product in a collection.\n\nThis limit is available on demand as part of campaign budget limits. Contact [Voucherify support](https://www.voucherify.io/contact-support) or your account manager to learn more.",
-            "nullable": true
-          },
-          "order_item_indices": {
-            "title": "InapplicableToOrderItemIndices",
-            "type": "array",
-            "description": "Lists which order lines are (not) covered by the discount. The order in the array is determined by the sequence of applied discounts, while the numbers correspond to the order lines sent in the `order` object in the request. The first order line is assigned `0`, the second order line is assigned `1`, and so on.",
-            "items": {
-              "title": "InapplicableToOrderItemIndicesItem",
-              "type": "integer"
-            },
-            "nullable": true
-          },
-          "order_item_units": {
-            "title": "InapplicableToOrderItemUnits",
-            "type": "array",
-            "description": "Lists which units within order lines are covered by the discount. The order line items are listed according to sequence of applied discounts while the `index` corresponds to the order line sent in the `order` object in the request.",
-            "items": {
-              "title": "InapplicableToOrderItemUnitsItem",
-              "type": "object",
-              "properties": {
-                "index": {
-                  "type": "integer",
-                  "description": "Number assigned to the order line item in accordance with the order sent in the request.",
-                  "minimum": 0
-                },
-                "units": {
-                  "title": "InapplicableToOrderItemUnitsItemUnits",
-                  "type": "array",
-                  "description": "Numbers of units in the order line covered by the discount; e.g. `2, 5, 8` for 10 units with the setting `\"skip_initially\": 1`, `\"repeat\": 3`. The counting of units starts from `1`. The maximum quantity of all handled units is 1000. If the quantity of all order items exceeds 1000, this array is not returned, but `units_limit_exceeded: true`. However, the discount is calculated properly for all relevant units.",
-                  "items": {
-                    "title": "InapplicableToOrderItemUnitsItemUnitsItem",
-                    "type": "integer"
-                  }
-                },
-                "units_limit_exceeded": {
-                  "type": "boolean",
-                  "description": "Returned as `true` only when the sum total of `quantity` of all order items exceeds 1000."
-                }
-              }
-            },
-            "nullable": true
-          },
-          "repeat": {
-            "type": "integer",
-            "description": "Determines the recurrence of the discount, e.g. `\"repeat\": 3` means that the discount is applied to every third item.",
-            "nullable": true
-          },
-          "skip_initially": {
-            "type": "integer",
-            "description": "Determines how many items are skipped before the discount is applied.",
-            "nullable": true
-          },
-          "target": {
-            "type": "string",
-            "description": "Determines to which kinds of objects the discount is applicable. `ITEM` includes products and SKUs. `UNIT` means particular units within an order line.",
-            "enum": [
-              "ITEM",
-              "UNIT"
-            ],
             "nullable": true
           }
         },

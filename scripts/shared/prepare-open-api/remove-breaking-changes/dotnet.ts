@@ -1,8 +1,45 @@
 import * as OpenAPI from "../../../../reference/OpenAPI.json";
 
+const movePropertiesToEnd = (schema: any, propertyNames: string[]) => {
+  const properties = schema.properties;
+  const propertyNamesSet = new Set(propertyNames);
+  const existingProperties = Object.fromEntries(
+    Object.entries(properties).filter(([name]) => !propertyNamesSet.has(name)),
+  );
+  const movedProperties = Object.fromEntries(
+    propertyNames
+      .filter((name) => name in properties)
+      .map((name) => [name, properties[name]]),
+  );
+
+  schema.properties = {
+    ...existingProperties,
+    ...movedProperties,
+  };
+};
+
+const applicableToQuantityLimitProperties = [
+  "product_campaign_quantity_limit",
+  "product_campaign_quantity_limit_formula",
+  "product_customer_campaign_quantity_limit",
+  "product_customer_campaign_quantity_limit_formula",
+  "product_in_collection_campaign_quantity_limit",
+  "product_in_collection_campaign_quantity_limit_formula",
+  "product_in_collection_customer_campaign_quantity_limit",
+  "product_in_collection_customer_campaign_quantity_limit_formula",
+  "product_promotion_tier_quantity_limit",
+  "product_promotion_tier_quantity_limit_formula",
+  "product_customer_promotion_tier_quantity_limit",
+  "product_customer_promotion_tier_quantity_limit_formula",
+  "product_in_collection_promotion_tier_quantity_limit",
+  "product_in_collection_promotion_tier_quantity_limit_formula",
+  "product_in_collection_customer_promotion_tier_quantity_limit",
+  "product_in_collection_customer_promotion_tier_quantity_limit_formula",
+];
+
 const removeDotnetBreakingChanges = {
   before: (_openApi: unknown): typeof OpenAPI => {
-    const openApi = _openApi as typeof OpenAPI;
+    const openApi: any = _openApi;
 
     // Gemini recommended so
     const schemas = openApi.components.schemas as any;
@@ -228,6 +265,22 @@ const removeDotnetBreakingChanges = {
   },
   after: (_openApi: unknown): any => {
     let openApi: any = _openApi;
+
+    // Keep newly added optional properties after the properties available in 9.0.2.
+    // C# model constructors follow schema property order, so inserting them in the
+    // middle changes how existing positional constructor calls are compiled.
+    const schemas = openApi.components.schemas;
+    movePropertiesToEnd(
+      schemas.ApplicableTo,
+      applicableToQuantityLimitProperties,
+    );
+    movePropertiesToEnd(
+      schemas.InapplicableTo,
+      applicableToQuantityLimitProperties,
+    );
+    movePropertiesToEnd(schemas.SegmentsCreateResponseBody, ["updated_at"]);
+    movePropertiesToEnd(schemas.SegmentsGetResponseBody, ["updated_at"]);
+
     return openApi;
   },
 };
