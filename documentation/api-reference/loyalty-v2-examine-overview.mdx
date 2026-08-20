@@ -1,0 +1,33 @@
+---
+title: "Examine: Overview"
+description: "Understand how the examine endpoints estimate earning opportunities and reward availability for a Loyalty v2 member without any side effects"
+keywords: ['loyalty v2', 'examine earning rules', 'examine rewards', 'dry run', 'points estimation']
+---
+
+The examine endpoints let you evaluate what a member could earn or redeem across their loyalty program memberships, without creating any transactions or otherwise changing stored data. Because they are pure dry-run operations, you can call them as often as needed to power member-facing UI, such as "ways to earn" screens or reward catalogs.
+
+## Examine earning rules
+
+The examine earning rule endpoint estimates the points and benefits a member would receive for a given scenario. You choose a trigger mode:
+- `ALL`: Evaluates every active earning rule across the member's programs at once, useful for showing all the available ways a member can earn points in a single call.
+- `SPECIFIC`: Evaluates only the earning rules tied to one event – an order being paid, a customer entering a segment, or a custom event. This mode requires the matching context object for that event (for example, order line items for `customer.order.paid`).
+
+The response lists the estimated points per card and per earning rule, plus any material or digital benefits that would be granted. Because the estimation is a single dry-run pass, it does not chain further consequences of the earned points; for example, it won't simulate a tier upgrade that itself unlocks additional points.
+
+## Examine rewards
+
+This endpoint evaluates every reward assigned to a member's active program memberships and reports whether each one is currently redeemable on each of the member's cards. You can scope the evaluation to a single membership with `member_id`.
+
+Each reward on each card is classified as:
+- `AVAILABLE`: The member has an active card for the reward's card definition, the card balance covers the resolved point cost, and the reward assignment has stock.
+- `UNAVAILABLE`: Accompanied by one or more structured reasons, such as `insufficient_balance` (with the exact points still missing), `out_of_stock`, `no_matching_cost`, `no_card_for_cost`, or `reward_inactive`.
+
+The structured unavailability reasons are designed so your frontend doesn't need to guess why a reward is greyed out. You can use the same response to render progress bars or "points needed" messaging.
+
+## Related resources
+
+- [Loyalty v2 API: Overview](/api-reference/loyalty-v2-api-overview) for the full Loyalty v2 API map.
+- [Earning rules: Overview](/api-reference/loyalty-v2-earning-rules-overview) for how to configure rules for gaining points and benefits.
+- [Rewards: Overview](/api-reference/loyalty-v2-rewards-overview) for how to manage rewards.
+- [Members: Overview](/api-reference/loyalty-v2-members-overview) for overall member management.
+- [Integrate loyalty v2](/guides/loyalty-v2-integrate) for worked examples of both examine endpoints.

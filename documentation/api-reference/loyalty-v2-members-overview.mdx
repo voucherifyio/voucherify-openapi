@@ -1,0 +1,52 @@
+---
+title: "Members: Overview"
+description: "Understand how customers are enrolled as members of a Loyalty v2 program, and how their loyalty cards, points, rewards, and payments are managed"
+keywords: ['loyalty v2', 'loyalty members', 'loyalty cards', 'pending points', 'reward purchases', 'pay with points']
+---
+
+A member is a Voucherify customer enrolled in a specific loyalty program. Membership is program-scoped. The same customer can be a member of several programs at once, but only once per program; a second enrollment attempt for the same customer is rejected. The customer must already exist in Voucherify, and the target program must be `ACTIVE` before it can accept new members.
+
+## Enrollment
+
+Members can be [created one at a time](/api-reference/programs/create-program-member), or in bulk through a [batch endpoint](/api-reference/programs/batch-create-program-members) that processes up to 10 MB of entries asynchronously in batches of 100, tracked as an [async action](/api-reference/async-actions/async-action-object). When a member is created, Voucherify automatically issues one loyalty card for every active card definition assigned to the program, so a member can start with several point wallets at once. Card `code` generation happens asynchronously, so a newly created card's `code` may briefly be `null`.
+
+## Member lifecycle
+
+A member is typically `ACTIVE` on creation, but can also be created as `INACTIVE`. Use the [activate](/api-reference/programs/activate-program-member) and [deactivate](/api-reference/programs/deactivate-program-member) endpoints to move a member between these two states. An inactive member can't earn or spend points. Updating a member merges metadata into the existing object and cannot change `status`; use activate or deactivate for status transitions. Deleting a member soft-deletes the member and its cards.
+
+## Loyalty cards and points
+
+Each of a member's loyalty cards tracks its own balance, lifetime point counters, and upcoming activation or expiration events. Beyond the automatic earning and spending flows, several endpoints let you manage points on a specific card directly:
+- Manually [adjust points](/api-reference/programs/adjust-card-points) (positive values create an admin credit, negative values an admin debit).
+- [List](/api-reference/programs/list-card-pending-points-buckets), and optionally manually [activate](/api-reference/programs/activate-a-pending-points-bucket) or [cancel](/api-reference/programs/cancel-a-pending-points-bucket), pending points buckets before their scheduled activation date.
+- [List](/api-reference/programs/list-card-expiring-points-buckets), and optionally manually [expire](/api-reference/programs/expire-points-bucket), expiring points buckets before their scheduled expiration date.
+- List [the full transaction history](/api-reference/programs/list-card-transactions) of a card.
+
+Aggregated daily points and earning-rule usage for a member are covered in the [Reports overview](/api-reference/loyalty-v2-reports-overview).
+
+## Rewards and payments
+
+Members spend points in two ways, both scoped to a member's card:
+- [Purchasing a reward](/api-reference/programs/purchase-reward-with-points): Spends points from the card tied to the reward's cost configuration, and can later be refunded, which returns the points to the card.
+- [Paying for an order with points](/api-reference/programs/pay-for-order-with-points): Spends points based on the card definition's pay-with-points exchange ratio, capped by the card balance or an optional payment limit, and can be run as a dry run before committing to a real transaction.
+
+Members also expose read-only history for benefit fulfillments and tier transitions (joins, upgrades, downgrades, prolongations, and exits), so you can build a complete activity feed for a member without combining several other endpoints.
+
+## Member vs. membership
+
+Related endpoints return a member's data from different angles:
+- [Get member](/api-reference/programs/get-program-member) returns the member together with its cards within one program.
+- [Get program membership](/api-reference/programs/get-program-membership) additionally enriches each card with tier progress. Use it whenever your integration needs to show progress toward the next loyalty tier.
+- [Get customer memberships](/api-reference/programs/get-customer-memberships) returns every membership for a customer across programs, including member, program, and cards.
+
+Membership lookups accept a path identifier interpreted through `identification_type` (for example customer ID or member ID).
+
+## Related resources
+
+- [Loyalty v2 API: Overview](/api-reference/loyalty-v2-api-overview) for the full Loyalty v2 API map.
+- [Programs: Overview](/api-reference/loyalty-v2-programs-overview) for overall program management.
+- [Card definitions: Overview](/api-reference/loyalty-v2-card-definitions-overview) for how to manage card definitions.
+- [Rewards: Overview](/api-reference/loyalty-v2-rewards-overview) for how to manage rewards.
+- [Tier structures: Overview](/api-reference/loyalty-v2-tier-structures-overview) for how to manage tier structures.
+- [Reports: Overview](/api-reference/loyalty-v2-reports-overview) for member card and earning-rule daily reports.
+- [Integrate loyalty v2](/guides/loyalty-v2-integrate) for a step-by-step member integration walkthrough.
