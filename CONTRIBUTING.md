@@ -60,6 +60,8 @@ Note that OpenAPI files slightly differ depending on where we use them.
 
 If you want to contribute to the OpenAPI file, you MUST do it in the **reference/OpenAPI.json** file, because all other OpenAPI files are generated from this file!
 
+> **For AI agents:** Detailed schema authoring rules (naming, reusability, SDK breaking-change avoidance, pipeline transforms, step-by-step workflows) are in **[.ai/openapi-schema-authoring.md](.ai/openapi-schema-authoring.md)**. Read it before building or reformatting schemas.
+
 To update the **[production/readOnly-openAPI.json]** file, run the `npm run build-production-openapi`
 
 The **[tmp/referenceToUpload/OpenAPI.json]** file is generated while running the `npm run create-clean-project -- (parameters)` command.
@@ -96,6 +98,8 @@ Tips:
   - Note: these files do not require a header.
 
 ### Naming Convention
+
+See **[.ai/openapi-schema-authoring.md](.ai/openapi-schema-authoring.md)** for the full guide (schema taxonomy, `$ref`/`allOf`/`oneOf` patterns, SDK pipeline, validation checklist, and AI workflows).
 
 When building new models, follow the following name convention: 
 - Use the PascalCase.
