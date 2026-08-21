@@ -98,12 +98,122 @@ def remove_deleted_from_enum_values(node):
             remove_deleted_from_enum_values(item)
 
 
+def apply_medium_confidence_fixes(spec: dict, changes: list[str]) -> None:
+    schemas = spec["components"]["schemas"]
+
+    schemas["CardDefinitionUpdateRequest"]["description"] = (
+        "Request body for updating a card definition.\n"
+        "All properties are optional. `type` and `status` cannot be updated.\n"
+        "When status is not `DRAFT` (`ACTIVE` or `INACTIVE`), only `name`, `metadata`, "
+        "and `pay_with_points` may be updated."
+    )
+    changes.append("CardDefinitionUpdateRequest description")
+
+    medium_desc: dict[str, str] = {}
+    for path, methods in spec["paths"].items():
+        if not path.startswith("/v2/loyalties"):
+            continue
+        for op in methods.values():
+            if not isinstance(op, dict) or not is_in_progress(op):
+                continue
+            oid = op.get("operationId", "")
+            badge = op["description"].split("</Info>\n\n", 1)[0] + "</Info>\n\n"
+
+            if oid == "updateCardDefinition":
+                medium_desc[oid] = (
+                    "Updates a card definition. All properties are optional; only provided sections\n"
+                    "are updated. `type` and `status` cannot be changed through this endpoint\n"
+                    "(status transitions are performed via the activate/draft endpoints).\n\n"
+                    "When status is not `DRAFT` (`ACTIVE` or `INACTIVE`), only `name`, `metadata`, "
+                    "and `pay_with_points` may be updated; other properties are rejected with `400` "
+                    "(key `invalid_payload`)."
+                )
+            elif oid == "deleteCardDefinition":
+                medium_desc[oid] = (
+                    "Soft-deletes a card definition and returns its last state with `status: DELETED`.\n"
+                    "Returns `400` (key `resource_in_use`) when the card definition is linked to a "
+                    "program, reward, earning rule, tier structure, or benefit."
+                )
+            elif oid == "deleteEarningRule":
+                medium_desc[oid] = (
+                    "Soft-deletes an earning rule and returns its last state with `status: DELETED`.\n"
+                    "Returns `400` (key `resource_in_use`) when the earning rule is assigned to a program."
+                )
+            elif oid == "updateEarningRule":
+                medium_desc[oid] = (
+                    "Updates an earning rule. All properties are optional; `status` cannot be changed\n"
+                    "through this endpoint (use the activate/deactivate/draft endpoints). For rules that\n"
+                    "are not in `DRAFT` status, only the following properties may effectively change:\n"
+                    "name, earnings, error, validity_hours, start_date, end_date, trigger_limits, "
+                    "earning_limits, metadata.\n"
+                    "Earnings items may carry an `id` (`lernei_...`) to update an existing earning item;\n"
+                    "items without an `id` are created."
+                )
+            elif oid == "batchProgramCardDefinitionAssignments":
+                medium_desc[oid] = (
+                    "Assigns and/or unassigns card definitions to/from a program in a single batch.\n"
+                    "Unassign operations are processed before assign operations.\n"
+                    "The program must be in `DRAFT` status - otherwise the request is rejected with\n"
+                    "`423 Locked` (key `non_draft_program`). Because the program must be `DRAFT`, "
+                    "card definitions in `DRAFT` or `INACTIVE` status may be assigned.\n"
+                    "In strict mode (default) missing card definitions or missing assignments cause the whole\n"
+                    "batch to fail."
+                )
+            elif oid == "listCardExpiringPoints":
+                medium_desc[oid] = (
+                    "Returns a cursor-paginated list of points expiration buckets of the member's card.\n"
+                    "Each bucket groups active points sharing the same expiration date and expiration\n"
+                    "type. Only `ACTIVE` buckets with an expiration date on or after the project date "
+                    "are included. Results can be ordered by `expiration_date`. Returns an empty list "
+                    "when points expiration is disabled on the card definition, or when no matching "
+                    "buckets exist. Returns `404` when the program, member, or card does not exist."
+                )
+            elif oid == "listCardDefinitionActivities":
+                medium_desc[oid] = (
+                    "Returns a cursor-paginated list of activities recorded for the card definition\n"
+                    "(creation, updates, deletion, state transitions and program assignments).\n"
+                    "Returns `404` when the card definition does not exist or is soft-deleted."
+                )
+            elif oid == "listEarningRuleActivities":
+                medium_desc[oid] = (
+                    "Returns a cursor-paginated list of activities recorded for the earning rule.\n"
+                    "Returns `404` when the earning rule does not exist or is soft-deleted."
+                )
+            elif oid == "createEarningRule":
+                medium_desc[oid] = (
+                    "Creates a new earning rule. When `status` is omitted the rule is created as `DRAFT`.\n"
+                    "When `validity_hours` is omitted it defaults to `{ \"type\": \"ANY_TIME\" }`.\n"
+                    "When `trigger_limits` is omitted it defaults to\n"
+                    "`{ \"cooldown\": { \"type\": \"NO_COOLDOWN\" }, \"frequency\": { \"type\": \"NO_LIMIT\" } }`.\n"
+                    "When `earning_limits` is omitted it defaults to "
+                    "`{ \"global\": { \"type\": \"NO_LIMIT\", \"limits\": [] } }`."
+                )
+
+            if oid in medium_desc:
+                op["description"] = badge + medium_desc[oid]
+                changes.append(f"{oid} medium description")
+
+
 def main() -> None:
+    import sys
+
+    medium_only = "--medium" in sys.argv
+
     with OPENAPI.open() as f:
         spec = json.load(f)
 
     schemas = spec["components"]["schemas"]
     changes: list[str] = []
+
+    if medium_only:
+        apply_medium_confidence_fixes(spec, changes)
+        with OPENAPI.open("w") as f:
+            json.dump(spec, f, indent=2, ensure_ascii=False)
+            f.write("\n")
+        print(f"Applied {len(changes)} medium change(s):")
+        for c in changes:
+            print(f"  - {c}")
+        return
 
     # --- Schema fixes ---
     schemas["TierPointsExpirationInput"] = TIER_POINTS_EXPIRATION_INPUT
