@@ -50205,7 +50205,7 @@
           },
           "status": {
             "type": "string",
-            "description": "Program status.",
+            "description": "Program status. `DELETED` is returned only by the delete endpoint and appears in activity snapshots. Deleted programs are excluded from get/list (404). Reads return `DRAFT`, `ACTIVE`, or `INACTIVE` only.",
             "enum": [
               "DRAFT",
               "ACTIVE",
@@ -50358,7 +50358,7 @@
             "type": "object",
             "properties": {
               "card_definitions": {
-                "description": "Card definitions assigned at creation, or `null` when none were provided.",
+                "description": "Card definitions assigned at creation. Returns an empty array when none were assigned.",
                 "oneOf": [
                   {
                     "type": "array",
@@ -50373,7 +50373,7 @@
                 ]
               },
               "earning_rules": {
-                "description": "Earning rules assigned at creation, or `null` when none were provided.",
+                "description": "Earning rules assigned at creation. Returns an empty array when none were assigned.",
                 "oneOf": [
                   {
                     "type": "array",
@@ -50388,7 +50388,7 @@
                 ]
               },
               "rewards": {
-                "description": "Rewards assigned at creation, or `null` when none were provided.",
+                "description": "Rewards assigned at creation. Returns an empty array when none were assigned.",
                 "oneOf": [
                   {
                     "type": "array",
@@ -50403,7 +50403,7 @@
                 ]
               },
               "tier_structures": {
-                "description": "Tier structures assigned at creation, or `null` when none were provided.",
+                "description": "Tier structures assigned at creation. Returns an empty array when none were assigned.",
                 "oneOf": [
                   {
                     "type": "array",
@@ -54540,8 +54540,7 @@
           "status": {
             "type": "string",
             "enum": [
-              "TRANSACTION_CREATED",
-              "NO_EXPIRATION"
+              "TRANSACTION_CREATED"
             ],
             "description": "Result status. The API endpoint returns `TRANSACTION_CREATED`."
           },
@@ -58137,7 +58136,11 @@
             "const": "report",
             "description": "Object type marker. Always `report`."
           }
-        }
+        },
+        "required": [
+          "data",
+          "object"
+        ]
       },
       "SpendingReportDailyEntry": {
         "type": "object",
@@ -58150,7 +58153,8 @@
           },
           "card_definition_id": {
             "type": "string",
-            "description": "Unique identifier of the card definition (format `lcdef_...`)."
+            "description": "Unique identifier of the card definition (format `lcdef_...`).",
+            "pattern": "^lcdef_[a-f0-9]+$"
           },
           "success": {
             "type": "number",
@@ -58193,11 +58197,13 @@
         "properties": {
           "id": {
             "type": "string",
-            "description": "Unique identifier of the summary row."
+            "description": "Unique identifier of the summary row.",
+            "pattern": "^lssum_[a-f0-9]+$"
           },
           "card_definition_id": {
             "type": "string",
-            "description": "Unique identifier of the card definition (format `lcdef_...`)."
+            "description": "Unique identifier of the card definition (format `lcdef_...`).",
+            "pattern": "^lcdef_[a-f0-9]+$"
           },
           "success": {
             "type": "number",
@@ -58250,7 +58256,11 @@
             "const": "report",
             "description": "Object type marker. Always `report`."
           }
-        }
+        },
+        "required": [
+          "data",
+          "object"
+        ]
       },
       "SpendingReportSummaryResponse": {
         "type": "object",
@@ -58268,7 +58278,11 @@
             "const": "report",
             "description": "Object type marker. Always `report`."
           }
-        }
+        },
+        "required": [
+          "data",
+          "object"
+        ]
       },
       "SpendingReportListFilters": {
         "type": "object",
@@ -62042,6 +62056,18 @@
                 "nullable": true
               }
             ]
+          },
+          "earning_limits": {
+            "description": "Global points earning limits. Defaults to `{ \"global\": { \"type\": \"NO_LIMIT\", \"limits\": [] } }` when omitted. Can be `null` on create/update.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/EarningRuleEarningLimits"
+              },
+              {
+                "type": "object",
+                "nullable": true
+              }
+            ]
           }
         },
         "required": [
@@ -62125,6 +62151,18 @@
             "oneOf": [
               {
                 "$ref": "#/components/schemas/EarningRuleTriggerLimits"
+              },
+              {
+                "type": "object",
+                "nullable": true
+              }
+            ]
+          },
+          "earning_limits": {
+            "description": "Global points earning limits. Defaults to `{ \"global\": { \"type\": \"NO_LIMIT\", \"limits\": [] } }` when omitted. Can be `null` on create/update.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/EarningRuleEarningLimits"
               },
               {
                 "type": "object",
@@ -64691,9 +64729,10 @@
             "enum": [
               "DRAFT",
               "ACTIVE",
-              "INACTIVE"
+              "INACTIVE",
+              "DELETED"
             ],
-            "description": "Current status. `DELETED` also exists internally but deleted rules are excluded from API reads."
+            "description": "Current status. `DELETED` appears only in the delete response and in activity snapshots. Deleted rules are excluded from get/list (404)."
           },
           "earnings": {
             "type": "array",
@@ -64772,6 +64811,14 @@
             "type": "string",
             "const": "earning_rule",
             "description": "Object type marker. Always `earning_rule`."
+          },
+          "earning_limits": {
+            "description": "Global points earning limits. Always present; defaults to `{ \"global\": { \"type\": \"NO_LIMIT\", \"limits\": [] } }`.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/EarningRuleEarningLimits"
+              }
+            ]
           }
         }
       },
@@ -64782,7 +64829,8 @@
         "properties": {
           "next": {
             "type": "string",
-            "description": "Cursor ID to pass as the `cursor` query parameter to fetch the next page."
+            "description": "Cursor ID to pass as the `cursor` query parameter to fetch the next page.",
+            "pattern": "^lcrsern_[a-f0-9]+$"
           },
           "expires_at": {
             "type": "string",
@@ -66671,6 +66719,18 @@
                 "nullable": true
               }
             ]
+          },
+          "points_expiration": {
+            "description": "Points expiration policy. Defaults to `{ \"type\": \"INHERIT\" }` when omitted.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/TierPointsExpirationInput"
+              },
+              {
+                "type": "object",
+                "nullable": true
+              }
+            ]
           }
         },
         "required": [
@@ -66718,6 +66778,18 @@
             "oneOf": [
               {
                 "type": "object"
+              },
+              {
+                "type": "object",
+                "nullable": true
+              }
+            ]
+          },
+          "points_expiration": {
+            "description": "Points expiration policy. Defaults to `{ \"type\": \"INHERIT\" }` when omitted.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/TierPointsExpirationInput"
               },
               {
                 "type": "object",
@@ -66940,7 +67012,7 @@
               "INACTIVE",
               "DELETED"
             ],
-            "description": "Current lifecycle status of the tier structure."
+            "description": "Current lifecycle status. `DELETED` appears only in the delete response and in activity snapshots. Deleted tier structures are excluded from get/list (404)."
           },
           "created_at": {
             "type": "string",
@@ -67314,6 +67386,14 @@
             "type": "string",
             "const": "tier",
             "description": "Object type discriminator. Always `tier`."
+          },
+          "points_expiration": {
+            "description": "Points expiration policy. Always present; defaults to `{ \"type\": \"INHERIT\" }`.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/TierPointsExpiration"
+              }
+            ]
           }
         },
         "required": [
@@ -67324,7 +67404,8 @@
           "metadata",
           "created_at",
           "updated_at",
-          "object"
+          "object",
+          "points_expiration"
         ]
       },
       "TierQualificationRules": {
@@ -68327,7 +68408,7 @@
       },
       "TierStructureFilterStatusField": {
         "type": "object",
-        "description": "Enum field filter for tier structure `status`. Allowed conditions: `$is`,\n`$is_not`, `$in`, `$not_in`. Allowed values: `DRAFT`, `ACTIVE`, `INACTIVE`,\n`DELETED`.",
+        "description": "Enum field filter for tier structure `status`. Allowed conditions: `$is`,\n`$is_not`, `$in`, `$not_in`. Allowed values: `DRAFT`, `ACTIVE`, `INACTIVE`.\nSoft-deleted tier structures are excluded from list results, so filtering by `DELETED` never matches.",
         "properties": {
           "conditions": {
             "type": "object",
@@ -68343,8 +68424,7 @@
                     "enum": [
                       "DRAFT",
                       "ACTIVE",
-                      "INACTIVE",
-                      "DELETED"
+                      "INACTIVE"
                     ]
                   },
                   {
@@ -68356,8 +68436,7 @@
                       "enum": [
                         "DRAFT",
                         "ACTIVE",
-                        "INACTIVE",
-                        "DELETED"
+                        "INACTIVE"
                       ]
                     }
                   },
@@ -68375,8 +68454,7 @@
                     "enum": [
                       "DRAFT",
                       "ACTIVE",
-                      "INACTIVE",
-                      "DELETED"
+                      "INACTIVE"
                     ]
                   },
                   {
@@ -68388,8 +68466,7 @@
                       "enum": [
                         "DRAFT",
                         "ACTIVE",
-                        "INACTIVE",
-                        "DELETED"
+                        "INACTIVE"
                       ]
                     }
                   },
@@ -68407,8 +68484,7 @@
                     "enum": [
                       "DRAFT",
                       "ACTIVE",
-                      "INACTIVE",
-                      "DELETED"
+                      "INACTIVE"
                     ]
                   },
                   {
@@ -68420,8 +68496,7 @@
                       "enum": [
                         "DRAFT",
                         "ACTIVE",
-                        "INACTIVE",
-                        "DELETED"
+                        "INACTIVE"
                       ]
                     }
                   },
@@ -68439,8 +68514,7 @@
                     "enum": [
                       "DRAFT",
                       "ACTIVE",
-                      "INACTIVE",
-                      "DELETED"
+                      "INACTIVE"
                     ]
                   },
                   {
@@ -68452,8 +68526,7 @@
                       "enum": [
                         "DRAFT",
                         "ACTIVE",
-                        "INACTIVE",
-                        "DELETED"
+                        "INACTIVE"
                       ]
                     }
                   },
@@ -69048,7 +69121,7 @@
       },
       "BenefitUpdateRequest": {
         "type": "object",
-        "description": "Request body for updating a benefit. All properties are optional; omitted properties keep\ntheir current values. When the benefit is `ACTIVE`, only `name` and `stock` may be updated.\nAfter the update, the type-specific configuration must stay consistent with the (possibly\nupdated) `type`.",
+        "description": "Request body for updating a benefit. All properties are optional; omitted properties keep\ntheir current values. When the benefit is `ACTIVE`, only `name` and `stock` may be updated.\nAfter the update, the type-specific configuration must stay consistent with the (possibly\nupdated) `type`. When the benefit is `ACTIVE`, only `name`, `stock`, `points`, `points_proportional`, and `digital` may be changed.",
         "properties": {
           "name": {
             "type": "string",
@@ -70492,10 +70565,22 @@
             }
           },
           "cursor": {
-            "description": "Pagination cursor. `null` when there are no more results.",
+            "description": "Pagination cursor for fetching the next page, or `null` when there are no more results.",
             "oneOf": [
               {
-                "$ref": "#/components/schemas/BenefitListCursor"
+                "type": "object",
+                "properties": {
+                  "next": {
+                    "type": "string",
+                    "pattern": "^lcrsaben_[a-f0-9]+$",
+                    "description": "Cursor id to pass as the `cursor` query parameter for the next page."
+                  },
+                  "expires_at": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "Timestamp after which the cursor expires (ISO 8601)."
+                  }
+                }
               },
               {
                 "type": "object",
@@ -71778,7 +71863,7 @@
       },
       "RewardUpdateRequest": {
         "type": "object",
-        "description": "Request body for updating a reward.\nAll properties are optional. When `type` is provided as\n`MATERIAL`, `material` is required and `digital` must be null; when `type` is\nprovided as `DIGITAL`, `digital` is required and `material` must be null.\nIn ACTIVE/INACTIVE status only `name`, `metadata`, `refunds`, `validity_hours`,\n`start_date`, `end_date` and `costs` can be updated.",
+        "description": "Request body for updating a reward.\nAll properties are optional. When `type` is provided as\n`MATERIAL`, `material` is required and `digital` must be null; when `type` is\nprovided as `DIGITAL`, `digital` is required and `material` must be null.\nIn ACTIVE/INACTIVE status only `name`, `metadata`, `refunds`, `validity_hours`,\n`start_date`, `end_date` and `costs` can be updated. When the reward is `ACTIVE` or `INACTIVE`, only `name`, `metadata`, `costs`, `material`, `digital`, and `purchase_limits` may be changed.",
         "properties": {
           "name": {
             "type": "string",
@@ -73348,7 +73433,7 @@
               "INACTIVE",
               "DELETED"
             ],
-            "description": "Current lifecycle status of the reward."
+            "description": "Current lifecycle status. `DELETED` appears only in the delete response and in activity snapshots. Deleted rewards are excluded from get/list (404)."
           },
           "start_date": {
             "type": "string",
@@ -74021,10 +74106,22 @@
             }
           },
           "cursor": {
-            "description": "Pagination cursor, or `null` when there are no more results.",
+            "description": "Pagination cursor for fetching the next page, or `null` when there are no more results.",
             "oneOf": [
               {
-                "$ref": "#/components/schemas/RewardListCursor"
+                "type": "object",
+                "properties": {
+                  "next": {
+                    "type": "string",
+                    "pattern": "^lcrsarew_[a-f0-9]+$",
+                    "description": "Cursor id to pass as the `cursor` query parameter for the next page."
+                  },
+                  "expires_at": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "Timestamp after which the cursor expires (ISO 8601)."
+                  }
+                }
               },
               {
                 "type": "object",
@@ -75909,7 +76006,11 @@
             "const": "report",
             "description": "Object type marker. Always `report`."
           }
-        }
+        },
+        "required": [
+          "data",
+          "object"
+        ]
       },
       "TiersReportSummaryEntry": {
         "type": "object",
@@ -75917,7 +76018,8 @@
         "properties": {
           "id": {
             "type": "string",
-            "description": "Unique identifier of the summary row."
+            "description": "Unique identifier of the summary row.",
+            "pattern": "^lptrs_[a-f0-9]+$"
           },
           "tier_structure_id": {
             "type": "string",
@@ -75972,7 +76074,11 @@
             "const": "report",
             "description": "Object type marker. Always `report`."
           }
-        }
+        },
+        "required": [
+          "data",
+          "object"
+        ]
       },
       "MemberTierProgressTier": {
         "type": "object",
@@ -76725,7 +76831,8 @@
           },
           "earning_item_id": {
             "type": "string",
-            "description": "Identifier of the earning item that produced the points."
+            "description": "Identifier of the earning item that produced the points.",
+            "pattern": "^lernei_[a-f0-9]+$"
           },
           "card_definition_id": {
             "type": "string",
@@ -76757,7 +76864,8 @@
         "properties": {
           "id": {
             "type": "string",
-            "description": "Unique identifier of the summary row."
+            "description": "Unique identifier of the summary row.",
+            "pattern": "^lppes_[a-f0-9]+$"
           },
           "earning_rule_id": {
             "type": "string",
@@ -76766,7 +76874,8 @@
           },
           "earning_item_id": {
             "type": "string",
-            "description": "Identifier of the earning item that produced the points."
+            "description": "Identifier of the earning item that produced the points.",
+            "pattern": "^lernei_[a-f0-9]+$"
           },
           "card_definition_id": {
             "type": "string",
@@ -76808,7 +76917,11 @@
             "const": "report",
             "description": "Object type marker. Always `report`."
           }
-        }
+        },
+        "required": [
+          "data",
+          "object"
+        ]
       },
       "PointsEarningsReportSummaryResponse": {
         "type": "object",
@@ -76826,7 +76939,11 @@
             "const": "report",
             "description": "Object type marker. Always `report`."
           }
-        }
+        },
+        "required": [
+          "data",
+          "object"
+        ]
       },
       "EarningRulesReportFilterEarningRuleIdConditions": {
         "type": "object",
@@ -77020,7 +77137,15 @@
             "const": "program_earning_rules_daily_report",
             "description": "Object type marker. Always `program_earning_rules_daily_report`."
           }
-        }
+        },
+        "required": [
+          "date",
+          "earning_rule_id",
+          "success_count",
+          "failures_count",
+          "failures_breakdown",
+          "object"
+        ]
       },
       "EarningRulesReportSummaryEntry": {
         "type": "object",
@@ -77028,7 +77153,8 @@
         "properties": {
           "id": {
             "type": "string",
-            "description": "Unique identifier of the summary row."
+            "description": "Unique identifier of the summary row.",
+            "pattern": "^lpers_[a-f0-9]+$"
           },
           "earning_rule_id": {
             "type": "string",
@@ -77056,7 +77182,15 @@
             "const": "program_earning_rules_summary_report",
             "description": "Object type marker. Always `program_earning_rules_summary_report`."
           }
-        }
+        },
+        "required": [
+          "id",
+          "earning_rule_id",
+          "success_count",
+          "failures_count",
+          "failures_breakdown",
+          "object"
+        ]
       },
       "EarningRulesReportDailyResponse": {
         "type": "object",
@@ -77074,7 +77208,11 @@
             "const": "report",
             "description": "Object type marker. Always `report`."
           }
-        }
+        },
+        "required": [
+          "data",
+          "object"
+        ]
       },
       "EarningRulesReportSummaryResponse": {
         "type": "object",
@@ -77092,7 +77230,11 @@
             "const": "report",
             "description": "Object type marker. Always `report`."
           }
-        }
+        },
+        "required": [
+          "data",
+          "object"
+        ]
       },
       "EarningRuleDailyReportEntry": {
         "type": "object",
@@ -77130,7 +77272,225 @@
             "const": "report",
             "description": "Object type marker. Always `report`."
           }
-        }
+        },
+        "required": [
+          "data",
+          "object"
+        ]
+      },
+      "EarningRuleEarningLimitsGlobalLimit": {
+        "type": "object",
+        "description": "A time-based global earning limit.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "TIME_BASED"
+            ],
+            "description": "Limit type."
+          },
+          "period": {
+            "$ref": "#/components/schemas/EarningRuleEarningLimitsGlobalLimitPeriod"
+          },
+          "points": {
+            "type": "object",
+            "properties": {
+              "max": {
+                "type": "number",
+                "minimum": 1,
+                "description": "Maximum points earned in the period."
+              }
+            },
+            "required": [
+              "max"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "type",
+          "period",
+          "points"
+        ],
+        "additionalProperties": false
+      },
+      "EarningRuleEarningLimitsGlobalLimitPeriod": {
+        "type": "object",
+        "description": "Period configuration for a time-based earning limit.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "CURRENT_PERIOD"
+            ],
+            "description": "Period type."
+          },
+          "current_period": {
+            "type": "object",
+            "properties": {
+              "unit": {
+                "type": "string",
+                "enum": [
+                  "DAY",
+                  "WEEK",
+                  "MONTH",
+                  "QUARTER",
+                  "YEAR"
+                ],
+                "description": "Calendar unit for the current period."
+              }
+            },
+            "required": [
+              "unit"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "type",
+          "current_period"
+        ],
+        "additionalProperties": false
+      },
+      "EarningRuleEarningLimitsGlobal": {
+        "type": "object",
+        "description": "Global earning limits for the rule.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "NO_LIMIT",
+              "LIMITED"
+            ],
+            "description": "Whether global earning limits apply."
+          },
+          "limits": {
+            "type": "array",
+            "description": "Limit definitions. Empty when `type` is `NO_LIMIT`.",
+            "items": {
+              "$ref": "#/components/schemas/EarningRuleEarningLimitsGlobalLimit"
+            }
+          }
+        },
+        "required": [
+          "type",
+          "limits"
+        ],
+        "additionalProperties": false
+      },
+      "EarningRuleEarningLimits": {
+        "type": "object",
+        "description": "Points earning limits for the rule. Defaults to `{ \"global\": { \"type\": \"NO_LIMIT\", \"limits\": [] } }` when omitted on create.",
+        "properties": {
+          "global": {
+            "$ref": "#/components/schemas/EarningRuleEarningLimitsGlobal"
+          }
+        },
+        "required": [
+          "global"
+        ],
+        "additionalProperties": false
+      },
+      "TierPointsExpiration": {
+        "type": "object",
+        "description": "Points expiration policy for the tier. Always present on responses; defaults to `{ \"type\": \"INHERIT\" }` when omitted on create.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "INHERIT",
+              "NO_EXPIRATION",
+              "ROLLING_EXPIRATION",
+              "CALENDAR_EXPIRATION",
+              "SLIDING_EXPIRATION"
+            ],
+            "description": "Expiration type. `INHERIT` uses the parent tier structure or card definition policy."
+          },
+          "rolling_expiration": {
+            "description": "Rolling expiration configuration. Only present when `type` is `ROLLING_EXPIRATION`.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CardDefinitionPointsExpirationRollingExpiration"
+              }
+            ]
+          },
+          "calendar_expiration": {
+            "description": "Calendar expiration configuration. Only present when `type` is `CALENDAR_EXPIRATION`.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CardDefinitionPointsExpirationCalendarExpiration"
+              }
+            ]
+          },
+          "sliding_expiration": {
+            "description": "Sliding expiration configuration. Only present when `type` is `SLIDING_EXPIRATION`.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CardDefinitionPointsExpirationSlidingExpiration"
+              }
+            ]
+          }
+        },
+        "required": [
+          "type"
+        ]
+      },
+      "TierPointsExpirationInput": {
+        "type": "object",
+        "description": "Points expiration policy for the tier.\nConditional requirements based on `type`:\n- `INHERIT`: `rolling_expiration`, `calendar_expiration` and `sliding_expiration` must be null/absent.\n- `NO_EXPIRATION`: `rolling_expiration`, `calendar_expiration` and `sliding_expiration` must be null/absent.\n- `ROLLING_EXPIRATION`: `rolling_expiration` is required; the other two must be null/absent.\n- `CALENDAR_EXPIRATION`: `calendar_expiration` is required; the other two must be null/absent.\n- `SLIDING_EXPIRATION`: `sliding_expiration` is required; the other two must be null/absent.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "INHERIT",
+              "NO_EXPIRATION",
+              "ROLLING_EXPIRATION",
+              "CALENDAR_EXPIRATION",
+              "SLIDING_EXPIRATION"
+            ],
+            "description": "Expiration type. `INHERIT` uses the parent tier structure or card definition policy."
+          },
+          "rolling_expiration": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/CardDefinitionPointsExpirationRollingExpirationInput"
+              },
+              {
+                "type": "object",
+                "nullable": true
+              }
+            ],
+            "description": "Rolling expiration configuration. Required when `type` is `ROLLING_EXPIRATION`, must be null otherwise."
+          },
+          "calendar_expiration": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/CardDefinitionPointsExpirationCalendarExpirationInput"
+              },
+              {
+                "type": "object",
+                "nullable": true
+              }
+            ],
+            "description": "Calendar expiration configuration. Required when `type` is `CALENDAR_EXPIRATION`, must be null otherwise."
+          },
+          "sliding_expiration": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/CardDefinitionPointsExpirationSlidingExpirationInput"
+              },
+              {
+                "type": "object",
+                "nullable": true
+              }
+            ],
+            "description": "Sliding expiration configuration. Required when `type` is `SLIDING_EXPIRATION`, must be null otherwise."
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "additionalProperties": false
       }
     },
     "examples": {
@@ -129135,7 +129495,7 @@
           "Programs"
         ],
         "summary": "Create program",
-        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nCreates a new loyalty program. The program can be created with status `DRAFT` (default) or\n`ACTIVE`. When created as `ACTIVE`, the program must be connected to at least one active\ncard definition and at least one active earning rule (provided via `card_definitions` and\n`earning_rules` arrays), otherwise the request is rejected with `423 Locked`\n(keys `missing_active_card_definition` / `missing_active_earning_rule`).\nOptionally assigns card definitions, earning rules, rewards and tier structures in the same request.",
+        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nCreates a new loyalty program. The program can be created with status `DRAFT` (default) or\n`ACTIVE`. When created as `ACTIVE`, the program must be connected to at least one active\ncard definition and at least one active earning rule (provided via `card_definitions` and\n`earning_rules` arrays), otherwise the request is rejected with `423 Locked`\n(keys `missing_active_card_definition` / `missing_active_earning_rule`).\nOptionally assigns card definitions, earning rules, rewards and tier structures in the same request.\nWhen both `start_date` and `end_date` are set, `start_date` must be before `end_date`.\nDuplicate ids within an assignment array are rejected with `400`. Referenced card definitions,\nearning rules, rewards or tier structures that do not exist return `404`. Assignment count\nlimits return `403` (key `limit_exceeded`).",
         "requestBody": {
           "required": true,
           "content": {
@@ -129167,8 +129527,8 @@
               }
             }
           },
-          "404": {
-            "description": "Resource not found.",
+          "403": {
+            "description": "Limit exceeded - e.g. too many assignments in a single request.",
             "content": {
               "application/json": {
                 "schema": {
@@ -129177,8 +129537,8 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
+          "404": {
+            "description": "Resource not found.",
             "content": {
               "application/json": {
                 "schema": {
@@ -129215,7 +129575,7 @@
           "Programs"
         ],
         "summary": "List programs",
-        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nReturns a cursor-paginated list of loyalty programs. Supports filtering by `id`, `name`,\n`status` and `created_at`. The same field cannot be used in both ascending and descending\norder at once.",
+        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nReturns a cursor-paginated list of loyalty programs. Supports filtering by `id`, `name`,\n`status` and `created_at`. The same field cannot be used in both ascending and descending\norder at once. Soft-deleted programs are excluded. Passing a `cursor` that does not match\nthe current query returns `400` (key `cursor_and_query_mismatch`).",
         "parameters": [
           {
             "name": "filters",
@@ -129330,16 +129690,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
           "500": {
             "description": "Internal server error.",
             "content": {
@@ -129360,10 +129710,10 @@
           "Programs"
         ],
         "summary": "Get program",
-        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nReturns a single loyalty program by its id.",
+        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nReturns a single loyalty program by its id. Soft-deleted programs are treated as not found\nand return `404`. The response does not include assignment ids (card definitions, earning\nrules, rewards or tier structures) — use the dedicated assignment list endpoints.",
         "parameters": [
           {
-            "name": "id",
+            "name": "programId",
             "in": "path",
             "required": true,
             "description": "Unique program identifier.",
@@ -129404,16 +129754,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
           "500": {
             "description": "Internal server error.",
             "content": {
@@ -129432,10 +129772,10 @@
           "Programs"
         ],
         "summary": "Update program",
-        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nUpdates a loyalty program. When the program is not in `DRAFT` status, only `name` and\n`metadata` may be changed (other properties are restricted after leaving draft).",
+        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nUpdates a loyalty program. When the program is not in `DRAFT` status, only `name`, `end_date`, and `metadata` may be changed (other properties are restricted after leaving draft).",
         "parameters": [
           {
-            "name": "id",
+            "name": "programId",
             "in": "path",
             "required": true,
             "description": "Unique program identifier.",
@@ -129486,16 +129826,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
           "500": {
             "description": "Internal server error.",
             "content": {
@@ -129517,7 +129847,7 @@
         "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nSoft-deletes a loyalty program and removes all of its card definition, earning rule,\nreward and tier structure assignments.",
         "parameters": [
           {
-            "name": "id",
+            "name": "programId",
             "in": "path",
             "required": true,
             "description": "Unique program identifier.",
@@ -129558,16 +129888,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
           "500": {
             "description": "Internal server error.",
             "content": {
@@ -129588,10 +129908,10 @@
           "Programs"
         ],
         "summary": "Activate program",
-        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nTransitions the program to `ACTIVE` status. Allowed transitions to `ACTIVE` are from\n`DRAFT` and `INACTIVE`. Before activation the program's card definition, earning rule\nand tier structure assignments are validated (at least one active card definition and\nearning rule is required). An invalid state transition is rejected with `400`\n(key `invalid_state_transition`). No request body.",
+        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nTransitions the program to `ACTIVE` status. Allowed transitions to `ACTIVE` are from\n`DRAFT` and `INACTIVE`. Requires at least one assigned `ACTIVE` card definition and\nat least one assigned `ACTIVE` earning rule (423 keys `missing_active_card_definition`,\n`missing_active_earning_rule`). Tier structures are optional; when assigned, from `DRAFT`\nall assigned tier structures must be `ACTIVE` (423 key `connected_non_active_tier_structure`);\nfrom `INACTIVE`, no assigned tier structure may be `DRAFT` (423 key\n`connected_draft_tier_structure`; `INACTIVE` tier structures are allowed). An invalid\nstate transition is rejected with `400` (key `invalid_state_transition`). No request body.",
         "parameters": [
           {
-            "name": "id",
+            "name": "programId",
             "in": "path",
             "required": true,
             "description": "Unique program identifier.",
@@ -129624,16 +129944,6 @@
           },
           "404": {
             "description": "Resource not found.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
             "content": {
               "application/json": {
                 "schema": {
@@ -129675,7 +129985,7 @@
         "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nTransitions the program to `INACTIVE` status. Only an `ACTIVE` program can be deactivated.\nAn invalid state transition is rejected with `400` (key `invalid_state_transition`).\nNo request body.",
         "parameters": [
           {
-            "name": "id",
+            "name": "programId",
             "in": "path",
             "required": true,
             "description": "Unique program identifier.",
@@ -129716,16 +130026,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
           "500": {
             "description": "Internal server error.",
             "content": {
@@ -129749,7 +130049,7 @@
         "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nReturns a cursor-paginated list of activities recorded for a program (created, updated,\ndeleted, activated, deactivated and assignment changes). Supports filtering by activity\n`id`, `type` and `created_at`.",
         "parameters": [
           {
-            "name": "id",
+            "name": "programId",
             "in": "path",
             "required": true,
             "description": "Unique program identifier.",
@@ -129867,16 +130167,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
           "500": {
             "description": "Internal server error.",
             "content": {
@@ -129900,7 +130190,7 @@
         "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nReturns a cursor-paginated list of card definitions assigned to the program.",
         "parameters": [
           {
-            "name": "id",
+            "name": "programId",
             "in": "path",
             "required": true,
             "description": "Unique program identifier.",
@@ -129999,16 +130289,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
           "500": {
             "description": "Internal server error.",
             "content": {
@@ -130032,7 +130312,7 @@
         "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nAssigns and/or unassigns card definitions to/from a program in a single batch.\nUnassign operations are processed before assign operations.\nThe program must be in `DRAFT` status - otherwise the request is rejected with\n`423 Locked` (key `non_draft_program`). In strict mode (default) missing card\ndefinitions, inactive card definitions or missing assignments cause the whole\nbatch to fail.",
         "parameters": [
           {
-            "name": "id",
+            "name": "programId",
             "in": "path",
             "required": true,
             "description": "Unique program identifier.",
@@ -130065,6 +130345,16 @@
           },
           "400": {
             "description": "Validation error - request body or query parameters failed validation, or the operation is not allowed in the current resource state.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Limit exceeded - assignment or resource count limit reached.",
             "content": {
               "application/json": {
                 "schema": {
@@ -130126,7 +130416,7 @@
         "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nReturns a cursor-paginated list of earning rules assigned to the program.",
         "parameters": [
           {
-            "name": "id",
+            "name": "programId",
             "in": "path",
             "required": true,
             "description": "Unique program identifier.",
@@ -130225,16 +130515,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
           "500": {
             "description": "Internal server error.",
             "content": {
@@ -130258,7 +130538,7 @@
         "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nAssigns and/or unassigns earning rules to/from a program in a single batch.\nUnassign operations are processed before assign operations. When the program is\n`ACTIVE`, the batch is validated to leave at least one active earning rule assigned.\nIn strict mode (default) missing earning rules or missing assignments cause the whole\nbatch to fail.",
         "parameters": [
           {
-            "name": "id",
+            "name": "programId",
             "in": "path",
             "required": true,
             "description": "Unique program identifier.",
@@ -130291,6 +130571,16 @@
           },
           "400": {
             "description": "Validation error - request body or query parameters failed validation, or the operation is not allowed in the current resource state.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Limit exceeded - assignment count exceeds the allowed maximum.",
             "content": {
               "application/json": {
                 "schema": {
@@ -130352,7 +130642,7 @@
         "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nReturns a cursor-paginated list of tier structures assigned to the program.",
         "parameters": [
           {
-            "name": "id",
+            "name": "programId",
             "in": "path",
             "required": true,
             "description": "Unique program identifier.",
@@ -130451,16 +130741,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
           "500": {
             "description": "Internal server error.",
             "content": {
@@ -130484,7 +130764,7 @@
         "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nAssigns and/or unassigns tier structures to/from a program in a single batch.\nUnassign operations are processed before assign operations. Unassigning is only\nallowed while the program is in `DRAFT` status - otherwise the request is rejected\nwith `423 Locked` (key `non_draft_program`). A program can have at most one tier\nstructure assigned. In strict mode (default) missing tier structures, inactive tier\nstructures or missing assignments cause the whole batch to fail.",
         "parameters": [
           {
-            "name": "id",
+            "name": "programId",
             "in": "path",
             "required": true,
             "description": "Unique program identifier.",
@@ -130517,6 +130797,16 @@
           },
           "400": {
             "description": "Validation error - request body or query parameters failed validation, or the operation is not allowed in the current resource state.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Limit exceeded - assignment or resource count limit reached.",
             "content": {
               "application/json": {
                 "schema": {
@@ -130677,16 +130967,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
           "500": {
             "description": "Internal server error.",
             "content": {
@@ -130743,6 +131023,16 @@
           },
           "400": {
             "description": "Validation error - request body or query parameters failed validation, or the operation is not allowed in the current resource state.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Limit exceeded - assignment count exceeds the allowed maximum.",
             "content": {
               "application/json": {
                 "schema": {
@@ -130847,16 +131137,6 @@
           },
           "404": {
             "description": "Resource not found.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
             "content": {
               "application/json": {
                 "schema": {
@@ -131145,7 +131425,7 @@
           "Programs"
         ],
         "summary": "List program members",
-        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nReturns a cursor-paginated list of members of the program. Results can be filtered\nby id, status, customer_id and created_at, and ordered by created_at, status or\ncustomer_id (ascending or descending). The same field cannot be ordered both\nascending and descending at the same time.\nReturns `404` when the program does not exist.\n\nList items do not include the `cards` array - use the get-member endpoint to\nretrieve a member with cards.",
+        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nReturns a cursor-paginated list of members of the program. Results can be filtered\nby id, status, customer_id and created_at, and ordered by created_at, status or\ncustomer_id (ascending or descending). The same field cannot be ordered both\nascending and descending at the same time.\nReturns `404` when the program does not exist.\n\nList items do not include the `cards` array - use the get-member endpoint to\nretrieve a member with cards.\n\nSoft-deleted members are excluded. Invalid, expired, or query-mismatched cursors return `400` (keys `invalid_query_params`, `invalid_or_expired_cursor`, `cursor_and_query_mismatch`).",
         "parameters": [
           {
             "name": "programId",
@@ -131263,16 +131543,6 @@
           },
           "404": {
             "description": "Resource not found.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
             "content": {
               "application/json": {
                 "schema": {
@@ -131612,7 +131882,7 @@
             }
           },
           "404": {
-            "description": "Resource not found. Returns `Cannot find member with id <member_id>` even if the program ID is incorrect, but the member ID is correct.",
+            "description": "Resource not found. Returns `resource_type: program` when the program ID does not exist. Returns `resource_type: member` when the member is not found in the program.",
             "content": {
               "application/json": {
                 "schema": {
@@ -131767,28 +132037,8 @@
               }
             }
           },
-          "400": {
-            "description": "Validation error - request body or query parameters failed validation, or the operation is not allowed in the current resource state.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
           "404": {
             "description": "Resource not found.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
             "content": {
               "application/json": {
                 "schema": {
@@ -131828,7 +132078,7 @@
           "Programs"
         ],
         "summary": "Get customer memberships",
-        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nReturns all loyalty memberships for a customer across programs, including the resolved customer identity and each membership's member, program, and cards. Use `identification_type` to choose how the `customerId` path value is interpreted.\n\nReturns an empty `memberships` array when the customer exists but has no memberships. Returns `404` when the customer or member cannot be resolved.",
+        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nReturns all loyalty memberships for a customer across programs, including the resolved customer identity and each membership's member, program, and cards. Use `identification_type` to choose how the `customerId` path value is interpreted.\n\nReturns an empty `memberships` array when the customer exists but has no memberships. Returns `404` when the customer or member cannot be resolved.\n\nReturns ACTIVE and INACTIVE memberships across all programs. Cards use the simple card shape (balance, lifetime_bucket, next_expiration, next_activation) without tier_progress.",
         "parameters": [
           {
             "name": "identification_type",
@@ -131886,7 +132136,7 @@
                               "member_role": "OWNER",
                               "created_at": "2026-06-11T15:59:41.298Z",
                               "card": {
-                                "id": "lcard_128f962dbc8c4ba5dc",
+                                "id": "lcrd_128f962dbc8c4ba5dc",
                                 "card_definition_id": "lcdef_128f58429f4c4bf7b2",
                                 "card_type": "INDIVIDUAL",
                                 "code": "CARD-001",
@@ -132252,16 +132502,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
           "500": {
             "description": "Internal server error.",
             "content": {
@@ -132336,16 +132576,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
           "500": {
             "description": "Internal server error.",
             "content": {
@@ -132366,7 +132596,7 @@
           "Programs"
         ],
         "summary": "List member activities",
-        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nReturns a cursor-paginated list of activities recorded for the member (created,\ndeleted, activated, deactivated, card assigned, card unassigned). Results can be\nfiltered by id, type and created_at. Returns `404` when the program or member does\nnot exist.",
+        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nReturns a cursor-paginated list of activities recorded for the member (created,\nupdated, deleted, activated, deactivated, card assigned, card unassigned). Results can be\nfiltered by id, type and created_at. Returns `404` when the program or member does\nnot exist.",
         "parameters": [
           {
             "name": "programId",
@@ -132482,16 +132712,6 @@
           },
           "404": {
             "description": "Resource not found.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
             "content": {
               "application/json": {
                 "schema": {
@@ -132913,16 +133133,6 @@
           },
           "404": {
             "description": "Resource not found.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
             "content": {
               "application/json": {
                 "schema": {
@@ -133651,16 +133861,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
           "500": {
             "description": "Internal server error.",
             "content": {
@@ -133681,7 +133881,7 @@
           "Programs"
         ],
         "summary": "Expire points bucket",
-        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nManually expires a points bucket before its scheduled expiration date, creating an\n`ADMIN_POINTS_EXPIRATION` card transaction (status `PENDING`, processed\nasynchronously). No request body.\n\nThe program and member must be in `ACTIVE` status, the card definition must have\npoints expiration enabled, the bucket must be in `ACTIVE` status, and the bucket's\nexpiration date must not be in the past (423 otherwise). Returns `404` when the\nprogram, member, card or bucket does not exist.",
+        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nManually expires a points bucket before its scheduled expiration date, creating an\n`ADMIN_POINTS_EXPIRATION` card transaction (status `PENDING`, processed\nasynchronously). No request body.\n\nThe program and member must be in `ACTIVE` status, the card definition must have\npoints expiration enabled, the bucket must be in `ACTIVE` status, and the bucket's\nexpiration_date must be in the future (423 key `bucket_not_eligible_for_manual_expiration` otherwise). Other 423 keys include `non_active_program`, `program_outside_validity_window`, `non_active_member`, `points_expiration_not_enabled`, and `invalid_points_bucket_status`. Returns `404` when the\nprogram, member, card or bucket does not exist.",
         "parameters": [
           {
             "name": "programId",
@@ -133747,16 +133947,6 @@
           },
           "404": {
             "description": "Resource not found.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
             "content": {
               "application/json": {
                 "schema": {
@@ -134101,7 +134291,7 @@
           "Programs"
         ],
         "summary": "Refund a reward purchase",
-        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nRefunds a previously approved reward purchase transaction. Creates a REFUND-type reward\ntransaction and schedules the return of the spent points to the member's card\n(\"Reward refund transaction created. Points will be returned to the member's card shortly.\").\n\nThe refunded purchase transaction must be of type `PURCHASE` and in `APPROVED` status,\notherwise the request is rejected with a conflict error.\n\nThe request body is optional (an empty payload is allowed). When omitted, default\npolicies are applied: `refund: DEFAULT`, `stock: DEFAULT`.",
+        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nRefunds a previously approved reward purchase transaction. Creates a REFUND-type reward\ntransaction and schedules the return of the spent points to the member's card\n(\"Reward refund transaction created. Points will be returned to the member's card shortly.\").\n\nThe refunded purchase transaction must be of type `PURCHASE` and in `APPROVED` status,\notherwise the request is rejected with `423 Locked`.\n\nThe request body is optional (an empty payload is allowed). When omitted, default\npolicies are applied: `refund: DEFAULT`, `stock: DEFAULT`.",
         "parameters": [
           {
             "name": "programId",
@@ -134109,7 +134299,8 @@
             "required": true,
             "description": "Unique loyalty program identifier (format: `lprg_` followed by hexadecimal characters).",
             "schema": {
-              "type": "string"
+              "type": "string",
+              "pattern": "^lprg_[a-f0-9]+$"
             }
           },
           {
@@ -134118,7 +134309,8 @@
             "required": true,
             "description": "Unique reward transaction identifier of the purchase to refund (format: `lrtx_` followed by hexadecimal characters).",
             "schema": {
-              "type": "string"
+              "type": "string",
+              "pattern": "^lrtx_[a-f0-9]+$"
             }
           }
         ],
@@ -134164,8 +134356,8 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
+          "423": {
+            "description": "Resource locked - operation blocked by resource state or relations.",
             "content": {
               "application/json": {
                 "schema": {
@@ -135293,7 +135485,8 @@
             "required": true,
             "description": "Unique loyalty program identifier (format: `lprg_` followed by hexadecimal characters).",
             "schema": {
-              "type": "string"
+              "type": "string",
+              "pattern": "^lprg_[a-f0-9]+$"
             }
           },
           {
@@ -135404,16 +135597,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
           "500": {
             "description": "Internal server error.",
             "content": {
@@ -135442,7 +135625,8 @@
             "required": true,
             "description": "Unique loyalty program identifier (format: `lprg_` followed by hexadecimal characters).",
             "schema": {
-              "type": "string"
+              "type": "string",
+              "pattern": "^lprg_[a-f0-9]+$"
             }
           },
           {
@@ -135553,16 +135737,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
           "500": {
             "description": "Internal server error.",
             "content": {
@@ -135591,7 +135765,8 @@
             "required": true,
             "description": "Unique loyalty program identifier (format: `lprg_` followed by hexadecimal characters).",
             "schema": {
-              "type": "string"
+              "type": "string",
+              "pattern": "^lprg_[a-f0-9]+$"
             }
           },
           {
@@ -135610,7 +135785,8 @@
             "required": true,
             "description": "Unique loyalty card identifier (format: `lcrd_` followed by hexadecimal characters).",
             "schema": {
-              "type": "string"
+              "type": "string",
+              "pattern": "^lcrd_[a-f0-9]+$"
             }
           },
           {
@@ -135628,7 +135804,7 @@
             "name": "end_date",
             "in": "query",
             "required": true,
-            "description": "End of the report date range, in `YYYY-MM-DD` format.",
+            "description": "End of the report date range, in `YYYY-MM-DD` format. Must be after `start_date`.",
             "schema": {
               "type": "string",
               "format": "date",
@@ -135674,16 +135850,6 @@
           },
           "404": {
             "description": "Resource not found.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
             "content": {
               "application/json": {
                 "schema": {
@@ -135843,7 +136009,8 @@
             "required": true,
             "description": "Unique loyalty program identifier (format: `lprg_` followed by hexadecimal characters).",
             "schema": {
-              "type": "string"
+              "type": "string",
+              "pattern": "^lprg_[a-f0-9]+$"
             }
           },
           {
@@ -135861,7 +136028,7 @@
             "name": "end_date",
             "in": "query",
             "required": true,
-            "description": "End of the report date range, in `YYYY-MM-DD` format.",
+            "description": "End of the report date range, in `YYYY-MM-DD` format Must be after `start_date`.",
             "schema": {
               "type": "string",
               "format": "date",
@@ -135926,16 +136093,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
           "500": {
             "description": "Internal server error.",
             "content": {
@@ -135956,7 +136113,7 @@
           "Programs"
         ],
         "summary": "Get program spending summary report",
-        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nReturns total points-spending statistics for the program (all time), optionally\nfiltered by card definition.",
+        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nReturns total points-spending statistics for the program (all time), optionally\nfiltered by card definition.\n\nResults are capped at 100 rows, sorted by `-id` (internal defaults; not configurable via query parameters).",
         "parameters": [
           {
             "name": "programId",
@@ -135964,7 +136121,8 @@
             "required": true,
             "description": "Unique loyalty program identifier (format: `lprg_` followed by hexadecimal characters).",
             "schema": {
-              "type": "string"
+              "type": "string",
+              "pattern": "^lprg_[a-f0-9]+$"
             }
           },
           {
@@ -136010,16 +136168,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
           "500": {
             "description": "Internal server error.",
             "content": {
@@ -136041,7 +136189,8 @@
           "required": true,
           "description": "Unique loyalty program identifier (format: `lprg_` followed by hexadecimal characters).",
           "schema": {
-            "type": "string"
+            "type": "string",
+            "pattern": "^lprg_[a-f0-9]+$"
           }
         }
       ],
@@ -136068,7 +136217,7 @@
             "name": "end_date",
             "in": "query",
             "required": true,
-            "description": "End of the report date range, in `YYYY-MM-DD` format.",
+            "description": "End of the report date range, in `YYYY-MM-DD` format Must be after `start_date`.",
             "schema": {
               "type": "string",
               "format": "date",
@@ -136174,7 +136323,8 @@
           "required": true,
           "description": "Unique loyalty program identifier (format: `lprg_` followed by hexadecimal characters).",
           "schema": {
-            "type": "string"
+            "type": "string",
+            "pattern": "^lprg_[a-f0-9]+$"
           }
         }
       ],
@@ -136184,48 +136334,8 @@
           "Programs"
         ],
         "summary": "Get program tiers summary report",
-        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nReturns total tier-movement statistics for the program (all time), optionally\nfiltered by tier structure and tier.\n\nResults are capped by `limit` (default `100`) and sorted by `order` (default `-id`).",
+        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nReturns total tier-movement statistics for the program (all time), optionally\nfiltered by tier structure and tier.\n\nResults are capped at 100 rows, sorted by `-id` (internal defaults; not configurable via query parameters).",
         "parameters": [
-          {
-            "name": "limit",
-            "in": "query",
-            "required": false,
-            "description": "Maximum number of report entries to return. Minimum: 1, maximum: 100. Defaults to 100 when omitted.",
-            "schema": {
-              "type": "integer",
-              "minimum": 1,
-              "maximum": 100,
-              "default": 100
-            }
-          },
-          {
-            "name": "order",
-            "in": "query",
-            "required": false,
-            "description": "Sort order. A single field or an array of fields. Prefix a field with `-` for descending order. Defaults to `-id`. Allowed values: `id`, `-id`.",
-            "schema": {
-              "oneOf": [
-                {
-                  "type": "string",
-                  "enum": [
-                    "id",
-                    "-id"
-                  ]
-                },
-                {
-                  "type": "array",
-                  "items": {
-                    "type": "string",
-                    "enum": [
-                      "id",
-                      "-id"
-                    ]
-                  }
-                }
-              ],
-              "default": "-id"
-            }
-          },
           {
             "name": "filters",
             "in": "query",
@@ -136421,7 +136531,7 @@
           "Programs"
         ],
         "summary": "Get program points-earnings summary report",
-        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nReturns total points-earnings statistics for the program (all time), optionally filtered by earning rule and card definition.",
+        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nReturns total points-earnings statistics for the program (all time), optionally filtered by earning rule and card definition.\n\nResults are capped at 100 rows, sorted by `-id` (internal defaults; not configurable via query parameters).",
         "parameters": [
           {
             "name": "programId",
@@ -136608,7 +136718,7 @@
           "Programs"
         ],
         "summary": "Get program earning-rules summary report",
-        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nReturns total earning-rule evaluation statistics for the program (all time), optionally filtered by earning rule. Includes success and failure counts with a failures breakdown.",
+        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nReturns total earning-rule evaluation statistics for the program (all time), optionally filtered by earning rule. Includes success and failure counts with a failures breakdown.\n\nResults are capped at 100 rows, sorted by `-id` (internal defaults; not configurable via query parameters).",
         "parameters": [
           {
             "name": "programId",
@@ -136779,26 +136889,6 @@
               }
             }
           },
-          "404": {
-            "description": "Resource not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Conflict - invalid state transition",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
           "500": {
             "description": "Internal server error",
             "content": {
@@ -136859,16 +136949,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict - invalid state transition",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
           "500": {
             "description": "Internal server error",
             "content": {
@@ -136921,16 +137001,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict - invalid state transition",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
           "500": {
             "description": "Internal server error",
             "content": {
@@ -136944,7 +137014,7 @@
         },
         "parameters": [
           {
-            "name": "id",
+            "name": "cardDefinitionId",
             "in": "path",
             "required": true,
             "description": "Unique card definition ID. Pattern: `^lcdef_[a-f0-9]+$`.",
@@ -137003,16 +137073,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict - invalid state transition",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
           "500": {
             "description": "Internal server error",
             "content": {
@@ -137026,7 +137086,7 @@
         },
         "parameters": [
           {
-            "name": "id",
+            "name": "cardDefinitionId",
             "in": "path",
             "required": true,
             "description": "Unique card definition ID. Pattern: `^lcdef_[a-f0-9]+$`.",
@@ -137075,16 +137135,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict - invalid state transition",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
           "500": {
             "description": "Internal server error",
             "content": {
@@ -137098,7 +137148,7 @@
         },
         "parameters": [
           {
-            "name": "id",
+            "name": "cardDefinitionId",
             "in": "path",
             "required": true,
             "description": "Unique card definition ID. Pattern: `^lcdef_[a-f0-9]+$`.",
@@ -137117,7 +137167,7 @@
           "Card Definitions"
         ],
         "summary": "Activate Card Definition",
-        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nTransitions the card definition from `DRAFT` to `ACTIVE`.\nNo request body. Activating from any other state results in an\ninvalid state transition error (409).",
+        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nTransitions the card definition from `DRAFT` to `ACTIVE`.\nNo request body. Activating from any other state results in an\ninvalid state transition (`400`, key `invalid_state_transition`).",
         "responses": {
           "200": {
             "description": "The activated card definition.",
@@ -137149,16 +137199,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict - invalid state transition",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
           "500": {
             "description": "Internal server error",
             "content": {
@@ -137172,7 +137212,7 @@
         },
         "parameters": [
           {
-            "name": "id",
+            "name": "cardDefinitionId",
             "in": "path",
             "required": true,
             "description": "Unique card definition ID. Pattern: `^lcdef_[a-f0-9]+$`.",
@@ -137191,7 +137231,7 @@
           "Card Definitions"
         ],
         "summary": "Draft Card Definition",
-        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nTransitions the card definition from `ACTIVE` back to `DRAFT`.\nNo request body. Drafting from any other state results in an\ninvalid state transition error (409).",
+        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nTransitions the card definition from `ACTIVE` back to `DRAFT`.\nNo request body. Drafting from any other state results in an\ninvalid state transition (`400`, key `invalid_state_transition`).",
         "responses": {
           "200": {
             "description": "The drafted card definition.",
@@ -137223,8 +137263,8 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict - invalid state transition",
+          "423": {
+            "description": "Resource locked - operation blocked by resource state or relations.",
             "content": {
               "application/json": {
                 "schema": {
@@ -137246,7 +137286,7 @@
         },
         "parameters": [
           {
-            "name": "id",
+            "name": "cardDefinitionId",
             "in": "path",
             "required": true,
             "description": "Unique card definition ID. Pattern: `^lcdef_[a-f0-9]+$`.",
@@ -137268,7 +137308,7 @@
         "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nReturns a cursor-paginated list of activities recorded for the card definition\n(creation, updates, deletion, state transitions and program assignments).\nReturns `404` when the card definition does not exist.",
         "parameters": [
           {
-            "name": "id",
+            "name": "cardDefinitionId",
             "in": "path",
             "required": true,
             "description": "Unique card definition ID. Pattern: `^lcdef_[a-f0-9]+$`.",
@@ -137369,16 +137409,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict - invalid state transition",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
           "500": {
             "description": "Internal server error",
             "content": {
@@ -137433,16 +137463,6 @@
           },
           "404": {
             "description": "Resource not found.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
             "content": {
               "application/json": {
                 "schema": {
@@ -137558,26 +137578,6 @@
               }
             }
           },
-          "404": {
-            "description": "Resource not found.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
           "500": {
             "description": "Internal server error.",
             "content": {
@@ -137630,16 +137630,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
           "500": {
             "description": "Internal server error.",
             "content": {
@@ -137653,7 +137643,7 @@
         },
         "parameters": [
           {
-            "name": "id",
+            "name": "earningRuleId",
             "in": "path",
             "required": true,
             "description": "Earning rule ID.",
@@ -137712,16 +137702,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
           "500": {
             "description": "Internal server error.",
             "content": {
@@ -137735,7 +137715,7 @@
         },
         "parameters": [
           {
-            "name": "id",
+            "name": "earningRuleId",
             "in": "path",
             "required": true,
             "description": "Earning rule ID.",
@@ -137784,16 +137764,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
           "500": {
             "description": "Internal server error.",
             "content": {
@@ -137807,7 +137777,7 @@
         },
         "parameters": [
           {
-            "name": "id",
+            "name": "earningRuleId",
             "in": "path",
             "required": true,
             "description": "Earning rule ID.",
@@ -137826,7 +137796,7 @@
         ],
         "operationId": "activateEarningRule",
         "summary": "Activate earning rule",
-        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nMoves the earning rule to `ACTIVE` status. No request body.\nAllowed transitions: `DRAFT -> ACTIVE`, `INACTIVE -> ACTIVE`.\nInvalid transitions are rejected with a conflict error.",
+        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nMoves the earning rule to `ACTIVE` status. No request body.\nAllowed transitions: `DRAFT -> ACTIVE`, `INACTIVE -> ACTIVE`.\nInvalid transitions are rejected with `400` (key `invalid_state_transition`). Locked relations or activation validation failures return `423`.",
         "responses": {
           "200": {
             "description": "Activated earning rule",
@@ -137858,8 +137828,8 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
+          "423": {
+            "description": "Resource locked - operation blocked by resource state or relations.",
             "content": {
               "application/json": {
                 "schema": {
@@ -137881,7 +137851,7 @@
         },
         "parameters": [
           {
-            "name": "id",
+            "name": "earningRuleId",
             "in": "path",
             "required": true,
             "description": "Earning rule ID.",
@@ -137900,7 +137870,7 @@
         ],
         "operationId": "deactivateEarningRule",
         "summary": "Deactivate earning rule",
-        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nMoves the earning rule to `INACTIVE` status. No request body.\nAllowed transition: `ACTIVE -> INACTIVE`.\nInvalid transitions are rejected with a conflict error.",
+        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nMoves the earning rule to `INACTIVE` status. No request body.\nAllowed transition: `ACTIVE -> INACTIVE`.\nInvalid transitions are rejected with `400` (key `invalid_state_transition`). Locked relations return `423`.",
         "responses": {
           "200": {
             "description": "Deactivated earning rule",
@@ -137932,16 +137902,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
           "500": {
             "description": "Internal server error.",
             "content": {
@@ -137955,7 +137915,7 @@
         },
         "parameters": [
           {
-            "name": "id",
+            "name": "earningRuleId",
             "in": "path",
             "required": true,
             "description": "Earning rule ID.",
@@ -137974,7 +137934,7 @@
         ],
         "operationId": "draftEarningRule",
         "summary": "Move earning rule to draft",
-        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nMoves the earning rule back to `DRAFT` status. No request body.\nAllowed transition: `ACTIVE -> DRAFT`.\nInvalid transitions are rejected with a conflict error.",
+        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nMoves the earning rule back to `DRAFT` status. No request body.\nAllowed transition: `ACTIVE -> DRAFT`.\nInvalid transitions are rejected with `400` (key `invalid_state_transition`). Locked relations return `423`.",
         "responses": {
           "200": {
             "description": "Drafted earning rule",
@@ -138006,8 +137966,8 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
+          "423": {
+            "description": "Resource locked - operation blocked by resource state or relations.",
             "content": {
               "application/json": {
                 "schema": {
@@ -138029,7 +137989,7 @@
         },
         "parameters": [
           {
-            "name": "id",
+            "name": "earningRuleId",
             "in": "path",
             "required": true,
             "description": "Earning rule ID.",
@@ -138051,7 +138011,7 @@
         "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nReturns a cursor-paginated list of activities (audit trail) for a single earning rule.\nThe same field cannot be used in both ascending and descending order at once.\nDefault order is `-created_at`.",
         "parameters": [
           {
-            "name": "id",
+            "name": "earningRuleId",
             "in": "path",
             "required": true,
             "description": "Earning rule ID.",
@@ -138153,16 +138113,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
           "500": {
             "description": "Internal server error.",
             "content": {
@@ -138217,16 +138167,6 @@
           },
           "404": {
             "description": "Resource not found.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
             "content": {
               "application/json": {
                 "schema": {
@@ -138359,16 +138299,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
           "500": {
             "description": "Internal server error.",
             "content": {
@@ -138421,16 +138351,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
           "500": {
             "description": "Internal server error.",
             "content": {
@@ -138444,7 +138364,7 @@
         },
         "parameters": [
           {
-            "name": "id",
+            "name": "tierStructureId",
             "in": "path",
             "required": true,
             "description": "Unique tier structure identifier.",
@@ -138503,16 +138423,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
           "500": {
             "description": "Internal server error.",
             "content": {
@@ -138526,7 +138436,7 @@
         },
         "parameters": [
           {
-            "name": "id",
+            "name": "tierStructureId",
             "in": "path",
             "required": true,
             "description": "Unique tier structure identifier.",
@@ -138543,7 +138453,7 @@
           "Tier Structures"
         ],
         "summary": "Delete tier structure",
-        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nDeletes a tier structure and returns the deleted resource.",
+        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nDeletes a tier structure and returns the deleted resource.\n\nReturns `400` with key `resource_in_use` and `related_object_ids` when the tier structure is assigned to programs, earning rules, or rewards.",
         "responses": {
           "200": {
             "description": "The deleted tier structure.",
@@ -138575,16 +138485,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
           "500": {
             "description": "Internal server error.",
             "content": {
@@ -138598,7 +138498,7 @@
         },
         "parameters": [
           {
-            "name": "id",
+            "name": "tierStructureId",
             "in": "path",
             "required": true,
             "description": "Unique tier structure identifier.",
@@ -138639,8 +138539,8 @@
               }
             }
           },
-          "404": {
-            "description": "Resource not found.",
+          "403": {
+            "description": "Limit exceeded - assignment or resource count limit reached.",
             "content": {
               "application/json": {
                 "schema": {
@@ -138649,8 +138549,8 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
+          "404": {
+            "description": "Resource not found.",
             "content": {
               "application/json": {
                 "schema": {
@@ -138672,7 +138572,7 @@
         },
         "parameters": [
           {
-            "name": "id",
+            "name": "tierStructureId",
             "in": "path",
             "required": true,
             "description": "Unique tier structure identifier.",
@@ -138723,8 +138623,8 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
+          "423": {
+            "description": "Resource locked - operation blocked by resource state or relations.",
             "content": {
               "application/json": {
                 "schema": {
@@ -138746,7 +138646,7 @@
         },
         "parameters": [
           {
-            "name": "id",
+            "name": "tierStructureId",
             "in": "path",
             "required": true,
             "description": "Unique tier structure identifier.",
@@ -138797,8 +138697,8 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
+          "423": {
+            "description": "Resource locked - operation blocked by resource state or relations.",
             "content": {
               "application/json": {
                 "schema": {
@@ -138820,7 +138720,7 @@
         },
         "parameters": [
           {
-            "name": "id",
+            "name": "tierStructureId",
             "in": "path",
             "required": true,
             "description": "Unique tier structure identifier.",
@@ -138839,7 +138739,7 @@
           "Tier Structures"
         ],
         "summary": "Create tier",
-        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nCreates a tier within the tier structure. If `downgrade` is omitted it defaults to\n`{ \"type\": \"INHERIT\" }`. A tier structure can hold at most 10 tiers.",
+        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nCreates a tier within the tier structure. If `downgrade` is omitted it defaults to\n`{ \"type\": \"INHERIT\" }`. A tier structure can hold at most 10 tiers.\n\nA tier structure can contain at most 100 tiers. Exceeding the limit returns `403` (key `tiers_per_tier_structure_limit_exceeded`).",
         "requestBody": {
           "required": true,
           "content": {
@@ -138871,8 +138771,8 @@
               }
             }
           },
-          "404": {
-            "description": "Resource not found.",
+          "403": {
+            "description": "Limit exceeded - assignment or resource count limit reached.",
             "content": {
               "application/json": {
                 "schema": {
@@ -138881,8 +138781,8 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
+          "404": {
+            "description": "Resource not found.",
             "content": {
               "application/json": {
                 "schema": {
@@ -138904,7 +138804,7 @@
         },
         "parameters": [
           {
-            "name": "id",
+            "name": "tierStructureId",
             "in": "path",
             "required": true,
             "description": "Unique tier structure identifier.",
@@ -138924,7 +138824,7 @@
         "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nReturns a cursor-paginated list of tiers belonging to the tier structure. This\nendpoint does not support a `filters` parameter. The same field cannot be requested\nin both ascending and descending order at once. Default order is `-created_at`.",
         "parameters": [
           {
-            "name": "id",
+            "name": "tierStructureId",
             "in": "path",
             "required": true,
             "description": "Unique tier structure identifier.",
@@ -139018,16 +138918,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
           "500": {
             "description": "Internal server error.",
             "content": {
@@ -139090,16 +138980,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
           "500": {
             "description": "Internal server error.",
             "content": {
@@ -139113,7 +138993,7 @@
         },
         "parameters": [
           {
-            "name": "id",
+            "name": "tierStructureId",
             "in": "path",
             "required": true,
             "description": "Unique tier structure identifier.",
@@ -139172,16 +139052,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
           "500": {
             "description": "Internal server error.",
             "content": {
@@ -139195,7 +139065,7 @@
         },
         "parameters": [
           {
-            "name": "id",
+            "name": "tierStructureId",
             "in": "path",
             "required": true,
             "description": "Unique tier structure identifier.",
@@ -139224,10 +139094,10 @@
           "Tier Structures"
         ],
         "summary": "List tier structure activities",
-        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nReturns a cursor-paginated list of activities recorded for the tier structure\n(creation, updates, state transitions, assignments, and nested tier changes).\nThe same field cannot be requested in both ascending and descending order at once.\nDefault order is `-created_at`.",
+        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nReturns a cursor-paginated list of activities recorded for the tier structure\n(creation, updates, state transitions, assignments, and nested tier changes).\nThe same field cannot be requested in both ascending and descending order at once.\nDefault order is `-created_at`.\n\nReturns `404` when the tier structure id does not exist.",
         "parameters": [
           {
-            "name": "id",
+            "name": "tierStructureId",
             "in": "path",
             "required": true,
             "description": "Unique tier structure identifier.",
@@ -139320,16 +139190,6 @@
           },
           "404": {
             "description": "Resource not found.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
             "content": {
               "application/json": {
                 "schema": {
@@ -139458,16 +139318,6 @@
           },
           "404": {
             "description": "Resource not found.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
             "content": {
               "application/json": {
                 "schema": {
@@ -139608,16 +139458,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
           "500": {
             "description": "Internal server error.",
             "content": {
@@ -139631,7 +139471,7 @@
         },
         "parameters": [
           {
-            "name": "id",
+            "name": "benefitId",
             "in": "path",
             "required": true,
             "description": "Unique benefit ID, prefixed with `lben_`.",
@@ -139648,7 +139488,7 @@
           "Benefits"
         ],
         "summary": "Update benefit",
-        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nUpdates a benefit. When the benefit is in `DRAFT` status all properties can be updated.\nWhen the benefit is `ACTIVE`, only `name` and `stock` may be updated (400 `invalid_payload`\notherwise). Referenced resources (card definition, product/SKU, campaign) are validated\nthe same way as on create; a points-based benefit can only reference an ACTIVE card\ndefinition (423 `resource_locked` otherwise). The benefit name must remain unique per\nproject (409 `duplicate_found`).",
+        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nUpdates a benefit. When the benefit is in `DRAFT` status all properties can be updated.\nWhen the benefit is `ACTIVE`, When the benefit is `ACTIVE`, only `name`, `stock`, `points`, `points_proportional`, and `digital` may be changed (with immutability rules on nested digital fields). Referenced resources (card definition, product/SKU, campaign) are validated\nthe same way as on create; a points-based benefit can only reference an ACTIVE card\ndefinition (423 `resource_locked` otherwise). The benefit name must remain unique per\nproject (409 `duplicate_found`).",
         "requestBody": {
           "required": true,
           "content": {
@@ -139723,7 +139563,7 @@
         },
         "parameters": [
           {
-            "name": "id",
+            "name": "benefitId",
             "in": "path",
             "required": true,
             "description": "Unique benefit ID, prefixed with `lben_`.",
@@ -139772,16 +139612,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
           "500": {
             "description": "Internal server error.",
             "content": {
@@ -139795,7 +139625,7 @@
         },
         "parameters": [
           {
-            "name": "id",
+            "name": "benefitId",
             "in": "path",
             "required": true,
             "description": "Unique benefit ID, prefixed with `lben_`.",
@@ -139817,7 +139647,7 @@
         "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nMoves a benefit from `DRAFT` to `ACTIVE` status. No request body. Only the\n`DRAFT` -> `ACTIVE` transition is allowed; activating from any other state returns\n400 `invalid_state_transition`. A points-based benefit cannot be activated when its\nconnected card definition does not exist or is not ACTIVE (423 `resource_locked`).",
         "parameters": [
           {
-            "name": "id",
+            "name": "benefitId",
             "in": "path",
             "required": true,
             "description": "Unique benefit ID, prefixed with `lben_`.",
@@ -139850,16 +139680,6 @@
           },
           "404": {
             "description": "Resource not found.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
             "content": {
               "application/json": {
                 "schema": {
@@ -139901,7 +139721,7 @@
         "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nMoves a benefit from `ACTIVE` back to `DRAFT` status. No request body. Only the\n`ACTIVE` -> `DRAFT` transition is allowed; drafting from any other state returns\n400 `invalid_state_transition`. A benefit assigned to an active earning rule cannot\nbe moved to draft (423 `resource_locked`, key `connected_active_earning_rule`).",
         "parameters": [
           {
-            "name": "id",
+            "name": "benefitId",
             "in": "path",
             "required": true,
             "description": "Unique benefit ID, prefixed with `lben_`.",
@@ -139934,16 +139754,6 @@
           },
           "404": {
             "description": "Resource not found.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
             "content": {
               "application/json": {
                 "schema": {
@@ -139985,7 +139795,7 @@
         "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nReturns a cursor-paginated list of activities recorded for the benefit (created, updated,\ndeleted, activated, drafted). Returns `404` when the benefit does not exist. Supports\nfiltering by activity `id`, `type`, and `created_at`, ordering by `created_at`\n(default `-created_at`), and cursor-based pagination.",
         "parameters": [
           {
-            "name": "id",
+            "name": "benefitId",
             "in": "path",
             "required": true,
             "description": "Unique benefit ID, prefixed with `lben_`.",
@@ -140092,16 +139902,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
           "500": {
             "description": "Internal server error.",
             "content": {
@@ -140122,7 +139922,7 @@
           "Rewards"
         ],
         "summary": "List rewards v2",
-        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nReturns a cursor-paginated list of rewards. Results can be filtered by id, name,\ntype and created_at, and ordered by created_at or name (ascending or descending).\nThe same field cannot be ordered both ascending and descending at the same time.",
+        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nReturns a cursor-paginated list of rewards. Results can be filtered by id, name,\ntype and created_at, and ordered by created_at or name (ascending or descending).\nThe same field cannot be ordered both ascending and descending at the same time.\n\nSoft-deleted rewards are excluded from results.",
         "parameters": [
           {
             "name": "limit",
@@ -140226,16 +140026,6 @@
           },
           "404": {
             "description": "Resource not found.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
             "content": {
               "application/json": {
                 "schema": {
@@ -140431,16 +140221,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
           "500": {
             "description": "Internal server error.",
             "content": {
@@ -140464,7 +140244,7 @@
         "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nReturns a single reward by its ID.",
         "parameters": [
           {
-            "name": "id",
+            "name": "rewardId",
             "in": "path",
             "required": true,
             "description": "Unique reward identifier, prefixed with `lrew_`.",
@@ -140574,16 +140354,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
           "500": {
             "description": "Internal server error.",
             "content": {
@@ -140605,7 +140375,7 @@
         "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nUpdates an existing reward. When `type` is provided as `MATERIAL` the `material`\nobject is required and `digital` must be null; when `type` is provided as `DIGITAL`\nthe `digital` object is required and `material` must be null.\n\nIn `DRAFT` status all properties can be updated. In `ACTIVE`/`INACTIVE` status only\nthe following properties can be updated: `name`, `metadata`, `refunds`,\n`validity_hours`, `start_date`, `end_date`, `costs`.",
         "parameters": [
           {
-            "name": "id",
+            "name": "rewardId",
             "in": "path",
             "required": true,
             "description": "Unique reward identifier, prefixed with `lrew_`.",
@@ -140759,16 +140529,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
           "500": {
             "description": "Internal server error.",
             "content": {
@@ -140787,10 +140547,10 @@
           "Rewards"
         ],
         "summary": "Delete a reward",
-        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nDeletes a reward (moves it to the DELETED status). Returns the deleted reward.",
+        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nDeletes a reward (moves it to the DELETED status). Returns the deleted reward.\n\nReturns `400` with key `resource_in_use` when the reward is assigned to a program.",
         "parameters": [
           {
-            "name": "id",
+            "name": "rewardId",
             "in": "path",
             "required": true,
             "description": "Unique reward identifier, prefixed with `lrew_`.",
@@ -140831,16 +140591,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
           "500": {
             "description": "Internal server error.",
             "content": {
@@ -140861,10 +140611,10 @@
           "Rewards"
         ],
         "summary": "Activate reward",
-        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nMoves the reward to the ACTIVE status. Allowed from DRAFT or INACTIVE status;\nother transitions are rejected with a conflict error. This endpoint takes no\nrequest body.",
+        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nMoves the reward to the ACTIVE status. Allowed from DRAFT or INACTIVE status;\ninvalid transitions are rejected with `400` (key `invalid_state_transition`). Locked relations return `423`. This endpoint takes no\nrequest body.",
         "parameters": [
           {
-            "name": "id",
+            "name": "rewardId",
             "in": "path",
             "required": true,
             "description": "Unique reward identifier, prefixed with `lrew_`.",
@@ -140905,8 +140655,8 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
+          "423": {
+            "description": "Resource locked - operation blocked by resource state or relations.",
             "content": {
               "application/json": {
                 "schema": {
@@ -140935,10 +140685,10 @@
           "Rewards"
         ],
         "summary": "Deactivate reward",
-        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nMoves the reward to the INACTIVE status. Allowed only from ACTIVE status;\nother transitions are rejected with a conflict error. This endpoint takes no\nrequest body.",
+        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nMoves the reward to the INACTIVE status. Allowed only from ACTIVE status;\nother transitions are rejected with `423 Locked`. This endpoint takes no\nrequest body.",
         "parameters": [
           {
-            "name": "id",
+            "name": "rewardId",
             "in": "path",
             "required": true,
             "description": "Unique reward identifier, prefixed with `lrew_`.",
@@ -140979,16 +140729,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
           "500": {
             "description": "Internal server error.",
             "content": {
@@ -141009,10 +140749,10 @@
           "Rewards"
         ],
         "summary": "Move reward back to draft",
-        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nMoves the reward back to the DRAFT status. Allowed only from `ACTIVE` status;\nother transitions are rejected with a conflict error. The reward can't be assigned to a loyalty program. This endpoint takes no\nrequest body.",
+        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nMoves the reward back to the DRAFT status. Allowed only from `ACTIVE` status;\nother transitions are rejected with `423 Locked`. The reward can't be assigned to a loyalty program. This endpoint takes no\nrequest body.",
         "parameters": [
           {
-            "name": "id",
+            "name": "rewardId",
             "in": "path",
             "required": true,
             "description": "Unique reward identifier, prefixed with `lrew_`.",
@@ -141053,8 +140793,8 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
+          "423": {
+            "description": "Resource locked - operation blocked by resource state or relations.",
             "content": {
               "application/json": {
                 "schema": {
@@ -141086,7 +140826,7 @@
         "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nReturns a cursor-paginated list of activities recorded for the given reward\n(created, updated, deleted, assigned, unassigned, activated, deactivated, drafted).\nReturns `404` when the reward does not exist.",
         "parameters": [
           {
-            "name": "id",
+            "name": "rewardId",
             "in": "path",
             "required": true,
             "description": "Unique reward identifier, prefixed with `lrew_`.",
@@ -141193,16 +140933,6 @@
           },
           "404": {
             "description": "Resource not found.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
             "content": {
               "application/json": {
                 "schema": {
