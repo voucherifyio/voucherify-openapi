@@ -19,7 +19,10 @@
 ## 2. Repository layout & data flow
 
 ```
-reference/OpenAPI.json          ← SOURCE OF TRUTH (edit here)
+reference/OpenAPI.json          ← SOURCE OF TRUTH (edit here, includes /v2/loyalties/*)
+        │
+        ├── sync-loyalties-v2-openapi (pre-commit)
+        │         └── documentation/openapi/loyalties-v2.json   → Mintlify Loyalty v2 docs
         │
         ├── prepare-open-api --language={ruby|python|java|php|dotnet|js}
         │         └── reference/readonly-sdks/{lang}/OpenAPI.json  → OpenAPI Generator → sdks/{lang}/
@@ -30,6 +33,8 @@ reference/OpenAPI.json          ← SOURCE OF TRUTH (edit here)
         └── build-production-openapi
                   └── production/readOnly-openAPI.json             → external client-facing spec
 ```
+
+**One-time import command:** `npm run merge-loyalties-v2-into-reference -- --source=<path-to-loyalties-v2.json>` (restore an old file from git history if needed).
 
 | Artifact | Used for SDK generation? | Schema names preserved? |
 |----------|--------------------------|-------------------------|

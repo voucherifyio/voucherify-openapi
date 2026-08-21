@@ -564,9 +564,6 @@ async function splitSecurityParamsThenSplitOpenapiByTags(
     await splitSecurityParamsThenSplitOpenapiByTags(
       splitSecurityParams(openApi) as unknown as OpenAPISpec,
       "/../documentation/openapi",
-      // Manually maintained files that are not generated from tags and must be
-      // preserved when the folder is regenerated.
-      ["loyalties-v2.json"],
     );
     await splitSecurityParamsThenSplitOpenapiByTags(
       openApiWebhooks,

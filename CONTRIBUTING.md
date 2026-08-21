@@ -68,6 +68,8 @@ The **[tmp/referenceToUpload/OpenAPI.json]** file is generated while running the
 
 The **[tmp/reference/{language}/OpenAPI.json]** files are generated while running `npm run prepare-open-api -- --language=(language)` command. The available languages are `ruby` and `python`.
 
+**Loyalty v2:** `/v2/loyalties/*` endpoints live in `reference/OpenAPI.json`. Mintlify uses `documentation/openapi/loyalties-v2.json`, which is **regenerated** from reference on `npm run pre-commit` (`sync-loyalties-v2-openapi`).
+
 ## OpenAPI
 
 The [OpenAPI Specification](https://swagger.io/specification/v3/) (OAS) is used to create the Voucherify API documentation.
