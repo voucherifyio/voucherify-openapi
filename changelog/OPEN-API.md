@@ -4,6 +4,10 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-08-26
+
+Changed type `integer` to `number` in `exchange_ratio` in the `RedemptionRewardResult` schema.
+
 ## 2026-08-10
 
 Published Loyalty v2 API reference overview pages:

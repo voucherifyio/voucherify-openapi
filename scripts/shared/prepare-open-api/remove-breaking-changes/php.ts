@@ -396,6 +396,34 @@ const removePhpBreakingChanges = {
       }
     };
 
+    // Compensate for an upstream typo in reference/OpenAPI.json: the
+    // ManagementProjectsWebhookBase.events enum spells four events with `aded`
+    // instead of `added` (introduced in commit feaa5138). Left untouched it
+    // renames the public EVENTS_*_ADDED constants to EVENTS_*_ADED, a breaking
+    // change for PHP consumers, so restore the correct spelling here. The root
+    // fix across every SDK is tracked in DEV-4148.
+    const webhookEvents =
+      schemas.ManagementProjectsWebhookBase?.properties?.events?.items?.enum;
+    if (Array.isArray(webhookEvents)) {
+      schemas.ManagementProjectsWebhookBase.properties.events.items.enum =
+        webhookEvents.map((event: string) =>
+          event
+            .replace(/\.balance_aded$/, ".balance_added")
+            .replace(/\.points_aded$/, ".points_added")
+            .replace(/\.pending_points\.aded$/, ".pending_points.added")
+            .replace(/\.vouchers\.aded$/, ".vouchers.added"),
+        );
+    }
+
+    // Keep importVouchersUsingCsv($file, $contentType) stable. The spec adds
+    // webhooks_enable before the generator-injected $contentType parameter,
+    // which silently shifts existing positional call sites. Drop it here so the
+    // public signature matches 5.0.4.
+    if (schemas.VouchersImportCSVRequestBody?.allOf?.[1]?.properties) {
+      delete schemas.VouchersImportCSVRequestBody.allOf[1].properties
+        .webhooks_enable;
+    }
+
     return openApi;
   },
   after: (_openApi: unknown): any => {
