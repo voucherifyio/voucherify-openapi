@@ -85,7 +85,7 @@ Verified and updated GET `/v2/loyalties/programs/{programId}/members/{memberId}/
 
 ## 2026-08-26
 
-Changed type `integer` to `number` in `exchange_ratio` in the `RedemptionRewardResult` schema.
+Typed `exchange_ratio` as `number` (was `integer` on redemption/reward nested `coin` objects, and `string` on create/update Pay with Points reward request bodies). The API returns fractional values such as `0.01`.
 
 ## 2026-08-10
 
