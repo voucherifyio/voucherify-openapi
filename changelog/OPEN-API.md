@@ -4,6 +4,10 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-08-28
+
+Verified and updated GET `/v2/loyalties/programs/{programId}/members/{memberId}/cards/{cardId}/expiring-points`.
+
 ## 2026-08-26
 
 Changed type `integer` to `number` in `exchange_ratio` in the `RedemptionRewardResult` schema.
