@@ -4502,7 +4502,7 @@
           "Programs"
         ],
         "summary": "List card expiring points buckets",
-        "description": "Returns a cursor-paginated list of points expiration buckets of the member's card. Each bucket groups active points sharing the same expiration date and expiration type. This means that expiration buckets can contain points earned through seperate transactions.\n\nResults can be ordered by `expiration_date`.\n\nReturns `404` when the program, member, or card does not exist.",
+        "description": "Returns a cursor-paginated list of `ACTIVE` point expiration buckets of the member's card. Each bucket groups active points sharing the same expiration date and expiration type. This means that expiration buckets can contain points earned through separate transactions.\n\nResults can be ordered by `expiration_date`.\n\nReturns an empty list if there are no `ACTIVE` buckets or if there are no point expiration settings for the card definition or earning rule (`NO_EXPIRATION`). Returns Returns `400` for invalid query parameters or an invalid, expired, or mismatched pagination cursor. Returns `404` when the program, member, or card does not exist.",
         "parameters": [
           {
             "name": "limit",
@@ -4594,7 +4594,7 @@
                           "object": "card_points_bucket"
                         }
                       ],
-                      "cursor": "lcpeb_12f5022f1ce873e0b5",
+                      "cursor": "lcrspeb_12f5022f1ce873e0b5",
                       "object": "list"
                     }
                   }
@@ -4602,8 +4602,83 @@
               }
             }
           },
+          "400": {
+            "description": "Invalid query parameters or pagination cursor.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Invalid cursor format": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Property .cursor must match pattern \"^lcrspeb_[a-f0-9]+$\"",
+                      "request_id": "v-12f3be8e03ab12dbfb"
+                    }
+                  },
+                  "Cursor invalid or expired": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_or_expired_cursor",
+                      "message": "Invalid or expired cursor",
+                      "details": "The provided cursor is invalid or has expired",
+                      "request_id": "v-12f3be8e03ab12dbfc"
+                    }
+                  },
+                  "Cursor does not match query": {
+                    "value": {
+                      "code": 400,
+                      "key": "cursor_and_query_mismatch",
+                      "message": "Cursor and query mismatch",
+                      "details": "The provided cursor does not match the query, either the cursor is invalid or the query has changed",
+                      "request_id": "v-12f3be8e03ab12dbfd"
+                    }
+                  },
+                  "Limit too high": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Property .limit cannot be greater than 100",
+                      "request_id": "v-12f3be8e03ab12dbfe"
+                    }
+                  },
+                  "Limit too low": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Property .limit cannot be lower than 1",
+                      "request_id": "v-12f3be8e03ab12dbff"
+                    }
+                  },
+                  "Unsupported order value": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Property .order must be equal to one of the allowed values [ expiration_date, -expiration_date ]",
+                      "request_id": "v-12f3be8e03ab12dc00"
+                    }
+                  },
+                  "Conflicting order values": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Query cannot be ordered by 'expiration_date' and '-expiration_date' at the same time",
+                      "request_id": "v-12f3be8e03ab12dc01"
+                    }
+                  }
+                }
+              }
+            }
+          },
           "404": {
-            "description": "Resource (campaign, member, card) not found.",
+            "description": "Resource (program, member, card) not found.",
             "content": {
               "application/json": {
                 "schema": {
