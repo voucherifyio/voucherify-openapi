@@ -4783,8 +4783,8 @@
         "tags": [
           "Programs"
         ],
-        "summary": "Expire points bucket",
-        "description": "Manually expires a points bucket before its scheduled expiration date, creating an `ADMIN_POINTS_EXPIRATION` card transaction (status `PENDING`, processed asynchronously). No request body.\n\nThe expiration bucket includes all points from various transactions that will expire on the bucket's expiration date.\n\nThe program and member must be in the `ACTIVE` status, the card definition or earning rule must have points expiration enabled, the bucket must be in the `ACTIVE` status, and the bucket's expiration date must not be in the past (`423` otherwise).\n\nReturns `404` when the program, member, card or bucket does not exist.",
+        "summary": "Expire point bucket",
+        "description": "Manually expires a points bucket before its scheduled expiration date, creating an `ADMIN_POINTS_EXPIRATION` card transaction (status `PENDING`, processed asynchronously). No request body.\n\nThe expiration bucket includes all points from various transactions that will expire on the bucket's expiration date.\n\nThe program and member must be in the `ACTIVE` status or available, the card definition must have points expiration enabled, or an earning rule or loyalty tier has an expiration override, the bucket must be in the `ACTIVE` status, and the bucket's expiration date must not be in the past (`423` otherwise).\n\nReturns `404` when the program, member, card or bucket does not exist.",
         "parameters": [],
         "responses": {
           "200": {
@@ -4792,7 +4792,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/LoyaltiesProgramsMembersCardsExpiringPointsBucketExpireResponseBody"
+                  "$ref": "#/components/schemas/LoyaltiesProgramsMembersCardsExpiringPointsExpireResponseBody"
                 },
                 "examples": {
                   "Point expiration bucket response": {
@@ -4827,16 +4827,6 @@
                       "message": "Points expiration transaction created"
                     }
                   }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Validation error - the operation is not allowed in the current resource state.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -4898,13 +4888,49 @@
             }
           },
           "423": {
-            "description": "Resource locked - a related resource is in a state that prevents this operation.",
+            "description": "Resource locked. Returned when expiration is not allowed (inactive program/member, program outside its validity window, points expiration not enabled, bucket not `ACTIVE`, or bucket expiration date in the past).",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
                 },
                 "examples": {
+                  "Program inactive": {
+                    "value": {
+                      "code": 423,
+                      "key": "non_active_program",
+                      "message": "Cannot expire member's card points when program status is not ACTIVE",
+                      "details": "Invalid program status",
+                      "request_id": "v-12f7de75256d51e8b1"
+                    }
+                  },
+                  "Program outside validity window": {
+                    "value": {
+                      "code": 423,
+                      "key": "program_outside_validity_window",
+                      "message": "Program is not available at this time",
+                      "details": "Cannot expire member's card points when program is not active at this time",
+                      "request_id": "v-12f7de75256d51e8b2"
+                    }
+                  },
+                  "Member inactive": {
+                    "value": {
+                      "code": 423,
+                      "key": "non_active_member",
+                      "message": "Cannot expire member's card points when member status is not ACTIVE",
+                      "details": "Invalid member status",
+                      "request_id": "v-12f7de75256d51e8b3"
+                    }
+                  },
+                  "Points expiration not enabled": {
+                    "value": {
+                      "code": 423,
+                      "key": "points_expiration_not_enabled",
+                      "message": "Cannot expire member's card points when points expiration for CARD_DEFINITION is not enabled",
+                      "details": "Points expiration not enabled",
+                      "request_id": "v-12f7de75256d51e8b4"
+                    }
+                  },
                   "Invalid point bucket status": {
                     "value": {
                       "code": 423,
@@ -4912,6 +4938,15 @@
                       "message": "Invalid points bucket status",
                       "details": "Points bucket must be in ACTIVE status in order to be expired",
                       "request_id": "v-12f7de75256d51e8bf"
+                    }
+                  },
+                  "Bucket not eligible for manual expiration": {
+                    "value": {
+                      "code": 423,
+                      "key": "bucket_not_eligible_for_manual_expiration",
+                      "message": "Manual expiration not available",
+                      "details": "Only future-dated buckets can be expired manually",
+                      "request_id": "v-12f7de75256d51e8b5"
                     }
                   }
                 }
@@ -18452,9 +18487,9 @@
         ],
         "title": "Loyalties Programs Members Cards Pending Points Cancel Response Body"
       },
-      "LoyaltiesProgramsMembersCardsExpiringPointsBucketExpireResponseBody": {
+      "LoyaltiesProgramsMembersCardsExpiringPointsExpireResponseBody": {
         "type": "object",
-        "title": "Loyalties Programs Members Cards Expiration Points Bucket Expire Response Body",
+        "title": "Loyalties Programs Members Cards Expiring Points Expire Response Body”",
         "description": "Response body schema for **POST** `/v2/loyalties/programs/{programId}/members/{memberId}/cards/{cardId}/expiring-points/{bucketId}/expire`.\n\nResult of expiring an expiration point bucket. This endpoint always returns status `TRANSACTION_CREATED` on success.",
         "properties": {
           "transaction": {
