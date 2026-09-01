@@ -4,6 +4,17 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-09-01
+
+- Verified and updated POST `/v2/loyalties/programs/{programId}/members/{memberId}/cards/{cardId}/expiring-points/{bucketId}/expire`.
+  - Added `LoyaltiesProgramsMembersCardsExpiringPointsExpireResponseBody` schema.
+  - Documented `423` lock cases (inactive program or member, program outside its validity window, points expiration not enabled, bucket not `ACTIVE`, or bucket expiration date in the past).
+  - Clarified `CardTransaction` `type` and `details` for `ADMIN_POINTS_EXPIRATION` (manually expired point bucket).
+- Verified and updated GET `/v2/loyalties/programs/{programId}/members/{memberId}/benefits/transactions`.
+  - Added `LoyaltiesProgramsMembersBenefitsTransactionsListResponseBody`, `LoyaltiesProgramsMembersBenefitsTransactionsListRequestQuery`, `LoyaltiesProgramsMembersBenefitsTransactionsListRequestQueryBenefitId`, and `BenefitTransactionDetailsMetadata` schemas.
+  - Expanded `BenefitTransactionDetails` (fulfillment `result` for `MATERIAL` and `DIGITAL`) and `BenefitTransactionRejection` (trigger-limit cooldown and frequency details).
+- Renamed Loyalty v2 list query-parameter schemas from `*Filters` / `*Filter*` to `*RequestQuery*` (path + action + request query).
+
 ## 2026-08-28
 
 Verified and updated GET `/v2/loyalties/programs/{programId}/members/{memberId}/cards/{cardId}/expiring-points`.
