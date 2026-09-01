@@ -6465,33 +6465,35 @@
       }
     },
     "/v2/loyalties/programs/{programId}/members/{memberId}/benefits/transactions": {
+      "parameters": [
+        {
+          "name": "programId",
+          "in": "path",
+          "required": true,
+          "description": "Unique loyalty program identifier (format: `lprg_` followed by hexadecimal characters).",
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "memberId",
+          "in": "path",
+          "required": true,
+          "description": "Program member ID (format `lmbr_[a-f0-9]+`).",
+          "schema": {
+            "type": "string",
+            "pattern": "^lmbr_[a-f0-9]+$"
+          }
+        }
+      ],
       "get": {
         "operationId": "listMemberBenefitTransactions",
         "tags": [
           "Programs"
         ],
         "summary": "List member benefit transactions",
-        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nLists benefit transactions (benefit fulfillments) for the given program member,\nwith cursor-based pagination. Supports filtering by benefit id and creation date.",
+        "description": "Lists benefit transactions (benefit fulfillments) for a given program member, with cursor-based pagination.\n\nSupports filtering by benefit ID and creation date.",
         "parameters": [
-          {
-            "name": "programId",
-            "in": "path",
-            "required": true,
-            "description": "Unique loyalty program identifier (format: `lprg_` followed by hexadecimal characters).",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "memberId",
-            "in": "path",
-            "required": true,
-            "description": "Program member ID (format `lmbr_[a-f0-9]+`).",
-            "schema": {
-              "type": "string",
-              "pattern": "^lmbr_[a-f0-9]+$"
-            }
-          },
           {
             "name": "limit",
             "in": "query",
@@ -6568,37 +6570,84 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/BenefitTransactionListResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Validation error - request body or query parameters failed validation, or the operation is not allowed in the current resource state.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                  "$ref": "#/components/schemas/LoyaltiesProgramsMembersBenefitsTransactionsListResponseBody"
+                },
+                "examples": {
+                  "Benefit transaction list": {
+                    "value": {
+                      "data": [
+                        {
+                          "id": "lbtx_12f8c3d1571aa184e0",
+                          "benefit_id": "lben_128f4bba81947c8542",
+                          "program_id": "lprg_128f58429f4c4bf7b2",
+                          "member_id": "lmbr_128f962dbc8c4ba5dc",
+                          "earning_rule_id": "lern_128f57ec40cc4bf762",
+                          "type": "FULFILLMENT",
+                          "details": {
+                            "reason": "AnnualProgram / Autumn Ethiopia",
+                            "rejection": null,
+                            "metadata": {
+                              "event_id": "evcus_12f8c3cf15eed6dde4",
+                              "earning_item_id": "lernei_128f57ec3b8c4bf761"
+                            },
+                            "result": {
+                              "details": {
+                                "material": {
+                                  "type": "PRODUCT",
+                                  "product": {
+                                    "id": "prod_128f4baa45547c8530"
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          "status": "APPROVED",
+                          "created_at": "2026-09-01T08:39:36.028Z",
+                          "updated_at": null,
+                          "object": "benefit_transaction"
+                        }
+                      ],
+                      "cursor": {
+                        "next": "lcrsbtx_12f8c42751eed6de54",
+                        "expires_at": "2026-09-01T08:51:04.072Z"
+                      },
+                      "object": "list"
+                    }
+                  }
                 }
               }
             }
           },
           "404": {
-            "description": "Resource not found.",
+            "description": "Resource (program or member) not found.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Program not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find program with id lprg_18f58429f4c4bf7b2",
+                      "request_id": "v-12f8c62fad93dba093",
+                      "resource_id": "lprg_18f58429f4c4bf7b2",
+                      "resource_type": "program"
+                    }
+                  },
+                  "Member not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find member with id lmbr_128f96dbc8c4ba5dc",
+                      "request_id": "v-12f8c64448dc2f8435",
+                      "resource_id": "lmbr_128f96dbc8c4ba5dc",
+                      "resource_type": "member"
+                    }
+                  }
                 }
               }
             }
@@ -21310,14 +21359,17 @@
       },
       "BenefitTransactionDetails": {
         "type": "object",
-        "description": "Details of a FULFILLMENT benefit transaction.",
+        "description": "Details of a `FULFILLMENT` benefit transaction.",
         "properties": {
           "reason": {
-            "type": "string",
-            "description": "Human-readable reason for the fulfillment."
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Human-readable reason for the fulfillment. Typically `{program name} / {earning rule name}`."
           },
           "rejection": {
-            "description": "Rejection details, present when the transaction was rejected.",
+            "description": "Rejection details. Populated for `REJECTED` transactions. `null` for `APPROVED` and `PENDING`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/BenefitTransactionRejection"
@@ -21328,16 +21380,58 @@
             ]
           },
           "metadata": {
-            "type": "object",
             "description": "Transaction metadata. Empty object when not set.",
-            "additionalProperties": true
+            "$ref": "#/components/schemas/BenefitTransactionDetailsMetadata"
           },
           "result": {
-            "description": "Fulfillment result payload, or `null` when not yet available.",
+            "description": "Fulfillment result. Populated for `APPROVED` transactions. `null` for `REJECTED` and `PENDING`.",
             "oneOf": [
               {
                 "type": "object",
-                "additionalProperties": true
+                "description": "Benefit fulfillment result envelope.",
+                "properties": {
+                  "details": {
+                    "type": "object",
+                    "description": "Fulfillment payload. Shape depends on the benefit type (`MATERIAL` or `DIGITAL`). Digital fulfillments also include published voucher fields at this level.",
+                    "properties": {
+                      "material": {
+                        "description": "Material benefit effect that was fulfilled. Present for `MATERIAL` benefits. Absent for `DIGITAL` benefits.",
+                        "oneOf": [
+                          {
+                            "$ref": "#/components/schemas/BenefitMaterial"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "digital": {
+                        "description": "Digital benefit effect that was fulfilled. Present for `DIGITAL` benefits. Absent for `MATERIAL` benefits.",
+                        "oneOf": [
+                          {
+                            "$ref": "#/components/schemas/BenefitDigital"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "voucher_id": {
+                        "type": "string",
+                        "description": "Published voucher ID for digital fulfillments."
+                      },
+                      "code": {
+                        "type": "string",
+                        "description": "Published voucher code for digital fulfillments."
+                      },
+                      "balance": {
+                        "type": "number",
+                        "description": "Gift voucher balance after credit. Present for `GIFT_VOUCHERS` digital fulfillments. Distinct from `digital.gift_vouchers.balance`, which is the configured credit amount."
+                      }
+                    },
+                    "additionalProperties": true
+                  }
+                }
               },
               {
                 "type": "null"
@@ -21346,17 +21440,99 @@
           }
         }
       },
+      "BenefitTransactionDetailsMetadata": {
+        "type": "object",
+        "description": "Benefit transaction metadata written at fulfillment time.",
+        "properties": {
+          "event_id": {
+            "type": "string",
+            "description": "Unique identifier of the event that triggered the fulfillment. Custom events use format `evcus_...`."
+          },
+          "earning_item_id": {
+            "description": "Identifier of the earning item that produced the benefit (format `lernei_...`). `null` when the earning item is unknown.",
+            "oneOf": [
+              {
+                "type": "string",
+                "pattern": "^lernei_[a-f0-9]+$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
       "BenefitTransactionRejection": {
         "type": "object",
-        "description": "Rejection details.",
+        "description": "Rejection details for a benefit transaction.",
         "properties": {
           "reason": {
             "type": "string",
-            "description": "Machine-readable rejection reason."
+            "description": "Machine-readable rejection reason. Known values include `OUT_OF_STOCK`, `BENEFIT_NOT_FOUND`, `UNEXPECTED_ERROR`, `TRIGGER_LIMIT_COOLDOWN_NOT_PASSED`, and `TRIGGER_LIMIT_FREQUENCY_EXCEEDED`. May also be a passthrough error key.",
+            "enum": [
+              "OUT_OF_STOCK",
+              "BENEFIT_NOT_FOUND",
+              "UNEXPECTED_ERROR",
+              "TRIGGER_LIMIT_COOLDOWN_NOT_PASSED",
+              "TRIGGER_LIMIT_FREQUENCY_EXCEEDED"
+            ]
           },
           "details": {
-            "type": "string",
-            "description": "Additional human-readable details about the rejection."
+            "description": "Additional rejection context. Stock, not-found, and unexpected-error rejections use a string. Trigger-limit rejections use an object.",
+            "oneOf": [
+              {
+                "type": "string",
+                "description": "Human-readable rejection message. Used for `OUT_OF_STOCK`, `BENEFIT_NOT_FOUND`, and `UNEXPECTED_ERROR`."
+              },
+              {
+                "type": "object",
+                "title": "Trigger-limit cooldown rejection details",
+                "description": "Trigger-limit cooldown rejection details. Returned when `reason` is `TRIGGER_LIMIT_COOLDOWN_NOT_PASSED`.",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "const": "COOLDOWN",
+                    "description": "Trigger-limit check that failed. Always `COOLDOWN`."
+                  },
+                  "remaining_ms": {
+                    "type": "number",
+                    "description": "Milliseconds remaining before the earning rule cooldown ends."
+                  }
+                },
+                "required": [
+                  "type",
+                  "remaining_ms"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "title": "Trigger-limit frequency rejection details",
+                "description": "Trigger-limit frequency rejection details. Returned when `reason` is `TRIGGER_LIMIT_FREQUENCY_EXCEEDED`.",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "const": "FREQUENCY",
+                    "description": "Trigger-limit check that failed. Always `FREQUENCY`."
+                  },
+                  "current_count": {
+                    "type": "number",
+                    "description": "Number of times the earning rule has already triggered in the limited period."
+                  },
+                  "limit": {
+                    "type": "number",
+                    "description": "Maximum number of times the earning rule may trigger in the limited period."
+                  }
+                },
+                "required": [
+                  "type",
+                  "current_count",
+                  "limit"
+                ],
+                "additionalProperties": false
+              }
+            ]
           }
         }
       },
@@ -21912,9 +22088,10 @@
         "title": "Loyalties Programs Members Orders Payments List Response Body",
         "description": "Response body schema for **GET** `/v2/loyalties/programs/{programId}/members/{memberId}/orders/payments`."
       },
-      "BenefitTransactionListResponse": {
+      "LoyaltiesProgramsMembersBenefitsTransactionsListResponseBody": {
         "type": "object",
-        "description": "Paginated list of benefit transactions.",
+        "description": "Response body schema for **GET** `/v2/loyalties/programs/{programId}/members/{memberId}/benefits/transactions`.",
+        "title": "Loyalties Programs Members Benefits Transactions List Response Body",
         "properties": {
           "data": {
             "type": "array",
