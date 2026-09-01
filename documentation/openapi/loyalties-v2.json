@@ -6470,9 +6470,10 @@
           "name": "programId",
           "in": "path",
           "required": true,
-          "description": "Unique loyalty program identifier (format: `lprg_` followed by hexadecimal characters).",
+          "description": "Unique loyalty program ID (format `lprg_[a-f0-9]+`).",
           "schema": {
-            "type": "string"
+            "type": "string",
+            "pattern": "^lprg_[a-f0-9]+$"
           }
         },
         {
@@ -6560,7 +6561,7 @@
             "explode": true,
             "description": "Field filters, e.g. `filters[benefit_id][conditions][$is]=lben_...`. Each field accepts a `conditions` object with condition operators.",
             "schema": {
-              "$ref": "#/components/schemas/BenefitTransactionListFilters"
+              "$ref": "#/components/schemas/LoyaltiesProgramsMembersBenefitsTransactionsListRequestQuery"
             }
           }
         ],
@@ -6612,6 +6613,81 @@
                         "expires_at": "2026-09-01T08:51:04.072Z"
                       },
                       "object": "list"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid query parameters or pagination cursor.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Invalid cursor format": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Property .cursor must match pattern \"^lcrsbtx_[a-f0-9]+$\"",
+                      "request_id": "v-12f8c71a41b2ce9101"
+                    }
+                  },
+                  "Cursor invalid or expired": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_or_expired_cursor",
+                      "message": "Invalid or expired cursor",
+                      "details": "The provided cursor is invalid or has expired",
+                      "request_id": "v-12f8c71a41b2ce9102"
+                    }
+                  },
+                  "Cursor does not match query": {
+                    "value": {
+                      "code": 400,
+                      "key": "cursor_and_query_mismatch",
+                      "message": "Cursor and query mismatch",
+                      "details": "The provided cursor does not match the query, either the cursor is invalid or the query has changed",
+                      "request_id": "v-12f8c71a41b2ce9103"
+                    }
+                  },
+                  "Limit too high": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Property .limit cannot be greater than 100",
+                      "request_id": "v-12f8c71a41b2ce9104"
+                    }
+                  },
+                  "Limit too low": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Property .limit cannot be lower than 1",
+                      "request_id": "v-12f8c71a41b2ce9105"
+                    }
+                  },
+                  "Unsupported order value": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Property .order must be equal to one of the allowed values [ -created_at, created_at ]",
+                      "request_id": "v-12f8c71a41b2ce9106"
+                    }
+                  },
+                  "Conflicting order values": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Query cannot be ordered by 'created_at' and '-created_at' at the same time",
+                      "request_id": "v-12f8c71a41b2ce9107"
                     }
                   }
                 }
@@ -21315,7 +21391,7 @@
             "enum": [
               "FULFILLMENT"
             ],
-            "description": "Transaction type."
+            "description": "Transaction type. Always `FULFILLMENT`."
           },
           "details": {
             "description": "Transaction details for the `FULFILLMENT` type.",
@@ -21446,7 +21522,7 @@
         "properties": {
           "event_id": {
             "type": "string",
-            "description": "Unique identifier of the event that triggered the fulfillment. Custom events use format `evcus_...`."
+            "description": "Unique identifier of the event that triggered the fulfillment. Custom events use the `evcus_` prefix; other source events use their own ID formats."
           },
           "earning_item_id": {
             "description": "Identifier of the earning item that produced the benefit (format `lernei_...`). `null` when the earning item is unknown.",
@@ -21469,14 +21545,7 @@
         "properties": {
           "reason": {
             "type": "string",
-            "description": "Machine-readable rejection reason. Known values include `OUT_OF_STOCK`, `BENEFIT_NOT_FOUND`, `UNEXPECTED_ERROR`, `TRIGGER_LIMIT_COOLDOWN_NOT_PASSED`, and `TRIGGER_LIMIT_FREQUENCY_EXCEEDED`. May also be a passthrough error key.",
-            "enum": [
-              "OUT_OF_STOCK",
-              "BENEFIT_NOT_FOUND",
-              "UNEXPECTED_ERROR",
-              "TRIGGER_LIMIT_COOLDOWN_NOT_PASSED",
-              "TRIGGER_LIMIT_FREQUENCY_EXCEEDED"
-            ]
+            "description": "Machine-readable rejection reason. Known values are `OUT_OF_STOCK`, `BENEFIT_NOT_FOUND`, `UNEXPECTED_ERROR`, `TRIGGER_LIMIT_COOLDOWN_NOT_PASSED`, and `TRIGGER_LIMIT_FREQUENCY_EXCEEDED`. Other error keys can be passed through, so treat this list as non-exhaustive."
           },
           "details": {
             "description": "Additional rejection context. Stock, not-found, and unexpected-error rejections use a string. Trigger-limit rejections use an object.",
@@ -21536,12 +21605,12 @@
           }
         }
       },
-      "BenefitTransactionListFilters": {
+      "LoyaltiesProgramsMembersBenefitsTransactionsListRequestQuery": {
         "type": "object",
-        "description": "Filters for listing benefit transactions.",
+        "description": "Request query schema for **GET** `/v2/loyalties/programs/{programId}/members/{memberId}/benefits/transactions`.",
         "properties": {
           "junction": {
-            "description": "Logical junction between the field filters. Defaults to AND behavior.",
+            "description": "Defines the logical junction between field filters. Allowed values: `AND`, `OR`. Defaults to `AND`.",
             "oneOf": [
               {
                 "type": "string",
@@ -21559,7 +21628,7 @@
             "description": "Filter by benefit id.",
             "oneOf": [
               {
-                "$ref": "#/components/schemas/BenefitTransactionFilterBenefitIdConditions"
+                "$ref": "#/components/schemas/LoyaltiesProgramsMembersBenefitsTransactionsListRequestQueryBenefitId"
               },
               {
                 "type": "null"
@@ -21578,9 +21647,10 @@
             ]
           }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "title": "Loyalties Programs Members Benefits Transactions List Request Query"
       },
-      "BenefitTransactionFilterBenefitIdConditions": {
+      "LoyaltiesProgramsMembersBenefitsTransactionsListRequestQueryBenefitId": {
         "type": "object",
         "description": "ID filter conditions for benefit ids. Values must match pattern `^lben_[a-f0-9]+$`. `$is`/`$is_not` accept a single value (string or 1-element array); `$in`/`$not_in` accept a string or an array of 1-100 values.",
         "properties": {
@@ -22095,7 +22165,7 @@
         "properties": {
           "data": {
             "type": "array",
-            "description": "Benefit transactions.",
+            "description": "List of benefit transactions.",
             "items": {
               "$ref": "#/components/schemas/BenefitTransaction"
             }
