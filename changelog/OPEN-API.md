@@ -6,6 +6,9 @@ Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
 ## 2026-09-01
 
+- Verified and updated GET `/v2/loyalties/programs/{programId}/members`.
+  - Corrected `DateFilter` `$is`, `$more_than`, and `$less_than` to non-negative integer strings (`pattern: ^[0-9]+$`) instead of date-time or unconstrained strings.
+  - Marked `expires_at` as required on `ListCursor`.
 - Verified and updated POST `/v2/loyalties/programs/{programId}/members/{memberId}/cards/{cardId}/expiring-points/{bucketId}/expire`.
   - Added `LoyaltiesProgramsMembersCardsExpiringPointsExpireResponseBody` schema.
   - Documented `423` lock cases (inactive program or member, program outside its validity window, points expiration not enabled, bucket not `ACTIVE`, or bucket expiration date in the past).
