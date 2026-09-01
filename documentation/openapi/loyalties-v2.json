@@ -152,7 +152,7 @@
             "schema": {
               "oneOf": [
                 {
-                  "$ref": "#/components/schemas/ProgramListFilters"
+                  "$ref": "#/components/schemas/LoyaltiesProgramsListRequestQuery"
                 },
                 {
                   "type": "null"
@@ -693,7 +693,7 @@
             "schema": {
               "oneOf": [
                 {
-                  "$ref": "#/components/schemas/ProgramActivityListFilters"
+                  "$ref": "#/components/schemas/LoyaltiesProgramsActivitiesListRequestQuery"
                 },
                 {
                   "type": "null"
@@ -2158,11 +2158,11 @@
             "required": false,
             "style": "deepObject",
             "explode": true,
-            "description": "Field-specific filter conditions, passed as a deep object, e.g.\n`filters[status][conditions][$is]=ACTIVE`. See the `MemberListFilters` schema\nfor available fields and conditions.",
+            "description": "Field-specific filter conditions, passed as a deep object, e.g.\n`filters[status][conditions][$is]=ACTIVE`.",
             "schema": {
               "oneOf": [
                 {
-                  "$ref": "#/components/schemas/MemberListFilters"
+                  "$ref": "#/components/schemas/LoyaltiesProgramsMembersListRequestQuery"
                 },
                 {
                   "type": "null"
@@ -3379,11 +3379,11 @@
             "required": false,
             "style": "deepObject",
             "explode": true,
-            "description": "Field-specific filter conditions, passed as a deep object, e.g.\n`filters[type][conditions][$is]=vl.member.created`. See the\n`MemberActivityListFilters` schema for available fields and conditions.",
+            "description": "Field-specific filter conditions, passed as a deep object, e.g.\n`filters[type][conditions][$is]=vl.member.created`.",
             "schema": {
               "oneOf": [
                 {
-                  "$ref": "#/components/schemas/MemberActivityListFilters"
+                  "$ref": "#/components/schemas/LoyaltiesProgramsMembersActivitiesListRequestQuery"
                 },
                 {
                   "type": "null"
@@ -3812,11 +3812,11 @@
             "required": false,
             "style": "deepObject",
             "explode": true,
-            "description": "Field-specific filter conditions, passed as a deep object, e.g.\n`filters[type][conditions][$is]=vl.card.created`. See the\n`CardActivityListFilters` schema for available fields and conditions.",
+            "description": "Field-specific filter conditions, passed as a deep object, e.g.\n`filters[type][conditions][$is]=vl.card.created`.",
             "schema": {
               "oneOf": [
                 {
-                  "$ref": "#/components/schemas/CardActivityListFilters"
+                  "$ref": "#/components/schemas/LoyaltiesProgramsMembersCardsActivitiesListRequestQuery"
                 },
                 {
                   "type": "null"
@@ -6465,33 +6465,36 @@
       }
     },
     "/v2/loyalties/programs/{programId}/members/{memberId}/benefits/transactions": {
+      "parameters": [
+        {
+          "name": "programId",
+          "in": "path",
+          "required": true,
+          "description": "Unique loyalty program ID (format `lprg_[a-f0-9]+`).",
+          "schema": {
+            "type": "string",
+            "pattern": "^lprg_[a-f0-9]+$"
+          }
+        },
+        {
+          "name": "memberId",
+          "in": "path",
+          "required": true,
+          "description": "Program member ID (format `lmbr_[a-f0-9]+`).",
+          "schema": {
+            "type": "string",
+            "pattern": "^lmbr_[a-f0-9]+$"
+          }
+        }
+      ],
       "get": {
         "operationId": "listMemberBenefitTransactions",
         "tags": [
           "Programs"
         ],
         "summary": "List member benefit transactions",
-        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nLists benefit transactions (benefit fulfillments) for the given program member,\nwith cursor-based pagination. Supports filtering by benefit id and creation date.",
+        "description": "Lists benefit transactions (benefit fulfillments) for a given program member, with cursor-based pagination.\n\nSupports filtering by benefit ID and creation date.",
         "parameters": [
-          {
-            "name": "programId",
-            "in": "path",
-            "required": true,
-            "description": "Unique loyalty program identifier (format: `lprg_` followed by hexadecimal characters).",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "memberId",
-            "in": "path",
-            "required": true,
-            "description": "Program member ID (format `lmbr_[a-f0-9]+`).",
-            "schema": {
-              "type": "string",
-              "pattern": "^lmbr_[a-f0-9]+$"
-            }
-          },
           {
             "name": "limit",
             "in": "query",
@@ -6558,7 +6561,7 @@
             "explode": true,
             "description": "Field filters, e.g. `filters[benefit_id][conditions][$is]=lben_...`. Each field accepts a `conditions` object with condition operators.",
             "schema": {
-              "$ref": "#/components/schemas/BenefitTransactionListFilters"
+              "$ref": "#/components/schemas/LoyaltiesProgramsMembersBenefitsTransactionsListRequestQuery"
             }
           }
         ],
@@ -6568,37 +6571,159 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/BenefitTransactionListResponse"
+                  "$ref": "#/components/schemas/LoyaltiesProgramsMembersBenefitsTransactionsListResponseBody"
+                },
+                "examples": {
+                  "Benefit transaction list": {
+                    "value": {
+                      "data": [
+                        {
+                          "id": "lbtx_12f8c3d1571aa184e0",
+                          "benefit_id": "lben_128f4bba81947c8542",
+                          "program_id": "lprg_128f58429f4c4bf7b2",
+                          "member_id": "lmbr_128f962dbc8c4ba5dc",
+                          "earning_rule_id": "lern_128f57ec40cc4bf762",
+                          "type": "FULFILLMENT",
+                          "details": {
+                            "reason": "AnnualProgram / Autumn Ethiopia",
+                            "rejection": null,
+                            "metadata": {
+                              "event_id": "evcus_12f8c3cf15eed6dde4",
+                              "earning_item_id": "lernei_128f57ec3b8c4bf761"
+                            },
+                            "result": {
+                              "details": {
+                                "material": {
+                                  "type": "PRODUCT",
+                                  "product": {
+                                    "id": "prod_128f4baa45547c8530"
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          "status": "APPROVED",
+                          "created_at": "2026-09-01T08:39:36.028Z",
+                          "updated_at": null,
+                          "object": "benefit_transaction"
+                        }
+                      ],
+                      "cursor": {
+                        "next": "lcrsbtx_12f8c42751eed6de54",
+                        "expires_at": "2026-09-01T08:51:04.072Z"
+                      },
+                      "object": "list"
+                    }
+                  }
                 }
               }
             }
           },
           "400": {
-            "description": "Validation error - request body or query parameters failed validation, or the operation is not allowed in the current resource state.",
+            "description": "Invalid query parameters or pagination cursor.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Invalid cursor format": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Property .cursor must match pattern \"^lcrsbtx_[a-f0-9]+$\"",
+                      "request_id": "v-12f8c71a41b2ce9101"
+                    }
+                  },
+                  "Cursor invalid or expired": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_or_expired_cursor",
+                      "message": "Invalid or expired cursor",
+                      "details": "The provided cursor is invalid or has expired",
+                      "request_id": "v-12f8c71a41b2ce9102"
+                    }
+                  },
+                  "Cursor does not match query": {
+                    "value": {
+                      "code": 400,
+                      "key": "cursor_and_query_mismatch",
+                      "message": "Cursor and query mismatch",
+                      "details": "The provided cursor does not match the query, either the cursor is invalid or the query has changed",
+                      "request_id": "v-12f8c71a41b2ce9103"
+                    }
+                  },
+                  "Limit too high": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Property .limit cannot be greater than 100",
+                      "request_id": "v-12f8c71a41b2ce9104"
+                    }
+                  },
+                  "Limit too low": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Property .limit cannot be lower than 1",
+                      "request_id": "v-12f8c71a41b2ce9105"
+                    }
+                  },
+                  "Unsupported order value": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Property .order must be equal to one of the allowed values [ -created_at, created_at ]",
+                      "request_id": "v-12f8c71a41b2ce9106"
+                    }
+                  },
+                  "Conflicting order values": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Query cannot be ordered by 'created_at' and '-created_at' at the same time",
+                      "request_id": "v-12f8c71a41b2ce9107"
+                    }
+                  }
                 }
               }
             }
           },
           "404": {
-            "description": "Resource not found.",
+            "description": "Resource (program or member) not found.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Program not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find program with id lprg_18f58429f4c4bf7b2",
+                      "request_id": "v-12f8c62fad93dba093",
+                      "resource_id": "lprg_18f58429f4c4bf7b2",
+                      "resource_type": "program"
+                    }
+                  },
+                  "Member not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find member with id lmbr_128f96dbc8c4ba5dc",
+                      "request_id": "v-12f8c64448dc2f8435",
+                      "resource_id": "lmbr_128f96dbc8c4ba5dc",
+                      "resource_type": "member"
+                    }
+                  }
                 }
               }
             }
@@ -6710,7 +6835,7 @@
             "explode": true,
             "description": "Field filters, e.g. `filters[card_id][conditions][$is]=lcrd_...`. Each field accepts a `conditions` object with condition operators.",
             "schema": {
-              "$ref": "#/components/schemas/TierTransactionListFilters"
+              "$ref": "#/components/schemas/LoyaltiesProgramsMembersTiersTransactionsListRequestQuery"
             }
           }
         ],
@@ -7946,7 +8071,7 @@
             "explode": true,
             "description": "Filter conditions per field, e.g. `filters[status][conditions][$is]=ACTIVE`.",
             "schema": {
-              "$ref": "#/components/schemas/CardDefinitionListFilters"
+              "$ref": "#/components/schemas/LoyaltiesCardDefinitionsListRequestQuery"
             }
           }
         ],
@@ -8526,7 +8651,7 @@
             "explode": true,
             "description": "Filter conditions per field, e.g. `filters[type][conditions][$is]=vl.card_definition.created`.",
             "schema": {
-              "$ref": "#/components/schemas/CardDefinitionActivityListFilters"
+              "$ref": "#/components/schemas/LoyaltiesCardDefinitionsActivitiesListRequestQuery"
             }
           }
         ],
@@ -8725,7 +8850,7 @@
             "explode": true,
             "description": "Filters as a deep object, e.g. `filters[status][conditions][$is]=ACTIVE` or `filters[name][conditions][$contains]=welcome`. See the schema for allowed fields and conditions.",
             "schema": {
-              "$ref": "#/components/schemas/EarningRuleListFilters"
+              "$ref": "#/components/schemas/LoyaltiesEarningRulesListRequestQuery"
             }
           }
         ],
@@ -9310,7 +9435,7 @@
             "explode": true,
             "description": "Filters as a deep object, e.g. `filters[type][conditions][$is]=vl.earning_rule.updated`.",
             "schema": {
-              "$ref": "#/components/schemas/EarningRuleActivitiesListFilters"
+              "$ref": "#/components/schemas/LoyaltiesEarningRulesActivitiesListRequestQuery"
             }
           }
         ],
@@ -9516,7 +9641,7 @@
             "explode": true,
             "description": "Field-specific filter conditions, passed as a deep object\n(e.g. `filters[status][conditions][$is]=ACTIVE`).",
             "schema": {
-              "$ref": "#/components/schemas/TierStructureListFilters"
+              "$ref": "#/components/schemas/LoyaltiesTierStructuresListRequestQuery"
             }
           }
         ],
@@ -10485,7 +10610,7 @@
             "explode": true,
             "description": "Field-specific filter conditions, passed as a deep object\n(e.g. `filters[type][conditions][$is]=vl.tier_structure.created`).",
             "schema": {
-              "$ref": "#/components/schemas/TierStructureActivityListFilters"
+              "$ref": "#/components/schemas/LoyaltiesTierStructuresActivitiesListRequestQuery"
             }
           }
         ],
@@ -10626,7 +10751,7 @@
             "explode": true,
             "description": "Field-specific filter conditions, e.g. `filters[name][conditions][$contains]=gold`.\nConditions of multiple fields are combined with the `junction`.",
             "schema": {
-              "$ref": "#/components/schemas/BenefitListFilters"
+              "$ref": "#/components/schemas/LoyaltiesBenefitsListRequestQuery"
             }
           }
         ],
@@ -11255,7 +11380,7 @@
             "explode": true,
             "description": "Field-specific filter conditions, e.g. `filters[type][conditions][$is]=vl.benefit.created`.\nConditions of multiple fields are combined with the `junction`.",
             "schema": {
-              "$ref": "#/components/schemas/BenefitActivityListFilters"
+              "$ref": "#/components/schemas/LoyaltiesBenefitsActivitiesListRequestQuery"
             }
           }
         ],
@@ -11390,11 +11515,11 @@
             "required": false,
             "style": "deepObject",
             "explode": true,
-            "description": "Field-specific filter conditions, passed as a deep object, e.g.\n`filters[name][conditions][$contains]=gift`. See the `RewardListFilters`\nschema for available fields and conditions.",
+            "description": "Field-specific filter conditions, passed as a deep object, e.g.\n`filters[name][conditions][$contains]=gift`.",
             "schema": {
               "oneOf": [
                 {
-                  "$ref": "#/components/schemas/RewardListFilters"
+                  "$ref": "#/components/schemas/LoyaltiesRewardsListRequestQuery"
                 },
                 {
                   "type": "null"
@@ -12359,11 +12484,11 @@
             "required": false,
             "style": "deepObject",
             "explode": true,
-            "description": "Field-specific filter conditions, passed as a deep object, e.g.\n`filters[type][conditions][$is]=vl.reward.created`. See the\n`RewardActivityListFilters` schema for available fields and conditions.",
+            "description": "Field-specific filter conditions, passed as a deep object, e.g.\n`filters[type][conditions][$is]=vl.reward.created`.",
             "schema": {
               "oneOf": [
                 {
-                  "$ref": "#/components/schemas/RewardActivityListFilters"
+                  "$ref": "#/components/schemas/LoyaltiesRewardsActivitiesListRequestQuery"
                 },
                 {
                   "type": "null"
@@ -15054,7 +15179,7 @@
           }
         }
       },
-      "ProgramIdFilterConditions": {
+      "LoyaltiesProgramsListRequestQueryId": {
         "type": "object",
         "description": "Filter conditions for the program `id` field (ID field type). Allowed conditions:\n`$is`, `$is_not`, `$in`, `$not_in`. Values must match the program id pattern\n`^lprg_[a-f0-9]+$`. Each condition accepts a single string or an array of strings\n(max 1 item for `$is`/`$is_not`, max 100 items for `$in`/`$not_in`).",
         "properties": {
@@ -15155,7 +15280,7 @@
         ],
         "additionalProperties": false
       },
-      "ProgramStringFilterConditions": {
+      "LoyaltiesProgramsListRequestQueryName": {
         "type": "object",
         "description": "Filter conditions for string fields (STRING field type). Allowed conditions:\n`$is`, `$is_not`, `$contains`, `$not_contain`, `$starts_with`, `$ends_with`,\n`$in`, `$not_in`, `$has_value`, `$is_unknown`. Each condition accepts a single\nstring or an array of strings (max 1 item, except `$in`/`$not_in` which allow\nup to 10 items).",
         "properties": {
@@ -15354,7 +15479,7 @@
         ],
         "additionalProperties": false
       },
-      "ProgramStatusFilterConditions": {
+      "LoyaltiesProgramsListRequestQueryStatus": {
         "type": "object",
         "description": "Filter conditions for the program `status` field (ENUM field type). Allowed conditions:\n`$is`, `$is_not`, `$in`, `$not_in`. Allowed values: `ACTIVE`, `INACTIVE`, `DRAFT`.\nEach condition accepts a single value or an array of values (max 1 item for\n`$is`/`$is_not`, up to 10 items for `$in`/`$not_in`).",
         "properties": {
@@ -15633,9 +15758,9 @@
         ],
         "additionalProperties": false
       },
-      "ProgramListFilters": {
+      "LoyaltiesProgramsListRequestQuery": {
         "type": "object",
-        "description": "Filters accepted by the program list endpoint.",
+        "description": "Request query schema for **GET** `/v2/loyalties/programs`.",
         "properties": {
           "junction": {
             "description": "Logical junction applied between field filters. Defaults to `AND`.",
@@ -15656,7 +15781,7 @@
             "description": "Filter by program id.",
             "oneOf": [
               {
-                "$ref": "#/components/schemas/ProgramIdFilterConditions"
+                "$ref": "#/components/schemas/LoyaltiesProgramsListRequestQueryId"
               },
               {
                 "type": "null"
@@ -15667,7 +15792,7 @@
             "description": "Filter by program name.",
             "oneOf": [
               {
-                "$ref": "#/components/schemas/ProgramStringFilterConditions"
+                "$ref": "#/components/schemas/LoyaltiesProgramsListRequestQueryName"
               },
               {
                 "type": "null"
@@ -15678,7 +15803,7 @@
             "description": "Filter by program status.",
             "oneOf": [
               {
-                "$ref": "#/components/schemas/ProgramStatusFilterConditions"
+                "$ref": "#/components/schemas/LoyaltiesProgramsListRequestQueryStatus"
               },
               {
                 "type": "null"
@@ -15697,9 +15822,10 @@
             ]
           }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "title": "Loyalties Programs List Request Query"
       },
-      "ProgramActivityIdFilterConditions": {
+      "LoyaltiesProgramsActivitiesListRequestQueryId": {
         "type": "object",
         "description": "Filter conditions for the activity `id` field (ID field type). Allowed conditions:\n`$is`, `$is_not`, `$in`, `$not_in`. Values must match the program activity id pattern\n`^laprg_[a-f0-9]+$`. Each condition accepts a single string or an array of strings\n(max 1 item for `$is`/`$is_not`, max 100 items for `$in`/`$not_in`).",
         "properties": {
@@ -15800,7 +15926,7 @@
         ],
         "additionalProperties": false
       },
-      "ProgramActivityTypeFilterConditions": {
+      "LoyaltiesProgramsActivitiesListRequestQueryType": {
         "type": "object",
         "description": "Filter conditions for the activity `type` field (ENUM field type). Allowed conditions:\n`$is`, `$is_not`, `$in`, `$not_in`. Allowed values are the program activity types.\nEach condition accepts a single value or an array of values (max 1 item for\n`$is`/`$is_not`, up to 10 items for `$in`/`$not_in`).",
         "properties": {
@@ -16021,9 +16147,9 @@
         ],
         "additionalProperties": false
       },
-      "ProgramActivityListFilters": {
+      "LoyaltiesProgramsActivitiesListRequestQuery": {
         "type": "object",
-        "description": "Filters accepted by the program activities list endpoint.",
+        "description": "Request query schema for **GET** `/v2/loyalties/programs/{programId}/activities`.",
         "properties": {
           "junction": {
             "description": "Logical junction applied between field filters. Defaults to `AND`.",
@@ -16044,7 +16170,7 @@
             "description": "Filter by activity id.",
             "oneOf": [
               {
-                "$ref": "#/components/schemas/ProgramActivityIdFilterConditions"
+                "$ref": "#/components/schemas/LoyaltiesProgramsActivitiesListRequestQueryId"
               },
               {
                 "type": "null"
@@ -16055,7 +16181,7 @@
             "description": "Filter by activity type.",
             "oneOf": [
               {
-                "$ref": "#/components/schemas/ProgramActivityTypeFilterConditions"
+                "$ref": "#/components/schemas/LoyaltiesProgramsActivitiesListRequestQueryType"
               },
               {
                 "type": "null"
@@ -16074,7 +16200,8 @@
             ]
           }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "title": "Loyalties Programs Activities List Request Query"
       },
       "LoyaltiesProgramsMembersCreateRequestBody": {
         "type": "object",
@@ -17014,9 +17141,9 @@
           "next"
         ]
       },
-      "MemberListFilters": {
+      "LoyaltiesProgramsMembersListRequestQuery": {
         "type": "object",
-        "description": "Filters for the members list. Each field accepts a `conditions` object; multiple\nfield filters are combined with the `junction` (default AND).",
+        "description": "Request query schema for **GET** `/v2/loyalties/programs/{programId}/members`.",
         "properties": {
           "junction": {
             "description": "How multiple field filters are combined. Defaults to `AND`.",
@@ -17037,7 +17164,7 @@
             "description": "Filter by member ID (ID conditions, values matching `^lmbr_[a-f0-9]+$`).",
             "oneOf": [
               {
-                "$ref": "#/components/schemas/MemberIdFilter"
+                "$ref": "#/components/schemas/LoyaltiesProgramsMembersListRequestQueryId"
               },
               {
                 "type": "null"
@@ -17048,7 +17175,7 @@
             "description": "Filter by member status (enum conditions, values `ACTIVE` or `INACTIVE`).",
             "oneOf": [
               {
-                "$ref": "#/components/schemas/MemberStatusFilter"
+                "$ref": "#/components/schemas/LoyaltiesProgramsMembersListRequestQueryStatus"
               },
               {
                 "type": "null"
@@ -17059,7 +17186,7 @@
             "description": "Filter by customer ID (ID conditions, values matching `^cust_[a-zA-Z0-9]+`).",
             "oneOf": [
               {
-                "$ref": "#/components/schemas/MemberCustomerIdFilter"
+                "$ref": "#/components/schemas/LoyaltiesProgramsMembersListRequestQueryCustomerId"
               },
               {
                 "type": "null"
@@ -17078,9 +17205,10 @@
             ]
           }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "title": "Loyalties Programs Members List Request Query"
       },
-      "MemberIdFilter": {
+      "LoyaltiesProgramsMembersListRequestQueryId": {
         "type": "object",
         "description": "ID filter conditions for member IDs. At least one condition is required.",
         "properties": {
@@ -17181,7 +17309,7 @@
         ],
         "additionalProperties": false
       },
-      "MemberCustomerIdFilter": {
+      "LoyaltiesProgramsMembersListRequestQueryCustomerId": {
         "type": "object",
         "description": "ID filter conditions for customer IDs. At least one condition is required.",
         "properties": {
@@ -17282,7 +17410,7 @@
         ],
         "additionalProperties": false
       },
-      "MemberStatusFilter": {
+      "LoyaltiesProgramsMembersListRequestQueryStatus": {
         "type": "object",
         "description": "Enum filter conditions for member status. Allowed values are `ACTIVE` and\n`INACTIVE`. At least one condition is required.",
         "properties": {
@@ -17686,9 +17814,9 @@
           }
         }
       },
-      "MemberActivityListFilters": {
+      "LoyaltiesProgramsMembersActivitiesListRequestQuery": {
         "type": "object",
-        "description": "Filters for the member activities list.",
+        "description": "Request query schema for **GET** `/v2/loyalties/programs/{programId}/members/{memberId}/activities`.",
         "properties": {
           "junction": {
             "description": "How multiple field filters are combined. Defaults to `AND`.",
@@ -17709,7 +17837,7 @@
             "description": "Filter by activity ID (ID conditions, values matching `^lambr_[a-f0-9]+$`).",
             "oneOf": [
               {
-                "$ref": "#/components/schemas/MemberActivityIdFilter"
+                "$ref": "#/components/schemas/LoyaltiesProgramsMembersActivitiesListRequestQueryId"
               },
               {
                 "type": "null"
@@ -17720,7 +17848,7 @@
             "description": "Filter by activity type (enum conditions over the member activity types).",
             "oneOf": [
               {
-                "$ref": "#/components/schemas/MemberActivityTypeFilter"
+                "$ref": "#/components/schemas/LoyaltiesProgramsMembersActivitiesListRequestQueryType"
               },
               {
                 "type": "null"
@@ -17739,9 +17867,10 @@
             ]
           }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "title": "Loyalties Programs Members Activities List Request Query"
       },
-      "MemberActivityIdFilter": {
+      "LoyaltiesProgramsMembersActivitiesListRequestQueryId": {
         "type": "object",
         "description": "ID filter conditions for member activity IDs. At least one condition is required.",
         "properties": {
@@ -17842,7 +17971,7 @@
         ],
         "additionalProperties": false
       },
-      "MemberActivityTypeFilter": {
+      "LoyaltiesProgramsMembersActivitiesListRequestQueryType": {
         "type": "object",
         "description": "Enum filter conditions for member activity types. At least one condition is\nrequired.",
         "properties": {
@@ -18092,9 +18221,9 @@
           "created_at"
         ]
       },
-      "CardActivityListFilters": {
+      "LoyaltiesProgramsMembersCardsActivitiesListRequestQuery": {
         "type": "object",
-        "description": "Filters for the card activities list.",
+        "description": "Request query schema for **GET** `/v2/loyalties/programs/{programId}/members/{memberId}/cards/{cardId}/activities`.",
         "properties": {
           "junction": {
             "description": "How multiple field filters are combined. Defaults to `AND`.",
@@ -18115,7 +18244,7 @@
             "description": "Filter by activity ID (ID conditions, values matching `^lacrd_[a-f0-9]+$`).",
             "oneOf": [
               {
-                "$ref": "#/components/schemas/CardActivityIdFilter"
+                "$ref": "#/components/schemas/LoyaltiesProgramsMembersCardsActivitiesListRequestQueryId"
               },
               {
                 "type": "null"
@@ -18126,7 +18255,7 @@
             "description": "Filter by activity type (enum conditions over the card activity types).",
             "oneOf": [
               {
-                "$ref": "#/components/schemas/CardActivityTypeFilter"
+                "$ref": "#/components/schemas/LoyaltiesProgramsMembersCardsActivitiesListRequestQueryType"
               },
               {
                 "type": "null"
@@ -18145,9 +18274,10 @@
             ]
           }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "title": "Loyalties Programs Members Cards Activities List Request Query"
       },
-      "CardActivityIdFilter": {
+      "LoyaltiesProgramsMembersCardsActivitiesListRequestQueryId": {
         "type": "object",
         "description": "ID filter conditions for card activity IDs. At least one condition is required.",
         "properties": {
@@ -18248,7 +18378,7 @@
         ],
         "additionalProperties": false
       },
-      "CardActivityTypeFilter": {
+      "LoyaltiesProgramsMembersCardsActivitiesListRequestQueryType": {
         "type": "object",
         "description": "Enum filter conditions for card activity types. At least one condition is\nrequired.",
         "properties": {
@@ -21266,7 +21396,7 @@
             "enum": [
               "FULFILLMENT"
             ],
-            "description": "Transaction type."
+            "description": "Transaction type. Always `FULFILLMENT`."
           },
           "details": {
             "description": "Transaction details for the `FULFILLMENT` type.",
@@ -21310,14 +21440,17 @@
       },
       "BenefitTransactionDetails": {
         "type": "object",
-        "description": "Details of a FULFILLMENT benefit transaction.",
+        "description": "Details of a `FULFILLMENT` benefit transaction.",
         "properties": {
           "reason": {
-            "type": "string",
-            "description": "Human-readable reason for the fulfillment."
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Human-readable reason for the fulfillment. Typically `{program name} / {earning rule name}`."
           },
           "rejection": {
-            "description": "Rejection details, present when the transaction was rejected.",
+            "description": "Rejection details. Populated for `REJECTED` transactions. `null` for `APPROVED` and `PENDING`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/BenefitTransactionRejection"
@@ -21328,16 +21461,58 @@
             ]
           },
           "metadata": {
-            "type": "object",
             "description": "Transaction metadata. Empty object when not set.",
-            "additionalProperties": true
+            "$ref": "#/components/schemas/BenefitTransactionDetailsMetadata"
           },
           "result": {
-            "description": "Fulfillment result payload, or `null` when not yet available.",
+            "description": "Fulfillment result. Populated for `APPROVED` transactions. `null` for `REJECTED` and `PENDING`.",
             "oneOf": [
               {
                 "type": "object",
-                "additionalProperties": true
+                "description": "Benefit fulfillment result envelope.",
+                "properties": {
+                  "details": {
+                    "type": "object",
+                    "description": "Fulfillment payload. Shape depends on the benefit type (`MATERIAL` or `DIGITAL`). Digital fulfillments also include published voucher fields at this level.",
+                    "properties": {
+                      "material": {
+                        "description": "Material benefit effect that was fulfilled. Present for `MATERIAL` benefits. Absent for `DIGITAL` benefits.",
+                        "oneOf": [
+                          {
+                            "$ref": "#/components/schemas/BenefitMaterial"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "digital": {
+                        "description": "Digital benefit effect that was fulfilled. Present for `DIGITAL` benefits. Absent for `MATERIAL` benefits.",
+                        "oneOf": [
+                          {
+                            "$ref": "#/components/schemas/BenefitDigital"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "voucher_id": {
+                        "type": "string",
+                        "description": "Published voucher ID for digital fulfillments."
+                      },
+                      "code": {
+                        "type": "string",
+                        "description": "Published voucher code for digital fulfillments."
+                      },
+                      "balance": {
+                        "type": "number",
+                        "description": "Gift voucher balance after credit. Present for `GIFT_VOUCHERS` digital fulfillments. Distinct from `digital.gift_vouchers.balance`, which is the configured credit amount."
+                      }
+                    },
+                    "additionalProperties": true
+                  }
+                }
               },
               {
                 "type": "null"
@@ -21346,26 +21521,101 @@
           }
         }
       },
+      "BenefitTransactionDetailsMetadata": {
+        "type": "object",
+        "description": "Benefit transaction metadata written at fulfillment time.",
+        "properties": {
+          "event_id": {
+            "type": "string",
+            "description": "Unique identifier of the event that triggered the fulfillment. Custom events use the `evcus_` prefix; other source events use their own ID formats."
+          },
+          "earning_item_id": {
+            "description": "Identifier of the earning item that produced the benefit (format `lernei_...`). `null` when the earning item is unknown.",
+            "oneOf": [
+              {
+                "type": "string",
+                "pattern": "^lernei_[a-f0-9]+$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
       "BenefitTransactionRejection": {
         "type": "object",
-        "description": "Rejection details.",
+        "description": "Rejection details for a benefit transaction.",
         "properties": {
           "reason": {
             "type": "string",
-            "description": "Machine-readable rejection reason."
+            "description": "Machine-readable rejection reason. Known values are `OUT_OF_STOCK`, `BENEFIT_NOT_FOUND`, `UNEXPECTED_ERROR`, `TRIGGER_LIMIT_COOLDOWN_NOT_PASSED`, and `TRIGGER_LIMIT_FREQUENCY_EXCEEDED`. Other error keys can be passed through, so treat this list as non-exhaustive."
           },
           "details": {
-            "type": "string",
-            "description": "Additional human-readable details about the rejection."
+            "description": "Additional rejection context. Stock, not-found, and unexpected-error rejections use a string. Trigger-limit rejections use an object.",
+            "oneOf": [
+              {
+                "type": "string",
+                "description": "Human-readable rejection message. Used for `OUT_OF_STOCK`, `BENEFIT_NOT_FOUND`, and `UNEXPECTED_ERROR`."
+              },
+              {
+                "type": "object",
+                "title": "Trigger-limit cooldown rejection details",
+                "description": "Trigger-limit cooldown rejection details. Returned when `reason` is `TRIGGER_LIMIT_COOLDOWN_NOT_PASSED`.",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "const": "COOLDOWN",
+                    "description": "Trigger-limit check that failed. Always `COOLDOWN`."
+                  },
+                  "remaining_ms": {
+                    "type": "number",
+                    "description": "Milliseconds remaining before the earning rule cooldown ends."
+                  }
+                },
+                "required": [
+                  "type",
+                  "remaining_ms"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "title": "Trigger-limit frequency rejection details",
+                "description": "Trigger-limit frequency rejection details. Returned when `reason` is `TRIGGER_LIMIT_FREQUENCY_EXCEEDED`.",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "const": "FREQUENCY",
+                    "description": "Trigger-limit check that failed. Always `FREQUENCY`."
+                  },
+                  "current_count": {
+                    "type": "number",
+                    "description": "Number of times the earning rule has already triggered in the limited period."
+                  },
+                  "limit": {
+                    "type": "number",
+                    "description": "Maximum number of times the earning rule may trigger in the limited period."
+                  }
+                },
+                "required": [
+                  "type",
+                  "current_count",
+                  "limit"
+                ],
+                "additionalProperties": false
+              }
+            ]
           }
         }
       },
-      "BenefitTransactionListFilters": {
+      "LoyaltiesProgramsMembersBenefitsTransactionsListRequestQuery": {
         "type": "object",
-        "description": "Filters for listing benefit transactions.",
+        "description": "Request query schema for **GET** `/v2/loyalties/programs/{programId}/members/{memberId}/benefits/transactions`.",
         "properties": {
           "junction": {
-            "description": "Logical junction between the field filters. Defaults to AND behavior.",
+            "description": "Defines the logical junction between field filters. Allowed values: `AND`, `OR`. Defaults to `AND`.",
             "oneOf": [
               {
                 "type": "string",
@@ -21383,7 +21633,7 @@
             "description": "Filter by benefit id.",
             "oneOf": [
               {
-                "$ref": "#/components/schemas/BenefitTransactionFilterBenefitIdConditions"
+                "$ref": "#/components/schemas/LoyaltiesProgramsMembersBenefitsTransactionsListRequestQueryBenefitId"
               },
               {
                 "type": "null"
@@ -21402,9 +21652,10 @@
             ]
           }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "title": "Loyalties Programs Members Benefits Transactions List Request Query"
       },
-      "BenefitTransactionFilterBenefitIdConditions": {
+      "LoyaltiesProgramsMembersBenefitsTransactionsListRequestQueryBenefitId": {
         "type": "object",
         "description": "ID filter conditions for benefit ids. Values must match pattern `^lben_[a-f0-9]+$`. `$is`/`$is_not` accept a single value (string or 1-element array); `$in`/`$not_in` accept a string or an array of 1-100 values.",
         "properties": {
@@ -21685,9 +21936,9 @@
           }
         }
       },
-      "TierTransactionListFilters": {
+      "LoyaltiesProgramsMembersTiersTransactionsListRequestQuery": {
         "type": "object",
-        "description": "Filters for listing tier transactions.",
+        "description": "Request query schema for **GET** `/v2/loyalties/programs/{programId}/members/{memberId}/tiers/transactions`.",
         "properties": {
           "junction": {
             "description": "Logical junction between the field filters. Defaults to AND behavior.",
@@ -21708,7 +21959,7 @@
             "description": "Filter by loyalty card id.",
             "oneOf": [
               {
-                "$ref": "#/components/schemas/TierTransactionFilterCardIdConditions"
+                "$ref": "#/components/schemas/LoyaltiesProgramsMembersTiersTransactionsListRequestQueryCardId"
               },
               {
                 "type": "null"
@@ -21727,9 +21978,10 @@
             ]
           }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "title": "Loyalties Programs Members Tiers Transactions List Request Query"
       },
-      "TierTransactionFilterCardIdConditions": {
+      "LoyaltiesProgramsMembersTiersTransactionsListRequestQueryCardId": {
         "type": "object",
         "description": "ID filter conditions for loyalty card ids. Values must match pattern `^lcrd_[a-f0-9]+$`. `$is`/`$is_not` accept a single value (string or 1-element array); `$in`/`$not_in` accept a string or an array of 1-100 values.",
         "properties": {
@@ -21912,13 +22164,14 @@
         "title": "Loyalties Programs Members Orders Payments List Response Body",
         "description": "Response body schema for **GET** `/v2/loyalties/programs/{programId}/members/{memberId}/orders/payments`."
       },
-      "BenefitTransactionListResponse": {
+      "LoyaltiesProgramsMembersBenefitsTransactionsListResponseBody": {
         "type": "object",
-        "description": "Paginated list of benefit transactions.",
+        "description": "Response body schema for **GET** `/v2/loyalties/programs/{programId}/members/{memberId}/benefits/transactions`.",
+        "title": "Loyalties Programs Members Benefits Transactions List Response Body",
         "properties": {
           "data": {
             "type": "array",
-            "description": "Benefit transactions.",
+            "description": "List of benefit transactions.",
             "items": {
               "$ref": "#/components/schemas/BenefitTransaction"
             }
@@ -23753,9 +24006,9 @@
         ],
         "additionalProperties": false
       },
-      "CardDefinitionListFilters": {
+      "LoyaltiesCardDefinitionsListRequestQuery": {
         "type": "object",
-        "description": "Filters for the card definitions list endpoint. Each field accepts a\n`conditions` object; provided conditions must be valid for the field type.",
+        "description": "Request query schema for **GET** `/v2/loyalties/card-definitions`.",
         "properties": {
           "junction": {
             "type": [
@@ -23772,7 +24025,7 @@
           "id": {
             "oneOf": [
               {
-                "$ref": "#/components/schemas/CardDefinitionIdFilter"
+                "$ref": "#/components/schemas/LoyaltiesCardDefinitionsListRequestQueryId"
               },
               {
                 "type": "null"
@@ -23783,7 +24036,7 @@
           "name": {
             "oneOf": [
               {
-                "$ref": "#/components/schemas/CardDefinitionStringFilter"
+                "$ref": "#/components/schemas/LoyaltiesCardDefinitionsListRequestQueryName"
               },
               {
                 "type": "null"
@@ -23794,7 +24047,7 @@
           "type": {
             "oneOf": [
               {
-                "$ref": "#/components/schemas/CardDefinitionTypeFilter"
+                "$ref": "#/components/schemas/LoyaltiesCardDefinitionsListRequestQueryType"
               },
               {
                 "type": "null"
@@ -23805,7 +24058,7 @@
           "status": {
             "oneOf": [
               {
-                "$ref": "#/components/schemas/CardDefinitionStatusFilter"
+                "$ref": "#/components/schemas/LoyaltiesCardDefinitionsListRequestQueryStatus"
               },
               {
                 "type": "null"
@@ -23836,9 +24089,10 @@
             "description": "Filter by last update date."
           }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "title": "Loyalties Card Definitions List Request Query"
       },
-      "CardDefinitionIdFilter": {
+      "LoyaltiesCardDefinitionsListRequestQueryId": {
         "type": "object",
         "description": "ID field filter. Allowed conditions:\n`$is`, `$is_not`, `$in`, `$not_in`. Values must match the card definition ID pattern\n`^lcdef_[a-f0-9]+$`. `$is`/`$is_not` accept a single value (string or 1-element array);\n`$in`/`$not_in` accept 1-100 values.",
         "properties": {
@@ -23927,7 +24181,7 @@
         ],
         "additionalProperties": false
       },
-      "CardDefinitionStringFilter": {
+      "LoyaltiesCardDefinitionsListRequestQueryName": {
         "type": "object",
         "description": "String field filter. Allowed conditions: `$is`, `$is_not`, `$contains`, `$not_contain`,\n`$starts_with`, `$ends_with`, `$in`, `$not_in`, `$has_value`, `$is_unknown`.\nSingle-value conditions accept a string or a 1-element array; `$in`/`$not_in`\naccept 1-10 values; `$has_value`/`$is_unknown` are presence checks and ignore the value.",
         "properties": {
@@ -24096,7 +24350,7 @@
         ],
         "additionalProperties": false
       },
-      "CardDefinitionTypeFilter": {
+      "LoyaltiesCardDefinitionsListRequestQueryType": {
         "type": "object",
         "description": "Enum field filter for the card definition `type` field. Allowed conditions:\n`$is`, `$is_not`, `$in`, `$not_in`.\nValues must be one of: `INDIVIDUAL`.",
         "properties": {
@@ -24201,7 +24455,7 @@
         ],
         "additionalProperties": false
       },
-      "CardDefinitionStatusFilter": {
+      "LoyaltiesCardDefinitionsListRequestQueryStatus": {
         "type": "object",
         "description": "Enum field filter for the card definition `status` field. Allowed conditions:\n`$is`, `$is_not`, `$in`, `$not_in`.\nValues must be one of: `ACTIVE`, `DRAFT` (deleted card definitions are not listable).",
         "properties": {
@@ -24435,9 +24689,9 @@
         ],
         "additionalProperties": false
       },
-      "CardDefinitionActivityListFilters": {
+      "LoyaltiesCardDefinitionsActivitiesListRequestQuery": {
         "type": "object",
-        "description": "Filters for the card definition activities list endpoint.",
+        "description": "Request query schema for **GET** `/v2/loyalties/card-definitions/{cardDefinitionId}/activities`.",
         "properties": {
           "junction": {
             "type": [
@@ -24454,7 +24708,7 @@
           "id": {
             "oneOf": [
               {
-                "$ref": "#/components/schemas/CardDefinitionActivityIdFilter"
+                "$ref": "#/components/schemas/LoyaltiesCardDefinitionsActivitiesListRequestQueryId"
               },
               {
                 "type": "null"
@@ -24465,7 +24719,7 @@
           "type": {
             "oneOf": [
               {
-                "$ref": "#/components/schemas/CardDefinitionActivityTypeFilter"
+                "$ref": "#/components/schemas/LoyaltiesCardDefinitionsActivitiesListRequestQueryType"
               },
               {
                 "type": "null"
@@ -24485,9 +24739,10 @@
             "description": "Filter by activity creation date."
           }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "title": "Loyalties Card Definitions Activities List Request Query"
       },
-      "CardDefinitionActivityIdFilter": {
+      "LoyaltiesCardDefinitionsActivitiesListRequestQueryId": {
         "type": "object",
         "description": "ID field filter for activity IDs. Allowed conditions:\n`$is`, `$is_not`, `$in`, `$not_in`.\nValues must match the card definition activity ID pattern `^lacd_[a-f0-9]+$`.\n`$is`/`$is_not` accept a single value; `$in`/`$not_in` accept 1-100 values.",
         "properties": {
@@ -24576,7 +24831,7 @@
         ],
         "additionalProperties": false
       },
-      "CardDefinitionActivityTypeFilter": {
+      "LoyaltiesCardDefinitionsActivitiesListRequestQueryType": {
         "type": "object",
         "description": "Enum field filter for activity types. Allowed conditions:\n`$is`, `$is_not`, `$in`, `$not_in`.\nValues must be one of: `vl.card_definition.created`, `vl.card_definition.updated`,\n`vl.card_definition.deleted`, `vl.card_definition.activated`,\n`vl.card_definition.deactivated`, `vl.card_definition.drafted`,\n`vl.card_definition.assigned`, `vl.card_definition.unassigned`.",
         "properties": {
@@ -28644,9 +28899,9 @@
           }
         }
       },
-      "EarningRuleListFilters": {
+      "LoyaltiesEarningRulesListRequestQuery": {
         "type": "object",
-        "description": "Filters for listing earning rules. Each field carries a required `conditions` object; condition values may be passed as a single string or as an array. Conditions not allowed for the field type are rejected.",
+        "description": "Request query schema for **GET** `/v2/loyalties/earning-rules`.",
         "properties": {
           "junction": {
             "description": "How multiple field filters are combined. Defaults to AND behaviour. Can be `null`.",
@@ -28763,7 +29018,7 @@
             "description": "Name filter (string type). Allowed conditions: `$is`, `$is_not`, `$contains`, `$not_contain`, `$starts_with`, `$ends_with` (single value), `$in`, `$not_in` (up to 10 values), `$has_value`, `$is_unknown`. Can be `null`.",
             "oneOf": [
               {
-                "$ref": "#/components/schemas/EarningRuleStringFilterConditions"
+                "$ref": "#/components/schemas/LoyaltiesEarningRulesListRequestQueryName"
               },
               {
                 "type": "null"
@@ -28910,9 +29165,10 @@
             ]
           }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "title": "Loyalties Earning Rules List Request Query"
       },
-      "EarningRuleStringFilterConditions": {
+      "LoyaltiesEarningRulesListRequestQueryName": {
         "type": "object",
         "description": "String field filter conditions. `$is`, `$is_not`, `$contains`, `$not_contain`, `$starts_with` and `$ends_with` take a single value (string or one-element array); `$in` and `$not_in` take up to 10 values; `$has_value` and `$is_unknown` are presence checks (value is ignored).",
         "required": [
@@ -29202,9 +29458,9 @@
           }
         }
       },
-      "EarningRuleActivitiesListFilters": {
+      "LoyaltiesEarningRulesActivitiesListRequestQuery": {
         "type": "object",
-        "description": "Filters for listing earning rule activities.",
+        "description": "Request query schema for **GET** `/v2/loyalties/earning-rules/{earningRuleId}/activities`.",
         "properties": {
           "junction": {
             "description": "How multiple field filters are combined. Can be `null`.",
@@ -29417,7 +29673,8 @@
             ]
           }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "title": "Loyalties Earning Rules Activities List Request Query"
       },
       "EarningRuleActivityType": {
         "type": "string",
@@ -31332,9 +31589,9 @@
           "object"
         ]
       },
-      "TierStructureListFilters": {
+      "LoyaltiesTierStructuresListRequestQuery": {
         "type": "object",
-        "description": "Filters for the tier structures list. Each field accepts a `conditions` object;\neach filter field may also be null.",
+        "description": "Request query schema for **GET** `/v2/loyalties/tier-structures`.",
         "properties": {
           "junction": {
             "description": "Logical junction combining the field filters. Defaults to AND semantics.",
@@ -31355,7 +31612,7 @@
             "description": "Filter by tier structure id (ID field conditions, pattern `^lts_[a-f0-9]+$`).",
             "oneOf": [
               {
-                "$ref": "#/components/schemas/TierStructureFilterIdField"
+                "$ref": "#/components/schemas/LoyaltiesTierStructuresListRequestQueryId"
               },
               {
                 "type": "null"
@@ -31366,7 +31623,7 @@
             "description": "Filter by tier structure name (string field conditions).",
             "oneOf": [
               {
-                "$ref": "#/components/schemas/TierStructureFilterStringField"
+                "$ref": "#/components/schemas/LoyaltiesTierStructuresListRequestQueryName"
               },
               {
                 "type": "null"
@@ -31377,7 +31634,7 @@
             "description": "Filter by tier structure type (enum field conditions).",
             "oneOf": [
               {
-                "$ref": "#/components/schemas/TierStructureFilterTypeField"
+                "$ref": "#/components/schemas/LoyaltiesTierStructuresListRequestQueryType"
               },
               {
                 "type": "null"
@@ -31388,7 +31645,7 @@
             "description": "Filter by tier structure status (enum field conditions).",
             "oneOf": [
               {
-                "$ref": "#/components/schemas/TierStructureFilterStatusField"
+                "$ref": "#/components/schemas/LoyaltiesTierStructuresListRequestQueryStatus"
               },
               {
                 "type": "null"
@@ -31407,11 +31664,12 @@
             ]
           }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "title": "Loyalties Tier Structures List Request Query"
       },
-      "TierStructureActivityListFilters": {
+      "LoyaltiesTierStructuresActivitiesListRequestQuery": {
         "type": "object",
-        "description": "Filters for the tier structure activities list. Each field accepts a `conditions`\nobject; each filter field may also be null.",
+        "description": "Request query schema for **GET** `/v2/loyalties/tier-structures/{tierStructureId}/activities`.",
         "properties": {
           "junction": {
             "description": "Logical junction combining the field filters. Defaults to AND semantics.",
@@ -31432,7 +31690,7 @@
             "description": "Filter by activity id (ID field conditions, pattern `^lats_[a-f0-9]+$`).",
             "oneOf": [
               {
-                "$ref": "#/components/schemas/TierStructureActivityFilterIdField"
+                "$ref": "#/components/schemas/LoyaltiesTierStructuresActivitiesListRequestQueryId"
               },
               {
                 "type": "null"
@@ -31443,7 +31701,7 @@
             "description": "Filter by activity type (enum field conditions).",
             "oneOf": [
               {
-                "$ref": "#/components/schemas/TierStructureActivityFilterTypeField"
+                "$ref": "#/components/schemas/LoyaltiesTierStructuresActivitiesListRequestQueryType"
               },
               {
                 "type": "null"
@@ -31462,9 +31720,10 @@
             ]
           }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "title": "Loyalties Tier Structures Activities List Request Query"
       },
-      "TierStructureFilterIdField": {
+      "LoyaltiesTierStructuresListRequestQueryId": {
         "type": "object",
         "description": "ID field filter for tier structure ids. Allowed conditions: `$is`, `$is_not`,\n`$in`, `$not_in`. Each condition accepts a single string or an array of strings\nmatching `^lts_[a-f0-9]+$`.",
         "properties": {
@@ -31566,7 +31825,7 @@
         ],
         "additionalProperties": false
       },
-      "TierStructureActivityFilterIdField": {
+      "LoyaltiesTierStructuresActivitiesListRequestQueryId": {
         "type": "object",
         "description": "ID field filter for tier structure activity ids. Allowed conditions: `$is`,\n`$is_not`, `$in`, `$not_in`. Each condition accepts a single string or an array\nof strings matching `^lats_[a-f0-9]+$`.",
         "properties": {
@@ -31668,7 +31927,7 @@
         ],
         "additionalProperties": false
       },
-      "TierStructureFilterStringField": {
+      "LoyaltiesTierStructuresListRequestQueryName": {
         "type": "object",
         "description": "String field filter. Allowed conditions: `$is`, `$is_not`, `$contains`,\n`$not_contain`, `$starts_with`, `$ends_with`, `$in`, `$not_in`, `$has_value`,\n`$is_unknown`. Each condition accepts a single string or an array of strings.",
         "properties": {
@@ -31868,7 +32127,7 @@
         ],
         "additionalProperties": false
       },
-      "TierStructureFilterTypeField": {
+      "LoyaltiesTierStructuresListRequestQueryType": {
         "type": "object",
         "description": "Enum field filter for tier structure `type`. Allowed conditions: `$is`, `$is_not`,\n`$in`, `$not_in`. Allowed values: `POINT_BALANCE`, `POINT_EARNED`.",
         "properties": {
@@ -31994,7 +32253,7 @@
         ],
         "additionalProperties": false
       },
-      "TierStructureFilterStatusField": {
+      "LoyaltiesTierStructuresListRequestQueryStatus": {
         "type": "object",
         "description": "Enum field filter for tier structure `status`. Allowed conditions: `$is`,\n`$is_not`, `$in`, `$not_in`. Allowed values: `DRAFT`, `ACTIVE`, `INACTIVE`,\n`DELETED`.",
         "properties": {
@@ -32136,7 +32395,7 @@
         ],
         "additionalProperties": false
       },
-      "TierStructureActivityFilterTypeField": {
+      "LoyaltiesTierStructuresActivitiesListRequestQueryType": {
         "type": "object",
         "description": "Enum field filter for activity `type`. Allowed conditions: `$is`, `$is_not`,\n`$in`, `$not_in`. Allowed values are the tier structure activity types.",
         "properties": {
@@ -34100,9 +34359,9 @@
           "object"
         ]
       },
-      "BenefitListFilters": {
+      "LoyaltiesBenefitsListRequestQuery": {
         "type": "object",
-        "description": "Filters for the benefits list. Each field accepts a `conditions` object with at least\none condition. Conditions of multiple fields are combined with the `junction`.",
+        "description": "Request query schema for **GET** `/v2/loyalties/benefits`.",
         "properties": {
           "junction": {
             "description": "How conditions of multiple fields are combined. Defaults to `AND`.",
@@ -34123,7 +34382,7 @@
             "description": "Filter by benefit ID.\nAllowed conditions: `$is`, `$is_not`, `$in`, `$not_in`. Values must match `^lben_[a-f0-9]+$`.\n`$is`/`$is_not` accept a single value (string or 1-element array); `$in`/`$not_in`\naccept up to 100 values.",
             "oneOf": [
               {
-                "$ref": "#/components/schemas/BenefitIdFilterConditions"
+                "$ref": "#/components/schemas/LoyaltiesBenefitsListRequestQueryId"
               },
               {
                 "type": "null"
@@ -34134,7 +34393,7 @@
             "description": "Filter by benefit name.\nAllowed conditions: `$is`, `$is_not`, `$contains`, `$not_contain`, `$starts_with`,\n`$ends_with`, `$in`, `$not_in`, `$has_value`, `$is_unknown`. `$in`/`$not_in` accept\nup to 10 values; the other value conditions accept a single value (string or\n1-element array); `$has_value`/`$is_unknown` are presence checks.",
             "oneOf": [
               {
-                "$ref": "#/components/schemas/BenefitStringFilterConditions"
+                "$ref": "#/components/schemas/LoyaltiesBenefitsListRequestQueryName"
               },
               {
                 "type": "null"
@@ -34145,7 +34404,7 @@
             "description": "Filter by benefit status.\nAllowed conditions: `$is`, `$is_not`, `$in`, `$not_in`. Allowed values: `ACTIVE`, `DRAFT`.",
             "oneOf": [
               {
-                "$ref": "#/components/schemas/BenefitStatusFilterConditions"
+                "$ref": "#/components/schemas/LoyaltiesBenefitsListRequestQueryStatus"
               },
               {
                 "type": "null"
@@ -34156,7 +34415,7 @@
             "description": "Filter by benefit type.\nAllowed conditions: `$is`, `$is_not`, `$in`, `$not_in`. Allowed values: `POINTS`,\n`POINTS_PROPORTIONAL`, `MATERIAL`, `DIGITAL`.",
             "oneOf": [
               {
-                "$ref": "#/components/schemas/BenefitTypeFilterConditions"
+                "$ref": "#/components/schemas/LoyaltiesBenefitsListRequestQueryType"
               },
               {
                 "type": "null"
@@ -34175,11 +34434,12 @@
             ]
           }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "title": "Loyalties Benefits List Request Query"
       },
-      "BenefitActivityListFilters": {
+      "LoyaltiesBenefitsActivitiesListRequestQuery": {
         "type": "object",
-        "description": "Filters for the benefit activities list. Each field accepts a `conditions` object with\nat least one condition. Conditions of multiple fields are combined with the `junction`.",
+        "description": "Request query schema for **GET** `/v2/loyalties/benefits/{benefitId}/activities`.",
         "properties": {
           "junction": {
             "description": "How conditions of multiple fields are combined. Defaults to `AND`.",
@@ -34200,7 +34460,7 @@
             "description": "Filter by activity ID.\nAllowed conditions: `$is`, `$is_not`, `$in`, `$not_in`. Values must match `^laben_[a-f0-9]+$`.\n`$is`/`$is_not` accept a single value (string or 1-element array); `$in`/`$not_in`\naccept up to 100 values.",
             "oneOf": [
               {
-                "$ref": "#/components/schemas/BenefitActivityIdFilterConditions"
+                "$ref": "#/components/schemas/LoyaltiesBenefitsActivitiesListRequestQueryId"
               },
               {
                 "type": "null"
@@ -34211,7 +34471,7 @@
             "description": "Filter by activity type.\nAllowed conditions: `$is`, `$is_not`, `$in`, `$not_in`. Allowed values:\n`vl.benefit.created`, `vl.benefit.updated`, `vl.benefit.deleted`,\n`vl.benefit.activated`, `vl.benefit.drafted`.",
             "oneOf": [
               {
-                "$ref": "#/components/schemas/BenefitActivityTypeFilterConditions"
+                "$ref": "#/components/schemas/LoyaltiesBenefitsActivitiesListRequestQueryType"
               },
               {
                 "type": "null"
@@ -34230,9 +34490,10 @@
             ]
           }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "title": "Loyalties Benefits Activities List Request Query"
       },
-      "BenefitIdFilterConditions": {
+      "LoyaltiesBenefitsListRequestQueryId": {
         "type": "object",
         "description": "ID filter conditions for benefit IDs. At least one condition is required.",
         "properties": {
@@ -34333,7 +34594,7 @@
         ],
         "additionalProperties": false
       },
-      "BenefitActivityIdFilterConditions": {
+      "LoyaltiesBenefitsActivitiesListRequestQueryId": {
         "type": "object",
         "description": "ID filter conditions for benefit activity IDs. At least one condition is required.",
         "properties": {
@@ -34434,7 +34695,7 @@
         ],
         "additionalProperties": false
       },
-      "BenefitStringFilterConditions": {
+      "LoyaltiesBenefitsListRequestQueryName": {
         "type": "object",
         "description": "String filter conditions. At least one condition is required.",
         "properties": {
@@ -34633,7 +34894,7 @@
         ],
         "additionalProperties": false
       },
-      "BenefitStatusFilterConditions": {
+      "LoyaltiesBenefitsListRequestQueryStatus": {
         "type": "object",
         "description": "Enum filter conditions for benefit status. At least one condition is required.",
         "properties": {
@@ -34758,7 +35019,7 @@
         ],
         "additionalProperties": false
       },
-      "BenefitTypeFilterConditions": {
+      "LoyaltiesBenefitsListRequestQueryType": {
         "type": "object",
         "description": "Enum filter conditions for benefit type. At least one condition is required.",
         "properties": {
@@ -34899,7 +35160,7 @@
         ],
         "additionalProperties": false
       },
-      "BenefitActivityTypeFilterConditions": {
+      "LoyaltiesBenefitsActivitiesListRequestQueryType": {
         "type": "object",
         "description": "Enum filter conditions for benefit activity type. At least one condition is required.",
         "properties": {
@@ -35923,9 +36184,9 @@
         ],
         "additionalProperties": false
       },
-      "RewardListFilters": {
+      "LoyaltiesRewardsListRequestQuery": {
         "type": "object",
-        "description": "Filters for the rewards list. Each field accepts an object with a required\n`conditions` property. Conditions that are not supported for a given field type\nare rejected.",
+        "description": "Request query schema for **GET** `/v2/loyalties/rewards`.",
         "properties": {
           "junction": {
             "description": "How multiple field filters are combined. Defaults to AND behavior.",
@@ -35946,7 +36207,7 @@
             "description": "Filter by reward ID (ID field type). Values must match `^lrew_[a-f0-9]+$`.",
             "oneOf": [
               {
-                "$ref": "#/components/schemas/RewardIdFilter"
+                "$ref": "#/components/schemas/LoyaltiesRewardsListRequestQueryId"
               },
               {
                 "type": "null"
@@ -35957,7 +36218,7 @@
             "description": "Filter by reward name (string field type).",
             "oneOf": [
               {
-                "$ref": "#/components/schemas/RewardStringFilter"
+                "$ref": "#/components/schemas/LoyaltiesRewardsListRequestQueryName"
               },
               {
                 "type": "null"
@@ -35968,7 +36229,7 @@
             "description": "Filter by reward type (enum field type with values MATERIAL, DIGITAL).",
             "oneOf": [
               {
-                "$ref": "#/components/schemas/RewardTypeFilter"
+                "$ref": "#/components/schemas/LoyaltiesRewardsListRequestQueryType"
               },
               {
                 "type": "null"
@@ -35987,11 +36248,12 @@
             ]
           }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "title": "Loyalties Rewards List Request Query"
       },
-      "RewardActivityListFilters": {
+      "LoyaltiesRewardsActivitiesListRequestQuery": {
         "type": "object",
-        "description": "Filters for the reward activities list. Each field accepts an object with a\nrequired `conditions` property.",
+        "description": "Request query schema for **GET** `/v2/loyalties/rewards/{rewardId}/activities`.",
         "properties": {
           "junction": {
             "description": "How multiple field filters are combined. Defaults to AND behavior.",
@@ -36012,7 +36274,7 @@
             "description": "Filter by activity ID (ID field type). Values must match `^larew_[a-f0-9]+$`.",
             "oneOf": [
               {
-                "$ref": "#/components/schemas/RewardActivityIdFilter"
+                "$ref": "#/components/schemas/LoyaltiesRewardsActivitiesListRequestQueryId"
               },
               {
                 "type": "null"
@@ -36023,7 +36285,7 @@
             "description": "Filter by activity type (enum field type).",
             "oneOf": [
               {
-                "$ref": "#/components/schemas/RewardActivityTypeFilter"
+                "$ref": "#/components/schemas/LoyaltiesRewardsActivitiesListRequestQueryType"
               },
               {
                 "type": "null"
@@ -36042,9 +36304,10 @@
             ]
           }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "title": "Loyalties Rewards Activities List Request Query"
       },
-      "RewardIdFilter": {
+      "LoyaltiesRewardsListRequestQueryId": {
         "type": "object",
         "description": "ID filter conditions. `$is`/`$is_not` accept a single value (string or 1-element\narray); `$in`/`$not_in` accept a string or an array of 1-100 values. All values\nmust match the reward ID pattern `^lrew_[a-f0-9]+$`.",
         "properties": {
@@ -36145,7 +36408,7 @@
         ],
         "additionalProperties": false
       },
-      "RewardActivityIdFilter": {
+      "LoyaltiesRewardsActivitiesListRequestQueryId": {
         "type": "object",
         "description": "ID filter conditions for reward activities. `$is`/`$is_not` accept a single value\n(string or 1-element array); `$in`/`$not_in` accept a string or an array of 1-100\nvalues. All values must match the activity ID pattern `^larew_[a-f0-9]+$`.",
         "properties": {
@@ -36246,7 +36509,7 @@
         ],
         "additionalProperties": false
       },
-      "RewardStringFilter": {
+      "LoyaltiesRewardsListRequestQueryName": {
         "type": "object",
         "description": "String filter conditions. `$is`, `$is_not`, `$contains`, `$not_contain`,\n`$starts_with` and `$ends_with` accept a single value (string or 1-element array);\n`$in`/`$not_in` accept a string or an array of 1-10 values; `$has_value` and\n`$is_unknown` take no meaningful value (string or array with at most 1 item).",
         "properties": {
@@ -36445,7 +36708,7 @@
         ],
         "additionalProperties": false
       },
-      "RewardTypeFilter": {
+      "LoyaltiesRewardsListRequestQueryType": {
         "type": "object",
         "description": "Enum filter conditions for the reward `type` field. Allowed values are MATERIAL\nand DIGITAL. `$is`/`$is_not` accept a single value (string or 1-element array);\n`$in`/`$not_in` accept a string or an array of 1-10 values.",
         "properties": {
@@ -36570,7 +36833,7 @@
         ],
         "additionalProperties": false
       },
-      "RewardActivityTypeFilter": {
+      "LoyaltiesRewardsActivitiesListRequestQueryType": {
         "type": "object",
         "description": "Enum filter conditions for the activity `type` field. `$is`/`$is_not` accept a\nsingle value (string or 1-element array); `$in`/`$not_in` accept a string or an\narray of 1-10 values.",
         "properties": {
