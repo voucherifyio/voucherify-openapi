@@ -2777,45 +2777,63 @@
           "Programs"
         ],
         "summary": "Delete program member",
-        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nDeletes the member from the program (soft delete - status becomes `DELETED`) and\ndeletes the member's cards. Records a `vl.member.deleted` activity. Returns the\ndeleted member (without cards). Returns `404` when the program or member does not\nexist.",
+        "description": "Deletes the member and sets `status` to `DELETED`. Unassigns the member's loyalty cards in this program.\n\nReturns the member without a `cards` array. Records a `vl.member.deleted` activity.\n\nReturns `404` when the program or member does not exist, including when the member is already deleted.",
         "parameters": [],
         "responses": {
           "200": {
-            "description": "The deleted member.",
+            "description": "The deleted member (without cards).",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Member"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Validation error - request body or query parameters failed validation, or the operation is not allowed in the current resource state.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                  "$ref": "#/components/schemas/LoyaltiesProgramsMembersDeleteResponseBody"
+                },
+                "examples": {
+                  "Delete member": {
+                    "value": {
+                      "id": "lmbr_12fa65bb422a9fab71",
+                      "customer_id": "cust_TL1FepNr2ewiwl3ybI36Ss1v",
+                      "program_id": "lprg_128f58429f4c4bf7b2",
+                      "status": "DELETED",
+                      "metadata": {},
+                      "created_at": "2026-09-02T15:05:29.608Z",
+                      "updated_at": null,
+                      "object": "member"
+                    }
+                  }
                 }
               }
             }
           },
           "404": {
-            "description": "Resource not found.",
+            "description": "Program or member not found. A second delete of the same member also returns `404`.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Member not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find member with id lmbr_12fa65bb422a9fab71",
+                      "request_id": "v-12fa6937d2a4064071",
+                      "resource_id": "lmbr_12fa65bb422a9fab71",
+                      "resource_type": "member"
+                    }
+                  },
+                  "Program not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find program with id lprg_128f58429f4c4bf72",
+                      "request_id": "v-12fa69cc8401a871ec",
+                      "resource_id": "lprg_128f58429f4c4bf72",
+                      "resource_type": "program"
+                    }
+                  }
                 }
               }
             }
@@ -16570,6 +16588,16 @@
         ],
         "additionalProperties": false,
         "title": "Loyalties Programs Members Cards Points Adjust Request Body"
+      },
+      "LoyaltiesProgramsMembersDeleteResponseBody": {
+        "title": "Loyalties Programs Members Delete Response Body",
+        "type": "object",
+        "description": "Response body schema for **DELETE** `/v2/loyalties/programs/{programId}/members/{memberId}`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Member"
+          }
+        ]
       },
       "Member": {
         "type": "object",
