@@ -5395,7 +5395,7 @@
           "Programs"
         ],
         "summary": "Refund reward purchase",
-        "description": "Refunds a previously approved reward purchase transaction. Creates a REFUND-type reward transaction and schedules the return of the spent points to the member's card (\"Reward refund transaction created. Points will be returned to the member's card shortly.\").\n\nThe refunded purchase transaction must be of type `PURCHASE` and in `APPROVED` status. Otherwise, the request is rejected with a conflict (`409`) error. Also, the program must be `ACTIVE` and within its validity window.\n\nThe request body is optional (an empty payload is allowed). When omitted, default policies are applied: `refund: DEFAULT`, `stock: DEFAULT`.",
+        "description": "Refunds an `APPROVED` reward purchase made by a program member. The purchase transaction is marked `REFUNDED`, a new `REFUND` reward transaction is created with status `APPROVED`, and the points spent on the purchase are returned to the member's card.\n\nThe request body is optional and an empty payload is allowed. Policies default to `refund: DEFAULT` and `stock: DEFAULT`.\n\nThe endpoint responds with `202` before the card balance changes. A `POINTS_RETURNED` card transaction is created for the member's card and processed shortly after the response. Returned points receive a new expiration date, resolved from the member's tier or card definition points expiration settings. They do not inherit the expiration of the originally spent points.\n\nFor a `LOYALTY_CARD_POINTS` reward, the points credited to the target card are also reversed, with a `POINTS_PURCHASE_REVERSED` card transaction on that card.\n\nOnly rewards whose `refunds.type` is `REFUNDABLE` can be refunded. Any other reward is rejected with `423` and key `reward_refund_policy_does_not_allow_refunds`. Send `policies.refund: ALLOW` to force the refund.\n\nThe program and the reward transaction must exist within the project, otherwise the request fails with `404`. The request is rejected with `423` when:\n- The program is not `ACTIVE` (`non_active_program`) or is outside its validity hours (`program_outside_validity_window`),\n- The transaction is not a purchase (`non_purchase_reward_transaction`) or is not `APPROVED` (`non_approved_reward_transaction`); refunding the same purchase twice fails here,\n- The reward, its program assignment, the member's card, or the card definition no longer exists,\n- For `LOYALTY_CARD_POINTS` rewards, the target card no longer holds the purchased points, or returning the cost would exceed the source card earning limits.",
         "parameters": [],
         "requestBody": {
           "required": false,
@@ -5414,7 +5414,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/RewardPurchaseRefundResponse"
+                  "$ref": "#/components/schemas/LoyaltiesProgramsRewardsPurchasesRefundResponseBody"
                 },
                 "examples": {
                   "Refund accepted": {
@@ -5470,8 +5470,38 @@
               }
             }
           },
+          "400": {
+            "description": "Invalid payload. `policies.refund` or `policies.stock` is not one of the allowed values.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Invalid refund policy": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_payload",
+                      "message": "Invalid payload",
+                      "details": "Property .policies.refund must be equal to one of the allowed values [ DEFAULT, ALLOW ]",
+                      "request_id": "v-12fa3c853ac1a815fa"
+                    }
+                  },
+                  "Invalid stock policy": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_payload",
+                      "message": "Invalid payload",
+                      "details": "Property .policies.stock must be equal to one of the allowed values [ DEFAULT, WRITE_OFF ]",
+                      "request_id": "v-12fa3c853ac1a815fb"
+                    }
+                  }
+                }
+              }
+            }
+          },
           "404": {
-            "description": "Resource – program or transaction – not found.",
+            "description": "Program or reward transaction not found.",
             "content": {
               "application/json": {
                 "schema": {
@@ -5504,18 +5534,8 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
           "423": {
-            "description": "Locked - e.g. reward refund policy doesn't allow refunds.",
+            "description": "Locked. The program is not `ACTIVE` or is outside its validity window (`non_active_program`, `program_outside_validity_window`), the transaction is not an `APPROVED` `PURCHASE` (`non_purchase_reward_transaction`, `non_approved_reward_transaction`), or the reward refund policy does not allow refunds (`reward_refund_policy_does_not_allow_refunds`).",
             "content": {
               "application/json": {
                 "schema": {
@@ -19824,7 +19844,7 @@
         "description": "Refund policies for a reward purchase refund.",
         "properties": {
           "refund": {
-            "description": "Refund policy. `DEFAULT` applies the standard refund rules; `ALLOW` forces the refund to be allowed. Defaults to `DEFAULT`.",
+            "description": "Applies the refund override. `DEFAULT` follows the reward's refunds setting. `ALLOW` refunds even when the reward is not refundable. Defaults to `DEFAULT`.",
             "oneOf": [
               {
                 "type": "string",
@@ -19839,7 +19859,7 @@
             ]
           },
           "stock": {
-            "description": "Stock policy. `DEFAULT` returns the purchased quantity to the reward stock; `WRITE_OFF` does not return it. Defaults to `DEFAULT`.",
+            "description": "Controls assignment stock. `DEFAULT` restores one unit when stock is limited. `WRITE_OFF` does not restore stock. Unlimited (`null`) stock is unchanged. Defaults to `DEFAULT`.",
             "oneOf": [
               {
                 "type": "string",
@@ -20004,7 +20024,7 @@
         "properties": {
           "reason": {
             "type": "string",
-            "description": "Human-readable reason, e.g. \"Reward refund — point purchase reversed\"."
+            "description": "Sets the refund reason. Always `Manual reward refund` for this endpoint."
           },
           "rejection": {
             "description": "Rejection details, present when the transaction was rejected.",
@@ -20055,7 +20075,15 @@
               }
             ]
           }
-        }
+        },
+        "required": [
+          "reason",
+          "rejection",
+          "metadata",
+          "points",
+          "result",
+          "purchase"
+        ]
       },
       "RewardPurchaseRefundPurchaseReference": {
         "type": "object",
@@ -20522,9 +20550,10 @@
         ],
         "title": "Loyalties Programs Members Rewards Purchases Create Transaction Response Body"
       },
-      "RewardPurchaseRefundResponse": {
+      "LoyaltiesProgramsRewardsPurchasesRefundResponseBody": {
         "type": "object",
-        "description": "Result of a reward refund request.",
+        "title": "Loyalties Programs Rewards Purchases Refund Response Body",
+        "description": "Response body schema for **POST** `/v2/loyalties/programs/{programId}/rewards/purchases/{rewardTransactionId}/refund`.",
         "properties": {
           "transaction": {
             "description": "The created REFUND-type reward transaction.",
@@ -20546,9 +20575,14 @@
           },
           "message": {
             "type": "string",
-            "description": "Human-readable result message: \"Reward refund transaction created. Points will be returned to the member's card shortly.\"."
+            "description": "Returns the result message: \"Reward refund transaction created. Points will be returned to the member's card shortly.\"."
           }
-        }
+        },
+        "required": [
+          "transaction",
+          "status",
+          "message"
+        ]
       },
       "LoyaltiesProgramsMembersRewardsPurchasesListRequestQuery": {
         "type": "object",
