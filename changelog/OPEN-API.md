@@ -6,6 +6,10 @@ Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
 ## 2026-09-02
 
+- Verified and updated POST `/v2/loyalties/programs/{programId}/members/{memberId}/activate`.
+  - Clarified that the 200 body is the member without cards and that `status` is always `ACTIVE`.
+  - Corrected the `400` description to invalid state transition (`invalid_state_transition`) instead of a validation error.
+  - Rewrote `programId` / `memberId` parameter descriptions and shared `Member` field descriptions (verb-first, required vs format, status enum).
 - Verified and updated DELETE `/v2/loyalties/programs/{programId}/members/{memberId}`.
   - Added `LoyaltiesProgramsMembersDeleteResponseBody` schema (`Member` via `allOf`).
   - Clarified soft-delete: sets `status` to `DELETED`, unassigns the member's loyalty cards in the program, and returns the member without a `cards` array.
