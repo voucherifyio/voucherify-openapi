@@ -3238,7 +3238,7 @@
           "name": "programId",
           "in": "path",
           "required": true,
-          "description": "Unique loyalty program ID (format `lprg_[a-f0-9]+`).",
+          "description": "Identifies the loyalty program. Format `lprg_[a-f0-9]+`. Required.",
           "schema": {
             "type": "string",
             "pattern": "^lprg_[a-f0-9]+$"
@@ -3248,7 +3248,7 @@
           "name": "memberId",
           "in": "path",
           "required": true,
-          "description": "Program member ID (format `lmbr_[a-f0-9]+`).",
+          "description": "Identifies the member. Format `lmbr_[a-f0-9]+`. Required.",
           "schema": {
             "type": "string",
             "pattern": "^lmbr_[a-f0-9]+$"
@@ -3261,44 +3261,83 @@
           "Programs"
         ],
         "summary": "Activate program member",
-        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nMoves the member to `ACTIVE` status and records a `vl.member.activated` activity. No request body. Returns `404` when the program or member does not exist. Returns `400` (`invalid_state_transition`) when the member cannot be activated from its current state.",
+        "description": "Moves the member to `ACTIVE` status and records a `vl.member.activated` activity. No request body. Returns `404` when the program or member does not exist. Returns `400` (`invalid_state_transition`) when the member cannot be activated from its current state.",
         "responses": {
           "200": {
-            "description": "The activated member (without cards).",
+            "description": "The activated member, without cards. Status is always `ACTIVE`.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Member"
+                  "$ref": "#/components/schemas/LoyaltiesProgramsMembersActivateResponseBody"
+                },
+                "examples": {
+                  "Activated inactive member": {
+                    "value": {
+                      "id": "lmbr_128f962dbc8c4ba5dc",
+                      "customer_id": "cust_6onRrs4kCnvSVrTs5YtDPFBG",
+                      "program_id": "lprg_128f58429f4c4bf7b2",
+                      "status": "ACTIVE",
+                      "metadata": {},
+                      "created_at": "2026-06-11T15:59:41.298Z",
+                      "updated_at": "2026-09-02T16:42:43.436Z",
+                      "object": "member"
+                    }
+                  }
                 }
               }
             }
           },
           "400": {
-            "description": "Validation error - request body or query parameters failed validation, or the operation is not allowed in the current resource state.",
+            "description": "Invalid state transition. Member cannot be activated from its current status.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Activate active member": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_state_transition",
+                      "message": "Invalid state transition",
+                      "details": "Cannot activate member 'lmbr_128f962dbc8c4ba5dc' from current state: 'ACTIVE'",
+                      "request_id": "v-12fa7b75e964066340"
+                    }
+                  }
                 }
               }
             }
           },
           "404": {
-            "description": "Resource not found.",
+            "description": "Resource (program or member) not found.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Member not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find member with id lmbr_128f96dbc8c4ba5dc",
+                      "request_id": "v-12fa7be05741a8148b",
+                      "resource_id": "lmbr_128f96dbc8c4ba5dc",
+                      "resource_type": "member"
+                    }
+                  },
+                  "Program not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find program with id lprg_128f58429f4cbf7b2",
+                      "request_id": "v-12fa7bb9c8240663c4",
+                      "resource_id": "lprg_128f58429f4cbf7b2",
+                      "resource_type": "program"
+                    }
+                  }
                 }
               }
             }
@@ -16589,6 +16628,16 @@
         "additionalProperties": false,
         "title": "Loyalties Programs Members Cards Points Adjust Request Body"
       },
+      "LoyaltiesProgramsMembersActivateResponseBody": {
+        "title": "Loyalties Programs Members Activate Response Body",
+        "type": "object",
+        "description": "Response body schema for **POST** `/v2/loyalties/programs/{programId}/members/{memberId}/activate`. On success, `status` is always `ACTIVE`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Member"
+          }
+        ]
+      },
       "LoyaltiesProgramsMembersDeleteResponseBody": {
         "title": "Loyalties Programs Members Delete Response Body",
         "type": "object",
@@ -16606,17 +16655,17 @@
           "id": {
             "type": "string",
             "pattern": "^lmbr_[a-f0-9]+$",
-            "description": "Unique member ID."
+            "description": "Identifies the member."
           },
           "customer_id": {
             "type": "string",
             "pattern": "^cust_[a-zA-Z0-9]+",
-            "description": "Unique Voucherify ID of the customer enrolled as this member."
+            "description": "Identifies the enrolled customer."
           },
           "program_id": {
             "type": "string",
             "pattern": "^lprg_[a-f0-9]+$",
-            "description": "Unique Voucherify ID of the loyalty program the member belongs to."
+            "description": "Identifies the loyalty program."
           },
           "status": {
             "type": "string",
@@ -16625,16 +16674,16 @@
               "INACTIVE",
               "DELETED"
             ],
-            "description": "Current member status. `INACTIVE` member can't earn points or redeem rewards."
+            "description": "Current member status. Allowed values: `ACTIVE`, `INACTIVE`, `DELETED`. `INACTIVE` members cannot earn points or redeem rewards."
           },
           "metadata": {
             "type": "object",
-            "description": "Free-form metadata attached to the member (empty object when none)."
+            "description": "Stores custom member metadata. Empty object when none is set."
           },
           "created_at": {
             "type": "string",
             "format": "date-time",
-            "description": "Timestamp when the member was created (ISO 8601)."
+            "description": "Records when the member was created (ISO 8601)."
           },
           "updated_at": {
             "type": [
@@ -16642,12 +16691,12 @@
               "null"
             ],
             "format": "date-time",
-            "description": "Timestamp when the member was last updated (ISO 8601), or `null` if never updated."
+            "description": "Records the last update (ISO 8601). `null` if the member has never been updated."
           },
           "object": {
             "type": "string",
             "const": "member",
-            "description": "Object type marker, always `member`."
+            "description": "Object type. Always `member`."
           }
         },
         "required": [
