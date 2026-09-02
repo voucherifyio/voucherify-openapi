@@ -5367,43 +5367,40 @@
       }
     },
     "/v2/loyalties/programs/{programId}/rewards/purchases/{rewardTransactionId}/refund": {
-      "parameters": [
-        {
-          "name": "programId",
-          "in": "path",
-          "required": true,
-          "description": "Unique loyalty program identifier (format: `lprg_` followed by hexadecimal characters).",
-          "schema": {
-            "type": "string",
-            "pattern": "^lprg_[a-f0-9]+$"
-          }
-        },
-        {
-          "name": "rewardTransactionId",
-          "in": "path",
-          "required": true,
-          "description": "Unique reward transaction identifier of the purchase to refund (format: `lrtx_` followed by hexadecimal characters).",
-          "schema": {
-            "type": "string",
-            "pattern": "^lrtx_[a-f0-9]+$"
-          }
-        }
-      ],
       "post": {
         "operationId": "refundRewardPurchase",
         "tags": [
           "Programs"
         ],
-        "summary": "Refund reward purchase",
-        "description": "Refunds a previously approved reward purchase transaction. Creates a REFUND-type reward transaction and schedules the return of the spent points to the member's card (\"Reward refund transaction created. Points will be returned to the member's card shortly.\").\n\nThe refunded purchase transaction must be of type `PURCHASE` and in `APPROVED` status. Otherwise, the request is rejected with a conflict (`409`) error. Also, the program must be `ACTIVE` and within its validity window.\n\nThe request body is optional (an empty payload is allowed). When omitted, default policies are applied: `refund: DEFAULT`, `stock: DEFAULT`.",
-        "parameters": [],
+        "summary": "Refund a reward purchase",
+        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nRefunds a previously approved reward purchase transaction. Creates a REFUND-type reward\ntransaction and schedules the return of the spent points to the member's card\n(\"Reward refund transaction created. Points will be returned to the member's card shortly.\").\n\nThe refunded purchase transaction must be of type `PURCHASE` and in `APPROVED` status,\notherwise the request is rejected with a conflict error.\n\nThe request body is optional (an empty payload is allowed). When omitted, default\npolicies are applied: `refund: DEFAULT`, `stock: DEFAULT`.",
+        "parameters": [
+          {
+            "name": "programId",
+            "in": "path",
+            "required": true,
+            "description": "Unique loyalty program identifier (format: `lprg_` followed by hexadecimal characters).",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "rewardTransactionId",
+            "in": "path",
+            "required": true,
+            "description": "Unique reward transaction identifier of the purchase to refund (format: `lrtx_` followed by hexadecimal characters).",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "requestBody": {
           "required": false,
           "description": "Optional refund policies. An empty payload is allowed.",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/LoyaltiesProgramsRewardsPurchasesRefundRequestBody"
+                "$ref": "#/components/schemas/RewardPurchaseRefundRequest"
               }
             }
           }
@@ -5415,91 +5412,26 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/RewardPurchaseRefundResponse"
-                },
-                "examples": {
-                  "Refund accepted": {
-                    "value": {
-                      "transaction": {
-                        "id": "lrtx_12fa3c01696025a386",
-                        "card_id": "lcrd_128f962dbd8c4ba5e1",
-                        "card_transaction_id": "lctx_12fa3c0169a025a387",
-                        "program_id": "lprg_128f58429f4c4bf7b2",
-                        "member_id": "lmbr_128f962dbc8c4ba5dc",
-                        "reward_id": "lrew_1294cebb458e4904a0",
-                        "status": "APPROVED",
-                        "type": "REFUND",
-                        "details": {
-                          "reason": "Manual reward refund",
-                          "rejection": null,
-                          "metadata": {},
-                          "points": {
-                            "total": 500
-                          },
-                          "result": {
-                            "reward": {
-                              "id": "lrew_1294cebb458e4904a0",
-                              "type": "MATERIAL"
-                            },
-                            "quantity": 1,
-                            "material": {
-                              "type": "PRODUCT",
-                              "product": {
-                                "id": "prod_1294ce96f66d469498"
-                              }
-                            },
-                            "digital": null
-                          },
-                          "purchase": {
-                            "card_transaction": {
-                              "id": "lctx_12cad1abefa2311e02"
-                            },
-                            "reward_transaction": {
-                              "id": "lrtx_12cad1abefa2311e03"
-                            }
-                          }
-                        },
-                        "created_at": "2026-09-02T12:03:11.401Z",
-                        "updated_at": null,
-                        "object": "reward_transaction"
-                      },
-                      "status": "APPROVED",
-                      "message": "Reward refund transaction created. Points will be returned to the member's card shortly."
-                    }
-                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error - request body or query parameters failed validation, or the operation is not allowed in the current resource state.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
           },
           "404": {
-            "description": "Resource – program or transaction – not found.",
+            "description": "Resource not found.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
-                },
-                "examples": {
-                  "Program not found": {
-                    "value": {
-                      "code": 404,
-                      "key": "not_found",
-                      "message": "Resource not found",
-                      "details": "Cannot find program with id lprg_128f5849f4c4bf7b2",
-                      "request_id": "v-12fa42985001a82218",
-                      "resource_id": "lprg_128f5849f4c4bf7b2",
-                      "resource_type": "program"
-                    }
-                  },
-                  "Transaction not found": {
-                    "value": {
-                      "code": 404,
-                      "key": "not_found",
-                      "message": "Resource not found",
-                      "details": "Cannot find reward_transaction with id lrtx_12cadabefa2311e03",
-                      "request_id": "v-12fa42b2a281a82254",
-                      "resource_id": "lrtx_12cadabefa2311e03",
-                      "resource_type": "reward_transaction"
-                    }
-                  }
                 }
               }
             }
@@ -5510,36 +5442,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "423": {
-            "description": "Locked - e.g. reward refund policy doesn't allow refunds.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                },
-                "examples": {
-                  "Refund not allowed": {
-                    "value": {
-                      "code": 423,
-                      "key": "reward_refund_policy_does_not_allow_refunds",
-                      "message": "Cannot refund reward",
-                      "details": "Reward lrew_1294cebb458e4904a0 refund policy does not allow refunds. To refund reward, set the refund policy to 'ALLOW' in the request body",
-                      "request_id": "v-12fa3c853ac1a815fa"
-                    }
-                  },
-                  "Transaction not approved": {
-                    "value": {
-                      "code": 423,
-                      "key": "non_approved_reward_transaction",
-                      "message": "Cannot refund reward when transaction status is not APPROVED",
-                      "details": "Invalid reward_transaction status",
-                      "request_id": "v-12fa3cdc7fa4066775"
-                    }
-                  }
                 }
               }
             }
@@ -19800,10 +19702,9 @@
         "additionalProperties": false,
         "title": "Loyalties Programs Members Rewards Purchases Create Request Body"
       },
-      "LoyaltiesProgramsRewardsPurchasesRefundRequestBody": {
+      "RewardPurchaseRefundRequest": {
         "type": "object",
-        "title": "Loyalties Programs Rewards Purchases Refund Request Body",
-        "description": "Request body schema for **POST** `/v2/loyalties/programs/{programId}/rewards/purchases/{rewardTransactionId}/refund`.",
+        "description": "Request body for refunding a reward purchase. May be empty; defaults are applied.",
         "properties": {
           "policies": {
             "description": "Refund policies. When omitted or `null`, defaults are applied.",
