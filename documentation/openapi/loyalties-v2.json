@@ -3261,7 +3261,7 @@
           "Programs"
         ],
         "summary": "Activate program member",
-        "description": "Moves the member to `ACTIVE` status and records a `vl.member.activated` activity. No request body. Returns `404` when the program or member does not exist. Returns `400` (`invalid_state_transition`) when the member cannot be activated from its current state.",
+        "description": "Moves the member to `ACTIVE` status and records a `vl.member.activated` activity. No request body.\n\nReturns `404` when the program or member does not exist. Returns `400` (`invalid_state_transition`) when the member cannot be activated from its current state.",
         "responses": {
           "200": {
             "description": "The activated member, without cards. Status is always `ACTIVE`.",
@@ -3356,72 +3356,111 @@
       }
     },
     "/v2/loyalties/programs/{programId}/members/{memberId}/deactivate": {
+      "parameters": [
+        {
+          "name": "programId",
+          "in": "path",
+          "required": true,
+          "description": "Identifies the loyalty program. Unique identifier in `lprg_[a-f0-9]+` format.",
+          "schema": {
+            "type": "string",
+            "pattern": "^lprg_[a-f0-9]+$"
+          }
+        },
+        {
+          "name": "memberId",
+          "in": "path",
+          "required": true,
+          "description": "Identifies the member. Unique identifier in `lmbr_[a-f0-9]+` format.",
+          "schema": {
+            "type": "string",
+            "pattern": "^lmbr_[a-f0-9]+$"
+          }
+        }
+      ],
       "post": {
         "operationId": "deactivateProgramMember",
         "tags": [
           "Programs"
         ],
         "summary": "Deactivate program member",
-        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nMoves the member to `INACTIVE` status and records a `vl.member.deactivated`\nactivity. No request body. Returns `404` when the program or member does not exist.\nReturns 400 (`invalid_state_transition`) when the member cannot be deactivated from\nits current state.",
-        "parameters": [
-          {
-            "name": "programId",
-            "in": "path",
-            "required": true,
-            "description": "Unique loyalty program ID (format `lprg_[a-f0-9]+`).",
-            "schema": {
-              "type": "string",
-              "pattern": "^lprg_[a-f0-9]+$"
-            }
-          },
-          {
-            "name": "memberId",
-            "in": "path",
-            "required": true,
-            "description": "Program member ID (format `lmbr_[a-f0-9]+`).",
-            "schema": {
-              "type": "string",
-              "pattern": "^lmbr_[a-f0-9]+$"
-            }
-          }
-        ],
+        "description": "Moves the member to `INACTIVE` status and records a `vl.member.deactivated` activity. No request body.\n\nReturns `404` when the program or member does not exist. Returns `400` (`invalid_state_transition`) when the member cannot be deactivated from its current status.",
         "responses": {
           "200": {
-            "description": "The deactivated member (without cards).",
+            "description": "The deactivated member, without cards. Status is always `INACTIVE`.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Member"
+                  "$ref": "#/components/schemas/LoyaltiesProgramsMembersDeactivateResponseBody"
+                },
+                "examples": {
+                  "Deactivated active member": {
+                    "value": {
+                      "id": "lmbr_128f962dbc8c4ba5dc",
+                      "customer_id": "cust_6onRrs4kCnvSVrTs5YtDPFBG",
+                      "program_id": "lprg_128f58429f4c4bf7b2",
+                      "status": "INACTIVE",
+                      "metadata": {},
+                      "created_at": "2026-06-11T15:59:41.298Z",
+                      "updated_at": "2026-09-02T17:17:24.129Z",
+                      "object": "member"
+                    }
+                  }
                 }
               }
             }
           },
           "400": {
-            "description": "Validation error - request body or query parameters failed validation, or the operation is not allowed in the current resource state.",
+            "description": "Invalid state transition. Member cannot be deactivated from its current status.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Deactivate inactive member": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_state_transition",
+                      "message": "Invalid state transition",
+                      "details": "Cannot deactivate member 'lmbr_128f962dbc8c4ba5dc' from current state: 'INACTIVE'",
+                      "request_id": "v-12fa842a736406741d"
+                    }
+                  }
                 }
               }
             }
           },
           "404": {
-            "description": "Resource not found.",
+            "description": "Resource (program or member) not found.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Member not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find member with id lmbr_128f96dbc8c4ba5dc",
+                      "request_id": "v-12fa7be05741a8148b",
+                      "resource_id": "lmbr_128f96dbc8c4ba5dc",
+                      "resource_type": "member"
+                    }
+                  },
+                  "Program not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find program with id lprg_128f58429f4cbf7b2",
+                      "request_id": "v-12fa7bb9c8240663c4",
+                      "resource_id": "lprg_128f58429f4cbf7b2",
+                      "resource_type": "program"
+                    }
+                  }
                 }
               }
             }
@@ -16632,6 +16671,16 @@
         "title": "Loyalties Programs Members Activate Response Body",
         "type": "object",
         "description": "Response body schema for **POST** `/v2/loyalties/programs/{programId}/members/{memberId}/activate`. On success, `status` is always `ACTIVE`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Member"
+          }
+        ]
+      },
+      "LoyaltiesProgramsMembersDeactivateResponseBody": {
+        "title": "Loyalties Programs Members Deactivate Response Body",
+        "type": "object",
+        "description": "Response body schema for **POST** `/v2/loyalties/programs/{programId}/members/{memberId}/deactivate`. On success, `status` is always `INACTIVE`.",
         "allOf": [
           {
             "$ref": "#/components/schemas/Member"
