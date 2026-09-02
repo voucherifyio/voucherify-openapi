@@ -4,6 +4,19 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-09-02
+
+- Verified and updated DELETE `/v2/loyalties/programs/{programId}/members/{memberId}`.
+  - Added `LoyaltiesProgramsMembersDeleteResponseBody` schema (`Member` via `allOf`).
+  - Clarified soft-delete: sets `status` to `DELETED`, unassigns the member's loyalty cards in the program, and returns the member without a `cards` array.
+  - Documented the `vl.member.deleted` activity and `404` when the program or member does not exist, including when the member is already deleted.
+  - Added a 200 example. Removed unused `400` and `409` responses.
+- Verified and updated POST `/v2/loyalties/programs/{programId}/rewards/purchases/{rewardTransactionId}/refund`.
+  - Renamed `RewardPurchaseRefundRequest` / `RewardPurchaseRefundResponse` to `LoyaltiesProgramsRewardsPurchasesRefundRequestBody` / `LoyaltiesProgramsRewardsPurchasesRefundResponseBody`.
+  - Documented `202` (refund accepted before card balance changes), `POINTS_RETURNED` on the source card, new expiration for returned points, and `POINTS_PURCHASE_REVERSED` for `LOYALTY_CARD_POINTS` rewards.
+  - Documented optional `policies.refund` (`DEFAULT`, `ALLOW`) and `policies.stock` (`DEFAULT`, `WRITE_OFF`), including `400` validation examples.
+  - Replaced `409` with `423` lock cases (`non_active_program`, `program_outside_validity_window`, `non_purchase_reward_transaction`, `non_approved_reward_transaction`, `reward_refund_policy_does_not_allow_refunds`). Clarified `404` for a missing program or reward transaction.
+
 ## 2026-09-01
 
 - Verified and updated GET `/v2/loyalties/programs/{programId}/members`.
