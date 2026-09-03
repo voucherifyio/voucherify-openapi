@@ -4,6 +4,10 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-09-03
+
+Add warning to DELETE `/v1/product-collections/{productCollectionId}`.
+
 ## 2026-09-02
 
 - Verified and updated POST `/v2/loyalties/programs/{programId}/members/{memberId}/activate`.
