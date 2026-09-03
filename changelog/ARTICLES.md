@@ -7,6 +7,20 @@ Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
 ## 2026-09-03
 
+Removed leftover “standalone” campaign wording from dashboard articles and aligned it with **generic** (DOC-1180 / DEV-4102). API `STANDALONE` type is unchanged.
+
+- Updated `dashboard-quickstart.mdx`
+- Updated `approval-requests.mdx`
+- Updated `key-concepts.mdx`
+- Updated `import-codes.mdx`
+- Updated `checking-eligibility.mdx`
+- Updated `integration-processes.mdx`
+- Updated `voucher-maintenance.mdx`
+- Updated `create-discount-coupons.mdx`
+- Updated `discount-code-import.mdx`
+- Updated `gift-card-import.mdx`
+- Updated `discount-promotion-overview.mdx`
+
 Documented adding vouchers to an existing campaign, including voucher metadata when adding a single voucher:
 
 - Updated `campaign-maintenance.mdx`
