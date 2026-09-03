@@ -5,6 +5,13 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-09-03
+
+Documented adding vouchers to an existing campaign, including voucher metadata when adding a single voucher:
+
+- Updated `campaign-maintenance.mdx`
+- Updated `voucher-maintenance.mdx`
+
 ## 2026-08-10
 
 Published Loyalty v2 guides and Build articles:
