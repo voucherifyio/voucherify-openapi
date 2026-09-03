@@ -1,0 +1,193 @@
+---
+title: "Workflows webhooks"
+description: "Receive Loyalty v2 transaction and activity events from Workflows webhook callouts"
+keywords: ["workflows", "webhook", "loyalty v2", "loyalty transaction", "loyalty activity", "webhook callout"]
+---
+
+Workflows can send Loyalty v2 events to your application through a **Webhook callout** action. When a configured Loyalty transaction or Loyalty activity triggers a workflow and the callout step runs, Voucherify sends an HTTP `POST` request to the target URL defined in that step.
+
+## Webhook structure
+
+Every Workflows webhook contains the following top-level fields:
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `id` | string | Unique webhook sendout ID. |
+| `project_id` | string | ID of the Voucherify project where the workflow ran. |
+| `created_at` | string | Timestamp when the webhook sendout was created, in ISO 8601 format. |
+| `type` | string | Transaction type or activity type that triggered the workflow. |
+| `data` | object | Event-specific payload. Its structure differs between transactions and activities. |
+| `source` | object | Workflow callout that created the webhook sendout. |
+| `event` | object | Event metadata copied from the transaction or activity. |
+
+The `source` object identifies the callout:
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `id` | string | Composite value in the `{workflow_definition_id}-{workflow_run_step_id}` format. |
+| `object` | string | Always `workflow`. |
+| `target_url` | string | Endpoint configured in the Webhook callout action. |
+
+## Transaction and activity payloads
+
+Workflows supports two Loyalty v2 trigger types. They use the same top-level webhook structure but differ in `data` and `event`.
+
+### Loyalty transactions
+
+For a Loyalty transaction:
+
+- `type` and `event.type` contain the transaction type, for example `POINTS_EARNED`.
+- `data` contains the transaction under `data.transaction`.
+- `data.transaction.status` contains the status matched by the workflow trigger, for example `APPROVED`.
+- `event.id` and `event.entity_id` contain the transaction ID.
+- `event` does not contain `event_source`.
+
+See [Points earned](/api-reference/loyalty-transactions/card/points-earned) for the schema and playground.
+
+### Loyalty activity
+
+For a Loyalty activity:
+
+- `type` and `event.type` contain the activity type, for example `vl.member.created`.
+- `data` contains the activity data directly. It is not wrapped in an `activity` property.
+- `event.id` and `event.entity_id` contain the activity ID.
+- `event.event_source` describes how the activity was initiated, such as through the API, Client API, User Portal, or an internal process.
+
+See [Member created](/api-reference/loyalty-activity/members/created) for the schema and playground.
+
+<Note>
+Transaction statuses such as `APPROVED`, `PENDING`, and `REJECTED` are workflow trigger filters and values of `data.transaction.status`. They are not separate event types.
+</Note>
+
+## Workflows webhook payload
+
+The list shows a general structure of a webhook payload sent by a Workflows webhook callout. Indented bullet points mean that an object contains further properties or objects.
+
+- `id` (`string`): Unique identifier of the sendout for this webhook. **Example:** `whs_7f3a8c52e1d94b607a`
+- `project_id` (`string`): Unique identifier of the Voucherify project. **Example:** `proj_5T4Rpl4T1nuM`
+- `created_at` (`string`): The exact moment when the webhook was created. **Example:** `2026-08-20T14:32:18.531Z`
+- `type` (`string`): Transaction type or activity type that triggered the workflow. **Example:** `POINTS_EARNED`, `vl.member.created`
+- `data` (`object`): Payload depends on the event that triggered the webhook sendout. Workflows cover the following events:
+  - [POINTS_EARNED](/api-reference/loyalty-transactions/card/points-earned)
+  - [vl.member.created](/api-reference/loyalty-activity/members/created)
+- `source` (`object`): Contains details about the Workflows webhook callout that created the sendout. Properties:
+  - `id` (`string`): Composite identifier in the `{workflow_definition_id}-{workflow_run_step_id}` format. **Example:** `wfdef_7d2f5a39b461-wfrnstp_4c91a287d053`
+  - `object` (`string`): Determines the type of the object. Available values: `workflow` **Example:** `workflow`
+  - `target_url` (`string`): The address where the webhook is sent.
+- `event` (`object`): Contains other data of the event that triggered the sendout. Properties:
+  - `id` (`string`): Unique identifier of the transaction or activity that triggered the sendout. **Example:** `lctx_7d2f5a39b461`
+  - `type` (`string`): Determines the type of the event. **Example:** `POINTS_EARNED`
+  - `created_at` (`string`): The exact moment when the event was created. **Example:** `2026-08-20T14:32:18.412Z`
+  - `entity_id` (`string`): Unique identifier of the entity that triggered the sendout. It has the same value as `event.id`. **Example:** `lctx_7d2f5a39b461`
+  - `group_id` (`string`): Unique identifier of the request that triggered the event. **Example:** `i-4e8b19d72c60`
+  - `event_source` (`object`): Present on Loyalty activity events only. Contains the source of the activity that triggered the sendout. Properties:
+    - `channel` (`string`): Determines the channel that triggered the sendout. Available values: `USER_PORTAL`, `API`, `CLIENT_API`, `INTERNAL` **Example:** `API`
+    - `user` (`object`): Defines the user who triggered the event.
+      - `id` (`string`): ID of the user who triggered the event.
+    - `api_key` (`object`): Determines the API key used to initiate the sendout. Properties:
+      - `name` (`string`): Channel name in the application keys.
+      - `app_id` (`string`): Contains the application ID from the Voucherify API key pair. **Example:** `52f26ec1-33a7-4d6f-a951-243b911cf84e`
+      - `client_app_id` (`string`): Client application ID associated with the API key. Omitted when not applicable.
+
+```JSON Points earned payload example
+{
+  "id": "whs_7f3a8c52e1d94b607a",
+  "project_id": "proj_5T4Rpl4T1nuM",
+  "created_at": "2026-08-20T14:32:18.531Z",
+  "type": "POINTS_EARNED",
+  "data": {
+    "transaction": {
+      "id": "lctx_7d2f5a39b461",
+      "card_id": "lcrd_28c4e7b195fa",
+      "program_id": "lprg_3e8a1c74d952",
+      "member_id": "lmbr_91f6b2e84a37",
+      "card_definition_id": "lcdef_6a2d9f41c783",
+      "card_type": "INDIVIDUAL",
+      "type": "POINTS_EARNED",
+      "details": {
+        "reason": "Order paid",
+        "rejection": null,
+        "metadata": {
+          "order_source": "online_store"
+        },
+        "points": {
+          "total": 250,
+          "expiration_date": "2027-08-20"
+        }
+      },
+      "status": "APPROVED",
+      "created_at": "2026-08-20T14:32:18.412Z",
+      "updated_at": "2026-08-20T14:32:18.497Z",
+      "object": "card_transaction"
+    }
+  },
+  "source": {
+    "id": "wfdef_7d2f5a39b461-wfrnstp_4c91a287d053",
+    "object": "workflow",
+    "target_url": "https://example.com/webhooks/voucherify"
+  },
+  "event": {
+    "id": "lctx_7d2f5a39b461",
+    "type": "POINTS_EARNED",
+    "created_at": "2026-08-20T14:32:18.412Z",
+    "group_id": "i-4e8b19d72c60",
+    "entity_id": "lctx_7d2f5a39b461"
+  }
+}
+```
+
+```JSON Member created payload example
+{
+  "id": "whs_8a6d13f90c42b751e4",
+  "project_id": "proj_5T4Rpl4T1nuM",
+  "created_at": "2026-08-21T09:15:43.284Z",
+  "type": "vl.member.created",
+  "data": {
+    "member": {
+      "id": "lmbr_91f6b2e84a37",
+      "customer_id": "cust_7LvqCsUB9c8WyFP8JaLXchtF",
+      "program_id": "lprg_3e8a1c74d952",
+      "status": "ACTIVE",
+      "metadata": {
+        "signup_channel": "mobile_app"
+      },
+      "created_at": "2026-08-21T09:15:43.091Z",
+      "updated_at": null,
+      "object": "member"
+    },
+    "program": {
+      "id": "lprg_3e8a1c74d952",
+      "name": "Coffee Club",
+      "status": "ACTIVE",
+      "start_date": "2026-01-01",
+      "end_date": null,
+      "validity_hours": {
+        "type": "ANY_TIME"
+      },
+      "metadata": {},
+      "created_at": "2025-12-10T11:24:07.635Z",
+      "updated_at": "2025-12-15T08:41:29.182Z",
+      "object": "program"
+    }
+  },
+  "source": {
+    "id": "wfdef_55bfc63a8142-wfrnstp_c2a4769de031",
+    "object": "workflow",
+    "target_url": "https://example.com/webhooks/voucherify"
+  },
+  "event": {
+    "id": "lambr_1c85f39e7a42",
+    "type": "vl.member.created",
+    "created_at": "2026-08-21T09:15:43.091Z",
+    "group_id": "i-62af94d1e703",
+    "entity_id": "lambr_1c85f39e7a42",
+    "event_source": {
+      "channel": "API",
+      "api_key": {
+        "name": "Server-side key",
+        "app_id": "52f26ec1-33a7-4d6f-a951-243b911cf84e"
+      }
+    }
+  }
+}
+```

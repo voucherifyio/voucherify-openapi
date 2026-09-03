@@ -1,0 +1,522 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Events - Events loyalty activity",
+    "version": "2024-01-01",
+    "description": ""
+  },
+  "paths": {},
+  "components": {
+    "schemas": {
+      "LoyaltyV2MemberCreatedWebhook": {
+        "title": "Loyalty Member Created Workflow Webhook",
+        "description": "Webhook payload sent when a Workflows webhook callout handles a `vl.member.created` activity.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/WorkflowWebhookBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "vl.member.created"
+              },
+              "data": {
+                "$ref": "#/components/schemas/LoyaltyV2MemberCreatedData"
+              },
+              "event": {
+                "$ref": "#/components/schemas/WorkflowActivityEvent"
+              }
+            },
+            "required": [
+              "type",
+              "data",
+              "event"
+            ]
+          }
+        ]
+      },
+      "WorkflowWebhookBase": {
+        "title": "Workflow Webhook Base",
+        "description": "Fields shared by webhook payloads sent by a Workflows webhook callout.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/DefaultPayloadData1"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "source": {
+                "$ref": "#/components/schemas/WorkflowWebhookSource"
+              }
+            },
+            "required": [
+              "source"
+            ]
+          }
+        ]
+      },
+      "LoyaltyV2MemberCreatedData": {
+        "title": "Loyalty Member Created Data",
+        "type": "object",
+        "description": "Data sent for the `vl.member.created` activity.",
+        "properties": {
+          "member": {
+            "$ref": "#/components/schemas/LoyaltyV2Member"
+          },
+          "program": {
+            "$ref": "#/components/schemas/LoyaltyV2Program"
+          }
+        },
+        "required": [
+          "member",
+          "program"
+        ]
+      },
+      "WorkflowActivityEvent": {
+        "title": "Workflow Activity Event",
+        "description": "Identifies the Loyalty activity that triggered the workflow.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/WorkflowTransactionEvent"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "event_source": {
+                "$ref": "#/components/schemas/LoyaltyV2ActivitySource"
+              }
+            },
+            "required": [
+              "event_source"
+            ]
+          }
+        ]
+      },
+      "DefaultPayloadData1": {
+        "type": "object",
+        "required": [
+          "id",
+          "project_id",
+          "created_at"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier of the sendout for this webhook.",
+            "example": "whs_0e16e42bc6e0c65b57"
+          },
+          "project_id": {
+            "type": "string",
+            "description": "Unique identifier of the Voucherify project.",
+            "example": "proj_5T4Rpl4T1nuM"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The exact moment when the webhook was created.",
+            "example": "2024-01-01T11:11:11.111Z"
+          }
+        }
+      },
+      "WorkflowWebhookSource": {
+        "title": "Workflow Webhook Source",
+        "type": "object",
+        "description": "Identifies the Workflows webhook callout that created the sendout.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Composite identifier built from the workflow definition ID and workflow run step ID: `{definition_id}-{run_step_id}`.",
+            "example": "wfdef_7d2f5a39b461-wfrnstp_4c91a287d053"
+          },
+          "object": {
+            "type": "string",
+            "const": "workflow",
+            "description": "Source object type. Always `workflow` for Workflows webhook callouts."
+          },
+          "target_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Endpoint configured in the webhook callout action.",
+            "example": "https://example.com/webhooks/voucherify"
+          }
+        },
+        "required": [
+          "id",
+          "object",
+          "target_url"
+        ]
+      },
+      "LoyaltyV2Member": {
+        "title": "Loyalty Program Member",
+        "type": "object",
+        "description": "Loyalty v2 program member snapshot recorded with the activity.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^lmbr_[a-f0-9]+$",
+            "description": "Unique member ID."
+          },
+          "customer_id": {
+            "type": "string",
+            "pattern": "^cust_[a-zA-Z0-9]+$",
+            "description": "ID of the enrolled customer."
+          },
+          "program_id": {
+            "type": "string",
+            "pattern": "^lprg_[a-f0-9]+$",
+            "description": "ID of the Loyalty v2 program."
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ACTIVE",
+              "INACTIVE",
+              "DELETED"
+            ],
+            "description": "Member status."
+          },
+          "metadata": {
+            "type": "object",
+            "description": "Custom member metadata."
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp when the member was created."
+          },
+          "updated_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time",
+            "description": "Timestamp when the member was last updated, or `null`."
+          },
+          "object": {
+            "type": "string",
+            "const": "member",
+            "description": "Object type. Always `member`."
+          }
+        },
+        "required": [
+          "id",
+          "customer_id",
+          "program_id",
+          "status",
+          "metadata",
+          "created_at",
+          "updated_at",
+          "object"
+        ]
+      },
+      "LoyaltyV2Program": {
+        "title": "Loyalty Program",
+        "type": "object",
+        "description": "Loyalty v2 program snapshot recorded with the activity.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^lprg_[a-f0-9]+$",
+            "description": "Unique program ID."
+          },
+          "name": {
+            "type": "string",
+            "description": "Program name."
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "DRAFT",
+              "ACTIVE",
+              "INACTIVE",
+              "DELETED"
+            ],
+            "description": "Program status."
+          },
+          "start_date": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date",
+            "description": "Program start date, or `null` when not set."
+          },
+          "end_date": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date",
+            "description": "Program end date, or `null` when not set."
+          },
+          "validity_hours": {
+            "$ref": "#/components/schemas/LoyaltyV2ProgramValidityHours"
+          },
+          "metadata": {
+            "type": "object",
+            "description": "Custom program metadata."
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp when the program was created."
+          },
+          "updated_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time",
+            "description": "Timestamp when the program was last updated, or `null`."
+          },
+          "object": {
+            "type": "string",
+            "const": "program",
+            "description": "Object type. Always `program`."
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "status",
+          "start_date",
+          "end_date",
+          "validity_hours",
+          "metadata",
+          "created_at",
+          "updated_at",
+          "object"
+        ]
+      },
+      "WorkflowTransactionEvent": {
+        "title": "Workflow Transaction Event",
+        "type": "object",
+        "description": "Identifies the Loyalty transaction that triggered the workflow. Transaction events do not contain `event_source`.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Transaction ID.",
+            "example": "lctx_7d2f5a39b461"
+          },
+          "type": {
+            "type": "string",
+            "description": "Transaction type that triggered the workflow.",
+            "example": "POINTS_EARNED"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp when the transaction was created."
+          },
+          "group_id": {
+            "type": "string",
+            "description": "Request ID of the workflow run that triggered the callout.",
+            "example": "i-7d2f5a39b461"
+          },
+          "entity_id": {
+            "type": "string",
+            "description": "Transaction ID. It has the same value as `event.id`.",
+            "example": "lctx_7d2f5a39b461"
+          }
+        },
+        "required": [
+          "id",
+          "type",
+          "created_at",
+          "group_id",
+          "entity_id"
+        ]
+      },
+      "LoyaltyV2ActivitySource": {
+        "title": "Loyalty Activity Source",
+        "type": "object",
+        "description": "Describes how the Loyalty activity was initiated.",
+        "properties": {
+          "channel": {
+            "type": "string",
+            "enum": [
+              "USER_PORTAL",
+              "API",
+              "CLIENT_API",
+              "INTERNAL"
+            ],
+            "description": "Channel through which the activity was initiated."
+          },
+          "user": {
+            "type": "object",
+            "description": "Dashboard user who initiated the activity. Omitted when not applicable.",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Dashboard user ID."
+              }
+            },
+            "required": [
+              "id"
+            ]
+          },
+          "api_key": {
+            "type": "object",
+            "description": "API key that initiated the activity. Omitted when not applicable.",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "API key name."
+              },
+              "app_id": {
+                "type": "string",
+                "description": "Application ID associated with the API key."
+              },
+              "client_app_id": {
+                "type": "string",
+                "description": "Client application ID associated with the API key. Omitted when not applicable."
+              }
+            },
+            "required": [
+              "name"
+            ]
+          }
+        },
+        "required": [
+          "channel"
+        ]
+      },
+      "LoyaltyV2ProgramValidityHours": {
+        "title": "Loyalty Program Validity Hours",
+        "type": "object",
+        "description": "Defines when the program is valid during a day.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "ANY_TIME",
+              "DAILY"
+            ],
+            "description": "Validity-hours mode."
+          },
+          "daily": {
+            "type": "array",
+            "description": "Daily validity windows. Omitted for `ANY_TIME`.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "days_of_week": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer"
+                  },
+                  "description": "Days of the week included in the window."
+                },
+                "start_time": {
+                  "type": "string",
+                  "description": "Start time of the window."
+                },
+                "end_time": {
+                  "type": "string",
+                  "description": "End time of the window."
+                }
+              },
+              "required": [
+                "days_of_week",
+                "start_time",
+                "end_time"
+              ]
+            }
+          }
+        },
+        "required": [
+          "type"
+        ]
+      }
+    }
+  },
+  "webhooks": {
+    "vl.member.created": {
+      "post": {
+        "operationId": "loyalty-activity-member-created",
+        "summary": "Member created",
+        "description": "",
+        "tags": [
+          "Events loyalty activity"
+        ],
+        "responses": {
+          "200": {
+            "description": "Webhook accepted"
+          },
+          "202": {
+            "description": "Webhook accepted"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoyaltyV2MemberCreatedWebhook"
+              },
+              "examples": {
+                "vl.member.created": {
+                  "value": {
+                    "id": "whs_8a6d13f90c42b751e4",
+                    "project_id": "proj_5T4Rpl4T1nuM",
+                    "created_at": "2026-08-21T09:15:43.284Z",
+                    "type": "vl.member.created",
+                    "data": {
+                      "member": {
+                        "id": "lmbr_91f6b2e84a37",
+                        "customer_id": "cust_7LvqCsUB9c8WyFP8JaLXchtF",
+                        "program_id": "lprg_3e8a1c74d952",
+                        "status": "ACTIVE",
+                        "metadata": {
+                          "signup_channel": "mobile_app"
+                        },
+                        "created_at": "2026-08-21T09:15:43.091Z",
+                        "updated_at": null,
+                        "object": "member"
+                      },
+                      "program": {
+                        "id": "lprg_3e8a1c74d952",
+                        "name": "Coffee Club",
+                        "status": "ACTIVE",
+                        "start_date": "2026-01-01",
+                        "end_date": null,
+                        "validity_hours": {
+                          "type": "ANY_TIME"
+                        },
+                        "metadata": {},
+                        "created_at": "2025-12-10T11:24:07.635Z",
+                        "updated_at": "2025-12-15T08:41:29.182Z",
+                        "object": "program"
+                      }
+                    },
+                    "source": {
+                      "id": "wfdef_55bfc63a8142-wfrnstp_c2a4769de031",
+                      "object": "workflow",
+                      "target_url": "https://example.com/webhooks/voucherify"
+                    },
+                    "event": {
+                      "id": "lambr_1c85f39e7a42",
+                      "type": "vl.member.created",
+                      "created_at": "2026-08-21T09:15:43.091Z",
+                      "group_id": "i-62af94d1e703",
+                      "entity_id": "lambr_1c85f39e7a42",
+                      "event_source": {
+                        "channel": "API",
+                        "api_key": {
+                          "name": "Server-side key",
+                          "app_id": "52f26ec1-33a7-4d6f-a951-243b911cf84e"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
