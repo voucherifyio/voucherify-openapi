@@ -1,0 +1,246 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Events - Events loyalty transaction",
+    "version": "2024-01-01",
+    "description": ""
+  },
+  "paths": {},
+  "components": {
+    "schemas": {
+      "EventLoyaltyPointsEarnedData": {
+        "title": "Loyalty Points Earned Data",
+        "type": "object",
+        "description": "Event data object schema for `POINTS_EARNED`.",
+        "properties": {
+          "transaction": {
+            "$ref": "#/components/schemas/LoyaltyV2PointsEarnedTransaction"
+          }
+        },
+        "required": [
+          "transaction"
+        ]
+      },
+      "LoyaltyV2PointsEarnedTransaction": {
+        "title": "Loyalty Points Earned Transaction",
+        "type": "object",
+        "description": "A Loyalty v2 card transaction created when points are earned.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^lctx_[a-f0-9]+$",
+            "description": "Unique card transaction ID."
+          },
+          "card_id": {
+            "type": "string",
+            "pattern": "^lcrd_[a-f0-9]+$",
+            "description": "ID of the loyalty card credited with points."
+          },
+          "program_id": {
+            "type": "string",
+            "pattern": "^lprg_[a-f0-9]+$",
+            "description": "ID of the Loyalty v2 program."
+          },
+          "member_id": {
+            "type": "string",
+            "pattern": "^lmbr_[a-f0-9]+$",
+            "description": "ID of the program member."
+          },
+          "card_definition_id": {
+            "type": "string",
+            "pattern": "^lcdef_[a-f0-9]+$",
+            "description": "ID of the card definition."
+          },
+          "card_type": {
+            "type": "string",
+            "enum": [
+              "INDIVIDUAL"
+            ],
+            "description": "Type of loyalty card."
+          },
+          "type": {
+            "type": "string",
+            "const": "POINTS_EARNED",
+            "description": "Transaction type. Always `POINTS_EARNED`."
+          },
+          "details": {
+            "$ref": "#/components/schemas/LoyaltyV2PointsEarnedDetails"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "PENDING",
+              "PROCESSING",
+              "APPROVED",
+              "REJECTED"
+            ],
+            "description": "Transaction status. A workflow can filter which statuses trigger its run."
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp when the transaction was created."
+          },
+          "updated_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time",
+            "description": "Timestamp when the transaction was last updated, or `null`."
+          },
+          "object": {
+            "type": "string",
+            "const": "card_transaction",
+            "description": "Object type. Always `card_transaction`."
+          }
+        },
+        "required": [
+          "id",
+          "card_id",
+          "program_id",
+          "member_id",
+          "card_definition_id",
+          "card_type",
+          "type",
+          "details",
+          "status",
+          "created_at",
+          "updated_at",
+          "object"
+        ]
+      },
+      "LoyaltyV2PointsEarnedDetails": {
+        "title": "Loyalty Points Earned Transaction Details",
+        "type": "object",
+        "description": "Details of a `POINTS_EARNED` card transaction.",
+        "properties": {
+          "reason": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Reason recorded for the transaction."
+          },
+          "rejection": {
+            "description": "Rejection information, or `null` when the transaction was not rejected.",
+            "oneOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "reason": {
+                    "type": "string",
+                    "description": "Rejection reason."
+                  },
+                  "details": {
+                    "type": "object",
+                    "description": "Additional rejection details."
+                  }
+                },
+                "required": [
+                  "reason"
+                ]
+              },
+              {
+                "type": "object",
+                "nullable": true,
+                "default": null
+              }
+            ]
+          },
+          "metadata": {
+            "type": "object",
+            "description": "Custom metadata associated with the transaction."
+          },
+          "points": {
+            "type": "object",
+            "description": "Points credited by the transaction.",
+            "properties": {
+              "total": {
+                "type": "integer",
+                "description": "Number of points credited."
+              },
+              "expiration_date": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "format": "date",
+                "description": "Date when the credited points expire, or `null` when they do not expire."
+              }
+            },
+            "required": [
+              "total",
+              "expiration_date"
+            ]
+          }
+        },
+        "required": [
+          "rejection",
+          "metadata",
+          "points"
+        ]
+      }
+    }
+  },
+  "webhooks": {
+    "POINTS_EARNED": {
+      "post": {
+        "operationId": "loyalty-transaction-card-points-earned",
+        "summary": "Points earned",
+        "description": "",
+        "tags": [
+          "Events loyalty transaction"
+        ],
+        "responses": {
+          "200": {
+            "description": "Webhook accepted"
+          },
+          "202": {
+            "description": "Webhook accepted"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EventLoyaltyPointsEarnedData"
+              },
+              "examples": {
+                "POINTS_EARNED": {
+                  "value": {
+                    "transaction": {
+                      "id": "lctx_7d2f5a39b461",
+                      "card_id": "lcrd_28c4e7b195fa",
+                      "program_id": "lprg_3e8a1c74d952",
+                      "member_id": "lmbr_91f6b2e84a37",
+                      "card_definition_id": "lcdef_6a2d9f41c783",
+                      "card_type": "INDIVIDUAL",
+                      "type": "POINTS_EARNED",
+                      "details": {
+                        "reason": "Order paid",
+                        "rejection": null,
+                        "metadata": {
+                          "order_source": "online_store"
+                        },
+                        "points": {
+                          "total": 250,
+                          "expiration_date": "2027-08-20"
+                        }
+                      },
+                      "status": "APPROVED",
+                      "created_at": "2026-08-20T14:32:18.412Z",
+                      "updated_at": "2026-08-20T14:32:18.497Z",
+                      "object": "card_transaction"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
