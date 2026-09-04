@@ -1,0 +1,281 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Events - Events loyalty activity",
+    "version": "2024-01-01",
+    "description": ""
+  },
+  "paths": {},
+  "components": {
+    "schemas": {
+      "EventLoyaltyMemberCreatedData": {
+        "title": "Loyalty Member Created Data",
+        "type": "object",
+        "description": "Event data object schema for `vl.member.created`.",
+        "properties": {
+          "member": {
+            "$ref": "#/components/schemas/LoyaltyV2Member"
+          },
+          "program": {
+            "$ref": "#/components/schemas/LoyaltyV2Program"
+          }
+        },
+        "required": [
+          "member",
+          "program"
+        ]
+      },
+      "LoyaltyV2Member": {
+        "title": "Loyalty Program Member",
+        "type": "object",
+        "description": "Loyalty v2 program member snapshot recorded with the activity.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^lmbr_[a-f0-9]+$",
+            "description": "Unique member ID."
+          },
+          "customer_id": {
+            "type": "string",
+            "pattern": "^cust_[a-zA-Z0-9]+$",
+            "description": "ID of the enrolled customer."
+          },
+          "program_id": {
+            "type": "string",
+            "pattern": "^lprg_[a-f0-9]+$",
+            "description": "ID of the Loyalty v2 program."
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ACTIVE",
+              "INACTIVE",
+              "DELETED"
+            ],
+            "description": "Member status."
+          },
+          "metadata": {
+            "type": "object",
+            "description": "Custom member metadata."
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp when the member was created."
+          },
+          "updated_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time",
+            "description": "Timestamp when the member was last updated, or `null`."
+          },
+          "object": {
+            "type": "string",
+            "const": "member",
+            "description": "Object type. Always `member`."
+          }
+        },
+        "required": [
+          "id",
+          "customer_id",
+          "program_id",
+          "status",
+          "metadata",
+          "created_at",
+          "updated_at",
+          "object"
+        ]
+      },
+      "LoyaltyV2Program": {
+        "title": "Loyalty Program",
+        "type": "object",
+        "description": "Loyalty v2 program snapshot recorded with the activity.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^lprg_[a-f0-9]+$",
+            "description": "Unique program ID."
+          },
+          "name": {
+            "type": "string",
+            "description": "Program name."
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "DRAFT",
+              "ACTIVE",
+              "INACTIVE",
+              "DELETED"
+            ],
+            "description": "Program status."
+          },
+          "start_date": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date",
+            "description": "Program start date, or `null` when not set."
+          },
+          "end_date": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date",
+            "description": "Program end date, or `null` when not set."
+          },
+          "validity_hours": {
+            "$ref": "#/components/schemas/LoyaltyV2ProgramValidityHours"
+          },
+          "metadata": {
+            "type": "object",
+            "description": "Custom program metadata."
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp when the program was created."
+          },
+          "updated_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time",
+            "description": "Timestamp when the program was last updated, or `null`."
+          },
+          "object": {
+            "type": "string",
+            "const": "program",
+            "description": "Object type. Always `program`."
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "status",
+          "start_date",
+          "end_date",
+          "validity_hours",
+          "metadata",
+          "created_at",
+          "updated_at",
+          "object"
+        ]
+      },
+      "LoyaltyV2ProgramValidityHours": {
+        "title": "Loyalty Program Validity Hours",
+        "type": "object",
+        "description": "Defines when the program is valid during a day.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "ANY_TIME",
+              "DAILY"
+            ],
+            "description": "Validity-hours mode."
+          },
+          "daily": {
+            "type": "array",
+            "description": "Daily validity windows. Omitted for `ANY_TIME`.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "days_of_week": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer"
+                  },
+                  "description": "Days of the week included in the window."
+                },
+                "start_time": {
+                  "type": "string",
+                  "description": "Start time of the window."
+                },
+                "end_time": {
+                  "type": "string",
+                  "description": "End time of the window."
+                }
+              },
+              "required": [
+                "days_of_week",
+                "start_time",
+                "end_time"
+              ]
+            }
+          }
+        },
+        "required": [
+          "type"
+        ]
+      }
+    }
+  },
+  "webhooks": {
+    "vl.member.created": {
+      "post": {
+        "operationId": "loyalty-activity-member-created",
+        "summary": "Member created",
+        "description": "",
+        "tags": [
+          "Events loyalty activity"
+        ],
+        "responses": {
+          "200": {
+            "description": "Webhook accepted"
+          },
+          "202": {
+            "description": "Webhook accepted"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EventLoyaltyMemberCreatedData"
+              },
+              "examples": {
+                "vl.member.created": {
+                  "value": {
+                    "member": {
+                      "id": "lmbr_91f6b2e84a37",
+                      "customer_id": "cust_7LvqCsUB9c8WyFP8JaLXchtF",
+                      "program_id": "lprg_3e8a1c74d952",
+                      "status": "ACTIVE",
+                      "metadata": {
+                        "signup_channel": "mobile_app"
+                      },
+                      "created_at": "2026-08-21T09:15:43.091Z",
+                      "updated_at": null,
+                      "object": "member"
+                    },
+                    "program": {
+                      "id": "lprg_3e8a1c74d952",
+                      "name": "Coffee Club",
+                      "status": "ACTIVE",
+                      "start_date": "2026-01-01",
+                      "end_date": null,
+                      "validity_hours": {
+                        "type": "ANY_TIME"
+                      },
+                      "metadata": {},
+                      "created_at": "2025-12-10T11:24:07.635Z",
+                      "updated_at": "2025-12-15T08:41:29.182Z",
+                      "object": "program"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
