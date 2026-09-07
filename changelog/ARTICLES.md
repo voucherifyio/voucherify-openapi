@@ -5,6 +5,10 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-09-07
+
+Update `documentation/manage/security-and-data-protection.mdx` with a link to an executable Data Processing Agreement.
+
 ## 2026-09-03
 
 Removed leftover “standalone” campaign wording from dashboard articles and aligned it with **generic** (DOC-1180 / DEV-4102). API `STANDALONE` type is unchanged.
