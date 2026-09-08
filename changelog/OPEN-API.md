@@ -4,9 +4,11 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
-## 2026-09-07
+## 2026-09-08
 
 - Documented the remaining Loyalty v2 card transaction events available to Workflows webhook callouts.
+
+## 2026-09-07
 
 - Documented the remaining Loyalty v2 member activity events available to Workflows webhook callouts:
   - `vl.member.updated`, `vl.member.deleted`, `vl.member.activated`, and `vl.member.deactivated`.
