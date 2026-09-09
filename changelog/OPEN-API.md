@@ -20,6 +20,9 @@ Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 - Documented Loyalty v2 card definition activity events available to Workflows webhook callouts:
   - `vl.card_definition.created`, `vl.card_definition.updated`, `vl.card_definition.deleted`, `vl.card_definition.activated`, and `vl.card_definition.drafted`.
   - `vl.card_definition.assigned` and `vl.card_definition.unassigned`.
+- Documented Loyalty v2 earning rule activity events available to Workflows webhook callouts:
+  - `vl.earning_rule.created`, `vl.earning_rule.updated`, `vl.earning_rule.deleted`, `vl.earning_rule.activated`, `vl.earning_rule.deactivated`, and `vl.earning_rule.drafted`.
+  - `vl.earning_rule.assigned` and `vl.earning_rule.unassigned`.
 
 ## 2026-09-08
 
