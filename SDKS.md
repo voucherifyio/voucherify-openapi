@@ -159,3 +159,12 @@ To avoid breaking changes, fix them in the [`index.ts` file](./scripts/shared/pr
 #### Releasing a major version
 
 Before releasing new major version please go to [`index.ts` file](./scripts/shared/prepare-open-api/index.ts) and update `fixBreakingChanges` parameter to make sure that all breaking changes will be applied at the same time.
+
+## v2/loyalties SDK
+
+Various notes regarding generating SDKs with v2/loyalties:
+- Preconditions:
+  - `OpenAPI.json` is upgraded to `"openapi": "3.1.0"`,
+  - `loyalties-v2.json` is merged with the upgraded `OpenAPI.json`
+- Exceptions (DO NOT GENERATE THE FOLLOWING ENDPOINTS/METHODS):
+  - POST `/v2/loyalties/tier-structures/{tierStructureId}/deactivate`
