@@ -4,6 +4,14 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-09-09
+
+- Documented the remaining Loyalty v2 transaction events available to Workflows webhook callouts:
+  - Order: `PAY_WITH_POINTS`.
+  - Tier: `UPGRADED`, `DOWNGRADED`, `JOINED`, `LEFT`, `EXPIRATION_CHANGED`, and `EVALUATION_REFRESHED`.
+  - Reward: `PURCHASE` and `REFUND`.
+  - Benefit: `FULFILLMENT`.
+
 ## 2026-09-08
 
 - Documented the remaining Loyalty v2 card transaction events available to Workflows webhook callouts.
