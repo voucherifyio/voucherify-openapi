@@ -757,6 +757,71 @@
           "reward"
         ]
       },
+      "EventLoyaltyActivityBenefitCreatedData": {
+        "title": "Benefit created data",
+        "type": "object",
+        "description": "Event data object schema for `vl.benefit.created`.",
+        "properties": {
+          "benefit": {
+            "$ref": "#/components/schemas/LoyaltyV2ActivityBenefit"
+          }
+        },
+        "required": [
+          "benefit"
+        ]
+      },
+      "EventLoyaltyActivityBenefitUpdatedData": {
+        "title": "Benefit updated data",
+        "type": "object",
+        "description": "Event data object schema for `vl.benefit.updated`.",
+        "properties": {
+          "benefit": {
+            "$ref": "#/components/schemas/LoyaltyV2ActivityBenefit"
+          }
+        },
+        "required": [
+          "benefit"
+        ]
+      },
+      "EventLoyaltyActivityBenefitDeletedData": {
+        "title": "Benefit deleted data",
+        "type": "object",
+        "description": "Event data object schema for `vl.benefit.deleted`.",
+        "properties": {
+          "benefit": {
+            "$ref": "#/components/schemas/LoyaltyV2ActivityBenefit"
+          }
+        },
+        "required": [
+          "benefit"
+        ]
+      },
+      "EventLoyaltyActivityBenefitActivatedData": {
+        "title": "Benefit activated data",
+        "type": "object",
+        "description": "Event data object schema for `vl.benefit.activated`.",
+        "properties": {
+          "benefit": {
+            "$ref": "#/components/schemas/LoyaltyV2ActivityBenefit"
+          }
+        },
+        "required": [
+          "benefit"
+        ]
+      },
+      "EventLoyaltyActivityBenefitDraftedData": {
+        "title": "Benefit drafted data",
+        "type": "object",
+        "description": "Event data object schema for `vl.benefit.drafted`.",
+        "properties": {
+          "benefit": {
+            "$ref": "#/components/schemas/LoyaltyV2ActivityBenefit"
+          }
+        },
+        "required": [
+          "benefit"
+        ]
+      },
       "LoyaltyV2Member": {
         "title": "Loyalty Program Member",
         "type": "object",
@@ -1566,6 +1631,107 @@
         "required": [
           "tier_structure_id",
           "created_at",
+          "object"
+        ]
+      },
+      "LoyaltyV2ActivityBenefit": {
+        "type": "object",
+        "description": "A benefit object. Exactly one type-specific configuration object\n(`points`, `points_proportional`, `material`, or `digital`) is present, matching the `type`;\nthe others are omitted.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^lben_[a-f0-9]+$",
+            "description": "Unique benefit ID, prefixed with `lben_`."
+          },
+          "name": {
+            "type": "string",
+            "description": "Benefit name, unique within the project."
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "POINTS",
+              "POINTS_PROPORTIONAL",
+              "MATERIAL",
+              "DIGITAL"
+            ],
+            "description": "Benefit type."
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "DRAFT",
+              "ACTIVE",
+              "DELETED"
+            ],
+            "description": "Current benefit status. `DELETED` appears only in the response of the delete endpoint and in activity snapshots."
+          },
+          "stock": {
+            "description": "Stock configuration. Omitted when not set.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitStock"
+              }
+            ]
+          },
+          "points": {
+            "description": "Fixed points configuration. Present only when `type` is `POINTS`.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitPoints"
+              }
+            ]
+          },
+          "points_proportional": {
+            "description": "Proportional points configuration. Present only when `type` is `POINTS_PROPORTIONAL`.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitPointsProportional"
+              }
+            ]
+          },
+          "material": {
+            "description": "Material configuration. Present only when `type` is `MATERIAL`.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitMaterial"
+              }
+            ]
+          },
+          "digital": {
+            "description": "Digital configuration. Present only when `type` is `DIGITAL`.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitDigital"
+              }
+            ]
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp of when the benefit was created, in ISO 8601 format."
+          },
+          "updated_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time",
+            "description": "Timestamp of the last update, in ISO 8601 format. `null` when the benefit was never updated."
+          },
+          "object": {
+            "type": "string",
+            "const": "benefit",
+            "description": "Type of the object. Always `benefit`."
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "type",
+          "status",
+          "created_at",
+          "updated_at",
           "object"
         ]
       },
@@ -2433,6 +2599,664 @@
             "description": "Grace period before the downgrade takes effect. Omitted when not configured."
           }
         }
+      },
+      "LoyaltyV2ActivityBenefitStock": {
+        "type": "object",
+        "description": "Stock configuration of the benefit. When `type` is `LIMITED` the `limited` object is\nrequired; when `type` is `UNLIMITED` the `limited` object must be omitted or `null`.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "UNLIMITED",
+              "LIMITED"
+            ],
+            "description": "Whether the benefit has unlimited or limited stock."
+          },
+          "limited": {
+            "description": "Limited stock configuration. Required when `type` is `LIMITED`, must be null otherwise.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitStockLimited"
+              },
+              {
+                "type": "object",
+                "nullable": true,
+                "default": null
+              }
+            ]
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "UNLIMITED"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "limited": {
+                  "type": "object",
+                  "nullable": true,
+                  "default": null
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "LIMITED"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "limited"
+              ],
+              "properties": {
+                "limited": {
+                  "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitStockLimited"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "LoyaltyV2ActivityBenefitPoints": {
+        "type": "object",
+        "description": "Fixed points effect - adds a fixed amount of points to a card of the given card definition.",
+        "properties": {
+          "value": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991,
+            "description": "Number of points to add."
+          },
+          "card_definition_id": {
+            "type": "string",
+            "pattern": "^lcdef_[a-f0-9]+$",
+            "description": "ID of the card definition whose cards receive the points. The card definition must exist and be ACTIVE."
+          }
+        },
+        "required": [
+          "value",
+          "card_definition_id"
+        ],
+        "additionalProperties": false
+      },
+      "LoyaltyV2ActivityBenefitPointsProportional": {
+        "type": "object",
+        "description": "Proportional points effect - points are calculated from an order amount, order items,\nor a metadata property. Exactly one calculation source object (`order`, `customer`,\n`custom_event`, or `order_items`) is required, determined by `calculation_type`;\nthe remaining source properties must be omitted or `null`.",
+        "properties": {
+          "calculation_type": {
+            "type": "string",
+            "enum": [
+              "PRE_DISCOUNT_ORDER_AMOUNT",
+              "POST_DISCOUNT_ORDER_AMOUNT",
+              "PRE_DISCOUNT_ORDER_ITEMS_AMOUNT",
+              "POST_DISCOUNT_ORDER_ITEMS_AMOUNT",
+              "ORDER_ITEMS_QUANTITY",
+              "ORDER_METADATA_VALUE",
+              "CUSTOMER_METADATA_VALUE",
+              "CUSTOM_EVENT_METADATA_VALUE"
+            ],
+            "description": "How the points are calculated:\n- `PRE_DISCOUNT_ORDER_AMOUNT` - points per every specified order amount before discounts (requires `order.amount`)\n- `POST_DISCOUNT_ORDER_AMOUNT` - points per every specified order amount after discounts (requires `order.total_amount`)\n- `PRE_DISCOUNT_ORDER_ITEMS_AMOUNT` - points per every specified amount spent on selected products before discounts (requires `order_items.amount`)\n- `POST_DISCOUNT_ORDER_ITEMS_AMOUNT` - points per every specified amount spent on selected products after discounts (requires `order_items.subtotal_amount`)\n- `ORDER_ITEMS_QUANTITY` - points per every specified quantity of selected products, excluding free items (requires `order_items.quantity`)\n- `ORDER_METADATA_VALUE` - points per every specified value in the order metadata (requires `order.metadata`)\n- `CUSTOMER_METADATA_VALUE` - points per every specified value in the customer metadata (requires `customer.metadata`)\n- `CUSTOM_EVENT_METADATA_VALUE` - points per every specified value in the custom event metadata (requires `custom_event.metadata`)"
+          },
+          "card_definition_id": {
+            "type": "string",
+            "pattern": "^lcdef_[a-f0-9]+$",
+            "description": "ID of the card definition whose cards receive the points. The card definition must exist and be ACTIVE."
+          },
+          "order": {
+            "description": "Order-based calculation configuration (for `PRE_DISCOUNT_ORDER_AMOUNT`, `POST_DISCOUNT_ORDER_AMOUNT`, `ORDER_METADATA_VALUE`).",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitPointsProportionalOrder"
+              },
+              {
+                "type": "object",
+                "nullable": true,
+                "default": null
+              }
+            ]
+          },
+          "customer": {
+            "description": "Customer-metadata-based calculation configuration (for `CUSTOMER_METADATA_VALUE`).",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitPointsProportionalCustomer"
+              },
+              {
+                "type": "object",
+                "nullable": true,
+                "default": null
+              }
+            ]
+          },
+          "custom_event": {
+            "description": "Custom-event-metadata-based calculation configuration (for `CUSTOM_EVENT_METADATA_VALUE`).",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitPointsProportionalCustomEvent"
+              },
+              {
+                "type": "object",
+                "nullable": true,
+                "default": null
+              }
+            ]
+          },
+          "order_items": {
+            "description": "Order-items-based calculation configuration (for `PRE_DISCOUNT_ORDER_ITEMS_AMOUNT`, `POST_DISCOUNT_ORDER_ITEMS_AMOUNT`, `ORDER_ITEMS_QUANTITY`).",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitPointsProportionalOrderItems"
+              },
+              {
+                "type": "object",
+                "nullable": true,
+                "default": null
+              }
+            ]
+          }
+        },
+        "required": [
+          "calculation_type",
+          "card_definition_id"
+        ],
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "calculation_type": {
+                  "const": "PRE_DISCOUNT_ORDER_AMOUNT"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "order"
+              ],
+              "properties": {
+                "order": {
+                  "type": "object",
+                  "required": [
+                    "amount"
+                  ]
+                },
+                "customer": {
+                  "type": "object",
+                  "nullable": true,
+                  "default": null
+                },
+                "custom_event": {
+                  "type": "object",
+                  "nullable": true,
+                  "default": null
+                },
+                "order_items": {
+                  "type": "object",
+                  "nullable": true,
+                  "default": null
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "calculation_type": {
+                  "const": "POST_DISCOUNT_ORDER_AMOUNT"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "order"
+              ],
+              "properties": {
+                "order": {
+                  "type": "object",
+                  "required": [
+                    "total_amount"
+                  ]
+                },
+                "customer": {
+                  "type": "object",
+                  "nullable": true,
+                  "default": null
+                },
+                "custom_event": {
+                  "type": "object",
+                  "nullable": true,
+                  "default": null
+                },
+                "order_items": {
+                  "type": "object",
+                  "nullable": true,
+                  "default": null
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "calculation_type": {
+                  "const": "ORDER_METADATA_VALUE"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "order"
+              ],
+              "properties": {
+                "order": {
+                  "type": "object",
+                  "required": [
+                    "metadata"
+                  ]
+                },
+                "customer": {
+                  "type": "object",
+                  "nullable": true,
+                  "default": null
+                },
+                "custom_event": {
+                  "type": "object",
+                  "nullable": true,
+                  "default": null
+                },
+                "order_items": {
+                  "type": "object",
+                  "nullable": true,
+                  "default": null
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "calculation_type": {
+                  "const": "CUSTOMER_METADATA_VALUE"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "customer"
+              ],
+              "properties": {
+                "customer": {
+                  "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitPointsProportionalCustomer"
+                },
+                "order": {
+                  "type": "object",
+                  "nullable": true,
+                  "default": null
+                },
+                "custom_event": {
+                  "type": "object",
+                  "nullable": true,
+                  "default": null
+                },
+                "order_items": {
+                  "type": "object",
+                  "nullable": true,
+                  "default": null
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "calculation_type": {
+                  "const": "CUSTOM_EVENT_METADATA_VALUE"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "custom_event"
+              ],
+              "properties": {
+                "custom_event": {
+                  "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitPointsProportionalCustomEvent"
+                },
+                "order": {
+                  "type": "object",
+                  "nullable": true,
+                  "default": null
+                },
+                "customer": {
+                  "type": "object",
+                  "nullable": true,
+                  "default": null
+                },
+                "order_items": {
+                  "type": "object",
+                  "nullable": true,
+                  "default": null
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "calculation_type": {
+                  "const": "PRE_DISCOUNT_ORDER_ITEMS_AMOUNT"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "order_items"
+              ],
+              "properties": {
+                "order_items": {
+                  "type": "object",
+                  "required": [
+                    "amount"
+                  ]
+                },
+                "order": {
+                  "type": "object",
+                  "nullable": true,
+                  "default": null
+                },
+                "customer": {
+                  "type": "object",
+                  "nullable": true,
+                  "default": null
+                },
+                "custom_event": {
+                  "type": "object",
+                  "nullable": true,
+                  "default": null
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "calculation_type": {
+                  "const": "POST_DISCOUNT_ORDER_ITEMS_AMOUNT"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "order_items"
+              ],
+              "properties": {
+                "order_items": {
+                  "type": "object",
+                  "required": [
+                    "subtotal_amount"
+                  ]
+                },
+                "order": {
+                  "type": "object",
+                  "nullable": true,
+                  "default": null
+                },
+                "customer": {
+                  "type": "object",
+                  "nullable": true,
+                  "default": null
+                },
+                "custom_event": {
+                  "type": "object",
+                  "nullable": true,
+                  "default": null
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "calculation_type": {
+                  "const": "ORDER_ITEMS_QUANTITY"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "order_items"
+              ],
+              "properties": {
+                "order_items": {
+                  "type": "object",
+                  "required": [
+                    "quantity"
+                  ]
+                },
+                "order": {
+                  "type": "object",
+                  "nullable": true,
+                  "default": null
+                },
+                "customer": {
+                  "type": "object",
+                  "nullable": true,
+                  "default": null
+                },
+                "custom_event": {
+                  "type": "object",
+                  "nullable": true,
+                  "default": null
+                }
+              }
+            }
+          }
+        ]
+      },
+      "LoyaltyV2ActivityBenefitMaterial": {
+        "type": "object",
+        "description": "Material benefit - a physical product or SKU. Exactly one of `product` or `sku` is\nrequired, matching the `type`; the other must be omitted or `null`.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "PRODUCT",
+              "SKU"
+            ],
+            "description": "Whether the benefit is a whole product or a specific SKU."
+          },
+          "product": {
+            "description": "Product reference. Required when `type` is `PRODUCT`, must be null otherwise. The product must exist.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitMaterialProduct"
+              },
+              {
+                "type": "object",
+                "nullable": true,
+                "default": null
+              }
+            ]
+          },
+          "sku": {
+            "description": "SKU reference. Required when `type` is `SKU`, must be null otherwise. The SKU must exist under the given product.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitMaterialSKU"
+              },
+              {
+                "type": "object",
+                "nullable": true,
+                "default": null
+              }
+            ]
+          }
+        },
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "required": [
+              "type"
+            ]
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "PRODUCT"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "product"
+              ],
+              "properties": {
+                "product": {
+                  "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitMaterialProduct"
+                },
+                "sku": {
+                  "type": "object",
+                  "nullable": true,
+                  "default": null
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "SKU"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "sku"
+              ],
+              "properties": {
+                "sku": {
+                  "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitMaterialSKU"
+                },
+                "product": {
+                  "type": "object",
+                  "nullable": true,
+                  "default": null
+                }
+              }
+            }
+          }
+        ]
+      },
+      "LoyaltyV2ActivityBenefitDigital": {
+        "type": "object",
+        "description": "Digital benefit - a reward sourced from a Voucherify campaign. Exactly one of\n`gift_vouchers` or `discount_coupons` is required, matching the `type`; the other must\nbe omitted or `null`. The referenced campaign must exist and its campaign type must match\nthe benefit's digital type.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "GIFT_VOUCHERS",
+              "DISCOUNT_COUPONS"
+            ],
+            "description": "Type of the digital reward."
+          },
+          "gift_vouchers": {
+            "description": "Gift vouchers configuration. Required when `type` is `GIFT_VOUCHERS`, must be null otherwise.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitDigitalGiftVouchers"
+              },
+              {
+                "type": "object",
+                "nullable": true,
+                "default": null
+              }
+            ]
+          },
+          "discount_coupons": {
+            "description": "Discount coupons configuration. Required when `type` is `DISCOUNT_COUPONS`, must be null otherwise.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitDigitalDiscountCoupons"
+              },
+              {
+                "type": "object",
+                "nullable": true,
+                "default": null
+              }
+            ]
+          }
+        },
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "required": [
+              "type"
+            ]
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "DISCOUNT_COUPONS"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "discount_coupons"
+              ],
+              "properties": {
+                "discount_coupons": {
+                  "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitDigitalDiscountCoupons"
+                },
+                "gift_vouchers": {
+                  "type": "object",
+                  "nullable": true,
+                  "default": null
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "GIFT_VOUCHERS"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "gift_vouchers"
+              ],
+              "properties": {
+                "gift_vouchers": {
+                  "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitDigitalGiftVouchers"
+                },
+                "discount_coupons": {
+                  "type": "object",
+                  "nullable": true,
+                  "default": null
+                }
+              }
+            }
+          }
+        ]
       },
       "LoyaltyV2CardLifetimePoints": {
         "title": "Loyalty Card Lifetime Points",
@@ -3613,6 +4437,193 @@
           }
         }
       },
+      "LoyaltyV2ActivityBenefitStockLimited": {
+        "type": "object",
+        "description": "Limited stock configuration.",
+        "properties": {
+          "quantity": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991,
+            "description": "Remaining stock quantity."
+          }
+        },
+        "required": [
+          "quantity"
+        ],
+        "additionalProperties": false
+      },
+      "LoyaltyV2ActivityBenefitPointsProportionalOrder": {
+        "type": "object",
+        "description": "Order-based proportional calculation. Provide the property matching the `calculation_type`.",
+        "properties": {
+          "amount": {
+            "description": "Points per every specified pre-discount order amount (for `PRE_DISCOUNT_ORDER_AMOUNT`).",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitPointsProportionalEvery"
+              }
+            ]
+          },
+          "total_amount": {
+            "description": "Points per every specified post-discount order amount (for `POST_DISCOUNT_ORDER_AMOUNT`).",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitPointsProportionalEvery"
+              }
+            ]
+          },
+          "metadata": {
+            "description": "Points per every specified value of an order metadata property (for `ORDER_METADATA_VALUE`).",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitPointsProportionalMetadata"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "LoyaltyV2ActivityBenefitPointsProportionalCustomer": {
+        "type": "object",
+        "description": "Customer-metadata-based proportional calculation.",
+        "properties": {
+          "metadata": {
+            "description": "Points per every specified value of a customer metadata property.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitPointsProportionalMetadata"
+              }
+            ]
+          }
+        },
+        "required": [
+          "metadata"
+        ],
+        "additionalProperties": false
+      },
+      "LoyaltyV2ActivityBenefitPointsProportionalCustomEvent": {
+        "type": "object",
+        "description": "Custom-event-metadata-based proportional calculation.",
+        "properties": {
+          "metadata": {
+            "description": "Points per every specified value of a custom event metadata property.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitPointsProportionalMetadata"
+              }
+            ]
+          }
+        },
+        "required": [
+          "metadata"
+        ],
+        "additionalProperties": false
+      },
+      "LoyaltyV2ActivityBenefitPointsProportionalOrderItems": {
+        "type": "object",
+        "description": "Order-items-based proportional calculation. Provide the property matching the `calculation_type`.",
+        "properties": {
+          "amount": {
+            "description": "Points per every specified pre-discount amount spent on the selected items (for `PRE_DISCOUNT_ORDER_ITEMS_AMOUNT`).",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitPointsProportionalOrderItemsCalculation"
+              }
+            ]
+          },
+          "subtotal_amount": {
+            "description": "Points per every specified post-discount amount spent on the selected items (for `POST_DISCOUNT_ORDER_ITEMS_AMOUNT`).",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitPointsProportionalOrderItemsCalculation"
+              }
+            ]
+          },
+          "quantity": {
+            "description": "Points per every specified quantity of the selected items, excluding free items (for `ORDER_ITEMS_QUANTITY`).",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitPointsProportionalOrderItemsCalculation"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "LoyaltyV2ActivityBenefitMaterialProduct": {
+        "type": "object",
+        "description": "Product reference for a material benefit.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^prod_[a-f0-9]+",
+            "description": "Product ID, prefixed with `prod_`."
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "additionalProperties": false
+      },
+      "LoyaltyV2ActivityBenefitMaterialSKU": {
+        "type": "object",
+        "description": "SKU reference for a material benefit.",
+        "properties": {
+          "product_id": {
+            "type": "string",
+            "pattern": "^prod_[a-f0-9]+",
+            "description": "ID of the product the SKU belongs to, prefixed with `prod_`."
+          },
+          "id": {
+            "type": "string",
+            "pattern": "^sku_[a-f0-9]+",
+            "description": "SKU ID, prefixed with `sku_`."
+          }
+        },
+        "required": [
+          "product_id",
+          "id"
+        ],
+        "additionalProperties": false
+      },
+      "LoyaltyV2ActivityBenefitDigitalGiftVouchers": {
+        "type": "object",
+        "description": "Gift vouchers digital benefit configuration.",
+        "properties": {
+          "campaign_id": {
+            "type": "string",
+            "pattern": "^camp_[a-zA-Z0-9]+",
+            "description": "ID of the GIFT_VOUCHERS campaign the vouchers are sourced from, prefixed with `camp_`."
+          },
+          "balance": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 9007199254740991,
+            "description": "Balance loaded onto the gift voucher."
+          }
+        },
+        "required": [
+          "campaign_id",
+          "balance"
+        ],
+        "additionalProperties": false
+      },
+      "LoyaltyV2ActivityBenefitDigitalDiscountCoupons": {
+        "type": "object",
+        "description": "Discount coupons digital benefit configuration.",
+        "properties": {
+          "campaign_id": {
+            "type": "string",
+            "pattern": "^camp_[a-zA-Z0-9]+",
+            "description": "ID of the DISCOUNT_COUPONS campaign the coupons are sourced from, prefixed with `camp_`."
+          }
+        },
+        "required": [
+          "campaign_id"
+        ],
+        "additionalProperties": false
+      },
       "LoyaltyV2ActivityCardDefinitionPeriod": {
         "type": "object",
         "description": "A period expressed as a value and unit.",
@@ -4574,6 +5585,90 @@
           }
         }
       },
+      "LoyaltyV2ActivityBenefitPointsProportionalEvery": {
+        "type": "object",
+        "description": "Ratio definition - `value` points for every `every` units.",
+        "properties": {
+          "every": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991,
+            "description": "Unit step (e.g. order amount in cents) for which `value` points are granted."
+          },
+          "value": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 9007199254740991,
+            "description": "Number of points granted per `every` units."
+          }
+        },
+        "required": [
+          "every",
+          "value"
+        ],
+        "additionalProperties": false
+      },
+      "LoyaltyV2ActivityBenefitPointsProportionalMetadata": {
+        "type": "object",
+        "description": "Metadata-based ratio definition - `value` points for every `every` units of the metadata property.",
+        "properties": {
+          "every": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991,
+            "description": "Unit step of the metadata property value for which `value` points are granted."
+          },
+          "value": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 9007199254740991,
+            "description": "Number of points granted per `every` units."
+          },
+          "property": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Name of the metadata property used for the calculation."
+          }
+        },
+        "required": [
+          "every",
+          "value",
+          "property"
+        ],
+        "additionalProperties": false
+      },
+      "LoyaltyV2ActivityBenefitPointsProportionalOrderItemsCalculation": {
+        "type": "object",
+        "description": "Order-items ratio definition with the list of applicable products/SKUs/collections.",
+        "properties": {
+          "every": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991,
+            "description": "Unit step (amount or quantity) for which `value` points are granted."
+          },
+          "value": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 9007199254740991,
+            "description": "Number of points granted per `every` units."
+          },
+          "applicable_to": {
+            "type": "array",
+            "minItems": 1,
+            "description": "Products, SKUs, or product collections the calculation applies to.",
+            "items": {
+              "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitPointsProportionalApplicableTo"
+            }
+          }
+        },
+        "required": [
+          "every",
+          "value",
+          "applicable_to"
+        ],
+        "additionalProperties": false
+      },
       "LoyaltyV2ActivityCardDefinitionLimitTimeBasedPeriod": {
         "type": "object",
         "description": "Time-based limit period.",
@@ -5130,6 +6225,153 @@
           "max"
         ]
       },
+      "LoyaltyV2ActivityBenefitPointsProportionalApplicableTo": {
+        "type": "object",
+        "description": "A single applicability rule. Exactly one of `product`, `sku`, or `products_collection`\nis required, matching the `type`; the other two must be omitted or `null`.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "product",
+              "sku",
+              "products_collection"
+            ],
+            "description": "Type of the referenced object."
+          },
+          "product": {
+            "description": "Product reference. Required when `type` is `product`, must be null otherwise.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitPointsProportionalApplicableToProduct"
+              },
+              {
+                "type": "object",
+                "nullable": true,
+                "default": null
+              }
+            ]
+          },
+          "sku": {
+            "description": "SKU reference. Required when `type` is `sku`, must be null otherwise.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitPointsProportionalApplicableToSku"
+              },
+              {
+                "type": "object",
+                "nullable": true,
+                "default": null
+              }
+            ]
+          },
+          "products_collection": {
+            "description": "Products collection reference. Required when `type` is `products_collection`, must be null otherwise.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitPointsProportionalApplicableToProductsCollection"
+              },
+              {
+                "type": "object",
+                "nullable": true,
+                "default": null
+              }
+            ]
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "product"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "product"
+              ],
+              "properties": {
+                "product": {
+                  "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitPointsProportionalApplicableToProduct"
+                },
+                "sku": {
+                  "type": "object",
+                  "nullable": true,
+                  "default": null
+                },
+                "products_collection": {
+                  "type": "object",
+                  "nullable": true,
+                  "default": null
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "sku"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "sku"
+              ],
+              "properties": {
+                "sku": {
+                  "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitPointsProportionalApplicableToSku"
+                },
+                "product": {
+                  "type": "object",
+                  "nullable": true,
+                  "default": null
+                },
+                "products_collection": {
+                  "type": "object",
+                  "nullable": true,
+                  "default": null
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "products_collection"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "products_collection"
+              ],
+              "properties": {
+                "products_collection": {
+                  "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitPointsProportionalApplicableToProductsCollection"
+                },
+                "product": {
+                  "type": "object",
+                  "nullable": true,
+                  "default": null
+                },
+                "sku": {
+                  "type": "object",
+                  "nullable": true,
+                  "default": null
+                }
+              }
+            }
+          }
+        ]
+      },
       "LoyaltyV2ActivityEarningRuleConditionObject": {
         "type": "object",
         "description": "Object reference used as a condition value (e.g. product, SKU or segment reference).",
@@ -5376,6 +6618,51 @@
         },
         "required": [
           "unit"
+        ],
+        "additionalProperties": false
+      },
+      "LoyaltyV2ActivityBenefitPointsProportionalApplicableToProduct": {
+        "type": "object",
+        "description": "Product reference.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^prod_[a-f0-9]+",
+            "description": "Product ID, prefixed with `prod_`."
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "additionalProperties": false
+      },
+      "LoyaltyV2ActivityBenefitPointsProportionalApplicableToSku": {
+        "type": "object",
+        "description": "SKU reference.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^sku_[a-f0-9]+",
+            "description": "SKU ID, prefixed with `sku_`."
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "additionalProperties": false
+      },
+      "LoyaltyV2ActivityBenefitPointsProportionalApplicableToProductsCollection": {
+        "type": "object",
+        "description": "Products collection reference.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^pc_[a-zA-Z0-9]+",
+            "description": "Products collection ID, prefixed with `pc_`."
+          }
+        },
+        "required": [
+          "id"
         ],
         "additionalProperties": false
       },
@@ -9757,6 +11044,256 @@
                           "limits": []
                         }
                       }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "vl.benefit.created": {
+      "post": {
+        "operationId": "loyalty-activity-benefit-created",
+        "summary": "Benefit created",
+        "description": "",
+        "tags": [
+          "Events loyalty activity"
+        ],
+        "responses": {
+          "200": {
+            "description": "Webhook accepted"
+          },
+          "202": {
+            "description": "Webhook accepted"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EventLoyaltyActivityBenefitCreatedData"
+              },
+              "examples": {
+                "vl.benefit.created": {
+                  "value": {
+                    "benefit": {
+                      "id": "lben_3e8a1c74d952",
+                      "name": "Birthday points",
+                      "type": "POINTS",
+                      "status": "DRAFT",
+                      "stock": {
+                        "type": "UNLIMITED"
+                      },
+                      "points": {
+                        "value": 100,
+                        "card_definition_id": "lcdef_6a2d9f41c783"
+                      },
+                      "created_at": "2026-09-09T10:15:43.091Z",
+                      "updated_at": "2026-09-09T10:16:12.284Z",
+                      "object": "benefit"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "vl.benefit.updated": {
+      "post": {
+        "operationId": "loyalty-activity-benefit-updated",
+        "summary": "Benefit updated",
+        "description": "",
+        "tags": [
+          "Events loyalty activity"
+        ],
+        "responses": {
+          "200": {
+            "description": "Webhook accepted"
+          },
+          "202": {
+            "description": "Webhook accepted"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EventLoyaltyActivityBenefitUpdatedData"
+              },
+              "examples": {
+                "vl.benefit.updated": {
+                  "value": {
+                    "benefit": {
+                      "id": "lben_3e8a1c74d952",
+                      "name": "Birthday points",
+                      "type": "POINTS",
+                      "status": "ACTIVE",
+                      "stock": {
+                        "type": "UNLIMITED"
+                      },
+                      "points": {
+                        "value": 100,
+                        "card_definition_id": "lcdef_6a2d9f41c783"
+                      },
+                      "created_at": "2026-09-09T10:15:43.091Z",
+                      "updated_at": "2026-09-09T10:16:12.284Z",
+                      "object": "benefit"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "vl.benefit.deleted": {
+      "post": {
+        "operationId": "loyalty-activity-benefit-deleted",
+        "summary": "Benefit deleted",
+        "description": "",
+        "tags": [
+          "Events loyalty activity"
+        ],
+        "responses": {
+          "200": {
+            "description": "Webhook accepted"
+          },
+          "202": {
+            "description": "Webhook accepted"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EventLoyaltyActivityBenefitDeletedData"
+              },
+              "examples": {
+                "vl.benefit.deleted": {
+                  "value": {
+                    "benefit": {
+                      "id": "lben_3e8a1c74d952",
+                      "name": "Birthday points",
+                      "type": "POINTS",
+                      "status": "DELETED",
+                      "stock": {
+                        "type": "UNLIMITED"
+                      },
+                      "points": {
+                        "value": 100,
+                        "card_definition_id": "lcdef_6a2d9f41c783"
+                      },
+                      "created_at": "2026-09-09T10:15:43.091Z",
+                      "updated_at": "2026-09-09T10:16:12.284Z",
+                      "object": "benefit"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "vl.benefit.activated": {
+      "post": {
+        "operationId": "loyalty-activity-benefit-activated",
+        "summary": "Benefit activated",
+        "description": "",
+        "tags": [
+          "Events loyalty activity"
+        ],
+        "responses": {
+          "200": {
+            "description": "Webhook accepted"
+          },
+          "202": {
+            "description": "Webhook accepted"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EventLoyaltyActivityBenefitActivatedData"
+              },
+              "examples": {
+                "vl.benefit.activated": {
+                  "value": {
+                    "benefit": {
+                      "id": "lben_3e8a1c74d952",
+                      "name": "Birthday points",
+                      "type": "POINTS",
+                      "status": "ACTIVE",
+                      "stock": {
+                        "type": "UNLIMITED"
+                      },
+                      "points": {
+                        "value": 100,
+                        "card_definition_id": "lcdef_6a2d9f41c783"
+                      },
+                      "created_at": "2026-09-09T10:15:43.091Z",
+                      "updated_at": "2026-09-09T10:16:12.284Z",
+                      "object": "benefit"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "vl.benefit.drafted": {
+      "post": {
+        "operationId": "loyalty-activity-benefit-drafted",
+        "summary": "Benefit drafted",
+        "description": "",
+        "tags": [
+          "Events loyalty activity"
+        ],
+        "responses": {
+          "200": {
+            "description": "Webhook accepted"
+          },
+          "202": {
+            "description": "Webhook accepted"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EventLoyaltyActivityBenefitDraftedData"
+              },
+              "examples": {
+                "vl.benefit.drafted": {
+                  "value": {
+                    "benefit": {
+                      "id": "lben_3e8a1c74d952",
+                      "name": "Birthday points",
+                      "type": "POINTS",
+                      "status": "DRAFT",
+                      "stock": {
+                        "type": "UNLIMITED"
+                      },
+                      "points": {
+                        "value": 100,
+                        "card_definition_id": "lcdef_6a2d9f41c783"
+                      },
+                      "created_at": "2026-09-09T10:15:43.091Z",
+                      "updated_at": "2026-09-09T10:16:12.284Z",
+                      "object": "benefit"
                     }
                   }
                 }
