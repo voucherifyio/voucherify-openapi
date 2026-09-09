@@ -4,6 +4,24 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-09-09
+
+- Documented the remaining Loyalty v2 transaction events available to Workflows webhook callouts:
+  - Order: `PAY_WITH_POINTS`.
+  - Tier: `UPGRADED`, `DOWNGRADED`, `JOINED`, `LEFT`, `EXPIRATION_CHANGED`, and `EVALUATION_REFRESHED`.
+  - Reward: `PURCHASE` and `REFUND`.
+  - Benefit: `FULFILLMENT`.
+
+## 2026-09-08
+
+- Documented the remaining Loyalty v2 card transaction events available to Workflows webhook callouts.
+
+## 2026-09-07
+
+- Documented the remaining Loyalty v2 member activity events available to Workflows webhook callouts:
+  - `vl.member.updated`, `vl.member.deleted`, `vl.member.activated`, and `vl.member.deactivated`.
+  - `vl.member.card.assigned` and `vl.member.card.unassigned`.
+
 ## 2026-09-03
 
 Add warning to DELETE `/v1/product-collections/{productCollectionId}`.
