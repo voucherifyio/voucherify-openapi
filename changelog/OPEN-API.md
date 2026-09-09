@@ -11,6 +11,7 @@ Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
   - Tier: `UPGRADED`, `DOWNGRADED`, `JOINED`, `LEFT`, `EXPIRATION_CHANGED`, and `EVALUATION_REFRESHED`.
   - Reward: `PURCHASE` and `REFUND`.
   - Benefit: `FULFILLMENT`.
+- Documented Loyalty v2 program activity events available to Workflows webhook callouts.
 
 ## 2026-09-08
 
