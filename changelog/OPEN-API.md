@@ -4,6 +4,11 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-09-09
+
+- Documented all remaining Loyalty v2 activity events available to Workflows webhook callouts:
+  - Programs, card definitions, earning rules, rewards, benefits, tier structures, and cards.
+
 ## 2026-09-08
 
 - Documented the remaining Loyalty v2 card transaction events available to Workflows webhook callouts.
