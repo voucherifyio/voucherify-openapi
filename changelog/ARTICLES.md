@@ -5,6 +5,10 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-09-09
+
+Updated `distribution-webhooks.mdx` with the **Send raw payload** behavior for default, custom, and legacy webhook configurations (DOC-1340 / DEV-3883 / DEV-4305).
+
 ## 2026-09-07
 
 Update `documentation/manage/security-and-data-protection.mdx` with a link to an executable Data Processing Agreement.
