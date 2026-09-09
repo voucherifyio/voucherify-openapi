@@ -4,6 +4,10 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-09-09
+
+- Documented Loyalty v2 program activity events available to Workflows webhook callouts.
+
 ## 2026-09-08
 
 - Documented the remaining Loyalty v2 card transaction events available to Workflows webhook callouts.
