@@ -17,6 +17,7 @@ Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
   - `vl.program.earning_rule.assigned` and `vl.program.earning_rule.unassigned`.
   - `vl.program.reward.assigned`, `vl.program.reward.unassigned`, and `vl.program.reward.updated`.
   - `vl.program.tier_structure.assigned` and `vl.program.tier_structure.unassigned`.
+- Documented Loyalty v2 card definition activity events available to Workflows webhook callouts.
 
 ## 2026-09-08
 
