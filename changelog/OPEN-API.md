@@ -11,6 +11,12 @@ Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
   - Tier: `UPGRADED`, `DOWNGRADED`, `JOINED`, `LEFT`, `EXPIRATION_CHANGED`, and `EVALUATION_REFRESHED`.
   - Reward: `PURCHASE` and `REFUND`.
   - Benefit: `FULFILLMENT`.
+- Documented Loyalty v2 program activity events available to Workflows webhook callouts:
+  - `vl.program.created`, `vl.program.updated`, `vl.program.deleted`, `vl.program.activated`, and `vl.program.deactivated`.
+  - `vl.program.card_definition.assigned` and `vl.program.card_definition.unassigned`.
+  - `vl.program.earning_rule.assigned` and `vl.program.earning_rule.unassigned`.
+  - `vl.program.reward.assigned`, `vl.program.reward.unassigned`, and `vl.program.reward.updated`.
+  - `vl.program.tier_structure.assigned` and `vl.program.tier_structure.unassigned`.
 
 ## 2026-09-08
 
