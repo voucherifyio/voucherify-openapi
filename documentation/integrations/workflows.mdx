@@ -1,0 +1,167 @@
+---
+title: "Workflows"
+description: "Create workflows that send Loyalty v2 events to external applications through webhook callouts"
+keywords: ["workflows", "loyalty v2", "webhook callout", "loyalty transaction", "loyalty activity", "automation"]
+tag: "NEW"
+---
+
+Workflows connect Loyalty v2 events to external applications. When an event matches a trigger, the workflow runs every connected webhook callout.
+
+Use Workflows to send loyalty events to your CRM, email platform, or custom application. One trigger can run several webhook callouts.
+
+## How Workflows work
+
+Each workflow uses two types of building blocks:
+
+| Building block | What it does | Example |
+| --- | --- | --- |
+| **Trigger** | Starts the workflow when a matching event occurs. | A member earns loyalty points. |
+| **Webhook callout** | Sends the event to your endpoint. | Send the event to your CRM. |
+
+Workflows currently support Loyalty v2 transaction and activity triggers.
+
+## Create and publish a workflow
+
+Before you start, prepare:
+
+- An active Loyalty v2 program.
+- An endpoint that accepts HTTP `POST` requests.
+- A webhook secret key if you want to verify signatures.
+
+<Steps>
+
+<Step title="Create the workflow">
+
+Go to **Workflows** in the Dashboard. Click **Create workflow**.
+
+Enter a **Name** and an optional **Description**. Click **Save draft** to open the canvas.
+
+</Step>
+
+<Step title="Add a trigger">
+
+Drag **Loyalty transaction** or **Loyalty activity** onto the canvas.
+
+Select the trigger. Use the right panel to choose its group and event. Loyalty transaction triggers also include a status filter.
+
+</Step>
+
+<Step title="Add a webhook callout">
+
+Drag **Webhook callout** onto the canvas. Select the action and enter its **Endpoint URL**.
+
+The URL must use `http` or `https`. You can also add up to 10 custom headers.
+
+Voucherify generates the webhook payload automatically.
+
+</Step>
+
+<Step title="Connect the building blocks">
+
+Drag a line from the trigger's right output. Connect it to the webhook callout's left input.
+
+A trigger can connect to several webhook callouts. A webhook callout can also accept several triggers.
+
+</Step>
+
+<Step title="Save and publish">
+
+Click **Save** to store your changes. Saving does not start the workflow.
+
+Click **Publish** after the graph is complete. Set the published workflow to **Active**.
+
+<Check>
+The workflow status is **Active**. Matching Loyalty v2 events can now start a workflow run.
+</Check>
+
+</Step>
+
+</Steps>
+
+## Configure triggers
+
+A trigger defines when a workflow starts.
+
+| Trigger | What it matches | What you configure |
+| --- | --- | --- |
+| **Loyalty transaction** | Point movements, orders paid with points, tier changes, reward purchases, and benefit fulfillment. | Group, event type, and transaction status. |
+| **Loyalty activity** | Lifecycle events for programs, members, cards, earning rules, rewards, benefits, and tier structures. | Group and event type. |
+
+<Note>
+Transaction statuses such as `APPROVED`, `PENDING`, and `REJECTED` are trigger filters. They are not separate event types.
+</Note>
+
+## Configure webhook callouts
+
+A webhook callout sends a signed HTTP `POST` request.
+
+Enter a target URL that accepts `http` or `https`. Add custom headers when your endpoint needs extra authentication or routing data.
+
+For signature verification, generate a secret in **Project settings** > **Webhooks**. Then validate the `x-voucherify-signature` header. See [Introduction to Voucherify webhooks](/api-reference/introduction-to-webhooks#authentication).
+
+## Save, publish, and activate
+
+Saving, publishing, and activation are separate operations.
+
+| Operation | What it does | When you can use it |
+| --- | --- | --- |
+| **Save** | Stores the working copy. Nothing goes live. | When you have valid unsaved changes. |
+| **Publish** | Creates a new published version from the saved graph. An active workflow starts using it right away. | When the graph is complete and fully saved. |
+| **Active** or **Inactive** | Turns the published workflow on or off. The graph does not change. | After the first publication. |
+
+## Workflow statuses
+
+| Status | Meaning |
+| --- | --- |
+| **Draft** | The workflow has never been published. It does not react to events. |
+| **Active** | The workflow is published. Matching events start new runs. |
+| **Inactive** | The workflow is published but paused. Matching events do not start new runs. |
+
+## Deactivate a workflow
+
+Set a workflow to **Inactive** to stop new runs. Events that occur while the workflow is inactive do not start a run.
+
+Deactivation does not cancel a run that already started. That run completes every pending action in its published graph.
+
+Publishing a new version follows the same rule. Existing runs keep their starting version. New runs use the latest published version.
+
+## Limits
+
+Triggers and actions have separate limits. A workflow can contain both five triggers and five actions.
+
+| Limit | Value |
+| --- | --- |
+| Workflows per project | 5 |
+| Triggers per workflow | 5 |
+| Actions per workflow | 5 |
+| Connections per workflow | 10 |
+| Custom headers per webhook callout | 10 |
+
+## Monitor webhook deliveries
+
+Go to **Audit log** > **Webhook send outs** to inspect webhook deliveries. Workflows webhook callouts appear in this list.
+
+The log includes:
+
+- Delivery status and webhook type.
+- Sendout and request identifiers.
+- Target URL and execution time.
+- The complete webhook payload.
+
+You can retry a failed delivery from its three-dot menu.
+
+Your endpoint must return a `2XX` response within 10 seconds. Voucherify retries failed deliveries according to the [shared webhook retry schedule](/api-reference/introduction-to-webhooks#responding-to-webhooks).
+
+## Next steps
+
+<CardGroup cols={2}>
+
+<Card title="Workflows webhooks" icon="webhook" href="/api-reference/workflows-webhooks">
+  Review the payload structure for Loyalty v2 transactions and activities.
+</Card>
+
+<Card title="Loyalty v2 integration" icon="code" href="/guides/loyalty-v2-integrate">
+  Integrate members, point wallets, earning rules, rewards, and transactions.
+</Card>
+
+</CardGroup>
