@@ -4459,7 +4459,7 @@
           },
           "error": {
             "type": "object",
-            "description": "Detailed failure cause for the invalid voucher if the reason has a translation defined in the Dashboard → Project Settings → Error Messages.",
+            "description": "Detailed failure cause for the invalid voucher if the reason has a translation defined in the Dashboard > Project Settings > Error Messages.",
             "properties": {
               "code": {
                 "type": "number",
@@ -16269,7 +16269,7 @@
             "properties": {
               "options": {
                 "type": "object",
-                "description": "Configure parameters returned in the response.",
+                "description": "Configure response expansion and the language of custom validation-rule error messages.",
                 "properties": {
                   "expand": {
                     "type": "array",
@@ -16283,6 +16283,13 @@
                         "category"
                       ]
                     }
+                  },
+                  "language": {
+                    "type": "string",
+                    "maxLength": 100,
+                    "pattern": "^[a-zA-Z]{2,3}(-[a-zA-Z]{2,4})?$",
+                    "example": "pl",
+                    "description": "Selects the language for the custom validation-rule error message. Returns the message in this language when a validation rule fails. Falls back to the Error Message Library default language when omitted or when the requested language has no message. Omits the custom error when no message can be resolved."
                   }
                 }
               }
@@ -16303,7 +16310,7 @@
             "properties": {
               "options": {
                 "type": "object",
-                "description": "Configure parameters returned in the response.",
+                "description": "Configure response expansion and the language of custom validation-rule error messages.",
                 "properties": {
                   "expand": {
                     "type": "array",
@@ -16317,6 +16324,13 @@
                         "category"
                       ]
                     }
+                  },
+                  "language": {
+                    "type": "string",
+                    "maxLength": 100,
+                    "pattern": "^[a-zA-Z]{2,3}(-[a-zA-Z]{2,4})?$",
+                    "example": "pl",
+                    "description": "Selects the language for the custom validation-rule error message. Returns the message in this language when a validation rule fails. Falls back to the Error Message Library default language when omitted or when the requested language has no message. Omits the custom error when no message can be resolved."
                   }
                 }
               }
@@ -31718,14 +31732,12 @@
               }
             },
             "error": {
-              "type": "object",
-              "description": "**CURRENTLY UNSUPPORTED**. Contains the error message returned from API when validation / redemption fails to meet requirements of defined rule.",
-              "properties": {
-                "message": {
-                  "type": "string",
-                  "description": "The error message returned from API when validation / redemption fails to meet requirements of defined rule."
+              "description": "**CURRENTLY UNSUPPORTED**. Custom error returned when validation or redemption fails the defined bundle rule. Resolved to `{ message }` at request time using `options.language`.",
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/ValidationRuleError"
                 }
-              }
+              ]
             }
           }
         }
@@ -31761,14 +31773,12 @@
               "$ref": "#/components/schemas/ValidationRuleRules01"
             },
             "error": {
-              "type": "object",
-              "description": "Contains the error message returned from API when validation / redemption fails to meet requirements of defined rule.",
-              "properties": {
-                "message": {
-                  "type": "string",
-                  "description": "The error message returned from API when validation / redemption fails to meet requirements of defined rule."
+              "description": "Custom error returned when validation or redemption fails the defined rule. Resolved to `{ message }` at request time using `options.language`.",
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/ValidationRuleError"
                 }
-              }
+              ]
             }
           }
         }
@@ -31804,14 +31814,12 @@
               "$ref": "#/components/schemas/ValidationRuleRules02"
             },
             "error": {
-              "type": "object",
-              "description": "Contains the error message returned from API when validation / redemption fails to meet requirements of defined rule.",
-              "properties": {
-                "message": {
-                  "type": "string",
-                  "description": "The error message returned from API when validation / redemption fails to meet requirements of defined rule."
+              "description": "Custom error returned when validation or redemption fails the defined rule. Resolved to `{ message }` at request time using `options.language`.",
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/ValidationRuleError"
                 }
-              }
+              ]
             }
           }
         }
@@ -31847,14 +31855,12 @@
               "$ref": "#/components/schemas/ValidationRuleRules03"
             },
             "error": {
-              "type": "object",
-              "description": "Contains the error message returned from API when validation / redemption fails to meet requirements of defined rule.",
-              "properties": {
-                "message": {
-                  "type": "string",
-                  "description": "The error message returned from API when validation / redemption fails to meet requirements of defined rule."
+              "description": "Custom error returned when validation or redemption fails the defined rule. Resolved to `{ message }` at request time using `options.language`.",
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/ValidationRuleError"
                 }
-              }
+              ]
             }
           }
         }
@@ -31891,14 +31897,12 @@
               "description": "Another set of validation rules. If you need to create complex rules with more nested rules, use the validation rule builder in the dashboard."
             },
             "error": {
-              "type": "object",
-              "description": "Contains the error message returned from API when validation / redemption fails to meet requirements of defined rule.",
-              "properties": {
-                "message": {
-                  "type": "string",
-                  "description": "The error message returned from API when validation / redemption fails to meet requirements of defined rule."
+              "description": "Custom error returned when validation or redemption fails the defined rule. Resolved to `{ message }` at request time using `options.language`.",
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/ValidationRuleError"
                 }
-              }
+              ]
             }
           }
         }
@@ -32053,6 +32057,54 @@
           }
         ]
       },
+      "ValidationRuleErrorLibrary": {
+        "title": "Validation Rule Error Library",
+        "type": "object",
+        "description": "References an Error Message Library entry. Required when `mode` is `LIBRARY`. Must be omitted or `null` when `mode` is `MESSAGES`.",
+        "properties": {
+          "key": {
+            "type": "string",
+            "maxLength": 100,
+            "example": "order.amount",
+            "description": "Identifies the library message. Use a validation-rule name such as `order.amount`, or a custom attribute key such as `order.metadata.location`."
+          }
+        },
+        "required": [
+          "key"
+        ]
+      },
+      "ValidationRuleError": {
+        "title": "Validation Rule Error",
+        "type": "object",
+        "description": "Defines the custom error returned when validation or redemption fails this rule. Use legacy `message`, `mode: MESSAGES` with per-language `messages`, or `mode: LIBRARY` with a library `key`. `MESSAGES` and `LIBRARY` are mutually exclusive. At validation or redemption time the API resolves this object to a single `{ message }` using `options.language`.",
+        "properties": {
+          "message": {
+            "type": "string",
+            "maxLength": 255,
+            "description": "Legacy single-language error message. Used when `mode` is omitted. In `MESSAGES` mode, used when neither the requested language nor the default language has a translation."
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "MESSAGES",
+              "LIBRARY"
+            ],
+            "description": "Selects how the custom error is defined. `MESSAGES` stores per-language text in `messages`. `LIBRARY` references an Error Message Library entry in `library`. Omit `mode` to use the legacy `message` field only."
+          },
+          "messages": {
+            "type": "object",
+            "maxProperties": 100,
+            "additionalProperties": {
+              "type": "string",
+              "maxLength": 255
+            },
+            "description": "Per-language custom messages keyed by language code (`en`, `pl`, `en-US`). Required when `mode` is `MESSAGES`. Must be omitted or `null` when `mode` is `LIBRARY`."
+          },
+          "library": {
+            "$ref": "#/components/schemas/ValidationRuleErrorLibrary"
+          }
+        }
+      },
       "ValidationRuleBase": {
         "title": "Validation Rule Base",
         "type": "object",
@@ -32070,14 +32122,12 @@
             "$ref": "#/components/schemas/ValidationRuleBundleRules"
           },
           "error": {
-            "type": "object",
-            "description": "Contains the error message returned from API when validation / redemption fails to meet requirements of defined rules.",
-            "properties": {
-              "message": {
-                "type": "string",
-                "description": "The error message returned from API when validation / redemption fails to meet requirements of defined rules."
+            "description": "Custom error returned when validation or redemption fails the defined rules. Resolved to `{ message }` at request time using `options.language`.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ValidationRuleError"
               }
-            }
+            ]
           },
           "applicable_to": {
             "type": "object",
@@ -41415,7 +41465,7 @@
             "properties": {
               "message": {
                 "type": "string",
-                "description": "Error message translation defined in Dashboard &rarr; Project Settings &rarr; Error Messages"
+                "description": "Resolved custom error message. For validation-rule failures, this is the Error Message Library or rule-level message for `options.language`. For other errors, this can be a translation defined in Dashboard > Project Settings > Error Messages."
               }
             }
           }
@@ -41463,7 +41513,7 @@
             "properties": {
               "message": {
                 "type": "string",
-                "description": "Error message translation defined in Dashboard &rarr; Project Settings &rarr; Error Messages"
+                "description": "Resolved custom error message. For validation-rule failures, this is the Error Message Library or rule-level message for `options.language`. For other errors, this can be a translation defined in Dashboard > Project Settings > Error Messages."
               }
             }
           }
@@ -41507,11 +41557,11 @@
           },
           "error": {
             "type": "object",
-            "description": "Includes additional information about the error.",
+            "description": "Includes the resolved custom validation-rule error message when one is configured.",
             "properties": {
               "message": {
                 "type": "string",
-                "description": "The message configured by the user in a validation rule."
+                "description": "Resolved custom validation-rule error message for `options.language`, falling back to the Error Message Library default language. Present only when a custom message can be resolved."
               }
             }
           }

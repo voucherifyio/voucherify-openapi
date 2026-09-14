@@ -7301,11 +7301,11 @@
           },
           "error": {
             "type": "object",
-            "description": "Includes additional information about the error.",
+            "description": "Includes the resolved custom validation-rule error message when one is configured.",
             "properties": {
               "message": {
                 "type": "string",
-                "description": "The message configured by the user in a validation rule.",
+                "description": "Resolved custom validation-rule error message for `options.language`, falling back to the Error Message Library default language. Present only when a custom message can be resolved.",
                 "nullable": true
               }
             },
@@ -25464,7 +25464,7 @@
             "properties": {
               "options": {
                 "type": "object",
-                "description": "Configure parameters returned in the response.",
+                "description": "Configure response expansion and the language of custom validation-rule error messages.",
                 "properties": {
                   "expand": {
                     "type": "array",
@@ -25478,6 +25478,14 @@
                         "category"
                       ]
                     },
+                    "nullable": true
+                  },
+                  "language": {
+                    "type": "string",
+                    "maxLength": 100,
+                    "pattern": "^[a-zA-Z]{2,3}(-[a-zA-Z]{2,4})?$",
+                    "example": "pl",
+                    "description": "Selects the language for the custom validation-rule error message. Returns the message in this language when a validation rule fails. Falls back to the Error Message Library default language when omitted or when the requested language has no message. Omits the custom error when no message can be resolved.",
                     "nullable": true
                   }
                 },
@@ -29545,16 +29553,12 @@
             "$ref": "#/components/schemas/ValidationRuleBundleRules"
           },
           "error": {
-            "type": "object",
-            "description": "Contains the error message returned from API when validation / redemption fails to meet requirements of defined rules.",
-            "properties": {
-              "message": {
-                "type": "string",
-                "description": "The error message returned from API when validation / redemption fails to meet requirements of defined rules.",
-                "nullable": true
+            "description": "Custom error returned when validation or redemption fails the defined rules. Resolved to `{ message }` at request time using `options.language`.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ValidationRuleError"
               }
-            },
-            "nullable": true
+            ]
           },
           "applicable_to": {
             "type": "object",
@@ -29664,6 +29668,56 @@
         "title": "Validation Rule Bundle Rules",
         "type": "object",
         "description": "Contains all the definitions for the bundle rules. It is a set of key value pairs representing the rules and logic between them. The keys are numbered consecutively beginning from `1`. The values are objects containing the rule conditions.\n\nWhile updating with the PUT method, you can pass `\"bundle_rules\": null` to delete the configuration; in the response, an empty object is then returned."
+      },
+      "ValidationRuleError": {
+        "title": "Validation Rule Error",
+        "type": "object",
+        "description": "Defines the custom error returned when validation or redemption fails this rule. Use legacy `message`, `mode: MESSAGES` with per-language `messages`, or `mode: LIBRARY` with a library `key`. `MESSAGES` and `LIBRARY` are mutually exclusive. At validation or redemption time the API resolves this object to a single `{ message }` using `options.language`.",
+        "properties": {
+          "message": {
+            "type": "string",
+            "maxLength": 255,
+            "description": "Legacy single-language error message. Used when `mode` is omitted. In `MESSAGES` mode, used when neither the requested language nor the default language has a translation.",
+            "nullable": true
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "MESSAGES",
+              "LIBRARY"
+            ],
+            "description": "Selects how the custom error is defined. `MESSAGES` stores per-language text in `messages`. `LIBRARY` references an Error Message Library entry in `library`. Omit `mode` to use the legacy `message` field only.",
+            "nullable": true
+          },
+          "messages": {
+            "type": "object",
+            "maxProperties": 100,
+            "additionalProperties": {
+              "type": "string",
+              "maxLength": 255
+            },
+            "description": "Per-language custom messages keyed by language code (`en`, `pl`, `en-US`). Required when `mode` is `MESSAGES`. Must be omitted or `null` when `mode` is `LIBRARY`.",
+            "nullable": true
+          },
+          "library": {
+            "$ref": "#/components/schemas/ValidationRuleErrorLibrary"
+          }
+        }
+      },
+      "ValidationRuleErrorLibrary": {
+        "title": "Validation Rule Error Library",
+        "type": "object",
+        "description": "References an Error Message Library entry. Required when `mode` is `LIBRARY`. Must be omitted or `null` when `mode` is `MESSAGES`.",
+        "properties": {
+          "key": {
+            "type": "string",
+            "maxLength": 100,
+            "example": "order.amount",
+            "description": "Identifies the library message. Use a validation-rule name such as `order.amount`, or a custom attribute key such as `order.metadata.location`.",
+            "nullable": true
+          }
+        },
+        "required": []
       },
       "ValidationRuleRules": {
         "title": "Validation Rule Rules",
@@ -30276,7 +30330,7 @@
             "properties": {
               "options": {
                 "type": "object",
-                "description": "Configure parameters returned in the response.",
+                "description": "Configure response expansion and the language of custom validation-rule error messages.",
                 "properties": {
                   "expand": {
                     "type": "array",
@@ -30290,6 +30344,14 @@
                         "category"
                       ]
                     },
+                    "nullable": true
+                  },
+                  "language": {
+                    "type": "string",
+                    "maxLength": 100,
+                    "pattern": "^[a-zA-Z]{2,3}(-[a-zA-Z]{2,4})?$",
+                    "example": "pl",
+                    "description": "Selects the language for the custom validation-rule error message. Returns the message in this language when a validation rule fails. Falls back to the Error Message Library default language when omitted or when the requested language has no message. Omits the custom error when no message can be resolved.",
                     "nullable": true
                   }
                 },
