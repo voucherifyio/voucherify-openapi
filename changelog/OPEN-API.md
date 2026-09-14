@@ -4,6 +4,16 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-09-14
+
+- Updated DELETE `/v1/customers/{customerId}`.
+  - Clarified that the customer is permanently deleted and that a new customer with the same `source_id` can be created.
+  - Documented that this method does not remove all related data, including personal data, from Voucherify databases.
+  - Pointed GDPR right-to-be-forgotten to POST `/v1/customers/{customerId}/permanent-deletion` and [Delete people data](/manage/team-settings#delete-people-data) in Team settings.
+- Updated POST `/v1/customers/{customerId}/permanent-deletion`.
+  - Replaced “consumer data” with “customer data”.
+  - Clarified that the method makes the customer profile forgotten by Voucherify as per the GDPR.
+
 ## 2026-09-09
 
 Removed POST `/v2/loyalties/tier-structures/{tierStructureId}/deactivate` from `docs.json`. This endpoint may be removed, so it has to be hidden from the public documentation.

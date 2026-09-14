@@ -5,6 +5,14 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-09-14
+
+Updated `customers.mdx` to distinguish Dashboard/API customer deletion from GDPR erasure:
+
+- Clarified that deleting a customer through the Dashboard or API allows creating a new customer with the same `source_id`.
+- Documented that Dashboard deletion does not remove all related data, including personal data, from Voucherify databases.
+- Pointed GDPR right-to-be-forgotten to the [Delete Customer Permanently](/api-reference/customers/delete-customer-permanently) endpoint and [Delete people data](/manage/team-settings#delete-people-data) in Team settings.
+
 ## 2026-09-09
 
 Updated `distribution-webhooks.mdx` with the **Send raw payload** behavior for default, custom, and legacy webhook configurations (DOC-1340 / DEV-3883 / DEV-4305).
