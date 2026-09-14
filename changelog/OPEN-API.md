@@ -4,6 +4,15 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-09-14
+
+- Documented the Error Message Library on validation-rule `error`.
+  - Added `ValidationRuleError` with `mode` (`MESSAGES`, `LIBRARY`), per-language `messages`, `library.key`, and the legacy `message` field.
+  - Added `ValidationRuleErrorLibrary`.
+  - Pointed `error` on `ValidationRuleBase`, rule maps, and unsupported bundle rules at `ValidationRuleError`. The API resolves the object to `{ message }` at validation or redemption time using `options.language`.
+- Added `options.language` to POST `/v1/validations` (`ValidationsValidateRequestBody`) and POST `/v1/redemptions` (`RedemptionsRedeemRequestBody`). Falls back to the library default language; omits the custom error when no message can be resolved.
+- Clarified resolved `error.message` on `Error`, `e_error`, and `e_error_expanded`.
+
 ## 2026-09-09
 
 Removed POST `/v2/loyalties/tier-structures/{tierStructureId}/deactivate` from `docs.json`. This endpoint may be removed, so it has to be hidden from the public documentation.
