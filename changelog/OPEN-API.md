@@ -12,6 +12,13 @@ Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
   - Pointed `error` on `ValidationRuleBase`, rule maps, and unsupported bundle rules at `ValidationRuleError`. The API resolves the object to `{ message }` at validation or redemption time using `options.language`.
 - Added `options.language` to POST `/v1/validations` (`ValidationsValidateRequestBody`) and POST `/v1/redemptions` (`RedemptionsRedeemRequestBody`). Falls back to the library default language; omits the custom error when no message can be resolved.
 - Clarified resolved `error.message` on `Error`, `e_error`, and `e_error_expanded`.
+- Updated DELETE `/v1/customers/{customerId}`.
+  - Clarified that the customer is permanently deleted and that a new customer with the same `source_id` can be created.
+  - Documented that this method does not remove all related data, including personal data, from Voucherify databases.
+  - Pointed GDPR right-to-be-forgotten to POST `/v1/customers/{customerId}/permanent-deletion` and [Delete people data](/manage/team-settings#delete-people-data) in Team settings.
+- Updated POST `/v1/customers/{customerId}/permanent-deletion`.
+  - Replaced “consumer data” with “customer data”.
+  - Clarified that the method makes the customer profile forgotten by Voucherify as per the GDPR.
 
 ## 2026-09-09
 
