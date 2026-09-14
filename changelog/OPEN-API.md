@@ -6,10 +6,23 @@ Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
 ## 2026-09-09
 
-- Documented Loyalty v2 program activity events available to Workflows webhook callouts.
-- Documented Loyalty v2 card definition activity events available to Workflows webhook callouts.
-- Documented Loyalty v2 earning rule activity events available to Workflows webhook callouts.
-- Documented Loyalty v2 reward activity events available to Workflows webhook callouts.
+- Documented the remaining Loyalty v2 transaction events available to Workflows webhook callouts:
+  - Order: `PAY_WITH_POINTS`.
+  - Tier: `UPGRADED`, `DOWNGRADED`, `JOINED`, `LEFT`, `EXPIRATION_CHANGED`, and `EVALUATION_REFRESHED`.
+  - Reward: `PURCHASE` and `REFUND`.
+  - Benefit: `FULFILLMENT`.
+- Documented Loyalty v2 program activity events available to Workflows webhook callouts:
+  - `vl.program.created`, `vl.program.updated`, `vl.program.deleted`, `vl.program.activated`, and `vl.program.deactivated`.
+  - `vl.program.card_definition.assigned` and `vl.program.card_definition.unassigned`.
+  - `vl.program.earning_rule.assigned` and `vl.program.earning_rule.unassigned`.
+  - `vl.program.reward.assigned`, `vl.program.reward.unassigned`, and `vl.program.reward.updated`.
+  - `vl.program.tier_structure.assigned` and `vl.program.tier_structure.unassigned`.
+- Documented Loyalty v2 card definition activity events available to Workflows webhook callouts:
+  - `vl.card_definition.created`, `vl.card_definition.updated`, `vl.card_definition.deleted`, `vl.card_definition.activated`, and `vl.card_definition.drafted`.
+  - `vl.card_definition.assigned` and `vl.card_definition.unassigned`.
+- Documented Loyalty v2 earning rule activity events available to Workflows webhook callouts:
+  - `vl.earning_rule.created`, `vl.earning_rule.updated`, `vl.earning_rule.deleted`, `vl.earning_rule.activated`, `vl.earning_rule.deactivated`, and `vl.earning_rule.drafted`.
+  - `vl.earning_rule.assigned` and `vl.earning_rule.unassigned`.
 
 ## 2026-09-08
 
