@@ -23,6 +23,8 @@ Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 - Documented Loyalty v2 earning rule activity events available to Workflows webhook callouts:
   - `vl.earning_rule.created`, `vl.earning_rule.updated`, `vl.earning_rule.deleted`, `vl.earning_rule.activated`, `vl.earning_rule.deactivated`, and `vl.earning_rule.drafted`.
   - `vl.earning_rule.assigned` and `vl.earning_rule.unassigned`.
+- Documented Loyalty v2 benefit activity events available to Workflows webhook callouts:
+  - `vl.benefit.created`, `vl.benefit.updated`, `vl.benefit.deleted`, `vl.benefit.activated`, and `vl.benefit.drafted`.
 
 ## 2026-09-08
 
