@@ -5,6 +5,15 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-09-16
+
+Fixed broken Loyalty v2 API overview links so they match the OpenAPI operation summaries:
+
+- Updated `loyalty-v2-members-overview.mdx` (pending and expiring point bucket endpoints)
+- Updated `loyalty-v2-rewards-overview.mdx` (refund reward purchase)
+- Updated `loyalty-v2-tier-structures-overview.mdx` (batch assign/unassign tier structures)
+- Updated `loyalty-v2-take-to-production.mdx` (refund reward purchase)
+
 ## 2026-09-14
 
 Updated `customers.mdx` to distinguish Dashboard/API customer deletion from GDPR erasure:
