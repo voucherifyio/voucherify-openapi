@@ -25,6 +25,10 @@ Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
   - `vl.earning_rule.assigned` and `vl.earning_rule.unassigned`.
 - Documented Loyalty v2 benefit activity events available to Workflows webhook callouts:
   - `vl.benefit.created`, `vl.benefit.updated`, `vl.benefit.deleted`, `vl.benefit.activated`, and `vl.benefit.drafted`.
+- Documented Loyalty v2 tier structure activity events available to Workflows webhook callouts:
+  - `vl.tier_structure.created`, `vl.tier_structure.updated`, `vl.tier_structure.deleted`, `vl.tier_structure.activated`, `vl.tier_structure.deactivated`, and `vl.tier_structure.drafted`.
+  - `vl.tier_structure.assigned` and `vl.tier_structure.unassigned`.
+  - `vl.tier_structure.tier.created`, `vl.tier_structure.tier.updated`, and `vl.tier_structure.tier.deleted`.
 
 ## 2026-09-08
 
