@@ -29,6 +29,9 @@ Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
   - `vl.tier_structure.created`, `vl.tier_structure.updated`, `vl.tier_structure.deleted`, `vl.tier_structure.activated`, `vl.tier_structure.deactivated`, and `vl.tier_structure.drafted`.
   - `vl.tier_structure.assigned` and `vl.tier_structure.unassigned`.
   - `vl.tier_structure.tier.created`, `vl.tier_structure.tier.updated`, and `vl.tier_structure.tier.deleted`.
+- Documented Loyalty v2 card activity events available to Workflows webhook callouts:
+  - `vl.card.created`, `vl.card.assigned`, and `vl.card.unassigned`.
+  - `vl.card.code_generation.succeeded` and `vl.card.code_generation.failed`.
 
 ## 2026-09-08
 
