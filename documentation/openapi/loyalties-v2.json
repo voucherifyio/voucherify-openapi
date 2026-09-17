@@ -4178,44 +4178,46 @@
       }
     },
     "/v2/loyalties/programs/{programId}/members/{memberId}/cards/{cardId}/activities": {
+      "parameters": [
+        {
+          "name": "programId",
+          "in": "path",
+          "required": true,
+          "description": "Unique loyalty program ID (format `lprg_[a-f0-9]+`).",
+          "schema": {
+            "type": "string",
+            "pattern": "^lprg_[a-f0-9]+$"
+          }
+        },
+        {
+          "name": "memberId",
+          "in": "path",
+          "required": true,
+          "description": "Program member ID (format `lmbr_[a-f0-9]+`).",
+          "schema": {
+            "type": "string",
+            "pattern": "^lmbr_[a-f0-9]+$"
+          }
+        },
+        {
+          "name": "cardId",
+          "in": "path",
+          "required": true,
+          "description": "Loyalty card ID (format `lcrd_[a-f0-9]+`).",
+          "schema": {
+            "type": "string",
+            "pattern": "^lcrd_[a-f0-9]+$"
+          }
+        }
+      ],
       "get": {
         "operationId": "listCardActivities",
         "tags": [
           "Programs"
         ],
         "summary": "List card activities",
-        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nReturns a cursor-paginated list of activities recorded for the member's card\n(created, assigned, unassigned, code generation succeeded/failed). Results can be\nfiltered by id, type and created_at. Returns `404` when the program, member or card\ndoes not exist.",
+        "description": "Returns a cursor-paginated list of activities recorded for the member's card. Results can be filtered by `id`, `type`, or `created_at`.\n\nReturns `400` when the provided cursor is invalid or has expired. Returns `404` when the program, member, or currently assigned card does not exist.",
         "parameters": [
-          {
-            "name": "programId",
-            "in": "path",
-            "required": true,
-            "description": "Unique loyalty program ID (format `lprg_[a-f0-9]+`).",
-            "schema": {
-              "type": "string",
-              "pattern": "^lprg_[a-f0-9]+$"
-            }
-          },
-          {
-            "name": "memberId",
-            "in": "path",
-            "required": true,
-            "description": "Program member ID (format `lmbr_[a-f0-9]+`).",
-            "schema": {
-              "type": "string",
-              "pattern": "^lmbr_[a-f0-9]+$"
-            }
-          },
-          {
-            "name": "cardId",
-            "in": "path",
-            "required": true,
-            "description": "Loyalty card ID (format `lcrd_[a-f0-9]+`).",
-            "schema": {
-              "type": "string",
-              "pattern": "^lcrd_[a-f0-9]+$"
-            }
-          },
           {
             "name": "limit",
             "in": "query",
@@ -4235,7 +4237,7 @@
             "name": "order",
             "in": "query",
             "required": false,
-            "description": "Field(s) to order results by. Valid orders are `created_at` and `-created_at`;\ndefaults to `-created_at`. Accepts a single value or an array of values\n(unrecognized values in the array form are ignored and the default order\napplies). Ordering by the same field in both directions simultaneously is\nrejected.",
+            "description": "Field(s) to order results by. Valid orders are `created_at` and `-created_at`; defaults to `-created_at`. Accepts a single value or an array of values (unrecognized values in the array form are ignored and the default order applies). Ordering by the same field in both directions simultaneously is rejected.",
             "schema": {
               "oneOf": [
                 {
@@ -4261,7 +4263,7 @@
             "name": "cursor",
             "in": "query",
             "required": false,
-            "description": "Pagination cursor returned in the `cursor.next` field of a previous response.\nMust match the pattern `^lcrsacrd_[a-f0-9]+$`.",
+            "description": "Pagination cursor returned in the `cursor.next` field of a previous response. Must match the pattern `^lcrsacrd_[a-f0-9]+$`.",
             "schema": {
               "type": [
                 "string",
@@ -4276,11 +4278,11 @@
             "required": false,
             "style": "deepObject",
             "explode": true,
-            "description": "Field-specific filter conditions, passed as a deep object, e.g.\n`filters[type][conditions][$is]=vl.card.created`.",
+            "description": "Field-specific filter conditions, passed as a deep object, e.g. `filters[type][conditions][$is]=vl.card.created`.",
             "schema": {
               "oneOf": [
                 {
-                  "$ref": "#/components/schemas/LoyaltiesProgramsMembersCardsActivitiesListRequestQuery"
+                  "$ref": "#/components/schemas/LoyaltiesProgramsMembersCardsActivitiesListRequestQueryFilters"
                 },
                 {
                   "type": "null"
@@ -4295,37 +4297,320 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CardActivityListResponse"
+                  "$ref": "#/components/schemas/LoyaltiesProgramsMembersCardsActivitiesListResponseBody"
+                },
+                "examples": {
+                  "List of card activities": {
+                    "value": {
+                      "data": [
+                        {
+                          "id": "lacrd_128f962f93cfd14ca9",
+                          "type": "vl.card.code_generation.succeeded",
+                          "data": {
+                            "card": {
+                              "id": "lcrd_128f962dbd8c4ba5e1",
+                              "code": "AnnualTime-7M7ShPGfme",
+                              "object": "card",
+                              "balance": {
+                                "points": 0,
+                                "pending_points": 0
+                              },
+                              "card_type": "INDIVIDUAL",
+                              "member_id": "lmbr_128f962dbc8c4ba5dc",
+                              "created_at": "2026-06-11T15:59:41.302Z",
+                              "program_id": "lprg_128f58429f4c4bf7b2",
+                              "updated_at": "2026-06-11T15:59:43.175Z",
+                              "customer_id": "cust_6onRrs4kCnvSVrTs5YtDPFBG",
+                              "lifetime_bucket": {
+                                "points": {
+                                  "added": 0,
+                                  "spent": 0,
+                                  "total": 0,
+                                  "earned": 0,
+                                  "locked": 0,
+                                  "expired": 0,
+                                  "refunded": 0,
+                                  "returned": 0,
+                                  "unlocked": 0,
+                                  "subtracted": 0
+                                },
+                                "pending_points": {
+                                  "total": 0,
+                                  "canceled": 0,
+                                  "activated": 0
+                                }
+                              },
+                              "card_definition_id": "lcdef_128f4a88414c4bed69"
+                            },
+                            "program": {
+                              "id": "lprg_128f58429f4c4bf7b2",
+                              "name": "AnnualProgram",
+                              "object": "program",
+                              "status": "ACTIVE",
+                              "end_date": null,
+                              "metadata": {},
+                              "created_at": "2026-06-11T11:29:09.756Z",
+                              "start_date": null,
+                              "updated_at": "2026-06-11T15:58:23.525Z",
+                              "validity_hours": {
+                                "type": "ANY_TIME"
+                              }
+                            }
+                          },
+                          "created_at": "2026-06-11T15:59:43.175Z",
+                          "group_id": "v-128f962db19cae026c",
+                          "source": {
+                            "channel": "INTERNAL"
+                          },
+                          "card_id": "lcrd_128f962dbd8c4ba5e1"
+                        },
+                        {
+                          "id": "lacrd_128f962dc00c4ba5f7",
+                          "type": "vl.card.assigned",
+                          "data": {
+                            "card": {
+                              "id": "lcrd_128f962dbd8c4ba5e1",
+                              "code": null,
+                              "object": "card",
+                              "balance": {
+                                "points": 0,
+                                "pending_points": 0
+                              },
+                              "card_type": "INDIVIDUAL",
+                              "member_id": "lmbr_128f962dbc8c4ba5dc",
+                              "created_at": "2026-06-11T15:59:41.302Z",
+                              "program_id": "lprg_128f58429f4c4bf7b2",
+                              "updated_at": null,
+                              "customer_id": "cust_6onRrs4kCnvSVrTs5YtDPFBG",
+                              "lifetime_bucket": {
+                                "points": {
+                                  "added": 0,
+                                  "spent": 0,
+                                  "total": 0,
+                                  "earned": 0,
+                                  "locked": 0,
+                                  "expired": 0,
+                                  "refunded": 0,
+                                  "returned": 0,
+                                  "unlocked": 0,
+                                  "subtracted": 0
+                                },
+                                "pending_points": {
+                                  "total": 0,
+                                  "canceled": 0,
+                                  "activated": 0
+                                }
+                              },
+                              "card_definition_id": "lcdef_128f4a88414c4bed69"
+                            },
+                            "member": {
+                              "id": "lmbr_128f962dbc8c4ba5dc",
+                              "object": "member",
+                              "status": "ACTIVE",
+                              "metadata": {},
+                              "created_at": "2026-06-11T15:59:41.298Z",
+                              "program_id": "lprg_128f58429f4c4bf7b2",
+                              "updated_at": null,
+                              "customer_id": "cust_6onRrs4kCnvSVrTs5YtDPFBG"
+                            },
+                            "program": {
+                              "id": "lprg_128f58429f4c4bf7b2",
+                              "name": "AnnualProgram",
+                              "object": "program",
+                              "status": "ACTIVE",
+                              "end_date": null,
+                              "metadata": {},
+                              "created_at": "2026-06-11T11:29:09.756Z",
+                              "start_date": null,
+                              "updated_at": "2026-06-11T15:58:23.525Z",
+                              "validity_hours": {
+                                "type": "ANY_TIME"
+                              }
+                            },
+                            "member_card": {
+                              "card": {
+                                "id": "lcrd_128f962dbd8c4ba5e1",
+                                "code": null,
+                                "object": "card",
+                                "balance": {
+                                  "points": 0,
+                                  "pending_points": 0
+                                },
+                                "card_type": "INDIVIDUAL",
+                                "lifetime_bucket": {
+                                  "points": {
+                                    "added": 0,
+                                    "spent": 0,
+                                    "total": 0,
+                                    "earned": 0,
+                                    "locked": 0,
+                                    "expired": 0,
+                                    "refunded": 0,
+                                    "returned": 0,
+                                    "unlocked": 0,
+                                    "subtracted": 0
+                                  },
+                                  "pending_points": {
+                                    "total": 0,
+                                    "canceled": 0,
+                                    "activated": 0
+                                  }
+                                },
+                                "next_activation": null,
+                                "next_expiration": null,
+                                "card_definition_id": "lcdef_128f4a88414c4bed69"
+                              },
+                              "object": "member_card",
+                              "created_at": "2026-06-11T15:59:41.303Z",
+                              "member_role": "OWNER",
+                              "tier_progress": null
+                            }
+                          },
+                          "created_at": "2026-06-11T15:59:41.303Z",
+                          "group_id": "v-128f962db19cae026c",
+                          "source": {
+                            "channel": "USER_PORTAL",
+                            "user": {
+                              "id": "user_ypzfEcSAphSONMGJRlj6trzXKsh7FGX7"
+                            }
+                          },
+                          "card_id": "lcrd_128f962dbd8c4ba5e1"
+                        },
+                        {
+                          "id": "lacrd_128f962dbf8c4ba5eb",
+                          "type": "vl.card.created",
+                          "data": {
+                            "card": {
+                              "id": "lcrd_128f962dbd8c4ba5e1",
+                              "code": null,
+                              "object": "card",
+                              "balance": {
+                                "points": 0,
+                                "pending_points": 0
+                              },
+                              "card_type": "INDIVIDUAL",
+                              "member_id": "lmbr_128f962dbc8c4ba5dc",
+                              "created_at": "2026-06-11T15:59:41.302Z",
+                              "program_id": "lprg_128f58429f4c4bf7b2",
+                              "updated_at": null,
+                              "customer_id": "cust_6onRrs4kCnvSVrTs5YtDPFBG",
+                              "lifetime_bucket": {
+                                "points": {
+                                  "added": 0,
+                                  "spent": 0,
+                                  "total": 0,
+                                  "earned": 0,
+                                  "locked": 0,
+                                  "expired": 0,
+                                  "refunded": 0,
+                                  "returned": 0,
+                                  "unlocked": 0,
+                                  "subtracted": 0
+                                },
+                                "pending_points": {
+                                  "total": 0,
+                                  "canceled": 0,
+                                  "activated": 0
+                                }
+                              },
+                              "card_definition_id": "lcdef_128f4a88414c4bed69"
+                            },
+                            "program": {
+                              "id": "lprg_128f58429f4c4bf7b2",
+                              "name": "AnnualProgram",
+                              "object": "program",
+                              "status": "ACTIVE",
+                              "end_date": null,
+                              "metadata": {},
+                              "created_at": "2026-06-11T11:29:09.756Z",
+                              "start_date": null,
+                              "updated_at": "2026-06-11T15:58:23.525Z",
+                              "validity_hours": {
+                                "type": "ANY_TIME"
+                              }
+                            }
+                          },
+                          "created_at": "2026-06-11T15:59:41.302Z",
+                          "group_id": "v-128f962db19cae026c",
+                          "source": {
+                            "channel": "USER_PORTAL",
+                            "user": {
+                              "id": "user_ypzfEcSAphSONMGJRlj6trzXKsh7FGX7"
+                            }
+                          },
+                          "card_id": "lcrd_128f962dbd8c4ba5e1"
+                        }
+                      ],
+                      "cursor": null,
+                      "object": "list"
+                    }
+                  }
                 }
               }
             }
           },
           "400": {
-            "description": "Validation error - request body or query parameters failed validation, or the operation is not allowed in the current resource state.",
+            "description": "Query parameters failed validation.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Invalid cursor": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_or_expired_cursor",
+                      "message": "Invalid or expired cursor",
+                      "details": "The provided cursor is invalid or has expired",
+                      "request_id": "v-130db36510c5e2759b"
+                    }
+                  }
                 }
               }
             }
           },
           "404": {
-            "description": "Resource not found.",
+            "description": "The program, member, or currently assigned card was not found.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Program not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find program with id lprg_18f58429f4c4bf7b2",
+                      "request_id": "v-130db30e15859652a6",
+                      "resource_id": "lprg_18f58429f4c4bf7b2",
+                      "resource_type": "program"
+                    }
+                  },
+                  "Member not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find member with id lmbr_128f62dbc8c4ba5dc",
+                      "request_id": "v-130db31ffb859652cd",
+                      "resource_id": "lmbr_128f62dbc8c4ba5dc",
+                      "resource_type": "member"
+                    }
+                  },
+                  "Card not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find card with id lcrd_128f62dbd8c4ba5df",
+                      "request_id": "v-12d749e6f811f0e31a",
+                      "resource_id": "lcrd_128f62dbd8c4ba5df",
+                      "resource_type": "card"
+                    }
+                  }
                 }
               }
             }
@@ -4336,6 +4621,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Internal server error": {
+                    "value": {
+                      "code": 500,
+                      "key": "api_error",
+                      "message": "Something went wrong. Don't worry, your campaigns are still safe and the Voucherify Team has been notified. Check out our Help Center and forums for help, or head back to home.",
+                      "request_id": "v-130db3a000c5e2759b"
+                    }
+                  }
                 }
               }
             }
@@ -18904,9 +19199,10 @@
         ],
         "additionalProperties": false
       },
-      "CardActivityListResponse": {
+      "LoyaltiesProgramsMembersCardsActivitiesListResponseBody": {
+        "title": "Loyalties Programs Members Cards Activities List Response Body",
         "type": "object",
-        "description": "Cursor-paginated list of card activities.",
+        "description": "Response body schema for **GET** `/v2/loyalties/programs/{programId}/members/{memberId}/cards/{cardId}/activities`.",
         "properties": {
           "data": {
             "type": "array",
@@ -18961,11 +19257,11 @@
               "vl.card.code_generation.succeeded",
               "vl.card.code_generation.failed"
             ],
-            "description": "Activity type."
+            "description": "Activity type. Allowed values: `vl.card.created`, `vl.card.assigned`, `vl.card.unassigned`, `vl.card.code_generation.succeeded`, and `vl.card.code_generation.failed`."
           },
           "data": {
-            "type": "object",
-            "description": "Activity payload - snapshots of the objects involved at the time of the activity."
+            "$ref": "#/components/schemas/CardActivityData",
+            "description": "Contains snapshots of the objects involved at the time of the activity."
           },
           "created_at": {
             "type": "string",
@@ -18989,9 +19285,70 @@
           "created_at"
         ]
       },
-      "LoyaltiesProgramsMembersCardsActivitiesListRequestQuery": {
+      "CardActivityData": {
         "type": "object",
-        "description": "Request query schema for **GET** `/v2/loyalties/programs/{programId}/members/{memberId}/cards/{cardId}/activities`.",
+        "description": "Snapshots of the objects involved at the time of the activity. Always contains `card` and `program`. For `vl.card.assigned` and `vl.card.unassigned`, also contains `member` and `member_card`. For `vl.card.code_generation.failed`, also contains `result`.",
+        "properties": {
+          "card": {
+            "$ref": "#/components/schemas/Card",
+            "description": "Full card snapshot at the time of the activity."
+          },
+          "program": {
+            "$ref": "#/components/schemas/Program",
+            "description": "Program snapshot at the time of the activity."
+          },
+          "member": {
+            "$ref": "#/components/schemas/Member",
+            "description": "Member snapshot. Present only for `vl.card.assigned` and `vl.card.unassigned`."
+          },
+          "member_card": {
+            "description": "Member-card assignment snapshot. Present only for `vl.card.assigned` and `vl.card.unassigned`.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/MemberCard"
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "tier_progress": {
+                    "type": "null",
+                    "description": "Always `null` for `vl.card.assigned` and `vl.card.unassigned`. The snapshot is built from the card assignment record, which does not include tier progress."
+                  }
+                },
+                "required": [
+                  "tier_progress"
+                ]
+              }
+            ]
+          },
+          "result": {
+            "$ref": "#/components/schemas/CardCodeGenerationFailureResult",
+            "description": "Failure details. Present only for `vl.card.code_generation.failed`."
+          }
+        },
+        "required": [
+          "card",
+          "program"
+        ],
+        "additionalProperties": false
+      },
+      "CardCodeGenerationFailureResult": {
+        "type": "object",
+        "description": "Outcome of a failed card code generation.",
+        "properties": {
+          "details": {
+            "type": "string",
+            "description": "Explains why code generation failed."
+          }
+        },
+        "required": [
+          "details"
+        ],
+        "additionalProperties": false
+      },
+      "LoyaltiesProgramsMembersCardsActivitiesListRequestQueryFilters": {
+        "type": "object",
+        "description": "Field-specific filters for **GET** `/v2/loyalties/programs/{programId}/members/{memberId}/cards/{cardId}/activities`.",
         "properties": {
           "junction": {
             "description": "How multiple field filters are combined. Defaults to `AND`.",
@@ -19012,7 +19369,7 @@
             "description": "Filter by activity ID (ID conditions, values matching `^lacrd_[a-f0-9]+$`).",
             "oneOf": [
               {
-                "$ref": "#/components/schemas/LoyaltiesProgramsMembersCardsActivitiesListRequestQueryId"
+                "$ref": "#/components/schemas/LoyaltiesProgramsMembersCardsActivitiesListRequestQueryFiltersId"
               },
               {
                 "type": "null"
@@ -19023,7 +19380,7 @@
             "description": "Filter by activity type (enum conditions over the card activity types).",
             "oneOf": [
               {
-                "$ref": "#/components/schemas/LoyaltiesProgramsMembersCardsActivitiesListRequestQueryType"
+                "$ref": "#/components/schemas/LoyaltiesProgramsMembersCardsActivitiesListRequestQueryFiltersType"
               },
               {
                 "type": "null"
@@ -19043,9 +19400,9 @@
           }
         },
         "additionalProperties": false,
-        "title": "Loyalties Programs Members Cards Activities List Request Query"
+        "title": "Loyalties Programs Members Cards Activities List Request Query Filters"
       },
-      "LoyaltiesProgramsMembersCardsActivitiesListRequestQueryId": {
+      "LoyaltiesProgramsMembersCardsActivitiesListRequestQueryFiltersId": {
         "type": "object",
         "description": "ID filter conditions for card activity IDs. At least one condition is required.",
         "properties": {
@@ -19146,7 +19503,7 @@
         ],
         "additionalProperties": false
       },
-      "LoyaltiesProgramsMembersCardsActivitiesListRequestQueryType": {
+      "LoyaltiesProgramsMembersCardsActivitiesListRequestQueryFiltersType": {
         "type": "object",
         "description": "Enum filter conditions for card activity types. At least one condition is\nrequired.",
         "properties": {
