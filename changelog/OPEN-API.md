@@ -4,6 +4,17 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-09-17
+
+Documented product and SKU CSV exports.
+
+- Updated POST `/v1/exports`.
+  - Added `product` and `sku` as `exported_object` types, with `ExportProductBase` / `ExportSkuBase` request schemas, field and filter enums, and create examples.
+  - Added `ExportProductScheduled` / `ExportSkuScheduled` to the 200 body.
+  - Updated the default-fields table, Products and SKUs field tables, and the `400` `invalid_payload` example to include `voucher_transactions`, `product`, and `sku`.
+- Updated GET `/v1/exports` to list `product` and `sku` among exported object types and include them in the list example.
+- Updated GET `/v1/exports/{exportId}` with `ExportProduct` / `ExportSku` on the 200 body and get examples.
+
 ## 2026-09-14
 
 - Documented the Error Message Library on validation-rule `error`.

@@ -5,6 +5,13 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-09-17
+
+Updated CSV export articles to include products and SKUs:
+
+- Updated `csv-export.mdx` to list products, SKUs, point expirations, and voucher transactions among exportable objects.
+- Updated `audit-logs.mdx` related-features copy to match the expanded CSV export types.
+
 ## 2026-09-16
 
 Fixed broken Loyalty v2 API overview links so they match the OpenAPI operation summaries:
