@@ -8602,28 +8602,30 @@
       }
     },
     "/v2/loyalties/programs/{programId}/reports/spending/daily": {
+      "parameters": [
+        {
+          "name": "programId",
+          "in": "path",
+          "required": true,
+          "description": "Unique loyalty program identifier (format: `lprg_` followed by hexadecimal characters).",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
       "get": {
-        "operationId": "getProgramSpendingDailyReport",
+        "operationId": "listProgramSpendingDailyReports",
         "tags": [
           "Programs"
         ],
-        "summary": "Get program spending daily report",
-        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nReturns aggregated daily points-spending statistics for the program over the given\ndate range and resolution, optionally filtered by card definition.\n\nThe date range is limited per resolution:\nmaximum 90 days for `day`, 12 weeks for `week`, 12 months for `month`, 4 quarters\nfor `quarter`.",
+        "summary": "List program spending daily reports",
+        "description": "Returns aggregated points-spending statistics for the program over the given date range and resolution. Optionally filters by card definition.\n\nThe date range and maximum values are limited per resolution:\n- 90 days for `day`,\n- 12 weeks for `week`,\n- 12 months for `month`,\n- 4 quarters for `quarter`,\n- `start_date` must be before `end_date`,\n- `end_date` is inclusive.\n\nReturns `400` when query validation fails. Returns `404` when the program does not exist.",
         "parameters": [
-          {
-            "name": "programId",
-            "in": "path",
-            "required": true,
-            "description": "Unique loyalty program identifier (format: `lprg_` followed by hexadecimal characters).",
-            "schema": {
-              "type": "string"
-            }
-          },
           {
             "name": "start_date",
             "in": "query",
             "required": true,
-            "description": "Start of the report date range (inclusive), in `YYYY-MM-DD` format.",
+            "description": "Sets the inclusive start of the report date range (`YYYY-MM-DD`). Must be before `end_date`.",
             "schema": {
               "type": "string",
               "format": "date",
@@ -8634,7 +8636,7 @@
             "name": "end_date",
             "in": "query",
             "required": true,
-            "description": "End of the report date range, in `YYYY-MM-DD` format.",
+            "description": "Sets the inclusive end of the report date range (`YYYY-MM-DD`). Must be after `start_date`.",
             "schema": {
               "type": "string",
               "format": "date",
@@ -8645,7 +8647,7 @@
             "name": "resolution",
             "in": "query",
             "required": true,
-            "description": "Aggregation resolution of the report. The allowed date range depends on the resolution: `day` - max 90 days, `week` - max 12 weeks, `month` - max 12 months, `quarter` - max 4 quarters.",
+            "description": "Sets the aggregation resolution. Allowed date range: `day` max 90 days, `week` max 12 weeks, `month` max 12 months, `quarter` max 4 quarters.",
             "schema": {
               "type": "string",
               "enum": [
@@ -8662,7 +8664,7 @@
             "required": false,
             "style": "deepObject",
             "explode": true,
-            "description": "Field filters, e.g. `filters[card_definition_id][conditions][$is]=lcdef_...`. Each field accepts a `conditions` object with condition operators.",
+            "description": "Filters rows by field conditions, e.g. `filters[card_definition_id][conditions][$is]=lcdef_...`.",
             "schema": {
               "$ref": "#/components/schemas/SpendingReportListFilters"
             }
@@ -8674,17 +8676,358 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SpendingReportDailyResponse"
+                  "$ref": "#/components/schemas/LoyaltiesProgramsReportsSpendingDailyListResponseBody"
+                },
+                "examples": {
+                  "Daily spending report: Day resolution": {
+                    "value": {
+                      "data": [
+                        {
+                          "date": "2026-06-30",
+                          "card_definition_id": "lcdef_128f4a88414c4bed69",
+                          "success": 3,
+                          "success_on_reward": 0,
+                          "success_on_order": 3,
+                          "points": 423,
+                          "points_on_rewards": 0,
+                          "points_on_order": 423,
+                          "amount_on_order": 423,
+                          "object": "spending_daily_report"
+                        },
+                        {
+                          "date": "2026-07-08",
+                          "card_definition_id": "lcdef_128f4a88414c4bed69",
+                          "success": 2,
+                          "success_on_reward": 2,
+                          "success_on_order": 0,
+                          "points": 1000,
+                          "points_on_rewards": 1000,
+                          "points_on_order": 0,
+                          "amount_on_order": 0,
+                          "object": "spending_daily_report"
+                        },
+                        {
+                          "date": "2026-07-10",
+                          "card_definition_id": "lcdef_128f4a88414c4bed69",
+                          "success": 4,
+                          "success_on_reward": 0,
+                          "success_on_order": 4,
+                          "points": 48,
+                          "points_on_rewards": 0,
+                          "points_on_order": 48,
+                          "amount_on_order": 48,
+                          "object": "spending_daily_report"
+                        },
+                        {
+                          "date": "2026-07-13",
+                          "card_definition_id": "lcdef_128f4a88414c4bed69",
+                          "success": 10,
+                          "success_on_reward": 0,
+                          "success_on_order": 10,
+                          "points": 2232,
+                          "points_on_rewards": 0,
+                          "points_on_order": 2232,
+                          "amount_on_order": 2232,
+                          "object": "spending_daily_report"
+                        },
+                        {
+                          "date": "2026-07-21",
+                          "card_definition_id": "lcdef_128f495f720c4bec8c",
+                          "success": 1,
+                          "success_on_reward": 1,
+                          "success_on_order": 0,
+                          "points": 250,
+                          "points_on_rewards": 250,
+                          "points_on_order": 0,
+                          "amount_on_order": 0,
+                          "object": "spending_daily_report"
+                        },
+                        {
+                          "date": "2026-07-21",
+                          "card_definition_id": "lcdef_128f4a88414c4bed69",
+                          "success": 1,
+                          "success_on_reward": 1,
+                          "success_on_order": 0,
+                          "points": 500,
+                          "points_on_rewards": 500,
+                          "points_on_order": 0,
+                          "amount_on_order": 0,
+                          "object": "spending_daily_report"
+                        },
+                        {
+                          "date": "2026-07-27",
+                          "card_definition_id": "lcdef_128f4a88414c4bed69",
+                          "success": 7,
+                          "success_on_reward": 7,
+                          "success_on_order": 0,
+                          "points": 3500,
+                          "points_on_rewards": 3500,
+                          "points_on_order": 0,
+                          "amount_on_order": 0,
+                          "object": "spending_daily_report"
+                        },
+                        {
+                          "date": "2026-07-29",
+                          "card_definition_id": "lcdef_128f4a88414c4bed69",
+                          "success": 3,
+                          "success_on_reward": 0,
+                          "success_on_order": 3,
+                          "points": 240,
+                          "points_on_rewards": 0,
+                          "points_on_order": 240,
+                          "amount_on_order": 240,
+                          "object": "spending_daily_report"
+                        }
+                      ],
+                      "object": "report"
+                    }
+                  },
+                  "Daily spending report: Week resolution": {
+                    "value": {
+                      "data": [
+                        {
+                          "date": "2026-06-29",
+                          "card_definition_id": "lcdef_128f4a88414c4bed69",
+                          "success": 3,
+                          "success_on_reward": 0,
+                          "success_on_order": 3,
+                          "points": 423,
+                          "points_on_rewards": 0,
+                          "points_on_order": 423,
+                          "amount_on_order": 423,
+                          "object": "spending_daily_report"
+                        },
+                        {
+                          "date": "2026-07-06",
+                          "card_definition_id": "lcdef_128f4a88414c4bed69",
+                          "success": 6,
+                          "success_on_reward": 2,
+                          "success_on_order": 4,
+                          "points": 1048,
+                          "points_on_rewards": 1000,
+                          "points_on_order": 48,
+                          "amount_on_order": 48,
+                          "object": "spending_daily_report"
+                        },
+                        {
+                          "date": "2026-07-13",
+                          "card_definition_id": "lcdef_128f4a88414c4bed69",
+                          "success": 10,
+                          "success_on_reward": 0,
+                          "success_on_order": 10,
+                          "points": 2232,
+                          "points_on_rewards": 0,
+                          "points_on_order": 2232,
+                          "amount_on_order": 2232,
+                          "object": "spending_daily_report"
+                        },
+                        {
+                          "date": "2026-07-20",
+                          "card_definition_id": "lcdef_128f495f720c4bec8c",
+                          "success": 1,
+                          "success_on_reward": 1,
+                          "success_on_order": 0,
+                          "points": 250,
+                          "points_on_rewards": 250,
+                          "points_on_order": 0,
+                          "amount_on_order": 0,
+                          "object": "spending_daily_report"
+                        },
+                        {
+                          "date": "2026-07-20",
+                          "card_definition_id": "lcdef_128f4a88414c4bed69",
+                          "success": 1,
+                          "success_on_reward": 1,
+                          "success_on_order": 0,
+                          "points": 500,
+                          "points_on_rewards": 500,
+                          "points_on_order": 0,
+                          "amount_on_order": 0,
+                          "object": "spending_daily_report"
+                        },
+                        {
+                          "date": "2026-07-27",
+                          "card_definition_id": "lcdef_128f4a88414c4bed69",
+                          "success": 10,
+                          "success_on_reward": 7,
+                          "success_on_order": 3,
+                          "points": 3740,
+                          "points_on_rewards": 3500,
+                          "points_on_order": 240,
+                          "amount_on_order": 240,
+                          "object": "spending_daily_report"
+                        }
+                      ],
+                      "object": "report"
+                    }
+                  },
+                  "Daily spending report: Month resolution": {
+                    "value": {
+                      "data": [
+                        {
+                          "date": "2026-06-01",
+                          "card_definition_id": "lcdef_128f4a88414c4bed69",
+                          "success": 3,
+                          "success_on_reward": 0,
+                          "success_on_order": 3,
+                          "points": 423,
+                          "points_on_rewards": 0,
+                          "points_on_order": 423,
+                          "amount_on_order": 423,
+                          "object": "spending_daily_report"
+                        },
+                        {
+                          "date": "2026-07-01",
+                          "card_definition_id": "lcdef_128f495f720c4bec8c",
+                          "success": 1,
+                          "success_on_reward": 1,
+                          "success_on_order": 0,
+                          "points": 250,
+                          "points_on_rewards": 250,
+                          "points_on_order": 0,
+                          "amount_on_order": 0,
+                          "object": "spending_daily_report"
+                        },
+                        {
+                          "date": "2026-07-01",
+                          "card_definition_id": "lcdef_128f4a88414c4bed69",
+                          "success": 27,
+                          "success_on_reward": 10,
+                          "success_on_order": 17,
+                          "points": 7520,
+                          "points_on_rewards": 5000,
+                          "points_on_order": 2520,
+                          "amount_on_order": 2520,
+                          "object": "spending_daily_report"
+                        }
+                      ],
+                      "object": "report"
+                    }
+                  },
+                  "Daily spending report: Quarter resolution": {
+                    "value": {
+                      "data": [
+                        {
+                          "date": "2026-04-01",
+                          "card_definition_id": "lcdef_128f4a88414c4bed69",
+                          "success": 3,
+                          "success_on_reward": 0,
+                          "success_on_order": 3,
+                          "points": 423,
+                          "points_on_rewards": 0,
+                          "points_on_order": 423,
+                          "amount_on_order": 423,
+                          "object": "spending_daily_report"
+                        },
+                        {
+                          "date": "2026-07-01",
+                          "card_definition_id": "lcdef_128f495f720c4bec8c",
+                          "success": 1,
+                          "success_on_reward": 1,
+                          "success_on_order": 0,
+                          "points": 250,
+                          "points_on_rewards": 250,
+                          "points_on_order": 0,
+                          "amount_on_order": 0,
+                          "object": "spending_daily_report"
+                        },
+                        {
+                          "date": "2026-07-01",
+                          "card_definition_id": "lcdef_128f4a88414c4bed69",
+                          "success": 27,
+                          "success_on_reward": 10,
+                          "success_on_order": 17,
+                          "points": 7520,
+                          "points_on_rewards": 5000,
+                          "points_on_order": 2520,
+                          "amount_on_order": 2520,
+                          "object": "spending_daily_report"
+                        }
+                      ],
+                      "object": "report"
+                    }
+                  },
+                  "Empty spending daily report": {
+                    "value": {
+                      "data": [],
+                      "object": "report"
+                    }
+                  }
                 }
               }
             }
           },
           "400": {
-            "description": "Validation error - request body or query parameters failed validation, or the operation is not allowed in the current resource state.",
+            "description": "Query parameters failed validation, or `start_date` is not before `end_date`.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Invalid query parameters: `start_date` is required": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Query must have required property 'start_date'",
+                      "request_id": "v-130eb43b3685e26454"
+                    }
+                  },
+                  "Invalid query parameters: `end_date` is required": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Query must have required property 'end_date'",
+                      "request_id": "v-130eb46d6c45e264b2"
+                    }
+                  },
+                  "Invalid query parameters: `resolution` is required": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Query must have required property 'resolution'",
+                      "request_id": "v-130eb4847405e264e3"
+                    }
+                  },
+                  "Invalid query parameters: `resolution` is invalid": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Property .resolution must be equal to one of the allowed values [ day, week, month, quarter ]",
+                      "request_id": "v-130eb4847405e264e4"
+                    }
+                  },
+                  "Invalid query parameters: `start_date` is invalid": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Property .start_date cannot be recognized as a ISO-8601 compliant date",
+                      "request_id": "v-130eb43b3685e26455"
+                    }
+                  },
+                  "Invalid query parameters: date range exceeds limit": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Query date range exceeds maximum allowed 90 days for resolution 'day'",
+                      "request_id": "v-130eb43b3685e26456"
+                    }
+                  },
+                  "Invalid payload: `start_date` is not before `end_date`": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_payload",
+                      "message": "Invalid payload",
+                      "details": "Property 'start_date' must be before 'end_date'",
+                      "request_id": "v-130eb43b3685e26457"
+                    }
+                  }
                 }
               }
             }
@@ -8695,16 +9038,19 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Program not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find program with id lprg_128f5829f4c4bf7b2",
+                      "request_id": "v-130eb4c2a6459642bb",
+                      "resource_id": "lprg_128f5829f4c4bf7b2",
+                      "resource_type": "program"
+                    }
+                  }
                 }
               }
             }
@@ -24607,51 +24953,63 @@
       },
       "SpendingReportDailyEntry": {
         "type": "object",
-        "description": "Aggregated daily program spending statistics for one period and card definition. All numeric fields default to 0.",
+        "description": "Aggregated program spending statistics for one period and card definition. Numeric fields default to `0`.",
         "properties": {
           "date": {
             "type": "string",
             "format": "date",
-            "description": "Date of the aggregation period (`YYYY-MM-DD`)."
+            "description": "Identifies the start of the truncated aggregation period (`YYYY-MM-DD`). For `week` this is Monday. For `month` this is the first day. For `quarter` this is the quarter start."
           },
           "card_definition_id": {
             "type": "string",
-            "description": "Unique identifier of the card definition (format `lcdef_...`)."
+            "description": "Identifies the card definition (`lcdef_...`)."
           },
           "success": {
             "type": "number",
-            "description": "Number of successful spending operations in the period."
+            "description": "Counts successful spending operations in the period."
           },
           "success_on_reward": {
             "type": "number",
-            "description": "Number of successful reward purchases in the period."
+            "description": "Counts successful reward purchases in the period."
           },
           "success_on_order": {
             "type": "number",
-            "description": "Number of successful order payments in the period."
+            "description": "Counts successful order payments in the period."
           },
           "points": {
             "type": "number",
-            "description": "Total points spent in the period."
+            "description": "Totals points spent in the period."
           },
           "points_on_rewards": {
             "type": "number",
-            "description": "Points spent on reward purchases in the period."
+            "description": "Totals points spent on reward purchases in the period."
           },
           "points_on_order": {
             "type": "number",
-            "description": "Points spent on order payments in the period."
+            "description": "Totals points spent on order payments in the period."
           },
           "amount_on_order": {
             "type": "number",
-            "description": "Order amount paid with points in the period."
+            "description": "Totals order amount paid with points in the period."
           },
           "object": {
             "type": "string",
             "const": "spending_daily_report",
             "description": "Object type marker. Always `spending_daily_report`."
           }
-        }
+        },
+        "required": [
+          "date",
+          "card_definition_id",
+          "success",
+          "success_on_reward",
+          "success_on_order",
+          "points",
+          "points_on_rewards",
+          "points_on_order",
+          "amount_on_order",
+          "object"
+        ]
       },
       "SpendingReportSummaryEntry": {
         "type": "object",
@@ -24700,13 +25058,14 @@
           }
         }
       },
-      "SpendingReportDailyResponse": {
+      "LoyaltiesProgramsReportsSpendingDailyListResponseBody": {
         "type": "object",
-        "description": "Program spending daily report result.",
+        "title": "Loyalties Programs Reports Spending Daily List Response Body",
+        "description": "Response body schema for **GET** `/v2/loyalties/programs/{programId}/reports/spending/daily`.",
         "properties": {
           "data": {
             "type": "array",
-            "description": "Report entries, one per aggregation period and card definition.",
+            "description": "List of report entries, one per aggregation period and card definition.",
             "items": {
               "$ref": "#/components/schemas/SpendingReportDailyEntry"
             }
@@ -24716,7 +25075,11 @@
             "const": "report",
             "description": "Object type marker. Always `report`."
           }
-        }
+        },
+        "required": [
+          "data",
+          "object"
+        ]
       },
       "SpendingReportSummaryResponse": {
         "type": "object",
