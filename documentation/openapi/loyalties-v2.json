@@ -37,7 +37,7 @@
     },
     {
       "name": "Tier structures",
-      "description": "CRUD operations, lifecycle management, and activity history for tier structures. Includes nested tier definitions (create, list, update, delete) within tier structures. Tier structures define the tiering model for loyalty programs — how members qualify for and move between tiers."
+      "description": "CRUD operations, lifecycle management, and activity history for tier structures. Includes nested tier definitions (create, list, update, delete) within tier structures. Tier structures define the tiering model for loyalty programs - how members qualify for and move between tiers."
     },
     {
       "name": "Benefits",
@@ -7249,7 +7249,7 @@
             }
           },
           "400": {
-            "description": "Validation error — query parameters failed validation, or the operation is not allowed in the current resource state.",
+            "description": "Validation error - query parameters failed validation, or the operation is not allowed in the current resource state.",
             "content": {
               "application/json": {
                 "schema": {
@@ -7987,33 +7987,36 @@
       }
     },
     "/v2/loyalties/programs/{programId}/members/{memberId}/tiers/transactions": {
+      "parameters": [
+        {
+          "name": "programId",
+          "in": "path",
+          "required": true,
+          "description": "Unique loyalty program ID (format `lprg_[a-f0-9]+`).",
+          "schema": {
+            "type": "string",
+            "pattern": "^lprg_[a-f0-9]+$"
+          }
+        },
+        {
+          "name": "memberId",
+          "in": "path",
+          "required": true,
+          "description": "Program member ID (format `lmbr_[a-f0-9]+`).",
+          "schema": {
+            "type": "string",
+            "pattern": "^lmbr_[a-f0-9]+$"
+          }
+        }
+      ],
       "get": {
         "operationId": "listMemberTierTransactions",
         "tags": [
           "Programs"
         ],
         "summary": "List member tier transactions",
-        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nLists tier transactions (tier joins, upgrades, downgrades, prolongations and exits)\nfor the given program member, with cursor-based pagination. Supports filtering by\ncard id and creation date.",
+        "description": "Lists tier transactions (tier joins, leaves, upgrades, downgrades, expiration changes, and evaluation refreshes) for the given program member, with cursor-based pagination.\n\nSupports filtering by card ID and creation date.\n\nReturns `400` when the provided cursor is invalid or has expired. Returns `404` when the program or member does not exist.",
         "parameters": [
-          {
-            "name": "programId",
-            "in": "path",
-            "required": true,
-            "description": "Unique loyalty program identifier (format: `lprg_` followed by hexadecimal characters).",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "memberId",
-            "in": "path",
-            "required": true,
-            "description": "Program member ID (format `lmbr_[a-f0-9]+`).",
-            "schema": {
-              "type": "string",
-              "pattern": "^lmbr_[a-f0-9]+$"
-            }
-          },
           {
             "name": "limit",
             "in": "query",
@@ -8090,37 +8093,218 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/TierTransactionListResponse"
+                  "$ref": "#/components/schemas/LoyaltiesProgramsMembersTiersTransactionsListResponseBody"
+                },
+                "examples": {
+                  "Tier transaction list": {
+                    "value": {
+                      "data": [
+                        {
+                          "id": "lttx_12fa3c024b476799e1",
+                          "card_id": "lcrd_128f962dbd8c4ba5e1",
+                          "program_id": "lprg_128f58429f4c4bf7b2",
+                          "member_id": "lmbr_128f962dbc8c4ba5dc",
+                          "card_definition_id": "lcdef_128f4a88414c4bed69",
+                          "tier_structure_id": "lts_128f4b460e4c4bedf6",
+                          "tier_id": "lt_128f4b46808c4bee07",
+                          "type": "UPGRADED",
+                          "details": {
+                            "points": 500,
+                            "tier_from": "lt_128f4b46400c4bedfb",
+                            "tier_to": "lt_128f4b46808c4bee07",
+                            "origin": {
+                              "type": "card_operations",
+                              "card_transaction_ids": [
+                                "lctx_12fa3c0169a025a387"
+                              ]
+                            },
+                            "rejection": null,
+                            "start_at": null,
+                            "expires_at": null
+                          },
+                          "status": "APPROVED",
+                          "created_at": "2026-09-02T12:03:12.301Z",
+                          "updated_at": "2026-09-02T12:03:12.908Z",
+                          "object": "tier_transaction"
+                        },
+                        {
+                          "id": "lttx_12f7dc870f4fbd500c",
+                          "card_id": "lcrd_128f962dbd8c4ba5e1",
+                          "program_id": "lprg_128f58429f4c4bf7b2",
+                          "member_id": "lmbr_128f962dbc8c4ba5dc",
+                          "card_definition_id": "lcdef_128f4a88414c4bed69",
+                          "tier_structure_id": "lts_128f4b460e4c4bedf6",
+                          "tier_id": "lt_128f4b46400c4bedfb",
+                          "type": "DOWNGRADED",
+                          "details": {
+                            "points": 0,
+                            "tier_from": "lt_128f4b46808c4bee07",
+                            "tier_to": "lt_128f4b46400c4bedfb",
+                            "origin": {
+                              "type": "card_operations",
+                              "card_transaction_ids": [
+                                "lctx_12f7dc8650267658b4"
+                              ]
+                            },
+                            "rejection": null,
+                            "start_at": null,
+                            "expires_at": null
+                          },
+                          "status": "APPROVED",
+                          "created_at": "2026-08-31T15:49:04.701Z",
+                          "updated_at": "2026-08-31T15:49:05.673Z",
+                          "object": "tier_transaction"
+                        },
+                        {
+                          "id": "lttx_12f3b6e3a268738b18",
+                          "card_id": "lcrd_128f962dbd8c4ba5e1",
+                          "program_id": "lprg_128f58429f4c4bf7b2",
+                          "member_id": "lmbr_128f962dbc8c4ba5dc",
+                          "card_definition_id": "lcdef_128f4a88414c4bed69",
+                          "tier_structure_id": "lts_128f4b460e4c4bedf6",
+                          "tier_id": null,
+                          "type": "EVALUATION_REFRESHED",
+                          "details": {
+                            "points": 2221000,
+                            "tier_from": null,
+                            "tier_to": null,
+                            "origin": {
+                              "type": "card_operations",
+                              "card_transaction_ids": [
+                                "lctx_12f3b6e28cae8bfa27"
+                              ]
+                            },
+                            "rejection": null,
+                            "start_at": null,
+                            "expires_at": null
+                          },
+                          "status": "APPROVED",
+                          "created_at": "2026-08-28T10:30:42.569Z",
+                          "updated_at": "2026-08-28T10:30:43.406Z",
+                          "object": "tier_transaction"
+                        },
+                        {
+                          "id": "lttx_1294dc734a1bbeb5ec",
+                          "card_id": "lcrd_128f962dbd8c4ba5e1",
+                          "program_id": "lprg_128f58429f4c4bf7b2",
+                          "member_id": "lmbr_128f962dbc8c4ba5dc",
+                          "card_definition_id": "lcdef_128f4a88414c4bed69",
+                          "tier_structure_id": "lts_128f4b460e4c4bedf6",
+                          "tier_id": null,
+                          "type": "EXPIRATION_CHANGED",
+                          "details": {
+                            "points": 500,
+                            "tier_from": null,
+                            "tier_to": null,
+                            "origin": {
+                              "type": "daily_task_operations"
+                            },
+                            "rejection": null,
+                            "start_at": null,
+                            "expires_at": "2026-07-15T23:59:59.999Z"
+                          },
+                          "status": "APPROVED",
+                          "created_at": "2026-06-15T18:19:06.920Z",
+                          "updated_at": "2026-06-15T18:19:07.918Z",
+                          "object": "tier_transaction"
+                        },
+                        {
+                          "id": "lttx_128f962dbf0c4ba5e5",
+                          "card_id": "lcrd_128f962dbd8c4ba5e1",
+                          "program_id": "lprg_128f58429f4c4bf7b2",
+                          "member_id": "lmbr_128f962dbc8c4ba5dc",
+                          "card_definition_id": "lcdef_128f4a88414c4bed69",
+                          "tier_structure_id": "lts_128f4b460e4c4bedf6",
+                          "tier_id": "lt_128f4b46400c4bedfb",
+                          "type": "JOINED",
+                          "details": {
+                            "points": 0,
+                            "tier_from": null,
+                            "tier_to": "lt_128f4b46400c4bedfb",
+                            "origin": {
+                              "type": "member_card_created"
+                            },
+                            "rejection": null,
+                            "start_at": null,
+                            "expires_at": null
+                          },
+                          "status": "APPROVED",
+                          "created_at": "2026-06-11T15:59:41.308Z",
+                          "updated_at": "2026-06-11T15:59:42.248Z",
+                          "object": "tier_transaction"
+                        }
+                      ],
+                      "cursor": {
+                        "next": "lcrsttx_130e8b9d41ee46fb7a",
+                        "expires_at": "2026-09-18T06:50:37.639Z"
+                      },
+                      "object": "list"
+                    }
+                  }
                 }
               }
             }
           },
           "400": {
-            "description": "Validation error - request body or query parameters failed validation, or the operation is not allowed in the current resource state.",
+            "description": "Invalid query parameters or pagination cursor.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Invalid cursor format": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Property .cursor must match pattern \"^lcrsttx_[a-f0-9]+$\"",
+                      "request_id": "v-130db36510c5e2759a"
+                    }
+                  },
+                  "Cursor invalid or expired": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_or_expired_cursor",
+                      "message": "Invalid or expired cursor",
+                      "details": "The provided cursor is invalid or has expired",
+                      "request_id": "v-130db36510c5e2759b"
+                    }
+                  }
                 }
               }
             }
           },
           "404": {
-            "description": "Resource not found.",
+            "description": "Resource (program or member) not found.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Program not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find program with id lprg_18f58429f4c4bf7b2",
+                      "request_id": "v-130db30e15859652a6",
+                      "resource_id": "lprg_18f58429f4c4bf7b2",
+                      "resource_type": "program"
+                    }
+                  },
+                  "Member not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find member with id lmbr_128f62dbc8c4ba5dc",
+                      "request_id": "v-130db31ffb859652cd",
+                      "resource_id": "lmbr_128f62dbc8c4ba5dc",
+                      "resource_type": "member"
+                    }
+                  }
                 }
               }
             }
@@ -8210,7 +8394,7 @@
             "name": "resolution",
             "in": "query",
             "required": true,
-            "description": "Aggregation resolution of the report. The allowed date range depends on the resolution: `day` — max 90 days, `week` — max 12 weeks, `month` — max 12 months, `quarter` — max 4 quarters.",
+            "description": "Aggregation resolution of the report. The allowed date range depends on the resolution: `day` - max 90 days, `week` - max 12 weeks, `month` - max 12 months, `quarter` - max 4 quarters.",
             "schema": {
               "type": "string",
               "enum": [
@@ -8352,7 +8536,7 @@
             "name": "resolution",
             "in": "query",
             "required": true,
-            "description": "Aggregation resolution of the report. The allowed date range depends on the resolution: `day` — max 90 days, `week` — max 12 weeks, `month` — max 12 months, `quarter` — max 4 quarters.",
+            "description": "Aggregation resolution of the report. The allowed date range depends on the resolution: `day` - max 90 days, `week` - max 12 weeks, `month` - max 12 months, `quarter` - max 4 quarters.",
             "schema": {
               "type": "string",
               "enum": [
@@ -8461,7 +8645,7 @@
             "name": "resolution",
             "in": "query",
             "required": true,
-            "description": "Aggregation resolution of the report. The allowed date range depends on the resolution: `day` — max 90 days, `week` — max 12 weeks, `month` — max 12 months, `quarter` — max 4 quarters.",
+            "description": "Aggregation resolution of the report. The allowed date range depends on the resolution: `day` - max 90 days, `week` - max 12 weeks, `month` - max 12 months, `quarter` - max 4 quarters.",
             "schema": {
               "type": "string",
               "enum": [
@@ -8686,7 +8870,7 @@
             "name": "resolution",
             "in": "query",
             "required": true,
-            "description": "Aggregation resolution of the report. The allowed date range depends on the resolution: `day` — max 90 days, `week` — max 12 weeks, `month` — max 12 months, `quarter` — max 4 quarters.",
+            "description": "Aggregation resolution of the report. The allowed date range depends on the resolution: `day` - max 90 days, `week` - max 12 weeks, `month` - max 12 months, `quarter` - max 4 quarters.",
             "schema": {
               "type": "string",
               "enum": [
@@ -8972,7 +9156,7 @@
             "name": "resolution",
             "in": "query",
             "required": true,
-            "description": "Aggregation resolution of the report. The allowed date range depends on the resolution: `day` — max 90 days, `week` — max 12 weeks, `month` — max 12 months, `quarter` — max 4 quarters.",
+            "description": "Aggregation resolution of the report. The allowed date range depends on the resolution: `day` - max 90 days, `week` - max 12 weeks, `month` - max 12 months, `quarter` - max 4 quarters.",
             "schema": {
               "type": "string",
               "enum": [
@@ -9177,7 +9361,7 @@
             "name": "resolution",
             "in": "query",
             "required": true,
-            "description": "Aggregation resolution of the report. The allowed date range depends on the resolution: `day` — max 90 days, `week` — max 12 weeks, `month` — max 12 months, `quarter` — max 4 quarters.",
+            "description": "Aggregation resolution of the report. The allowed date range depends on the resolution: `day` - max 90 days, `week` - max 12 weeks, `month` - max 12 months, `quarter` - max 4 quarters.",
             "schema": {
               "type": "string",
               "enum": [
@@ -21745,7 +21929,7 @@
             "description": "Transaction type."
           },
           "details": {
-            "description": "Transaction details. Shape depends on `type` — purchase details for `PURCHASE`, refund details for `REFUND`.",
+            "description": "Transaction details. Shape depends on `type` - purchase details for `PURCHASE`, refund details for `REFUND`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/RewardPurchaseTransactionDetailsPurchase"
@@ -22304,7 +22488,7 @@
                 "description": "Transaction type."
               },
               "details": {
-                "description": "Transaction details. Shape depends on `type` — purchase details for `PURCHASE`.",
+                "description": "Transaction details. Shape depends on `type` - purchase details for `PURCHASE`.",
                 "oneOf": [
                   {
                     "$ref": "#/components/schemas/RewardPurchaseTransactionDetailsPurchase"
@@ -22869,7 +23053,7 @@
               "REJECTED",
               "SIMULATED"
             ],
-            "description": "Transaction status. `PENDING` — created, awaiting processing; `PROCESSING` — being processed; `APPROVED` — completed successfully; `REJECTED` — rejected (see `details.rejection`); `SIMULATED` — dry-run create result, not persisted (not returned by list)."
+            "description": "Transaction status. `PENDING` - created, awaiting processing; `PROCESSING` - being processed; `APPROVED` - completed successfully; `REJECTED` - rejected (see `details.rejection`); `SIMULATED` - dry-run create result, not persisted (not returned by list)."
           },
           "type": {
             "type": "string",
@@ -23045,7 +23229,7 @@
                 "enum": [
                   "SIMULATED"
                 ],
-                "description": "Transaction status. `SIMULATED` — dry-run create result, not persisted."
+                "description": "Transaction status. `SIMULATED` - dry-run create result, not persisted."
               },
               "type": {
                 "type": "string",
@@ -23464,7 +23648,7 @@
               "APPROVED",
               "REJECTED"
             ],
-            "description": "Transaction status. `PENDING` — created, awaiting processing; `APPROVED` — completed successfully; `REJECTED` — rejected (see `details.rejection`)."
+            "description": "Transaction status. `PENDING` - created, awaiting processing; `APPROVED` - completed successfully; `REJECTED` - rejected (see `details.rejection`)."
           },
           "created_at": {
             "type": "string",
@@ -23806,7 +23990,7 @@
       },
       "TierTransaction": {
         "type": "object",
-        "description": "A tier transaction. Represents a tier membership change.",
+        "description": "A tier transaction. Records the outcome of a tier evaluation for a member card.",
         "properties": {
           "id": {
             "type": "string",
@@ -23846,9 +24030,10 @@
               "DOWNGRADED",
               "JOINED",
               "LEFT",
-              "PROLONGED"
+              "EXPIRATION_CHANGED",
+              "EVALUATION_REFRESHED"
             ],
-            "description": "Transaction type. `JOINED` — member joined a tier; `LEFT` — member left a tier; `UPGRADED` — member moved to a higher tier; `DOWNGRADED` — member moved to a lower tier; `PROLONGED` — the member's tier membership was prolonged."
+            "description": "Transaction type. `JOINED` - member joined a tier. `LEFT` - member left a tier. `UPGRADED` - member moved to a higher tier. `DOWNGRADED` - member moved to a lower tier. `EXPIRATION_CHANGED` - current tier unchanged; the expiration date was set, extended, or cleared. `EVALUATION_REFRESHED` - current tier and expiration day unchanged; the stored evaluation and points were recalculated."
           },
           "details": {
             "$ref": "#/components/schemas/TierTransactionDetails"
@@ -23860,7 +24045,7 @@
               "APPROVED",
               "REJECTED"
             ],
-            "description": "Transaction status. `PENDING` — created, awaiting processing; `APPROVED` — completed successfully; `REJECTED` — rejected (see `details.rejection`)."
+            "description": "Transaction status. `PENDING` - created, awaiting processing; `APPROVED` - completed successfully; `REJECTED` - rejected (see `details.rejection`)."
           },
           "created_at": {
             "type": "string",
@@ -23880,35 +24065,50 @@
             "const": "tier_transaction",
             "description": "Object type marker. Always `tier_transaction`."
           }
-        }
+        },
+        "required": [
+          "id",
+          "card_id",
+          "program_id",
+          "member_id",
+          "card_definition_id",
+          "tier_structure_id",
+          "tier_id",
+          "type",
+          "details",
+          "status",
+          "created_at",
+          "updated_at",
+          "object"
+        ]
       },
       "TierTransactionDetails": {
         "type": "object",
-        "description": "Tier transaction details. All fields are nullable; which fields are populated depends on the transaction type: `JOINED`/`PROLONGED` — `tier_to`, `start_at`, `expires_at` (no `tier_from`); `LEFT` — `tier_from` (no `tier_to`); `UPGRADED`/`DOWNGRADED` — both `tier_from` and `tier_to`.",
+        "description": "Details of the tier evaluation. Fields that do not apply to the transaction type are `null`. `JOINED` - `tier_to` set, `tier_from` null. `LEFT` - `tier_from` set, `tier_to` null. `UPGRADED` and `DOWNGRADED` - both `tier_from` and `tier_to` set. `EXPIRATION_CHANGED` - `expires_at` holds the new expiration; `tier_from` and `tier_to` null. `EVALUATION_REFRESHED` - `points` holds the recalculated value; `tier_from` and `tier_to` null.",
         "properties": {
           "points": {
             "type": [
               "number",
               "null"
             ],
-            "description": "Points balance relevant to the tier change, or `null`."
+            "description": "Qualifying points at the time of evaluation. Returns the point balance or the points earned in the tracking period, depending on the tier structure. `null` when points were not calculated."
           },
           "tier_from": {
             "type": [
               "string",
               "null"
             ],
-            "description": "Unique identifier of the tier the member moved from (format `lt_...`). `null` for `JOINED` and `PROLONGED` transactions."
+            "description": "Unique identifier of the tier the member moved from (format `lt_...`). `null` when there is no source tier, including `JOINED`, `EXPIRATION_CHANGED`, and `EVALUATION_REFRESHED` transactions."
           },
           "tier_to": {
             "type": [
               "string",
               "null"
             ],
-            "description": "Unique identifier of the tier the member moved to (format `lt_...`). `null` for `LEFT` transactions."
+            "description": "Unique identifier of the tier the member moved to (format `lt_...`). `null` when there is no destination tier, including `LEFT`, `EXPIRATION_CHANGED`, and `EVALUATION_REFRESHED` transactions."
           },
           "origin": {
-            "description": "What triggered the tier change.",
+            "description": "What triggered the transaction.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/TierTransactionOrigin"
@@ -23945,11 +24145,20 @@
             "format": "date-time",
             "description": "Expiration of the tier membership period, or `null`."
           }
-        }
+        },
+        "required": [
+          "points",
+          "tier_from",
+          "tier_to",
+          "origin",
+          "rejection",
+          "start_at",
+          "expires_at"
+        ]
       },
       "TierTransactionOrigin": {
         "type": "object",
-        "description": "Origin of the tier change.",
+        "description": "Origin of the tier transaction.",
         "properties": {
           "type": {
             "type": "string",
@@ -23957,22 +24166,33 @@
               "card_operations",
               "daily_task_operations",
               "member_card_created",
-              "member_card_deleted"
+              "member_card_deleted",
+              "segment_change"
             ],
-            "description": "Origin type. `card_operations` — triggered by card point operations; `daily_task_operations` — triggered by scheduled daily tasks; `member_card_created` — triggered by creating a member card; `member_card_deleted` — triggered by deleting a member card."
+            "description": "Origin type. `card_operations` - point operations on the card. `daily_task_operations` - scheduled daily tier processing. `member_card_created` - a member card was created. `member_card_deleted` - a member card was deleted. `segment_change` - the customer entered or left a segment used in tier qualification."
           },
           "card_transaction_ids": {
             "type": "array",
             "items": {
               "type": "string"
             },
-            "description": "Unique identifiers of the card transactions that triggered the tier change (format `lctx_...`)."
+            "description": "Unique identifiers of the card transactions that triggered the transaction (format `lctx_...`). Returned for the `card_operations` origin."
+          },
+          "segment_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Unique identifiers of the customer segments that triggered the transaction. Returned for the `segment_change` origin."
           }
-        }
+        },
+        "required": [
+          "type"
+        ]
       },
       "TierTransactionRejection": {
         "type": "object",
-        "description": "Rejection details.",
+        "description": "Rejection details for a tier transaction.",
         "properties": {
           "reason": {
             "type": "string",
@@ -23982,7 +24202,10 @@
             "type": "string",
             "description": "Additional human-readable details about the rejection."
           }
-        }
+        },
+        "required": [
+          "reason"
+        ]
       },
       "LoyaltiesProgramsMembersTiersTransactionsListRequestQuery": {
         "type": "object",
@@ -24004,7 +24227,7 @@
             ]
           },
           "card_id": {
-            "description": "Filter by loyalty card id.",
+            "description": "Filter by loyalty card ID.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/LoyaltiesProgramsMembersTiersTransactionsListRequestQueryCardId"
@@ -24253,33 +24476,23 @@
           }
         }
       },
-      "TierTransactionListResponse": {
+      "LoyaltiesProgramsMembersTiersTransactionsListResponseBody": {
         "type": "object",
-        "description": "Paginated list of tier transactions.",
+        "description": "Response body schema for **GET** `/v2/loyalties/programs/{programId}/members/{memberId}/tiers/transactions`.",
+        "title": "Loyalties Programs Members Tiers Transactions List Response Body",
         "properties": {
           "data": {
             "type": "array",
-            "description": "Tier transactions.",
+            "description": "List of tier transactions.",
             "items": {
               "$ref": "#/components/schemas/TierTransaction"
             }
           },
           "cursor": {
-            "description": "Pagination cursor. `null` when there are no more results.",
+            "description": "Pagination cursor, or `null` when there are no more results.",
             "oneOf": [
               {
-                "type": "object",
-                "properties": {
-                  "next": {
-                    "type": "string",
-                    "description": "Cursor to pass as the `cursor` query parameter to fetch the next page (format `lcrsttx_...`)."
-                  },
-                  "expires_at": {
-                    "type": "string",
-                    "format": "date-time",
-                    "description": "Timestamp when the cursor expires."
-                  }
-                }
+                "$ref": "#/components/schemas/ListCursor"
               },
               {
                 "type": "null"
@@ -24291,7 +24504,12 @@
             "const": "list",
             "description": "Object type marker. Always `list`."
           }
-        }
+        },
+        "required": [
+          "data",
+          "cursor",
+          "object"
+        ]
       },
       "CardDailyReportEntry": {
         "type": "object",
