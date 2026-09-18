@@ -168,3 +168,4 @@ Various notes regarding generating SDKs with v2/loyalties:
   - `loyalties-v2.json` is merged with the upgraded `OpenAPI.json`
 - Exceptions (DO NOT GENERATE THE FOLLOWING ENDPOINTS/METHODS):
   - POST `/v2/loyalties/tier-structures/{tierStructureId}/deactivate`
+  - PUT `/v2/loyalties/tier-structures/{tierStructureId}/tiers/{tierId}`

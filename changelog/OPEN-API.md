@@ -4,6 +4,10 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-09-18
+
+Removed PUT `/v2/loyalties/tier-structures/{tierStructureId}/tiers/{tierId}` from `docs.json`. This endpoint may be removed, so it has to be hidden from the public documentation.
+
 ## 2026-09-17
 
 Documented product and SKU CSV exports.
