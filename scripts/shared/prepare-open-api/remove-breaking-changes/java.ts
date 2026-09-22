@@ -3,6 +3,7 @@ import {
   OpenAPISpec,
   removeRequiredFromRequestsAndResponses,
 } from "../remove-required-from-request-and-responses";
+import { restoreValidationRuleErrorObjects } from "./utils";
 
 const removeJavaBreakingChanges = {
   before: (_openApi: unknown): typeof OpenAPI => {
@@ -142,6 +143,8 @@ const removeJavaBreakingChanges = {
         "custom_double_opt_in_redirect_url": { "type": "string", "nullable": true, "description": "Defines the URL for the double opt-in consent." }
       }
     };
+
+    restoreValidationRuleErrorObjects(schemas);
 
     return openApi;
   },
