@@ -1,6 +1,9 @@
 import * as OpenAPI from "../../../../reference/OpenAPI.json";
 import { removeRequiredFromRequestsAndResponses } from "../remove-required-from-request-and-responses";
-import { fixOrderCalculated } from "./utils";
+import {
+  fixOrderCalculated,
+  restoreValidationRuleErrorObjects,
+} from "./utils";
 
 const removePhpBreakingChanges = {
   before: (_openApi: unknown): typeof OpenAPI => {
@@ -423,6 +426,8 @@ const removePhpBreakingChanges = {
       delete schemas.VouchersImportCSVRequestBody.allOf[1].properties
         .webhooks_enable;
     }
+
+    restoreValidationRuleErrorObjects(schemas);
 
     return openApi;
   },

@@ -3,6 +3,7 @@ import { removeRequiredFromRequestsAndResponses } from "../remove-required-from-
 import {
   fixOrderCalculated,
   restoreLoyaltyExpirationRulesPeriodTypeDefault,
+  restoreValidationRuleErrorObjects,
 } from "./utils";
 
 const removeRubyBreakingChanges = {
@@ -404,6 +405,8 @@ const removeRubyBreakingChanges = {
     restoreLoyaltyExpirationRulesPeriodTypeDefault(
       openApi.components.schemas.EarningRuleExpirationRules as any,
     );
+
+    restoreValidationRuleErrorObjects(openApi.components.schemas);
 
     return openApi;
   },

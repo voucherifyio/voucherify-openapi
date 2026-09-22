@@ -1,4 +1,5 @@
 import * as OpenAPI from "../../../../reference/OpenAPI.json";
+import { restoreValidationRuleErrorObjects } from "./utils";
 
 const removeJsBreakingChanges = {
   before: (_openApi: unknown): typeof OpenAPI => {
@@ -122,6 +123,8 @@ const removeJsBreakingChanges = {
         "custom_double_opt_in_redirect_url": { "type": "string", "nullable": true, "description": "Defines the URL for the double opt-in consent." }
       }
     };
+
+    restoreValidationRuleErrorObjects(schemas);
 
     return openApi;
   },
