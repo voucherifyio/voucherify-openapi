@@ -21,6 +21,21 @@ Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
   - `vl.program.earning_rule.assigned` and `vl.program.earning_rule.unassigned`.
   - `vl.program.reward.assigned`, `vl.program.reward.unassigned`, and `vl.program.reward.updated`.
   - `vl.program.tier_structure.assigned` and `vl.program.tier_structure.unassigned`.
+- Documented Loyalty v2 card definition activity events available to Workflows webhook callouts:
+  - `vl.card_definition.created`, `vl.card_definition.updated`, `vl.card_definition.deleted`, `vl.card_definition.activated`, and `vl.card_definition.drafted`.
+  - `vl.card_definition.assigned` and `vl.card_definition.unassigned`.
+- Documented Loyalty v2 earning rule activity events available to Workflows webhook callouts:
+  - `vl.earning_rule.created`, `vl.earning_rule.updated`, `vl.earning_rule.deleted`, `vl.earning_rule.activated`, `vl.earning_rule.deactivated`, and `vl.earning_rule.drafted`.
+  - `vl.earning_rule.assigned` and `vl.earning_rule.unassigned`.
+- Documented Loyalty v2 benefit activity events available to Workflows webhook callouts:
+  - `vl.benefit.created`, `vl.benefit.updated`, `vl.benefit.deleted`, `vl.benefit.activated`, and `vl.benefit.drafted`.
+- Documented Loyalty v2 tier structure activity events available to Workflows webhook callouts:
+  - `vl.tier_structure.created`, `vl.tier_structure.updated`, `vl.tier_structure.deleted`, `vl.tier_structure.activated`, `vl.tier_structure.deactivated`, and `vl.tier_structure.drafted`.
+  - `vl.tier_structure.assigned` and `vl.tier_structure.unassigned`.
+  - `vl.tier_structure.tier.created`, `vl.tier_structure.tier.updated`, and `vl.tier_structure.tier.deleted`.
+- Documented Loyalty v2 card activity events available to Workflows webhook callouts:
+  - `vl.card.created`, `vl.card.assigned`, and `vl.card.unassigned`.
+  - `vl.card.code_generation.succeeded` and `vl.card.code_generation.failed`.
 
 ## 2026-09-08
 
