@@ -8,6 +8,38 @@ Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
 - Documented Workflows webhook callouts. `data.trigger` is always the Loyalty transaction or Loyalty activity that started the workflow. `source.id` is the workflow definition ID, and `source.workflow` identifies the run.
 
+## 2026-09-18
+
+Removed PUT `/v2/loyalties/tier-structures/{tierStructureId}/tiers/{tierId}` from `docs.json`. This endpoint may be removed, so it has to be hidden from the public documentation.
+
+## 2026-09-17
+
+Documented product and SKU CSV exports.
+
+- Updated POST `/v1/exports`.
+  - Added `product` and `sku` as `exported_object` types, with `ExportProductBase` / `ExportSkuBase` request schemas, field and filter enums, and create examples.
+  - Added `ExportProductScheduled` / `ExportSkuScheduled` to the 200 body.
+  - Updated the default-fields table, Products and SKUs field tables, and the `400` `invalid_payload` example to include `voucher_transactions`, `product`, and `sku`.
+- Updated GET `/v1/exports` to list `product` and `sku` among exported object types and include them in the list example.
+- Updated GET `/v1/exports/{exportId}` with `ExportProduct` / `ExportSku` on the 200 body and get examples.
+
+## 2026-09-14
+
+- Documented the Error Message Library on validation-rule `error`.
+  - Added `ValidationRuleError` with `mode` (`MESSAGES`, `LIBRARY`), per-language `messages`, `library.key`, and the legacy `message` field.
+  - Added `ValidationRuleErrorLibrary`.
+  - Pointed `error` on `ValidationRuleBase`, rule maps, and unsupported bundle rules at `ValidationRuleError`. The API resolves the object to `{ message }` at validation or redemption time using `options.language`.
+- Added `options.language` to POST `/v1/validations` (`ValidationsValidateRequestBody`) and POST `/v1/redemptions` (`RedemptionsRedeemRequestBody`). Falls back to the library default language; omits the custom error when no message can be resolved.
+- Clarified resolved `error.message` on `Error`, `e_error`, and `e_error_expanded`.
+- Updated DELETE `/v1/customers/{customerId}`.
+  - Clarified that the customer is permanently deleted and that a new customer with the same `source_id` can be created.
+  - Documented that this method does not remove all related data, including personal data, from Voucherify databases.
+  - Pointed GDPR right-to-be-forgotten to POST `/v1/customers/{customerId}/permanent-deletion` and [Delete people data](/manage/team-settings#delete-people-data) in Team settings.
+- Updated POST `/v1/customers/{customerId}/permanent-deletion`.
+  - Replaced “consumer data” with “customer data”.
+  - Clarified that the method makes the customer profile forgotten by Voucherify as per the GDPR.
+
+
 ## 2026-09-09
 
 - Documented the remaining Loyalty v2 transaction events available to Workflows webhook callouts:
@@ -36,6 +68,7 @@ Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 - Documented Loyalty v2 card activity events available to Workflows webhook callouts:
   - `vl.card.created`, `vl.card.assigned`, and `vl.card.unassigned`.
   - `vl.card.code_generation.succeeded` and `vl.card.code_generation.failed`.
+- Removed POST `/v2/loyalties/tier-structures/{tierStructureId}/deactivate` from `docs.json`. This endpoint may be removed, so it has to be hidden from the public documentation.
 
 ## 2026-09-08
 
@@ -93,7 +126,7 @@ Verified and updated GET `/v2/loyalties/programs/{programId}/members/{memberId}/
 
 ## 2026-08-26
 
-Changed type `integer` to `number` in `exchange_ratio` in the `RedemptionRewardResult` schema.
+Typed `exchange_ratio` as `number` (was `integer` on redemption/reward nested `coin` objects, and `string` on create/update Pay with Points reward request bodies). The API returns fractional values such as `0.01`.
 
 ## 2026-08-10
 
