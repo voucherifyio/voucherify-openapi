@@ -5,6 +5,38 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-09-17
+
+Updated CSV export articles to include products and SKUs:
+
+- Updated `csv-export.mdx` to list products, SKUs, point expirations, and voucher transactions among exportable objects.
+- Updated `audit-logs.mdx` related-features copy to match the expanded CSV export types.
+
+## 2026-09-16
+
+Fixed broken Loyalty v2 API overview links so they match the OpenAPI operation summaries:
+
+- Updated `loyalty-v2-members-overview.mdx` (pending and expiring point bucket endpoints)
+- Updated `loyalty-v2-rewards-overview.mdx` (refund reward purchase)
+- Updated `loyalty-v2-tier-structures-overview.mdx` (batch assign/unassign tier structures)
+- Updated `loyalty-v2-take-to-production.mdx` (refund reward purchase)
+
+## 2026-09-14
+
+Updated `customers.mdx` to distinguish Dashboard/API customer deletion from GDPR erasure:
+
+- Clarified that deleting a customer through the Dashboard or API allows creating a new customer with the same `source_id`.
+- Documented that Dashboard deletion does not remove all related data, including personal data, from Voucherify databases.
+- Pointed GDPR right-to-be-forgotten to the [Delete Customer Permanently](/api-reference/customers/delete-customer-permanently) endpoint and [Delete people data](/manage/team-settings#delete-people-data) in Team settings.
+
+## 2026-09-09
+
+Updated `distribution-webhooks.mdx` with the **Send raw payload** behavior for default, custom, and legacy webhook configurations (DOC-1340 / DEV-3883 / DEV-4305).
+
+## 2026-09-07
+
+Update `documentation/manage/security-and-data-protection.mdx` with a link to an executable Data Processing Agreement.
+
 ## 2026-09-03
 
 Removed leftover “standalone” campaign wording from dashboard articles and aligned it with **generic** (DOC-1180 / DEV-4102). API `STANDALONE` type is unchanged.

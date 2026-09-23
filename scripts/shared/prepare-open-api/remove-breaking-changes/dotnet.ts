@@ -1,4 +1,5 @@
 import * as OpenAPI from "../../../../reference/OpenAPI.json";
+import { restoreValidationRuleErrorObjects } from "./utils";
 
 const removeDotnetBreakingChanges = {
   before: (_openApi: unknown): typeof OpenAPI => {
@@ -223,6 +224,8 @@ const removeDotnetBreakingChanges = {
         }
       }
     };
+
+    restoreValidationRuleErrorObjects(schemas);
 
     return openApi;
   },
