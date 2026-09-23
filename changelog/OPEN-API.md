@@ -4,6 +4,10 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-09-23
+
+- Documented Workflows webhook callouts. `data.trigger` is always the Loyalty transaction or Loyalty activity that started the workflow. `source.id` is the workflow definition ID, and `source.workflow` identifies the run.
+
 ## 2026-09-18
 
 Removed PUT `/v2/loyalties/tier-structures/{tierStructureId}/tiers/{tierId}` from `docs.json`. This endpoint may be removed, so it has to be hidden from the public documentation.

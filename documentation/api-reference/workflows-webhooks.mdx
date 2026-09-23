@@ -7,26 +7,28 @@ tag: "NEW"
 
 Workflows can send Loyalty v2 events to your application through a **Webhook callout** action. When a configured Loyalty transaction or Loyalty activity triggers a workflow and the callout step runs, Voucherify sends an HTTP `POST` request to the target URL defined in that step.
 
-Workflows webhooks use the [shared Voucherify webhook structure](/api-reference/introduction-to-webhooks#voucherify-webhook-structure). For these webhooks, `source.object` is always `workflow`. The `source.id` uses the `{workflow_definition_id}-{workflow_run_step_id}` format.
+Workflows webhooks use the [shared Voucherify webhook structure](/api-reference/introduction-to-webhooks#voucherify-webhook-structure). For these webhooks, `source.object` is always `workflow`. `source.id` is the workflow definition ID. `source.workflow` identifies the definition version, node, run, and step.
 
-Each event reference page describes only the content nested under `data`.
+`data.trigger` is always the trigger that started the workflow. Later steps in the same run do not replace it.
+
+Each event reference page describes the Loyalty v2 event. Workflows send that event in `data.trigger`.
 
 ## Transaction and activity payloads
 
-Workflows supports two Loyalty v2 trigger types. They use the same top-level webhook structure but differ in `data` and `event`.
+Workflows supports two Loyalty v2 trigger types. They use the same top-level webhook structure but differ in `data.trigger` and `event`.
 
 ### Loyalty transactions
 
 For a Loyalty transaction:
 
 - `type` and `event.type` contain the transaction type, for example `POINTS_EARNED`.
-- `data` contains the transaction under `data.transaction`.
-- `data.transaction.status` contains the status matched by the workflow trigger, for example `APPROVED`.
+- `data.trigger` contains the transaction.
+- `data.trigger.transaction.status` contains the status matched by the workflow trigger, for example `APPROVED`.
 - `event.id` and `event.entity_id` contain the transaction ID.
 - `event` does not contain `event_source`.
 
 <Note>
-Transaction statuses such as `APPROVED`, `PENDING`, and `REJECTED` are workflow trigger filters and values of `data.transaction.status`. They are not separate event types.
+Transaction statuses such as `APPROVED`, `PENDING`, and `REJECTED` are workflow trigger filters and values of `data.trigger.transaction.status`. They are not separate event types.
 </Note>
 
 See [Points earned](/api-reference/loyalty-transactions/card/points-earned) for the event schema.
@@ -36,7 +38,7 @@ See [Points earned](/api-reference/loyalty-transactions/card/points-earned) for 
 For a Loyalty activity:
 
 - `type` and `event.type` contain the activity type, for example `vl.member.created`.
-- `data` contains the activity data directly. It is not wrapped in an `activity` property.
+- `data.trigger` contains the activity.
 - `event.id` and `event.entity_id` contain the activity ID.
 - `event.event_source` describes how the activity was initiated, such as through the API, Client API, User Portal, or an internal process.
 
@@ -55,35 +57,44 @@ These examples show the complete payload sent to your endpoint.
   "created_at": "2026-08-20T14:32:18.531Z",
   "type": "POINTS_EARNED",
   "data": {
-    "transaction": {
-      "id": "lctx_7d2f5a39b461",
-      "card_id": "lcrd_28c4e7b195fa",
-      "program_id": "lprg_3e8a1c74d952",
-      "member_id": "lmbr_91f6b2e84a37",
-      "card_definition_id": "lcdef_6a2d9f41c783",
-      "card_type": "INDIVIDUAL",
-      "type": "POINTS_EARNED",
-      "details": {
-        "reason": "Order paid",
-        "rejection": null,
-        "metadata": {
-          "order_source": "online_store"
+    "trigger": {
+      "transaction": {
+        "id": "lctx_7d2f5a39b461",
+        "card_id": "lcrd_28c4e7b195fa",
+        "program_id": "lprg_3e8a1c74d952",
+        "member_id": "lmbr_91f6b2e84a37",
+        "card_definition_id": "lcdef_6a2d9f41c783",
+        "card_type": "INDIVIDUAL",
+        "type": "POINTS_EARNED",
+        "details": {
+          "reason": "Order paid",
+          "rejection": null,
+          "metadata": {
+            "order_source": "online_store"
+          },
+          "points": {
+            "total": 250,
+            "expiration_date": "2027-08-20"
+          }
         },
-        "points": {
-          "total": 250,
-          "expiration_date": "2027-08-20"
-        }
-      },
-      "status": "APPROVED",
-      "created_at": "2026-08-20T14:32:18.412Z",
-      "updated_at": "2026-08-20T14:32:18.497Z",
-      "object": "card_transaction"
+        "status": "APPROVED",
+        "created_at": "2026-08-20T14:32:18.412Z",
+        "updated_at": "2026-08-20T14:32:18.497Z",
+        "object": "card_transaction"
+      }
     }
   },
   "source": {
-    "id": "wfdef_7d2f5a39b461-wfrnstp_4c91a287d053",
+    "id": "wfdef_7d2f5a39b461",
     "object": "workflow",
-    "target_url": "https://example.com/webhooks/voucherify"
+    "target_url": "https://example.com/webhooks/voucherify",
+    "workflow": {
+      "id": "wfdef_7d2f5a39b461",
+      "version": 1,
+      "node": "exwfnod_webhook",
+      "run": "wfrun_4c91a287d053",
+      "step": "wfrnstp_4c91a287d053"
+    }
   },
   "event": {
     "id": "lctx_7d2f5a39b461",
@@ -102,37 +113,62 @@ These examples show the complete payload sent to your endpoint.
   "created_at": "2026-08-21T09:15:43.284Z",
   "type": "vl.member.created",
   "data": {
-    "member": {
-      "id": "lmbr_91f6b2e84a37",
-      "customer_id": "cust_7LvqCsUB9c8WyFP8JaLXchtF",
-      "program_id": "lprg_3e8a1c74d952",
-      "status": "ACTIVE",
-      "metadata": {
-        "signup_channel": "mobile_app"
-      },
-      "created_at": "2026-08-21T09:15:43.091Z",
-      "updated_at": null,
-      "object": "member"
-    },
-    "program": {
-      "id": "lprg_3e8a1c74d952",
-      "name": "Coffee Club",
-      "status": "ACTIVE",
-      "start_date": "2026-01-01T00:00:00.000Z",
-      "end_date": null,
-      "validity_hours": {
-        "type": "ANY_TIME"
-      },
-      "metadata": {},
-      "created_at": "2025-12-10T11:24:07.635Z",
-      "updated_at": "2025-12-15T08:41:29.182Z",
-      "object": "program"
+    "trigger": {
+      "activity": {
+        "id": "lambr_1c85f39e7a42",
+        "type": "vl.member.created",
+        "source": {
+          "channel": "API",
+          "api_key": {
+            "name": "Server-side key",
+            "app_id": "52f26ec1-33a7-4d6f-a951-243b911cf84e"
+          }
+        },
+        "group_id": "i-62af94d1e703",
+        "created_at": "2026-08-21T09:15:43.091Z",
+        "member_id": "lmbr_91f6b2e84a37",
+        "data": {
+          "member": {
+            "id": "lmbr_91f6b2e84a37",
+            "customer_id": "cust_7LvqCsUB9c8WyFP8JaLXchtF",
+            "program_id": "lprg_3e8a1c74d952",
+            "status": "ACTIVE",
+            "metadata": {
+              "signup_channel": "mobile_app"
+            },
+            "created_at": "2026-08-21T09:15:43.091Z",
+            "updated_at": null,
+            "object": "member"
+          },
+          "program": {
+            "id": "lprg_3e8a1c74d952",
+            "name": "Coffee Club",
+            "status": "ACTIVE",
+            "start_date": "2026-01-01T00:00:00.000Z",
+            "end_date": null,
+            "validity_hours": {
+              "type": "ANY_TIME"
+            },
+            "metadata": {},
+            "created_at": "2025-12-10T11:24:07.635Z",
+            "updated_at": "2025-12-15T08:41:29.182Z",
+            "object": "program"
+          }
+        }
+      }
     }
   },
   "source": {
-    "id": "wfdef_55bfc63a8142-wfrnstp_c2a4769de031",
+    "id": "wfdef_55bfc63a8142",
     "object": "workflow",
-    "target_url": "https://example.com/webhooks/voucherify"
+    "target_url": "https://example.com/webhooks/voucherify",
+    "workflow": {
+      "id": "wfdef_55bfc63a8142",
+      "version": 1,
+      "node": "exwfnod_webhook",
+      "run": "wfrun_c2a4769de031",
+      "step": "wfrnstp_c2a4769de031"
+    }
   },
   "event": {
     "id": "lambr_1c85f39e7a42",
