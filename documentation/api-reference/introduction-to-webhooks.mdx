@@ -1,15 +1,16 @@
 ---
 title: "Introduction to Voucherify webhooks"
-description: "Use webhooks to get notified about project and distribution events in Voucherify"
-keywords: ['project', 'distribution', 'webhook', 'structure', 'callback', 'tracking', 'monitoring', 'notification', 'event']
+description: "Use webhooks to get notified about project, distribution, and Workflows events in Voucherify"
+keywords: ['project', 'distribution', 'workflows', 'webhook', 'structure', 'callback', 'tracking', 'monitoring', 'notification', 'event']
 ---
 
 Webhooks in Voucherify are automated messages sent from Voucherify to your application when specific events happen. For example, when a voucher is redeemed, Voucherify can instantly notify your app about it. You set up webhooks by providing a URL (endpoint) in Voucherify, and Voucherify sends event notifications directly to this URL.
 
-Voucherify offers two types of webhooks:
+Voucherify offers three types of webhooks:
 
 * [Project-level webhooks](/api-reference/project-settings-webhooks) – triggered by general events across your entire project (like voucher redemption, customer updates, or order events).
 * [Distribution-based webhooks](/api-reference/distribution-webhooks) – triggered specifically by voucher distribution events (for example, when a voucher is successfully sent or fails to send).
+* [Workflows webhooks](/api-reference/workflows-webhooks) – sent by a Webhook callout action after a Loyalty transaction or Loyalty activity triggers a workflow.
 
 You can set up each webhook separately based on your application's needs.
 
@@ -17,15 +18,18 @@ You can set up each webhook separately based on your application's needs.
 
 The Voucherify webhooks share the same data structure, consisting of the following keys:
 
-* `id`
-* `project_id`
-* `created_at`
-* `type`
-* `data`
-* `source`
-* `event`
+- `id` (`string`): Unique identifier of the send out for this webhook. Example: `whs_0e16e42bc6e0c65b57`
+- `project_id` (`string`): Unique identifier of the Voucherify project. Example: `proj_5T4Rpl4T1nuM`
+- `created_at` (`string`): Timestamp representing the date and time when the webhook send out was created. The value is in ISO 8601 format. Example: `2024-01-01T11:11:11.111Z`
+- `type` (`string`): Name of the event that triggered the webhook send out. The value depends on the webhook type, for example a Project settings event name, a distribution event name, or a Loyalty v2 transaction or activity type.
+- `data` (`object`): Payload of the event that triggered the webhook. The contents depend on what triggered the webhook.
+- `source` (`object`): Details about the source of the webhook send out. Includes:
+  - `id` (`string`): Identifier of the source that sent the webhook, such as a Project settings webhook, a distribution, or a Workflows callout step.
+  - `object` (`string`): Type of the source object; `webhook` for Project settings webhooks, `distribution` for Distribution webhooks, `workflow` for Workflows webhook callouts.
+  - `target_url` (`string`): URL that receives the webhook.
+- `event` (`object`): Metadata of the event that triggered the send out, such as the event ID, type, timestamps, related entity ID, and request group ID. Nested properties can vary by webhook type.
 
-The values for the `type` and `data` depend on the event that triggers the webhook. Go to [Project Setting Webhook Payload](/api-reference/project-settings-webhooks#webhooks-available-in-project-settings) and [Distribution Webhook Payload](/api-reference/distribution-webhooks#webhooks-available-in-distributions) to learn more about their payloads.
+The values for `type`, `data`, and `event` depend on what triggers the webhook. For Workflows webhooks, `data.trigger` is always the trigger that started the workflow. Learn more in [Project setting webhook payload](/api-reference/project-settings-webhooks#project-setting-webhook-payload), [Distribution webhook payload](/api-reference/distribution-webhooks#distribution-webhook-payload), and [Workflows webhooks](/api-reference/workflows-webhooks).
 
 ## Authentication
 

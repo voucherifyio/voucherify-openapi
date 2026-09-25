@@ -4,6 +4,10 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-09-23
+
+- Documented Workflows webhook callouts. `data.trigger` is always the Loyalty transaction or Loyalty activity that started the workflow. `source.id` is the workflow definition ID, and `source.workflow` identifies the run.
+
 ## 2026-09-18
 
 Removed PUT `/v2/loyalties/tier-structures/{tierStructureId}/tiers/{tierId}` from `docs.json`. This endpoint may be removed, so it has to be hidden from the public documentation.
@@ -35,9 +39,46 @@ Documented product and SKU CSV exports.
   - Replaced “consumer data” with “customer data”.
   - Clarified that the method makes the customer profile forgotten by Voucherify as per the GDPR.
 
+
 ## 2026-09-09
 
-Removed POST `/v2/loyalties/tier-structures/{tierStructureId}/deactivate` from `docs.json`. This endpoint may be removed, so it has to be hidden from the public documentation.
+- Documented the remaining Loyalty v2 transaction events available to Workflows webhook callouts:
+  - Order: `PAY_WITH_POINTS`.
+  - Tier: `UPGRADED`, `DOWNGRADED`, `JOINED`, `LEFT`, `EXPIRATION_CHANGED`, and `EVALUATION_REFRESHED`.
+  - Reward: `PURCHASE` and `REFUND`.
+  - Benefit: `FULFILLMENT`.
+- Documented Loyalty v2 program activity events available to Workflows webhook callouts:
+  - `vl.program.created`, `vl.program.updated`, `vl.program.deleted`, `vl.program.activated`, and `vl.program.deactivated`.
+  - `vl.program.card_definition.assigned` and `vl.program.card_definition.unassigned`.
+  - `vl.program.earning_rule.assigned` and `vl.program.earning_rule.unassigned`.
+  - `vl.program.reward.assigned`, `vl.program.reward.unassigned`, and `vl.program.reward.updated`.
+  - `vl.program.tier_structure.assigned` and `vl.program.tier_structure.unassigned`.
+- Documented Loyalty v2 card definition activity events available to Workflows webhook callouts:
+  - `vl.card_definition.created`, `vl.card_definition.updated`, `vl.card_definition.deleted`, `vl.card_definition.activated`, and `vl.card_definition.drafted`.
+  - `vl.card_definition.assigned` and `vl.card_definition.unassigned`.
+- Documented Loyalty v2 earning rule activity events available to Workflows webhook callouts:
+  - `vl.earning_rule.created`, `vl.earning_rule.updated`, `vl.earning_rule.deleted`, `vl.earning_rule.activated`, `vl.earning_rule.deactivated`, and `vl.earning_rule.drafted`.
+  - `vl.earning_rule.assigned` and `vl.earning_rule.unassigned`.
+- Documented Loyalty v2 benefit activity events available to Workflows webhook callouts:
+  - `vl.benefit.created`, `vl.benefit.updated`, `vl.benefit.deleted`, `vl.benefit.activated`, and `vl.benefit.drafted`.
+- Documented Loyalty v2 tier structure activity events available to Workflows webhook callouts:
+  - `vl.tier_structure.created`, `vl.tier_structure.updated`, `vl.tier_structure.deleted`, `vl.tier_structure.activated`, `vl.tier_structure.deactivated`, and `vl.tier_structure.drafted`.
+  - `vl.tier_structure.assigned` and `vl.tier_structure.unassigned`.
+  - `vl.tier_structure.tier.created`, `vl.tier_structure.tier.updated`, and `vl.tier_structure.tier.deleted`.
+- Documented Loyalty v2 card activity events available to Workflows webhook callouts:
+  - `vl.card.created`, `vl.card.assigned`, and `vl.card.unassigned`.
+  - `vl.card.code_generation.succeeded` and `vl.card.code_generation.failed`.
+- Removed POST `/v2/loyalties/tier-structures/{tierStructureId}/deactivate` from `docs.json`. This endpoint may be removed, so it has to be hidden from the public documentation.
+
+## 2026-09-08
+
+- Documented the remaining Loyalty v2 card transaction events available to Workflows webhook callouts.
+
+## 2026-09-07
+
+- Documented the remaining Loyalty v2 member activity events available to Workflows webhook callouts:
+  - `vl.member.updated`, `vl.member.deleted`, `vl.member.activated`, and `vl.member.deactivated`.
+  - `vl.member.card.assigned` and `vl.member.card.unassigned`.
 
 ## 2026-09-03
 
