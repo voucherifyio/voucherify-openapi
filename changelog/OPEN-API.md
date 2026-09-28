@@ -4,12 +4,6 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
-## 2026-09-28
-
-- Corrected the Loyalty tier transaction webhook examples for events that keep the member in the same tier. The current tier stays on the member's tier record and is not copied onto the transaction.
-  - `EXPIRATION_CHANGED`: `transaction.tier_id`, `details.tier_to`, and `details.start_at` are `null`.
-  - `EVALUATION_REFRESHED`: `transaction.tier_id` and `details.tier_to` are `null`. `details.start_at` was already `null`.
-
 ## 2026-09-23
 
 - Documented Workflows webhook callouts. `data.trigger` is always the Loyalty transaction or Loyalty activity that started the workflow. `source.id` is the workflow definition ID, and `source.workflow` identifies the run.
