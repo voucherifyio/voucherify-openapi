@@ -5,7 +5,7 @@ openapi: "/openapi-events/events-loyalty-transaction.json webhook JOINED"
 keywords: ["loyalty v2", "workflow", "webhook", "tier joined", "tier transaction"]
 ---
 
-The `JOINED` event indicates that a member joined a Loyalty v2 tier.
+The `JOINED` event indicates that a member who had no Loyalty v2 tier now qualifies for one.
 
 <Note>
 This page documents only the event data nested under `data`. See [Introduction to webhooks](/api-reference/introduction-to-webhooks) for the shared webhook structure, and [Workflows webhooks](/api-reference/workflows-webhooks) for the full Workflows webhook payload.
@@ -14,5 +14,13 @@ This page documents only the event data nested under `data`. See [Introduction t
 This event can trigger a workflow when **Loyalty transaction** is configured with the **Tier transactions** group and the `JOINED` transaction type. If the workflow reaches a **Webhook callout** action, Voucherify sends a webhook to the action's target URL.
 
 Workflows send this transaction in the `data.trigger` object. The example uses the `APPROVED` status. A workflow can filter the trigger by transaction status: `PENDING`, `APPROVED`, or `REJECTED`. The matched status is available in `data.trigger.transaction.status`; it does not create a separate event type.
+
+Voucherify creates this transaction when the member has no current tier and the tier calculation assigns one:
+- The member's point balance or points earned in the tracking period meet a tier for the first time. Assigning a card to a member who already qualifies creates the same transaction.
+- The member's created and they already qualify for a tier.
+- A point-earned tier structure uses `NEXT_TRACKING_PERIOD`. The join waits until the next tracking period. Until then, the recalculation is an `EVALUATION_REFRESHED` transaction. The `JOINED` transaction is created when that period starts.
+- The customer enters a segment required by a tier and then qualifies.
+
+Creating or activating a member does not join a tier. A member who does not meet any tier does not produce this transaction. A move from one tier to another is an `UPGRADED` or `DOWNGRADED` transaction.
 
 `details.tier_from` is `null`. `details.tier_to` is the joined tier ID.
