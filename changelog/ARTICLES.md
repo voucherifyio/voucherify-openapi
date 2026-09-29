@@ -5,6 +5,13 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-09-28
+
+Clarified when Voucherify creates each Loyalty v2 tier transaction, and which event is created instead when the member stays in the same tier or only drops one level.
+
+- Updated `joined.mdx`, `upgraded.mdx`, `downgraded.mdx`, and `left.mdx` with the qualification, retention, `NO_DOWNGRADE`, `SINGLE_LEVEL`, and `NEXT_TRACKING_PERIOD` cases.
+- Updated `expiration-changed.mdx` and `evaluation-refreshed.mdx`. The member stays in the same tier, so `transaction.tier_id`, `details.tier_from`, `details.tier_to`, and `details.start_at` are `null`. The current tier stays on the member's tier record.
+
 ## 2026-09-17
 
 Updated CSV export articles to include products and SKUs:
