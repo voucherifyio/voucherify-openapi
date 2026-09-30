@@ -9078,30 +9078,32 @@
       }
     },
     "/v2/loyalties/programs/{programId}/reports/spending/summary": {
+      "parameters": [
+        {
+          "name": "programId",
+          "in": "path",
+          "required": true,
+          "description": "Unique loyalty program identifier (format: `lprg_` followed by hexadecimal characters).",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
       "get": {
-        "operationId": "getProgramSpendingSummaryReport",
+        "operationId": "listProgramSpendingSummaryReports",
         "tags": [
           "Programs"
         ],
-        "summary": "Get program spending summary report",
-        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nReturns total points-spending statistics for the program (all time), optionally\nfiltered by card definition.",
+        "summary": "List program spending summary reports",
+        "description": "Returns all-time point-spending totals for the program, one row per card definition that has recorded spending. Filters rows with `filters[card_definition_id]`. Returns at most 10 rows (max number of card definitions per program), ordered by `id` descending. `limit` and `order` are not query parameters.\n\nReturns `200` with an empty `data` array when no spending is recorded. Returns `400` when query validation fails. Returns `404` when the program does not exist.",
         "parameters": [
-          {
-            "name": "programId",
-            "in": "path",
-            "required": true,
-            "description": "Unique loyalty program identifier (format: `lprg_` followed by hexadecimal characters).",
-            "schema": {
-              "type": "string"
-            }
-          },
           {
             "name": "filters",
             "in": "query",
             "required": false,
             "style": "deepObject",
             "explode": true,
-            "description": "Field filters, e.g. `filters[card_definition_id][conditions][$is]=lcdef_...`. Each field accepts a `conditions` object with condition operators.",
+            "description": "Filters rows by field conditions, e.g. `filters[card_definition_id][conditions][$is]=lcdef_...`.",
             "schema": {
               "$ref": "#/components/schemas/SpendingReportListFilters"
             }
@@ -9113,17 +9115,67 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SpendingReportSummaryResponse"
+                  "$ref": "#/components/schemas/LoyaltiesProgramsReportsSpendingSummaryListResponseBody"
+                },
+                "examples": {
+                  "Summary spending report": {
+                    "value": {
+                      "data": [
+                        {
+                          "id": "lssum_12c2bc3be20c8cb533",
+                          "card_definition_id": "lcdef_128f495f720c4bec8c",
+                          "success": 1,
+                          "success_on_reward": 1,
+                          "success_on_order": 0,
+                          "points": 250,
+                          "points_on_rewards": 250,
+                          "points_on_order": 0,
+                          "amount_on_order": 0,
+                          "object": "spending_summary_report"
+                        },
+                        {
+                          "id": "lssum_12a8242827ca244ecd",
+                          "card_definition_id": "lcdef_128f4a88414c4bed69",
+                          "success": 30,
+                          "success_on_reward": 10,
+                          "success_on_order": 20,
+                          "points": 7943,
+                          "points_on_rewards": 5000,
+                          "points_on_order": 2943,
+                          "amount_on_order": 2943,
+                          "object": "spending_summary_report"
+                        }
+                      ],
+                      "object": "report"
+                    }
+                  },
+                  "Empty spending summary report": {
+                    "value": {
+                      "data": [],
+                      "object": "report"
+                    }
+                  }
                 }
               }
             }
           },
           "400": {
-            "description": "Validation error - request body or query parameters failed validation, or the operation is not allowed in the current resource state.",
+            "description": "Query parameters failed validation.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Invalid query parameters: `card_definition_id` is invalid": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Property .filters.card_definition_id.conditions.$is must match pattern \"^lcdef_[a-f0-9]+$\"",
+                      "request_id": "v-131e4b76ad2e098945"
+                    }
+                  }
                 }
               }
             }
@@ -9134,16 +9186,19 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Program not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find program with id lprg_128f58429fc4bf7b2",
+                      "request_id": "v-131e4b76ad2e098944",
+                      "resource_id": "lprg_128f58429fc4bf7b2",
+                      "resource_type": "program"
+                    }
+                  }
                 }
               }
             }
@@ -25013,50 +25068,62 @@
       },
       "SpendingReportSummaryEntry": {
         "type": "object",
-        "description": "Total program spending statistics for one card definition. All numeric fields default to 0.",
+        "description": "Total program spending statistics for one card definition that has recorded spending. Numeric fields default to `0`.",
         "properties": {
           "id": {
             "type": "string",
-            "description": "Unique identifier of the summary row."
+            "description": "Identifies the summary row (`lssum_...`)."
           },
           "card_definition_id": {
             "type": "string",
-            "description": "Unique identifier of the card definition (format `lcdef_...`)."
+            "description": "Identifies the card definition (`lcdef_...`)."
           },
           "success": {
             "type": "number",
-            "description": "Total number of successful spending operations."
+            "description": "Counts successful spending operations."
           },
           "success_on_reward": {
             "type": "number",
-            "description": "Total number of successful reward purchases."
+            "description": "Counts successful reward purchases."
           },
           "success_on_order": {
             "type": "number",
-            "description": "Total number of successful order payments."
+            "description": "Counts successful order payments."
           },
           "points": {
             "type": "number",
-            "description": "Total points spent."
+            "description": "Totals points spent."
           },
           "points_on_rewards": {
             "type": "number",
-            "description": "Total points spent on reward purchases."
+            "description": "Totals points spent on reward purchases."
           },
           "points_on_order": {
             "type": "number",
-            "description": "Total points spent on order payments."
+            "description": "Totals points spent on order payments."
           },
           "amount_on_order": {
             "type": "number",
-            "description": "Total order amount paid with points."
+            "description": "Totals order amount paid with points."
           },
           "object": {
             "type": "string",
             "const": "spending_summary_report",
             "description": "Object type marker. Always `spending_summary_report`."
           }
-        }
+        },
+        "required": [
+          "id",
+          "card_definition_id",
+          "success",
+          "success_on_reward",
+          "success_on_order",
+          "points",
+          "points_on_rewards",
+          "points_on_order",
+          "amount_on_order",
+          "object"
+        ]
       },
       "LoyaltiesProgramsReportsSpendingDailyListResponseBody": {
         "type": "object",
@@ -25081,13 +25148,14 @@
           "object"
         ]
       },
-      "SpendingReportSummaryResponse": {
+      "LoyaltiesProgramsReportsSpendingSummaryListResponseBody": {
         "type": "object",
-        "description": "Program spending summary report result.",
+        "title": "Loyalties Programs Reports Spending Summary List Response Body",
+        "description": "Response body schema for **GET** `/v2/loyalties/programs/{programId}/reports/spending/summary`.",
         "properties": {
           "data": {
             "type": "array",
-            "description": "Report entries, one per card definition.",
+            "description": "Lists summary rows, one per card definition that has recorded spending. Contains at most 10 rows (max number of card definitions per program), ordered by `id` descending.",
             "items": {
               "$ref": "#/components/schemas/SpendingReportSummaryEntry"
             }
@@ -25097,14 +25165,18 @@
             "const": "report",
             "description": "Object type marker. Always `report`."
           }
-        }
+        },
+        "required": [
+          "data",
+          "object"
+        ]
       },
       "SpendingReportListFilters": {
         "type": "object",
         "description": "Filters for spending reports.",
         "properties": {
           "junction": {
-            "description": "Logical junction between the field filters. Defaults to AND behavior.",
+            "description": "Sets the logical junction between field filters. Allowed values: `AND`, `OR`. Defaults to `AND`.",
             "oneOf": [
               {
                 "type": "string",
@@ -25119,7 +25191,7 @@
             ]
           },
           "card_definition_id": {
-            "description": "Filter by card definition id.",
+            "description": "Filters rows by card definition id (`lcdef_...`).",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/SpendingReportFilterCardDefinitionIdConditions"
