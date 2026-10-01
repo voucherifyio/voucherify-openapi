@@ -1113,29 +1113,31 @@
       }
     },
     "/v2/loyalties/programs/{programId}/earning-rules": {
+      "parameters": [
+        {
+          "name": "programId",
+          "in": "path",
+          "required": true,
+          "description": "Unique program identifier.",
+          "schema": {
+            "type": "string",
+            "pattern": "^lprg_[a-f0-9]+$"
+          }
+        }
+      ],
       "get": {
         "operationId": "listProgramEarningRuleAssignments",
         "tags": [
           "Programs"
         ],
         "summary": "List program earning rule assignments",
-        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nReturns a cursor-paginated list of earning rules assigned to the program.",
+        "description": "Returns a cursor-paginated list of earning rules assigned to the program.",
         "parameters": [
-          {
-            "name": "programId",
-            "in": "path",
-            "required": true,
-            "description": "Unique program identifier.",
-            "schema": {
-              "type": "string",
-              "pattern": "^lprg_[a-f0-9]+$"
-            }
-          },
           {
             "name": "limit",
             "in": "query",
             "required": false,
-            "description": "Maximum number of items to return. Between 1 and 100. Defaults to 10. Non-integer values are rounded.",
+            "description": "Maximum number of items to return. Between 1 and 100. Defaults to 10.",
             "schema": {
               "type": [
                 "number",
@@ -1151,7 +1153,7 @@
             "name": "order",
             "in": "query",
             "required": false,
-            "description": "Sorting order. A single value or an array of values. Prefix with `-` for descending.\nDefaults to `-created_at`. The same field cannot be used in both ascending and\ndescending order at once.",
+            "description": "Sorting order. A single value or an array of values. Prefix with `-` for descending. Defaults to `-created_at`. The same field cannot be used in both ascending and descending order at once.",
             "schema": {
               "oneOf": [
                 {
@@ -1197,37 +1199,153 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProgramEarningRuleAssignmentListResponse"
+                  "$ref": "#/components/schemas/LoyaltiesProgramsEarningRulesListResponseBody"
+                },
+                "examples": {
+                  "List of earning rules with a cursor": {
+                    "value": {
+                      "data": [
+                        {
+                          "earning_rule_id": "lern_12cd26a685db3e63d8",
+                          "created_at": "2026-07-29T11:38:14.731Z",
+                          "object": "program_earning_rule"
+                        },
+                        {
+                          "earning_rule_id": "lern_128f48ee44cc4bec34",
+                          "created_at": "2026-06-11T15:57:31.791Z",
+                          "object": "program_earning_rule"
+                        },
+                        {
+                          "earning_rule_id": "lern_128f577bd4d47c8e12",
+                          "created_at": "2026-06-11T15:57:29.977Z",
+                          "object": "program_earning_rule"
+                        }
+                      ],
+                      "cursor": {
+                        "next": "lcrserna_131f92cb9e16d68013",
+                        "expires_at": "2026-10-01T12:16:10.809Z"
+                      },
+                      "object": "list"
+                    }
+                  }
                 }
               }
             }
           },
           "400": {
-            "description": "Validation error - request body or query parameters failed validation, or the operation is not allowed in the current resource state.",
+            "description": "Query parameters failed validation, or the cursor is invalid, expired, from another list, or does not match this query.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Invalid cursor format": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Property .cursor must match pattern \"^lcrserna_[a-f0-9]+$\"",
+                      "request_id": "v-12f90062450611349b"
+                    }
+                  },
+                  "Cursor invalid or expired": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_or_expired_cursor",
+                      "message": "Invalid or expired cursor",
+                      "details": "The provided cursor is invalid or has expired",
+                      "request_id": "v-12f90062450611349c"
+                    }
+                  },
+                  "Cursor does not match query": {
+                    "value": {
+                      "code": 400,
+                      "key": "cursor_and_query_mismatch",
+                      "message": "Cursor and query mismatch",
+                      "details": "The provided cursor does not match the query, either the cursor is invalid or the query has changed",
+                      "request_id": "v-12f90062450611349d"
+                    }
+                  },
+                  "Cursor from another list": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_cursor",
+                      "message": "Invalid cursor",
+                      "details": "The provided cursor is invalid",
+                      "request_id": "v-12f90062450611349e"
+                    }
+                  },
+                  "Limit too high": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Property .limit cannot be greater than 100",
+                      "request_id": "v-12f90062450611349f"
+                    }
+                  },
+                  "Limit too low": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Property .limit cannot be lower than 1",
+                      "request_id": "v-12f9006245061134a0"
+                    }
+                  },
+                  "Unsupported order value": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Property .order must be equal to one of the allowed values [ -created_at, created_at ]",
+                      "request_id": "v-12f9006245061134a1"
+                    }
+                  },
+                  "Conflicting order values": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Query cannot be ordered by 'created_at' and '-created_at' at the same time",
+                      "request_id": "v-12f9006245061134a2"
+                    }
+                  }
                 }
               }
             }
           },
           "404": {
-            "description": "Resource not found.",
+            "description": "Program not found. Returned for any unknown program id, including a value that does not match `lprg_[a-f0-9]+`.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Program not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find program with id lprg_18f58429f4c4bf7b2",
+                      "request_id": "v-131f936f8b622332dd",
+                      "resource_id": "lprg_18f58429f4c4bf7b2",
+                      "resource_type": "program"
+                    }
+                  },
+                  "Program id does not match the pattern": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find program with id non-existent-program-id",
+                      "request_id": "v-131f936f8b622332de",
+                      "resource_id": "non-existent-program-id",
+                      "resource_type": "program"
+                    }
+                  }
                 }
               }
             }
@@ -17471,18 +17589,19 @@
           },
           "object": {
             "type": "string",
-            "description": "Object type marker.",
+            "description": "Object type marker. Always `program_earning_rule`.",
             "const": "program_earning_rule"
           }
         }
       },
-      "ProgramEarningRuleAssignmentListResponse": {
+      "LoyaltiesProgramsEarningRulesListResponseBody": {
         "type": "object",
-        "description": "Cursor-paginated list of earning rule assignments.",
+        "title": "Loyalties Programs Earning Rules List Response Body",
+        "description": "Response body schema for **GET** `/v2/loyalties/programs/{programId}/earning-rules`.",
         "properties": {
           "object": {
             "type": "string",
-            "description": "Object type marker.",
+            "description": "Object type marker. Always `list`.",
             "const": "list"
           },
           "data": {
@@ -17493,7 +17612,7 @@
             }
           },
           "cursor": {
-            "description": "Pagination cursor, or `null` when there are no more results.",
+            "description": "Pagination cursor. `null` when there are no more results.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/ProgramListCursor"
@@ -17503,7 +17622,12 @@
               }
             ]
           }
-        }
+        },
+        "required": [
+          "object",
+          "data",
+          "cursor"
+        ]
       },
       "ProgramEarningRuleBatchResponse": {
         "type": "object",
