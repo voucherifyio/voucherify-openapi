@@ -14,13 +14,24 @@
  * `enum` is not given an extra `null` entry. A strict 3.1 validator can
  * reject `null` for those two enums; keeping the enum bytes is what makes
  * the downgrade identical to the original document. Instance values under
- * `example`, `examples`, `default`, and `enum` are not walked.
+ * `example`, `examples`, `default`, `enum`, and `const` are not walked.
+ *
+ * JSON Schema `const` is legal in 3.1 and absent from 3.0. Downgrade
+ * replaces it with a one-value `enum` in the same key position. Upgrade
+ * leaves a one-value `enum` as an enum, so a document that already uses
+ * `const` does not round-trip back to `const`.
  *
  * Key order is part of the round-trip. `nullable` immediately before
  * `type` is encoded as `["null", "<type>"]`. Any other position is stored
  * in `x-openapi-30-nullable-index` and removed on the way back to 3.0.1.
  */
-const INSTANCE_KEYS = new Set(["example", "examples", "default", "enum"]);
+const INSTANCE_KEYS = new Set([
+  "example",
+  "examples",
+  "default",
+  "enum",
+  "const",
+]);
 const COMPOSITION_KEYS = ["allOf", "anyOf", "oneOf", "not"] as const;
 
 /**
@@ -184,12 +195,93 @@ function downgradeValue(value: JsonValue): JsonValue {
     next[key] = INSTANCE_KEYS.has(key) ? child : downgradeValue(child);
   }
   if (isNullableAnyOf(next)) {
-    return collapseNullableAnyOf(next);
+    return downgradeConst(collapseNullableAnyOf(next));
   }
   if (Array.isArray(next.type)) {
-    return collapseNullUnion(next);
+    return downgradeConst(collapseNullUnion(next));
   }
-  return next;
+  return downgradeConst(next);
+}
+
+/**
+ * OpenAPI 3.0 has no `const`. A one-value enum is the same constraint.
+ * The value itself is an instance, so it is copied as-is.
+ */
+function downgradeConst(schema: JsonObject): JsonObject {
+  if (!("const" in schema)) {
+    return schema;
+  }
+
+  const constValue = schema.const as JsonValue;
+  if ("enum" in schema) {
+    if (!Array.isArray(schema.enum)) {
+      throw new Error(
+        `Cannot downgrade const ${JSON.stringify(
+          constValue,
+        )} next to a non-array enum`,
+      );
+    }
+    const allowed = schema.enum.some((item) =>
+      jsonEqual(item as JsonValue, constValue),
+    );
+    if (!allowed) {
+      throw new Error(
+        `Cannot downgrade const ${JSON.stringify(
+          constValue,
+        )} because it is not listed in enum ${JSON.stringify(schema.enum)}`,
+      );
+    }
+    const withoutConst: JsonObject = {};
+    for (const [key, value] of Object.entries(schema)) {
+      if (key !== "const") {
+        withoutConst[key] = value;
+      }
+    }
+    return withoutConst;
+  }
+
+  const converted: JsonObject = {};
+  for (const [key, value] of Object.entries(schema)) {
+    if (key === "const") {
+      converted.enum = [constValue];
+    } else {
+      converted[key] = value;
+    }
+  }
+  return converted;
+}
+
+function jsonEqual(left: JsonValue, right: JsonValue): boolean {
+  if (left === right) {
+    return true;
+  }
+  if (Array.isArray(left) || Array.isArray(right)) {
+    if (
+      !Array.isArray(left) ||
+      !Array.isArray(right) ||
+      left.length !== right.length
+    ) {
+      return false;
+    }
+    return left.every((item, index) =>
+      jsonEqual(item, right[index] as JsonValue),
+    );
+  }
+  if (isObject(left) || isObject(right)) {
+    if (!isObject(left) || !isObject(right)) {
+      return false;
+    }
+    const leftKeys = Object.keys(left);
+    if (leftKeys.length !== Object.keys(right).length) {
+      return false;
+    }
+    return leftKeys.every(
+      (key) =>
+        key in right &&
+        jsonEqual(left[key] as JsonValue, right[key] as JsonValue),
+    );
+  }
+  return false;
 }
 
 function isExactNullSchema(value: JsonValue): boolean {
