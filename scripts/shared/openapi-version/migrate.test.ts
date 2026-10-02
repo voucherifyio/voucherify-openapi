@@ -341,6 +341,169 @@ describe("OpenAPI 3.0.1 ↔ 3.1.0", () => {
     ).toThrow(/type/);
   });
 
+  it("downgrades JSON Schema const to a one-value enum", () => {
+    const document = {
+      openapi: "3.1.0",
+      info: { title: "fixture", version: "1" },
+      paths: {},
+      components: {
+        schemas: {
+          Marker: {
+            type: "string",
+            description: "Object type marker.",
+            const: "program",
+          },
+          Hours: {
+            if: {
+              properties: {
+                type: { const: "ANY_TIME" },
+              },
+            },
+          },
+          Limit: { const: 1 },
+          Flag: { const: false },
+          Empty: { const: null },
+          Tags: { const: ["a", "b"] },
+          Payload: { const: { const: "keep-me", n: 1 } },
+        },
+      },
+    };
+
+    expect(stringify(downgradeOpenApi310To301(document))).toBe(
+      stringify({
+        openapi: "3.0.1",
+        info: { title: "fixture", version: "1" },
+        paths: {},
+        components: {
+          schemas: {
+            Marker: {
+              type: "string",
+              description: "Object type marker.",
+              enum: ["program"],
+            },
+            Hours: {
+              if: {
+                properties: {
+                  type: { enum: ["ANY_TIME"] },
+                },
+              },
+            },
+            Limit: { enum: [1] },
+            Flag: { enum: [false] },
+            Empty: { enum: [null] },
+            Tags: { enum: [["a", "b"]] },
+            Payload: { enum: [{ const: "keep-me", n: 1 }] },
+          },
+        },
+      }),
+    );
+    expect(stringify(document)).toContain('"const": "program"');
+  });
+
+  it("does not rewrite const inside example, examples, default, or enum", () => {
+    const schema = {
+      type: "object",
+      example: { const: "program" },
+      examples: { sample: { value: { const: "program" } } },
+      default: { const: "program" },
+      enum: [{ const: "program" }],
+    };
+    const document = {
+      openapi: "3.1.0",
+      info: { title: "fixture", version: "1" },
+      paths: {},
+      components: { schemas: { Sample: schema } },
+    };
+
+    expect(downgradeOpenApi310To301(document)).toEqual({
+      ...document,
+      openapi: "3.0.1",
+    });
+  });
+
+  it("drops const when enum already allows that value", () => {
+    const document = {
+      openapi: "3.1.0",
+      info: { title: "fixture", version: "1" },
+      paths: {},
+      components: {
+        schemas: {
+          Marker: {
+            type: "string",
+            enum: ["program", "list"],
+            const: "program",
+          },
+          Shape: {
+            const: { b: 1, a: 2 },
+            enum: [{ a: 2, b: 1 }],
+          },
+        },
+      },
+    };
+
+    expect(stringify(downgradeOpenApi310To301(document))).toBe(
+      stringify({
+        openapi: "3.0.1",
+        info: { title: "fixture", version: "1" },
+        paths: {},
+        components: {
+          schemas: {
+            Marker: { type: "string", enum: ["program", "list"] },
+            Shape: { enum: [{ a: 2, b: 1 }] },
+          },
+        },
+      }),
+    );
+  });
+
+  it("refuses to downgrade const next to a non-array enum", () => {
+    expect(() =>
+      downgradeOpenApi310To301({
+        openapi: "3.1.0",
+        info: { title: "fixture", version: "1" },
+        paths: {},
+        components: {
+          schemas: { Marker: { const: "program", enum: "program" } },
+        },
+      }),
+    ).toThrow(/non-array enum/);
+  });
+
+  it("refuses to drop a const that contradicts enum", () => {
+    expect(() =>
+      downgradeOpenApi310To301({
+        openapi: "3.1.0",
+        info: { title: "fixture", version: "1" },
+        paths: {},
+        components: {
+          schemas: { Marker: { const: "program", enum: ["list"] } },
+        },
+      }),
+    ).toThrow(/const/);
+  });
+
+  it("does not turn a one-value enum into const", () => {
+    const document = {
+      ...baseDocument(),
+      components: {
+        schemas: {
+          Marker: {
+            type: "string",
+            description: "Object type marker.",
+            enum: ["program"],
+          },
+        },
+      },
+    };
+
+    const upgraded = upgradeOpenApi301To310(document);
+
+    expect(upgraded).toEqual({ ...document, openapi: "3.1.0" });
+    expect(stringify(downgradeOpenApi310To301(upgraded))).toBe(
+      stringify(document),
+    );
+  });
+
   it("returns a 3.0.1 document unchanged and downgrades a 3.1.0 document", () => {
     const current = baseDocument();
     const upgraded = upgradeOpenApi301To310({
