@@ -94,6 +94,21 @@ export function ensureOpenApi301<T extends { openapi: string }>(
   );
 }
 
+/**
+ * SDK prep opts in with `downgradeTo301`. Generators that must keep today's
+ * 3.0.1 output call `ensureOpenApi301` directly.
+ * The clone goes through JSON so a TypeScript JSON import can be copied.
+ */
+export function applySdkOpenApiVersion<T extends { openapi: string }>(
+  document: T,
+  downgradeTo301: boolean,
+): T {
+  if (!downgradeTo301) {
+    return document;
+  }
+  return ensureOpenApi301(JSON.parse(JSON.stringify(document)) as T);
+}
+
 function upgradeValue(value: JsonValue, path: string): JsonValue {
   if (Array.isArray(value)) {
     return value.map((item, index) => upgradeValue(item, `${path}/${index}`));

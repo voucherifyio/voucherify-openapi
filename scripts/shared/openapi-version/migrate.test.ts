@@ -1,6 +1,7 @@
 import fs from "fs";
 import path from "path";
 import {
+  applySdkOpenApiVersion,
   downgradeOpenApi310To301,
   ensureOpenApi301,
   upgradeOpenApi301To310,
@@ -518,24 +519,74 @@ describe("OpenAPI 3.0.1 ↔ 3.1.0", () => {
     );
   });
 
+  it("downgrades only when an SDK asks for OpenAPI 3.0.1", () => {
+    const current = {
+      ...baseDocument(),
+      components: {
+        schemas: { Id: { type: "string", nullable: true } },
+      },
+    };
+    const upgraded = upgradeOpenApi301To310(current);
+
+    expect(applySdkOpenApiVersion(upgraded, false)).toBe(upgraded);
+    expect(stringify(applySdkOpenApiVersion(upgraded, true))).toBe(
+      stringify(current),
+    );
+    expect(applySdkOpenApiVersion(current, true)).not.toBe(current);
+    expect(stringify(applySdkOpenApiVersion(current, true))).toBe(
+      stringify(current),
+    );
+  });
+
+  it("feeds SDK generators the original 3.0.1 bytes of reference/OpenAPI.json", () => {
+    const filePath = path.join(__dirname, "../../../reference/OpenAPI.json");
+    const raw = fs.readFileSync(filePath, "utf8");
+    const document = JSON.parse(raw);
+
+    if (document.openapi === "3.0.1") {
+      expect(stringify(applySdkOpenApiVersion(document, true))).toBe(raw);
+      expect(
+        stringify(
+          applySdkOpenApiVersion(upgradeOpenApi301To310(document), true),
+        ),
+      ).toBe(raw);
+      return;
+    }
+
+    expect(document.openapi).toBe("3.1.0");
+    const as301 = applySdkOpenApiVersion(document, true);
+    expect(as301.openapi).toBe("3.0.1");
+    expect(stringify(upgradeOpenApi301To310(as301))).toBe(raw);
+  });
+
   it("round-trips reference/OpenAPI.json to the same JSON bytes", () => {
     const filePath = path.join(__dirname, "../../../reference/OpenAPI.json");
     const raw = fs.readFileSync(filePath, "utf8");
     const document = JSON.parse(raw);
 
-    expect(document.openapi).toBe("3.0.1");
     expect(stringify(document)).toBe(raw);
 
-    const upgraded = upgradeOpenApi301To310(document);
-    const downgraded = downgradeOpenApi310To301(
-      JSON.parse(stringify(upgraded)),
-    );
+    if (document.openapi === "3.0.1") {
+      const upgraded = upgradeOpenApi301To310(document);
+      const downgraded = downgradeOpenApi310To301(
+        JSON.parse(stringify(upgraded)),
+      );
 
-    expect(upgraded.openapi).toBe("3.1.0");
-    expect(stringify(downgraded)).toBe(raw);
+      expect(upgraded.openapi).toBe("3.1.0");
+      expect(stringify(downgraded)).toBe(raw);
+      expect(
+        stringify(upgradeOpenApi301To310(JSON.parse(stringify(downgraded)))),
+      ).toBe(stringify(upgraded));
+      expect(stringify(upgraded)).not.toContain('"nullable": true');
+      return;
+    }
+
+    expect(document.openapi).toBe("3.1.0");
+    const downgraded = downgradeOpenApi310To301(document);
+    expect(downgraded.openapi).toBe("3.0.1");
     expect(
       stringify(upgradeOpenApi301To310(JSON.parse(stringify(downgraded)))),
-    ).toBe(stringify(upgraded));
-    expect(stringify(upgraded)).not.toContain('"nullable": true');
+    ).toBe(raw);
+    expect(raw).not.toContain('"nullable": true');
   });
 });
