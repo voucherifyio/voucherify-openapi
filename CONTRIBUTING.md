@@ -54,7 +54,7 @@ h1::after {\n content: \"BETA\";\n background-color: rgb(237, 117, 71);\n color:
 Note that OpenAPI files slightly differ depending on where we use them.
 
 - [**[production/readOnly-openAPI.json]**](https://github.com/voucherifyio/voucherify-openapi/tree/master/production) - specification version 3.0.1 for all external viewers.
-- [**[reference/OpenAPI.json]**](https://github.com/voucherifyio/voucherify-openapi/tree/master/reference) - Specification version 3.0.1 with `"type": "null"` usages.
+- [**[reference/OpenAPI.json]**](https://github.com/voucherifyio/voucherify-openapi/tree/master/reference) - Specification version 3.1.0. Nullable fields use JSON Schema null unions (`"type": ["string", "null"]`, or `anyOf` with `"type": "null"` when the schema is a composition). `"type": "null"` is still used directly. SDK, production, and Mintlify generators downgrade this file to 3.0.1 `nullable` while those consumers stay on 3.0.1.
 - **[tmp/referenceToUpload/OpenAPI.json]** - Used for readme.io specification version 3.0.1, but it is marked as 3.1.0 to skip the validation check by readme.io. It uses `"type": "null"`.
 - **[tmp/reference/{language}/OpenAPI.json]** - Used to generate an SDK.
 
