@@ -5,6 +5,10 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-10-02
+
+Updated `errors.mdx` to add `403` Forbidden to the HTTP status code summary. Typical causes are missing permissions, no access to the resource's area or store, a project bound to another region, or a required integration key. Some `403` responses are HTML instead of JSON.
+
 ## 2026-09-28
 
 Clarified when Voucherify creates each Loyalty v2 tier transaction, and which event is created instead when the member stays in the same tier or only drops one level.
