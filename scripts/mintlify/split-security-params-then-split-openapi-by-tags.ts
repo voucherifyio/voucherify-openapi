@@ -3,8 +3,10 @@ import * as path from "path";
 import * as openApiWebhooks from "../../reference/OpenAPIWebhooks.json";
 import * as _openApi from "../../reference/OpenAPI.json";
 import { splitSecurityParams } from "./utils/split-security-params";
+import { ensureOpenApi301 } from "../shared/openapi-version/migrate";
 
-const openApi = _openApi as any;
+// Mintlify split files stay on 3.0.1 nullable until those consumers move to 3.1.
+const openApi = ensureOpenApi301(JSON.parse(JSON.stringify(_openApi)));
 
 interface OpenAPISpec {
   openapi: string;
