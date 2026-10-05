@@ -52,7 +52,9 @@ describe("Mintlify tag split", () => {
       fixture() as never,
       "",
       [],
-      { rewriteTypeNull: false, outputFolder: dir },
+      {
+        outputFolder: dir,
+      },
     );
 
     const document = readWidgets(dir);
@@ -68,29 +70,6 @@ describe("Mintlify tag split", () => {
     fs.rmSync(dir, { recursive: true, force: true });
   });
 
-  it("still rewrites type null when the webhook split asks for it", async () => {
-    const dir = fs.mkdtempSync(path.join(os.tmpdir(), "mintlify-split-"));
-
-    await splitSecurityParamsThenSplitOpenapiByTags(
-      fixture() as never,
-      "",
-      [],
-      { outputFolder: dir },
-    );
-
-    const document = readWidgets(dir);
-    expect(propertiesOf(document).name).toEqual({
-      type: ["string", "null"],
-      "x-openapi-30-nullable-index": 2,
-    });
-    expect(propertiesOf(document).empty).toEqual({
-      type: "object",
-      nullable: true,
-      default: null,
-    });
-    fs.rmSync(dir, { recursive: true, force: true });
-  });
-
   it("commits documentation/openapi tag files as OpenAPI 3.1.0", () => {
     const filePath = path.join(
       __dirname,
@@ -101,5 +80,20 @@ describe("Mintlify tag split", () => {
 
     expect(document.openapi).toBe("3.1.0");
     expect(raw).not.toContain('"nullable": true');
+  });
+
+  it("commits event files as OpenAPI 3.1.0 without nullable", () => {
+    const dir = path.join(__dirname, "../../documentation/openapi-events");
+    const files = fs.readdirSync(dir).filter((name) => name.endsWith(".json"));
+
+    expect(files.length).toBeGreaterThan(0);
+    for (const name of files) {
+      const raw = fs.readFileSync(path.join(dir, name), "utf8");
+      const document = JSON.parse(raw);
+
+      expect(document.openapi).toBe("3.1.0");
+      expect(raw).not.toContain('"nullable": true');
+      expect(raw).toContain('"type": "null"');
+    }
   });
 });
