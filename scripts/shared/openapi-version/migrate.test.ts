@@ -167,10 +167,7 @@ describe("OpenAPI 3.0.1 ↔ 3.1.0", () => {
     const upgraded = upgradeOpenApi301To310(document);
 
     expect(upgraded.components.schemas.Order).toEqual({
-      anyOf: [
-        { allOf: [{ $ref: "#/components/schemas/OrderBase" }] },
-        { type: "null" },
-      ],
+      anyOf: [{ $ref: "#/components/schemas/OrderBase" }, { type: "null" }],
     });
     expect(stringify(downgradeOpenApi310To301(upgraded))).toBe(
       stringify(document),
