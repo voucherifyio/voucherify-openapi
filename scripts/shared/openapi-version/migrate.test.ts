@@ -167,10 +167,7 @@ describe("OpenAPI 3.0.1 ↔ 3.1.0", () => {
     const upgraded = upgradeOpenApi301To310(document);
 
     expect(upgraded.components.schemas.Order).toEqual({
-      anyOf: [
-        { allOf: [{ $ref: "#/components/schemas/OrderBase" }] },
-        { type: "null" },
-      ],
+      anyOf: [{ $ref: "#/components/schemas/OrderBase" }, { type: "null" }],
     });
     expect(stringify(downgradeOpenApi310To301(upgraded))).toBe(
       stringify(document),
@@ -240,8 +237,18 @@ describe("OpenAPI 3.0.1 ↔ 3.1.0", () => {
       ],
       "x-openapi-30-nullable-index": 1,
     });
-    expect(stringify(downgradeOpenApi310To301(upgraded))).toBe(
-      stringify(document),
+    const downgraded = downgradeOpenApi310To301(upgraded);
+
+    expect(downgraded.components.schemas.Rule).toEqual({
+      nullable: true,
+      allOf: [{ $ref: "#/components/schemas/ValidationRule" }],
+    });
+    expect(downgraded.components.schemas.Later).toEqual({
+      allOf: [{ $ref: "#/components/schemas/ValidationRule" }],
+      nullable: true,
+    });
+    expect(stringify(upgradeOpenApi301To310(downgraded))).toBe(
+      stringify(upgraded),
     );
   });
 
