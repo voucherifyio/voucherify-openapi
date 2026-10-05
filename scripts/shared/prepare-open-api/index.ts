@@ -24,6 +24,7 @@ import {
   snakeToCamel,
 } from "./utils";
 import { applySdkOpenApiVersion } from "../openapi-version/migrate";
+import { omitWebhooks } from "../openapi-webhooks/reachable-schemas";
 
 let openAPIContent: any = originalOpenAPIContent;
 import addMissingDefaults from "./add-missing-defaults";
@@ -279,8 +280,10 @@ const main = async (languageOptions: LanguageOptions) => {
   }
 
   // Building all together
+  // Webhook operations are not part of the SDK surface. Extra schemas that
+  // only those operations reference are already dropped by removeNotUsedSchemas.
   let newOpenApiFile = cleanUpDescriptionsInEntireObject({
-    ...openAPIContent,
+    ...omitWebhooks(openAPIContent),
     components: {
       ...openAPIContent.components,
       schemas: fixRefUagesInAllSchemasProperties(schemasWithoutNotUsed),

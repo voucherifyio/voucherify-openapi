@@ -6,6 +6,7 @@ import { removeNotUsedSchemas } from "./prepare-open-api/remove-not-used-schemas
 import { parseNullsToNullableObjects } from "./prepare-open-api/utils";
 import { removeNotYetRefactoredPaths } from "./remove-not-yet-refactored-paths";
 import { ensureOpenApi301 } from "./openapi-version/migrate";
+import { omitWebhooks } from "./openapi-webhooks/reachable-schemas";
 
 function isObject(value) {
   return typeof value === "object" && value !== null && !Array.isArray(value);
@@ -61,7 +62,7 @@ const main = async () => {
     ),
   );
   const newOpenApiFile = {
-    ...openAPIContent,
+    ...omitWebhooks(openAPIContent),
     components: {
       ...openAPIContent.components,
       schemas: schemasWithoutNotUsed,
