@@ -81,14 +81,15 @@ How to edit the OpenAPI file:
 
 > [!WARNING] Each OpenAPI change should be tested by reviewing the documentation on readme.io after the full documentation update process.
 
-### OpenAPIWebhooks File and Event Documentation
+### Webhooks and event documentation
 
-The documentation of the events that are used in Voucherify webhooks is generated from an [OpenAPIWebhooks.json file](https://github.com/voucherifyio/voucherify-openapi/tree/master/reference).
+Webhook operations live in the `webhooks` section of [OpenAPI.json](https://github.com/voucherifyio/voucherify-openapi/tree/master/reference). Mintlify event pages are generated from that section into `documentation/openapi-events`.
 
 If you want to contribute to this documentation, follow the guidelines for the Voucherify OpenAPI documentation.
 
 Tips:
-- To add a new event, add it to the `"paths"` resources in the OpenAPIWebhooks.json file. Events use the `POST` method.
+- To add a new event, add it under `webhooks`. Events use the `post` method.
+- A schema that an API path already uses keeps that API definition. A webhook payload that needs a different shape gets its own schema name. Names copied from the old webhook file use a `Webhook` prefix when they collided.
 - To add a new event category, add an object to the `"tags"` section. Specify the name and description. The name and the description should be the same, starting with the `Events` word.
 - If you want to add a page to the Events section, add a Markdown file to the `docs/custom-webhook-sites` folder.
   - Note: these files require a header wrapped with `---` to describe the page title, type, slug, order, and visibility.
