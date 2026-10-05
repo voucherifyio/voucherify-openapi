@@ -89,7 +89,7 @@ If you want to contribute to this documentation, follow the guidelines for the V
 
 Tips:
 - To add a new event, add it under `webhooks`. Events use the `post` method.
-- A schema that an API path already uses keeps that API definition. A webhook payload that needs a different shape gets its own schema name. Names copied from the old webhook file use a `Webhook` prefix when they collided.
+- A schema that an API path already uses keeps that API definition. When a webhook payload uses that same shape, events point at it. A payload that is a different object keeps a `Webhook` prefix.
 - To add a new event category, add an object to the `"tags"` section. Specify the name and description. The name and the description should be the same, starting with the `Events` word.
 - If you want to add a page to the Events section, add a Markdown file to the `docs/custom-webhook-sites` folder.
   - Note: these files require a header wrapped with `---` to describe the page title, type, slug, order, and visibility.
