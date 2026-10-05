@@ -17,8 +17,7 @@ Available SDKs:
 
 ### 📁 `reference/`
 Contains the source OpenAPI specification files that serve as the foundation for SDK generation and documentation:
-- **`OpenAPI.json`** - Main OpenAPI specification
-- **`OpenAPIWebhooks.json`** - Webhooks specification
+- **`OpenAPI.json`** - Main OpenAPI specification, including webhook operations
 - **`readonly-sdks/`** - Read-only SDK specifications
 - **`split-openapi-by-tags/`** - OpenAPI spec split by API resource tags
 

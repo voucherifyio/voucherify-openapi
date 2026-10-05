@@ -1,6 +1,5 @@
 import * as fs from "fs/promises";
 import * as path from "path";
-import * as openApiWebhooks from "../../reference/OpenAPIWebhooks.json";
 import * as openApi from "../../reference/OpenAPI.json";
 import { OPENAPI_30_NULLABLE_INDEX } from "../shared/openapi-version/migrate";
 import { splitSecurityParams } from "./utils/split-security-params";
@@ -588,9 +587,15 @@ export async function splitSecurityParamsThenSplitOpenapiByTags(
   }
 }
 
+const EVENTS_INFO = { title: "Events", version: "2024-01-01" };
+
 async function main(): Promise<void> {
+  const apiSpec = splitSecurityParams(openApi) as unknown as OpenAPISpec;
+  // Event operations live on the same document. They are written to
+  // documentation/openapi-events, not into the API tag files.
+  delete apiSpec.webhooks;
   await splitSecurityParamsThenSplitOpenapiByTags(
-    splitSecurityParams(openApi) as unknown as OpenAPISpec,
+    apiSpec,
     "/../documentation/openapi",
     // Manually maintained files that are not generated from tags and must be
     // preserved when the folder is regenerated.
@@ -599,8 +604,18 @@ async function main(): Promise<void> {
     // loyalties-v2.json that way.
     { rewriteTypeNull: false },
   );
+  const source = openApi as {
+    openapi: string;
+    webhooks?: OpenAPISpec["webhooks"];
+    components?: OpenAPISpec["components"];
+  };
   await splitSecurityParamsThenSplitOpenapiByTags(
-    openApiWebhooks,
+    {
+      openapi: source.openapi,
+      info: EVENTS_INFO,
+      webhooks: source.webhooks,
+      components: source.components,
+    },
     "/../documentation/openapi-events",
   );
 }
