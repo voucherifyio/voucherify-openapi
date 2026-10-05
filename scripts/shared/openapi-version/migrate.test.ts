@@ -208,6 +208,43 @@ describe("OpenAPI 3.0.1 ↔ 3.1.0", () => {
     );
   });
 
+  it("wraps a nullable $ref that has no type of its own", () => {
+    const document = {
+      ...baseDocument(),
+      components: {
+        schemas: {
+          Rule: {
+            nullable: true,
+            $ref: "#/components/schemas/ValidationRule",
+          },
+          Later: {
+            $ref: "#/components/schemas/ValidationRule",
+            nullable: true,
+          },
+        },
+      },
+    };
+
+    const upgraded = upgradeOpenApi301To310(document);
+
+    expect(upgraded.components.schemas.Rule).toEqual({
+      anyOf: [
+        { $ref: "#/components/schemas/ValidationRule" },
+        { type: "null" },
+      ],
+    });
+    expect(upgraded.components.schemas.Later).toEqual({
+      anyOf: [
+        { $ref: "#/components/schemas/ValidationRule" },
+        { type: "null" },
+      ],
+      "x-openapi-30-nullable-index": 1,
+    });
+    expect(stringify(downgradeOpenApi310To301(upgraded))).toBe(
+      stringify(document),
+    );
+  });
+
   it("leaves type null and enum values untouched", () => {
     const document = {
       ...baseDocument(),
@@ -380,24 +417,31 @@ describe("OpenAPI 3.0.1 ↔ 3.1.0", () => {
               type: "string",
               description: "Object type marker.",
               enum: ["program"],
+              "x-openapi-31-const": true,
             },
             Hours: {
               if: {
                 properties: {
-                  type: { enum: ["ANY_TIME"] },
+                  type: { enum: ["ANY_TIME"], "x-openapi-31-const": true },
                 },
               },
             },
-            Limit: { enum: [1] },
-            Flag: { enum: [false] },
-            Empty: { enum: [null] },
-            Tags: { enum: [["a", "b"]] },
-            Payload: { enum: [{ const: "keep-me", n: 1 }] },
+            Limit: { enum: [1], "x-openapi-31-const": true },
+            Flag: { enum: [false], "x-openapi-31-const": true },
+            Empty: { enum: [null], "x-openapi-31-const": true },
+            Tags: { enum: [["a", "b"]], "x-openapi-31-const": true },
+            Payload: {
+              enum: [{ const: "keep-me", n: 1 }],
+              "x-openapi-31-const": true,
+            },
           },
         },
       }),
     );
     expect(stringify(document)).toContain('"const": "program"');
+    expect(
+      stringify(upgradeOpenApi301To310(downgradeOpenApi310To301(document))),
+    ).toBe(stringify(document));
   });
 
   it("does not rewrite const inside example, examples, default, or enum", () => {

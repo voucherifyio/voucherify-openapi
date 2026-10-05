@@ -6,7 +6,8 @@
  * 2020-12, which has no `nullable`. A typed schema becomes a union with
  * `null`. A composition (allOf / anyOf / oneOf / not) is wrapped in
  * `anyOf` with `{ "type": "null" }`, because putting `null` on `type`
- * would still require the composition to match.
+ * would still require the composition to match. A `nullable` `$ref`
+ * without its own `type` is wrapped the same way.
  *
  * `type: "null"` is already used in this spec and is legal in 3.1, so it
  * stays. `example` stays too: JSON Schema keeps unknown keywords as
@@ -17,9 +18,9 @@
  * `example`, `examples`, `default`, `enum`, and `const` are not walked.
  *
  * JSON Schema `const` is legal in 3.1 and absent from 3.0. Downgrade
- * replaces it with a one-value `enum` in the same key position. Upgrade
- * leaves a one-value `enum` as an enum, so a document that already uses
- * `const` does not round-trip back to `const`.
+ * replaces it with a one-value `enum` in the same key position and marks
+ * that enum with `x-openapi-31-const`. Upgrade restores `const` only when
+ * the mark is present, so a one-value enum written by hand stays an enum.
  *
  * Key order is part of the round-trip. `nullable` immediately before
  * `type` is encoded as `["null", "<type>"]`. Any other position is stored
@@ -40,6 +41,13 @@ const COMPOSITION_KEYS = ["allOf", "anyOf", "oneOf", "not"] as const;
  * this index so the 3.0.1 document matches the original key order.
  */
 export const OPENAPI_30_NULLABLE_INDEX = "x-openapi-30-nullable-index";
+
+/**
+ * Present only on the 3.0.1 form of a schema that used `const`.
+ * Upgrade removes it and puts `const` back. A one-value enum without this
+ * mark stays an enum.
+ */
+export const OPENAPI_31_CONST = "x-openapi-31-const";
 
 type JsonObject = { [key: string]: JsonValue };
 type JsonValue = null | boolean | number | string | JsonValue[] | JsonObject;
@@ -117,16 +125,37 @@ function upgradeValue(value: JsonValue, path: string): JsonValue {
     return value;
   }
 
-  const next: JsonObject = {};
+  let next: JsonObject = {};
   for (const [key, child] of Object.entries(value)) {
     next[key] = INSTANCE_KEYS.has(key)
       ? child
       : upgradeValue(child, `${path}/${key}`);
   }
+  if (next[OPENAPI_31_CONST] === true) {
+    next = restoreConst(next, path);
+  }
   if (!("nullable" in next)) {
     return next;
   }
   return upgradeNullable(next, path);
+}
+
+function restoreConst(schema: JsonObject, path: string): JsonObject {
+  if (!Array.isArray(schema.enum) || schema.enum.length !== 1) {
+    throw new Error(`${path}: ${OPENAPI_31_CONST} requires a one-value enum`);
+  }
+  const converted: JsonObject = {};
+  for (const [key, value] of Object.entries(schema)) {
+    if (key === OPENAPI_31_CONST) {
+      continue;
+    }
+    if (key === "enum") {
+      converted.const = schema.enum[0];
+      continue;
+    }
+    converted[key] = value;
+  }
+  return converted;
 }
 
 function upgradeNullable(schema: JsonObject, path: string): JsonObject {
@@ -137,7 +166,10 @@ function upgradeNullable(schema: JsonObject, path: string): JsonObject {
       )}`,
     );
   }
-  if (COMPOSITION_KEYS.some((key) => key in schema)) {
+  if (
+    COMPOSITION_KEYS.some((key) => key in schema) ||
+    ("$ref" in schema && typeof schema.type !== "string")
+  ) {
     return wrapNullableComposition(schema);
   }
   if (typeof schema.type !== "string") {
@@ -263,6 +295,7 @@ function downgradeConst(schema: JsonObject): JsonObject {
       converted[key] = value;
     }
   }
+  converted[OPENAPI_31_CONST] = true;
   return converted;
 }
 
