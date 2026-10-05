@@ -6,7 +6,11 @@
  * 2020-12, which has no `nullable`. A typed schema becomes a union with
  * `null`. A composition (allOf / anyOf / oneOf / not) is wrapped in
  * `anyOf` with `{ "type": "null" }`, because putting `null` on `type`
- * would still require the composition to match.
+ * would still require the composition to match. An `allOf` whose only
+ * member is a `$ref` is that same reference: OpenAPI 3.0 ignores keywords
+ * next to `$ref`, so the 3.0 document used `allOf` to keep `nullable`.
+ * The 3.1 branch is the `$ref` itself. Downgrade puts the `allOf` back,
+ * which is what SDK prep already flattens.
  *
  * `type: "null"` is already used in this spec and is legal in 3.1, so it
  * stays. `example` stays too: JSON Schema keeps unknown keywords as
@@ -153,6 +157,31 @@ function upgradeNullable(schema: JsonObject, path: string): JsonObject {
   return convertSimpleNullable(schema);
 }
 
+function isExactRefSchema(value: JsonValue): value is JsonObject {
+  return (
+    isObject(value) &&
+    Object.keys(value).length === 1 &&
+    typeof value.$ref === "string"
+  );
+}
+
+/**
+ * `{ "nullable": true, "allOf": [{ "$ref": "..." }] }` is how this spec
+ * attaches nullable to a reference in OpenAPI 3.0. In 3.1 the reference
+ * can sit directly in `anyOf`.
+ */
+function isSingleRefAllOf(value: JsonValue): value is JsonObject {
+  if (
+    !isObject(value) ||
+    Object.keys(value).length !== 1 ||
+    !Array.isArray(value.allOf) ||
+    value.allOf.length !== 1
+  ) {
+    return false;
+  }
+  return isExactRefSchema(value.allOf[0] as JsonValue);
+}
+
 function wrapNullableComposition(schema: JsonObject): JsonObject {
   const keys = Object.keys(schema);
   const nullableIndex = keys.indexOf("nullable");
@@ -162,9 +191,12 @@ function wrapNullableComposition(schema: JsonObject): JsonObject {
       inner[key] = schema[key];
     }
   }
+  const branch = isSingleRefAllOf(inner)
+    ? { $ref: (inner.allOf as JsonObject[])[0].$ref }
+    : inner;
 
   const wrapped: JsonObject = {
-    anyOf: [inner, { type: "null" }],
+    anyOf: [branch, { type: "null" }],
   };
   if (nullableIndex !== 0) {
     wrapped[OPENAPI_30_NULLABLE_INDEX] = nullableIndex;
@@ -329,7 +361,12 @@ function collapseNullableAnyOf(schema: JsonObject): JsonObject {
   if (!isObject(inner as JsonValue)) {
     throw new Error("Nullable anyOf branch must be an object");
   }
-  return insertKey(inner as JsonObject, nullableIndex, "nullable", true);
+  // OpenAPI 3.0 ignores `nullable` next to `$ref`. Restore the allOf
+  // wrapper the SDK pipeline already receives for these fields.
+  const restored = isExactRefSchema(inner as JsonValue)
+    ? { allOf: [inner as JsonObject] }
+    : (inner as JsonObject);
+  return insertKey(restored, nullableIndex, "nullable", true);
 }
 
 function collapseNullUnion(schema: JsonObject): JsonObject {
