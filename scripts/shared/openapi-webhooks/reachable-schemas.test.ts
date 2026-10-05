@@ -97,7 +97,10 @@ describe("webhook schemas stay out of generated API specs", () => {
     const filePath = path.join(__dirname, "../../../reference/OpenAPI.json");
     const spec = JSON.parse(fs.readFileSync(filePath, "utf8"));
 
-    expect(spec.webhooks).toBeUndefined();
-    expect(schemaNamesReachableFromPaths(spec).size).toBeGreaterThan(100);
+    const reachable = schemaNamesReachableFromPaths(spec);
+
+    expect(Object.keys(spec.webhooks).length).toBeGreaterThan(100);
+    expect(reachable.size).toBeGreaterThan(100);
+    expect(reachable.has("EventBusValRuleAssignmentCreatedData")).toBe(false);
   });
 });
