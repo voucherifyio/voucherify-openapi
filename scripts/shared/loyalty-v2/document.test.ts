@@ -4,6 +4,7 @@ import {
   LOYALTY_V2_DOCUMENT_KEY,
   appendLoyaltyV2,
   documentWithoutLoyaltyV2,
+  dropFreeLoyaltyV2Prefixes,
   extractLoyaltyV2Document,
   omitLoyaltyV2Document,
   type OpenApiDocument,
@@ -93,6 +94,65 @@ describe("Loyalty v2 document", () => {
     expect(apiOnly.components?.schemas?.VLProgram).toBeUndefined();
     expect(apiOnly.components?.schemas?.Campaign).toEqual({ type: "object" });
     expect(apiOnly[LOYALTY_V2_DOCUMENT_KEY]).toBeUndefined();
+  });
+
+  it("drops a free VL prefix and keeps a name that already exists", () => {
+    const main: OpenApiDocument = {
+      openapi: "3.1.0",
+      paths: {},
+      components: { schemas: { BadRequest: { type: "object", description: "api" } } },
+    };
+    const loyalty: OpenApiDocument = {
+      openapi: "3.1.0",
+      info: { title: "Loyalty" },
+      servers: [],
+      tags: [],
+      paths: {
+        "/v2/loyalties/programs": {
+          get: {
+            responses: {
+              "200": {
+                content: {
+                  "application/json": {
+                    schema: { $ref: "#/components/schemas/Program" },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+      components: {
+        schemas: {
+          Program: {
+            type: "object",
+            properties: {
+              error: { $ref: "#/components/schemas/BadRequest" },
+            },
+          },
+          BadRequest: { type: "object", description: "loyalty" },
+        },
+        securitySchemes: {},
+      },
+      security: [],
+    };
+    const dropped = dropFreeLoyaltyV2Prefixes(appendLoyaltyV2(main, loyalty));
+
+    expect(dropped.components?.schemas?.VLProgram).toBeUndefined();
+    expect(dropped.components?.schemas?.Program).toMatchObject({
+      properties: { error: { $ref: "#/components/schemas/VLBadRequest" } },
+    });
+    expect(dropped.components?.schemas?.BadRequest).toEqual({
+      type: "object",
+      description: "api",
+    });
+    expect(dropped.components?.schemas?.VLBadRequest).toEqual({
+      type: "object",
+      description: "loyalty",
+    });
+    expect(JSON.stringify(extractLoyaltyV2Document(dropped))).toBe(
+      JSON.stringify(loyalty),
+    );
   });
 
   it("rebuilds documentation/openapi/loyalties-v2.json from reference/OpenAPI.json", () => {
