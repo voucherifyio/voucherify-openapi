@@ -30,7 +30,7 @@ npm run prepare-generated
 
 Languages under `reference/readonly-sdks/` are `ruby`, `java`, `php`, `python`, `js`, and `dotnet`.
 
-`documentation/openapi/loyalties-v2.json` is generated from paths under `/v2/loyalties`. Those schemas use their own names in `reference/OpenAPI.json`. A `VL` prefix remains only when that name already belongs to an API schema (`BadRequest`, `MemberActivity`, `MemberActivityData`). `x-loyalty-v2` holds the tag file's info, servers, tags, and security. The generator strips a remaining prefix when it writes the tag file. SDK and production specs omit `x-loyalty-v2` and do not include `/v2/loyalties`, because those paths are not on the SDK allowlist.
+`documentation/openapi/loyalties-v2.json` is generated from paths under `/v2/loyalties`. Those schemas use their own names in `reference/OpenAPI.json`. A schema is not copied again when an existing schema has the same body and its name ends with the loyalty name. A `VL` prefix remains only when that name already belongs to an API schema (`BadRequest`, `MemberActivity`, `MemberActivityData`). `x-loyalty-v2` holds the tag file's info, servers, tags, and security. The generator strips a remaining prefix when it writes the tag file. SDK and production specs omit `x-loyalty-v2` and do not include `/v2/loyalties`, because those paths are not on the SDK allowlist.
 
 Null in 3.1 is `"type": "null"` or a union such as `"type": ["string", "null"]`. A nullable reference is `anyOf` of the `$ref` and `{ "type": "null" }`. Do not write the OpenAPI 3.0 keyword `nullable` into `reference/OpenAPI.json` or into `documentation/openapi*`. SDK and production specs are downgraded to 3.0.1, and that downgrade is what introduces `nullable`.
 

@@ -98,6 +98,39 @@ function schemaRef(name: string): string {
   return `${SCHEMA_REF_PREFIX}${name}`;
 }
 
+const IGNORED_SCHEMA_KEYS = new Set([
+  "description",
+  "title",
+  "example",
+  "examples",
+  "externalDocs",
+]);
+
+function schemaBody(node: Json): Json {
+  if (Array.isArray(node)) {
+    return node.map((item) => schemaBody(item));
+  }
+  if (!node || typeof node !== "object") {
+    return node;
+  }
+  const body: { [key: string]: Json } = {};
+  for (const [key, value] of Object.entries(node)) {
+    if (IGNORED_SCHEMA_KEYS.has(key) || key.startsWith("x-")) {
+      continue;
+    }
+    body[key] = schemaBody(value);
+  }
+  return body;
+}
+
+function isStoredLoyaltySchema(name: string, publicNames: Set<string>): boolean {
+  return (
+    publicNames.has(name) ||
+    (name.startsWith(LOYALTY_V2_SCHEMA_PREFIX) &&
+      publicNames.has(name.slice(LOYALTY_V2_SCHEMA_PREFIX.length)))
+  );
+}
+
 function rewriteSchemaRefs(
   node: Json,
   rename: (name: string) => string | undefined,
@@ -243,6 +276,66 @@ export function dropFreeLoyaltyV2Prefixes(
 }
 
 /**
+ * Points a Loyalty v2 schema at an existing schema when that schema is the
+ * same body and its name ends with the loyalty name (`Foo` and `...Foo`).
+ * Shared shapes that do not share the name stay separate. When descriptions
+ * differ, the loyalty text is kept: it is the loyalty spec, and the other
+ * copy is the event schema.
+ */
+export function dedupeLoyaltyV2Schemas(
+  document: OpenApiDocument,
+): OpenApiDocument {
+  const copy = clone(document);
+  const envelope = loyaltyEnvelope(copy);
+  const schemas = copy.components?.schemas;
+  if (!schemas) {
+    return copy;
+  }
+  const publicNames = new Set(envelope.schemaNames);
+  const apiByBody = new Map<string, string[]>();
+  for (const [name, schema] of Object.entries(schemas)) {
+    if (isStoredLoyaltySchema(name, publicNames)) {
+      continue;
+    }
+    const body = JSON.stringify(schemaBody(schema));
+    const names = apiByBody.get(body) ?? [];
+    names.push(name);
+    apiByBody.set(body, names);
+  }
+
+  const rename = new Map<string, string>();
+  const kept: string[] = [];
+  for (const publicName of envelope.schemaNames) {
+    const storedName = storedSchemaName(publicName, schemas);
+    const matches = (apiByBody.get(JSON.stringify(schemaBody(schemas[storedName]))) ??
+      []
+    ).filter((name) => name !== publicName && name.endsWith(publicName));
+    if (matches.length !== 1) {
+      kept.push(publicName);
+      continue;
+    }
+    const canonical = matches[0] as string;
+    const loyaltySchema = schemas[storedName] as { description?: Json };
+    const canonicalSchema = schemas[canonical] as { description?: Json };
+    if (
+      typeof loyaltySchema.description === "string" &&
+      loyaltySchema.description !== canonicalSchema.description
+    ) {
+      canonicalSchema.description = loyaltySchema.description;
+    }
+    delete schemas[storedName];
+    rename.set(storedName, canonical);
+  }
+  envelope.schemaNames = kept;
+  const apply = (name: string): string | undefined => rename.get(name);
+  if (copy.paths) {
+    rewriteSchemaRefs(copy.paths as Json, apply);
+  }
+  rewriteSchemaRefs(schemas as Json, apply);
+  return copy;
+}
+
+/**
  * Rebuilds documentation/openapi/loyalties-v2.json from the main document.
  * Stored `VL` names are written back as the original schema names.
  */
@@ -271,6 +364,42 @@ export function extractLoyaltyV2Document(main: OpenApiDocument): OpenApiDocument
     const schema = clone(schemas[storedName]);
     rewriteSchemaRefs(schema, rename);
     extractedSchemas[publicName] = schema;
+  }
+  const pending: string[] = [];
+  const noteRef = (node: Json) => {
+    if (Array.isArray(node)) {
+      node.forEach(noteRef);
+      return;
+    }
+    if (!node || typeof node !== "object") {
+      return;
+    }
+    for (const [key, value] of Object.entries(node)) {
+      if (
+        key === "$ref" &&
+        typeof value === "string" &&
+        value.startsWith(SCHEMA_REF_PREFIX)
+      ) {
+        pending.push(decodeURIComponent(value.slice(SCHEMA_REF_PREFIX.length)));
+        continue;
+      }
+      noteRef(value);
+    }
+  };
+  noteRef(paths as Json);
+  noteRef(extractedSchemas as Json);
+  while (pending.length > 0) {
+    const name = pending.pop() as string;
+    if (
+      Object.prototype.hasOwnProperty.call(extractedSchemas, name) ||
+      !Object.prototype.hasOwnProperty.call(schemas, name)
+    ) {
+      continue;
+    }
+    const schema = clone(schemas[name]);
+    rewriteSchemaRefs(schema, rename);
+    extractedSchemas[name] = schema;
+    noteRef(schema);
   }
 
   return {
