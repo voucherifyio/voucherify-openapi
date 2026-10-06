@@ -5,6 +5,18 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-10-05
+
+Documented the Loyalty v2 limit of 10 effects per earning rule and moved the rollout marker to the Expansion phase.
+
+- Updated `create-earning-rules.mdx` so each earning can contain up to 10 effects.
+- Updated `loyalty-overview.mdx` with the same effect limit on program limits, and marked Expansion as the current rollout phase. The Expansion section lists those items as Features.
+
+Documented password strength requirements:
+
+- Updated `account-security.mdx` with the strong-password rules: at least 12 characters, one uppercase letter, one lowercase letter, and one number. The password must be hard to guess and must not contain an email, names, keyboard patterns, or common words.
+- Updated `security.mdx` to state that passwords must be strong and are hashed using SHA256 with salt.
+
 ## 2026-10-02
 
 Updated `errors.mdx` to add `403` Forbidden to the HTTP status code summary. Typical causes are missing permissions, no access to the resource's area or store, a project bound to another region, or a required integration key. Some `403` responses are HTML instead of JSON.
