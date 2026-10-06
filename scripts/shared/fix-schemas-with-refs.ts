@@ -5,6 +5,7 @@ import {
   isLoyaltyV2Path,
   pathsWithoutLoyaltyV2,
 } from "./loyalty-v2/document";
+import { serializeOpenApiDocument } from "./loyalty-v2/serialize";
 import { schemaNamesReachableFromPaths } from "./openapi-webhooks/reachable-schemas";
 
 /**
@@ -93,7 +94,7 @@ async function main(): Promise<void> {
 
   await fsPromises.writeFile(
     openApiPath,
-    JSON.stringify(fixOpenApiDocument(document), null, 2),
+    serializeOpenApiDocument(fixOpenApiDocument(document)),
   );
 }
 
