@@ -1,5 +1,7 @@
 import fs from "fs";
 import path from "path";
+import { documentWithoutLoyaltyV2 } from "../loyalty-v2/document";
+import { serializeOpenApiDocument } from "../loyalty-v2/serialize";
 import {
   applySdkOpenApiVersion,
   downgradeOpenApi310To301,
@@ -605,9 +607,12 @@ describe("OpenAPI 3.0.1 ↔ 3.1.0", () => {
     }
 
     expect(document.openapi).toBe("3.1.0");
-    const as301 = applySdkOpenApiVersion(document, true);
+    // SDK prep drops Loyalty v2 before downgrade. `type: ["null"]` there
+    // cannot be written as OpenAPI 3.0.1 nullable.
+    const api = documentWithoutLoyaltyV2(document);
+    const as301 = applySdkOpenApiVersion(api, true);
     expect(as301.openapi).toBe("3.0.1");
-    expect(stringify(upgradeOpenApi301To310(as301))).toBe(raw);
+    expect(stringify(upgradeOpenApi301To310(as301))).toBe(stringify(api));
   });
 
   it("round-trips reference/OpenAPI.json to the same JSON bytes", () => {
@@ -615,7 +620,7 @@ describe("OpenAPI 3.0.1 ↔ 3.1.0", () => {
     const raw = fs.readFileSync(filePath, "utf8");
     const document = JSON.parse(raw);
 
-    expect(stringify(document)).toBe(raw);
+    expect(serializeOpenApiDocument(document)).toBe(raw);
 
     if (document.openapi === "3.0.1") {
       const upgraded = upgradeOpenApi301To310(document);
@@ -633,11 +638,12 @@ describe("OpenAPI 3.0.1 ↔ 3.1.0", () => {
     }
 
     expect(document.openapi).toBe("3.1.0");
-    const downgraded = downgradeOpenApi310To301(document);
+    const api = documentWithoutLoyaltyV2(document);
+    const downgraded = downgradeOpenApi310To301(api);
     expect(downgraded.openapi).toBe("3.0.1");
     expect(
       stringify(upgradeOpenApi301To310(JSON.parse(stringify(downgraded)))),
-    ).toBe(raw);
+    ).toBe(stringify(api));
     expect(raw).not.toContain('"nullable": true');
   });
 });
