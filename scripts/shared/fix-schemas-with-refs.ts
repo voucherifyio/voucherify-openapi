@@ -1,14 +1,17 @@
 import path from "path";
 import fsPromises from "fs/promises";
 import { omit, pick } from "lodash";
+import {
+  isLoyaltyV2Path,
+  pathsWithoutLoyaltyV2,
+} from "./loyalty-v2/document";
 import { schemaNamesReachableFromPaths } from "./openapi-webhooks/reachable-schemas";
 
 /**
  * Rewrites `$ref` siblings the way the API spec already does.
- * Schemas that are only reachable from `webhooks` are left alone, and the
- * `webhooks` tree itself is not walked. Generated SDK and production specs
- * never include those schemas, so rewriting them would change event docs
- * the next time this script runs.
+ * Schemas that are only reachable from `webhooks` or `/v2/loyalties` are left
+ * alone, and those trees are not walked. SDK and production specs do not
+ * include them, and the Loyalty v2 tag file keeps descriptions next to `$ref`.
  */
 export const fixSchemasWithRefs = (
   object: any,
@@ -16,6 +19,9 @@ export const fixSchemasWithRefs = (
   reachable?: Set<string>,
 ): any => {
   if (path[0] === "webhooks") {
+    return object;
+  }
+  if (path[0] === "paths" && path.length >= 2 && isLoyaltyV2Path(path[1])) {
     return object;
   }
   if (
@@ -70,7 +76,12 @@ export function fixOpenApiDocument<T extends { paths?: unknown }>(
   return fixSchemasWithRefs(
     document,
     [],
-    schemaNamesReachableFromPaths(document),
+    schemaNamesReachableFromPaths({
+      ...document,
+      paths: pathsWithoutLoyaltyV2(
+        document.paths as Record<string, unknown> | undefined,
+      ),
+    }),
   );
 }
 

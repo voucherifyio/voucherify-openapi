@@ -63,6 +63,38 @@ describe("fixSchemasWithRefs", () => {
     expect(fixed.components.schemas.Used).toEqual({ type: "string" });
   });
 
+  it("leaves a description next to a Loyalty v2 $ref", () => {
+    const schema = {
+      description: "kept next to the ref",
+      $ref: "#/components/schemas/VLHours",
+    };
+    const document = {
+      paths: {
+        "/v2/loyalties/programs": {
+          get: {
+            responses: {
+              "200": {
+                content: {
+                  "application/json": { schema },
+                },
+              },
+            },
+          },
+        },
+      },
+      components: {
+        schemas: {
+          VLHours: schema,
+        },
+      },
+    };
+
+    const fixed = fixOpenApiDocument(document);
+
+    expect(fixed.paths["/v2/loyalties/programs"].get.responses["200"].content["application/json"].schema).toEqual(schema);
+    expect(fixed.components.schemas.VLHours).toEqual(schema);
+  });
+
   it("does not change reference/OpenAPI.json", () => {
     const filePath = path.join(__dirname, "../../reference/OpenAPI.json");
     const raw = fs.readFileSync(filePath, "utf8");

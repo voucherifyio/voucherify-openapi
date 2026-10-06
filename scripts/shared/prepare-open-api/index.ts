@@ -24,6 +24,10 @@ import {
   snakeToCamel,
 } from "./utils";
 import { applySdkOpenApiVersion } from "../openapi-version/migrate";
+import {
+  documentWithoutLoyaltyV2,
+  omitLoyaltyV2Document,
+} from "../loyalty-v2/document";
 import { omitWebhooks } from "../openapi-webhooks/reachable-schemas";
 
 let openAPIContent: any = originalOpenAPIContent;
@@ -129,7 +133,7 @@ const savePreparedOpenApiFile = async (lang: string, openAPI: object) => {
 
 const main = async (languageOptions: LanguageOptions) => {
   openAPIContent = applySdkOpenApiVersion(
-    openAPIContent,
+    documentWithoutLoyaltyV2(openAPIContent),
     languageOptions.downgradeTo301,
   );
   const prohibited = [
@@ -283,7 +287,7 @@ const main = async (languageOptions: LanguageOptions) => {
   // Webhook operations are not part of the SDK surface. Extra schemas that
   // only those operations reference are already dropped by removeNotUsedSchemas.
   let newOpenApiFile = cleanUpDescriptionsInEntireObject({
-    ...omitWebhooks(openAPIContent),
+    ...omitLoyaltyV2Document(omitWebhooks(openAPIContent)),
     components: {
       ...openAPIContent.components,
       schemas: fixRefUagesInAllSchemasProperties(schemasWithoutNotUsed),

@@ -1,6 +1,7 @@
 import * as fs from "fs/promises";
 import * as path from "path";
 import * as openApi from "../../reference/OpenAPI.json";
+import { extractLoyaltyV2Document, isLoyaltyV2Path } from "../shared/loyalty-v2/document";
 import { OPENAPI_30_NULLABLE_INDEX } from "../shared/openapi-version/migrate";
 import { splitSecurityParams } from "./utils/split-security-params";
 
@@ -233,6 +234,11 @@ function extractEndpointsByTags(
   }
 
   for (const [pathName, pathItem] of Object.entries(openApiSpec.paths)) {
+    // Loyalty v2 is one tag file, not one file per operation tag.
+    if (isLoyaltyV2Path(pathName)) {
+      continue;
+    }
+
     // Extract path-level parameters
     const pathLevelParameters = pathItem.parameters || [];
 
@@ -466,8 +472,7 @@ export async function splitSecurityParamsThenSplitOpenapiByTags(
     await fs.mkdir(OUTPUT_FOLDER, { recursive: true });
 
     // Clear the folder contents instead of deleting the whole folder, so that
-    // manually maintained files listed in `keepFiles` (e.g. loyalties-v2.json)
-    // are preserved across runs.
+    // files listed in `keepFiles` are preserved across runs.
     const keepSet = new Set(keepFiles);
     const existingEntries = await fs.readdir(OUTPUT_FOLDER, {
       withFileTypes: true,
@@ -558,9 +563,10 @@ async function main(): Promise<void> {
   await splitSecurityParamsThenSplitOpenapiByTags(
     apiSpec,
     "/../documentation/openapi",
-    // Manually maintained files that are not generated from tags and must be
-    // preserved when the folder is regenerated.
-    ["loyalties-v2.json"],
+  );
+  await fs.writeFile(
+    path.join(__dirname, "../../documentation/openapi/loyalties-v2.json"),
+    JSON.stringify(extractLoyaltyV2Document(openApi as never), null, 2),
   );
   const source = openApi as {
     openapi: string;

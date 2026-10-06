@@ -11,10 +11,14 @@ import _ from "lodash";
 import { prettify } from "htmlfy";
 import { sanitizeHtmlAttributes } from "./utils/sanitize-html-attributes";
 import { addIdsToH2 } from "./utils/add-ids-to-h2";
+import { documentWithoutLoyaltyV2 } from "../shared/loyalty-v2/document";
 import { ensureOpenApi301 } from "../shared/openapi-version/migrate";
 
 // Markdown tables still read 3.0.1 nullable (`type` + `nullable`).
-const openApi = ensureOpenApi301(JSON.parse(JSON.stringify(_openApi)));
+// Loyalty v2 stays 3.1 in its own tag file and is not part of these tables.
+const openApi = ensureOpenApi301(
+  documentWithoutLoyaltyV2(JSON.parse(JSON.stringify(_openApi))),
+);
 
 const PATH_TO_DOCS_REFERENCE = [
   __dirname,
