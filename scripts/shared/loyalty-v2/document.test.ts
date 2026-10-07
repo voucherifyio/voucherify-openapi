@@ -6,8 +6,10 @@ import {
   dedupeLoyaltyV2Schemas,
   documentWithoutLoyaltyV2,
   dropFreeLoyaltyV2Prefixes,
+  LOYALTY_V2_TAG_PREFIX,
   extractLoyaltyV2Document,
   omitLoyaltyV2Document,
+  withoutLoyaltyV2TagPrefix,
   type OpenApiDocument,
 } from "./document";
 
@@ -241,6 +243,28 @@ describe("Loyalty v2 document", () => {
     const loyalty = fs.readFileSync(loyaltyPath, "utf8");
 
     expect(main[LOYALTY_V2_DOCUMENT_KEY]).toBeDefined();
-    expect(JSON.stringify(extractLoyaltyV2Document(main), null, 2)).toBe(loyalty);
+    for (const [pathName, pathItem] of Object.entries(
+      main.paths as Record<string, Record<string, { tags?: string[] }>>,
+    )) {
+      if (!pathName.startsWith("/v2/loyalties")) {
+        continue;
+      }
+      for (const operation of Object.values(pathItem)) {
+        if (!operation?.tags) {
+          continue;
+        }
+        expect(operation.tags.length).toBeGreaterThan(0);
+        for (const tag of operation.tags) {
+          expect(tag.startsWith(LOYALTY_V2_TAG_PREFIX)).toBe(true);
+        }
+      }
+    }
+    expect(
+      JSON.stringify(
+        withoutLoyaltyV2TagPrefix(extractLoyaltyV2Document(main)),
+        null,
+        2,
+      ),
+    ).toBe(loyalty);
   });
 });

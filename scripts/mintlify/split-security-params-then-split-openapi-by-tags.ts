@@ -1,7 +1,12 @@
 import * as fs from "fs/promises";
 import * as path from "path";
 import * as openApi from "../../reference/OpenAPI.json";
-import { extractLoyaltyV2Document, isLoyaltyV2Path } from "../shared/loyalty-v2/document";
+import {
+  LOYALTY_V2_TAG_PREFIX,
+  extractLoyaltyV2Document,
+  isLoyaltyV2Tag,
+  withoutLoyaltyV2TagPrefix,
+} from "../shared/loyalty-v2/document";
 import { OPENAPI_30_NULLABLE_INDEX } from "../shared/openapi-version/migrate";
 import { splitSecurityParams } from "./utils/split-security-params";
 
@@ -234,11 +239,6 @@ function extractEndpointsByTags(
   }
 
   for (const [pathName, pathItem] of Object.entries(openApiSpec.paths)) {
-    // Loyalty v2 is one tag file, not one file per operation tag.
-    if (isLoyaltyV2Path(pathName)) {
-      continue;
-    }
-
     // Extract path-level parameters
     const pathLevelParameters = pathItem.parameters || [];
 
@@ -501,8 +501,15 @@ export async function splitSecurityParamsThenSplitOpenapiByTags(
 
     console.log(`Found ${allTags.size} tags to process`);
 
+    const loyaltyTags = [...endpointTagGroups.keys()].filter((tag) =>
+      isLoyaltyV2Tag(tag),
+    );
+
     // Process each tag
     for (const tag of allTags) {
+      if (loyaltyTags.includes(tag)) {
+        continue;
+      }
       try {
         const endpoints = endpointTagGroups.get(tag) || [];
         const webhooks = webhookTagGroups.get(tag) || [];
@@ -533,8 +540,27 @@ export async function splitSecurityParamsThenSplitOpenapiByTags(
       }
     }
 
+    if (loyaltyTags.length > 0) {
+      const loyaltyDocument = withoutLoyaltyV2TagPrefix(
+        extractLoyaltyV2Document(openApiSpec as never),
+      );
+      await fs.writeFile(
+        path.join(OUTPUT_FOLDER, "loyalties-v2.json"),
+        JSON.stringify(loyaltyDocument, null, 2),
+      );
+      const endpointCount = loyaltyTags.reduce(
+        (count, tag) => count + (endpointTagGroups.get(tag)?.length ?? 0),
+        0,
+      );
+      console.log(
+        `Created: loyalties-v2.json (${endpointCount} endpoints, tags ${loyaltyTags.join(", ")} with the ${LOYALTY_V2_TAG_PREFIX} prefix removed)`,
+      );
+    }
+
+    const writtenTagCount =
+      allTags.size - loyaltyTags.length + (loyaltyTags.length > 0 ? 1 : 0);
     console.log(
-      `\nSuccessfully split OpenAPI into ${allTags.size} tag-based files`,
+      `\nSuccessfully split OpenAPI into ${writtenTagCount} tag-based files`,
     );
     console.log(`Output directory: ${OUTPUT_FOLDER}`);
 
@@ -563,10 +589,6 @@ async function main(): Promise<void> {
   await splitSecurityParamsThenSplitOpenapiByTags(
     apiSpec,
     "/../documentation/openapi",
-  );
-  await fs.writeFile(
-    path.join(__dirname, "../../documentation/openapi/loyalties-v2.json"),
-    JSON.stringify(extractLoyaltyV2Document(openApi as never), null, 2),
   );
   const source = openApi as {
     openapi: string;

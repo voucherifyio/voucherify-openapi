@@ -1,5 +1,6 @@
 export const LOYALTY_V2_PATH_PREFIX = "/v2/loyalties";
 export const LOYALTY_V2_SCHEMA_PREFIX = "VL";
+export const LOYALTY_V2_TAG_PREFIX = "LV2-";
 export const LOYALTY_V2_DOCUMENT_KEY = "x-loyalty-v2";
 
 const SCHEMA_REF_PREFIX = "#/components/schemas/";
@@ -25,6 +26,44 @@ export type OpenApiDocument = {
   };
   [key: string]: unknown;
 };
+
+export function isLoyaltyV2Tag(tag: string): boolean {
+  return tag.startsWith(LOYALTY_V2_TAG_PREFIX);
+}
+
+export function stripLoyaltyV2TagPrefix(tag: string): string {
+  return isLoyaltyV2Tag(tag) ? tag.slice(LOYALTY_V2_TAG_PREFIX.length) : tag;
+}
+
+/**
+ * The source tags keep `LV2-` so they do not join an API tag file.
+ * `loyalties-v2.json` is one document for every such tag, without the prefix.
+ */
+export function withoutLoyaltyV2TagPrefix<T extends OpenApiDocument>(
+  document: T,
+): T {
+  const copy = clone(document);
+  for (const pathItem of Object.values(copy.paths ?? {})) {
+    if (!pathItem || typeof pathItem !== "object" || Array.isArray(pathItem)) {
+      continue;
+    }
+    for (const operation of Object.values(pathItem)) {
+      if (
+        !operation ||
+        typeof operation !== "object" ||
+        Array.isArray(operation) ||
+        !Array.isArray((operation as { tags?: unknown }).tags)
+      ) {
+        continue;
+      }
+      const tagged = operation as { tags: string[] };
+      tagged.tags = tagged.tags.map((tag) =>
+        typeof tag === "string" ? stripLoyaltyV2TagPrefix(tag) : tag,
+      );
+    }
+  }
+  return copy;
+}
 
 export function isLoyaltyV2Path(pathName: string): boolean {
   return (
