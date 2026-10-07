@@ -4,6 +4,12 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-10-07
+
+- Published `reference/OpenAPI.json` as OpenAPI 3.1.0 (DEV-4255). Nullable fields use a `null` type (`type` array, or `anyOf` of a schema and `null`) instead of `nullable: true`.
+- Moved webhook operations from `reference/OpenAPIWebhooks.json` into `reference/OpenAPI.json` and removed the separate file (DEV-4256). Webhook payload schemas that match API objects now reference those shared schemas.
+- Documented `parameters` on `SimpleReferralTier`: `event_type`, `segment.id`, `custom_event.id`, and `distribution.id`.
+
 ## 2026-09-28
 
 - Corrected the Loyalty tier transaction webhook examples for events that keep the member in the same tier. The current tier stays on the member's tier record and is not copied onto the transaction.
