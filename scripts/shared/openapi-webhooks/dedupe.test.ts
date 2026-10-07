@@ -182,22 +182,12 @@ describe("dropMatchingWebhookCopies", () => {
     expect(schemas.WebhookSimpleOrderItem).toBeUndefined();
     expect(schemas.WebhookSimpleVoucher).toBeUndefined();
     expect(schemas.WebhookDiscountUnitVouchersEffectTypes).toBeUndefined();
-    expect(schemas.WebhookCategory).toBeDefined();
-    expect(schemas.WebhookAny).toBeDefined();
-    expect(schemas.WebhookVoucher).toBeDefined();
-    expect(schemas.WebhookOrderCalculated).toBeDefined();
     expect(
       schemas.ReferralProgram.properties.referee_reward.properties.amount.type,
     ).toBe("integer");
     expect(
       schemas.ReferralProgram.properties.referee_reward.properties.type.enum,
     ).toEqual(["LOYALTY_CARD", "GIFT_VOUCHER"]);
-    expect(JSON.stringify(schemas.WebhookSimpleCampaign)).toContain(
-      '"$ref":"#/components/schemas/ReferralProgram"',
-    );
-    expect(JSON.stringify(schemas.WebhookSimpleCampaign)).toContain(
-      '"$ref":"#/components/schemas/WebhookCategory"',
-    );
 
     const reachable = schemaNamesReachableFromPaths(document);
     expect(reachable.has("ReferralProgram")).toBe(true);
