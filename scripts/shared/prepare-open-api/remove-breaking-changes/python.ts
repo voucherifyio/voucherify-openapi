@@ -141,6 +141,12 @@ const removePythonBreakingChanges = {
       }
     };
 
+    // Restore `parameters` on SimpleReferralTier
+    schemas.SimpleReferralTier.properties.parameters = {
+      type: "object",
+      description: "Referral tier parameters",
+    };
+
     restoreValidationRuleErrorObjects(schemas);
 
     return openApi;
