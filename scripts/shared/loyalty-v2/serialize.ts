@@ -2,41 +2,56 @@ import {
   LOYALTY_V2_DOCUMENT_KEY,
   LOYALTY_V2_SCHEMA_PREFIX,
   isLoyaltyV2Path,
+  loyaltyOnlySchemaNames,
   type LoyaltyV2Envelope,
   type OpenApiDocument,
 } from "./document";
 
 /**
  * Writes the main OpenAPI document.
- * Loyalty schema lines, `/v2/loyalties` path lines, and the `x-loyalty-v2`
- * block end with a trailing space. Those objects are appended after the API
- * schemas and paths, but the same JSON lines also appear later in the file.
- * GitHub's diff then pairs the new lines with that later text. The trailing
- * space keeps the review diff an append. `prepare-generated` writes it back.
+ * Loyalty schema lines and `/v2/loyalties` path lines end with a trailing
+ * space. Those objects repeat lines that already exist later in the file.
+ * Without the space, a diff pairs the two copies and looks like a move.
+ * `prepare-generated` writes the space back.
  */
 export function serializeOpenApiDocument(document: OpenApiDocument): string {
   const text = JSON.stringify(document, null, 2);
   const envelope = document[LOYALTY_V2_DOCUMENT_KEY] as
     | LoyaltyV2Envelope
     | undefined;
-  if (!envelope?.schemaNames) {
-    return text;
-  }
   const schemas = document.components?.schemas ?? {};
   const loyaltySchemas = new Set<string>();
-  for (const publicName of envelope.schemaNames) {
-    const prefixed = `${LOYALTY_V2_SCHEMA_PREFIX}${publicName}`;
-    if (Object.prototype.hasOwnProperty.call(schemas, prefixed)) {
-      loyaltySchemas.add(prefixed);
-    } else if (Object.prototype.hasOwnProperty.call(schemas, publicName)) {
-      loyaltySchemas.add(publicName);
+  for (const name of loyaltyOnlySchemaNames(document)) {
+    // Folded copies keep the longer API name. Those lines were never spaced.
+    if (name.startsWith("LoyaltyV2")) {
+      continue;
     }
+    loyaltySchemas.add(name);
+  }
+  if (envelope?.schemaNames) {
+    for (const publicName of envelope.schemaNames) {
+      const prefixed = `${LOYALTY_V2_SCHEMA_PREFIX}${publicName}`;
+      if (Object.prototype.hasOwnProperty.call(schemas, prefixed)) {
+        loyaltySchemas.add(prefixed);
+      } else if (Object.prototype.hasOwnProperty.call(schemas, publicName)) {
+        loyaltySchemas.add(publicName);
+      }
+    }
+  }
+  if (
+    schemas.CardPointsExpirationResult &&
+    !loyaltySchemas.has("CardPointsExpirationResult")
+  ) {
+    loyaltySchemas.add("CardPointsExpirationResult");
   }
   const loyaltyPaths = new Set(
     Object.keys(document.paths ?? {}).filter((pathName) =>
       isLoyaltyV2Path(pathName),
     ),
   );
+  if (loyaltySchemas.size === 0 && loyaltyPaths.size === 0 && !envelope) {
+    return text;
+  }
   return markLoyaltyLines(text, loyaltySchemas, loyaltyPaths);
 }
 

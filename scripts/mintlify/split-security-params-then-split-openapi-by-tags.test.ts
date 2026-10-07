@@ -95,6 +95,10 @@ describe("Mintlify tag split", () => {
               operationId: "list-loyalty-programs",
               tags: ["LV2-Programs"],
               responses: { "200": { description: "ok" } },
+              security: [
+                { "X-App-Id": [], "X-App-Token": [] },
+                { bearerAuth: [] },
+              ],
             },
           },
           "/v2/loyalties/rewards": {
@@ -112,13 +116,12 @@ describe("Mintlify tag split", () => {
             },
           },
         },
-        "x-loyalty-v2": {
-          info: { title: "Voucherify Loyalty v2 API" },
-          servers: [],
-          tags: [{ name: "Programs" }, { name: "Rewards" }],
-          security: [],
-          securitySchemes: {},
-          schemaNames: [],
+        components: {
+          securitySchemes: {
+            "X-App-Id": { type: "apiKey" },
+            "X-App-Token": { type: "apiKey" },
+            bearerAuth: { type: "http", scheme: "bearer" },
+          },
         },
       } as never,
       "",
@@ -137,10 +140,19 @@ describe("Mintlify tag split", () => {
     const loyalty = JSON.parse(
       fs.readFileSync(path.join(dir, "loyalties-v2.json"), "utf8"),
     );
-    expect(loyalty.info.title).toBe("Voucherify Loyalty v2 API");
+    expect(loyalty.info.title).toBe("Voucherify API - Loyalty v2");
+    expect(loyalty.tags).toBeUndefined();
     expect(loyalty.paths["/v2/loyalties/programs"].get.tags).toEqual([
       "Programs",
     ]);
+    expect(loyalty.paths["/v2/loyalties/programs"].get.security).toEqual([
+      { "X-App-Id": [], "X-App-Token": [] },
+      { bearerAuth: [] },
+    ]);
+    expect(loyalty.components.securitySchemes.bearerAuth).toEqual({
+      type: "http",
+      scheme: "bearer",
+    });
     expect(loyalty.paths["/v2/loyalties/rewards"].get.tags).toEqual([
       "Rewards",
     ]);

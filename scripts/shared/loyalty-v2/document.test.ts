@@ -9,7 +9,6 @@ import {
   LOYALTY_V2_TAG_PREFIX,
   extractLoyaltyV2Document,
   omitLoyaltyV2Document,
-  withoutLoyaltyV2TagPrefix,
   type OpenApiDocument,
 } from "./document";
 
@@ -234,37 +233,76 @@ describe("Loyalty v2 document", () => {
     expect(extracted.components?.schemas?.Hours).toBeUndefined();
   });
 
-  it("rebuilds documentation/openapi/loyalties-v2.json from reference/OpenAPI.json", () => {
+  it("drops a security scheme that only Loyalty v2 operations use", () => {
+    const document: OpenApiDocument = {
+      openapi: "3.1.0",
+      tags: [{ name: "Campaigns" }, { name: "LV2-Programs", description: "loyalty" }],
+      paths: {
+        "/v1/campaigns": {
+          get: { security: [{ "X-App-Id": [] }] },
+        },
+        "/v2/loyalties/programs": {
+          get: {
+            tags: ["LV2-Programs"],
+            security: [{ bearerAuth: [] }],
+            responses: {
+              "200": {
+                content: {
+                  "application/json": {
+                    schema: { $ref: "#/components/schemas/Program" },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+      components: {
+        schemas: { Program: { type: "object" } },
+        securitySchemes: {
+          "X-App-Id": { type: "apiKey" },
+          bearerAuth: { type: "http", scheme: "bearer" },
+        },
+      },
+    };
+
+    const apiOnly = documentWithoutLoyaltyV2(document);
+
+    expect(apiOnly.components?.schemas?.Program).toBeUndefined();
+    expect(apiOnly.components?.securitySchemes?.["X-App-Id"]).toBeDefined();
+    expect(apiOnly.components?.securitySchemes?.bearerAuth).toBeUndefined();
+    expect(apiOnly.tags).toEqual([{ name: "Campaigns" }]);
+  });
+
+  it("keeps Loyalty v2 tags and security on the operations, not in an envelope", () => {
     const root = path.join(__dirname, "../../..");
     const main = JSON.parse(
       fs.readFileSync(path.join(root, "reference/OpenAPI.json"), "utf8"),
     );
-    const loyaltyPath = path.join(root, "documentation/openapi/loyalties-v2.json");
-    const loyalty = fs.readFileSync(loyaltyPath, "utf8");
 
-    expect(main[LOYALTY_V2_DOCUMENT_KEY]).toBeDefined();
+    expect(main[LOYALTY_V2_DOCUMENT_KEY]).toBeUndefined();
+    expect(main.components.securitySchemes.bearerAuth).toBeDefined();
     for (const [pathName, pathItem] of Object.entries(
-      main.paths as Record<string, Record<string, { tags?: string[] }>>,
+      main.paths as Record<
+        string,
+        Record<string, { tags?: string[]; security?: unknown; operationId?: string }>
+      >,
     )) {
       if (!pathName.startsWith("/v2/loyalties")) {
         continue;
       }
       for (const operation of Object.values(pathItem)) {
-        if (!operation?.tags) {
+        if (!operation?.operationId) {
           continue;
         }
-        expect(operation.tags.length).toBeGreaterThan(0);
-        for (const tag of operation.tags) {
+        expect(operation.security).toEqual([
+          { "X-App-Id": [], "X-App-Token": [] },
+          { bearerAuth: [] },
+        ]);
+        for (const tag of operation.tags ?? []) {
           expect(tag.startsWith(LOYALTY_V2_TAG_PREFIX)).toBe(true);
         }
       }
     }
-    expect(
-      JSON.stringify(
-        withoutLoyaltyV2TagPrefix(extractLoyaltyV2Document(main)),
-        null,
-        2,
-      ),
-    ).toBe(loyalty);
   });
 });

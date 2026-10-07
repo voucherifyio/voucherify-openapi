@@ -44,6 +44,9 @@ export const splitSecurityParams = (openapi: any) => {
                             "X-Voucherify-OAuth":
                               allSecurity["X-Voucherify-OAuth"],
                           },
+                          {
+                            bearerAuth: allSecurity["bearerAuth"],
+                          },
                         ].filter((security) =>
                           Object.values(security).find((v) => v),
                         );
