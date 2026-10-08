@@ -74519,6 +74519,17 @@
               }
             ]
           },
+          "card_definition_id": {
+            "description": "Filter by card definition ID (ID conditions, values matching `^lcdef_[a-f0-9]+$`).",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LoyaltiesProgramsMembersOrdersPaymentsListRequestQueryCardDefinitionId"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "created_at": {
             "description": "Filter by creation date.",
             "oneOf": [
@@ -74635,6 +74646,108 @@
         ],
         "additionalProperties": false,
         "title": "Loyalties Programs Members Orders Payments List Request Query Id"
+      },
+      "LoyaltiesProgramsMembersOrdersPaymentsListRequestQueryCardDefinitionId": {
+        "type": "object",
+        "description": "ID filter conditions for card definition IDs. Values must match pattern `^lcdef_[a-f0-9]+$`. `$is`/`$is_not` accept a single value (string or 1-element array); `$in`/`$not_in` accept a string or an array of 1-100 values.",
+        "properties": {
+          "conditions": {
+            "type": "object",
+            "minProperties": 1,
+            "additionalProperties": false,
+            "properties": {
+              "$is": {
+                "description": "Matches transactions whose card definition ID equals the given value.",
+                "oneOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^lcdef_[a-f0-9]+$"
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "pattern": "^lcdef_[a-f0-9]+$"
+                    },
+                    "minItems": 1,
+                    "maxItems": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "$is_not": {
+                "description": "Matches transactions whose card definition ID does not equal the given value.",
+                "oneOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^lcdef_[a-f0-9]+$"
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "pattern": "^lcdef_[a-f0-9]+$"
+                    },
+                    "minItems": 1,
+                    "maxItems": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "$in": {
+                "description": "Matches transactions whose card definition ID is one of the given values.",
+                "oneOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^lcdef_[a-f0-9]+$"
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "pattern": "^lcdef_[a-f0-9]+$"
+                    },
+                    "minItems": 1,
+                    "maxItems": 100
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "$not_in": {
+                "description": "Matches transactions whose card definition ID is not one of the given values.",
+                "oneOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^lcdef_[a-f0-9]+$"
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "pattern": "^lcdef_[a-f0-9]+$"
+                    },
+                    "minItems": 1,
+                    "maxItems": 100
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "required": [
+          "conditions"
+        ],
+        "additionalProperties": false,
+        "title": "Loyalties Programs Members Orders Payments List Request Query Card Definition Id"
       },
       "TransactionFilterDateConditions": {
         "type": "object",
@@ -152654,7 +152767,7 @@
           "LV2-Programs"
         ],
         "summary": "List member order payments",
-        "description": "Lists persisted order transactions (pay-with-points payments) for the given program member, with cursor-based pagination. Supports filtering by transaction `id` and `created_at` date. Dry-run (`SIMULATED`) results from create are never persisted and do not appear in this list.",
+        "description": "Lists stored `PAY_WITH_POINTS` order transactions for the program member, with cursor pagination. Filter by `id`, `card_definition_id`, and `created_at`. Order by `id` (default `-id`, newest first). Dry-run (`SIMULATED`) results aren't stored and don't appear. Returns `404` when the program or the member doesn't exist. The program is checked first.",
         "parameters": [
           {
             "name": "limit",
@@ -152675,7 +152788,7 @@
             "name": "order",
             "in": "query",
             "required": false,
-            "description": "Sorts results by a field name, optionally prefixed with `-` for descending order. May be provided multiple times (array). The same field cannot be used in both ascending and descending order at once. Default: `-created_at`.",
+            "description": "Orders results by transaction `id`. `-id` is newest first and the default. `id` is oldest first. An array that orders by `id` and `-id` together is rejected.",
             "schema": {
               "oneOf": [
                 {
@@ -152683,16 +152796,16 @@
                   "items": {
                     "type": "string",
                     "enum": [
-                      "-created_at",
-                      "created_at"
+                      "-id",
+                      "id"
                     ]
                   }
                 },
                 {
                   "type": "string",
                   "enum": [
-                    "-created_at",
-                    "created_at"
+                    "-id",
+                    "id"
                   ]
                 },
                 {
@@ -152722,7 +152835,14 @@
             "explode": true,
             "description": "Filters results by field, e.g. `filters[id][conditions][$is]=lotx_...`. Each field accepts a `conditions` object with condition operators.",
             "schema": {
-              "$ref": "#/components/schemas/LoyaltiesProgramsMembersOrdersPaymentsListRequestQuery"
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/LoyaltiesProgramsMembersOrdersPaymentsListRequestQuery"
+                },
+                {
+                  "type": "null"
+                }
+              ]
             }
           }
         ],
@@ -152833,17 +152953,37 @@
             }
           },
           "400": {
-            "description": "Validation error - query parameters failed validation, or the operation is not allowed in the current resource state.",
+            "description": "The query failed validation. `order` must be `id` or `-id`, and an array can't order by `id` and `-id` together. A cursor that doesn't match `^lcrsotx_[a-f0-9]+$` returns `invalid_query_params`.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Invalid order": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Property .order must be equal to one of the allowed values [ -id, id ]",
+                      "request_id": "v-12bdef050f2cb1ef70"
+                    }
+                  },
+                  "Invalid cursor": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Property .cursor must match pattern \"^lcrsotx_[a-f0-9]+$\"",
+                      "request_id": "v-12bdef050f2cb1ef71"
+                    }
+                  }
                 }
               }
             }
           },
           "404": {
-            "description": "Program or member not found.",
+            "description": "The program doesn't exist (`resource_type` `program`), or the member doesn't exist in that program (`resource_type` `member`). A member of another program is not found. The program is checked first.",
             "content": {
               "application/json": {
                 "schema": {
