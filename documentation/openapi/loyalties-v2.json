@@ -2829,7 +2829,7 @@
           "Programs"
         ],
         "summary": "Batch create program members",
-        "description": "Schedules asynchronous batch creation of program members. The request body is a JSON array of member entries (maximum body size is 10 MB). The request is processed asynchronously in batches of 100 entries.\n\nThe program must exist (otherwise, it returns a `404` error) and be in the `ACTIVE` status (otherwise, it returns a `423` error). Supported member fields are validated during background processing using the same domain validation rules as single member creation. Entries that fail validation (missing/invalid `customer_id`, unknown customer, invalid `status`, duplicate `customer_id` within the same batch, member already exists) are reported per-entry  individually in the report linked from the async action result. The failed entries do not fail the whole batch (conflicting members are skipped).\n\nReturns `202` status with the identifier of the scheduled async action. Use the [GET Async Action](/api-reference/async-actions/get-async-action) endpoint to check the status of the batch creation. You can also check the processing status and the result in the Audit log – [Background tasks](/analyze/audit-logs#background-tasks) in the Voucherify dashboard.",
+        "description": "Schedules creation of program members from a JSON array and returns `202` with `async_action_id`. The program must exist, be `ACTIVE`, and be inside its validity window. The body isn't checked before that response. Entries are processed in batches of 100. The raw body must be at most 10 MB.\n\nEach entry uses the same fields as [Create program member](/api-reference/programs/create-program-member). A failed entry is skipped. Its report row sets `created` to `false` and explains the failure in `error`. Skipped cases include an invalid `customer_identification`, an unknown customer, an invalid `status`, a duplicate customer in the batch (`Duplicate customer ID`), a customer who is already a member (`Member already exists`), metadata that doesn't match the `vl_member` schema, and entries past the loyalty members plan limit. Successful entries enroll the customer and create a loyalty card for each card definition on the program. Report columns are `identification_type`, `customer_id`, `customer_source_id`, `program_id`, `member_id`, `created`, and `error`.\n\nAn empty array or a `null` entry fails the async action with `invalid_request_payload`. A body that isn't a JSON array fails it with `top_level_object_should_be_an_array`. Use [Get async action](/api-reference/async-actions/get-async-action) to read the status and the report. You can also open the result from Audit log, [Background tasks](/analyze/audit-logs#background-tasks).",
         "parameters": [
           {
             "name": "programId",
@@ -2848,13 +2848,32 @@
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/LoyaltiesProgramsMembersCreateInBulkRequestBody"
+              },
+              "examples": {
+                "Create members": {
+                  "value": [
+                    {
+                      "customer_identification": {
+                        "type": "customer_id",
+                        "customer_id": "cust_X07elh40iNWLujRmDNmBufxd"
+                      }
+                    },
+                    {
+                      "customer_identification": {
+                        "type": "customer_source_id",
+                        "customer_source_id": "crm-1001"
+                      },
+                      "status": "ACTIVE"
+                    }
+                  ]
+                }
               }
             }
           }
         },
         "responses": {
           "202": {
-            "description": "Batch creation has been scheduled.",
+            "description": "The batch is scheduled. Use `async_action_id` to follow processing.",
             "content": {
               "application/json": {
                 "schema": {
@@ -2913,7 +2932,7 @@
             }
           },
           "423": {
-            "description": "Resource locked - a related resource is in a state that prevents this operation.",
+            "description": "The program is not `ACTIVE` (`non_active_program`) or is outside its validity window (`program_outside_validity_window`).",
             "content": {
               "application/json": {
                 "schema": {
@@ -2924,9 +2943,18 @@
                     "value": {
                       "code": 423,
                       "key": "non_active_program",
-                      "message": "Invalid program status",
-                      "details": "Cannot create members when program status is not ACTIVE",
-                      "request_id": "v-12c31c59130a67bb28"
+                      "message": "Cannot create members when program status is not ACTIVE",
+                      "details": "Invalid program status",
+                      "request_id": "v-12c31c59130a67bb29"
+                    }
+                  },
+                  "Program outside validity window": {
+                    "value": {
+                      "code": 423,
+                      "key": "program_outside_validity_window",
+                      "message": "Program is not available at this time",
+                      "details": "Cannot create members when program is not active at this time",
+                      "request_id": "v-12c31c59130a67bb2a"
                     }
                   }
                 }
@@ -18556,7 +18584,7 @@
       },
       "LoyaltiesProgramsMembersCreateInBulkRequestBody": {
         "type": "array",
-        "description": "Request body schema for **POST** `/v2/loyalties/programs/{programId}/members/batch`.\n\nConsists of a JSON array of member entries. The raw body is limited to 10485760 bytes (10 MB) and is processed asynchronously in batches of 100 entries. Each entry is validated like a single member creation request during background processing; per-entry failures (invalid customer_id format, unknown customer, invalid status, member already exists) are reported in the async action result.",
+        "description": "Request body schema for **POST** `/v2/loyalties/programs/{programId}/members/batch`.\n\nA JSON array of member entries. The raw body is limited to 10485760 bytes (10 MB). The array isn't validated before the `202` response. Entries are processed asynchronously in batches of 100. Each entry should use the same fields as a single member create. Invalid entries are skipped and listed in the async action report.",
         "items": {
           "$ref": "#/components/schemas/MemberCreate"
         },
@@ -18569,7 +18597,7 @@
           "async_action_id": {
             "type": "string",
             "pattern": "^aa_[a-f0-9]+$",
-            "description": "ID of the scheduled async action processing the batch."
+            "description": "Identifies the async action that processes the batch."
           }
         },
         "required": [
