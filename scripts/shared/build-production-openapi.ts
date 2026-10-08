@@ -5,6 +5,12 @@ import { removedNotUsedParameters } from "./prepare-open-api/removed-not-used-pa
 import { removeNotUsedSchemas } from "./prepare-open-api/remove-not-used-schemas";
 import { parseNullsToNullableObjects } from "./prepare-open-api/utils";
 import { removeNotYetRefactoredPaths } from "./remove-not-yet-refactored-paths";
+import { ensureOpenApi301 } from "./openapi-version/migrate";
+import {
+  documentWithoutLoyaltyV2,
+  omitLoyaltyV2Document,
+} from "./loyalty-v2/document";
+import { omitWebhooks } from "./openapi-webhooks/reachable-schemas";
 
 function isObject(value) {
   return typeof value === "object" && value !== null && !Array.isArray(value);
@@ -22,8 +28,11 @@ const removeKey = (node: object, key: string): object => {
 
 const main = async () => {
   const openApiPath = path.join(__dirname, "../../reference/OpenAPI.json");
-  const openAPIContent = JSON.parse(
-    (await fsPromises.readFile(openApiPath)).toString(),
+  // production/readOnly-openAPI.json stays 3.0.1 for external viewers.
+  const openAPIContent = ensureOpenApi301(
+    documentWithoutLoyaltyV2(
+      JSON.parse((await fsPromises.readFile(openApiPath)).toString()),
+    ),
   );
   removeKey(openAPIContent, "x-stoplight");
   const paths = removeNotYetRefactoredPaths(openAPIContent.paths);
@@ -59,7 +68,7 @@ const main = async () => {
     ),
   );
   const newOpenApiFile = {
-    ...openAPIContent,
+    ...omitLoyaltyV2Document(omitWebhooks(openAPIContent)),
     components: {
       ...openAPIContent.components,
       schemas: schemasWithoutNotUsed,

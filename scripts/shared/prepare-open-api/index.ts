@@ -23,6 +23,12 @@ import {
   removeStoplightTag,
   snakeToCamel,
 } from "./utils";
+import { applySdkOpenApiVersion } from "../openapi-version/migrate";
+import {
+  documentWithoutLoyaltyV2,
+  omitLoyaltyV2Document,
+} from "../loyalty-v2/document";
+import { omitWebhooks } from "../openapi-webhooks/reachable-schemas";
 
 let openAPIContent: any = originalOpenAPIContent;
 import addMissingDefaults from "./add-missing-defaults";
@@ -48,39 +54,51 @@ type LanguageOptions = {
   };
   supportOauth?: true;
   removeAllSchemasDefaults?: true;
+  /**
+   * OpenAPI Generator builds pinned in package.json still expect 3.0.1
+   * `nullable`. Keep this true so reference/readonly-sdks stays byte-identical
+   * after reference/OpenAPI.json moves to 3.1.0.
+   */
+  downgradeTo301: boolean;
 };
 
-const supportedLanguages: {
+export const supportedLanguages: {
   [language: string]: LanguageOptions;
 } = {
   python: {
     name: "python",
     simplifyAllObjectsThatHaveAdditionalProperties: true, //MUST STAY!
     use2XX: true, //MUST STAY!
+    downgradeTo301: true, //MUST STAY!
     fixBreakingChanges: removePythonBreakingChanges,
   },
   ruby: {
     name: "ruby",
+    downgradeTo301: true, //MUST STAY!
     fixBreakingChanges: removeRubyBreakingChanges,
   },
   php: {
     name: "php",
     putNotObjectSchemasIntoObjectSchemas: true, //MUST STAY!
+    downgradeTo301: true, //MUST STAY!
     fixBreakingChanges: removePhpBreakingChanges,
   },
   java: {
     name: "java",
+    downgradeTo301: true, //MUST STAY!
     fixBreakingChanges: removeJavaBreakingChanges,
   },
   dotnet: {
     name: "dotnet",
     supportOauth: true,
     removeAllSchemasDefaults: true,
+    downgradeTo301: true, //MUST STAY!
     fixBreakingChanges: removeDotnetBreakingChanges,
   },
   js: {
     name: "js",
     supportOauth: true,
+    downgradeTo301: true, //MUST STAY!
     fixBreakingChanges: removeJsBreakingChanges,
   },
 };
@@ -114,6 +132,10 @@ const savePreparedOpenApiFile = async (lang: string, openAPI: object) => {
 };
 
 const main = async (languageOptions: LanguageOptions) => {
+  openAPIContent = applySdkOpenApiVersion(
+    documentWithoutLoyaltyV2(openAPIContent),
+    languageOptions.downgradeTo301,
+  );
   const prohibited = [
     '"readOnly": true',
     '"readOnly": false',
@@ -262,8 +284,10 @@ const main = async (languageOptions: LanguageOptions) => {
   }
 
   // Building all together
+  // Webhook operations are not part of the SDK surface. Extra schemas that
+  // only those operations reference are already dropped by removeNotUsedSchemas.
   let newOpenApiFile = cleanUpDescriptionsInEntireObject({
-    ...openAPIContent,
+    ...omitLoyaltyV2Document(omitWebhooks(openAPIContent)),
     components: {
       ...openAPIContent.components,
       schemas: fixRefUagesInAllSchemasProperties(schemasWithoutNotUsed),
@@ -502,21 +526,23 @@ const fixSchemaTitle = (schema, title, schemas, skipSettingTitle?: boolean) => {
   return { title: schema.title, ..._.omit(schema, ["title"]) };
 };
 
-if (!("language" in options)) {
-  console.log(colors.red("invalid arguments, missing language parameter"));
-} else if (
-  typeof options.language !== "string" ||
-  !Object.keys(supportedLanguages).includes(options.language)
-) {
-  console.log(
-    colors.red(
-      `invalid language arguments, supported languages are ${Object.keys(
-        supportedLanguages,
-      )
-        .map((language) => `"${language}"`)
-        .join(", ")}`,
-    ),
-  );
-} else {
-  main(supportedLanguages[options.language]);
+if (require.main === module) {
+  if (!("language" in options)) {
+    console.log(colors.red("invalid arguments, missing language parameter"));
+  } else if (
+    typeof options.language !== "string" ||
+    !Object.keys(supportedLanguages).includes(options.language)
+  ) {
+    console.log(
+      colors.red(
+        `invalid language arguments, supported languages are ${Object.keys(
+          supportedLanguages,
+        )
+          .map((language) => `"${language}"`)
+          .join(", ")}`,
+      ),
+    );
+  } else {
+    main(supportedLanguages[options.language]);
+  }
 }

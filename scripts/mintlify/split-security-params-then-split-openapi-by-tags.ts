@@ -1,10 +1,13 @@
 import * as fs from "fs/promises";
 import * as path from "path";
-import * as openApiWebhooks from "../../reference/OpenAPIWebhooks.json";
-import * as _openApi from "../../reference/OpenAPI.json";
+import * as openApi from "../../reference/OpenAPI.json";
+import {
+  LOYALTY_V2_TAG_PREFIX,
+  isLoyaltyV2Tag,
+  stripLoyaltyV2TagPrefix,
+} from "../shared/loyalty-v2/document";
+import { OPENAPI_30_NULLABLE_INDEX } from "../shared/openapi-version/migrate";
 import { splitSecurityParams } from "./utils/split-security-params";
-
-const openApi = _openApi as any;
 
 interface OpenAPISpec {
   openapi: string;
@@ -150,34 +153,25 @@ function collectAllReferencedComponents(
 }
 
 /**
- * Recursively transforms objects by replacing type: "null" with type: "object", nullable: true, default: null
+ * Drops the key the 3.0.1 downgrade uses to restore `nullable` position.
+ * It is not part of the API. Tag files are 3.1 and do not need it.
  */
-function transformNullTypes(obj: any): any {
+function omitRoundTripKeys(obj: any): any {
   if (obj === null || typeof obj !== "object") {
     return obj;
   }
 
   if (Array.isArray(obj)) {
-    return obj.map((item) => transformNullTypes(item));
+    return obj.map((item) => omitRoundTripKeys(item));
   }
 
   const result: any = {};
-
   for (const [key, value] of Object.entries(obj)) {
-    // Check if this is a type property with value "null"
-    if (key === "type" && value === "null") {
-      // Transform this object to have the new structure
-      result.type = "object";
-      result.nullable = true;
-      result.default = null;
-      // Skip processing the original "type": "null" property
+    if (key === OPENAPI_30_NULLABLE_INDEX) {
       continue;
     }
-
-    // Recursively process all other properties
-    result[key] = transformNullTypes(value);
+    result[key] = omitRoundTripKeys(value);
   }
-
   return result;
 }
 
@@ -462,23 +456,22 @@ function sanitizeTagName(tag: string): string {
 /**
  * Main function to split OpenAPI into tag-based files
  */
-async function splitSecurityParamsThenSplitOpenapiByTags(
+export async function splitSecurityParamsThenSplitOpenapiByTags(
   openApiSpec: OpenAPISpec,
   destination: string,
   keepFiles: string[] = [],
+  options: { outputFolder?: string } = {},
 ): Promise<void> {
-  const OUTPUT_FOLDER = path.join(
-    __dirname,
-    `..${destination}`.replaceAll("//", "/"),
-  );
+  const OUTPUT_FOLDER =
+    options.outputFolder ??
+    path.join(__dirname, `..${destination}`.replaceAll("//", "/"));
 
   try {
     // Make sure the output folder exists.
     await fs.mkdir(OUTPUT_FOLDER, { recursive: true });
 
     // Clear the folder contents instead of deleting the whole folder, so that
-    // manually maintained files listed in `keepFiles` (e.g. loyalties-v2.json)
-    // are preserved across runs.
+    // files listed in `keepFiles` are preserved across runs.
     const keepSet = new Set(keepFiles);
     const existingEntries = await fs.readdir(OUTPUT_FOLDER, {
       withFileTypes: true,
@@ -507,14 +500,22 @@ async function splitSecurityParamsThenSplitOpenapiByTags(
 
     console.log(`Found ${allTags.size} tags to process`);
 
+    const loyaltyTags = [...endpointTagGroups.keys()].filter((tag) =>
+      isLoyaltyV2Tag(tag),
+    );
+
     // Process each tag
     for (const tag of allTags) {
+      if (loyaltyTags.includes(tag)) {
+        continue;
+      }
       try {
         const endpoints = endpointTagGroups.get(tag) || [];
         const webhooks = webhookTagGroups.get(tag) || [];
 
-        // Create tag-specific OpenAPI spec
-        const tagSpec = transformNullTypes(
+        // `{ "type": "null" }` is valid in OpenAPI 3.1. Keep it, and drop the
+        // key that only exists so a 3.0.1 downgrade can restore `nullable`.
+        const written = omitRoundTripKeys(
           createTagOpenApiSpec(tag, endpoints, webhooks, openApiSpec),
         );
 
@@ -524,7 +525,7 @@ async function splitSecurityParamsThenSplitOpenapiByTags(
         const filePath = path.join(OUTPUT_FOLDER, filename);
 
         // Write the file
-        await fs.writeFile(filePath, JSON.stringify(tagSpec, null, 2));
+        await fs.writeFile(filePath, JSON.stringify(written, null, 2));
 
         const endpointsCount = endpoints.length;
         const webhooksCount = webhooks.length;
@@ -538,8 +539,51 @@ async function splitSecurityParamsThenSplitOpenapiByTags(
       }
     }
 
+    if (loyaltyTags.length > 0) {
+      const seen = new Set<string>();
+      const loyaltyEndpoints: EndpointInfo[] = [];
+      for (const loyaltyTag of loyaltyTags) {
+        for (const endpoint of endpointTagGroups.get(loyaltyTag) ?? []) {
+          const id = `${endpoint.method} ${endpoint.path}`;
+          if (seen.has(id)) {
+            continue;
+          }
+          seen.add(id);
+          const tags = (endpoint.operation.tags ?? []).map((tag: string) =>
+            stripLoyaltyV2TagPrefix(tag),
+          );
+          loyaltyEndpoints.push({
+            ...endpoint,
+            tags,
+            operation: { ...endpoint.operation, tags },
+          });
+        }
+      }
+      const loyaltyDocument = omitRoundTripKeys(
+        createTagOpenApiSpec(
+          "Loyalty v2",
+          loyaltyEndpoints,
+          [],
+          openApiSpec,
+        ),
+      );
+      await fs.writeFile(
+        path.join(OUTPUT_FOLDER, "loyalties-v2.json"),
+        JSON.stringify(loyaltyDocument, null, 2),
+      );
+      const endpointCount = loyaltyTags.reduce(
+        (count, tag) => count + (endpointTagGroups.get(tag)?.length ?? 0),
+        0,
+      );
+      console.log(
+        `Created: loyalties-v2.json (${endpointCount} endpoints, tags ${loyaltyTags.join(", ")} with the ${LOYALTY_V2_TAG_PREFIX} prefix removed)`,
+      );
+    }
+
+    const writtenTagCount =
+      allTags.size - loyaltyTags.length + (loyaltyTags.length > 0 ? 1 : 0);
     console.log(
-      `\nSuccessfully split OpenAPI into ${allTags.size} tag-based files`,
+      `\nSuccessfully split OpenAPI into ${writtenTagCount} tag-based files`,
     );
     console.log(`Output directory: ${OUTPUT_FOLDER}`);
 
@@ -558,22 +602,36 @@ async function splitSecurityParamsThenSplitOpenapiByTags(
   }
 }
 
-// Execute the script
-(async () => {
-  try {
-    await splitSecurityParamsThenSplitOpenapiByTags(
-      splitSecurityParams(openApi) as unknown as OpenAPISpec,
-      "/../documentation/openapi",
-      // Manually maintained files that are not generated from tags and must be
-      // preserved when the folder is regenerated.
-      ["loyalties-v2.json"],
-    );
-    await splitSecurityParamsThenSplitOpenapiByTags(
-      openApiWebhooks,
-      "/../documentation/openapi-events",
-    );
-  } catch (error) {
+const EVENTS_INFO = { title: "Events", version: "2024-01-01" };
+
+async function main(): Promise<void> {
+  const apiSpec = splitSecurityParams(openApi) as unknown as OpenAPISpec;
+  // Event operations live on the same document. They are written to
+  // documentation/openapi-events, not into the API tag files.
+  delete apiSpec.webhooks;
+  await splitSecurityParamsThenSplitOpenapiByTags(
+    apiSpec,
+    "/../documentation/openapi",
+  );
+  const source = openApi as {
+    openapi: string;
+    webhooks?: OpenAPISpec["webhooks"];
+    components?: OpenAPISpec["components"];
+  };
+  await splitSecurityParamsThenSplitOpenapiByTags(
+    {
+      openapi: source.openapi,
+      info: EVENTS_INFO,
+      webhooks: source.webhooks,
+      components: source.components,
+    },
+    "/../documentation/openapi-events",
+  );
+}
+
+if (require.main === module) {
+  main().catch((error) => {
     console.error("Script execution failed:", error);
     process.exit(1);
-  }
-})();
+  });
+}

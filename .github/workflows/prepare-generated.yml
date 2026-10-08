@@ -1,0 +1,48 @@
+name: Prepare generated files
+
+# Runs on every non-draft pull request, whatever the base branch is.
+# Drafts are skipped until they are marked ready for review.
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: prepare-generated-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  prepare-generated:
+    name: Tests and generated files
+    if: github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+
+      - name: Setup Node.js
+        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Unit tests
+        run: npx jest --ci --watchman=false scripts/shared/openapi-version/migrate.test.ts scripts/shared/prepare-open-api/supported-languages.test.ts scripts/mintlify/split-security-params-then-split-openapi-by-tags.test.ts scripts/shared/openapi-webhooks/reachable-schemas.test.ts scripts/shared/fix-schemas-with-refs.test.ts scripts/shared/loyalty-v2/document.test.ts scripts/shared/loyalty-v2/serialize.test.ts
+
+      - name: Regenerate derived OpenAPI files
+        run: npm run prepare-generated
+
+      - name: Fail if generated files are out of date
+        run: |
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "prepare-generated changed files. Run npm run prepare-generated locally and commit the result."
+            git status --porcelain
+            git diff --stat
+            exit 1
+          fi

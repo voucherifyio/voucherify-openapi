@@ -20,8 +20,10 @@
             "type": "object",
             "properties": {
               "user": {
-                "nullable": true,
-                "type": "object",
+                "type": [
+                  "null",
+                  "object"
+                ],
                 "description": "Details about the user who triggered the publication or caused an action that triggered the publication through auto-increase voucher count. It's `null` if the publication was caused through the API.",
                 "properties": {
                   "id": {
@@ -40,16 +42,34 @@
         "type": "object",
         "properties": {
           "customer": {
-            "nullable": true,
-            "$ref": "#/components/schemas/SimpleCustomer"
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SimpleCustomer"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "campaign": {
-            "nullable": true,
-            "$ref": "#/components/schemas/SimpleCampaign"
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SimpleCampaign"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "publication": {
-            "nullable": true,
-            "$ref": "#/components/schemas/ListPublicationsItemBase"
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/WebhookListPublicationsItemBase"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "voucher": {
             "$ref": "#/components/schemas/SimpleVoucher"
@@ -109,7 +129,7 @@
           },
           "type": {
             "type": "string",
-            "description": "Defines whether the campaign can be updated with new vouchers after campaign creation or if the campaign consists of standalone vouchers.\n\n- `AUTO_UPDATE`: the campaign is dynamic, i.e. vouchers will generate based on set criteria\n-  `STATIC`: vouchers need to be manually published\n- `STANDALONE`: campaign for single vouchers",
+            "description": "Defines whether the campaign can be updated with new vouchers after campaign creation or if the campaign consists of generic (standalone) vouchers.\n\n- `AUTO_UPDATE`: the campaign is dynamic, i.e. vouchers will generate based on set criteria\n-  `STATIC`: vouchers need to be manually published\n- `STANDALONE`: campaign for single vouchers",
             "enum": [
               "AUTO_UPDATE",
               "STATIC",
@@ -132,15 +152,17 @@
           },
           "join_once": {
             "type": "boolean",
-            "description": "If this value is set to `true`, customers will be able to join the campaign only once. It is always `false` for standalone voucher campaigns and it cannot be changed in them. It is always `true` for loyalty campaigns."
+            "description": "If this value is set to `true`, customers will be able to join the campaign only once. It is always `false` for generic (standalone) vouchers campaigns and it cannot be changed in them. It is always `true` for loyalty campaigns and it cannot be changed in them."
           },
           "active": {
             "type": "boolean",
             "description": "Indicates whether the campaign is active."
           },
           "category_id": {
-            "nullable": true,
-            "type": "string",
+            "type": [
+              "null",
+              "string"
+            ],
             "description": "The unique category ID that this campaign belongs to."
           },
           "category": {
@@ -196,7 +218,7 @@
           }
         }
       },
-      "ListPublicationsItemBase": {
+      "WebhookListPublicationsItemBase": {
         "title": "List Publications Item Base",
         "type": "object",
         "properties": {
@@ -237,8 +259,10 @@
             "description": "How the publication was originated."
           },
           "source_id": {
-            "type": "string",
-            "nullable": true,
+            "type": [
+              "string",
+              "null"
+            ],
             "description": "Unique identifier of the merchant's publication if it is different from the Voucherify publication ID."
           },
           "result": {
@@ -338,8 +362,10 @@
             "example": "cust_nM4jqPiaXUvQdVSA6vTRUnix"
           },
           "category_id": {
-            "type": "string",
-            "nullable": true,
+            "type": [
+              "string",
+              "null"
+            ],
             "description": "Unique identifier of the category that this voucher belongs to.",
             "example": "cat_0b6152ce12414820dc"
           },
@@ -371,14 +397,20 @@
             "description": "Defines the redemption limits on vouchers.",
             "properties": {
               "quantity": {
-                "type": "integer",
-                "nullable": true,
+                "type": [
+                  "integer",
+                  "null"
+                ],
                 "description": "How many times a voucher can be redeemed. A `null` value means unlimited."
               },
               "redeemed_quantity": {
                 "type": "integer",
                 "example": 1,
                 "description": "How many times a voucher has already been redeemed."
+              },
+              "redeemed_points": {
+                "type": "integer",
+                "description": "Total loyalty points redeemed."
               }
             },
             "required": [
@@ -433,7 +465,7 @@
             ]
           },
           "discount": {
-            "description": "Defines the voucher discount type and details. It will not be returned at all or it will return a `null` for `LOYALTY_CARD`.",
+            "description": "Defines the voucher discount type and details.",
             "allOf": [
               {
                 "$ref": "#/components/schemas/Discount"
@@ -441,7 +473,7 @@
             ]
           },
           "gift": {
-            "description": "Defines the voucher gift details. It will not be returned at all or it will return a `null` for `LOYALTY_CARD`.",
+            "description": "Defines the voucher gift details.",
             "allOf": [
               {
                 "$ref": "#/components/schemas/Gift"
@@ -449,7 +481,7 @@
             ]
           },
           "loyalty_card": {
-            "description": "Defines the voucher loyalty card details.  It will not be returned at all or it will return a `null` for `DISCOUNT_VOUCHER` or `GIFT_CARD`.",
+            "description": "Defines the voucher loyalty card details.",
             "allOf": [
               {
                 "$ref": "#/components/schemas/CampaignLoyaltyCard"
@@ -461,8 +493,10 @@
             "description": "Defines the redemption limits on vouchers.",
             "properties": {
               "quantity": {
-                "type": "integer",
-                "nullable": true,
+                "type": [
+                  "integer",
+                  "null"
+                ],
                 "description": "How many times a voucher can be redeemed. A `null` value means unlimited."
               },
               "redeemed_quantity": {
@@ -477,7 +511,16 @@
             ]
           },
           "code_config": {
-            "$ref": "#/components/schemas/CodeConfigRequiredLengthCharsetPattern"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CodeConfig"
+              }
+            ],
+            "required": [
+              "length",
+              "charset",
+              "pattern"
+            ]
           }
         },
         "required": [
@@ -497,7 +540,7 @@
               "redemption",
               "custom_event"
             ],
-            "description": "Defines how a referral is triggered."
+            "description": "Define how a referral is triggered."
           },
           "custom_event": {
             "type": "object",
@@ -525,7 +568,7 @@
                   "id": {
                     "type": "string",
                     "example": "camp_kdxp3vf1clQ9CFs1jpqv3tZe",
-                    "description": "Unique identifier of the reward source."
+                    "description": "Unique ID of the reward source."
                   },
                   "name": {
                     "type": "string",
@@ -544,14 +587,13 @@
               "type": {
                 "type": "string",
                 "enum": [
-                  "DISCOUNT_VOUCHER",
                   "LOYALTY_CARD",
                   "GIFT_VOUCHER"
                 ],
                 "description": "Type of reward."
               },
               "amount": {
-                "type": "string",
+                "type": "integer",
                 "description": "Define the number of `points` to add to a loyalty card or `credits` to the balance on a gift card. In case of the gift card, the value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000."
               }
             }
@@ -560,6 +602,7 @@
       },
       "Category": {
         "title": "Category",
+        "description": "This is an object representing a category.",
         "type": "object",
         "properties": {
           "id": {
@@ -572,19 +615,8 @@
           },
           "hierarchy": {
             "type": "integer",
-            "description": "Category hierarchy."
-          },
-          "created_at": {
-            "type": "string",
-            "description": "Timestamp representing the date and time when the category was created in the ISO 8601 format.",
-            "example": "2024-01-01T11:11:11.111Z",
-            "format": "date-time"
-          },
-          "updated_at": {
-            "type": "string",
-            "description": "Timestamp representing the date and time when the category was updated in the ISO 8601 format.",
-            "example": "2024-01-01T11:11:11.111Z",
-            "format": "date-time"
+            "description": "Category hierarchy. Categories with lower hierarchy are processed before categories with higher hierarchy value.",
+            "minimum": 0
           },
           "object": {
             "type": "string",
@@ -594,13 +626,17 @@
             ],
             "description": "The type of the object represented by the JSON. This object stores information about the category."
           },
-          "stacking_rules_type": {
+          "created_at": {
             "type": "string",
-            "description": "The type of the stacking rule eligibility.",
-            "enum": [
-              "JOINT",
-              "EXCLUSIVE"
-            ]
+            "description": "Timestamp representing the date and time when the category was created. The value is shown in the ISO 8601 format.",
+            "example": "2022-07-14T10:45:13.156Z",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "example": "2022-08-16T10:52:08.094Z",
+            "description": "Timestamp representing the date and time when the category was updated. The value is shown in the ISO 8601 format.",
+            "format": "date-time"
           }
         },
         "required": [
@@ -613,44 +649,46 @@
       },
       "CustomerWithSummaryLoyaltyReferrals": {
         "title": "Customer With Summary Loyalty Referrals",
-        "description": "Customer details with details about loyalty and referral programs.",
         "allOf": [
-          {
-            "$ref": "#/components/schemas/CustomerBase"
-          },
           {
             "type": "object",
             "title": "Customer Response Data",
             "properties": {
               "id": {
                 "type": "string",
-                "description": "The ID of an existing customer that will be linked to the redemption in this request."
+                "description": "The ID of an existing customer that will be linked to redemption in this request."
               },
               "source_id": {
                 "type": "string",
-                "description": "A unique identifier of the customer who validates a voucher."
+                "description": "A unique identifier of the customer who validates a voucher. It can be a customer ID or email from a CRM system, database, or a third-party service. If you also pass a customer ID (unique ID assigned by Voucherify), the source ID will be ignored."
               },
               "summary": {
-                "nullable": true,
-                "allOf": [
+                "anyOf": [
                   {
                     "$ref": "#/components/schemas/CustomerSummary"
+                  },
+                  {
+                    "type": "null"
                   }
                 ]
               },
               "loyalty": {
-                "nullable": true,
-                "allOf": [
+                "anyOf": [
                   {
                     "$ref": "#/components/schemas/CustomerLoyalty"
+                  },
+                  {
+                    "type": "null"
                   }
                 ]
               },
               "referrals": {
-                "nullable": true,
-                "allOf": [
+                "anyOf": [
                   {
                     "$ref": "#/components/schemas/CustomerReferrals"
+                  },
+                  {
+                    "type": "null"
                   }
                 ]
               },
@@ -660,23 +698,27 @@
               },
               "created_at": {
                 "type": "string",
-                "description": "Timestamp representing the date and time when the customer was created in the ISO 8601 format.",
-                "example": "2024-01-01T11:11:11.111Z",
+                "description": "Timestamp representing the date and time when the customer was created. The value is shown in the ISO 8601 format.",
+                "example": "2022-08-30T06:32:07.380Z",
                 "format": "date-time"
               },
               "updated_at": {
                 "type": "string",
-                "description": "Timestamp representing the date and time when the customer was updated in the ISO 8601 format.",
-                "example": "2024-01-01T11:11:11.111Z",
+                "description": "Timestamp representing the date and time when the customer was updated. The value is shown in the ISO 8601 format.",
+                "example": "2022-08-31T06:32:07.380Z",
                 "format": "date-time"
               },
               "assets": {
                 "type": "object",
-                "description": "Contains information about the customer's cockpit.",
+                "description": "Contains information about the customer's cockpit.\n\n⚠️ Warning: Customer cockpits were removed. The customer cockpit URLs redirect to customer preference center.",
                 "properties": {
                   "cockpit_url": {
                     "type": "string",
-                    "description": "Customer's cockpit URL address."
+                    "description": "URL address to customer preference center. Previously, a customer's cockpit URL address."
+                  },
+                  "cockpit_preference_center_url": {
+                    "type": "string",
+                    "description": "URL address to customer preference center."
                   }
                 }
               },
@@ -695,22 +737,28 @@
               "referrals",
               "object"
             ]
+          },
+          {
+            "$ref": "#/components/schemas/CustomerBase"
           }
         ]
       },
       "Gift": {
         "title": "Gift",
         "type": "object",
-        "additionalProperties": false,
         "description": "Contains current gift card balance information.",
         "properties": {
           "amount": {
             "type": "number",
-            "description": "Total gift card income over the lifetime of the card. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $10 amount is written as 1000."
+            "description": "Total gift card income over the lifetime of the card. The value is multiplied by 100 to represent 2 decimal places. For example `10000 cents` for `$100.00`."
+          },
+          "subtracted_amount": {
+            "type": "integer",
+            "description": "Total amount of subtracted credits over the gift card lifetime."
           },
           "balance": {
             "type": "number",
-            "description": "Available funds. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $10 amount is written as 1000."
+            "description": "Available funds. The value is multiplied by 100 to represent 2 decimal places. For example `10000 cents` for `$100.00`. `balance` = `amount` - `subtracted_amount` - `redemption.redeemed_amount`."
           },
           "effect": {
             "type": "string",
@@ -762,7 +810,7 @@
           },
           "balance": {
             "type": "integer",
-            "description": "Points available for reward redemption. This is calculated as follows: `balance` = `points` – `expired_points` – `subtracted_points` – `redemption.redeemed_points`."
+            "description": "Points available for reward redemption. This is calculated as follows: `balance` = `points` - `expired_points` - `subtracted_points` - `redemption.redeemed_points`."
           },
           "next_expiration_date": {
             "type": "string",
@@ -787,9 +835,9 @@
         }
       },
       "CampaignLoyaltyCard": {
-        "title": "Campaign Loyalty Card",
         "type": "object",
         "description": "Schema model for a campaign loyalty card.",
+        "title": "Campaign Loyalty Card",
         "properties": {
           "points": {
             "type": "integer",
@@ -813,7 +861,7 @@
               },
               "rounding_type": {
                 "type": "string",
-                "description": "Type of rounding of the expiration period. Optional  for the `period_type: MONTH`.",
+                "description": "Type of rounding of the expiration period. Optional for the `period_type: MONTH`.",
                 "enum": [
                   "END_OF_MONTH",
                   "END_OF_QUARTER",
@@ -848,80 +896,34 @@
           "points"
         ]
       },
-      "CodeConfigRequiredLengthCharsetPattern": {
-        "title": "Code Config Settings",
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/CodeConfig"
-          }
-        ],
-        "required": [
-          "length",
-          "prefix",
-          "charset",
-          "pattern",
-          "postfix"
-        ]
-      },
-      "CustomerBase": {
-        "title": "Customer Base",
+      "CodeConfig": {
+        "title": "Code Config",
         "type": "object",
+        "description": "Contains information about the config used for the voucher code. Defines the code's pattern (prefix, postfix, length, charset, etc).",
         "properties": {
-          "name": {
+          "length": {
+            "type": "number",
+            "description": "Number of characters in a generated code (excluding prefix and postfix)."
+          },
+          "charset": {
             "type": "string",
-            "description": "Customer's first and last name."
+            "description": "Characters that can appear in the code.  \n\nExamples:\n\n- Alphanumeric: `0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ` \n- Alphabetic: `abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ` \n- Alphabetic Lowercase: `abcdefghijklmnopqrstuvwxyz` \n- Alphabetic Uppercase: `ABCDEFGHIJKLMNOPQRSTUVWXYZ` \n- Numbers: `0123456789`  \n- Custom: a custom character set"
           },
-          "description": {
+          "prefix": {
             "type": "string",
-            "description": "An arbitrary string that you can attach to a customer object."
+            "description": "A text appended before the code."
           },
-          "email": {
+          "postfix": {
             "type": "string",
-            "description": "Customer's email address."
+            "description": "A text appended after the code."
           },
-          "phone": {
+          "pattern": {
             "type": "string",
-            "description": "Customer's phone number. This parameter is mandatory for sending out codes to customers via an SMS channel."
+            "description": "A pattern for codes where hashes (#) will be replaced with random characters. Overrides `length`."
           },
-          "birthdate": {
-            "type": "string",
-            "description": "Customer's birthdate; format YYYY-MM-DD.",
-            "format": "date"
-          },
-          "address": {
-            "type": "object",
-            "nullable": true,
-            "description": "Customer's address.",
-            "properties": {
-              "city": {
-                "type": "string",
-                "description": "City"
-              },
-              "state": {
-                "type": "string",
-                "description": "State"
-              },
-              "line_1": {
-                "type": "string",
-                "description": "First line of address."
-              },
-              "line_2": {
-                "type": "string",
-                "description": "Second line of address."
-              },
-              "country": {
-                "type": "string",
-                "description": "Country."
-              },
-              "postal_code": {
-                "type": "string",
-                "description": "Postal code."
-              }
-            }
-          },
-          "metadata": {
-            "type": "object",
-            "description": "A set of custom key/value pairs that you can attach to a customer. The metadata object stores all custom attributes assigned to the customer."
+          "initial_count": {
+            "type": "integer",
+            "description": "Internal value, does not change anything if provided."
           }
         }
       },
@@ -947,7 +949,7 @@
         "properties": {
           "points": {
             "type": "integer",
-            "description": "Customer's loyalty points."
+            "description": "Customer's loyalty points minus expired for all loyalty cards which the customer has."
           },
           "referred_customers": {
             "type": "integer",
@@ -957,7 +959,6 @@
             "type": "object",
             "description": "Contains campaigns with details about point balances and how many customers were referred by the customer.",
             "additionalProperties": {
-              "title": "Campaign Loyalty Card Details",
               "type": "object",
               "description": "Contains details about the point balances left on loyalty cards and the number of referred customers in each campaign.",
               "properties": {
@@ -972,7 +973,7 @@
                 },
                 "referred_customers": {
                   "type": "integer",
-                  "description": "Number of customers referred by the customer in the campaign."
+                  "description": "Number of customers referred by the customer in campaign."
                 }
               }
             }
@@ -1003,13 +1004,13 @@
               "properties": {
                 "campaign_id": {
                   "type": "string",
-                  "description": "Unique identifier of the campaign assigned by Voucherify.",
+                  "description": "Unique campaign ID, assigned by Voucherify.",
                   "example": "camp_rRsfatlwN7unSeUIJDCYedal"
                 },
                 "referrer_id": {
                   "type": "string",
                   "example": "cust_sehkNIi8Uq2qQuRqSr7xn4Zi",
-                  "description": "Unique referrer ID assigned by Voucherify. This is the customer ID of a customer that is referring this customer."
+                  "description": "Unique referrer ID, assigned by Voucherify. This is the customer ID of a customer that is referring this customer."
                 },
                 "related_object_id": {
                   "type": "string",
@@ -1023,8 +1024,8 @@
                 "date": {
                   "type": "string",
                   "format": "date-time",
-                  "example": "2024-01-01T11:11:11.111Z",
-                  "description": "Timestamp representing the date and time when the customer was referred in the ISO 8601 format."
+                  "example": "2022-08-30T10:19:39.196Z",
+                  "description": "Timestamp representing the date and time when the customer was referred in ISO 8601 format."
                 }
               },
               "required": [
@@ -1041,6 +1042,75 @@
           "total",
           "campaigns"
         ]
+      },
+      "CustomerBase": {
+        "title": "Customer Base",
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Customer's first and last name."
+          },
+          "description": {
+            "type": "string",
+            "description": "An arbitrary string that you can attach to a customer object."
+          },
+          "email": {
+            "type": "string",
+            "description": "Customer's email address."
+          },
+          "phone": {
+            "type": "string",
+            "description": "Customer's phone number. This parameter is mandatory when you try to send out codes to customers via an SMS channel."
+          },
+          "birthday": {
+            "type": "string",
+            "description": "`Deprecated`. ~~Customer's birthdate; format YYYY-MM-DD~~.",
+            "format": "date"
+          },
+          "birthdate": {
+            "type": "string",
+            "description": "Customer's birthdate; format YYYY-MM-DD.",
+            "format": "date"
+          },
+          "address": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "description": "Customer's address.",
+            "properties": {
+              "city": {
+                "type": "string",
+                "description": "City"
+              },
+              "state": {
+                "type": "string",
+                "description": "State"
+              },
+              "line_1": {
+                "type": "string",
+                "description": "First line of address."
+              },
+              "line_2": {
+                "type": "string",
+                "description": "Second line of address."
+              },
+              "country": {
+                "type": "string",
+                "description": "Country."
+              },
+              "postal_code": {
+                "type": "string",
+                "description": "Postal code."
+              }
+            }
+          },
+          "metadata": {
+            "type": "object",
+            "description": "A set of custom key/value pairs that you can attach to a customer. The metadata object stores all custom attributes assigned to the customer. It can be useful for storing additional information about the customer in a structured format. This metadata can be used for validating whether the customer qualifies for a discount or it can be used in building customer segments."
+          }
+        }
       },
       "DiscountAmount": {
         "type": "object",
@@ -1059,7 +1129,8 @@
             "description": "Amount taken off the subtotal of a price. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $10 discount is written as 1000."
           },
           "amount_off_formula": {
-            "type": "string"
+            "type": "string",
+            "description": "Formula used to dynamically calculate the discount."
           },
           "aggregated_amount_limit": {
             "type": "integer",
@@ -1097,10 +1168,11 @@
           },
           "unit_off": {
             "type": "integer",
-            "description": "Number of units granted a full value discount."
+            "description": "Number of units to be granted a full value discount."
           },
           "unit_off_formula": {
-            "type": "string"
+            "type": "string",
+            "description": "Formula used to dynamically calculate the number of units."
           },
           "effect": {
             "description": "Defines how the unit is added to the customer's order.",
@@ -1184,7 +1256,8 @@
             "description": "The percent discount that the customer will receive."
           },
           "percent_off_formula": {
-            "type": "string"
+            "type": "string",
+            "description": "Formula used to dynamically calculate the discount."
           },
           "amount_limit": {
             "type": "number",
@@ -1229,7 +1302,8 @@
             "description": "Sets a fixed value for an order total or the item price. The value is multiplied by 100 to precisely represent 2 decimal places. For example, a $10 discount is written as 1000. If the fixed amount is calculated by the formula, i.e. the `fixed_amount_formula` parameter is present in the fixed amount definition, this value becomes the **fallback value**. As a result, if the formula cannot be calculated due to missing metadata, for example, this value will be used as the fixed value."
           },
           "fixed_amount_formula": {
-            "type": "string"
+            "type": "string",
+            "description": "Formula used to dynamically calculate the discount."
           },
           "effect": {
             "description": "Defines how the discount is applied to the customer's order.",
@@ -1249,64 +1323,33 @@
           "fixed_amount"
         ]
       },
-      "CodeConfig": {
-        "title": "Code Config",
-        "type": "object",
-        "description": "Schema containing information about config used for voucher. Defines the code pattern (prefix, suffix, length, charset, etc).",
-        "properties": {
-          "length": {
-            "type": "number",
-            "description": "Number of characters in a generated code (excluding prefix and postfix)."
-          },
-          "charset": {
-            "type": "string",
-            "description": "Characters that can appear in the code."
-          },
-          "prefix": {
-            "type": "string",
-            "description": "A text appended before the code."
-          },
-          "postfix": {
-            "type": "string",
-            "description": "A text appended after the code."
-          },
-          "pattern": {
-            "type": "string",
-            "description": "A pattern for codes where hashes (#) will be replaced with random characters. Overrides `length`."
-          },
-          "initial_count": {
-            "type": "integer",
-            "description": "The initial count."
-          }
-        }
-      },
       "CustomerSummaryRedemptions": {
         "title": "Customer Summary Redemptions",
         "type": "object",
         "properties": {
           "total_redeemed": {
             "type": "integer",
-            "description": "Total number of the redemptions made by the customer."
+            "description": "Total number of redemptions made by the customer."
           },
           "total_failed": {
             "type": "integer",
-            "description": "Total number of the redemptions that failed."
+            "description": "Total number of redemptions that failed."
           },
           "total_succeeded": {
             "type": "integer",
-            "description": "Total number of the redemptions that succeeded."
+            "description": "Total number of redemptions that succeeded."
           },
           "total_rolled_back": {
             "type": "integer",
-            "description": "Total number of the redemptions that were rolled back for the customer."
+            "description": "Total number of redemptions that were rolled back for the customer."
           },
           "total_rollback_failed": {
             "type": "integer",
-            "description": "Total number of the redemption rollbacks that failed."
+            "description": "Total number of redemption rollbacks that failed."
           },
           "total_rollback_succeeded": {
             "type": "integer",
-            "description": "Total number of the redemption rollbacks that succeeded."
+            "description": "Total number of redemption rollbacks that succeeded."
           },
           "gift": {
             "type": "object",
@@ -1318,12 +1361,12 @@
             "properties": {
               "redeemed_amount": {
                 "type": "integer",
-                "description": "Total amount of gift card credits redeemed by the customer. The value is multiplied by 100 to precisely represent 2 decimal places. For example `1000 cents` for `$10.00`.",
+                "description": "Total amount of gift card credits redeemed by customer. The value is multiplied by 100 to represent 2 decimal places. For example `10000 cents` for `$100.00`.",
                 "default": 0
               },
               "amount_to_go": {
                 "type": "integer",
-                "description": "Remaining gift card balance across all gift cards. The value is multiplied by 100 to precisely represent 2 decimal places. For example `1000 cents` for `$10.00`.",
+                "description": "Remaining gift card balance across all gift cards. The value is multiplied by 100 to represent 2 decimal places. For example `10000 cents` for `$100.00`.",
                 "default": 0
               }
             }
@@ -1338,11 +1381,11 @@
             "properties": {
               "redeemed_points": {
                 "type": "integer",
-                "description": "Total number of the loyalty points redeemed by the customer."
+                "description": "Total number of loyalty points redeemed by the customer."
               },
               "points_to_go": {
                 "type": "integer",
-                "description": "Sum of the remaining available point balance across all loyalty cards."
+                "description": "Sum of remaining available point balance across all loyalty cards."
               }
             }
           }
@@ -1360,11 +1403,12 @@
       },
       "CustomerSummaryOrders": {
         "title": "Customer Summary Orders",
+        "description": "Lists details about orders related to the customer. Lists only data for orders with the `PAID` or `FULFILLED` status. Data from orders with a `CREATED` or `CANCELED` status are not included. The data is updated also when an order changes status.",
         "type": "object",
         "properties": {
           "total_amount": {
             "type": "integer",
-            "description": "The total amount spent by the customer. The value is multiplied by 100 to precisely represent 2 decimal places. For example `1000 cents` for `$10.00`."
+            "description": "The total amount spent by the customer. The value is multiplied by 100 to represent 2 decimal places. For example `10000 cents` for `$100.00`."
           },
           "total_count": {
             "type": "integer",
@@ -1372,17 +1416,17 @@
           },
           "average_amount": {
             "type": "integer",
-            "description": "Average amount spent on orders. `total_amount` &divide; `total_count`. The value is multiplied by 100 to precisely represent 2 decimal places. For example `1000 cents` for `$10.00`."
+            "description": "Average amount spent on orders. `total_amount` &divide; `total_count`. The value is multiplied by 100 to represent 2 decimal places. For example `10000 cents` for `$100.00`."
           },
           "last_order_amount": {
             "type": "integer",
-            "description": "Amount spent on last order. The value is multiplied by 100 to precisely represent 2 decimal places. For example `1000 cents` for `$10.00`."
+            "description": "Amount spent on last order. The value is multiplied by 100 to represent 2 decimal places. For example `10000 cents` for `$100.00`."
           },
           "last_order_date": {
             "type": "string",
             "format": "date-time",
-            "example": "2024-01-01T11:11:11.111Z",
-            "description": "Timestamp representing the date and time of the customer's last order in the ISO 8601 format."
+            "example": "2022-08-30T11:51:08.029Z",
+            "description": "Timestamp representing the date and time of the customer's last order in ISO 8601 format."
           }
         },
         "required": [
@@ -1408,14 +1452,14 @@
         "enum": [
           "ADD_MISSING_ITEMS",
           "ADD_NEW_ITEMS",
-          "ADD_MANY_ITEMS"
+          "ADD_MANY_ITEMS",
+          "ADD_SAME_ITEMS"
         ],
         "type": "string"
       },
       "SimpleProductDiscountUnit": {
         "type": "object",
         "title": "Simple Product Discount Unit",
-        "description": "Simplified product discount unit data.",
         "properties": {
           "id": {
             "type": "string",
@@ -1437,8 +1481,7 @@
       },
       "SimpleSkuDiscountUnit": {
         "type": "object",
-        "title": "Simple SKU Discount Unit",
-        "description": "Simplified SKU discount unit data.",
+        "title": "Simple Sku Discount Unit",
         "properties": {
           "id": {
             "type": "string",
@@ -1450,7 +1493,7 @@
           },
           "name": {
             "type": "string",
-            "description": "SKU name."
+            "description": "Sku name"
           }
         },
         "required": [
@@ -1464,10 +1507,11 @@
         "properties": {
           "unit_off": {
             "type": "number",
-            "description": "Number of units granted a full value discount."
+            "description": "Number of units to be granted a full value discount."
           },
           "unit_off_formula": {
-            "type": "string"
+            "type": "string",
+            "description": "Formula used to dynamically calculate the number of units."
           },
           "effect": {
             "type": "string",
@@ -1475,7 +1519,7 @@
               "ADD_NEW_ITEMS",
               "ADD_MISSING_ITEMS"
             ],
-            "description": "Defines how the unit is added to the customer's order."
+            "description": "Defines how the unit is added to the customer's order.\n\n"
           },
           "unit_type": {
             "type": "string",

@@ -1,127 +1,133 @@
-# Voucherify's Documentation and OpenAPI Contribution
+# Contribution to Voucherify's documentation and API reference
 
-## Introduction
+## How the documentation is built
 
-Voucherify builds and maintains REST API documentation and SDKs to make it easier for software developers to understand and integrate Voucherify into their e-commerce platforms.
+### Introduction
 
-This document describes all deliverables and their development process.
+This guide explains how the Mintlify site is produced from this repository, and how to change the API reference and the guides. The repository map is in [README.md](./README.md). Publishing an SDK is described in [SDKS.md](./SDKS.md).
 
-## Guides and API Reference
+### Documentation structure
 
-The Guides and API Reference pages are hosted on [readme.io](https://readme.com/), which is a platform for creating and hosting developer documentation. However, the source of the documentation content is stored in the [Voucherify Open API GitHub repository](https://github.com/voucherifyio/voucherify-openapi).
+`documentation/` is the Mintlify site. `documentation/docs.json` is navigation, theme, and which OpenAPI file each API group uses. Prose is `*.mdx`.
 
-The guides are stored purely as Markdown files in the [guides folder](https://github.com/voucherifyio/voucherify-openapi/tree/master/docs/guides). They can be uploaded to the readme.io platform via readme CLI.
+The site tabs are:
 
-The API Reference pages are built by readme.io. The platform combines the OpenAPI file that describes Voucherify API endpoints, parameters, and responses with the Markdown files from the [reference folder](https://github.com/voucherifyio/voucherify-openapi/tree/master/docs/reference-docs).
+- **Voucherify**, from `documentation/get-started/`
+- **Developer guides**, from `documentation/guides/` and `documentation/integrations/`
+- **User guides**, from `documentation/discover/`, `prepare/`, `build/`, `optimize/`, `orchestrate/`, `analyze/`, and `manage/`
+- **API reference**, from `documentation/api-reference/` together with the generated OpenAPI files
+- **Changelog**, from `documentation/changelog/`
 
-## API Reference - Endpoint Pages
+Shared fragments live in `documentation/snippets/` and are imported by other pages. Sample files live in `documentation/examples/`.
 
-API Endpoint Pages like [GET voucher](https://docs.voucherify.io/reference/get-voucher) describe a REST API endpoint, including details like path, HTTP method, path parameters, body parameters, response schema, and response statuses. On the right side of those pages, there is a `Playground Widget` that developers can use to make test API calls. Readme.io builds those pages using information about the REST API from the uploaded OpenAPI file and displays UI, so users can explore all the details.
+Mintlify builds a preview only for a pull request whose base is `master`. A pull request into another branch does not get that preview.
 
-For each endpoint page, there is a corresponding dummy Markdown file like [VOUCHERS-Get-Voucher.md](https://github.com/voucherifyio/voucherify-openapi/blob/master/docs/reference-docs/VOUCHERS-Get-Voucher.md). This page allows editing the appearance of the page displayed in readme.io, in particular:
-- The Markdown attributes section at the beginning of the file wrapped by `---` describes the page title, type, slug, order, and visibility.
-- `[block:html]` section that adds custom styles to the page that hides unnecessary UI elements like Playground language selector or expandable readme object exploration widget. It can be also used to display the "Beta" tag next to the title. 
+`documentation/.mintlify/AGENTS.md` is Mintlify's writing guide for MDX components. It is not this contribution process.
 
-Reamde.io platform compares the `operationId` endpoint details attribute from the OpenAPI file with the `slug` from Markdown attributes to combine them and display the final version of the API endpoint page.
+### API reference
 
-All API endpoint pages are grouped by sections like `Vouchers`, `Campaigns`, or `Promotions`. Those sections are built by readme.io based on the `tags` endpoint details attribute from the OpenAPI file. The attribute must be used in the `parentDocSlug` attribute of the dummy Markdown file. 
+`reference/OpenAPI.json` is the source. It is OpenAPI 3.1.0 and it contains both `paths` and `webhooks`. Every other OpenAPI file is generated from it.
 
+`npm run prepare-generated` refreshes the derived OpenAPI files and the schema tables. It does not regenerate SDK source. `npm run pre-commit` is the same command. CI runs it and fails if the working tree is dirty.
 
-## API Reference - Data Model Pages
+The split writes two kinds of Mintlify files, both still OpenAPI 3.1.0:
 
-Data model pages like [Voucher Object](https://docs.voucherify.io/reference/voucher-object "Voucher object page") describe the schema of the main building blocks used in specific sections. There are two types of data model pages:
-1. Using readme.io expandable object exploration widget, like on the [Validation Object page](https://docs.voucherify.io/reference/validation-object "Validation Object Page"),
-2. Displaying the schema of the object with all attributes in a table like on the [Voucher Object page](https://docs.voucherify.io/reference/voucher-object).
+- `documentation/openapi/*.json` comes from `paths` and has no `webhooks` key. A group in `docs.json` points at one of these files with `"openapi": "/openapi/....json"` and lists operations as `METHOD /path`. Mintlify renders those endpoint pages from the operation.
+- `documentation/openapi-events/*.json` comes from `webhooks`. An event page is MDX. Its `openapi` frontmatter names the webhook file and the event.
 
-We believe that presenting object details in a table is more intuitive for developers. Unfortunately, readme.io does not have the feature to display building block objects defined in OpenAPI in a table format, so we have built a custom JS script (`build-update-md-tables-from-openapi`). The script generates Markdown tables automatically from the OpenAPI file and puts them into Markdown files in the `reference-docs` folder, e.g.: https://github.com/voucherifyio/voucherify-openapi/blob/master/docs/reference-docs/VOUCHERS-Voucher-Object.md. Once the Markdown files are created, they are uploaded to readme.io with the readme.io CLI. 
+Paths under `/v2/loyalties` use tags that start with `LV2-`, such as `LV2-Programs`. The split writes every such path to `documentation/openapi/loyalties-v2.json` and removes the `LV2-` prefix in that file.
 
-## API Reference - Introduction Pages
+Schema pages under `documentation/api-reference/` are MDX. The pages listed in `scripts/mintlify/utils/md-tables.ts` are rewritten by `prepare-generated` from a downgraded view of the spec. Introduction pages in the same folder are written by hand.
 
-Pages from the introduction section, like [Introduction – What is Voucherify API?](https://docs.voucherify.io/reference/introduction-1), are Markdown pages uploaded to readme.io with readme.io CLI. Their content can be found along with other Markdown files inside the [`docs/reference-docs`](https://github.com/voucherifyio/voucherify-openapi/blob/master/docs/reference-docs/).
+`prepare-generated` runs `scripts/shared/fix-schemas-with-refs.ts` first. Where a `$ref` has sibling keywords, that script wraps them in `allOf` for schemas reachable from `paths`. OpenAPI 3.1 allows the `$ref` to keep those siblings. The wrap is there for later generators. The script leaves `webhooks` and `/v2/loyalties` as written.
 
-## Beta Endpoints
+Null in the source uses JSON Schema null. SDK and production specs are downgraded to OpenAPI 3.0.1, and that downgrade is what introduces `nullable`.
 
-To label an API endpoint as a Beta version in readme.io, add the following details in its Markdown file:
-- Add `[Beta]` postfix to the page title (`title` markdown attribute)
-- Add the following style to the `[block:html]` section within the `<style></style>` tags:
+### Developer documentation
 
-```css
-h1::after {\n content: \"BETA\";\n background-color: rgb(237, 117, 71);\n color: rgb(255, 255, 255);\n border-radius: 2rem;padding: 8px 13px 8px;\n white-space: nowrap;font-size:12px;\n}
+Developer pages explain how to call the API and how to connect other systems. They live in `documentation/get-started/`, `documentation/guides/`, and `documentation/integrations/`, in the groups `docs.json` already defines for those folders.
+
+### User interface documentation
+
+User-interface pages explain the dashboard. They live in `documentation/discover/`, `prepare/`, `build/`, `optimize/`, `orchestrate/`, `analyze/`, and `manage/`, in the groups `docs.json` defines for the User guides tab.
+
+### API reference and SDKs
+
+Published clients are built from the same source, through `reference/readonly-sdks/<lang>/OpenAPI.json`. `prepare-generated` writes those files. It does not regenerate the checkouts under `sdks/`.
+
+SDK and production specs are OpenAPI 3.0.1. They omit `webhooks`, paths under `/v2/loyalties`, and any schema only those paths reach. `scripts/shared/get-take-list.ts` is the list of endpoints those specs include. A new endpoint stays off that list until an SDK release adds it.
+
+Filters in `scripts/shared/prepare-open-api/remove-breaking-changes/` undo source changes that would break a published client. A change that should not affect published clients leaves `reference/readonly-sdks/` and `production/readOnly-openAPI.json` byte-for-byte unchanged.
+
+Files under `sdks/` stay untouched during an OpenAPI or documentation change. A commit in this repository only stores the submodule SHA.
+
+## How to change the documentation
+
+### Add or edit a guide page
+
+1. Choose the folder for the audience. Developer pages go in `get-started/`, `guides/`, or `integrations/`. User-interface pages go in `discover/`, `prepare/`, `build/`, `optimize/`, `orchestrate/`, `analyze/`, or `manage/`.
+2. Add an `.mdx` file. Start it with `title` and `description` frontmatter.
+3. Add the page path, without `.mdx`, to the matching group in `documentation/docs.json`.
+4. Put text that several pages share in `documentation/snippets/` and import it:
+
+```mdx
+import TimeFrame from "/snippets/time-frame.mdx"
 ```
 
-## OpenAPI Files
+5. Open the pull request against `master` so Mintlify builds a preview.
 
-Note that OpenAPI files slightly differ depending on where we use them.
+### Change an endpoint
 
-- [**[production/readOnly-openAPI.json]**](https://github.com/voucherifyio/voucherify-openapi/tree/master/production) - specification version 3.0.1 for all external viewers.
-- [**[reference/OpenAPI.json]**](https://github.com/voucherifyio/voucherify-openapi/tree/master/reference) - Specification version 3.0.1 with `"type": "null"` usages.
-- **[tmp/referenceToUpload/OpenAPI.json]** - Used for readme.io specification version 3.0.1, but it is marked as 3.1.0 to skip the validation check by readme.io. It uses `"type": "null"`.
-- **[tmp/reference/{language}/OpenAPI.json]** - Used to generate an SDK.
+1. Edit the operation in `reference/OpenAPI.json`. Set its tag to the API group it belongs to.
+2. In `documentation/docs.json`, add the operation to that group's `pages` as `METHOD /path`, for example `GET /v1/vouchers/{code}`. A new group also needs `"openapi": "/openapi/<tag-file>.json"`.
+3. Leave `scripts/shared/get-take-list.ts` unchanged. A new endpoint is not added there, so the SDK specs omit it.
+4. For a path under `/v2/loyalties`, tag the operation with an `LV2-` tag, such as `LV2-Programs`. The split writes it to `documentation/openapi/loyalties-v2.json`. SDK and production specs omit it.
+5. To add or refresh a schema page, register the schema in `scripts/mintlify/utils/md-tables.ts`. `prepare-generated` writes `documentation/api-reference/<group>/<title>.mdx` from that entry, with the path lowercased and spaces turned into hyphens. Add that path to the group in `docs.json`. Edit the schema in `reference/OpenAPI.json`.
+6. Run `npm run prepare-generated` and commit what it rewrites.
+7. Open the pull request against `master` so Mintlify builds a preview.
 
-If you want to contribute to the OpenAPI file, you MUST do it in the **reference/OpenAPI.json** file, because all other OpenAPI files are generated from this file!
+Before you commit, confirm that the operation includes its query parameters, filters, body fields, and response fields, and that the change follows [Avoid a breaking SDK change](#avoid-a-breaking-sdk-change). When the change must stay out of published clients, `reference/readonly-sdks/` and `production/readOnly-openAPI.json` stay byte-for-byte unchanged.
 
-To update the **[production/readOnly-openAPI.json]** file, run the `npm run build-production-openapi`
+### Add or change a webhook event
 
-The **[tmp/referenceToUpload/OpenAPI.json]** file is generated while running the `npm run create-clean-project -- (parameters)` command.
+1. Add the event under `webhooks` in `reference/OpenAPI.json`. Use the `post` method. The webhook key is the event name, such as `EVENTS.CUSTOMER.CREATED`.
+2. Set `tags` to a category that starts with `Events`, such as `Events customer`. A new category is a new tag. The split writes `documentation/openapi-events/events-customer.json` from that tag: lowercase, with spaces turned into hyphens.
+3. When an API path already uses the payload schema, reference that schema. When the payload is a different object, give the schema a `Webhook` prefix.
+4. Add an MDX page under `documentation/api-reference/` and list its path in the Events group in `docs.json`. The frontmatter points at the webhook file and the event name:
 
-The **[tmp/reference/{language}/OpenAPI.json]** files are generated while running `npm run prepare-open-api -- --language=(language)` command. The available languages are `ruby` and `python`.
+```yaml
+---
+title: "Created"
+openapi: "/openapi-events/events-customer.json webhook EVENTS.CUSTOMER.CREATED"
+---
+```
 
-## OpenAPI
+5. Run `npm run prepare-generated` and commit the rewrite. A webhook-only schema stays out of `reference/readonly-sdks/` and `production/readOnly-openAPI.json`.
 
-The [OpenAPI Specification](https://swagger.io/specification/v3/) (OAS) is used to create the Voucherify API documentation.
-The Voucherify OpenAPI file is located in the [Voucherify OpenAPI GitHub repository](https://github.com/voucherifyio/voucherify-openapi/blob/master/production/readOnly-openAPI.json "Voucherify OpenAPI read only json file").
+### Name a schema
 
-We use [Stoplight](https://stoplight.io/ "Stoplight.io") to edit the OpenAPI file as it gives a readable UI that helps to edit the very large json file. Everyone can create a free account on the Stoplight platform.
+Use PascalCase.
 
-How to edit the OpenAPI file:
-1. Upload `./reference/OpenAPI.json` file to the Stoplight platform.
-2. Make changes to the OpenAPI.json file with the Stoplight UI.
-3. Export the modified OpenAPI content and update the OpenAPI.json file in the repository.
-4. Ensure that the OpenAPI.json file has only expected changes.
+A schema that describes one operation (a 0-level model) follows `{Client?}{PathNameResult}{Action}{Differentiator?}{Request|Response}{Body|Query}`:
 
-> [!WARNING] Each OpenAPI change should be tested by reviewing the documentation on readme.io after the full documentation update process.
+- `Client` is optional. Use it for client schemas.
+- `PathNameResult` is `location.pathname` without `v1` and without path parameters, in PascalCase.
+  - `/v1/rewards/{rewardId}/assignments` becomes `RewardsAssignments`
+  - `/v1/rewards/{rewardId}/assignments/{assignmentId}` becomes `RewardsAssignments`
+  - `/v1/rewards/{rewardId}/assignments/{assignmentId}/redemptions` becomes `RewardsAssignmentsRedemptions`
+  - `/client/v1/rewards/{rewardId}/assignments/{assignmentId}/redemptions` becomes `ClientRewardsAssignmentsRedemptions`
+- `Action` comes from the HTTP method or from what the endpoint does.
+  - `Get` for one record, `List` for many
+  - `Update` for one record, `UpdateInBulk` for many
+  - `Delete` for one record
+  - `Create` for one record, `CreateInBulk` for many
+  - Or a verb such as `Track`, `Validate`, `Import`, or `Export`
+- `Differentiator` is optional. Use it when a 0-level model contains only `oneOf`. The child model's `title` is its schema name in Title Case. Its `description` follows `{Response|Request} {Body|Query} schema for **{Method}** {Path}`, and names a second method and path when the schema serves both.
+- `Request` or `Response`
+- `Body` or `Query`
 
-### OpenAPIWebhooks File and Event Documentation
+A 0-level model that needs a differentiator:
 
-The documentation of the events that are used in Voucherify webhooks is generated from an [OpenAPIWebhooks.json file](https://github.com/voucherifyio/voucherify-openapi/tree/master/reference).
-
-If you want to contribute to this documentation, follow the guidelines for the Voucherify OpenAPI documentation.
-
-Tips:
-- To add a new event, add it to the `"paths"` resources in the OpenAPIWebhooks.json file. Events use the `POST` method.
-- To add a new event category, add an object to the `"tags"` section. Specify the name and description. The name and the description should be the same, starting with the `Events` word.
-- If you want to add a page to the Events section, add a Markdown file to the `docs/custom-webhook-sites` folder.
-  - Note: these files require a header wrapped with `---` to describe the page title, type, slug, order, and visibility.
-- If an event requires an additional description, add a Markdown file to the `docs/webhook-introductions` folder. The file should be named in the following format: `events-{event category tag name}-{event > post > summary > value}`. Example: `events-voucher-enabled.md`.
-  - Note: these files do not require a header.
-
-### Naming Convention
-
-When building new models, follow the following name convention: 
-- Use the PascalCase.
-- If a model is used as a specific API endpoint description (0-level model), follow the pattern: `{Client?}{PathNameResult}{Action}{Differentiator?}{Request|Response}{Body|Query}`, where:
-  - (optional) `Client`: Use for all client schemas.
-  - `PathNameResult`: `location.pathname` WITHOUT `v1` and `path parameters` written in PascalCase. Examples:
-    - `/v1/rewards/{rewardId}/assignments` => `RewardsAssignments`
-    - `/v1/rewards/{rewardId}/assignments/{assignmentId}` => `RewardsAssignments`
-    - `/v1/rewards/{rewardId}/assignments/{assignmentId}/redemptions` => `RewardsAssignmentsRedemptions`
-    - `/client/v1/rewards/{rewardId}/assignments/{assignmentId}/redemptions` => `ClientRewardsAssignmentsRedemptions`
-  - `Action`: Either taken from an HTTP method, e.g. `List`, `Get`, `Update`, `Delete`, `Create` or what the endpoint does, e.g. `Track`, `Validate`, `Import`, `Export`
-    - `Get`(single record), 
-    - `List`(multiple record)
-    - `Update`(single record), 
-    - `UpdateInBulk` (multiple record), 
-    - `Delete`(single record), 
-    - `Create`(single record), 
-    - `CreateInBulk`(multiple record)
-  - (optional) `Differentiator`: Sub-model title when a 0-level model contains only `oneOf`. The title of those models must be like the schema name but in `Title Case` and the description must follow the pattern: `{Response/Request} {Body/Query} schema for **{Method}** {Path} {OPTIONALLY: and **{Method}** {Path}}`. Examples:
-    - `Base [PublicationsCreateBaseResponseBody]` (common part of other child models)
-    - `Vouchers [PublicationsCreateVouchersResponseBody]`
-    - `Voucher [PublicationsCreateVoucherResponseBody]`
-  - `Request` or `Response`
-  - `Body` or `Query`
-
-Example of a model that needs a `Differentiator`:
 ```json
 "PublicationsCreateResponseBody": {
     "title": "Publications Create Response Body",
@@ -135,19 +141,21 @@ Example of a model that needs a `Differentiator`:
             "$ref": "#/components/schemas/PublicationsCreateVouchersResponseBody"
         }
     ]
-},
+}
 ```
-- If a model is used by more than one API endpoint (general model), use simple domain language, e.g. `Customer`, `Category`, `Discount`, `DiscountUnit`.
-- If a part of a model is used by more than one schema, save this part under a new schema and use it with an `allOf` operator.
 
-**If you see a schema with a wrong name, don't hesitate to correct it!**
+The child titles follow the same rule: `Voucher [PublicationsCreateVoucherResponseBody]`, `Vouchers [PublicationsCreateVouchersResponseBody]`. A shared part of those children is a `Base` model, such as `PublicationsCreateBaseResponseBody`.
 
-### Correct 0-level model example:
+A schema used by more than one operation takes a domain name, such as `Customer`, `Category`, `Discount`, or `DiscountUnit`. When part of a schema is shared, save that part as its own schema and include it with `allOf`.
 
-- `type` - should be `object` or `array` mostly but in some cases, it could be optional.
-- `title` - should be the same as the name of the model.
-- `description` - should point to the API endpoint that uses this model e.g. `{type} body schema for **{method}** {path}`.
-- `properties / oneOf / allOf` - should contain all attributes that are used in the API endpoint or `$ref` to another schema.
+Correct a schema whose name breaks this pattern.
+
+A 0-level model has:
+
+- `type` of `object` or `array` in most cases
+- `title` equal to the schema name in Title Case
+- `description` that points at the operation, for example: Response body schema for **GET** `v1/redemptions/{redemptionId}`
+- `properties`, `oneOf`, or `allOf` for the fields or for `$ref`s to other schemas
 
 ```json
 {
@@ -167,22 +175,56 @@ Example of a model that needs a `Differentiator`:
 }
 ```
 
-For example:
-- The general voucher model, used in many different API endpoints, should have the name `Voucher` (currently, it has a name: `Voucher`)
-- for path `GET /v1/vouchers` (list vouchers), we have a `1_res_vouchers_GET` 0-level model that should be named `VouchersListResponseBody`.
-- for path `GET /v1/vouchers` (list vouchers), we have a `1_res_vouchers_GET` 0-level model which has a sub-model `Voucher_list_vouchers` that should be named `VouchersListResponseBody`.
-- General model `Voucher` is used in many paths (`GET /v1/vouchers/{code}`, `POST /v1/vouchers/qualification`, `GET /v1/publications/create`); therefore, it should be renamed to `Voucher`.
+Two names for vouchers:
 
-> [!NOTE] Most likely, the general model will be the same as used in the GET method. For example, `CategoriesGetResponseBody` is equal by reference to `Category`. This model most likely will not be used in `PUT` requests, because the response in a `PUT` request always returns value in `updated_at`, so you will need to create a duplicated model just for the update response.
+- The voucher shape used by many operations is `Voucher`.
+- The 0-level model for `GET /v1/vouchers` is `VouchersListResponseBody`.
 
-### Good practices
+The general model is often the same object the `GET` response returns. `CategoriesGetResponseBody` can be a reference to `Category`. A `PUT` response usually needs its own model, because that response always includes `updated_at`.
 
-Contribute with the following good practices in mind:
-- For literal unions, use `enum`,
-- For type unions, use `oneOf`,
-- For attributes that may contain `null`, add `"nullable": true`,
-- If an attribute is always `null`, set `"type": "null"`,
-- For dates, use `"type": "string", "format": "date-time"` or `"type": "string", "format": "date"`,
-- For the object type `object`, add the `required` attribute which should contain a list of required attributes in the object,
-- A `nullable` cannot be next to a `$ref`. Run `npm run fix-schemas-with-refs` to fix it.
-- `writeOnly` and `readOnly` flags should not be used, because they cause errors in generating SDKs
+### Write a schema
+
+- For a literal union, use `enum`.
+- For a type union, use `oneOf`.
+- For a value that may be null, use a union such as `"type": ["string", "null"]`. For a reference that may be null, use `anyOf` of the `$ref` and `{ "type": "null" }`.
+- For a value that is always null, use `"type": "null"`.
+- For a date, use `"type": "string"` with `"format": "date-time"` or `"format": "date"`.
+- For an object, set `required` to the list of required fields.
+- A `$ref` may sit next to other keywords. OpenAPI 3.1 allows it.
+- Leave out `writeOnly` and `readOnly`. They cause errors when the SDKs are generated.
+
+Keep `nullable` out of `reference/OpenAPI.json` and out of `documentation/openapi*`. The SDK and production downgrade adds it.
+
+### Avoid a breaking SDK change
+
+These edits to `reference/OpenAPI.json` are safe for published SDKs:
+- Changing a `title`
+- Changing a `description`
+- Adding a property to an object
+- Reordering properties on a response object
+- Adding a schema
+- Removing a field from `required`
+- Adding an `example`
+- Adding a value to an existing `enum`
+
+These edits break published SDKs:
+- Adding a query parameter
+- Deleting anything: a query parameter, a schema, a property, or similar
+- Reordering query parameters
+- Removing a query parameter that clients already send, such as `page` after paging changes
+- Replacing an inline object with a `$ref`
+- Removing a value from an `enum`
+- Adding an `enum` to a schema that was only `"type": "string"`
+- Adding `format`, or changing it, on a schema with `"type": "string"`
+- Adding `default` (likely to break clients)
+- Adding an `enum` value when the existing values share a prefix. That case needs a filter in `remove-breaking-changes/`
+
+Changing `operationId` or `tags` on an existing operation is forbidden. A mapping is added when either one has to change.
+
+### Filter a breaking change
+
+To keep a breaking edit out of the SDK specs, undo it in `scripts/shared/prepare-open-api/remove-breaking-changes/<lang>.ts`. Each language file has `before` and `after`. `scripts/shared/prepare-open-api/index.ts` runs those functions while it writes `reference/readonly-sdks/<lang>/OpenAPI.json`.
+
+Run `npm run prepare-generated` afterward. The SDK input files and `production/readOnly-openAPI.json` stay free of the breaking edit.
+
+When a major SDK release should include the change, update the filters in `remove-breaking-changes/` so the change passes through. Version numbering for that release is in [SDKS.md](./SDKS.md).

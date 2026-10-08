@@ -165,7 +165,7 @@ Before releasing new major version please go to [`index.ts` file](./scripts/shar
 Various notes regarding generating SDKs with v2/loyalties:
 - Preconditions:
   - `OpenAPI.json` is upgraded to `"openapi": "3.1.0"`,
-  - `loyalties-v2.json` is merged with the upgraded `OpenAPI.json`
+  - Loyalty v2 lives in `OpenAPI.json` on `/v2/loyalties` paths. SDK generation omits those paths and schemas only those paths reach.
 - Exceptions (DO NOT GENERATE THE FOLLOWING ENDPOINTS/METHODS):
   - POST `/v2/loyalties/tier-structures/{tierStructureId}/deactivate`
   - PUT `/v2/loyalties/tier-structures/{tierStructureId}/tiers/{tierId}`
