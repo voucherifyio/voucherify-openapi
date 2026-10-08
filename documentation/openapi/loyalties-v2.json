@@ -16611,7 +16611,7 @@
         ],
         "operationId": "examineEarningRules",
         "summary": "Examine earning rules",
-        "description": "Estimates earning opportunities for a customer without triggering any actual earning for loyalty v2 earning rules. The `trigger` selects whether all trigger events or one specific event is examined. When a specific event is selected, exactly one matching context object is required: `customer_order_paid` for `customer.order.paid`, `customer_segment_entered` for `customer.segment.entered`, and `customer_custom_event` for `customer.custom_event`. The other context objects must not be present.\n\nThis endpoint can examine earning rules for all loyalty programs the customer belongs to by using `customer_identification` with `customer_id` or `customer_source_id`. To examine earning rules only for one program, use `member_id` in `customer_identification`, as `member_id` is loyalty program-specific.",
+        "description": "Estimates earning opportunities for a customer without triggering any actual earning for loyalty v2 earning rules. The `trigger` selects whether all trigger events or one specific event is examined. When a specific event is selected, exactly one matching context object is required: `customer_order_paid` for `customer.order.paid`, `customer_segment_entered` for `customer.segment.entered`, and `customer_custom_event` for `customer.custom_event`. The other context objects must not be present.\n\nThis endpoint can examine earning rules for all loyalty programs the customer belongs to by using `customer_identification` with `customer_id` or `customer_source_id`. To examine earning rules only for one program, use `member_id` in `customer_identification`, as `member_id` is loyalty program-specific. A customer who exists but has no active membership returns `200` with an empty `memberships` array.",
         "requestBody": {
           "required": true,
           "content": {
@@ -16787,7 +16787,7 @@
         },
         "responses": {
           "200": {
-            "description": "Earning rules examination result",
+            "description": "Earning rules examination result. An empty `memberships` array means no active membership has earning rules for the examined trigger.",
             "content": {
               "application/json": {
                 "schema": {
@@ -17369,7 +17369,7 @@
             }
           },
           "400": {
-            "description": "Validation error - request body failed validation.",
+            "description": "Validation error - request body failed validation. Temporary customer, member, or order metadata that does not match its metadata schema returns key `metadata_validation_failed` and message `Metadata validation failed`.",
             "content": {
               "application/json": {
                 "schema": {
@@ -17390,7 +17390,7 @@
             }
           },
           "404": {
-            "description": "Resource not found.",
+            "description": "The `member_id` does not exist, or the `customer_id` or `customer_source_id` does not exist. An unknown `member_id` is checked first and returns `resource_type` `member` with details `Cannot find member with id {memberId}`. An unknown customer returns `resource_type` `customer` with details `Cannot find customer with id {id}`, where `{id}` is the `customer_id` or `customer_source_id` you sent. When a member exists but its customer record does not, that same customer error uses the `member_id` as `{id}`.",
             "content": {
               "application/json": {
                 "schema": {
@@ -17406,6 +17406,17 @@
                       "request_id": "v-12cd3ae8271a39a7c6",
                       "resource_id": "lmbr_128f962db8c4ba5dc",
                       "resource_type": "member"
+                    }
+                  },
+                  "Customer not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find customer with id cust_nonexistent",
+                      "request_id": "v-12cd3ae8271a39a7c7",
+                      "resource_id": "cust_nonexistent",
+                      "resource_type": "customer"
                     }
                   }
                 }
@@ -24112,14 +24123,14 @@
           },
           "earning_rules": {
             "type": "array",
-            "description": "All earning rules that matched during examination (deduplicated).",
+            "description": "Lists earning rules that produced a points or benefit estimation, deduplicated across memberships.",
             "items": {
               "$ref": "#/components/schemas/LoyaltiesExamineEarningRulesExamineResponseBodyEarningRuleDetail"
             }
           },
           "memberships": {
             "type": "array",
-            "description": "Earning opportunities per program membership.",
+            "description": "Lists one entry for each active membership whose program has earning rules for the examined trigger. Includes a card only when its estimated points are greater than 0, and a benefit only when an earning rule can grant it. Both arrays can be empty.",
             "items": {
               "$ref": "#/components/schemas/LoyaltiesExamineEarningRulesExamineResponseBodyMembership"
             }
