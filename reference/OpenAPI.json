@@ -72945,6 +72945,13 @@
             "type": "string",
             "description": "Unique identifier of the loyalty card the points were spent from (format `lcrd_...`)."
           },
+          "card_definition_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Unique identifier of the card definition for that card (format `lcdef_...`). `null` when none is stored."
+          },
           "card_transaction_id": {
             "type": [
               "string",
@@ -73682,6 +73689,17 @@
               }
             ]
           },
+          "card_definition_id": {
+            "description": "Filter by card definition ID (ID conditions, values matching `^lcdef_[a-f0-9]+$`).",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LoyaltiesProgramsMembersRewardsPurchasesListRequestQueryCardDefinitionId"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "created_at": {
             "description": "Filter by creation date.",
             "oneOf": [
@@ -73900,6 +73918,108 @@
         ],
         "additionalProperties": false,
         "title": "Loyalties Programs Members Rewards Purchases List Request Query Reward Id"
+      },
+      "LoyaltiesProgramsMembersRewardsPurchasesListRequestQueryCardDefinitionId": {
+        "type": "object",
+        "description": "ID filter conditions for card definition IDs. Values must match pattern `^lcdef_[a-f0-9]+$`. `$is`/`$is_not` accept a single value (string or 1-element array); `$in`/`$not_in` accept a string or an array of 1-100 values.",
+        "properties": {
+          "conditions": {
+            "type": "object",
+            "minProperties": 1,
+            "additionalProperties": false,
+            "properties": {
+              "$is": {
+                "description": "Matches transactions whose card definition ID equals the given value.",
+                "oneOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^lcdef_[a-f0-9]+$"
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "pattern": "^lcdef_[a-f0-9]+$"
+                    },
+                    "minItems": 1,
+                    "maxItems": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "$is_not": {
+                "description": "Matches transactions whose card definition ID does not equal the given value.",
+                "oneOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^lcdef_[a-f0-9]+$"
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "pattern": "^lcdef_[a-f0-9]+$"
+                    },
+                    "minItems": 1,
+                    "maxItems": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "$in": {
+                "description": "Matches transactions whose card definition ID is one of the given values.",
+                "oneOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^lcdef_[a-f0-9]+$"
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "pattern": "^lcdef_[a-f0-9]+$"
+                    },
+                    "minItems": 1,
+                    "maxItems": 100
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "$not_in": {
+                "description": "Matches transactions whose card definition ID is not one of the given values.",
+                "oneOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^lcdef_[a-f0-9]+$"
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "pattern": "^lcdef_[a-f0-9]+$"
+                    },
+                    "minItems": 1,
+                    "maxItems": 100
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "required": [
+          "conditions"
+        ],
+        "additionalProperties": false,
+        "title": "Loyalties Programs Members Rewards Purchases List Request Query Card Definition Id"
       },
       "LoyaltiesProgramsMembersOrdersPaymentsCreateRequestBody": {
         "type": "object",
@@ -151933,7 +152053,7 @@
           "LV2-Programs"
         ],
         "summary": "List member reward purchases",
-        "description": "Lists reward transactions of type `PURCHASE` for the given program member, with cursor-based pagination. Supports filtering by transaction `id`, `reward_id`, and `created_at` date.\n\nIt returns all persisted purchase transactions for the member, regardless of status. Purchases rejected synchronously at creation time (for example, insufficient card balance or unavailable stock) are not stored and do not appear in this list. Purchases accepted for processing (202) that later fail asynchronously appear with status: \"REJECTED\" and `details.rejection`.",
+        "description": "Lists stored `PURCHASE` reward transactions for the program member, with cursor pagination. Filter by `id`, `reward_id`, `card_definition_id`, and `created_at`. Order by `id` (default `-id`, newest first). Purchases rejected before a transaction is stored don't appear. A purchase accepted with `202` that later fails is stored as `REJECTED` with `details.rejection`. Returns `404` when the program or the member doesn't exist. The program is checked first.",
         "parameters": [
           {
             "name": "limit",
@@ -151954,7 +152074,7 @@
             "name": "order",
             "in": "query",
             "required": false,
-            "description": "Sort order. A field name, optionally prefixed with `-` for descending order. May be provided multiple times (array). The same field cannot be used in both ascending and descending order at once. Default: `-created_at`.",
+            "description": "Orders results by transaction `id`. `-id` is newest first and the default. `id` is oldest first. An array that orders by `id` and `-id` together is rejected.",
             "schema": {
               "oneOf": [
                 {
@@ -151962,16 +152082,16 @@
                   "items": {
                     "type": "string",
                     "enum": [
-                      "-created_at",
-                      "created_at"
+                      "-id",
+                      "id"
                     ]
                   }
                 },
                 {
                   "type": "string",
                   "enum": [
-                    "-created_at",
-                    "created_at"
+                    "-id",
+                    "id"
                   ]
                 },
                 {
@@ -152001,7 +152121,14 @@
             "explode": true,
             "description": "Field filters, e.g. `filters[reward_id][conditions][$is]=lrew_...`. Each field accepts a `conditions` object with condition operators.",
             "schema": {
-              "$ref": "#/components/schemas/LoyaltiesProgramsMembersRewardsPurchasesListRequestQuery"
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/LoyaltiesProgramsMembersRewardsPurchasesListRequestQuery"
+                },
+                {
+                  "type": "null"
+                }
+              ]
             }
           }
         ],
@@ -152020,6 +152147,7 @@
                         {
                           "id": "lrtx_12cac270a5e2310b4b",
                           "card_id": "lcrd_128f962dbd8c4ba5e1",
+                          "card_definition_id": "lcdef_128f4a88414c4bed69",
                           "card_transaction_id": "lctx_12cac270a5e2310b4a",
                           "program_id": "lprg_128f58429f4c4bf7b2",
                           "member_id": "lmbr_128f962dbc8c4ba5dc",
@@ -152055,6 +152183,7 @@
                         {
                           "id": "lrtx_1299a9ded817f57b90",
                           "card_id": "lcrd_128f962dbd8c4ba5df",
+                          "card_definition_id": "lcdef_128f49963c0c4becb7",
                           "card_transaction_id": "lctx_1299a9ded817f57b8f",
                           "program_id": "lprg_128f58429f4c4bf7b2",
                           "member_id": "lmbr_128f962dbc8c4ba5dc",
@@ -152090,6 +152219,7 @@
                         {
                           "id": "lrtx_129748dbafe65ae86e",
                           "card_id": "lcrd_128f962dbd8c4ba5e1",
+                          "card_definition_id": "lcdef_128f4a88414c4bed69",
                           "card_transaction_id": "lctx_129748dbafe65ae86d",
                           "program_id": "lprg_128f58429f4c4bf7b2",
                           "member_id": "lmbr_128f962dbc8c4ba5dc",
@@ -152135,21 +152265,83 @@
             }
           },
           "400": {
-            "description": "Validation error - request body or query parameters failed validation, or the operation is not allowed in the current resource state.",
+            "description": "The query failed validation. `order` must be `id` or `-id`, and an array can't order by `id` and `-id` together. A cursor that doesn't match `^lcrstrx_[a-f0-9]+$` returns `invalid_query_params`. An unknown cursor returns `invalid_or_expired_cursor`. A cursor from a different `limit` or `order` returns `cursor_and_query_mismatch`.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Invalid order": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Property .order must be equal to one of the allowed values [ -id, id ]",
+                      "request_id": "v-12bdef050f2cb1ef70"
+                    }
+                  },
+                  "Invalid cursor": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Property .cursor must match pattern \"^lcrstrx_[a-f0-9]+$\"",
+                      "request_id": "v-12bdef050f2cb1ef71"
+                    }
+                  },
+                  "Unknown cursor": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_or_expired_cursor",
+                      "message": "Invalid or expired cursor",
+                      "details": "The provided cursor is invalid or has expired",
+                      "request_id": "v-12bdef050f2cb1ef72"
+                    }
+                  },
+                  "Cursor and query mismatch": {
+                    "value": {
+                      "code": 400,
+                      "key": "cursor_and_query_mismatch",
+                      "message": "Cursor and query mismatch",
+                      "details": "The provided cursor does not match the query, either the cursor is invalid or the query has changed",
+                      "request_id": "v-12bdef050f2cb1ef73"
+                    }
+                  }
                 }
               }
             }
           },
           "404": {
-            "description": "Resource not found.",
+            "description": "The program doesn't exist (`resource_type` `program`), or the member doesn't exist in that program (`resource_type` `member`). A member of another program is not found. The program is checked first.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Program not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find program with id lprg_128f58429f4c4bf7b2",
+                      "request_id": "v-12bdef050f2cb1ef74",
+                      "resource_id": "lprg_128f58429f4c4bf7b2",
+                      "resource_type": "program"
+                    }
+                  },
+                  "Member not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find member with id lmbr_128f962dbc8c4ba5dc",
+                      "request_id": "v-12bdef050f2cb1ef75",
+                      "resource_id": "lmbr_128f962dbc8c4ba5dc",
+                      "resource_type": "member"
+                    }
+                  }
                 }
               }
             }
