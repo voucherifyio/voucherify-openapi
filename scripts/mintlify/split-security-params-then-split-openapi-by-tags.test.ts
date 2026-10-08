@@ -82,6 +82,40 @@ describe("Mintlify tag split", () => {
     expect(raw).not.toContain('"nullable": true');
   });
 
+  it("keeps Loyalty v2 paths out of the per-tag files", async () => {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), "mintlify-split-"));
+
+    await splitSecurityParamsThenSplitOpenapiByTags(
+      {
+        openapi: "3.1.0",
+        info: { title: "Voucherify API", version: "1", description: "" },
+        paths: {
+          "/v2/loyalties/programs": {
+            get: {
+              operationId: "list-loyalty-programs",
+              tags: ["Programs"],
+              responses: { "200": { description: "ok" } },
+            },
+          },
+          "/v1/campaigns": {
+            get: {
+              operationId: "list-campaigns",
+              tags: ["Campaigns"],
+              responses: { "200": { description: "ok" } },
+            },
+          },
+        },
+      } as never,
+      "",
+      [],
+      { outputFolder: dir },
+    );
+
+    expect(fs.existsSync(path.join(dir, "programs.json"))).toBe(false);
+    expect(fs.existsSync(path.join(dir, "campaigns.json"))).toBe(true);
+    fs.rmSync(dir, { recursive: true, force: true });
+  });
+
   it("commits event files as OpenAPI 3.1.0 without nullable", () => {
     const dir = path.join(__dirname, "../../documentation/openapi-events");
     const files = fs.readdirSync(dir).filter((name) => name.endsWith(".json"));
