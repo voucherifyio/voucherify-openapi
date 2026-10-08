@@ -69450,7 +69450,7 @@
           },
           "cards": {
             "type": "array",
-            "description": "Member's loyalty cards - one per card definition assigned to the program, each enriched with tier progress. Card codes are generated asynchronously, so `card.code` may be `null` right after member creation.",
+            "description": "Member's loyalty cards, one per card definition assigned to the program. `tier_progress` is present when that card definition has a tier structure and the member has a tier on the card. Otherwise it is omitted. `card.code` can be `null` right after member creation, while code generation is still running.",
             "items": {
               "$ref": "#/components/schemas/MembershipCard"
             }
@@ -69490,12 +69490,9 @@
             "properties": {
               "tier_progress": {
                 "$ref": "#/components/schemas/MemberTierProgress",
-                "description": "The member's tier progress on this card. Omitted on endpoints that don't enrich cards with tier progress."
+                "description": "The member's tier progress on this card. Omitted when the card definition has no tier structure, or the member has no tier on this card."
               }
-            },
-            "required": [
-              "tier_progress"
-            ]
+            }
           }
         ]
       },
@@ -148217,13 +148214,13 @@
           "LV2-Programs"
         ],
         "summary": "Get program membership",
-        "description": "Returns a single membership - the member's full loyalty profile within the program, combining the member, the program, and the member's loyalty cards enriched with tier progress. Use `identification_type` to choose how the `customerId` path value is interpreted.\n\nReturns `404` when the program does not exist, or when the customer/member has no membership in the program.",
+        "description": "Returns the membership for one customer in the program: the member, the program, and the member's loyalty cards. A card includes `tier_progress` when its card definition has a tier structure and the member has a tier on that card. Otherwise `tier_progress` is omitted.\n\n`identification_type` chooses how `customerId` is read. It defaults to `customer_id`.",
         "parameters": [
           {
             "name": "identification_type",
             "in": "query",
             "required": false,
-            "description": "Defines how the `customerId` path value is interpreted. `customer_id` - Voucherify customer ID (default). `customer_source_id` - customer's `source_id`. `member_id` - loyalty member ID.",
+            "description": "Chooses how `customerId` is read. `customer_id` is the Voucherify customer ID and the default. `customer_source_id` is the customer's `source_id`. `member_id` is the loyalty member ID.",
             "schema": {
               "type": "string",
               "enum": [
@@ -148397,24 +148394,57 @@
             }
           },
           "400": {
-            "description": "Validation error - `identification_type` has an unsupported value.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Resource not found - the program does not exist, or the customer/member has no membership in the program.",
+            "description": "The query failed validation (`invalid_query_params`). `identification_type` must be `customer_id`, `customer_source_id`, or `member_id`.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
                 },
                 "examples": {
-                  "Member not found": {
+                  "Unsupported identification type": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Property .identification_type must be equal to one of the allowed values [ customer_id, customer_source_id, member_id ]",
+                      "request_id": "v-12bdef050f2cb1ef70"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The program doesn't exist (`resource_type` `program`), the source ID doesn't match a customer (`resource_type` `customer`), or there is no membership in the program (`resource_type` `member`). A lookup by customer ID with no membership returns that customer ID as `resource_id`.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Program not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find program with id lprg_128f58429f4c4bf7b2",
+                      "request_id": "v-12bdef050f2cb1ef6f",
+                      "resource_id": "lprg_128f58429f4c4bf7b2",
+                      "resource_type": "program"
+                    }
+                  },
+                  "Customer not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find customer with id nonexistent-source-id",
+                      "request_id": "v-12bdef050f2cb1ef6e",
+                      "resource_id": "nonexistent-source-id",
+                      "resource_type": "customer"
+                    }
+                  },
+                  "No membership": {
                     "value": {
                       "code": 404,
                       "key": "not_found",
