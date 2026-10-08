@@ -132,6 +132,7 @@ const savePreparedOpenApiFile = async (lang: string, openAPI: object) => {
 };
 
 const main = async (languageOptions: LanguageOptions) => {
+  // Downgrades to 3.0.1 and folds if/then/not. See prepare-open-api/AGENTS.md.
   openAPIContent = applySdkOpenApiVersion(
     documentWithoutLoyaltyV2(openAPIContent),
     languageOptions.downgradeTo301,

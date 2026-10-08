@@ -5,7 +5,7 @@ import { removedNotUsedParameters } from "./prepare-open-api/removed-not-used-pa
 import { removeNotUsedSchemas } from "./prepare-open-api/remove-not-used-schemas";
 import { parseNullsToNullableObjects } from "./prepare-open-api/utils";
 import { removeNotYetRefactoredPaths } from "./remove-not-yet-refactored-paths";
-import { ensureOpenApi301 } from "./openapi-version/migrate";
+import { applySdkOpenApiVersion } from "./openapi-version/migrate";
 import {
   documentWithoutLoyaltyV2,
   omitLoyaltyV2Document,
@@ -29,10 +29,12 @@ const removeKey = (node: object, key: string): object => {
 const main = async () => {
   const openApiPath = path.join(__dirname, "../../reference/OpenAPI.json");
   // production/readOnly-openAPI.json stays 3.0.1 for external viewers.
-  const openAPIContent = ensureOpenApi301(
+  // The reversible downgrade leaves if/then/not; the SDK entry folds them.
+  const openAPIContent = applySdkOpenApiVersion(
     documentWithoutLoyaltyV2(
       JSON.parse((await fsPromises.readFile(openApiPath)).toString()),
     ),
+    true,
   );
   removeKey(openAPIContent, "x-stoplight");
   const paths = removeNotYetRefactoredPaths(openAPIContent.paths);

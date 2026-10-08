@@ -44,7 +44,7 @@ Do not edit files under `sdks/`. A commit here only stores a submodule SHA, and 
 
 `if`, `then`, `else`, and `not` are JSON Schema. OpenAPI 3.0.1 and the pinned generators do not implement them. A generator-facing document has to replace each such branch with one object: keep the properties already declared on the parent, keep the parent's `required`, and say in a description that the API validates the combination. Do not promote a branch `required` array onto the parent, and do not replace a parent property with `type: "null"` from a single branch.
 
-`mergeJsonSchemaConditionals` in `scripts/shared/openapi-version/merge-json-schema-conditionals.ts` does that fold. It leaves `const` untouched. Nothing calls it yet, so SDK and production output are unchanged.
+`mergeJsonSchemaConditionals` in `scripts/shared/openapi-version/merge-json-schema-conditionals.ts` does that fold. It leaves `const` untouched. `applySdkOpenApiVersion` runs it after the reversible downgrade. `index.ts` and `build-production-openapi.ts` both use that entry, so SDK files and `production/readOnly-openAPI.json` get the fold. `npm run openapi:downgrade-to-301` stays reversible and still leaves `if` / `then` / `not` in place. Markdown tables call `ensureOpenApi301` and do not fold.
 
 The full source cannot be downgraded as a whole. Some Loyalty v2 schemas use `type: ["null"]`, which has no 3.0.1 `nullable` form. Strip Loyalty v2 first, then downgrade. `npm run openapi:downgrade-to-301` runs the reversible downgrade on whatever file you pass and still throws on that union.
 
