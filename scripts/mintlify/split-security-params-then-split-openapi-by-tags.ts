@@ -1,12 +1,9 @@
 import * as fs from "fs/promises";
 import * as path from "path";
 import * as openApiWebhooks from "../../reference/OpenAPIWebhooks.json";
-import * as _openApi from "../../reference/OpenAPI.json";
+import * as openApi from "../../reference/OpenAPI.json";
+import { OPENAPI_30_NULLABLE_INDEX } from "../shared/openapi-version/migrate";
 import { splitSecurityParams } from "./utils/split-security-params";
-import { ensureOpenApi301 } from "../shared/openapi-version/migrate";
-
-// Mintlify split files stay on 3.0.1 nullable until those consumers move to 3.1.
-const openApi = ensureOpenApi301(JSON.parse(JSON.stringify(_openApi)));
 
 interface OpenAPISpec {
   openapi: string;
@@ -149,6 +146,29 @@ function collectAllReferencedComponents(
   }
 
   return collectedComponents;
+}
+
+/**
+ * Drops the key the 3.0.1 downgrade uses to restore `nullable` position.
+ * It is not part of the API. Tag files are 3.1 and do not need it.
+ */
+function omitRoundTripKeys(obj: any): any {
+  if (obj === null || typeof obj !== "object") {
+    return obj;
+  }
+
+  if (Array.isArray(obj)) {
+    return obj.map((item) => omitRoundTripKeys(item));
+  }
+
+  const result: any = {};
+  for (const [key, value] of Object.entries(obj)) {
+    if (key === OPENAPI_30_NULLABLE_INDEX) {
+      continue;
+    }
+    result[key] = omitRoundTripKeys(value);
+  }
+  return result;
 }
 
 /**
@@ -464,15 +484,15 @@ function sanitizeTagName(tag: string): string {
 /**
  * Main function to split OpenAPI into tag-based files
  */
-async function splitSecurityParamsThenSplitOpenapiByTags(
+export async function splitSecurityParamsThenSplitOpenapiByTags(
   openApiSpec: OpenAPISpec,
   destination: string,
   keepFiles: string[] = [],
+  options: { rewriteTypeNull?: boolean; outputFolder?: string } = {},
 ): Promise<void> {
-  const OUTPUT_FOLDER = path.join(
-    __dirname,
-    `..${destination}`.replaceAll("//", "/"),
-  );
+  const OUTPUT_FOLDER =
+    options.outputFolder ??
+    path.join(__dirname, `..${destination}`.replaceAll("//", "/"));
 
   try {
     // Make sure the output folder exists.
@@ -515,10 +535,18 @@ async function splitSecurityParamsThenSplitOpenapiByTags(
         const endpoints = endpointTagGroups.get(tag) || [];
         const webhooks = webhookTagGroups.get(tag) || [];
 
-        // Create tag-specific OpenAPI spec
-        const tagSpec = transformNullTypes(
-          createTagOpenApiSpec(tag, endpoints, webhooks, openApiSpec),
+        // `{ "type": "null" }` is valid in 3.1. The webhook split still rewrites
+        // it to a 3.0 nullable object. The API tag split does not.
+        const tagSpec = createTagOpenApiSpec(
+          tag,
+          endpoints,
+          webhooks,
+          openApiSpec,
         );
+        const written =
+          options.rewriteTypeNull === false
+            ? omitRoundTripKeys(tagSpec)
+            : transformNullTypes(tagSpec);
 
         // Generate filename based on tag name
         const sanitizedTagName = sanitizeTagName(tag);
@@ -526,7 +554,7 @@ async function splitSecurityParamsThenSplitOpenapiByTags(
         const filePath = path.join(OUTPUT_FOLDER, filename);
 
         // Write the file
-        await fs.writeFile(filePath, JSON.stringify(tagSpec, null, 2));
+        await fs.writeFile(filePath, JSON.stringify(written, null, 2));
 
         const endpointsCount = endpoints.length;
         const webhooksCount = webhooks.length;
@@ -560,22 +588,26 @@ async function splitSecurityParamsThenSplitOpenapiByTags(
   }
 }
 
-// Execute the script
-(async () => {
-  try {
-    await splitSecurityParamsThenSplitOpenapiByTags(
-      splitSecurityParams(openApi) as unknown as OpenAPISpec,
-      "/../documentation/openapi",
-      // Manually maintained files that are not generated from tags and must be
-      // preserved when the folder is regenerated.
-      ["loyalties-v2.json"],
-    );
-    await splitSecurityParamsThenSplitOpenapiByTags(
-      openApiWebhooks,
-      "/../documentation/openapi-events",
-    );
-  } catch (error) {
+async function main(): Promise<void> {
+  await splitSecurityParamsThenSplitOpenapiByTags(
+    splitSecurityParams(openApi) as unknown as OpenAPISpec,
+    "/../documentation/openapi",
+    // Manually maintained files that are not generated from tags and must be
+    // preserved when the folder is regenerated.
+    ["loyalties-v2.json"],
+    // Keep 3.1 null unions and `"type": "null"`. Mintlify already renders
+    // loyalties-v2.json that way.
+    { rewriteTypeNull: false },
+  );
+  await splitSecurityParamsThenSplitOpenapiByTags(
+    openApiWebhooks,
+    "/../documentation/openapi-events",
+  );
+}
+
+if (require.main === module) {
+  main().catch((error) => {
     console.error("Script execution failed:", error);
     process.exit(1);
-  }
-})();
+  });
+}
