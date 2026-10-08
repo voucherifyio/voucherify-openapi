@@ -2212,7 +2212,7 @@
           "Programs"
         ],
         "summary": "Create program member",
-        "description": "Enrolls a customer as a member of the loyalty program. The program must be in the `ACTIVE` status (returns a `423` error otherwise) and the customer must exist in Voucherify. A customer can be a member of a given program only once - creating a second member for the same customer ID returns `409` error (`member_already_exists`).\n\nLoyalty cards are created automatically for all card definitions assigned to the program and returned in the `cards` array. Card `code` generation is asynchronous: `code` may be `null` immediately after creation.",
+        "description": "Enrolls an existing customer as a member of the loyalty program and creates a loyalty card for each card definition assigned to the program. Card `code` generation is asynchronous, so `code` can be `null` right after creation.\n\nThe program must be `ACTIVE` and inside its validity window, and the customer must already exist. A customer can be a member of a program only once. Identify the customer with `customer_identification`. `status` defaults to `ACTIVE`.",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -2220,6 +2220,28 @@
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/LoyaltiesProgramsMembersCreateRequestBody"
+              },
+              "examples": {
+                "Enroll by customer ID": {
+                  "value": {
+                    "customer_identification": {
+                      "type": "customer_id",
+                      "customer_id": "cust_X07elh40iNWLujRmDNmBufxd"
+                    }
+                  }
+                },
+                "Enroll by source ID": {
+                  "value": {
+                    "customer_identification": {
+                      "type": "customer_source_id",
+                      "customer_source_id": "crm-1001"
+                    },
+                    "status": "INACTIVE",
+                    "metadata": {
+                      "tier": "gold"
+                    }
+                  }
+                }
               }
             }
           }
@@ -2369,24 +2391,76 @@
             }
           },
           "400": {
-            "description": "Validation error - request body or path parameters failed validation, or the operation is not allowed in the current resource state.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Resource not found.",
+            "description": "The request body failed validation (`invalid_payload`), or `metadata` doesn't match the `vl_member` metadata schema (`metadata_validation_failed`).",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
                 },
                 "examples": {
-                  "Member not found": {
+                  "Invalid customer ID": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_payload",
+                      "message": "Invalid payload",
+                      "details": "Property .customer_identification.customer_id must match pattern \"^cust_[a-zA-Z0-9]+\"",
+                      "request_id": "v-12c30587d84f93b9b0"
+                    }
+                  },
+                  "Metadata validation failed": {
+                    "value": {
+                      "code": 400,
+                      "key": "metadata_validation_failed",
+                      "message": "Metadata validation failed",
+                      "details": "Only defined properties are allowed",
+                      "request_id": "v-12c30587d84f93b9b1"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "The organization has reached its loyalty members plan limit (`payment_required`).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Loyalty members limit exceeded": {
+                    "value": {
+                      "code": 402,
+                      "key": "payment_required",
+                      "message": "Plan limit exceeded",
+                      "details": "You cannot create more than 1000 loyalty members in your current plan",
+                      "request_id": "v-12c30587d84f93b9b2"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The program or the customer doesn't exist.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Program not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find program with id lprg_128f58429f4c4bf7b2",
+                      "request_id": "v-12c30587d84f93b9ae",
+                      "resource_id": "lprg_128f58429f4c4bf7b2",
+                      "resource_type": "program"
+                    }
+                  },
+                  "Customer not found": {
                     "value": {
                       "code": 404,
                       "key": "not_found",
@@ -2402,7 +2476,7 @@
             }
           },
           "409": {
-            "description": "Conflict - the customer with a given ID has already been added to the loyalty program.",
+            "description": "The customer is already a member of the program (`member_already_exists`). When you identify the customer by source ID, `details` quotes that source ID.",
             "content": {
               "application/json": {
                 "schema": {
@@ -2423,7 +2497,7 @@
             }
           },
           "423": {
-            "description": "Program is not in ACTIVE status.",
+            "description": "The program is not `ACTIVE` (`non_active_program`) or is outside its validity window (`program_outside_validity_window`).",
             "content": {
               "application/json": {
                 "schema": {
@@ -2434,9 +2508,18 @@
                     "value": {
                       "code": 423,
                       "key": "non_active_program",
-                      "message": "Invalid program status",
-                      "details": "Cannot create member when program status is not ACTIVE",
-                      "request_id": "v-..."
+                      "message": "Cannot create member when program status is not ACTIVE",
+                      "details": "Invalid program status",
+                      "request_id": "v-12c30587d84f93b9b3"
+                    }
+                  },
+                  "Program outside validity window": {
+                    "value": {
+                      "code": 423,
+                      "key": "program_outside_validity_window",
+                      "message": "Program is not available at this time",
+                      "details": "Cannot create member when program is not active at this time",
+                      "request_id": "v-12c30587d84f93b9b4"
                     }
                   }
                 }
@@ -25157,34 +25240,74 @@
       },
       "MemberCreate": {
         "type": "object",
+        "description": "Fields for creating one loyalty program member. No additional properties are allowed.",
+        "additionalProperties": false,
         "properties": {
           "customer_identification": {
-            "type": "object",
-            "properties": {
-              "type": {
-                "type": "string",
-                "description": "Defines how the customer is identified for the member creation. If `customer_id` is provided, the customer is identified by their unique Voucherify customer ID. Then, pass the required `customer_id` string.\n\nIf `customer_source_id` is provided, the customer is identified by their source ID (e.g. from an external system). Then, pass the required `customer_source_id` string.",
-                "enum": [
-                  "customer_id",
-                  "customer_source_id"
+            "description": "Identifies the existing customer to enroll. Send exactly one identifier, matching `type`.",
+            "oneOf": [
+              {
+                "type": "object",
+                "title": "Customer ID",
+                "description": "Identifies the customer by Voucherify customer ID.",
+                "additionalProperties": false,
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "const": "customer_id",
+                    "description": "Identifies the customer by `customer_id`."
+                  },
+                  "customer_id": {
+                    "type": "string",
+                    "pattern": "^cust_[a-zA-Z0-9]+",
+                    "description": "Identifies an existing customer by Voucherify customer ID."
+                  },
+                  "customer_source_id": {
+                    "type": "null",
+                    "description": "Omit this field or set it to `null` when `type` is `customer_id`."
+                  }
+                },
+                "required": [
+                  "type",
+                  "customer_id"
                 ]
               },
-              "customer_id": {
-                "type": "string",
-                "pattern": "^cust_[a-zA-Z0-9]+",
-                "description": "Unique Voucherify customer ID of an existing customer to enroll as a member. Required when `type` is `customer_id`."
-              },
-              "customer_source_id": {
-                "type": "string",
-                "description": "Source ID from an external system of an existing customer to enroll as a member. Required when `type` is `customer_source_id`."
+              {
+                "type": "object",
+                "title": "Customer source ID",
+                "description": "Identifies the customer by source ID.",
+                "additionalProperties": false,
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "const": "customer_source_id",
+                    "description": "Identifies the customer by `customer_source_id`."
+                  },
+                  "customer_source_id": {
+                    "description": "Identifies an existing customer by source ID. Accepts a string or a number.",
+                    "oneOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "number"
+                      }
+                    ]
+                  },
+                  "customer_id": {
+                    "type": "null",
+                    "description": "Omit this field or set it to `null` when `type` is `customer_source_id`."
+                  }
+                },
+                "required": [
+                  "type",
+                  "customer_source_id"
+                ]
               }
-            },
-            "required": [
-              "type"
             ]
           },
           "status": {
-            "description": "Initial member status. Defaults to `ACTIVE` when omitted or `null`.",
+            "description": "Sets the initial member status. Allowed values are `ACTIVE` and `INACTIVE`. Defaults to `ACTIVE` when omitted or `null`.",
             "oneOf": [
               {
                 "type": "string",
@@ -25200,7 +25323,7 @@
             "default": "ACTIVE"
           },
           "metadata": {
-            "description": "Free-form metadata attached to the member. Validated against the metadata schema defined for the `vl_member` related object (when one is configured). Defaults to an empty object.",
+            "description": "Stores custom metadata on the member. Validated against the metadata schema for the `vl_member` related object when one is configured. Defaults to an empty object when omitted or `null`.",
             "oneOf": [
               {
                 "type": "object"
@@ -25213,7 +25336,7 @@
           }
         },
         "required": [
-          "customer_id"
+          "customer_identification"
         ]
       },
       "LoyaltiesProgramsMembersListRequestQueryId": {
