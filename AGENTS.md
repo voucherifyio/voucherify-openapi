@@ -34,7 +34,7 @@ Languages under `reference/readonly-sdks/` are `ruby`, `java`, `php`, `python`, 
 
 Null in 3.1 is `"type": "null"` or a union such as `"type": ["string", "null"]`. A nullable reference is `anyOf` of the `$ref` and `{ "type": "null" }`. Do not write the OpenAPI 3.0 keyword `nullable` into `reference/OpenAPI.json` or into `documentation/openapi*`. SDK and production specs are downgraded to 3.0.1, and that downgrade is what introduces `nullable`.
 
-`downgradeTo301` in `scripts/shared/prepare-open-api/index.ts` stays `true` for every language. The OpenAPI Generator versions pinned in `package.json` still expect 3.0.1.
+`downgradeTo301` in `scripts/shared/prepare-open-api/index.ts` stays `true` for every language. The OpenAPI Generator versions pinned in `package.json` still expect 3.0.1. `scripts/shared/prepare-open-api/AGENTS.md` is the map of that generator pipeline. Read it before editing `prepare-open-api` or the 3.0.1 downgrade.
 
 ## What `prepare-generated` runs
 
