@@ -5,6 +5,15 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-10-08
+
+Updated Workflows articles for versions, unfinished drafts, publish confirmation, step IDs, overlapping triggers, and designer shortcuts (DEV-4328 / DEV-4329 / DEV-4334 / DEV-4341 / DEV-4348 / DEV-4465 / DEV-4467 / DEV-4512).
+
+- Updated `workflow-options-limits.mdx` with the **Versions** list, the limit of 100 published versions, save rules for an unfinished draft, confirmation before publish and status changes, and identifier prefixes and suffixes. Overlapping loyalty triggers are in an agent-only visibility block.
+- Updated `build-workflows.mdx` with the save and publish steps, a restore-version procedure, confirmation for **Activate** and **Deactivate**, and a shortcut tip.
+- Updated `workflows.mdx` to point at the versions list and to remove version control from **What's next**.
+- Removed the `NEW` tag from `build-workflows.mdx`, `workflow-options-limits.mdx`, and `workflows.mdx`.
+
 ## 2026-10-05
 
 Documented the Loyalty v2 limit of 10 effects per earning rule and moved the rollout marker to the Expansion phase.
