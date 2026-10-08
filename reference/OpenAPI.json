@@ -74036,7 +74036,7 @@
             "$ref": "#/components/schemas/OrderPaymentOrder"
           },
           "payment_limit": {
-            "description": "Optional payment limit. When omitted, the default `CARD_BALANCE` limit is applied (spend up to the card balance).",
+            "description": "Optional payment limit. When omitted or `null`, the default `CARD_BALANCE` limit is applied (spend up to the card balance).",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/LoyaltiesProgramsMembersOrdersPaymentsCreateRequestBodyLimit"
@@ -74308,6 +74308,42 @@
           },
           "payment": {
             "$ref": "#/components/schemas/OrderPaymentPaymentDetails"
+          },
+          "spending_cap": {
+            "description": "The cap that limited this payment. Create always returns it. Older list rows omit it.",
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "CARD_SPENDING_GLOBAL_SPENDING_BASED_LIMIT",
+                  "CARD_SPENDING_GLOBAL_TIME_BASED_LIMIT",
+                  "CARD_SPENDING_TRANSACTIONS_LIMIT",
+                  "REQUEST_PAYMENT_LIMIT",
+                  "ORDER_TOTAL_AMOUNT",
+                  "CARD_BALANCE_POINTS"
+                ],
+                "description": "Identifies which cap limited the payment."
+              },
+              "unit": {
+                "type": "string",
+                "enum": [
+                  "POINTS",
+                  "AMOUNT"
+                ],
+                "description": "Whether `value` is points or an amount."
+              },
+              "value": {
+                "type": "number",
+                "description": "Cap value in `unit`."
+              }
+            },
+            "required": [
+              "type",
+              "unit",
+              "value"
+            ],
+            "additionalProperties": false
           }
         }
       },
@@ -153052,7 +153088,7 @@
           "LV2-Programs"
         ],
         "summary": "Pay for order with points",
-        "description": "Pays for an order using points from the specified member loyalty card. The payment amount and points to spend are calculated from the card definition's pay-with-points exchange ratio formula, capped by the card balance and the optional `payment_limit`.\n\nRequires:\n- `ACTIVE` program;\n- `ACTIVE` member;\n- Card definition with pay-with-points enabled and a configured exchange ratio formula;\n- Existing order in Voucherify with order `id` or order `source_id`.\n\nModes:\n- `TRANSACTION` (default): Creates a `PENDING` order transaction (and an underlying card transaction) processed asynchronously. Returns HTTP `202`. Sending a request for the same order `id` or `source_id` creates a new transaction each time.\n- `DRY_RUN`: Simulates the payment without creating any transaction. Returns HTTP `200` with a `SIMULATED` transaction payload.",
+        "description": "Pays for an order with points from the member's card. The amount and points come from the card definition's pay-with-points exchange ratio, limited by the order total, the card balance, card spending caps, and the optional `payment_limit`. The binding cap is returned as `details.spending_cap`.\n\nThe program and member must be `ACTIVE`, and the program must be inside its validity window. The card must belong to the member. The card definition must have pay-with-points enabled and an exchange-ratio formula. The order must already exist, identified by `id` or `source_id`.\n\nModes:\n- `TRANSACTION` (default): creates a `PENDING` order transaction and a `PENDING` card transaction. Returns `202`. The same order can be paid again; each call creates a new transaction.\n- `DRY_RUN`: simulates the payment and doesn't create a transaction. Returns `200` with status `SIMULATED`.",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -153138,6 +153174,11 @@
                             "amount": 150,
                             "points_spent": 150,
                             "exchange_ratio": 1
+                          },
+                          "spending_cap": {
+                            "type": "REQUEST_PAYMENT_LIMIT",
+                            "unit": "POINTS",
+                            "value": 150
                           }
                         },
                         "updated_at": null,
@@ -153168,6 +153209,11 @@
                             "amount": 650,
                             "points_spent": 650,
                             "exchange_ratio": 1
+                          },
+                          "spending_cap": {
+                            "type": "ORDER_TOTAL_AMOUNT",
+                            "unit": "AMOUNT",
+                            "value": 650
                           }
                         },
                         "updated_at": null,
@@ -153196,6 +153242,11 @@
                             "amount": 650,
                             "points_spent": 650,
                             "exchange_ratio": 1
+                          },
+                          "spending_cap": {
+                            "type": "CARD_BALANCE_POINTS",
+                            "unit": "POINTS",
+                            "value": 650
                           }
                         },
                         "updated_at": null,
@@ -153239,6 +153290,11 @@
                             "amount": 12,
                             "points_spent": 12,
                             "exchange_ratio": 1
+                          },
+                          "spending_cap": {
+                            "type": "REQUEST_PAYMENT_LIMIT",
+                            "unit": "POINTS",
+                            "value": 12
                           }
                         },
                         "created_at": "2026-07-13T11:01:23.245Z",
@@ -153271,6 +153327,11 @@
                             "amount": 2000,
                             "points_spent": 2000,
                             "exchange_ratio": 1
+                          },
+                          "spending_cap": {
+                            "type": "REQUEST_PAYMENT_LIMIT",
+                            "unit": "AMOUNT",
+                            "value": 2000
                           }
                         },
                         "created_at": "2026-07-13T12:06:15.135Z",
@@ -153301,6 +153362,11 @@
                             "amount": 200,
                             "points_spent": 200,
                             "exchange_ratio": 1
+                          },
+                          "spending_cap": {
+                            "type": "CARD_BALANCE_POINTS",
+                            "unit": "POINTS",
+                            "value": 200
                           }
                         },
                         "created_at": "2026-07-13T11:07:16.212Z",
@@ -153316,17 +153382,28 @@
             }
           },
           "400": {
-            "description": "Validation error - request body or query parameters failed validation, or the operation is not allowed in the current resource state.",
+            "description": "The request body failed validation (`invalid_payload`). Pay-with-points is enabled but the card definition has no exchange-ratio formula (`missing_exchange_ratio_formula`).",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Missing exchange ratio formula": {
+                    "value": {
+                      "code": 400,
+                      "key": "missing_exchange_ratio_formula",
+                      "message": "Missing exchange ratio formula",
+                      "details": "Card definition has pay with points enabled but no exchange ratio formula configured",
+                      "request_id": "v-12bdef050f2cb1ef70"
+                    }
+                  }
                 }
               }
             }
           },
           "404": {
-            "description": "Resource not found.",
+            "description": "Checked in order. The program doesn't exist (`resource_type` `program`). The member doesn't exist in that program (`member`). The card doesn't exist, or it isn't assigned to this member (`card`, `resource_id` is the card id). The card definition doesn't exist (`card_definition`). The order doesn't exist (`order`). Lookup by `id` says `Cannot find order with id {id}`. Lookup by `source_id` says `Cannot find order with source_id {sourceId}`.",
             "content": {
               "application/json": {
                 "schema": {
@@ -153382,7 +153459,7 @@
             }
           },
           "423": {
-            "description": "Card balance is zero or the resource state blocks the payment.",
+            "description": "The payment is locked. `non_active_program` and `program_outside_validity_window` reject a program that isn't `ACTIVE` or is outside its validity window. `non_active_member` rejects a member that isn't `ACTIVE`. `pay_with_points_not_enabled` means the card definition doesn't allow pay-with-points. `invalid_exchange_ratio` means the formula result isn't a positive number. `zero_card_balance`, `zero_order_total_amount`, `exhausted_card_spending_global_spending_based_limit`, `exhausted_card_spending_global_time_based_limit`, and `exhausted_card_spending_transactions_limit` mean a cap is already zero. `zero_points_to_spent` and `zero_payment_amount` mean the calculation produced nothing to charge.",
             "content": {
               "application/json": {
                 "schema": {
