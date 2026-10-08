@@ -1,6 +1,5 @@
 import * as fs from "fs/promises";
 import * as path from "path";
-import * as openApiWebhooks from "../../reference/OpenAPIWebhooks.json";
 import * as openApi from "../../reference/OpenAPI.json";
 import { OPENAPI_30_NULLABLE_INDEX } from "../shared/openapi-version/migrate";
 import { splitSecurityParams } from "./utils/split-security-params";
@@ -168,38 +167,6 @@ function omitRoundTripKeys(obj: any): any {
     }
     result[key] = omitRoundTripKeys(value);
   }
-  return result;
-}
-
-/**
- * Recursively transforms objects by replacing type: "null" with type: "object", nullable: true, default: null
- */
-function transformNullTypes(obj: any): any {
-  if (obj === null || typeof obj !== "object") {
-    return obj;
-  }
-
-  if (Array.isArray(obj)) {
-    return obj.map((item) => transformNullTypes(item));
-  }
-
-  const result: any = {};
-
-  for (const [key, value] of Object.entries(obj)) {
-    // Check if this is a type property with value "null"
-    if (key === "type" && value === "null") {
-      // Transform this object to have the new structure
-      result.type = "object";
-      result.nullable = true;
-      result.default = null;
-      // Skip processing the original "type": "null" property
-      continue;
-    }
-
-    // Recursively process all other properties
-    result[key] = transformNullTypes(value);
-  }
-
   return result;
 }
 
@@ -488,7 +455,7 @@ export async function splitSecurityParamsThenSplitOpenapiByTags(
   openApiSpec: OpenAPISpec,
   destination: string,
   keepFiles: string[] = [],
-  options: { rewriteTypeNull?: boolean; outputFolder?: string } = {},
+  options: { outputFolder?: string } = {},
 ): Promise<void> {
   const OUTPUT_FOLDER =
     options.outputFolder ??
@@ -535,18 +502,11 @@ export async function splitSecurityParamsThenSplitOpenapiByTags(
         const endpoints = endpointTagGroups.get(tag) || [];
         const webhooks = webhookTagGroups.get(tag) || [];
 
-        // `{ "type": "null" }` is valid in 3.1. The webhook split still rewrites
-        // it to a 3.0 nullable object. The API tag split does not.
-        const tagSpec = createTagOpenApiSpec(
-          tag,
-          endpoints,
-          webhooks,
-          openApiSpec,
+        // `{ "type": "null" }` is valid in OpenAPI 3.1. Keep it, and drop the
+        // key that only exists so a 3.0.1 downgrade can restore `nullable`.
+        const written = omitRoundTripKeys(
+          createTagOpenApiSpec(tag, endpoints, webhooks, openApiSpec),
         );
-        const written =
-          options.rewriteTypeNull === false
-            ? omitRoundTripKeys(tagSpec)
-            : transformNullTypes(tagSpec);
 
         // Generate filename based on tag name
         const sanitizedTagName = sanitizeTagName(tag);
@@ -588,19 +548,32 @@ export async function splitSecurityParamsThenSplitOpenapiByTags(
   }
 }
 
+const EVENTS_INFO = { title: "Events", version: "2024-01-01" };
+
 async function main(): Promise<void> {
+  const apiSpec = splitSecurityParams(openApi) as unknown as OpenAPISpec;
+  // Event operations live on the same document. They are written to
+  // documentation/openapi-events, not into the API tag files.
+  delete apiSpec.webhooks;
   await splitSecurityParamsThenSplitOpenapiByTags(
-    splitSecurityParams(openApi) as unknown as OpenAPISpec,
+    apiSpec,
     "/../documentation/openapi",
     // Manually maintained files that are not generated from tags and must be
     // preserved when the folder is regenerated.
     ["loyalties-v2.json"],
-    // Keep 3.1 null unions and `"type": "null"`. Mintlify already renders
-    // loyalties-v2.json that way.
-    { rewriteTypeNull: false },
   );
+  const source = openApi as {
+    openapi: string;
+    webhooks?: OpenAPISpec["webhooks"];
+    components?: OpenAPISpec["components"];
+  };
   await splitSecurityParamsThenSplitOpenapiByTags(
-    openApiWebhooks,
+    {
+      openapi: source.openapi,
+      info: EVENTS_INFO,
+      webhooks: source.webhooks,
+      components: source.components,
+    },
     "/../documentation/openapi-events",
   );
 }
