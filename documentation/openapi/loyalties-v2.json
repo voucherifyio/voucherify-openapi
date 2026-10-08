@@ -17461,7 +17461,7 @@
         ],
         "operationId": "examineRewards",
         "summary": "Examine rewards",
-        "description": "Evaluates rewards assigned to a customer's active Loyalty v2 program memberships. Applies temporary customer and member metadata overrides without updating stored data. Returns reward availability by card, including points costs and applicable unavailability reasons.\n\nThis endpoint can examine rewards for all loyalty programs the customer belongs to by using `customer_identification` with `customer_id` or `source_id`. To examine rewards only for one program, use `member_id` in `customer_identification`, as `member_id` is loyalty program-specific.",
+        "description": "Evaluates rewards assigned to a customer's active Loyalty v2 program memberships. Applies temporary customer and member metadata overrides without updating stored data. Returns reward availability by card, including points costs and applicable unavailability reasons. Omits a reward when it is inactive, out of stock, has no matching cost, or the member has no card for that cost.\n\nThis endpoint can examine rewards for all loyalty programs the customer belongs to by using `customer_identification` with `customer_id` or `customer_source_id`. To examine rewards only for one program, use `member_id` in `customer_identification`, as `member_id` is loyalty program-specific. A customer who exists but has no active membership returns `200` with an empty `memberships` array.",
         "requestBody": {
           "required": true,
           "content": {
@@ -17474,7 +17474,7 @@
         },
         "responses": {
           "200": {
-            "description": "Rewards examination result",
+            "description": "Rewards examination result. An empty `memberships` array means the customer has no active membership. An empty `cards` array means no assigned reward resolved onto a card.",
             "content": {
               "application/json": {
                 "schema": {
@@ -17703,17 +17703,28 @@
             }
           },
           "400": {
-            "description": "Validation error - request body or query parameters failed validation, or the operation is not allowed in the current resource state.",
+            "description": "The request body failed validation. Sending `member` when `customer_identification.type` is not `member_id` returns key `invalid_payload`, message `Invalid payload`, and details `Property 'member' is only allowed when customer_identification.type is 'member_id'`. Customer or member metadata that does not match its metadata schema returns key `metadata_validation_failed` and message `Metadata validation failed`.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Member override not allowed": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_payload",
+                      "message": "Invalid payload",
+                      "details": "Property 'member' is only allowed when customer_identification.type is 'member_id'",
+                      "request_id": "v-12c2e64d5d4a67cddd"
+                    }
+                  }
                 }
               }
             }
           },
           "404": {
-            "description": "Resource not found.",
+            "description": "The `member_id` does not exist, or the `customer_id` or `customer_source_id` does not exist. An unknown `member_id` is checked first and returns `resource_type` `member` with details `Cannot find member with id {memberId}`. An unknown customer returns `resource_type` `customer` with details `Cannot find customer with id {id}`, where `{id}` is the `customer_id` or `customer_source_id` you sent. When a member exists but its customer record does not, that same customer error uses the `member_id` as `{id}`.",
             "content": {
               "application/json": {
                 "schema": {
@@ -17729,6 +17740,17 @@
                       "request_id": "v-12c2e64d5d4a67cddc",
                       "resource_id": "cust_6onRrs4kCnvSVrTs5YtDPFB",
                       "resource_type": "customer"
+                    }
+                  },
+                  "Member not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find member with id lmbr_128f962db8c4ba5dc",
+                      "request_id": "v-12c2e64d5d4a67cdde",
+                      "resource_id": "lmbr_128f962db8c4ba5dc",
+                      "resource_type": "member"
                     }
                   }
                 }
@@ -24172,7 +24194,7 @@
           },
           "member": {
             "type": "object",
-            "description": "Provides temporary member metadata overrides for the examination. Requires `customer_identification.type` to be `member_id`. Merges them with stored metadata without updating the member.",
+            "description": "Overrides member metadata for this examination. Send it only when `customer_identification.type` is `member_id`. Merges the override with stored metadata without updating the member.",
             "additionalProperties": false,
             "properties": {
               "metadata": {
@@ -24193,6 +24215,36 @@
           "customer_identification"
         ],
         "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "not": {
+                "required": [
+                  "customer_identification"
+                ],
+                "properties": {
+                  "customer_identification": {
+                    "required": [
+                      "type"
+                    ],
+                    "properties": {
+                      "type": {
+                        "const": "member_id"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "then": {
+              "not": {
+                "required": [
+                  "member"
+                ]
+              }
+            }
+          }
+        ],
         "title": "Loyalties Examine Rewards Examine Request Body"
       },
       "LoyaltiesExamineRewardsExamineResponseBody": {
@@ -24204,14 +24256,14 @@
           },
           "rewards": {
             "type": "array",
-            "description": "Lists rewards included in the returned card estimations.",
+            "description": "Lists rewards that resolved a points cost and appear on a returned card. Omits a reward when it is inactive, out of stock, has no matching cost, or the member has no card for that cost.",
             "items": {
               "$ref": "#/components/schemas/LoyaltiesExamineRewardsExamineResponseBodyRewardDetail"
             }
           },
           "memberships": {
             "type": "array",
-            "description": "Reward opportunities per program membership.",
+            "description": "Lists one entry for each active membership whose program has reward assignments. `cards` can be empty when none of those rewards resolve onto a card.",
             "items": {
               "$ref": "#/components/schemas/LoyaltiesExamineRewardsExamineResponseBodyMembership"
             }
@@ -36972,7 +37024,7 @@
           },
           "cards": {
             "type": "array",
-            "description": "Reward estimations per card.",
+            "description": "Lists cards that have at least one reward with a resolved points cost. Can be empty.",
             "items": {
               "$ref": "#/components/schemas/LoyaltiesExamineRewardsExamineResponseBodyCardEstimation"
             }
