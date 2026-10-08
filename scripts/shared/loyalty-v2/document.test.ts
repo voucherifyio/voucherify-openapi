@@ -3,10 +3,13 @@ import path from "path";
 import {
   LOYALTY_V2_DOCUMENT_KEY,
   appendLoyaltyV2,
+  dedupeLoyaltyV2Schemas,
   documentWithoutLoyaltyV2,
   dropFreeLoyaltyV2Prefixes,
+  LOYALTY_V2_TAG_PREFIX,
   extractLoyaltyV2Document,
   omitLoyaltyV2Document,
+  withoutLoyaltyV2TagPrefix,
   type OpenApiDocument,
 } from "./document";
 
@@ -155,6 +158,82 @@ describe("Loyalty v2 document", () => {
     );
   });
 
+  it("reuses an existing schema when the name ends with the loyalty name", () => {
+    const hours = { type: "object", properties: { day: { type: "string" } } };
+    const main: OpenApiDocument = {
+      openapi: "3.1.0",
+      paths: {},
+      components: {
+        schemas: {
+          LoyaltyV2Hours: { ...hours, description: "event" },
+          OtherHours: {
+            type: "object",
+            description: "different role",
+            properties: { day: { type: "number" } },
+          },
+        },
+      },
+    };
+    const loyalty: OpenApiDocument = {
+      openapi: "3.1.0",
+      info: { title: "Loyalty" },
+      servers: [],
+      tags: [],
+      paths: {
+        "/v2/loyalties/programs": {
+          get: {
+            responses: {
+              "200": {
+                content: {
+                  "application/json": {
+                    schema: { $ref: "#/components/schemas/Hours" },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+      components: {
+        schemas: {
+          Hours: { ...hours, description: "loyalty" },
+        },
+        securitySchemes: {},
+      },
+      security: [],
+    };
+    const deduped = dedupeLoyaltyV2Schemas(
+      dropFreeLoyaltyV2Prefixes(appendLoyaltyV2(main, loyalty)),
+    );
+
+    expect(deduped.components?.schemas?.Hours).toBeUndefined();
+    expect(deduped.components?.schemas?.VLHours).toBeUndefined();
+    expect(deduped.components?.schemas?.LoyaltyV2Hours).toMatchObject({
+      description: "loyalty",
+    });
+    expect(deduped.components?.schemas?.OtherHours).toMatchObject({
+      description: "different role",
+    });
+    const extracted = extractLoyaltyV2Document(deduped);
+    expect(
+      extracted.paths?.["/v2/loyalties/programs"],
+    ).toMatchObject({
+      get: {
+        responses: {
+          "200": {
+            content: {
+              "application/json": {
+                schema: { $ref: "#/components/schemas/LoyaltyV2Hours" },
+              },
+            },
+          },
+        },
+      },
+    });
+    expect(extracted.components?.schemas?.LoyaltyV2Hours).toBeDefined();
+    expect(extracted.components?.schemas?.Hours).toBeUndefined();
+  });
+
   it("rebuilds documentation/openapi/loyalties-v2.json from reference/OpenAPI.json", () => {
     const root = path.join(__dirname, "../../..");
     const main = JSON.parse(
@@ -164,6 +243,28 @@ describe("Loyalty v2 document", () => {
     const loyalty = fs.readFileSync(loyaltyPath, "utf8");
 
     expect(main[LOYALTY_V2_DOCUMENT_KEY]).toBeDefined();
-    expect(JSON.stringify(extractLoyaltyV2Document(main), null, 2)).toBe(loyalty);
+    for (const [pathName, pathItem] of Object.entries(
+      main.paths as Record<string, Record<string, { tags?: string[] }>>,
+    )) {
+      if (!pathName.startsWith("/v2/loyalties")) {
+        continue;
+      }
+      for (const operation of Object.values(pathItem)) {
+        if (!operation?.tags) {
+          continue;
+        }
+        expect(operation.tags.length).toBeGreaterThan(0);
+        for (const tag of operation.tags) {
+          expect(tag.startsWith(LOYALTY_V2_TAG_PREFIX)).toBe(true);
+        }
+      }
+    }
+    expect(
+      JSON.stringify(
+        withoutLoyaltyV2TagPrefix(extractLoyaltyV2Document(main)),
+        null,
+        2,
+      ),
+    ).toBe(loyalty);
   });
 });

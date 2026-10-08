@@ -29,12 +29,13 @@
 - [Management](#management)
 - [OAuth](#oauth)
 - [Client-side](#client-side)
-- [Programs](#programs)
-- [Card Definitions](#card-definitions)
-- [Earning Rules](#earning-rules)
-- [Tier Structures](#tier-structures)
-- [Benefits](#benefits)
-- [Examine](#examine)
+- [LV2-Programs](#lv2-programs)
+- [LV2-Card Definitions](#lv2-card-definitions)
+- [LV2-Earning Rules](#lv2-earning-rules)
+- [LV2-Tier Structures](#lv2-tier-structures)
+- [LV2-Benefits](#lv2-benefits)
+- [LV2-Rewards](#lv2-rewards)
+- [LV2-Examine](#lv2-examine)
 # Endpoints
 
 ## Publications
@@ -121,27 +122,18 @@
 | /v1/promotions/{campaignId}/stacks/{stackId}   | put    | Update Promotion Stack             | <font color='green'>supported</font> |               |
 | /v1/promotions/{campaignId}/stacks/{stackId}   | delete | Delete Promotion Stack             | <font color='green'>supported</font> |               |
 ## Rewards
-| endpoint                                          | method | summary                   | is supported                         | is deprecated |
-| ------------------------------------------------- | ------ | ------------------------- | ------------------------------------ | ------------- |
-| /v1/rewards                                       | get    | List Rewards              | <font color='green'>supported</font> |               |
-| /v1/rewards                                       | post   | Create Reward             | <font color='green'>supported</font> |               |
-| /v1/rewards/{rewardId}                            | get    | Get Reward                | <font color='green'>supported</font> |               |
-| /v1/rewards/{rewardId}                            | put    | Update Reward             | <font color='green'>supported</font> |               |
-| /v1/rewards/{rewardId}                            | delete | Delete Reward             | <font color='green'>supported</font> |               |
-| /v1/rewards/{rewardId}/assignments                | get    | List Reward Assignments   | <font color='green'>supported</font> |               |
-| /v1/rewards/{rewardId}/assignments                | post   | Create Reward Assignment  | <font color='green'>supported</font> |               |
-| /v1/rewards/{rewardId}/assignments/{assignmentId} | put    | Update Reward Assignment  | <font color='green'>supported</font> |               |
-| /v1/rewards/{rewardId}/assignments/{assignmentId} | delete | Delete Reward Assignment  | <font color='green'>supported</font> |               |
-| /v1/rewards/{rewardId}/assignments/{assignmentId} | get    | Get Reward Assignment     | <font color='green'>supported</font> |               |
-| /v2/loyalties/rewards                             | get    | List rewards v2           |                                      |               |
-| /v2/loyalties/rewards                             | post   | Create a reward           |                                      |               |
-| /v2/loyalties/rewards/{rewardId}                  | get    | Get reward by ID          |                                      |               |
-| /v2/loyalties/rewards/{rewardId}                  | put    | Update a reward           |                                      |               |
-| /v2/loyalties/rewards/{rewardId}                  | delete | Delete a reward           |                                      |               |
-| /v2/loyalties/rewards/{rewardId}/activate         | post   | Activate reward           |                                      |               |
-| /v2/loyalties/rewards/{rewardId}/deactivate       | post   | Deactivate reward         |                                      |               |
-| /v2/loyalties/rewards/{rewardId}/draft            | post   | Move reward back to draft |                                      |               |
-| /v2/loyalties/rewards/{rewardId}/activities       | get    | List reward activities    |                                      |               |
+| endpoint                                          | method | summary                  | is supported                         | is deprecated |
+| ------------------------------------------------- | ------ | ------------------------ | ------------------------------------ | ------------- |
+| /v1/rewards                                       | get    | List Rewards             | <font color='green'>supported</font> |               |
+| /v1/rewards                                       | post   | Create Reward            | <font color='green'>supported</font> |               |
+| /v1/rewards/{rewardId}                            | get    | Get Reward               | <font color='green'>supported</font> |               |
+| /v1/rewards/{rewardId}                            | put    | Update Reward            | <font color='green'>supported</font> |               |
+| /v1/rewards/{rewardId}                            | delete | Delete Reward            | <font color='green'>supported</font> |               |
+| /v1/rewards/{rewardId}/assignments                | get    | List Reward Assignments  | <font color='green'>supported</font> |               |
+| /v1/rewards/{rewardId}/assignments                | post   | Create Reward Assignment | <font color='green'>supported</font> |               |
+| /v1/rewards/{rewardId}/assignments/{assignmentId} | put    | Update Reward Assignment | <font color='green'>supported</font> |               |
+| /v1/rewards/{rewardId}/assignments/{assignmentId} | delete | Delete Reward Assignment | <font color='green'>supported</font> |               |
+| /v1/rewards/{rewardId}/assignments/{assignmentId} | get    | Get Reward Assignment    | <font color='green'>supported</font> |               |
 ## Loyalties
 | endpoint                                                                   | method | summary                                           | is supported                         | is deprecated                        |
 | -------------------------------------------------------------------------- | ------ | ------------------------------------------------- | ------------------------------------ | ------------------------------------ |
@@ -385,7 +377,7 @@
 | /client/v1/validate         | get    | Validate Voucher (client-side)             |                                      |  <font color='red'>deprecated</font> |
 | /client/v1/redeem           | post   | Redeem Voucher (client-side)               |                                      |  <font color='red'>deprecated</font> |
 | /client/v1/publish          | post   | Create Publication (client-side)           |                                      |                                      |
-## Programs
+## LV2-Programs
 | endpoint                                                                                                | method | summary                                    | is supported | is deprecated |
 | ------------------------------------------------------------------------------------------------------- | ------ | ------------------------------------------ | ------------ | ------------- |
 | /v2/loyalties/programs                                                                                  | post   | Create program                             |              |               |
@@ -441,7 +433,7 @@
 | /v2/loyalties/programs/{programId}/reports/points-earnings/summary                                      | get    | Get program points-earnings summary report |              |               |
 | /v2/loyalties/programs/{programId}/reports/earning-rules/daily                                          | get    | Get program earning-rules daily report     |              |               |
 | /v2/loyalties/programs/{programId}/reports/earning-rules/summary                                        | get    | Get program earning-rules summary report   |              |               |
-## Card Definitions
+## LV2-Card Definitions
 | endpoint                                                     | method | summary                         | is supported | is deprecated |
 | ------------------------------------------------------------ | ------ | ------------------------------- | ------------ | ------------- |
 | /v2/loyalties/card-definitions                               | get    | List Card Definitions           |              |               |
@@ -452,7 +444,7 @@
 | /v2/loyalties/card-definitions/{cardDefinitionId}/activate   | post   | Activate Card Definition        |              |               |
 | /v2/loyalties/card-definitions/{cardDefinitionId}/draft      | post   | Draft Card Definition           |              |               |
 | /v2/loyalties/card-definitions/{cardDefinitionId}/activities | get    | List Card Definition Activities |              |               |
-## Earning Rules
+## LV2-Earning Rules
 | endpoint                                               | method | summary                      | is supported | is deprecated |
 | ------------------------------------------------------ | ------ | ---------------------------- | ------------ | ------------- |
 | /v2/loyalties/earning-rules                            | post   | Create earning rule          |              |               |
@@ -464,7 +456,7 @@
 | /v2/loyalties/earning-rules/{earningRuleId}/deactivate | post   | Deactivate earning rule      |              |               |
 | /v2/loyalties/earning-rules/{earningRuleId}/draft      | post   | Move earning rule to draft   |              |               |
 | /v2/loyalties/earning-rules/{earningRuleId}/activities | get    | List earning rule activities |              |               |
-## Tier Structures
+## LV2-Tier Structures
 | endpoint                                                       | method | summary                        | is supported | is deprecated |
 | -------------------------------------------------------------- | ------ | ------------------------------ | ------------ | ------------- |
 | /v2/loyalties/tier-structures                                  | post   | Create tier structure          |              |               |
@@ -480,7 +472,7 @@
 | /v2/loyalties/tier-structures/{tierStructureId}/tiers/{tierId} | put    | Update tier                    |              |               |
 | /v2/loyalties/tier-structures/{tierStructureId}/tiers/{tierId} | delete | Delete tier                    |              |               |
 | /v2/loyalties/tier-structures/{tierStructureId}/activities     | get    | List tier structure activities |              |               |
-## Benefits
+## LV2-Benefits
 | endpoint                                      | method | summary                 | is supported | is deprecated |
 | --------------------------------------------- | ------ | ----------------------- | ------------ | ------------- |
 | /v2/loyalties/benefits                        | get    | List benefits           |              |               |
@@ -491,7 +483,19 @@
 | /v2/loyalties/benefits/{benefitId}/activate   | post   | Activate benefit        |              |               |
 | /v2/loyalties/benefits/{benefitId}/draft      | post   | Move benefit to draft   |              |               |
 | /v2/loyalties/benefits/{benefitId}/activities | get    | List benefit activities |              |               |
-## Examine
+## LV2-Rewards
+| endpoint                                    | method | summary                   | is supported | is deprecated |
+| ------------------------------------------- | ------ | ------------------------- | ------------ | ------------- |
+| /v2/loyalties/rewards                       | get    | List rewards v2           |              |               |
+| /v2/loyalties/rewards                       | post   | Create a reward           |              |               |
+| /v2/loyalties/rewards/{rewardId}            | get    | Get reward by ID          |              |               |
+| /v2/loyalties/rewards/{rewardId}            | put    | Update a reward           |              |               |
+| /v2/loyalties/rewards/{rewardId}            | delete | Delete a reward           |              |               |
+| /v2/loyalties/rewards/{rewardId}/activate   | post   | Activate reward           |              |               |
+| /v2/loyalties/rewards/{rewardId}/deactivate | post   | Deactivate reward         |              |               |
+| /v2/loyalties/rewards/{rewardId}/draft      | post   | Move reward back to draft |              |               |
+| /v2/loyalties/rewards/{rewardId}/activities | get    | List reward activities    |              |               |
+## LV2-Examine
 | endpoint                            | method | summary               | is supported | is deprecated |
 | ----------------------------------- | ------ | --------------------- | ------------ | ------------- |
 | /v2/loyalties/examine/earning-rules | post   | Examine earning rules |              |               |

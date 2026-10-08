@@ -82,7 +82,7 @@ describe("Mintlify tag split", () => {
     expect(raw).not.toContain('"nullable": true');
   });
 
-  it("keeps Loyalty v2 paths out of the per-tag files", async () => {
+  it("merges LV2- tags into loyalties-v2.json and strips the prefix", async () => {
     const dir = fs.mkdtempSync(path.join(os.tmpdir(), "mintlify-split-"));
 
     await splitSecurityParamsThenSplitOpenapiByTags(
@@ -93,17 +93,32 @@ describe("Mintlify tag split", () => {
           "/v2/loyalties/programs": {
             get: {
               operationId: "list-loyalty-programs",
-              tags: ["Programs"],
+              tags: ["LV2-Programs"],
               responses: { "200": { description: "ok" } },
             },
           },
-          "/v1/campaigns": {
+          "/v2/loyalties/rewards": {
             get: {
-              operationId: "list-campaigns",
-              tags: ["Campaigns"],
+              operationId: "list-loyalty-rewards",
+              tags: ["LV2-Rewards"],
               responses: { "200": { description: "ok" } },
             },
           },
+          "/v1/rewards": {
+            get: {
+              operationId: "list-rewards",
+              tags: ["Rewards"],
+              responses: { "200": { description: "ok" } },
+            },
+          },
+        },
+        "x-loyalty-v2": {
+          info: { title: "Voucherify Loyalty v2 API" },
+          servers: [],
+          tags: [{ name: "Programs" }, { name: "Rewards" }],
+          security: [],
+          securitySchemes: {},
+          schemaNames: [],
         },
       } as never,
       "",
@@ -111,8 +126,24 @@ describe("Mintlify tag split", () => {
       { outputFolder: dir },
     );
 
+    expect(fs.existsSync(path.join(dir, "lv2-programs.json"))).toBe(false);
+    expect(fs.existsSync(path.join(dir, "lv2-rewards.json"))).toBe(false);
     expect(fs.existsSync(path.join(dir, "programs.json"))).toBe(false);
-    expect(fs.existsSync(path.join(dir, "campaigns.json"))).toBe(true);
+    const rewards = JSON.parse(
+      fs.readFileSync(path.join(dir, "rewards.json"), "utf8"),
+    );
+    expect(rewards.paths["/v1/rewards"]).toBeDefined();
+    expect(rewards.paths["/v2/loyalties/rewards"]).toBeUndefined();
+    const loyalty = JSON.parse(
+      fs.readFileSync(path.join(dir, "loyalties-v2.json"), "utf8"),
+    );
+    expect(loyalty.info.title).toBe("Voucherify Loyalty v2 API");
+    expect(loyalty.paths["/v2/loyalties/programs"].get.tags).toEqual([
+      "Programs",
+    ]);
+    expect(loyalty.paths["/v2/loyalties/rewards"].get.tags).toEqual([
+      "Rewards",
+    ]);
     fs.rmSync(dir, { recursive: true, force: true });
   });
 

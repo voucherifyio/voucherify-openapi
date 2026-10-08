@@ -30,7 +30,7 @@ npm run prepare-generated
 
 Languages under `reference/readonly-sdks/` are `ruby`, `java`, `php`, `python`, `js`, and `dotnet`.
 
-`documentation/openapi/loyalties-v2.json` is generated from paths under `/v2/loyalties`. Those schemas use their own names in `reference/OpenAPI.json`. A `VL` prefix remains only when that name already belongs to an API schema (`BadRequest`, `MemberActivity`, `MemberActivityData`). `x-loyalty-v2` holds the tag file's info, servers, tags, and security. The generator strips a remaining prefix when it writes the tag file. SDK and production specs omit `x-loyalty-v2` and do not include `/v2/loyalties`, because those paths are not on the SDK allowlist.
+`documentation/openapi/loyalties-v2.json` is one file for every path under `/v2/loyalties`. Operation tags there start with `LV2-` (`LV2-Programs`, `LV2-Rewards`, and the other loyalty tags) so they do not join an API tag such as `Rewards`. The tag split merges every `LV2-` tag into that one file and removes the prefix, so the file still shows `Programs` and `Rewards` together. Those schemas use their own names in `reference/OpenAPI.json`. A schema is not copied again when an existing schema has the same body and its name ends with the loyalty name. A `VL` prefix remains only when that name already belongs to an API schema (`BadRequest`, `MemberActivity`, `MemberActivityData`). `x-loyalty-v2` holds the tag file's info, servers, tags, and security. The generator strips a remaining schema prefix when it writes the tag file. SDK and production specs omit `x-loyalty-v2` and do not include `/v2/loyalties`, because those paths are not on the SDK allowlist.
 
 Null in 3.1 is `"type": "null"` or a union such as `"type": ["string", "null"]`. A nullable reference is `anyOf` of the `$ref` and `{ "type": "null" }`. Do not write the OpenAPI 3.0 keyword `nullable` into `reference/OpenAPI.json` or into `documentation/openapi*`. SDK and production specs are downgraded to 3.0.1, and that downgrade is what introduces `nullable`.
 
@@ -39,7 +39,7 @@ Null in 3.1 is `"type": "null"` or a union such as `"type": ["string", "null"]`.
 ## What `prepare-generated` runs
 
 1. `scripts/shared/fix-schemas-with-refs.ts` — on the 3.1 source, a `$ref` cannot sit next to other keywords. The script wraps those in `allOf` for schemas reachable from `paths`. It does not walk `webhooks` or `/v2/loyalties`. Loyalty schema lines, `/v2/loyalties` path lines, and the `x-loyalty-v2` block are written with a trailing space so the GitHub diff of that append stays additions.
-2. `scripts/mintlify/split-security-params-then-split-openapi-by-tags.ts` — writes `documentation/openapi` from `paths` and `documentation/openapi-events` from `webhooks`. Both stay 3.1.0. The round-trip key `x-openapi-30-nullable-index` is stripped. `/v2/loyalties` is written to `loyalties-v2.json` instead of one file per tag.
+2. `scripts/mintlify/split-security-params-then-split-openapi-by-tags.ts` — writes `documentation/openapi` from `paths` and `documentation/openapi-events` from `webhooks`. Both stay 3.1.0. The round-trip key `x-openapi-30-nullable-index` is stripped. Tags that start with `LV2-` are written together to `loyalties-v2.json` with that prefix removed.
 3. `scripts/shared/generate-endpoints-coverage-doc.ts` — coverage notes.
 4. `scripts/mintlify/build-update-md-tables-from-openapi.ts` — Markdown tables inside the docs. It reads a downgraded view of the spec.
 5. `scripts/shared/prepare-open-api/index.ts` once per language — writes `reference/readonly-sdks/<lang>/OpenAPI.json`.
