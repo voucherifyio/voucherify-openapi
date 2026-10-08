@@ -5,7 +5,9 @@ This repository contains OpenAPI specifications for the Voucherify API and all r
 ## Repository Structure
 
 ### 📁 `sdks/`
-Contains Git submodules for all generated SDKs. Each SDK is maintained in its own repository and linked here as a submodule. See `.gitmodules` for the complete list of SDKs and their repositories.
+Git submodules for the published SDKs. Each SDK lives in its own repository. See `.gitmodules` for the remotes. A commit in this repository only stores the submodule SHA.
+
+Do not edit files under `sdks/` as part of an OpenAPI or docs change. Publish an SDK with `npm run generate-sdk-<lang>`. `npm run generate-sdks` runs every language.
 
 Available SDKs:
 - **Ruby** - `sdks/ruby` → [voucherify-ruby-sdk](https://github.com/voucherifyio/voucherify-ruby-sdk)
@@ -16,19 +18,37 @@ Available SDKs:
 - **JavaScript** - `sdks/js` → [voucherify-js-sdk](https://github.com/voucherifyio/voucherify-js-sdk)
 
 ### 📁 `reference/`
-Contains the source OpenAPI specification files that serve as the foundation for SDK generation and documentation:
-- **`OpenAPI.json`** - Main OpenAPI specification, including webhook operations
-- **`readonly-sdks/`** - Read-only SDK specifications
-- **`split-openapi-by-tags/`** - OpenAPI spec split by API resource tags
+- **`OpenAPI.json`** - Source OpenAPI specification (`paths` and `webhooks`). Edit this file.
+- **`readonly-sdks/`** - Generated SDK input, one `OpenAPI.json` per language. Written by `npm run prepare-generated`.
+- **`split-openapi-by-tags/`** - Old tag split. The current generator writes `documentation/openapi`.
 
 ### 📁 `documentation/`
-Contains all Mintlify documentation files. This entire folder is shared with Mintlify for generating the API documentation website:
-- **`api-reference/`** - API reference documentation pages
-- **`guides/`** - User guides and tutorials
-- **`integrations/`** - Integration documentation
-- **`openapi/`** - Processed OpenAPI files for documentation
-- **`changelog/`** - API changelog
-- **`docs.json`** - Mintlify configuration
+The Mintlify documentation site. Prose is `*.mdx`. Generated OpenAPI files in this folder are rewritten by `npm run prepare-generated`; edit `reference/OpenAPI.json` instead.
+
+Mintlify builds a preview only for a pull request whose base is the deployment branch (`master`). A pull request into another branch does not get that preview.
+
+`documentation/.mintlify/AGENTS.md` is Mintlify's writing guide for MDX components. It is not a map of this repository.
+
+**Configuration**
+- **`docs.json`** - navigation, theme, and which OpenAPI file each API group uses (`"openapi": "/openapi/....json"`)
+- **`style.css`** - site styles
+- **`images/`** - images referenced by the site
+
+**Prose**, grouped the same way as the navigation in `docs.json`:
+- **`get-started/`** - Get started
+- **`guides/`** - developer guides
+- **`integrations/`** - integrations
+- **`discover/`**, **`prepare/`**, **`build/`**, **`optimize/`**, **`orchestrate/`**, **`analyze/`**, **`manage/`** - product guides for those sections
+- **`api-reference/`** - API reference pages, including webhook event pages
+- **`changelog/`** - public Voucherify changelog
+- **`snippets/`** - MDX imported by other pages
+- **`examples/`** - sample files, such as CSV import templates
+
+Event pages point at a webhook file with frontmatter such as `openapi: "/openapi-events/events-customer.json webhook EVENTS.CUSTOMER.CREATED"`.
+
+**Generated OpenAPI** (OpenAPI 3.1.0; do not edit by hand):
+- **`openapi/*.json`** - built from `paths`. No `webhooks` key. `loyalties-v2.json` holds every path under `/v2/loyalties`.
+- **`openapi-events/*.json`** - webhook operations, built from `webhooks`. Event pages reference these files.
 
 ### 📁 `production/`
 Contains the production-ready OpenAPI specification that can be distributed to clients:
@@ -52,7 +72,7 @@ Contains all automation scripts for processing OpenAPI specifications and genera
 #### `scripts/mintlify/`
 Scripts specific to Mintlify documentation generation:
 - **`build-update-md-tables-from-openapi.ts`** - Generates Markdown tables from OpenAPI schemas
-- **`split-openapi-by-tags.ts`** - Splits the OpenAPI spec by tags for documentation
+- **`split-security-params-then-split-openapi-by-tags.ts`** - Writes `documentation/openapi` and `documentation/openapi-events` from the source spec
 - **`output/`** - Generated Markdown files for various API objects (Voucher, Campaign, Redemption, etc.)
 - **`utils/`** - Utility functions:
   - `add-ids-to-h2.ts` - Adds IDs to H2 headings
@@ -61,21 +81,11 @@ Scripts specific to Mintlify documentation generation:
   - `schema-to-md-table.ts` - Converts schemas to Markdown tables
 
 #### `scripts/sdks/`
-SDK-specific processing scripts organized by language:
-- **`dotnet/`** - .NET SDK fixes:
-  - `fix-dotnet-imports.ts` - Fixes import statements
-  - `fix-enums-in-dotnet.js` - Corrects enum definitions
-- **`java/`** - Java SDK specific scripts
-- **`js/`** - JavaScript SDK processing:
-  - `clean-js-sdk-files.sh` - Cleanup script
-  - `fix-JS-sdk-required-properties-types.js` - Type corrections
-  - `fix-JS-sdk-types.js` - Additional type fixes
-- **`php/`** - PHP SDK specific scripts
-- **`python/`** - Python SDK specific scripts
-- **`ruby/`** - Ruby SDK processing:
-  - `update-ruby-dockefile-sdk-version.ts` - Version management
-- **`shared/`** - Scripts shared across SDKs:
-  - `copy-env-to-sdks.sh` - Environment variable distribution
+Post-processing applied when an SDK is published:
+- **`dotnet/`** - `fix-dotnet-imports.ts`, `fix-enums-in-dotnet.js`
+- **`js/`** - `clean-js-sdk-files.sh`, `fix-JS-sdk-required-properties-types.js`, `fix-JS-sdk-types.js`
+- **`ruby/`** - `update-ruby-dockerfile-sdk-version.ts`
+- **`shared/`** - `copy-env-to-sdks.sh`
 
 #### `scripts/shared/`
 Core scripts used across both SDK and documentation generation:
@@ -98,9 +108,6 @@ Core scripts used across both SDK and documentation generation:
   - `remove-unwanted-properties.ts` - Property filtering
   - `removeOneOfs.ts` - OneOf schema resolution
   - `searchAndReplaceInFiles.ts` - Bulk file modifications
-
-#### `scripts/production/`
-Scripts specific to production build processes
 
 #### `scripts/types/`
 TypeScript type definitions:
@@ -125,20 +132,21 @@ git submodule update --init --recursive
 
 ## Contributing
 
-When contributing to this repository, please be aware that:
-1. Changes to OpenAPI specifications in `reference/` will affect SDK generation
-2. Scripts in `scripts/shared/prepare-open-api/` process the spec before generation
-3. Each SDK may have language-specific post-processing scripts
-4. Documentation changes should be made in the `documentation/` folder
-5. Always check `production/ENDPOINTS-COVERAGE.md` for endpoint availability
+Read the [Contributing guide](CONTRIBUTING.md) for complete information regarding contribution.
+
+When contributing to this repository:
+1. Change the API in `reference/OpenAPI.json`.
+2. Run `npm run prepare-generated` and commit what it rewrites. This refreshes derived OpenAPI files and Markdown tables. It does not regenerate SDK source. `npm run pre-commit` is the same command.
+3. Publish an SDK only with `npm run generate-sdk-<lang>`. That prepares `reference/readonly-sdks/<lang>/OpenAPI.json`, runs OpenAPI Generator with `mustache-templates/`, then applies `scripts/sdks/<lang>/`.
+4. Documentation changes belong in `documentation/`.
+5. Check `production/ENDPOINTS-COVERAGE.md` for which endpoints are in the production spec.
+
+Mintlify builds a documentation preview only for a pull request whose base is `master`. A pull request into another branch does not get that preview.
 
 ## Workflow Overview
 
-1. **Source Specification** → `reference/OpenAPI.json` contains the master specification
-2. **Processing** → Scripts in `scripts/shared/prepare-open-api/` transform the spec
-3. **SDK Generation** → OpenAPI Generator uses specs + `mustache-templates/` to create SDKs
-4. **Post-Processing** → Language-specific scripts in `scripts/sdks/{language}/` refine the output
-5. **Documentation** → Mintlify uses files from `documentation/` folder
-6. **Production** → `production/readOnly-openAPI.json` is the client-facing specification
-
-
+1. **Source** → Edit `reference/OpenAPI.json`.
+2. **Derived files** → `npm run prepare-generated` refreshes the Mintlify OpenAPI files, `reference/readonly-sdks/`, Markdown tables, and `production/readOnly-openAPI.json`. It does not regenerate SDK source.
+3. **SDK publish** → `npm run generate-sdk-<lang>` is a separate step. It uses `mustache-templates/` and `scripts/sdks/<lang>/`.
+4. **Documentation** → Mintlify reads `documentation/`.
+5. **Production** → `production/readOnly-openAPI.json` is the client-facing specification.
