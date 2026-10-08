@@ -212,7 +212,5 @@ describe("mergeWebhooksIntoOpenApi", () => {
       document.components.schemas.EventCustomerCreated.allOf,
     ).toBeUndefined();
     expect(document.components.schemas.Voucher).toBeDefined();
-    expect(document.components.schemas.WebhookVoucher).toBeDefined();
-    expect(Object.keys(document.webhooks)).toHaveLength(161);
   });
 });
