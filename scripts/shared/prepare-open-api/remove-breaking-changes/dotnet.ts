@@ -1,6 +1,63 @@
 import * as OpenAPI from "../../../../reference/OpenAPI.json";
 import { restoreValidationRuleErrorObjects } from "./utils";
 
+const ID_ORDER_VALUES = ["-id", "id"];
+
+const isIdOrderEnum = (schema: { enum?: string[] } | undefined) =>
+  Array.isArray(schema?.enum) &&
+  schema.enum.length === ID_ORDER_VALUES.length &&
+  ID_ORDER_VALUES.every((value) => schema.enum?.includes(value));
+
+/** string | string[] | null on Loyalty v2 `order` queries. C# emits a duplicate JsonToken.String case for that oneOf. */
+const isLoyaltyIdOrderOneOf = (schema: {
+  oneOf?: Array<{ type?: string | string[]; items?: { enum?: string[] }; enum?: string[] }>;
+}) => {
+  const branches = schema?.oneOf;
+  if (!Array.isArray(branches) || branches.length !== 3) {
+    return false;
+  }
+  const arrayBranch = branches.find((branch) => branch.type === "array");
+  const stringBranch = branches.find((branch) => branch.type === "string");
+  const nullBranch = branches.find(
+    (branch) => branch.type === "null" || (Array.isArray(branch.type) && branch.type.includes("null") && branch.type.length === 1),
+  );
+  return Boolean(
+    arrayBranch &&
+      isIdOrderEnum(arrayBranch.items) &&
+      stringBranch &&
+      isIdOrderEnum(stringBranch) &&
+      nullBranch,
+  );
+};
+
+const collapseLoyaltyIdOrderParameters = (paths: typeof OpenAPI.paths) => {
+  for (const [path, pathItem] of Object.entries(paths)) {
+    if (!path.startsWith("/v2/loyalties/") || !pathItem) {
+      continue;
+    }
+    for (const operation of Object.values(pathItem)) {
+      if (!operation || typeof operation !== "object" || !("parameters" in operation)) {
+        continue;
+      }
+      const parameters = (operation as { parameters?: Array<{ name?: string; description?: string; schema?: unknown }> }).parameters;
+      if (!Array.isArray(parameters)) {
+        continue;
+      }
+      for (const parameter of parameters) {
+        if (parameter?.name !== "order" || !parameter.schema || !isLoyaltyIdOrderOneOf(parameter.schema as never)) {
+          continue;
+        }
+        parameter.schema = {
+          type: "string",
+          nullable: true,
+          enum: ID_ORDER_VALUES,
+          description: parameter.description,
+        };
+      }
+    }
+  }
+};
+
 const removeDotnetBreakingChanges = {
   before: (_openApi: unknown): typeof OpenAPI => {
     const openApi = _openApi as typeof OpenAPI;
@@ -232,6 +289,10 @@ const removeDotnetBreakingChanges = {
     };
 
     restoreValidationRuleErrorObjects(schemas);
+
+    // C# oneOf of string and array emits two JsonToken.String cases and does not build.
+    // The API rejects an array that orders by both id and -id, so a single string is enough.
+    collapseLoyaltyIdOrderParameters(openApi.paths);
 
     return openApi;
   },

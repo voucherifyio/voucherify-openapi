@@ -4,6 +4,36 @@
 //   },
 
 export const rawTakeList = {
+  "/v2/loyalties/programs/{programId}/members": {
+    post: true,
+  },
+  "/v2/loyalties/programs/{programId}/members/batch": {
+    post: true,
+  },
+  "/v2/loyalties/programs/{programId}/memberships/{customerId}": {
+    get: true,
+  },
+  "/v2/loyalties/programs/{programId}/members/{memberId}": {
+    get: true,
+  },
+  "/v2/loyalties/programs/{programId}/members/{memberId}/cards/{cardId}/transactions":
+    {
+      get: true,
+    },
+  "/v2/loyalties/programs/{programId}/members/{memberId}/rewards/purchases": {
+    get: true,
+    post: true,
+  },
+  "/v2/loyalties/programs/{programId}/members/{memberId}/orders/payments": {
+    get: true,
+    post: true,
+  },
+  "/v2/loyalties/examine/earning-rules": {
+    post: true,
+  },
+  "/v2/loyalties/examine/rewards": {
+    post: true,
+  },
   "/v1/loyalties/{campaignId}/qualifications": {
     post: [],
   },

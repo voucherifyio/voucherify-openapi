@@ -134,7 +134,9 @@ const savePreparedOpenApiFile = async (lang: string, openAPI: object) => {
 const main = async (languageOptions: LanguageOptions) => {
   // Downgrades to 3.0.1 and folds if/then/not. See prepare-open-api/AGENTS.md.
   openAPIContent = applySdkOpenApiVersion(
-    documentWithoutLoyaltyV2(openAPIContent),
+    documentWithoutLoyaltyV2(openAPIContent, {
+      keepSdkPublishedPaths: true,
+    }),
     languageOptions.downgradeTo301,
   );
   const prohibited = [
@@ -412,11 +414,16 @@ const copySchemasIfUsedAsAllOfInBase = (schemas): Record<string, any> => {
               `Could not find ${copyFromSchemaName} schema.... ref found in schema ${schemaName}`,
             );
           }
-        } else {
-          throw new Error(
-            `Could not find $ref in schema ${schemaName}.allOf[0]`,
-          );
         }
+        const only = schema.allOf[0];
+        const next = _.omit(schema, ["allOf"]) as any;
+        if (Array.isArray(only?.required)) {
+          next.required = _.uniq([...(next.required || []), ...only.required]);
+        }
+        if (only?.properties) {
+          next.properties = { ...(next.properties || {}), ...only.properties };
+        }
+        return [schemaName, next];
       } else {
         return [
           schemaName,

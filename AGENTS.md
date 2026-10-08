@@ -30,7 +30,7 @@ npm run prepare-generated
 
 Languages under `reference/readonly-sdks/` are `ruby`, `java`, `php`, `python`, `js`, and `dotnet`.
 
-`documentation/openapi/loyalties-v2.json` is one file for every path under `/v2/loyalties`. Operation tags there start with `LV2-` (`LV2-Programs`, `LV2-Rewards`, and the other loyalty tags) so they do not join an API tag such as `Rewards`. The tag split merges every `LV2-` tag into that one file the same way it writes `oauth.json`: main info and servers, security from the operation, schemas from `$ref`. It removes the `LV2-` prefix in that file, so the operations still show `Programs` and `Rewards`. Those schemas use their own names in `reference/OpenAPI.json`. A schema is not copied again when an existing schema has the same body and its name ends with the loyalty name. A `VL` prefix remains only when that name already belongs to an API schema (`BadRequest`, `MemberActivity`, `MemberActivityData`). SDK and production specs omit `/v2/loyalties` and any schema only those paths reach, because those paths are not on the SDK allowlist.
+`documentation/openapi/loyalties-v2.json` is one file for every path under `/v2/loyalties`. Operation tags there start with `LV2-` (`LV2-Programs`, `LV2-Rewards`, and the other loyalty tags) so they do not join an API tag such as `Rewards`. The tag split merges every `LV2-` tag into that one file the same way it writes `oauth.json`: main info and servers, security from the operation, schemas from `$ref`. It removes the `LV2-` prefix in that file, so the operations still show `Programs` and `Rewards`. Those schemas use their own names in `reference/OpenAPI.json`. A schema is not copied again when an existing schema has the same body and its name ends with the loyalty name. A `VL` prefix remains only when that name already belongs to an API schema (`BadRequest`, `MemberActivity`, `MemberActivityData`). SDK and production specs omit `/v2/loyalties` paths that are not on the SDK allowlist, and any schema only those omitted paths reach. Allowlisted Loyalty v2 paths stay (`keepSdkPublishedPaths`) and are downgraded with the rest of the API. Markdown tables still omit every `/v2/loyalties` path.
 
 Null in 3.1 is `"type": "null"` or a union such as `"type": ["string", "null"]`. A nullable reference is `anyOf` of the `$ref` and `{ "type": "null" }`. Do not write the OpenAPI 3.0 keyword `nullable` into `reference/OpenAPI.json` or into `documentation/openapi*`. SDK and production specs are downgraded to 3.0.1, and that downgrade is what introduces `nullable`.
 
@@ -47,7 +47,7 @@ Null in 3.1 is `"type": "null"` or a union such as `"type": ["string", "null"]`.
 
 SDK prep and the production build both:
 
-- drop Loyalty v2 paths and schemas only those paths reach before downgrade (`documentWithoutLoyaltyV2`)
+- drop Loyalty v2 paths that are not on the allowlist, and schemas only those paths reach, before downgrade (`documentWithoutLoyaltyV2` with `keepSdkPublishedPaths`)
 - downgrade 3.1.0 to 3.0.1 (`scripts/shared/openapi-version/migrate.ts`)
 - fold JSON Schema `if` / `then` / `else` / `not` into the parent object (`mergeJsonSchemaConditionals`) so a generator never sees those keywords
 - drop the `webhooks` key (`omitWebhooks` in `scripts/shared/openapi-webhooks/reachable-schemas.ts`)

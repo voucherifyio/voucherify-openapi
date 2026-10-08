@@ -22,7 +22,7 @@ Do not edit files under `sdks/`. A commit here only stores a submodule SHA, and 
 
 ## Order inside `main`
 
-1. Drop Loyalty v2 paths and the schemas only those paths reach (`documentWithoutLoyaltyV2`). Schemas that a non-loyalty path also reaches stay.
+1. Drop Loyalty v2 paths that are not on the allowlist, and the schemas only those paths reach (`documentWithoutLoyaltyV2` with `keepSdkPublishedPaths`). Schemas that a non-loyalty path or an allowlisted Loyalty v2 path also reaches stay. Markdown tables call the same function without that flag and omit every Loyalty v2 path.
 2. Downgrade 3.1.0 to 3.0.1 when `downgradeTo301` is set (`applySdkOpenApiVersion` in `scripts/shared/openapi-version/migrate.ts`).
 3. Reject a document that still contains `readOnly` or `writeOnly`.
 4. Run the in-file cleanups, then `fixBreakingChanges.before` for that language.
@@ -46,11 +46,11 @@ Do not edit files under `sdks/`. A commit here only stores a submodule SHA, and 
 
 `mergeJsonSchemaConditionals` in `scripts/shared/openapi-version/merge-json-schema-conditionals.ts` does that fold. It leaves `const` untouched. `applySdkOpenApiVersion` runs it after the reversible downgrade. `index.ts` and `build-production-openapi.ts` both use that entry, so SDK files and `production/readOnly-openAPI.json` get the fold. `npm run openapi:downgrade-to-301` stays reversible and still leaves `if` / `then` / `not` in place. Markdown tables call `ensureOpenApi301` and do not fold.
 
-The full source cannot be downgraded as a whole. Some Loyalty v2 schemas use `type: ["null"]`, which has no 3.0.1 `nullable` form. Strip Loyalty v2 first, then downgrade. `npm run openapi:downgrade-to-301` runs the reversible downgrade on whatever file you pass and still throws on that union.
+The full source cannot be downgraded as a whole while a schema still uses `type: ["null"]` or a union of `string`, `number`, and `null`. Neither has a 3.0.1 `nullable` form. A field that is always null uses `"type": "null"`, which a later step turns into a nullable object. `applySdkOpenApiVersion` collapses `string`/`number`/`null` to one nullable type before that downgrade: amount, price, and quantity keep `number`; other fields, including source IDs, keep `string`. The reversible downgrade still throws on both shapes. SDK and production keep allowlisted Loyalty v2 paths and still drop every other Loyalty v2 path before downgrade.
 
 ## What must stay byte-identical
 
-A change that should not affect published clients leaves `reference/readonly-sdks/` and `production/readOnly-openAPI.json` byte-for-byte unchanged. Webhook-only schemas are in that set, because reachability starts at `paths`. Loyalty-only schemas are in that set too, because step 1 deletes them before downgrade.
+A change that should not affect published clients leaves `reference/readonly-sdks/` and `production/readOnly-openAPI.json` byte-for-byte unchanged. Webhook-only schemas are in that set, because reachability starts at `paths`. Schemas reached only by Loyalty v2 paths that are not on the allowlist are in that set too, because step 1 deletes those paths before downgrade. Schemas reached by an allowlisted Loyalty v2 path are published.
 
 Shared schemas are not in that set. A schema reached by a non-loyalty path is still in the downgraded document even when its name starts with `LoyaltyV2`. If it is unused after deprecated paths are removed, a later step deletes it. If it survives into a published file, editing it changes that file.
 

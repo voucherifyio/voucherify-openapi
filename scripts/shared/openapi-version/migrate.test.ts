@@ -19,6 +19,45 @@ const baseDocument = () => ({
 });
 
 describe("OpenAPI 3.0.1 ↔ 3.1.0", () => {
+  it("collapses a string/number/null union on the generator entry only", () => {
+    const document = {
+      openapi: "3.1.0",
+      info: { title: "fixture", version: "1" },
+      paths: {},
+      components: {
+        schemas: {
+          SourceId: {
+            type: ["string", "number", "null"],
+            description:
+              "Product source ID. May be provided as a string or a number. Can be `null`.",
+          },
+          Amount: {
+            type: ["string", "number", "null"],
+            description:
+              "Order amount after discounts - a non-negative integer. May be provided as a string or a number. Can be `null`.",
+          },
+        },
+      },
+    };
+
+    const as301 = applySdkOpenApiVersion(document, true);
+
+    expect(as301.components.schemas.SourceId).toMatchObject({
+      type: "string",
+      nullable: true,
+    });
+    expect(as301.components.schemas.Amount).toMatchObject({
+      type: "number",
+      nullable: true,
+    });
+    expect(as301.components.schemas.SourceId.description).toContain(
+      "string or a number",
+    );
+    expect(() => downgradeOpenApi310To301(document)).toThrow(
+      /string","number","null/,
+    );
+  });
+
   it("changes only the version when the document has no nullable schemas", () => {
     const document = baseDocument();
 

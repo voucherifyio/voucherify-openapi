@@ -33,6 +33,7 @@ const main = async () => {
   const openAPIContent = applySdkOpenApiVersion(
     documentWithoutLoyaltyV2(
       JSON.parse((await fsPromises.readFile(openApiPath)).toString()),
+      { keepSdkPublishedPaths: true },
     ),
     true,
   );
