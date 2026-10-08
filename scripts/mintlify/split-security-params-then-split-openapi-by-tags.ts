@@ -3,9 +3,8 @@ import * as path from "path";
 import * as openApi from "../../reference/OpenAPI.json";
 import {
   LOYALTY_V2_TAG_PREFIX,
-  extractLoyaltyV2Document,
   isLoyaltyV2Tag,
-  withoutLoyaltyV2TagPrefix,
+  stripLoyaltyV2TagPrefix,
 } from "../shared/loyalty-v2/document";
 import { OPENAPI_30_NULLABLE_INDEX } from "../shared/openapi-version/migrate";
 import { splitSecurityParams } from "./utils/split-security-params";
@@ -541,8 +540,32 @@ export async function splitSecurityParamsThenSplitOpenapiByTags(
     }
 
     if (loyaltyTags.length > 0) {
-      const loyaltyDocument = withoutLoyaltyV2TagPrefix(
-        extractLoyaltyV2Document(openApiSpec as never),
+      const seen = new Set<string>();
+      const loyaltyEndpoints: EndpointInfo[] = [];
+      for (const loyaltyTag of loyaltyTags) {
+        for (const endpoint of endpointTagGroups.get(loyaltyTag) ?? []) {
+          const id = `${endpoint.method} ${endpoint.path}`;
+          if (seen.has(id)) {
+            continue;
+          }
+          seen.add(id);
+          const tags = (endpoint.operation.tags ?? []).map((tag: string) =>
+            stripLoyaltyV2TagPrefix(tag),
+          );
+          loyaltyEndpoints.push({
+            ...endpoint,
+            tags,
+            operation: { ...endpoint.operation, tags },
+          });
+        }
+      }
+      const loyaltyDocument = omitRoundTripKeys(
+        createTagOpenApiSpec(
+          "Loyalty v2",
+          loyaltyEndpoints,
+          [],
+          openApiSpec,
+        ),
       );
       await fs.writeFile(
         path.join(OUTPUT_FOLDER, "loyalties-v2.json"),

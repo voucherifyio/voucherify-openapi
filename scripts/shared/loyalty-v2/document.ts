@@ -1,3 +1,5 @@
+import { schemaNamesReachableFromPaths } from "../openapi-webhooks/reachable-schemas";
+
 export const LOYALTY_V2_PATH_PREFIX = "/v2/loyalties";
 export const LOYALTY_V2_SCHEMA_PREFIX = "VL";
 export const LOYALTY_V2_TAG_PREFIX = "LV2-";
@@ -84,19 +86,55 @@ export function pathsWithoutLoyaltyV2(
 }
 
 /**
- * Drops Loyalty v2 paths, schemas, and the tag-file envelope.
+ * Schemas a Loyalty v2 path reaches that no other path reaches.
+ * SDK prep deletes these before the 3.0.1 downgrade. Shared schemas stay.
+ */
+export function loyaltyOnlySchemaNames(document: OpenApiDocument): Set<string> {
+  const loyaltyPaths: Record<string, unknown> = {};
+  const otherPaths: Record<string, unknown> = {};
+  for (const [pathName, pathItem] of Object.entries(document.paths ?? {})) {
+    if (isLoyaltyV2Path(pathName)) {
+      loyaltyPaths[pathName] = pathItem;
+    } else {
+      otherPaths[pathName] = pathItem;
+    }
+  }
+  const components = document.components as
+    | { [group: string]: { [name: string]: unknown } | undefined }
+    | undefined;
+  const fromLoyalty = schemaNamesReachableFromPaths({
+    paths: loyaltyPaths,
+    components,
+  });
+  const fromOther = schemaNamesReachableFromPaths({
+    paths: otherPaths,
+    components,
+  });
+  const only = new Set<string>();
+  for (const name of fromLoyalty) {
+    if (!fromOther.has(name)) {
+      only.add(name);
+    }
+  }
+  return only;
+}
+
+/**
+ * Drops Loyalty v2 paths and the schemas only those paths reach.
  * SDK, production, and Markdown-table downgrades stay on the API surface.
- * A `VL` schema is the loyalty copy. The unprefixed name is removed only when
- * that copy was renamed onto it.
  */
 export function documentWithoutLoyaltyV2<T extends OpenApiDocument>(
   document: T,
 ): T {
-  const envelope = document[LOYALTY_V2_DOCUMENT_KEY] as
-    | LoyaltyV2Envelope
-    | undefined;
   const copy = clone(document);
+  const onlyLoyalty = loyaltyOnlySchemaNames(copy);
   delete copy[LOYALTY_V2_DOCUMENT_KEY];
+  const tagged = copy as T & { tags?: { name?: string }[] };
+  if (Array.isArray(tagged.tags)) {
+    tagged.tags = tagged.tags.filter(
+      (tag) => !tag?.name || !isLoyaltyV2Tag(tag.name),
+    );
+  }
   if (copy.paths) {
     for (const pathName of Object.keys(copy.paths)) {
       if (isLoyaltyV2Path(pathName)) {
@@ -105,17 +143,49 @@ export function documentWithoutLoyaltyV2<T extends OpenApiDocument>(
     }
   }
   const schemas = copy.components?.schemas;
-  if (envelope && schemas) {
-    for (const publicName of envelope.schemaNames) {
-      const prefixed = `${LOYALTY_V2_SCHEMA_PREFIX}${publicName}`;
-      if (Object.prototype.hasOwnProperty.call(schemas, prefixed)) {
-        delete schemas[prefixed];
-      } else {
-        delete schemas[publicName];
+  if (schemas) {
+    for (const name of onlyLoyalty) {
+      delete schemas[name];
+    }
+  }
+  dropUnreferencedSecuritySchemes(copy);
+  return copy;
+}
+
+function dropUnreferencedSecuritySchemes(document: OpenApiDocument): void {
+  const schemes = document.components?.securitySchemes;
+  if (!schemes) {
+    return;
+  }
+  const used = new Set<string>();
+  const note = (security: unknown) => {
+    if (!Array.isArray(security)) {
+      return;
+    }
+    for (const requirement of security) {
+      if (requirement && typeof requirement === "object") {
+        for (const name of Object.keys(requirement as Record<string, unknown>)) {
+          used.add(name);
+        }
+      }
+    }
+  };
+  note(document.security);
+  for (const pathItem of Object.values(document.paths ?? {})) {
+    if (!pathItem || typeof pathItem !== "object" || Array.isArray(pathItem)) {
+      continue;
+    }
+    for (const operation of Object.values(pathItem)) {
+      if (operation && typeof operation === "object" && !Array.isArray(operation)) {
+        note((operation as { security?: unknown }).security);
       }
     }
   }
-  return copy;
+  for (const name of Object.keys(schemes)) {
+    if (!used.has(name)) {
+      delete schemes[name];
+    }
+  }
 }
 
 export function omitLoyaltyV2Document<T extends Record<string, unknown>>(
