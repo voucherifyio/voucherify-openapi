@@ -83,25 +83,14 @@ describe("serializeOpenApiDocument", () => {
     },
   };
 
-  it("adds a trailing space only on loyalty lines", () => {
+  it("writes loyalty lines without trailing spaces", () => {
     const appended = appendLoyaltyV2(main, loyalty());
-    const plain = JSON.stringify(appended, null, 2);
-    const spaced = serializeOpenApiDocument(appended);
+    const text = serializeOpenApiDocument(appended);
 
-    expect(
-      spaced
-        .split("\n")
-        .map((line) => (line.endsWith(" ") ? line.slice(0, -1) : line))
-        .join("\n"),
-    ).toBe(plain);
-    expect(JSON.parse(spaced)).toEqual(appended);
-    expect(spaced.split("\n").some((line) => line.endsWith(" "))).toBe(true);
-    expect(
-      spaced
-        .split("\n")
-        .find((line) => line.includes('"/v1/campaigns"'))
-        ?.endsWith(" "),
-    ).toBe(false);
+    expect(text).toBe(JSON.stringify(appended, null, 2));
+    expect(JSON.parse(text)).toEqual(appended);
+    expect(text.split("\n").some((line) => /[ \t]$/.test(line))).toBe(false);
+    expect(text).toContain('"/v2/loyalties/programs"');
   });
 
   it("writes the same text on a second pass", () => {

@@ -96,10 +96,12 @@ describe("fixSchemasWithRefs", () => {
     expect(fixed.components.schemas.VLHours).toEqual(schema);
   });
 
-  it("does not change reference/OpenAPI.json", () => {
+  it("serializes reference/OpenAPI.json without trailing spaces", () => {
     const filePath = path.join(__dirname, "../../reference/OpenAPI.json");
     const raw = fs.readFileSync(filePath, "utf8");
 
-    expect(serializeOpenApiDocument(fixOpenApiDocument(JSON.parse(raw)))).toBe(raw);
+    expect(serializeOpenApiDocument(fixOpenApiDocument(JSON.parse(raw)))).toBe(
+      raw.replace(/[ \t]+$/gm, ""),
+    );
   });
 });

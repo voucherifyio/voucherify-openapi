@@ -615,12 +615,12 @@ describe("OpenAPI 3.0.1 ↔ 3.1.0", () => {
     expect(stringify(upgradeOpenApi301To310(as301))).toBe(stringify(api));
   });
 
-  it("round-trips reference/OpenAPI.json to the same JSON bytes", () => {
+  it("round-trips reference/OpenAPI.json without trailing spaces", () => {
     const filePath = path.join(__dirname, "../../../reference/OpenAPI.json");
     const raw = fs.readFileSync(filePath, "utf8");
     const document = JSON.parse(raw);
 
-    expect(serializeOpenApiDocument(document)).toBe(raw);
+    expect(serializeOpenApiDocument(document)).toBe(raw.replace(/[ \t]+$/gm, ""));
 
     if (document.openapi === "3.0.1") {
       const upgraded = upgradeOpenApi301To310(document);

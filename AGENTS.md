@@ -38,7 +38,7 @@ Null in 3.1 is `"type": "null"` or a union such as `"type": ["string", "null"]`.
 
 ## What `prepare-generated` runs
 
-1. `scripts/shared/fix-schemas-with-refs.ts` — on the 3.1 source, a `$ref` cannot sit next to other keywords. The script wraps those in `allOf` for schemas reachable from `paths`. It does not walk `webhooks` or `/v2/loyalties`. Loyalty schema lines and `/v2/loyalties` path lines keep a trailing space so a diff does not pair them with the same JSON later in the file.
+1. `scripts/shared/fix-schemas-with-refs.ts` — on the 3.1 source, a `$ref` cannot sit next to other keywords. The script wraps those in `allOf` for schemas reachable from `paths`. It does not walk `webhooks` or `/v2/loyalties`. The rewrite is `JSON.stringify` with no trailing spaces.
 2. `scripts/mintlify/split-security-params-then-split-openapi-by-tags.ts` — writes `documentation/openapi` from `paths` and `documentation/openapi-events` from `webhooks`. Both stay 3.1.0. The round-trip key `x-openapi-30-nullable-index` is stripped. Tags that start with `LV2-` are written together to `loyalties-v2.json` with that prefix removed.
 3. `scripts/shared/generate-endpoints-coverage-doc.ts` — coverage notes.
 4. `scripts/mintlify/build-update-md-tables-from-openapi.ts` — Markdown tables inside the docs. It reads a downgraded view of the spec.
