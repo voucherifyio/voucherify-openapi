@@ -204,6 +204,45 @@ export function appendLoyaltyV2(
 }
 
 /**
+ * Renames `VL` schemas to their public names when that name is free.
+ * Names that already exist (`BadRequest`, `MemberActivity`, `MemberActivityData`)
+ * stay prefixed so the API body is not overwritten.
+ */
+export function dropFreeLoyaltyV2Prefixes(
+  document: OpenApiDocument,
+): OpenApiDocument {
+  const copy = clone(document);
+  const envelope = loyaltyEnvelope(copy);
+  const schemas = copy.components?.schemas;
+  if (!schemas) {
+    return copy;
+  }
+  const rename = new Map<string, string>();
+  for (const publicName of envelope.schemaNames) {
+    const prefixed = `${LOYALTY_V2_SCHEMA_PREFIX}${publicName}`;
+    if (!Object.prototype.hasOwnProperty.call(schemas, prefixed)) {
+      continue;
+    }
+    if (Object.prototype.hasOwnProperty.call(schemas, publicName)) {
+      continue;
+    }
+    rename.set(prefixed, publicName);
+  }
+  const next: Record<string, Json> = {};
+  for (const [name, schema] of Object.entries(schemas)) {
+    next[rename.get(name) ?? name] = schema;
+  }
+  copy.components = copy.components ?? {};
+  copy.components.schemas = next;
+  const apply = (name: string): string | undefined => rename.get(name);
+  if (copy.paths) {
+    rewriteSchemaRefs(copy.paths as Json, apply);
+  }
+  rewriteSchemaRefs(next as Json, apply);
+  return copy;
+}
+
+/**
  * Rebuilds documentation/openapi/loyalties-v2.json from the main document.
  * Stored `VL` names are written back as the original schema names.
  */
