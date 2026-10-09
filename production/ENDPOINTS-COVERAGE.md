@@ -429,6 +429,7 @@
 | /v2/loyalties/programs/{programId}/reports/spending/summary                                             | get    | List program spending summary reports      |              |               |
 | /v2/loyalties/programs/{programId}/reports/tiers/daily                                                  | get    | Get program tiers daily report             |              |               |
 | /v2/loyalties/programs/{programId}/reports/tiers/summary                                                | get    | Get program tiers summary report           |              |               |
+| /v2/loyalties/programs/{programId}/reports/rewards/daily                                                | get    | Get program rewards daily report           |              |               |
 | /v2/loyalties/programs/{programId}/reports/points-earnings/daily                                        | get    | Get program points-earnings daily report   |              |               |
 | /v2/loyalties/programs/{programId}/reports/points-earnings/summary                                      | get    | Get program points-earnings summary report |              |               |
 | /v2/loyalties/programs/{programId}/reports/earning-rules/daily                                          | get    | Get program earning-rules daily report     |              |               |
