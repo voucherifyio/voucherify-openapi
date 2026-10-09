@@ -71730,7 +71730,14 @@
         "properties": {
           "transaction": {
             "description": "The created card transaction (`ADMIN_CREDIT` or `ADMIN_DEBIT`), or `null` when no transaction was created (status `NO_CHANGE`).",
-            "$ref": "#/components/schemas/CardTransaction"
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CardTransaction"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "status": {
             "type": "string",
@@ -71742,6 +71749,11 @@
           },
           "message": {
             "type": "string",
+            "enum": [
+              "Points addition transaction created",
+              "Points subtraction transaction created",
+              "Provided amount is zero, transaction was not created"
+            ],
             "description": "Human-readable result message:\n- \"Points addition transaction created\",\n- \"Points subtraction transaction created\",\n- \"Provided amount is zero, transaction was not created\"."
           }
         },
@@ -149578,7 +149590,7 @@
           "LV2-Programs"
         ],
         "summary": "Adjust card points",
-        "description": "Manually adjusts the points balance of the member's card.\n\nA positive `points` value creates an `ADMIN_CREDIT` card transaction (point addition). The added points get an expiration date calculated from the point expiration settings for the card definition or earning rule.\n\nA negative `points` value creates an `ADMIN_DEBIT` card transaction (point subtraction).\n\nWhen `points` is `0`, no transaction is created and the result status is `NO_CHANGE`.\n\nThe transaction is created with status `PENDING` and processed asynchronously. Both the program and the member must be in the `ACTIVE` status (`423` otherwise). Returns `404` when the program, member, or card does not exist.",
+        "description": "Manually adjusts the points balance of the member's card.\n\nA positive `points` value creates an `ADMIN_CREDIT` card transaction. The expiration date comes from the member tier when that tier defines its own points expiration. Otherwise the date comes from the card definition. `expiration_date` is `null` when points don't expire.\n\nA negative `points` value creates an `ADMIN_DEBIT` card transaction.\n\nWhen `points` is `0`, no transaction is created and `status` is `NO_CHANGE`.\n\nThe transaction is created with status `PENDING` and processed asynchronously. The program and the member must be `ACTIVE`. The program must also be inside its validity window. Otherwise the response is `423`. The response is `404` when the program or the member doesn't exist, or when the card isn't assigned to that member.",
         "parameters": [],
         "requestBody": {
           "required": true,
