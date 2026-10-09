@@ -1,5 +1,6 @@
 import fs from "fs";
 import path from "path";
+import { applySdkOpenApiVersion } from "../openapi-version/migrate";
 import {
   LOYALTY_V2_DOCUMENT_KEY,
   appendLoyaltyV2,
@@ -272,6 +273,177 @@ describe("Loyalty v2 document", () => {
     expect(apiOnly.components?.securitySchemes?.["X-App-Id"]).toBeDefined();
     expect(apiOnly.components?.securitySchemes?.bearerAuth).toBeUndefined();
     expect(apiOnly.tags).toEqual([{ name: "Campaigns" }]);
+  });
+
+  it("keeps allowlisted Loyalty v2 paths and drops the rest", () => {
+    const published = "/v2/loyalties/programs/{programId}/members";
+    const omitted = "/v2/loyalties/programs";
+    const document: OpenApiDocument = {
+      openapi: "3.1.0",
+      tags: [
+        { name: "Campaigns" },
+        { name: "LV2-Programs", description: "omitted" },
+        { name: "LV2-Members", description: "published" },
+      ],
+      paths: {
+        "/v1/campaigns": {
+          get: {
+            tags: ["Campaigns"],
+            responses: {
+              "200": {
+                content: {
+                  "application/json": {
+                    schema: {
+                      allOf: [
+                        { $ref: "#/components/schemas/Campaign" },
+                        { $ref: "#/components/schemas/Shared" },
+                      ],
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+        [omitted]: {
+          get: {
+            tags: ["LV2-Programs"],
+            security: [{ loyaltyOnly: [] }],
+            responses: {
+              "200": {
+                content: {
+                  "application/json": {
+                    schema: { $ref: "#/components/schemas/ProgramOnly" },
+                  },
+                },
+              },
+            },
+          },
+        },
+        [published]: {
+          post: {
+            operationId: "createProgramMember",
+            tags: ["LV2-Members"],
+            security: [{ bearerAuth: [] }],
+            responses: {
+              "200": {
+                content: {
+                  "application/json": {
+                    schema: { $ref: "#/components/schemas/Member" },
+                  },
+                },
+              },
+            },
+          },
+          get: {
+            operationId: "listProgramMembers",
+            tags: ["LV2-Members"],
+          },
+        },
+      },
+      components: {
+        schemas: {
+          Campaign: { type: "object" },
+          ProgramOnly: { type: "object" },
+          Member: { type: "object" },
+          Shared: { type: "object" },
+        },
+        securitySchemes: {
+          bearerAuth: { type: "http", scheme: "bearer" },
+          loyaltyOnly: { type: "apiKey" },
+        },
+      },
+    };
+
+    const stripped = documentWithoutLoyaltyV2(document);
+    expect(stripped.paths?.[published]).toBeUndefined();
+    expect(stripped.paths?.[omitted]).toBeUndefined();
+    expect(stripped.components?.schemas?.Member).toBeUndefined();
+    expect(stripped.components?.schemas?.ProgramOnly).toBeUndefined();
+    expect(stripped.components?.schemas?.Campaign).toBeDefined();
+    expect(stripped.components?.schemas?.Shared).toBeDefined();
+
+    const publishedDoc = documentWithoutLoyaltyV2(document, {
+      keepSdkPublishedPaths: true,
+    });
+    expect(publishedDoc.paths?.[omitted]).toBeUndefined();
+    expect(publishedDoc.paths?.[published]).toMatchObject({
+      post: { operationId: "createProgramMember" },
+      get: { operationId: "listProgramMembers" },
+    });
+    expect(publishedDoc.components?.schemas?.ProgramOnly).toBeUndefined();
+    expect(publishedDoc.components?.schemas?.Member).toEqual({ type: "object" });
+    expect(publishedDoc.components?.schemas?.Shared).toBeDefined();
+    expect(publishedDoc.components?.securitySchemes?.bearerAuth).toBeDefined();
+    expect(publishedDoc.components?.securitySchemes?.loyaltyOnly).toBeUndefined();
+    expect(publishedDoc.tags).toEqual([
+      { name: "Campaigns" },
+      { name: "LV2-Members", description: "published" },
+    ]);
+  });
+
+  it("downgrades allowlisted Loyalty v2 paths, including a null-only field", () => {
+    const root = path.join(__dirname, "../../..");
+    const main = JSON.parse(
+      fs.readFileSync(path.join(root, "reference/OpenAPI.json"), "utf8"),
+    );
+    const kept = documentWithoutLoyaltyV2(main, {
+      keepSdkPublishedPaths: true,
+    });
+    const dryRun =
+      kept.components?.schemas
+        ?.LoyaltiesProgramsMembersOrdersPaymentsCreateDryRunResponseBody;
+    const transaction = (
+      dryRun as {
+        properties: {
+          transaction: {
+            properties: {
+              card_transaction_id: { type: string | string[] };
+              updated_at: { type: string | string[] };
+            };
+          };
+        };
+      }
+    ).properties.transaction.properties;
+
+    expect(transaction.card_transaction_id.type).toEqual(["null"]);
+    expect(transaction.updated_at.type).toEqual(["null"]);
+    expect(kept.paths?.["/v2/loyalties/programs"]).toBeUndefined();
+    expect(
+      (
+        kept.paths?.["/v2/loyalties/examine/rewards"] as {
+          post?: { operationId?: string };
+        }
+      )?.post?.operationId,
+    ).toBe("examineRewards");
+    expect(
+      (
+        kept.paths?.["/v2/loyalties/programs/{programId}/members"] as {
+          post?: { operationId?: string };
+          get?: { operationId?: string };
+        }
+      )?.get,
+    ).toBeDefined();
+
+    const as301 = applySdkOpenApiVersion(kept, true);
+    expect(as301.openapi).toBe("3.0.1");
+    const downgradedTransaction = (
+      as301.components?.schemas
+        ?.LoyaltiesProgramsMembersOrdersPaymentsCreateDryRunResponseBody as {
+        properties: {
+          transaction: {
+            properties: {
+              card_transaction_id: { type: string };
+              updated_at: { type: string };
+            };
+          };
+        };
+      }
+    ).properties.transaction.properties;
+    expect(downgradedTransaction.card_transaction_id.type).toBe("null");
+    expect(downgradedTransaction.updated_at.type).toBe("null");
+    expect(as301.paths?.["/v2/loyalties/examine/rewards"]).toBeDefined();
+    expect(as301.paths?.["/v2/loyalties/programs"]).toBeUndefined();
   });
 
   it("keeps Loyalty v2 tags and security on the operations, not in an envelope", () => {

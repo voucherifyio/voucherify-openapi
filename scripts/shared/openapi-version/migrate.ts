@@ -127,7 +127,61 @@ export function applySdkOpenApiVersion<T extends { openapi: string }>(
     return document;
   }
   const cloned = JSON.parse(JSON.stringify(document)) as T;
-  return mergeJsonSchemaConditionals(ensureOpenApi301(cloned));
+  return mergeJsonSchemaConditionals(
+    ensureOpenApi301(collapseGeneratorNullUnions(cloned) as T),
+  );
+}
+
+/**
+ * OpenAPI 3.0.1 nullable is one type plus `nullable`. A union of `string`,
+ * `number`, and `null` cannot round-trip, so this runs only on the generator
+ * entry. Amount, price, and quantity fields keep `number`. Other fields,
+ * including source IDs, keep `string`. The description still says the API
+ * accepts both. A type array that is only `null` becomes `"type": "null"`,
+ * which a later step turns into a nullable object. Upgrade does not restore
+ * the one-element array. `downgradeOpenApi310To301` does not call this.
+ */
+function collapseGeneratorNullUnions<T>(document: T): T {
+  return collapseGeneratorNullUnionsValue(document as JsonValue) as T;
+}
+
+function collapseGeneratorNullUnionsValue(value: JsonValue): JsonValue {
+  if (Array.isArray(value)) {
+    return value.map((item) => collapseGeneratorNullUnionsValue(item));
+  }
+  if (!isObject(value)) {
+    return value;
+  }
+
+  const next: JsonObject = {};
+  for (const [key, child] of Object.entries(value)) {
+    next[key] = INSTANCE_KEYS.has(key)
+      ? child
+      : collapseGeneratorNullUnionsValue(child);
+  }
+  if (!Array.isArray(next.type)) {
+    return next;
+  }
+  const types = next.type;
+  if (types.length === 1 && types[0] === "null") {
+    next.type = "null";
+    return next;
+  }
+  const nonNull = types.filter((type) => type !== "null");
+  if (
+    types.length !== 3 ||
+    nonNull.length !== 2 ||
+    !types.includes("null") ||
+    !nonNull.includes("string") ||
+    !nonNull.includes("number")
+  ) {
+    return next;
+  }
+  const description =
+    typeof next.description === "string" ? next.description : "";
+  const keepNumber = /integer|quantity|price|amount/i.test(description);
+  next.type = [keepNumber ? "number" : "string", "null"];
+  return next;
 }
 
 function upgradeValue(value: JsonValue, path: string): JsonValue {

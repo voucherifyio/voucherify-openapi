@@ -406,13 +406,13 @@ const removeRubyBreakingChanges = {
       openApi.components.schemas.EarningRuleExpirationRules as any,
     );
 
+    restoreValidationRuleErrorObjects(openApi.components.schemas);
+
     // Restore `parameters` on SimpleReferralTier
     schemas.SimpleReferralTier.properties.parameters = {
       type: "object",
       description: "Referral tier parameters",
     };
-
-    restoreValidationRuleErrorObjects(openApi.components.schemas);
 
     return openApi;
   },

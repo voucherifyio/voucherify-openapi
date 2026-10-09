@@ -1,3 +1,4 @@
+import { rawTakeList } from "../get-take-list";
 import { schemaNamesReachableFromPaths } from "../openapi-webhooks/reachable-schemas";
 
 export const LOYALTY_V2_PATH_PREFIX = "/v2/loyalties";
@@ -86,15 +87,18 @@ export function pathsWithoutLoyaltyV2(
 }
 
 /**
- * Schemas a Loyalty v2 path reaches that no other path reaches.
- * SDK prep deletes these before the 3.0.1 downgrade. Shared schemas stay.
+ * Schemas reached by `pathNames` and by no other path.
+ * Shared schemas stay.
  */
-export function loyaltyOnlySchemaNames(document: OpenApiDocument): Set<string> {
-  const loyaltyPaths: Record<string, unknown> = {};
+function schemaNamesOnlyOnPaths(
+  document: OpenApiDocument,
+  pathNames: Set<string>,
+): Set<string> {
+  const selectedPaths: Record<string, unknown> = {};
   const otherPaths: Record<string, unknown> = {};
   for (const [pathName, pathItem] of Object.entries(document.paths ?? {})) {
-    if (isLoyaltyV2Path(pathName)) {
-      loyaltyPaths[pathName] = pathItem;
+    if (pathNames.has(pathName)) {
+      selectedPaths[pathName] = pathItem;
     } else {
       otherPaths[pathName] = pathItem;
     }
@@ -102,8 +106,8 @@ export function loyaltyOnlySchemaNames(document: OpenApiDocument): Set<string> {
   const components = document.components as
     | { [group: string]: { [name: string]: unknown } | undefined }
     | undefined;
-  const fromLoyalty = schemaNamesReachableFromPaths({
-    paths: loyaltyPaths,
+  const fromSelected = schemaNamesReachableFromPaths({
+    paths: selectedPaths,
     components,
   });
   const fromOther = schemaNamesReachableFromPaths({
@@ -111,7 +115,7 @@ export function loyaltyOnlySchemaNames(document: OpenApiDocument): Set<string> {
     components,
   });
   const only = new Set<string>();
-  for (const name of fromLoyalty) {
+  for (const name of fromSelected) {
     if (!fromOther.has(name)) {
       only.add(name);
     }
@@ -120,31 +124,114 @@ export function loyaltyOnlySchemaNames(document: OpenApiDocument): Set<string> {
 }
 
 /**
- * Drops Loyalty v2 paths and the schemas only those paths reach.
- * SDK, production, and Markdown-table downgrades stay on the API surface.
+ * Schemas a Loyalty v2 path reaches that no other path reaches.
+ * SDK prep deletes these before the 3.0.1 downgrade, except schemas
+ * reached by an allowlisted Loyalty v2 path. Shared schemas stay.
  */
-export function documentWithoutLoyaltyV2<T extends OpenApiDocument>(
-  document: T,
-): T {
-  const copy = clone(document);
-  const onlyLoyalty = loyaltyOnlySchemaNames(copy);
-  delete copy[LOYALTY_V2_DOCUMENT_KEY];
-  const tagged = copy as T & { tags?: { name?: string }[] };
-  if (Array.isArray(tagged.tags)) {
-    tagged.tags = tagged.tags.filter(
-      (tag) => !tag?.name || !isLoyaltyV2Tag(tag.name),
-    );
+export function loyaltyOnlySchemaNames(document: OpenApiDocument): Set<string> {
+  const loyaltyPaths = new Set<string>();
+  for (const pathName of Object.keys(document.paths ?? {})) {
+    if (isLoyaltyV2Path(pathName)) {
+      loyaltyPaths.add(pathName);
+    }
   }
-  if (copy.paths) {
-    for (const pathName of Object.keys(copy.paths)) {
-      if (isLoyaltyV2Path(pathName)) {
-        delete copy.paths[pathName];
+  return schemaNamesOnlyOnPaths(document, loyaltyPaths);
+}
+
+/**
+ * Loyalty v2 paths `rawTakeList` publishes (`true` or a non-empty language array).
+ * An empty array registers the path and ships it to nobody.
+ */
+export function sdkPublishedLoyaltyV2Paths(): Set<string> {
+  const kept = new Set<string>();
+  for (const [pathName, methods] of Object.entries(rawTakeList)) {
+    if (!isLoyaltyV2Path(pathName)) {
+      continue;
+    }
+    for (const value of Object.values(methods)) {
+      if (value === true || (Array.isArray(value) && value.length > 0)) {
+        kept.add(pathName);
+        break;
       }
     }
   }
+  return kept;
+}
+
+function tagsUsedByOperations(
+  paths: Record<string, unknown> | undefined,
+): Set<string> {
+  const used = new Set<string>();
+  for (const pathItem of Object.values(paths ?? {})) {
+    if (!pathItem || typeof pathItem !== "object" || Array.isArray(pathItem)) {
+      continue;
+    }
+    for (const operation of Object.values(pathItem)) {
+      if (!operation || typeof operation !== "object" || Array.isArray(operation)) {
+        continue;
+      }
+      const tags = (operation as { tags?: unknown }).tags;
+      if (!Array.isArray(tags)) {
+        continue;
+      }
+      for (const tag of tags) {
+        if (typeof tag === "string") {
+          used.add(tag);
+        }
+      }
+    }
+  }
+  return used;
+}
+
+export type DocumentWithoutLoyaltyV2Options = {
+  /**
+   * Keep Loyalty v2 paths that the SDK allowlist publishes, plus the schemas
+   * and tags those paths reach. Markdown tables leave this off.
+   */
+  keepSdkPublishedPaths?: boolean;
+};
+
+/**
+ * Drops Loyalty v2 paths and the schemas only those paths reach.
+ * SDK and production pass `keepSdkPublishedPaths` so allowlisted Loyalty v2
+ * operations survive the 3.0.1 downgrade. Markdown tables stay on the
+ * non-loyalty API surface.
+ */
+export function documentWithoutLoyaltyV2<T extends OpenApiDocument>(
+  document: T,
+  options?: DocumentWithoutLoyaltyV2Options,
+): T {
+  const copy = clone(document);
+  const keptPaths = options?.keepSdkPublishedPaths
+    ? sdkPublishedLoyaltyV2Paths()
+    : new Set<string>();
+  const droppedLoyaltyPaths = new Set<string>();
+  for (const pathName of Object.keys(copy.paths ?? {})) {
+    if (isLoyaltyV2Path(pathName) && !keptPaths.has(pathName)) {
+      droppedLoyaltyPaths.add(pathName);
+    }
+  }
+  const onlyDropped = schemaNamesOnlyOnPaths(copy, droppedLoyaltyPaths);
+  delete copy[LOYALTY_V2_DOCUMENT_KEY];
+  if (copy.paths) {
+    for (const pathName of droppedLoyaltyPaths) {
+      delete copy.paths[pathName];
+    }
+  }
+  const usedTags = tagsUsedByOperations(copy.paths);
+  const tagged = copy as T & { tags?: { name?: string }[] };
+  if (Array.isArray(tagged.tags)) {
+    tagged.tags = tagged.tags.filter(
+      (tag) =>
+        !tag?.name ||
+        !isLoyaltyV2Tag(tag.name) ||
+        usedTags.has(tag.name),
+    );
+  }
   const schemas = copy.components?.schemas;
   if (schemas) {
-    for (const name of onlyLoyalty) {
+    for (const name of onlyDropped) {
       delete schemas[name];
     }
   }
