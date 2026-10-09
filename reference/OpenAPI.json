@@ -69135,34 +69135,67 @@
       },
       "MemberCreate": {
         "type": "object",
+        "description": "Fields for creating one loyalty program member. No additional properties are allowed.",
+        "additionalProperties": false,
         "properties": {
           "customer_identification": {
-            "type": "object",
-            "properties": {
-              "type": {
-                "type": "string",
-                "description": "Defines how the customer is identified for the member creation. If `customer_id` is provided, the customer is identified by their unique Voucherify customer ID. Then, pass the required `customer_id` string.\n\nIf `customer_source_id` is provided, the customer is identified by their source ID (e.g. from an external system). Then, pass the required `customer_source_id` string.",
-                "enum": [
-                  "customer_id",
-                  "customer_source_id"
+            "description": "Identifies the existing customer to enroll. Send exactly one identifier, matching `type`.",
+            "oneOf": [
+              {
+                "type": "object",
+                "title": "Customer ID",
+                "description": "Identifies the customer by Voucherify customer ID.",
+                "additionalProperties": false,
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "const": "customer_id",
+                    "description": "Identifies the customer by `customer_id`."
+                  },
+                  "customer_id": {
+                    "type": "string",
+                    "pattern": "^cust_[a-zA-Z0-9]+",
+                    "description": "Identifies an existing customer by Voucherify customer ID."
+                  },
+                  "customer_source_id": {
+                    "type": "null",
+                    "description": "Omit this field or set it to `null` when `type` is `customer_id`."
+                  }
+                },
+                "required": [
+                  "type",
+                  "customer_id"
                 ]
               },
-              "customer_id": {
-                "type": "string",
-                "pattern": "^cust_[a-zA-Z0-9]+",
-                "description": "Unique Voucherify customer ID of an existing customer to enroll as a member. Required when `type` is `customer_id`."
-              },
-              "customer_source_id": {
-                "type": "string",
-                "description": "Source ID from an external system of an existing customer to enroll as a member. Required when `type` is `customer_source_id`."
+              {
+                "type": "object",
+                "title": "Customer source ID",
+                "description": "Identifies the customer by source ID.",
+                "additionalProperties": false,
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "const": "customer_source_id",
+                    "description": "Identifies the customer by `customer_source_id`."
+                  },
+                  "customer_source_id": {
+                    "type": "string",
+                    "description": "Identifies an existing customer by source ID."
+                  },
+                  "customer_id": {
+                    "type": "null",
+                    "description": "Omit this field or set it to `null` when `type` is `customer_source_id`."
+                  }
+                },
+                "required": [
+                  "type",
+                  "customer_source_id"
+                ]
               }
-            },
-            "required": [
-              "type"
             ]
           },
           "status": {
-            "description": "Initial member status. Defaults to `ACTIVE` when omitted or `null`.",
+            "description": "Sets the initial member status. Allowed values are `ACTIVE` and `INACTIVE`. Defaults to `ACTIVE` when omitted or `null`.",
             "oneOf": [
               {
                 "type": "string",
@@ -69178,7 +69211,7 @@
             "default": "ACTIVE"
           },
           "metadata": {
-            "description": "Free-form metadata attached to the member. Validated against the metadata schema defined for the `vl_member` related object (when one is configured). Defaults to an empty object.",
+            "description": "Stores custom metadata on the member. Validated against the metadata schema for the `vl_member` related object when one is configured. Defaults to an empty object when omitted or `null`.",
             "oneOf": [
               {
                 "type": "object"
@@ -69191,7 +69224,7 @@
           }
         },
         "required": [
-          "customer_id"
+          "customer_identification"
         ]
       },
       "LoyaltiesProgramsMembersCreateResponseBody": {
@@ -69206,7 +69239,7 @@
       },
       "LoyaltiesProgramsMembersCreateInBulkRequestBody": {
         "type": "array",
-        "description": "Request body schema for **POST** `/v2/loyalties/programs/{programId}/members/batch`.\n\nConsists of a JSON array of member entries. The raw body is limited to 10485760 bytes (10 MB) and is processed asynchronously in batches of 100 entries. Each entry is validated like a single member creation request during background processing; per-entry failures (invalid customer_id format, unknown customer, invalid status, member already exists) are reported in the async action result.",
+        "description": "Request body schema for **POST** `/v2/loyalties/programs/{programId}/members/batch`.\n\nA JSON array of member entries. The raw body is limited to 10485760 bytes (10 MB). The array isn't validated before the `202` response. Entries are processed asynchronously in batches of 100. Each entry should use the same fields as a single member create. Invalid entries are skipped and listed in the async action report.",
         "items": {
           "$ref": "#/components/schemas/MemberCreate"
         },
@@ -69251,7 +69284,7 @@
           "async_action_id": {
             "type": "string",
             "pattern": "^aa_[a-f0-9]+$",
-            "description": "ID of the scheduled async action processing the batch."
+            "description": "Identifies the async action that processes the batch."
           }
         },
         "required": [
@@ -69410,7 +69443,7 @@
           },
           "cards": {
             "type": "array",
-            "description": "Member's loyalty cards - one per card definition assigned to the program, each enriched with tier progress. Card codes are generated asynchronously, so `card.code` may be `null` right after member creation.",
+            "description": "Member's loyalty cards, one per card definition assigned to the program. `tier_progress` is present when that card definition has a tier structure and the member has a tier on the card. Otherwise it is omitted. `card.code` can be `null` right after member creation, while code generation is still running.",
             "items": {
               "$ref": "#/components/schemas/MembershipCard"
             }
@@ -69450,12 +69483,9 @@
             "properties": {
               "tier_progress": {
                 "$ref": "#/components/schemas/MemberTierProgress",
-                "description": "The member's tier progress on this card. Omitted on endpoints that don't enrich cards with tier progress."
+                "description": "The member's tier progress on this card. Omitted when the card definition has no tier structure, or the member has no tier on this card."
               }
-            },
-            "required": [
-              "tier_progress"
-            ]
+            }
           }
         ]
       },
@@ -72304,6 +72334,17 @@
                 "type": "null"
               }
             ]
+          },
+          "card_definition_id": {
+            "description": "Filter by card definition ID (ID conditions, values matching `^lcdef_[a-f0-9]+$`).",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LoyaltiesProgramsMembersCardsTransactionsListRequestQueryCardDefinitionId"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         },
         "additionalProperties": false,
@@ -72410,6 +72451,108 @@
         ],
         "additionalProperties": false,
         "title": "Loyalties Programs Members Cards Transactions List Request Query Id"
+      },
+      "LoyaltiesProgramsMembersCardsTransactionsListRequestQueryCardDefinitionId": {
+        "type": "object",
+        "description": "ID filter conditions for card definition IDs. At least one condition is required.",
+        "properties": {
+          "conditions": {
+            "type": "object",
+            "minProperties": 1,
+            "properties": {
+              "$is": {
+                "description": "Value equals. Single value or an array with exactly one value.",
+                "oneOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^lcdef_[a-f0-9]+$"
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "pattern": "^lcdef_[a-f0-9]+$"
+                    },
+                    "minItems": 1,
+                    "maxItems": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "$is_not": {
+                "description": "Value does not equal. Single value or an array with exactly one value.",
+                "oneOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^lcdef_[a-f0-9]+$"
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "pattern": "^lcdef_[a-f0-9]+$"
+                    },
+                    "minItems": 1,
+                    "maxItems": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "$in": {
+                "description": "Value is one of. Single value or an array of 1-100 values.",
+                "oneOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^lcdef_[a-f0-9]+$"
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "pattern": "^lcdef_[a-f0-9]+$"
+                    },
+                    "minItems": 1,
+                    "maxItems": 100
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "$not_in": {
+                "description": "Value is not one of. Single value or an array of 1-100 values.",
+                "oneOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^lcdef_[a-f0-9]+$"
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "pattern": "^lcdef_[a-f0-9]+$"
+                    },
+                    "minItems": 1,
+                    "maxItems": 100
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "conditions"
+        ],
+        "additionalProperties": false,
+        "title": "Loyalties Programs Members Cards Transactions List Request Query Card Definition Id"
       },
       "LoyaltiesProgramsMembersCardsPendingPointsListResponseBody": {
         "type": "object",
@@ -72794,6 +72937,13 @@
           "card_id": {
             "type": "string",
             "description": "Unique identifier of the loyalty card the points were spent from (format `lcrd_...`)."
+          },
+          "card_definition_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Unique identifier of the card definition for that card (format `lcdef_...`). `null` when none is stored."
           },
           "card_transaction_id": {
             "type": [
@@ -73273,6 +73423,10 @@
                 "type": "string",
                 "description": "Unique identifier of the loyalty card the points are to be spent from (format `lcrd_...`)."
               },
+              "card_definition_id": {
+                "type": "string",
+                "description": "Unique identifier of the card definition for that card (format `lcdef_...`)."
+              },
               "card_transaction_id": {
                 "type": "null",
                 "description": "`null` for `DRY_RUN` (SIMULATED) transactions."
@@ -73317,6 +73471,7 @@
             },
             "required": [
               "card_id",
+              "card_definition_id",
               "card_transaction_id",
               "program_id",
               "member_id",
@@ -73363,6 +73518,10 @@
                 "type": "string",
                 "description": "Unique identifier of the loyalty card the points were spent from (format `lcrd_...`)."
               },
+              "card_definition_id": {
+                "type": "string",
+                "description": "Unique identifier of the card definition for that card (format `lcdef_...`)."
+              },
               "card_transaction_id": {
                 "type": "string",
                 "description": "Unique identifier of the underlying card transaction (format `lctx_...`)."
@@ -73394,15 +73553,8 @@
                 "description": "Transaction type."
               },
               "details": {
-                "description": "Transaction details. Shape depends on `type` - purchase details for `PURCHASE`.",
-                "oneOf": [
-                  {
-                    "$ref": "#/components/schemas/RewardPurchaseTransactionDetailsPurchase"
-                  },
-                  {
-                    "type": "null"
-                  }
-                ]
+                "description": "Purchase details. `result` is `null` until processing finishes.",
+                "$ref": "#/components/schemas/RewardPurchaseTransactionDetailsPurchase"
               },
               "created_at": {
                 "type": "string",
@@ -73426,6 +73578,7 @@
             "required": [
               "id",
               "card_id",
+              "card_definition_id",
               "card_transaction_id",
               "program_id",
               "member_id",
@@ -73526,6 +73679,17 @@
             "oneOf": [
               {
                 "$ref": "#/components/schemas/LoyaltiesProgramsMembersRewardsPurchasesListRequestQueryRewardId"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "card_definition_id": {
+            "description": "Filter by card definition ID (ID conditions, values matching `^lcdef_[a-f0-9]+$`).",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LoyaltiesProgramsMembersRewardsPurchasesListRequestQueryCardDefinitionId"
               },
               {
                 "type": "null"
@@ -73751,6 +73915,108 @@
         "additionalProperties": false,
         "title": "Loyalties Programs Members Rewards Purchases List Request Query Reward Id"
       },
+      "LoyaltiesProgramsMembersRewardsPurchasesListRequestQueryCardDefinitionId": {
+        "type": "object",
+        "description": "ID filter conditions for card definition IDs. Values must match pattern `^lcdef_[a-f0-9]+$`. `$is`/`$is_not` accept a single value (string or 1-element array); `$in`/`$not_in` accept a string or an array of 1-100 values.",
+        "properties": {
+          "conditions": {
+            "type": "object",
+            "minProperties": 1,
+            "additionalProperties": false,
+            "properties": {
+              "$is": {
+                "description": "Matches transactions whose card definition ID equals the given value.",
+                "oneOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^lcdef_[a-f0-9]+$"
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "pattern": "^lcdef_[a-f0-9]+$"
+                    },
+                    "minItems": 1,
+                    "maxItems": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "$is_not": {
+                "description": "Matches transactions whose card definition ID does not equal the given value.",
+                "oneOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^lcdef_[a-f0-9]+$"
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "pattern": "^lcdef_[a-f0-9]+$"
+                    },
+                    "minItems": 1,
+                    "maxItems": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "$in": {
+                "description": "Matches transactions whose card definition ID is one of the given values.",
+                "oneOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^lcdef_[a-f0-9]+$"
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "pattern": "^lcdef_[a-f0-9]+$"
+                    },
+                    "minItems": 1,
+                    "maxItems": 100
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "$not_in": {
+                "description": "Matches transactions whose card definition ID is not one of the given values.",
+                "oneOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^lcdef_[a-f0-9]+$"
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "pattern": "^lcdef_[a-f0-9]+$"
+                    },
+                    "minItems": 1,
+                    "maxItems": 100
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "required": [
+          "conditions"
+        ],
+        "additionalProperties": false,
+        "title": "Loyalties Programs Members Rewards Purchases List Request Query Card Definition Id"
+      },
       "LoyaltiesProgramsMembersOrdersPaymentsCreateRequestBody": {
         "type": "object",
         "description": "Request body schema for **POST** `/v2/loyalties/programs/{programId}/members/{memberId}/orders/payments`.",
@@ -73763,7 +74029,7 @@
             "$ref": "#/components/schemas/OrderPaymentOrder"
           },
           "payment_limit": {
-            "description": "Optional payment limit. When omitted, the default `CARD_BALANCE` limit is applied (spend up to the card balance).",
+            "description": "Optional payment limit. When omitted or `null`, the default `CARD_BALANCE` limit is applied (spend up to the card balance).",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/LoyaltiesProgramsMembersOrdersPaymentsCreateRequestBodyLimit"
@@ -74035,6 +74301,42 @@
           },
           "payment": {
             "$ref": "#/components/schemas/OrderPaymentPaymentDetails"
+          },
+          "spending_cap": {
+            "description": "The cap that limited this payment. Create always returns it. Older list rows omit it.",
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "CARD_SPENDING_GLOBAL_SPENDING_BASED_LIMIT",
+                  "CARD_SPENDING_GLOBAL_TIME_BASED_LIMIT",
+                  "CARD_SPENDING_TRANSACTIONS_LIMIT",
+                  "REQUEST_PAYMENT_LIMIT",
+                  "ORDER_TOTAL_AMOUNT",
+                  "CARD_BALANCE_POINTS"
+                ],
+                "description": "Identifies which cap limited the payment."
+              },
+              "unit": {
+                "type": "string",
+                "enum": [
+                  "POINTS",
+                  "AMOUNT"
+                ],
+                "description": "Whether `value` is points or an amount."
+              },
+              "value": {
+                "type": "number",
+                "description": "Cap value in `unit`."
+              }
+            },
+            "required": [
+              "type",
+              "unit",
+              "value"
+            ],
+            "additionalProperties": false
           }
         }
       },
@@ -74240,6 +74542,17 @@
             "oneOf": [
               {
                 "$ref": "#/components/schemas/LoyaltiesProgramsMembersOrdersPaymentsListRequestQueryId"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "card_definition_id": {
+            "description": "Filter by card definition ID (ID conditions, values matching `^lcdef_[a-f0-9]+$`).",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LoyaltiesProgramsMembersRewardsPurchasesListRequestQueryCardDefinitionId"
               },
               {
                 "type": "null"
@@ -90560,14 +90873,14 @@
           },
           "earning_rules": {
             "type": "array",
-            "description": "All earning rules that matched during examination (deduplicated).",
+            "description": "Lists earning rules that produced a points or benefit estimation, deduplicated across memberships.",
             "items": {
               "$ref": "#/components/schemas/LoyaltiesExamineEarningRulesExamineResponseBodyEarningRuleDetail"
             }
           },
           "memberships": {
             "type": "array",
-            "description": "Earning opportunities per program membership.",
+            "description": "Lists one entry for each active membership whose program has earning rules for the examined trigger. Includes a card only when its estimated points are greater than 0, and a benefit only when an earning rule can grant it. Both arrays can be empty.",
             "items": {
               "$ref": "#/components/schemas/LoyaltiesExamineEarningRulesExamineResponseBodyMembership"
             }
@@ -90609,7 +90922,7 @@
           },
           "member": {
             "type": "object",
-            "description": "Provides temporary member metadata overrides for the examination. Requires `customer_identification.type` to be `member_id`. Merges them with stored metadata without updating the member.",
+            "description": "Overrides member metadata for this examination. Send it only when `customer_identification.type` is `member_id`. Merges the override with stored metadata without updating the member.",
             "additionalProperties": false,
             "properties": {
               "metadata": {
@@ -90630,6 +90943,36 @@
           "customer_identification"
         ],
         "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "not": {
+                "required": [
+                  "customer_identification"
+                ],
+                "properties": {
+                  "customer_identification": {
+                    "required": [
+                      "type"
+                    ],
+                    "properties": {
+                      "type": {
+                        "const": "member_id"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "then": {
+              "not": {
+                "required": [
+                  "member"
+                ]
+              }
+            }
+          }
+        ],
         "title": "Loyalties Examine Rewards Examine Request Body"
       },
       "LoyaltiesExamineRewardsExamineResponseBodyRewardReference": {
@@ -90869,7 +91212,7 @@
           },
           "cards": {
             "type": "array",
-            "description": "Reward estimations per card.",
+            "description": "Lists cards that have at least one reward with a resolved points cost. Can be empty.",
             "items": {
               "$ref": "#/components/schemas/LoyaltiesExamineRewardsExamineResponseBodyCardEstimation"
             }
@@ -90897,14 +91240,14 @@
           },
           "rewards": {
             "type": "array",
-            "description": "Lists rewards included in the returned card estimations.",
+            "description": "Lists rewards that resolved a points cost and appear on a returned card. Omits a reward when it is inactive, out of stock, has no matching cost, or the member has no card for that cost.",
             "items": {
               "$ref": "#/components/schemas/LoyaltiesExamineRewardsExamineResponseBodyRewardDetail"
             }
           },
           "memberships": {
             "type": "array",
-            "description": "Reward opportunities per program membership.",
+            "description": "Lists one entry for each active membership whose program has reward assignments. `cards` can be empty when none of those rewards resolve onto a card.",
             "items": {
               "$ref": "#/components/schemas/LoyaltiesExamineRewardsExamineResponseBodyMembership"
             }
@@ -146759,7 +147102,7 @@
           "LV2-Programs"
         ],
         "summary": "Create program member",
-        "description": "Enrolls a customer as a member of the loyalty program. The program must be in the `ACTIVE` status (returns a `423` error otherwise) and the customer must exist in Voucherify. A customer can be a member of a given program only once - creating a second member for the same customer ID returns `409` error (`member_already_exists`).\n\nLoyalty cards are created automatically for all card definitions assigned to the program and returned in the `cards` array. Card `code` generation is asynchronous: `code` may be `null` immediately after creation.",
+        "description": "Enrolls an existing customer as a member of the loyalty program and creates a loyalty card for each card definition assigned to the program. Card `code` generation is asynchronous, so `code` can be `null` right after creation.\n\nThe program must be `ACTIVE` and inside its validity window, and the customer must already exist. A customer can be a member of a program only once. Identify the customer with `customer_identification`. `status` defaults to `ACTIVE`.",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -146767,6 +147110,28 @@
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/LoyaltiesProgramsMembersCreateRequestBody"
+              },
+              "examples": {
+                "Enroll by customer ID": {
+                  "value": {
+                    "customer_identification": {
+                      "type": "customer_id",
+                      "customer_id": "cust_X07elh40iNWLujRmDNmBufxd"
+                    }
+                  }
+                },
+                "Enroll by source ID": {
+                  "value": {
+                    "customer_identification": {
+                      "type": "customer_source_id",
+                      "customer_source_id": "crm-1001"
+                    },
+                    "status": "INACTIVE",
+                    "metadata": {
+                      "tier": "gold"
+                    }
+                  }
+                }
               }
             }
           }
@@ -146916,24 +147281,76 @@
             }
           },
           "400": {
-            "description": "Validation error - request body or path parameters failed validation, or the operation is not allowed in the current resource state.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Resource not found.",
+            "description": "The request body failed validation (`invalid_payload`), or `metadata` doesn't match the `vl_member` metadata schema (`metadata_validation_failed`).",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
                 },
                 "examples": {
-                  "Member not found": {
+                  "Invalid customer ID": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_payload",
+                      "message": "Invalid payload",
+                      "details": "Property .customer_identification.customer_id must match pattern \"^cust_[a-zA-Z0-9]+\"",
+                      "request_id": "v-12c30587d84f93b9b0"
+                    }
+                  },
+                  "Metadata validation failed": {
+                    "value": {
+                      "code": 400,
+                      "key": "metadata_validation_failed",
+                      "message": "Metadata validation failed",
+                      "details": "Only defined properties are allowed",
+                      "request_id": "v-12c30587d84f93b9b1"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "The organization has reached its loyalty members plan limit (`payment_required`).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Loyalty members limit exceeded": {
+                    "value": {
+                      "code": 402,
+                      "key": "payment_required",
+                      "message": "Plan limit exceeded",
+                      "details": "You cannot create more than 1000 loyalty members in your current plan",
+                      "request_id": "v-12c30587d84f93b9b2"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The program or the customer doesn't exist.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Program not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find program with id lprg_128f58429f4c4bf7b2",
+                      "request_id": "v-12c30587d84f93b9ae",
+                      "resource_id": "lprg_128f58429f4c4bf7b2",
+                      "resource_type": "program"
+                    }
+                  },
+                  "Customer not found": {
                     "value": {
                       "code": 404,
                       "key": "not_found",
@@ -146949,7 +147366,7 @@
             }
           },
           "409": {
-            "description": "Conflict - the customer with a given ID has already been added to the loyalty program.",
+            "description": "The customer is already a member of the program (`member_already_exists`). When you identify the customer by source ID, `details` quotes that source ID.",
             "content": {
               "application/json": {
                 "schema": {
@@ -146970,7 +147387,7 @@
             }
           },
           "423": {
-            "description": "Program is not in ACTIVE status.",
+            "description": "The program is not `ACTIVE` (`non_active_program`) or is outside its validity window (`program_outside_validity_window`).",
             "content": {
               "application/json": {
                 "schema": {
@@ -146981,9 +147398,18 @@
                     "value": {
                       "code": 423,
                       "key": "non_active_program",
-                      "message": "Invalid program status",
-                      "details": "Cannot create member when program status is not ACTIVE",
-                      "request_id": "v-..."
+                      "message": "Cannot create member when program status is not ACTIVE",
+                      "details": "Invalid program status",
+                      "request_id": "v-12c30587d84f93b9b3"
+                    }
+                  },
+                  "Program outside validity window": {
+                    "value": {
+                      "code": 423,
+                      "key": "program_outside_validity_window",
+                      "message": "Program is not available at this time",
+                      "details": "Cannot create member when program is not active at this time",
+                      "request_id": "v-12c30587d84f93b9b4"
                     }
                   }
                 }
@@ -147293,7 +147719,7 @@
           "LV2-Programs"
         ],
         "summary": "Batch create program members",
-        "description": "Schedules asynchronous batch creation of program members. The request body is a JSON array of member entries (maximum body size is 10 MB). The request is processed asynchronously in batches of 100 entries.\n\nThe program must exist (otherwise, it returns a `404` error) and be in the `ACTIVE` status (otherwise, it returns a `423` error). Supported member fields are validated during background processing using the same domain validation rules as single member creation. Entries that fail validation (missing/invalid `customer_id`, unknown customer, invalid `status`, duplicate `customer_id` within the same batch, member already exists) are reported per-entry  individually in the report linked from the async action result. The failed entries do not fail the whole batch (conflicting members are skipped).\n\nReturns `202` status with the identifier of the scheduled async action. Use the [GET Async Action](/api-reference/async-actions/get-async-action) endpoint to check the status of the batch creation. You can also check the processing status and the result in the Audit log – [Background tasks](/analyze/audit-logs#background-tasks) in the Voucherify dashboard.",
+        "description": "Schedules creation of program members from a JSON array and returns `202` with `async_action_id`. The program must exist, be `ACTIVE`, and be inside its validity window. The body isn't checked before that response. Entries are processed in batches of 100. The raw body must be at most 10 MB.\n\nEach entry uses the same fields as [Create program member](/api-reference/programs/create-program-member). A failed entry is skipped. Its report row sets `created` to `false` and explains the failure in `error`. Skipped cases include an invalid `customer_identification`, an unknown customer, an invalid `status`, a duplicate customer in the batch (`Duplicate customer ID`), a customer who is already a member (`Member already exists`), metadata that doesn't match the `vl_member` schema, and entries past the loyalty members plan limit. Successful entries enroll the customer and create a loyalty card for each card definition on the program. Report columns are `identification_type`, `customer_id`, `customer_source_id`, `program_id`, `member_id`, `created`, and `error`.\n\nAn empty array or a `null` entry fails the async action with `invalid_request_payload`. A body that isn't a JSON array fails it with `top_level_object_should_be_an_array`. Use [Get async action](/api-reference/async-actions/get-async-action) to read the status and the report. You can also open the result from Audit log, [Background tasks](/analyze/audit-logs#background-tasks).",
         "parameters": [
           {
             "name": "programId",
@@ -147312,13 +147738,32 @@
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/LoyaltiesProgramsMembersCreateInBulkRequestBody"
+              },
+              "examples": {
+                "Create members": {
+                  "value": [
+                    {
+                      "customer_identification": {
+                        "type": "customer_id",
+                        "customer_id": "cust_X07elh40iNWLujRmDNmBufxd"
+                      }
+                    },
+                    {
+                      "customer_identification": {
+                        "type": "customer_source_id",
+                        "customer_source_id": "crm-1001"
+                      },
+                      "status": "ACTIVE"
+                    }
+                  ]
+                }
               }
             }
           }
         },
         "responses": {
           "202": {
-            "description": "Batch creation has been scheduled.",
+            "description": "The batch is scheduled. Use `async_action_id` to follow processing.",
             "content": {
               "application/json": {
                 "schema": {
@@ -147377,7 +147822,7 @@
             }
           },
           "423": {
-            "description": "Resource locked - a related resource is in a state that prevents this operation.",
+            "description": "The program is not `ACTIVE` (`non_active_program`) or is outside its validity window (`program_outside_validity_window`).",
             "content": {
               "application/json": {
                 "schema": {
@@ -147388,9 +147833,18 @@
                     "value": {
                       "code": 423,
                       "key": "non_active_program",
-                      "message": "Invalid program status",
-                      "details": "Cannot create members when program status is not ACTIVE",
-                      "request_id": "v-12c31c59130a67bb28"
+                      "message": "Cannot create members when program status is not ACTIVE",
+                      "details": "Invalid program status",
+                      "request_id": "v-12c31c59130a67bb29"
+                    }
+                  },
+                  "Program outside validity window": {
+                    "value": {
+                      "code": 423,
+                      "key": "program_outside_validity_window",
+                      "message": "Program is not available at this time",
+                      "details": "Cannot create members when program is not active at this time",
+                      "request_id": "v-12c31c59130a67bb2a"
                     }
                   }
                 }
@@ -147457,7 +147911,7 @@
           "LV2-Programs"
         ],
         "summary": "Get program member",
-        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nReturns a single member of the program together with all its loyalty cards.\nEach card includes the current balance, lifetime bucket counters, and next\nexpiration/activation info.\n\nCard `code` may be `null` shortly after member creation because card code\ngeneration is asynchronous.\n\nReturns `404` when the program or member does not exist.",
+        "description": "Returns one member of the program together with that member's loyalty cards. Each card includes `balance`, `lifetime_bucket`, `next_expiration`, and `next_activation`. `tier_progress` is not included. Use [Get program membership](/api-reference/programs/get-program-membership) when you need tier progress.\n\n`card.code` can be `null` shortly after member creation, while code generation is still running.\n\nReturns `404` when the program doesn't exist, or when the member doesn't exist in that program. The program is checked first.",
         "parameters": [],
         "responses": {
           "200": {
@@ -147622,13 +148076,24 @@
             }
           },
           "404": {
-            "description": "Resource not found. Returns `Cannot find member with id <member_id>` even if the program ID is incorrect, but the member ID is correct.",
+            "description": "The program doesn't exist (`resource_type` `program`), or the member doesn't exist in that program (`resource_type` `member`). A member of another program is not found. The program is checked first.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
                 },
                 "examples": {
+                  "Program not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find program with id lprg_128f58429f4c4bf7b2",
+                      "request_id": "v-12bdef050f2cb1ef70",
+                      "resource_id": "lprg_128f58429f4c4bf7b2",
+                      "resource_type": "program"
+                    }
+                  },
                   "Member not found": {
                     "value": {
                       "code": 404,
@@ -148066,13 +148531,13 @@
           "LV2-Programs"
         ],
         "summary": "Get program membership",
-        "description": "Returns a single membership - the member's full loyalty profile within the program, combining the member, the program, and the member's loyalty cards enriched with tier progress. Use `identification_type` to choose how the `customerId` path value is interpreted.\n\nReturns `404` when the program does not exist, or when the customer/member has no membership in the program.",
+        "description": "Returns the membership for one customer in the program: the member, the program, and the member's loyalty cards. A card includes `tier_progress` when its card definition has a tier structure and the member has a tier on that card. Otherwise `tier_progress` is omitted.\n\n`identification_type` chooses how `customerId` is read. It defaults to `customer_id`.",
         "parameters": [
           {
             "name": "identification_type",
             "in": "query",
             "required": false,
-            "description": "Defines how the `customerId` path value is interpreted. `customer_id` - Voucherify customer ID (default). `customer_source_id` - customer's `source_id`. `member_id` - loyalty member ID.",
+            "description": "Chooses how `customerId` is read. `customer_id` is the Voucherify customer ID and the default. `customer_source_id` is the customer's `source_id`. `member_id` is the loyalty member ID.",
             "schema": {
               "type": "string",
               "enum": [
@@ -148246,24 +148711,57 @@
             }
           },
           "400": {
-            "description": "Validation error - `identification_type` has an unsupported value.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Resource not found - the program does not exist, or the customer/member has no membership in the program.",
+            "description": "The query failed validation (`invalid_query_params`). `identification_type` must be `customer_id`, `customer_source_id`, or `member_id`.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
                 },
                 "examples": {
-                  "Member not found": {
+                  "Unsupported identification type": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Property .identification_type must be equal to one of the allowed values [ customer_id, customer_source_id, member_id ]",
+                      "request_id": "v-12bdef050f2cb1ef70"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The program doesn't exist (`resource_type` `program`), the source ID doesn't match a customer (`resource_type` `customer`), or there is no membership in the program (`resource_type` `member`). A lookup by customer ID with no membership returns that customer ID as `resource_id`.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Program not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find program with id lprg_128f58429f4c4bf7b2",
+                      "request_id": "v-12bdef050f2cb1ef6f",
+                      "resource_id": "lprg_128f58429f4c4bf7b2",
+                      "resource_type": "program"
+                    }
+                  },
+                  "Customer not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find customer with id nonexistent-source-id",
+                      "request_id": "v-12bdef050f2cb1ef6e",
+                      "resource_id": "nonexistent-source-id",
+                      "resource_type": "customer"
+                    }
+                  },
+                  "No membership": {
                     "value": {
                       "code": 404,
                       "key": "not_found",
@@ -150979,7 +151477,7 @@
           "LV2-Programs"
         ],
         "summary": "List card transactions",
-        "description": "Returns a cursor-paginated list of transactions of the member's card. Results can be filtered by `id` and `created_at`, and ordered by `created_at` (default `-created_at`, newest first). Returns `404` when the program, member or card does not exist.",
+        "description": "Returns a cursor-paginated list of transactions on the member's card. Filter by `id`, `card_definition_id`, and `created_at`. Order by `id` (default `-id`, newest first). Returns `404` when the program, member, or card doesn't exist. The program is checked first, then the member, then the card. A member of another program, or a card that isn't assigned to this member, is not found.",
         "parameters": [
           {
             "name": "programId",
@@ -151030,7 +151528,7 @@
             "name": "order",
             "in": "query",
             "required": false,
-            "description": "Field(s) to order results by. Valid orders are `-created_at` and `created_at`;\ndefaults to `-created_at`. Ordering by the same field in both directions\nsimultaneously is rejected.",
+            "description": "Orders results by transaction `id`. `-id` is newest first and the default. `id` is oldest first. An array that orders by `id` and `-id` together is rejected.",
             "schema": {
               "oneOf": [
                 {
@@ -151038,16 +151536,16 @@
                   "items": {
                     "type": "string",
                     "enum": [
-                      "-created_at",
-                      "created_at"
+                      "-id",
+                      "id"
                     ]
                   }
                 },
                 {
                   "type": "string",
                   "enum": [
-                    "-created_at",
-                    "created_at"
+                    "-id",
+                    "id"
                   ]
                 },
                 {
@@ -151248,21 +151746,94 @@
             }
           },
           "400": {
-            "description": "Validation error - query parameters failed validation, or the operation is not allowed in the current resource state.",
+            "description": "The query failed validation. `order` must be `id` or `-id`, and an array can't order by `id` and `-id` together. A cursor that doesn't match `^lcrsctx_[a-f0-9]+$` returns `invalid_query_params`. An unknown cursor returns `invalid_or_expired_cursor`. A cursor from a different `limit` or `order` returns `cursor_and_query_mismatch`.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Invalid order": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Property .order must be equal to one of the allowed values [ -id, id ]",
+                      "request_id": "v-12bdef050f2cb1ef70"
+                    }
+                  },
+                  "Invalid cursor": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Property .cursor must match pattern \"^lcrsctx_[a-f0-9]+$\"",
+                      "request_id": "v-12bdef050f2cb1ef71"
+                    }
+                  },
+                  "Unknown cursor": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_or_expired_cursor",
+                      "message": "Invalid or expired cursor",
+                      "details": "The provided cursor is invalid or has expired",
+                      "request_id": "v-12bdef050f2cb1ef72"
+                    }
+                  },
+                  "Cursor and query mismatch": {
+                    "value": {
+                      "code": 400,
+                      "key": "cursor_and_query_mismatch",
+                      "message": "Cursor and query mismatch",
+                      "details": "The provided cursor does not match the query, either the cursor is invalid or the query has changed",
+                      "request_id": "v-12bdef050f2cb1ef73"
+                    }
+                  }
                 }
               }
             }
           },
           "404": {
-            "description": "Resource not found.",
+            "description": "The program doesn't exist (`resource_type` `program`), the member doesn't exist in that program (`resource_type` `member`), or the card isn't assigned to that member (`resource_type` `card`). The program is checked first.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Program not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find program with id lprg_128f58429f4c4bf7b2",
+                      "request_id": "v-12bdef050f2cb1ef74",
+                      "resource_id": "lprg_128f58429f4c4bf7b2",
+                      "resource_type": "program"
+                    }
+                  },
+                  "Member not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find member with id lmbr_128f962dbc8c4ba5dc",
+                      "request_id": "v-12bdef050f2cb1ef75",
+                      "resource_id": "lmbr_128f962dbc8c4ba5dc",
+                      "resource_type": "member"
+                    }
+                  },
+                  "Card not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find card with id lcrd_128f962dbd8c4ba5e0",
+                      "request_id": "v-12bdef050f2cb1ef76",
+                      "resource_id": "lcrd_128f962dbd8c4ba5e0",
+                      "resource_type": "card"
+                    }
+                  }
                 }
               }
             }
@@ -151555,7 +152126,7 @@
           "LV2-Programs"
         ],
         "summary": "List member reward purchases",
-        "description": "Lists reward transactions of type `PURCHASE` for the given program member, with cursor-based pagination. Supports filtering by transaction `id`, `reward_id`, and `created_at` date.\n\nIt returns all persisted purchase transactions for the member, regardless of status. Purchases rejected synchronously at creation time (for example, insufficient card balance or unavailable stock) are not stored and do not appear in this list. Purchases accepted for processing (202) that later fail asynchronously appear with status: \"REJECTED\" and `details.rejection`.",
+        "description": "Lists stored `PURCHASE` reward transactions for the program member, with cursor pagination. Filter by `id`, `reward_id`, `card_definition_id`, and `created_at`. Order by `id` (default `-id`, newest first). Purchases rejected before a transaction is stored don't appear. A purchase accepted with `202` that later fails is stored as `REJECTED` with `details.rejection`. Returns `404` when the program or the member doesn't exist. The program is checked first.",
         "parameters": [
           {
             "name": "limit",
@@ -151576,7 +152147,7 @@
             "name": "order",
             "in": "query",
             "required": false,
-            "description": "Sort order. A field name, optionally prefixed with `-` for descending order. May be provided multiple times (array). The same field cannot be used in both ascending and descending order at once. Default: `-created_at`.",
+            "description": "Orders results by transaction `id`. `-id` is newest first and the default. `id` is oldest first. An array that orders by `id` and `-id` together is rejected.",
             "schema": {
               "oneOf": [
                 {
@@ -151584,16 +152155,16 @@
                   "items": {
                     "type": "string",
                     "enum": [
-                      "-created_at",
-                      "created_at"
+                      "-id",
+                      "id"
                     ]
                   }
                 },
                 {
                   "type": "string",
                   "enum": [
-                    "-created_at",
-                    "created_at"
+                    "-id",
+                    "id"
                   ]
                 },
                 {
@@ -151623,7 +152194,14 @@
             "explode": true,
             "description": "Field filters, e.g. `filters[reward_id][conditions][$is]=lrew_...`. Each field accepts a `conditions` object with condition operators.",
             "schema": {
-              "$ref": "#/components/schemas/LoyaltiesProgramsMembersRewardsPurchasesListRequestQuery"
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/LoyaltiesProgramsMembersRewardsPurchasesListRequestQuery"
+                },
+                {
+                  "type": "null"
+                }
+              ]
             }
           }
         ],
@@ -151642,6 +152220,7 @@
                         {
                           "id": "lrtx_12cac270a5e2310b4b",
                           "card_id": "lcrd_128f962dbd8c4ba5e1",
+                          "card_definition_id": "lcdef_128f4a88414c4bed69",
                           "card_transaction_id": "lctx_12cac270a5e2310b4a",
                           "program_id": "lprg_128f58429f4c4bf7b2",
                           "member_id": "lmbr_128f962dbc8c4ba5dc",
@@ -151677,6 +152256,7 @@
                         {
                           "id": "lrtx_1299a9ded817f57b90",
                           "card_id": "lcrd_128f962dbd8c4ba5df",
+                          "card_definition_id": "lcdef_128f49963c0c4becb7",
                           "card_transaction_id": "lctx_1299a9ded817f57b8f",
                           "program_id": "lprg_128f58429f4c4bf7b2",
                           "member_id": "lmbr_128f962dbc8c4ba5dc",
@@ -151712,6 +152292,7 @@
                         {
                           "id": "lrtx_129748dbafe65ae86e",
                           "card_id": "lcrd_128f962dbd8c4ba5e1",
+                          "card_definition_id": "lcdef_128f4a88414c4bed69",
                           "card_transaction_id": "lctx_129748dbafe65ae86d",
                           "program_id": "lprg_128f58429f4c4bf7b2",
                           "member_id": "lmbr_128f962dbc8c4ba5dc",
@@ -151757,21 +152338,83 @@
             }
           },
           "400": {
-            "description": "Validation error - request body or query parameters failed validation, or the operation is not allowed in the current resource state.",
+            "description": "The query failed validation. `order` must be `id` or `-id`, and an array can't order by `id` and `-id` together. A cursor that doesn't match `^lcrstrx_[a-f0-9]+$` returns `invalid_query_params`. An unknown cursor returns `invalid_or_expired_cursor`. A cursor from a different `limit` or `order` returns `cursor_and_query_mismatch`.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Invalid order": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Property .order must be equal to one of the allowed values [ -id, id ]",
+                      "request_id": "v-12bdef050f2cb1ef70"
+                    }
+                  },
+                  "Invalid cursor": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Property .cursor must match pattern \"^lcrstrx_[a-f0-9]+$\"",
+                      "request_id": "v-12bdef050f2cb1ef71"
+                    }
+                  },
+                  "Unknown cursor": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_or_expired_cursor",
+                      "message": "Invalid or expired cursor",
+                      "details": "The provided cursor is invalid or has expired",
+                      "request_id": "v-12bdef050f2cb1ef72"
+                    }
+                  },
+                  "Cursor and query mismatch": {
+                    "value": {
+                      "code": 400,
+                      "key": "cursor_and_query_mismatch",
+                      "message": "Cursor and query mismatch",
+                      "details": "The provided cursor does not match the query, either the cursor is invalid or the query has changed",
+                      "request_id": "v-12bdef050f2cb1ef73"
+                    }
+                  }
                 }
               }
             }
           },
           "404": {
-            "description": "Resource not found.",
+            "description": "The program doesn't exist (`resource_type` `program`), or the member doesn't exist in that program (`resource_type` `member`). A member of another program is not found. The program is checked first.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Program not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find program with id lprg_128f58429f4c4bf7b2",
+                      "request_id": "v-12bdef050f2cb1ef74",
+                      "resource_id": "lprg_128f58429f4c4bf7b2",
+                      "resource_type": "program"
+                    }
+                  },
+                  "Member not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find member with id lmbr_128f962dbc8c4ba5dc",
+                      "request_id": "v-12bdef050f2cb1ef75",
+                      "resource_id": "lmbr_128f962dbc8c4ba5dc",
+                      "resource_type": "member"
+                    }
+                  }
                 }
               }
             }
@@ -151812,7 +152455,7 @@
           "LV2-Programs"
         ],
         "summary": "Purchase reward with points",
-        "description": "Purchases a reward on behalf of the program member by spending points from the member's loyalty card (the card is resolved from the reward cost's card definition).\n\nRequires an `ACTIVE` program and an `ACTIVE` reward within their configured validity windows, an `ACTIVE` member, the reward to be assigned to the program with available stock, a matching reward cost for the customer's context, and sufficient points within the configured spending limits.\n\nModes:\n- `TRANSACTION` (default): creates a `PENDING` reward transaction (and an underlying card transaction) processed asynchronously. Returns HTTP `202`.\n- `DRY_RUN`: simulates the purchase without creating any transaction. Returns HTTP `200` with a `SIMULATED` transaction payload.",
+        "description": "Purchases a reward for the program member by spending points from the member's card. The card comes from the matching reward cost's card definition.\n\nThe program, reward, and member must be `ACTIVE`. The program and reward must be inside their validity windows. The reward must be assigned to the program with stock available, a cost must match the customer, and the purchase must stay inside frequency, cooldown, balance, and spending limits.\n\nModes:\n- `TRANSACTION` (default): creates a `PENDING` reward transaction and a `PENDING` card transaction. Returns `202`.\n- `DRY_RUN`: simulates the purchase and doesn't create a transaction. Returns `200` with status `SIMULATED`.",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -151837,6 +152480,7 @@
                     "value": {
                       "transaction": {
                         "card_id": "lcrd_128f962dbd8c4ba5e1",
+                        "card_definition_id": "lcdef_128f4a88414c4bed69",
                         "card_transaction_id": null,
                         "program_id": "lprg_128f58429f4c4bf7b2",
                         "member_id": "lmbr_128f962dbc8c4ba5dc",
@@ -151876,6 +152520,7 @@
                       "transaction": {
                         "id": "lrtx_12cad1abefa2311e03",
                         "card_id": "lcrd_128f962dbd8c4ba5e1",
+                        "card_definition_id": "lcdef_128f4a88414c4bed69",
                         "card_transaction_id": "lctx_12cad1abefa2311e02",
                         "program_id": "lprg_128f58429f4c4bf7b2",
                         "member_id": "lmbr_128f962dbc8c4ba5dc",
@@ -151914,7 +152559,7 @@
             }
           },
           "404": {
-            "description": "Resource not found.",
+            "description": "Checked in order. The program doesn't exist (`resource_type` `program`). The member doesn't exist in that program (`member`). The reward doesn't exist, or it isn't assigned to the program (`reward`, `resource_id` is the reward id). The member has no card for the cost's card definition, or that card record is missing (`card`; `resource_id` is the card definition id, or the card id). The card definition doesn't exist (`card_definition`). For a `LOYALTY_CARD_POINTS` reward, a missing target card is also `card`.",
             "content": {
               "application/json": {
                 "schema": {
@@ -151953,13 +152598,35 @@
                       "resource_id": "lrew_128f4cefbad47863e",
                       "resource_type": "reward"
                     }
+                  },
+                  "Card not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find card with id lcdef_128f4a88414c4bed69",
+                      "request_id": "v-12cbaf831680295187",
+                      "resource_id": "lcdef_128f4a88414c4bed69",
+                      "resource_type": "card"
+                    }
+                  },
+                  "Card definition not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find card_definition with id lcdef_128f4a88414c4bed69",
+                      "request_id": "v-12cbaf831680295188",
+                      "resource_id": "lcdef_128f4a88414c4bed69",
+                      "resource_type": "card_definition"
+                    }
                   }
                 }
               }
             }
           },
           "423": {
-            "description": "The purchase is unavailable because a resource state, validity window, stock level, matching cost, card balance, or spending limit prevents it.",
+            "description": "The purchase is locked. `non_active_program`, `program_outside_validity_window`, `non_active_member`, `non_active_reward`, and `reward_outside_validity_window` reject a resource that isn't `ACTIVE` or is outside its validity window. `reward_out_of_stock` means assignment stock isn't available. `purchase_limit_cooldown` and `purchase_limit_frequency` mean a purchase limit blocked the request. `no_matching_reward_cost` means no cost matches this customer. `insufficient_card_balance` means the card doesn't have enough points. `exceeded_card_spending_global_spending_based_limit`, `exceeded_card_spending_global_time_based_limit`, and `exceeded_card_spending_transactions_limit` mean a spending cap was exceeded. `exceeded_spending_limits` is the fallback when the cap has no specific key.",
             "content": {
               "application/json": {
                 "schema": {
@@ -151982,6 +152649,15 @@
                       "message": "Cannot purchase reward when stock is not available",
                       "details": "Reward stock is not available",
                       "request_id": "v-12cbaf9b78002951b5"
+                    }
+                  },
+                  "No matching reward cost": {
+                    "value": {
+                      "code": 423,
+                      "key": "no_matching_reward_cost",
+                      "message": "Reward is not available for this customer",
+                      "details": "No matching cost for the current customer context",
+                      "request_id": "v-12cbaf9b78002951b6"
                     }
                   }
                 }
@@ -152048,7 +152724,7 @@
           "LV2-Programs"
         ],
         "summary": "List member order payments",
-        "description": "Lists persisted order transactions (pay-with-points payments) for the given program member, with cursor-based pagination. Supports filtering by transaction `id` and `created_at` date. Dry-run (`SIMULATED`) results from create are never persisted and do not appear in this list.",
+        "description": "Lists stored `PAY_WITH_POINTS` order transactions for the program member, with cursor pagination. Filter by `id`, `card_definition_id`, and `created_at`. Order by `id` (default `-id`, newest first). Dry-run (`SIMULATED`) results aren't stored and don't appear. Returns `404` when the program or the member doesn't exist. The program is checked first.",
         "parameters": [
           {
             "name": "limit",
@@ -152069,7 +152745,7 @@
             "name": "order",
             "in": "query",
             "required": false,
-            "description": "Sorts results by a field name, optionally prefixed with `-` for descending order. May be provided multiple times (array). The same field cannot be used in both ascending and descending order at once. Default: `-created_at`.",
+            "description": "Orders results by transaction `id`. `-id` is newest first and the default. `id` is oldest first. An array that orders by `id` and `-id` together is rejected.",
             "schema": {
               "oneOf": [
                 {
@@ -152077,16 +152753,16 @@
                   "items": {
                     "type": "string",
                     "enum": [
-                      "-created_at",
-                      "created_at"
+                      "-id",
+                      "id"
                     ]
                   }
                 },
                 {
                   "type": "string",
                   "enum": [
-                    "-created_at",
-                    "created_at"
+                    "-id",
+                    "id"
                   ]
                 },
                 {
@@ -152116,7 +152792,14 @@
             "explode": true,
             "description": "Filters results by field, e.g. `filters[id][conditions][$is]=lotx_...`. Each field accepts a `conditions` object with condition operators.",
             "schema": {
-              "$ref": "#/components/schemas/LoyaltiesProgramsMembersOrdersPaymentsListRequestQuery"
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/LoyaltiesProgramsMembersOrdersPaymentsListRequestQuery"
+                },
+                {
+                  "type": "null"
+                }
+              ]
             }
           }
         ],
@@ -152227,17 +152910,37 @@
             }
           },
           "400": {
-            "description": "Validation error - query parameters failed validation, or the operation is not allowed in the current resource state.",
+            "description": "The query failed validation. `order` must be `id` or `-id`, and an array can't order by `id` and `-id` together. A cursor that doesn't match `^lcrsotx_[a-f0-9]+$` returns `invalid_query_params`.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Invalid order": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Property .order must be equal to one of the allowed values [ -id, id ]",
+                      "request_id": "v-12bdef050f2cb1ef70"
+                    }
+                  },
+                  "Invalid cursor": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Property .cursor must match pattern \"^lcrsotx_[a-f0-9]+$\"",
+                      "request_id": "v-12bdef050f2cb1ef71"
+                    }
+                  }
                 }
               }
             }
           },
           "404": {
-            "description": "Program or member not found.",
+            "description": "The program doesn't exist (`resource_type` `program`), or the member doesn't exist in that program (`resource_type` `member`). A member of another program is not found. The program is checked first.",
             "content": {
               "application/json": {
                 "schema": {
@@ -152306,7 +153009,7 @@
           "LV2-Programs"
         ],
         "summary": "Pay for order with points",
-        "description": "Pays for an order using points from the specified member loyalty card. The payment amount and points to spend are calculated from the card definition's pay-with-points exchange ratio formula, capped by the card balance and the optional `payment_limit`.\n\nRequires:\n- `ACTIVE` program;\n- `ACTIVE` member;\n- Card definition with pay-with-points enabled and a configured exchange ratio formula;\n- Existing order in Voucherify with order `id` or order `source_id`.\n\nModes:\n- `TRANSACTION` (default): Creates a `PENDING` order transaction (and an underlying card transaction) processed asynchronously. Returns HTTP `202`. Sending a request for the same order `id` or `source_id` creates a new transaction each time.\n- `DRY_RUN`: Simulates the payment without creating any transaction. Returns HTTP `200` with a `SIMULATED` transaction payload.",
+        "description": "Pays for an order with points from the member's card. The amount and points come from the card definition's pay-with-points exchange ratio, limited by the order total, the card balance, card spending caps, and the optional `payment_limit`. The binding cap is returned as `details.spending_cap`.\n\nThe program and member must be `ACTIVE`, and the program must be inside its validity window. The card must belong to the member. The card definition must have pay-with-points enabled and an exchange-ratio formula. The order must already exist, identified by `id` or `source_id`.\n\nModes:\n- `TRANSACTION` (default): creates a `PENDING` order transaction and a `PENDING` card transaction. Returns `202`. The same order can be paid again; each call creates a new transaction.\n- `DRY_RUN`: simulates the payment and doesn't create a transaction. Returns `200` with status `SIMULATED`.",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -152392,6 +153095,11 @@
                             "amount": 150,
                             "points_spent": 150,
                             "exchange_ratio": 1
+                          },
+                          "spending_cap": {
+                            "type": "REQUEST_PAYMENT_LIMIT",
+                            "unit": "POINTS",
+                            "value": 150
                           }
                         },
                         "updated_at": null,
@@ -152422,6 +153130,11 @@
                             "amount": 650,
                             "points_spent": 650,
                             "exchange_ratio": 1
+                          },
+                          "spending_cap": {
+                            "type": "ORDER_TOTAL_AMOUNT",
+                            "unit": "AMOUNT",
+                            "value": 650
                           }
                         },
                         "updated_at": null,
@@ -152450,6 +153163,11 @@
                             "amount": 650,
                             "points_spent": 650,
                             "exchange_ratio": 1
+                          },
+                          "spending_cap": {
+                            "type": "CARD_BALANCE_POINTS",
+                            "unit": "POINTS",
+                            "value": 650
                           }
                         },
                         "updated_at": null,
@@ -152493,6 +153211,11 @@
                             "amount": 12,
                             "points_spent": 12,
                             "exchange_ratio": 1
+                          },
+                          "spending_cap": {
+                            "type": "REQUEST_PAYMENT_LIMIT",
+                            "unit": "POINTS",
+                            "value": 12
                           }
                         },
                         "created_at": "2026-07-13T11:01:23.245Z",
@@ -152525,6 +153248,11 @@
                             "amount": 2000,
                             "points_spent": 2000,
                             "exchange_ratio": 1
+                          },
+                          "spending_cap": {
+                            "type": "REQUEST_PAYMENT_LIMIT",
+                            "unit": "AMOUNT",
+                            "value": 2000
                           }
                         },
                         "created_at": "2026-07-13T12:06:15.135Z",
@@ -152555,6 +153283,11 @@
                             "amount": 200,
                             "points_spent": 200,
                             "exchange_ratio": 1
+                          },
+                          "spending_cap": {
+                            "type": "CARD_BALANCE_POINTS",
+                            "unit": "POINTS",
+                            "value": 200
                           }
                         },
                         "created_at": "2026-07-13T11:07:16.212Z",
@@ -152570,17 +153303,28 @@
             }
           },
           "400": {
-            "description": "Validation error - request body or query parameters failed validation, or the operation is not allowed in the current resource state.",
+            "description": "The request body failed validation (`invalid_payload`). Pay-with-points is enabled but the card definition has no exchange-ratio formula (`missing_exchange_ratio_formula`).",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Missing exchange ratio formula": {
+                    "value": {
+                      "code": 400,
+                      "key": "missing_exchange_ratio_formula",
+                      "message": "Missing exchange ratio formula",
+                      "details": "Card definition has pay with points enabled but no exchange ratio formula configured",
+                      "request_id": "v-12bdef050f2cb1ef70"
+                    }
+                  }
                 }
               }
             }
           },
           "404": {
-            "description": "Resource not found.",
+            "description": "Checked in order. The program doesn't exist (`resource_type` `program`). The member doesn't exist in that program (`member`). The card doesn't exist, or it isn't assigned to this member (`card`, `resource_id` is the card id). The card definition doesn't exist (`card_definition`). The order doesn't exist (`order`). Lookup by `id` says `Cannot find order with id {id}`. Lookup by `source_id` says `Cannot find order with source_id {sourceId}`.",
             "content": {
               "application/json": {
                 "schema": {
@@ -152636,7 +153380,7 @@
             }
           },
           "423": {
-            "description": "Card balance is zero or the resource state blocks the payment.",
+            "description": "The payment is locked. `non_active_program` and `program_outside_validity_window` reject a program that isn't `ACTIVE` or is outside its validity window. `non_active_member` rejects a member that isn't `ACTIVE`. `pay_with_points_not_enabled` means the card definition doesn't allow pay-with-points. `invalid_exchange_ratio` means the formula result isn't a positive number. `zero_card_balance`, `zero_order_total_amount`, `exhausted_card_spending_global_spending_based_limit`, `exhausted_card_spending_global_time_based_limit`, and `exhausted_card_spending_transactions_limit` mean a cap is already zero. `zero_points_to_spent` and `zero_payment_amount` mean the calculation produced nothing to charge.",
             "content": {
               "application/json": {
                 "schema": {
@@ -160757,7 +161501,7 @@
         ],
         "operationId": "examineEarningRules",
         "summary": "Examine earning rules",
-        "description": "Estimates earning opportunities for a customer without triggering any actual earning for loyalty v2 earning rules. The `trigger` selects whether all trigger events or one specific event is examined. When a specific event is selected, exactly one matching context object is required: `customer_order_paid` for `customer.order.paid`, `customer_segment_entered` for `customer.segment.entered`, and `customer_custom_event` for `customer.custom_event`. The other context objects must not be present.\n\nThis endpoint can examine earning rules for all loyalty programs the customer belongs to by using `customer_identification` with `customer_id` or `customer_source_id`. To examine earning rules only for one program, use `member_id` in `customer_identification`, as `member_id` is loyalty program-specific.",
+        "description": "Estimates earning opportunities for a customer without triggering any actual earning for loyalty v2 earning rules. The `trigger` selects whether all trigger events or one specific event is examined. When a specific event is selected, exactly one matching context object is required: `customer_order_paid` for `customer.order.paid`, `customer_segment_entered` for `customer.segment.entered`, and `customer_custom_event` for `customer.custom_event`. The other context objects must not be present.\n\nThis endpoint can examine earning rules for all loyalty programs the customer belongs to by using `customer_identification` with `customer_id` or `customer_source_id`. To examine earning rules only for one program, use `member_id` in `customer_identification`, as `member_id` is loyalty program-specific. A customer who exists but has no active membership returns `200` with an empty `memberships` array.",
         "requestBody": {
           "required": true,
           "content": {
@@ -160933,7 +161677,7 @@
         },
         "responses": {
           "200": {
-            "description": "Earning rules examination result",
+            "description": "Earning rules examination result. An empty `memberships` array means no active membership has earning rules for the examined trigger.",
             "content": {
               "application/json": {
                 "schema": {
@@ -161515,7 +162259,7 @@
             }
           },
           "400": {
-            "description": "Validation error - request body failed validation.",
+            "description": "Validation error - request body failed validation. Temporary customer, member, or order metadata that does not match its metadata schema returns key `metadata_validation_failed` and message `Metadata validation failed`.",
             "content": {
               "application/json": {
                 "schema": {
@@ -161536,7 +162280,7 @@
             }
           },
           "404": {
-            "description": "Resource not found.",
+            "description": "The `member_id` does not exist, or the `customer_id` or `customer_source_id` does not exist. An unknown `member_id` is checked first and returns `resource_type` `member` with details `Cannot find member with id {memberId}`. An unknown customer returns `resource_type` `customer` with details `Cannot find customer with id {id}`, where `{id}` is the `customer_id` or `customer_source_id` you sent. When a member exists but its customer record does not, that same customer error uses the `member_id` as `{id}`.",
             "content": {
               "application/json": {
                 "schema": {
@@ -161552,6 +162296,17 @@
                       "request_id": "v-12cd3ae8271a39a7c6",
                       "resource_id": "lmbr_128f962db8c4ba5dc",
                       "resource_type": "member"
+                    }
+                  },
+                  "Customer not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find customer with id cust_nonexistent",
+                      "request_id": "v-12cd3ae8271a39a7c7",
+                      "resource_id": "cust_nonexistent",
+                      "resource_type": "customer"
                     }
                   }
                 }
@@ -161596,7 +162351,7 @@
         ],
         "operationId": "examineRewards",
         "summary": "Examine rewards",
-        "description": "Evaluates rewards assigned to a customer's active Loyalty v2 program memberships. Applies temporary customer and member metadata overrides without updating stored data. Returns reward availability by card, including points costs and applicable unavailability reasons.\n\nThis endpoint can examine rewards for all loyalty programs the customer belongs to by using `customer_identification` with `customer_id` or `source_id`. To examine rewards only for one program, use `member_id` in `customer_identification`, as `member_id` is loyalty program-specific.",
+        "description": "Evaluates rewards assigned to a customer's active Loyalty v2 program memberships. Applies temporary customer and member metadata overrides without updating stored data. Returns reward availability by card, including points costs and applicable unavailability reasons. Omits a reward when it is inactive, out of stock, has no matching cost, or the member has no card for that cost.\n\nThis endpoint can examine rewards for all loyalty programs the customer belongs to by using `customer_identification` with `customer_id` or `customer_source_id`. To examine rewards only for one program, use `member_id` in `customer_identification`, as `member_id` is loyalty program-specific. A customer who exists but has no active membership returns `200` with an empty `memberships` array.",
         "requestBody": {
           "required": true,
           "content": {
@@ -161609,7 +162364,7 @@
         },
         "responses": {
           "200": {
-            "description": "Rewards examination result",
+            "description": "Rewards examination result. An empty `memberships` array means the customer has no active membership. An empty `cards` array means no assigned reward resolved onto a card.",
             "content": {
               "application/json": {
                 "schema": {
@@ -161838,17 +162593,28 @@
             }
           },
           "400": {
-            "description": "Validation error - request body or query parameters failed validation, or the operation is not allowed in the current resource state.",
+            "description": "The request body failed validation. Sending `member` when `customer_identification.type` is not `member_id` returns key `invalid_payload`, message `Invalid payload`, and details `Property 'member' is only allowed when customer_identification.type is 'member_id'`. Customer or member metadata that does not match its metadata schema returns key `metadata_validation_failed` and message `Metadata validation failed`.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Member override not allowed": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_payload",
+                      "message": "Invalid payload",
+                      "details": "Property 'member' is only allowed when customer_identification.type is 'member_id'",
+                      "request_id": "v-12c2e64d5d4a67cddd"
+                    }
+                  }
                 }
               }
             }
           },
           "404": {
-            "description": "Resource not found.",
+            "description": "The `member_id` does not exist, or the `customer_id` or `customer_source_id` does not exist. An unknown `member_id` is checked first and returns `resource_type` `member` with details `Cannot find member with id {memberId}`. An unknown customer returns `resource_type` `customer` with details `Cannot find customer with id {id}`, where `{id}` is the `customer_id` or `customer_source_id` you sent. When a member exists but its customer record does not, that same customer error uses the `member_id` as `{id}`.",
             "content": {
               "application/json": {
                 "schema": {
@@ -161864,6 +162630,17 @@
                       "request_id": "v-12c2e64d5d4a67cddc",
                       "resource_id": "cust_6onRrs4kCnvSVrTs5YtDPFB",
                       "resource_type": "customer"
+                    }
+                  },
+                  "Member not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find member with id lmbr_128f962db8c4ba5dc",
+                      "request_id": "v-12c2e64d5d4a67cdde",
+                      "resource_id": "lmbr_128f962db8c4ba5dc",
+                      "resource_type": "member"
                     }
                   }
                 }
