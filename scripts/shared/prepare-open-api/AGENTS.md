@@ -44,6 +44,8 @@ Do not edit files under `sdks/`. A commit here only stores a submodule SHA, and 
 
 `if`, `then`, `else`, and `not` are JSON Schema. OpenAPI 3.0.1 and the pinned generators do not implement them. A generator-facing document has to replace each such branch with one object: keep the properties already declared on the parent, keep the parent's `required`, and say in a description that the API validates the combination. Do not promote a branch `required` array onto the parent, and do not replace a parent property with `type: "null"` from a single branch.
 
+`mergeJsonSchemaConditionals` in `scripts/shared/openapi-version/merge-json-schema-conditionals.ts` does that fold. It leaves `const` untouched. Nothing calls it yet, so SDK and production output are unchanged.
+
 The full source cannot be downgraded as a whole. Some Loyalty v2 schemas use `type: ["null"]`, which has no 3.0.1 `nullable` form. Strip Loyalty v2 first, then downgrade. `npm run openapi:downgrade-to-301` runs the reversible downgrade on whatever file you pass and still throws on that union.
 
 ## What must stay byte-identical
@@ -57,7 +59,7 @@ Shared schemas are not in that set. A schema reached by a non-loyalty path is st
 From the repository root:
 
 ```bash
-npm test -- scripts/shared/openapi-version/migrate.test.ts scripts/shared/prepare-open-api/supported-languages.test.ts
+npm test -- --ci --watchman=false scripts/shared/openapi-version/migrate.test.ts scripts/shared/openapi-version/merge-json-schema-conditionals.test.ts scripts/shared/prepare-open-api/supported-languages.test.ts
 ```
 
 After a change that can affect published output, run `npm run prepare-open-api -- --language=ruby` and `npm run build-production-openapi`, then inspect `git diff` for those JSON files. Diagnostics printed by the prep (`DESCRIPTIONS ARE NOT THE SAME`, `"DEFAULT" IS NOT A STRING`, `not found ... in schemas`) do not fail the script.
