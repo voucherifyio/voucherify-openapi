@@ -71827,19 +71827,12 @@
       },
       "LoyaltiesProgramsMembersCardsExpiringPointsExpireResponseBody": {
         "type": "object",
-        "title": "Loyalties Programs Members Cards Expiring Points Expire Response Body”",
+        "title": "Loyalties Programs Members Cards Expiring Points Expire Response Body",
         "description": "Response body schema for **POST** `/v2/loyalties/programs/{programId}/members/{memberId}/cards/{cardId}/expiring-points/{bucketId}/expire`.\n\nResult of expiring an expiration point bucket. This endpoint always returns status `TRANSACTION_CREATED` on success.",
         "properties": {
           "transaction": {
-            "description": "The created `ADMIN_POINTS_EXPIRATION` card transaction, or `null`.",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/CardTransaction"
-              },
-              {
-                "type": "null"
-              }
-            ]
+            "description": "The created `ADMIN_POINTS_EXPIRATION` card transaction.",
+            "$ref": "#/components/schemas/CardTransaction"
           },
           "status": {
             "type": "string",
@@ -71850,6 +71843,9 @@
           },
           "message": {
             "type": "string",
+            "enum": [
+              "Points expiration transaction created"
+            ],
             "description": "Human-readable result message - \"Points expiration transaction created\"."
           }
         },
@@ -151692,7 +151688,7 @@
           "LV2-Programs"
         ],
         "summary": "Expire point bucket",
-        "description": "Manually expires a points bucket before its scheduled expiration date, creating an `ADMIN_POINTS_EXPIRATION` card transaction (status `PENDING`, processed asynchronously). No request body.\n\nThe expiration bucket includes all points from various transactions that will expire on the bucket's expiration date.\n\nThe program and member must be in the `ACTIVE` status or available, the card definition must have points expiration enabled, or an earning rule or loyalty tier has an expiration override, the bucket must be in the `ACTIVE` status, and the bucket's expiration date must not be in the past (`423` otherwise).\n\nReturns `404` when the program, member, card or bucket does not exist.",
+        "description": "Expires an `ACTIVE` points bucket. Creates an `ADMIN_POINTS_EXPIRATION` card transaction. The transaction is created with status `PENDING` and processed asynchronously. No request body.\n\nThe bucket must be `ACTIVE`, and its `expiration_date` must be on or after the current project day. The program and the member must be `ACTIVE`, and the program must be inside its validity window. Otherwise the response is `423`.\n\nReturns `404` when the program, the member, or the card definition doesn't exist, when the card isn't assigned to that member, or when the bucket isn't on that card.",
         "parameters": [],
         "responses": {
           "200": {
@@ -151780,6 +151776,17 @@
                       "resource_type": "card"
                     }
                   },
+                  "Card definition not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find card_definition with id lcdef_128f4a88414c4bed00",
+                      "request_id": "v-12f7deda0cad51e97a",
+                      "resource_id": "lcdef_128f4a88414c4bed00",
+                      "resource_type": "card_definition"
+                    }
+                  },
                   "Point bucket not found": {
                     "value": {
                       "code": 404,
@@ -151796,7 +151803,7 @@
             }
           },
           "423": {
-            "description": "Resource locked. Returned when expiration is not allowed (inactive program/member, program outside its validity window, points expiration not enabled, bucket not `ACTIVE`, or bucket expiration date in the past).",
+            "description": "The program or member isn't `ACTIVE`, the program is outside its validity window, the bucket isn't `ACTIVE`, or the bucket `expiration_date` is before the current project day.",
             "content": {
               "application/json": {
                 "schema": {
@@ -151828,15 +151835,6 @@
                       "message": "Cannot expire member's card points when member status is not ACTIVE",
                       "details": "Invalid member status",
                       "request_id": "v-12f7de75256d51e8b3"
-                    }
-                  },
-                  "Points expiration not enabled": {
-                    "value": {
-                      "code": 423,
-                      "key": "points_expiration_not_enabled",
-                      "message": "Cannot expire member's card points when points expiration for CARD_DEFINITION is not enabled",
-                      "details": "Points expiration not enabled",
-                      "request_id": "v-12f7de75256d51e8b4"
                     }
                   },
                   "Invalid point bucket status": {
