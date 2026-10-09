@@ -92092,7 +92092,8 @@
         "properties": {
           "id": {
             "type": "string",
-            "description": "Unique identifier of the summary row."
+            "pattern": "^lptrs_[a-f0-9]+$",
+            "description": "Identifies the summary row (format: `lptrs_` followed by hexadecimal characters)."
           },
           "tier_structure_id": {
             "type": "string",
@@ -92122,14 +92123,25 @@
           },
           "prolongs": {
             "type": "number",
-            "description": "Total number of tier prolongations."
+            "description": "Counts expiration-date changes for members who stayed on this tier."
           },
           "object": {
             "type": "string",
             "const": "program_tiers_summary_report",
             "description": "Object type marker. Always `program_tiers_summary_report`."
           }
-        }
+        },
+        "required": [
+          "id",
+          "tier_structure_id",
+          "tier_id",
+          "joins",
+          "upgrades",
+          "downgrades",
+          "lefts",
+          "prolongs",
+          "object"
+        ]
       },
       "TiersReportSummaryResponse": {
         "type": "object",
@@ -92137,7 +92149,7 @@
         "properties": {
           "data": {
             "type": "array",
-            "description": "Report entries, one per tier structure and tier.",
+            "description": "List of summary rows, one per tier structure and tier with recorded movement, ordered by `id` descending. Contains at most 100 rows. Empty when no movement was recorded.",
             "items": {
               "$ref": "#/components/schemas/TiersReportSummaryEntry"
             }
@@ -92147,7 +92159,11 @@
             "const": "report",
             "description": "Object type marker. Always `report`."
           }
-        }
+        },
+        "required": [
+          "data",
+          "object"
+        ]
       },
       "MemberTierProgressTier": {
         "type": "object",
@@ -156429,48 +156445,8 @@
           "LV2-Programs"
         ],
         "summary": "Get program tiers summary report",
-        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nReturns total tier-movement statistics for the program (all time), optionally\nfiltered by tier structure and tier.\n\nResults are capped by `limit` (default `100`) and sorted by `order` (default `-id`).",
+        "description": "Returns all-time tier-movement totals for the program, one row per tier structure and tier that has recorded movement. Filters rows with `filters[tier_structure_id]` and `filters[tier_id]`. Returns at most 100 rows, ordered by `id` descending. `limit` and `order` are not query parameters. A filter that matches no rows returns an empty `data` array.\n\nReturns `400` when query validation fails. Returns `404` when the program does not exist.",
         "parameters": [
-          {
-            "name": "limit",
-            "in": "query",
-            "required": false,
-            "description": "Maximum number of report entries to return. Minimum: 1, maximum: 100. Defaults to 100 when omitted.",
-            "schema": {
-              "type": "integer",
-              "minimum": 1,
-              "maximum": 100,
-              "default": 100
-            }
-          },
-          {
-            "name": "order",
-            "in": "query",
-            "required": false,
-            "description": "Sort order. A single field or an array of fields. Prefix a field with `-` for descending order. Defaults to `-id`. Allowed values: `id`, `-id`.",
-            "schema": {
-              "oneOf": [
-                {
-                  "type": "string",
-                  "enum": [
-                    "id",
-                    "-id"
-                  ]
-                },
-                {
-                  "type": "array",
-                  "items": {
-                    "type": "string",
-                    "enum": [
-                      "id",
-                      "-id"
-                    ]
-                  }
-                }
-              ],
-              "default": "-id"
-            }
-          },
           {
             "name": "filters",
             "in": "query",
@@ -156509,17 +156485,34 @@
                       ],
                       "object": "report"
                     }
+                  },
+                  "Empty tiers summary report": {
+                    "value": {
+                      "data": [],
+                      "object": "report"
+                    }
                   }
                 }
               }
             }
           },
           "400": {
-            "description": "Validation error - request body or query parameters failed validation, or the operation is not allowed in the current resource state.",
+            "description": "Query parameters failed validation.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Invalid query parameters: `tier_structure_id` is invalid": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Property .filters.tier_structure_id.conditions.$is must match pattern \"^lts_[a-f0-9]+$\"",
+                      "request_id": "v-131e4b76ad2e098911"
+                    }
+                  }
                 }
               }
             }
@@ -156530,6 +156523,19 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Program not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find program with id lprg_128f4a88414c4bed69",
+                      "request_id": "v-131e4b76ad2e098912",
+                      "resource_id": "lprg_128f4a88414c4bed69",
+                      "resource_type": "program"
+                    }
+                  }
                 }
               }
             }
