@@ -92970,6 +92970,69 @@
           "object"
         ]
       },
+      "MembersReportSummaryEntry": {
+        "type": "object",
+        "description": "All-time member and card changes for the program. Counters that did not change are 0.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^lpmrs_[a-f0-9]+$",
+            "description": "Identifies the summary row (format: `lpmrs_` followed by hexadecimal characters)."
+          },
+          "members_joined": {
+            "type": "number",
+            "description": "Counts members who joined the program."
+          },
+          "members_deactivated": {
+            "type": "number",
+            "description": "Counts members deactivated. Decreases by 1 when a member is activated again."
+          },
+          "members_deleted": {
+            "type": "number",
+            "description": "Counts members deleted."
+          },
+          "cards": {
+            "type": "number",
+            "description": "Counts cards created. Decreases by 1 when a card is unassigned."
+          },
+          "object": {
+            "type": "string",
+            "const": "program_members_summary_report",
+            "description": "Object type marker. Always `program_members_summary_report`."
+          }
+        },
+        "required": [
+          "id",
+          "members_joined",
+          "members_deactivated",
+          "members_deleted",
+          "cards",
+          "object"
+        ]
+      },
+      "LoyaltiesProgramsReportsMembersSummaryListResponseBody": {
+        "type": "object",
+        "title": "Loyalties Programs Reports Members Summary List Response Body",
+        "description": "Response body schema for **GET** `/v2/loyalties/programs/{programId}/reports/members/summary`.",
+        "properties": {
+          "data": {
+            "type": "array",
+            "description": "List of summary rows for the program. Contains one row when activity was recorded, ordered by `id` descending. Empty when no activity was recorded.",
+            "items": {
+              "$ref": "#/components/schemas/MembersReportSummaryEntry"
+            }
+          },
+          "object": {
+            "type": "string",
+            "const": "report",
+            "description": "Object type marker. Always `report`."
+          }
+        },
+        "required": [
+          "data",
+          "object"
+        ]
+      },
       "MemberTierProgressTier": {
         "type": "object",
         "description": "Tier reference with id and name.",
@@ -158310,6 +158373,123 @@
                       "message": "Resource not found",
                       "details": "Cannot find program with id lprg_128f58429fc4bf7b2",
                       "request_id": "v-131e4b76ad2e098968",
+                      "resource_id": "lprg_128f58429fc4bf7b2",
+                      "resource_type": "program"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Internal server error": {
+                    "value": {
+                      "code": 500,
+                      "key": "api_error",
+                      "message": "Something went wrong. Don't worry, your campaigns are still safe and the Voucherify Team has been notified. Check out our Help Center and forums for help, or head back to home."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": []
+          },
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/v2/loyalties/programs/{programId}/reports/members/summary": {
+      "parameters": [
+        {
+          "name": "programId",
+          "in": "path",
+          "required": true,
+          "description": "Unique loyalty program identifier (format: `lprg_` followed by hexadecimal characters).",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "operationId": "getProgramMembersSummaryReport",
+        "tags": [
+          "LV2-Programs"
+        ],
+        "summary": "Get program members summary report",
+        "description": "Returns all-time member and card totals for the program. The response contains one row when activity was recorded, and an empty `data` array otherwise. `limit` and `order` are not query parameters.\n\nReturns `400` when query validation fails. Returns `404` when the program does not exist.",
+        "responses": {
+          "200": {
+            "description": "Program members summary report.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoyaltiesProgramsReportsMembersSummaryListResponseBody"
+                },
+                "examples": {
+                  "Summary members report": {
+                    "value": {
+                      "data": [
+                        {
+                          "id": "lpmrs_128f4a88414c4bed6f",
+                          "members_joined": 1,
+                          "members_deactivated": 0,
+                          "members_deleted": 0,
+                          "cards": 1,
+                          "object": "program_members_summary_report"
+                        }
+                      ],
+                      "object": "report"
+                    }
+                  },
+                  "Empty members summary report": {
+                    "value": {
+                      "data": [],
+                      "object": "report"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Query parameters failed validation.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Program not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find program with id lprg_128f58429fc4bf7b2",
+                      "request_id": "v-131e4b76ad2e098972",
                       "resource_id": "lprg_128f58429fc4bf7b2",
                       "resource_type": "program"
                     }
