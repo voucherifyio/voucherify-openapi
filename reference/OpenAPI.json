@@ -61042,7 +61042,7 @@
       },
       "LoyaltyV2ActivityEarningRuleEffectPointsExpirationRollingExpirationRounding": {
         "type": "object",
-        "description": "Rounding of the rolling expiration date. `value` (the month number, 1-12) is required for `END_OF_PARTICULAR_MONTH` and must be null for all other rounding types.",
+        "description": "`value` is the month (1-12). Required when `type` is `END_OF_PARTICULAR_MONTH`. Absent for other rounding types.",
         "properties": {
           "type": {
             "type": "string",
@@ -61056,7 +61056,7 @@
             "description": "Rounding type."
           },
           "value": {
-            "description": "Month number (1-12), only for `END_OF_PARTICULAR_MONTH`. `null`able otherwise.",
+            "description": "Month number (1-12). Present only when `type` is `END_OF_PARTICULAR_MONTH`.",
             "oneOf": [
               {
                 "type": "integer",
@@ -61343,71 +61343,21 @@
       },
       "LoyaltyV2ActivityEarningRuleEffectPointsExpirationSlidingExpiration": {
         "type": "object",
-        "description": "Sliding expiration – points expire after a period of member inactivity. At least one of `earning_activity`, `spending_activity` or `custom_activity` must be `true`. When `custom_activity` is `true`, `custom_activity_types` is required (1-10 unique items).",
+        "description": "Sliding expiration. Points expire after a period of member inactivity.",
         "properties": {
           "earning_activity": {
             "type": "boolean",
             "description": "Whether earning activity resets the expiration window."
           },
-          "spending_activity": {
-            "type": "boolean",
-            "description": "Whether spending activity resets the expiration window."
-          },
-          "custom_activity": {
-            "type": "boolean",
-            "description": "Whether the listed custom activity types reset the expiration window."
-          },
-          "custom_activity_types": {
-            "description": "Custom activity type names. Required (1-10 unique items) when `custom_activity` is true. Can be `null`.",
-            "oneOf": [
-              {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                }
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
           "period": {
             "$ref": "#/components/schemas/LoyaltyV2ActivityEarningRuleEffectPointsExpirationSlidingExpirationPeriod"
           }
         },
-        "additionalProperties": false,
-        "allOf": [
-          {
-            "required": [
-              "period"
-            ]
-          },
-          {
-            "if": {
-              "properties": {
-                "custom_activity": {
-                  "const": true
-                }
-              }
-            },
-            "then": {
-              "required": [
-                "custom_activity_types"
-              ],
-              "properties": {
-                "custom_activity_types": {
-                  "type": "array",
-                  "minItems": 1,
-                  "maxItems": 10,
-                  "uniqueItems": true,
-                  "items": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          }
-        ]
+        "required": [
+          "earning_activity",
+          "period"
+        ],
+        "additionalProperties": false
       },
       "LoyaltyV2ActivityEarningRuleEffectPointsExpiration": {
         "type": "object",
@@ -67813,7 +67763,12 @@
             "description": "Object type marker.",
             "const": "program_tier_structure"
           }
-        }
+        },
+        "required": [
+          "tier_structure_id",
+          "created_at",
+          "object"
+        ]
       },
       "ProgramTierStructureAssignmentListResponse": {
         "type": "object",
@@ -67842,7 +67797,12 @@
               }
             ]
           }
-        }
+        },
+        "required": [
+          "object",
+          "data",
+          "cursor"
+        ]
       },
       "ProgramTierStructureBatchResponse": {
         "type": "object",
@@ -67913,7 +67873,15 @@
             "description": "Object type marker.",
             "const": "program_reward"
           }
-        }
+        },
+        "required": [
+          "reward_id",
+          "stock",
+          "redeemed",
+          "created_at",
+          "updated_at",
+          "object"
+        ]
       },
       "ProgramRewardAssignmentListResponse": {
         "type": "object",
@@ -67942,7 +67910,12 @@
               }
             ]
           }
-        }
+        },
+        "required": [
+          "object",
+          "data",
+          "cursor"
+        ]
       },
       "ProgramRewardBatchResponse": {
         "type": "object",
@@ -79887,7 +79860,7 @@
             "description": "Triggering event type."
           },
           "custom_event": {
-            "description": "Custom event trigger context. Required when `event` is `customer.custom_event`; must be null for other events.",
+            "description": "Required when `event` is `customer.custom_event`. Absent for other events.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/LoyaltyV2ActivityEarningRuleTriggerCustomEvent"
@@ -79898,7 +79871,7 @@
             ]
           },
           "segment": {
-            "description": "Segment trigger context. Required when `event` is `customer.segment.entered`; must be null for other events.",
+            "description": "Required when `event` is `customer.segment.entered`. Absent for other events.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/LoyaltyV2ActivityEarningRuleTriggerSegment"
@@ -80358,7 +80331,7 @@
       },
       "EarningRuleEffectPointsProportional": {
         "type": "object",
-        "description": "Proportional points effect - awards points using an \"every X gives Y points\" formula.\nDepending on `calculation_type`, one specific configuration object is required and the\nothers must be null/absent:\n- `PRE_DISCOUNT_ORDER_AMOUNT`: requires `order.amount`\n- `POST_DISCOUNT_ORDER_AMOUNT`: requires `order.total_amount`\n- `ORDER_METADATA_VALUE`: requires `order.metadata`\n- `CUSTOMER_METADATA_VALUE`: requires `customer.metadata`\n- `CUSTOM_EVENT_METADATA_VALUE`: requires `custom_event.metadata`\n- `PRE_DISCOUNT_ORDER_ITEMS_AMOUNT`: requires `order_items.amount`\n- `POST_DISCOUNT_ORDER_ITEMS_AMOUNT`: requires `order_items.subtotal_amount`\n- `ORDER_ITEMS_QUANTITY`: requires `order_items.quantity`\nThe trigger further restricts allowed calculation types:\n`customer.order.paid` allows all order/order-items types plus `CUSTOMER_METADATA_VALUE`;\n`customer.custom_event` allows `CUSTOMER_METADATA_VALUE` and `CUSTOM_EVENT_METADATA_VALUE`;\n`customer.segment.entered` allows only `CUSTOMER_METADATA_VALUE`.",
+        "description": "Proportional points effect - awards points using an \"every X gives Y points\" formula.\nDepending on `calculation_type`, one specific configuration object is required and the others must be null/absent:\n- `PRE_DISCOUNT_ORDER_AMOUNT`: requires `order.amount`\n- `POST_DISCOUNT_ORDER_AMOUNT`: requires `order.total_amount`\n- `ORDER_METADATA_VALUE`: requires `order.metadata`\n- `CUSTOMER_METADATA_VALUE`: requires `customer.metadata`\n- `CUSTOM_EVENT_METADATA_VALUE`: requires `custom_event.metadata`\n- `PRE_DISCOUNT_ORDER_ITEMS_AMOUNT`: requires `order_items.amount`\n- `POST_DISCOUNT_ORDER_ITEMS_AMOUNT`: requires `order_items.subtotal_amount`\n- `ORDER_ITEMS_QUANTITY`: requires `order_items.quantity`\nThe trigger further restricts allowed calculation types:\n`customer.order.paid` allows all order/order-items types plus `CUSTOMER_METADATA_VALUE`;\n`customer.custom_event` allows `CUSTOMER_METADATA_VALUE` and `CUSTOM_EVENT_METADATA_VALUE`;\n`customer.segment.entered` allows only `CUSTOMER_METADATA_VALUE`.",
         "properties": {
           "calculation_type": {
             "type": "string",
@@ -81049,71 +81022,21 @@
       },
       "EarningRuleEffectPointsExpirationSlidingExpiration": {
         "type": "object",
-        "description": "Sliding expiration - points expire after a period of member inactivity. At least one of `earning_activity`, `spending_activity` or `custom_activity` must be `true`. When `custom_activity` is `true`, `custom_activity_types` is required (1-10 unique items).",
+        "description": "Sliding expiration. Points expire after a period of member inactivity.",
         "properties": {
           "earning_activity": {
             "type": "boolean",
             "description": "Whether earning activity resets the expiration window."
           },
-          "spending_activity": {
-            "type": "boolean",
-            "description": "Whether spending activity resets the expiration window."
-          },
-          "custom_activity": {
-            "type": "boolean",
-            "description": "Whether the listed custom activity types reset the expiration window."
-          },
-          "custom_activity_types": {
-            "description": "Custom activity type names. Required (1-10 unique items) when `custom_activity` is true. Can be `null`.",
-            "oneOf": [
-              {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                }
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
           "period": {
             "$ref": "#/components/schemas/LoyaltyV2ActivityEarningRuleEffectPointsExpirationSlidingExpirationPeriod"
           }
         },
-        "additionalProperties": false,
-        "allOf": [
-          {
-            "required": [
-              "period"
-            ]
-          },
-          {
-            "if": {
-              "properties": {
-                "custom_activity": {
-                  "const": true
-                }
-              }
-            },
-            "then": {
-              "required": [
-                "custom_activity_types"
-              ],
-              "properties": {
-                "custom_activity_types": {
-                  "type": "array",
-                  "minItems": 1,
-                  "maxItems": 10,
-                  "uniqueItems": true,
-                  "items": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          }
-        ]
+        "required": [
+          "earning_activity",
+          "period"
+        ],
+        "additionalProperties": false
       },
       "EarningRuleTierRules": {
         "type": "object",
@@ -81555,7 +81478,7 @@
           }
         ]
       },
-      "EarningRuleEarningResponse": {
+      "EarningRuleEarning": {
         "type": "object",
         "description": "An earning definition as returned by the API.",
         "properties": {
@@ -81574,34 +81497,27 @@
           },
           "rules": {
             "description": "Validation rules group. Absent when the earning has no rules.",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/EarningRuleRulesGroup"
-              },
-              {
-                "type": "null"
-              }
-            ]
+            "$ref": "#/components/schemas/EarningRuleRulesGroup"
           },
           "tier_rules": {
             "description": "Tier requirements. Defaults to `{ \"type\": \"NO_REQUIREMENTS\" }` when not explicitly configured.",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/EarningRuleTierRules"
-              },
-              {
-                "type": "null"
-              }
-            ]
+            "$ref": "#/components/schemas/EarningRuleTierRules"
           },
           "effects": {
             "type": "array",
-            "description": "Effects applied when the rules match.",
+            "minItems": 1,
+            "maxItems": 10,
+            "description": "Effects applied when the rules match. Contains 1 to 10 effects.",
             "items": {
               "$ref": "#/components/schemas/EarningRuleEffect"
             }
           }
-        }
+        },
+        "required": [
+          "id",
+          "tier_rules",
+          "effects"
+        ]
       },
       "EarningRuleResponse": {
         "type": "object",
@@ -81628,9 +81544,10 @@
           },
           "earnings": {
             "type": "array",
-            "description": "Earning definitions of the rule.",
+            "minItems": 1,
+            "description": "Earning definitions of the rule. Contains at least one earning.",
             "items": {
-              "$ref": "#/components/schemas/EarningRuleEarningResponse"
+              "$ref": "#/components/schemas/EarningRuleEarning"
             }
           },
           "trigger": {
@@ -81638,14 +81555,7 @@
           },
           "error": {
             "description": "Default error configuration. Absent when not configured.",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/LoyaltyV2ActivityEarningRuleError"
-              },
-              {
-                "type": "null"
-              }
-            ]
+            "$ref": "#/components/schemas/LoyaltyV2ActivityEarningRuleError"
           },
           "validity_hours": {
             "$ref": "#/components/schemas/EarningRuleValidityHours",
@@ -81668,15 +81578,31 @@
             "description": "Date-time until which the rule is active. Can be `null`."
           },
           "trigger_limits": {
-            "description": "Cooldown and frequency limits. In responses, `frequency.limits` is always an array (empty for `NO_LIMIT`).",
-            "oneOf": [
+            "description": "Cooldown and frequency limits. Always present. `cooldown` and `frequency` are always objects. `frequency.limits` is always an array and is empty when `frequency.type` is `NO_LIMIT`.",
+            "allOf": [
               {
                 "$ref": "#/components/schemas/EarningRuleTriggerLimits"
               },
               {
-                "type": "null"
+                "type": "object",
+                "required": [
+                  "cooldown",
+                  "frequency"
+                ],
+                "properties": {
+                  "cooldown": {
+                    "$ref": "#/components/schemas/EarningRuleTriggerLimitsCooldown"
+                  },
+                  "frequency": {
+                    "$ref": "#/components/schemas/EarningRuleTriggerLimitsFrequency"
+                  }
+                }
               }
             ]
+          },
+          "earning_limits": {
+            "description": "Limits how many points this rule can award. Always present. Defaults to no global limit (`global.type` `NO_LIMIT` and `global.limits` `[]`).",
+            "$ref": "#/components/schemas/LoyaltyV2ActivityEarningRuleEarningLimits"
           },
           "metadata": {
             "$ref": "#/components/schemas/LoyaltyV2ActivityMetadata",
@@ -81700,7 +81626,33 @@
             "const": "earning_rule",
             "description": "Object type marker. Always `earning_rule`."
           }
-        }
+        },
+        "required": [
+          "id",
+          "name",
+          "status",
+          "earnings",
+          "trigger",
+          "validity_hours",
+          "start_date",
+          "end_date",
+          "trigger_limits",
+          "earning_limits",
+          "metadata",
+          "created_at",
+          "updated_at",
+          "object"
+        ]
+      },
+      "V2LoyaltiesEarningRulesGetResponseBody": {
+        "title": "V2 Loyalties Earning Rules Get Response Body",
+        "type": "object",
+        "description": "Response body schema for **GET** `/v2/loyalties/earning-rules/{earningRuleId}`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EarningRuleResponse"
+          }
+        ]
       },
       "EarningRuleListCursor": {
         "type": [
@@ -86585,7 +86537,7 @@
             "description": "Current benefit status. `DELETED` appears only in the response of the delete endpoint and in activity snapshots."
           },
           "stock": {
-            "description": "Stock configuration. Omitted when not set.",
+            "description": "Stock configuration. Always present. Null stock is returned as `UNLIMITED` with `limited` omitted.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/BenefitStock"
@@ -86648,7 +86600,9 @@
           "name",
           "type",
           "status",
+          "stock",
           "created_at",
+          "updated_at",
           "object"
         ]
       },
@@ -89675,12 +89629,15 @@
           "name",
           "type",
           "status",
+          "start_date",
+          "end_date",
           "validity_hours",
           "refunds",
           "costs",
           "purchase_limits",
           "metadata",
           "created_at",
+          "updated_at",
           "object"
         ]
       },
@@ -89763,9 +89720,76 @@
           "type"
         ]
       },
+      "RewardCostTierRulesAnyOfEntryResponse": {
+        "type": "object",
+        "description": "Tier structure with the tiers that qualify for this cost.",
+        "properties": {
+          "tier_structure_id": {
+            "type": "string",
+            "pattern": "^lts_[a-f0-9]+$",
+            "description": "Identifies the tier structure."
+          },
+          "tier_ids": {
+            "type": "array",
+            "minItems": 1,
+            "description": "Lists the qualifying tier IDs.",
+            "items": {
+              "type": "string",
+              "pattern": "^lt_[a-f0-9]+$"
+            }
+          }
+        },
+        "required": [
+          "tier_structure_id",
+          "tier_ids"
+        ],
+        "additionalProperties": false
+      },
+      "RewardCostTierRulesResponse": {
+        "type": "object",
+        "description": "Tier requirements for a reward cost. `any_of` is omitted when `type` is `NO_REQUIREMENTS`.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "NO_REQUIREMENTS",
+              "ANY_OF"
+            ],
+            "description": "Tier requirement type."
+          },
+          "any_of": {
+            "type": "array",
+            "minItems": 1,
+            "description": "Lists tier combinations that qualify. Present when `type` is `ANY_OF`.",
+            "items": {
+              "$ref": "#/components/schemas/RewardCostTierRulesAnyOfEntryResponse"
+            }
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "ANY_OF"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "any_of"
+              ]
+            }
+          }
+        ]
+      },
       "RewardCostResponse": {
         "type": "object",
-        "description": "A reward cost. `rules` is omitted when the cost has no\nrule definitions; `spending` is null when no spending is defined.",
+        "description": "A reward cost. `rules` is omitted when the cost has no\nrule definitions; `spending` is null when no spending is defined. `tier_rules` is always present and defaults to `NO_REQUIREMENTS`.",
         "properties": {
           "id": {
             "type": "string",
@@ -89785,10 +89809,15 @@
             "items": {
               "$ref": "#/components/schemas/LoyaltyV2ActivityRewardCostSpendingResponse"
             }
+          },
+          "tier_rules": {
+            "$ref": "#/components/schemas/RewardCostTierRulesResponse",
+            "description": "Defines which tiers can use this cost. Always present. Defaults to `NO_REQUIREMENTS`."
           }
         },
         "required": [
-          "id"
+          "id",
+          "tier_rules"
         ]
       },
       "RewardCostRuleGroupResponse": {
@@ -92143,7 +92172,11 @@
             "$ref": "#/components/schemas/RewardPurchaseLimitsFrequency",
             "description": "How many times the reward can be purchased in a period."
           }
-        }
+        },
+        "required": [
+          "cooldown",
+          "frequency"
+        ]
       },
       "RewardPurchaseLimitsCooldownFixedCooldownPeriodInput": {
         "type": "object",
@@ -146838,7 +146871,7 @@
           "LV2-Programs"
         ],
         "summary": "List program tier structure assignments",
-        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nReturns a cursor-paginated list of tier structures assigned to the program.",
+        "description": "Returns a cursor-paginated list of tier structures assigned to the program.",
         "parameters": [
           {
             "name": "programId",
@@ -146922,7 +146955,7 @@
             }
           },
           "400": {
-            "description": "Validation error - request body or query parameters failed validation, or the operation is not allowed in the current resource state.",
+            "description": "Query parameters failed validation, or the cursor is invalid, expired, from another list, or does not match this query.",
             "content": {
               "application/json": {
                 "schema": {
@@ -146932,17 +146965,7 @@
             }
           },
           "404": {
-            "description": "Resource not found.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
+            "description": "Program not found. Returned for any unknown program id, including a value that does not match `lprg_[a-f0-9]+`.",
             "content": {
               "application/json": {
                 "schema": {
@@ -147101,7 +147124,7 @@
           "LV2-Programs"
         ],
         "summary": "List program reward assignments",
-        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nReturns a cursor-paginated list of rewards assigned to the program, including their stock configuration and redemption counters.",
+        "description": "Returns a cursor-paginated list of rewards assigned to the program, including their stock configuration and redemption counters.",
         "parameters": [
           {
             "name": "programId",
@@ -147185,7 +147208,7 @@
             }
           },
           "400": {
-            "description": "Validation error - request body or query parameters failed validation, or the operation is not allowed in the current resource state.",
+            "description": "Query parameters failed validation, or the cursor is invalid, expired, from another list, or does not match this query.",
             "content": {
               "application/json": {
                 "schema": {
@@ -147195,17 +147218,7 @@
             }
           },
           "404": {
-            "description": "Resource not found.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
+            "description": "Program not found. Returned for any unknown program id, including a value that does not match `lprg_[a-f0-9]+`.",
             "content": {
               "application/json": {
                 "schema": {
@@ -157728,40 +157741,162 @@
         ],
         "operationId": "getEarningRule",
         "summary": "Get earning rule",
-        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nReturns a single earning rule by its ID.",
+        "description": "Returns a single earning rule by its ID.",
         "responses": {
           "200": {
             "description": "Earning rule",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/EarningRuleResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Validation error - request body or query parameters failed validation, or the operation is not allowed in the current resource state.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                  "$ref": "#/components/schemas/V2LoyaltiesEarningRulesGetResponseBody"
+                },
+                "examples": {
+                  "Draft earning rule with effects": {
+                    "value": {
+                      "id": "lern_1329f334d5cba64cfb",
+                      "name": "Earning Rule Q42026",
+                      "status": "DRAFT",
+                      "earnings": [
+                        {
+                          "id": "lernei_1329f334d24ba64cf9",
+                          "name": "Earning VIP",
+                          "rules": {
+                            "1": {
+                              "name": "customer.segment",
+                              "conditions": {
+                                "$is": [
+                                  "seg_HFJezEkKnc0iHK50NWl6c6da"
+                                ]
+                              }
+                            },
+                            "logic": "1"
+                          },
+                          "tier_rules": {
+                            "type": "ANY_OF",
+                            "any_of": [
+                              {
+                                "tier_structure_id": "lts_128f4b460e4c4bedf6",
+                                "tier_ids": [
+                                  "lt_128f4b46808c4bee07"
+                                ]
+                              }
+                            ]
+                          },
+                          "effects": [
+                            {
+                              "type": "POINTS",
+                              "points": {
+                                "value": 30,
+                                "card_definition_id": "lcdef_1329efb2af8ba6486f"
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "id": "lernei_1329f334d24ba64cfa",
+                          "name": "Earning non-VIP",
+                          "tier_rules": {
+                            "type": "ANY_OF",
+                            "any_of": [
+                              {
+                                "tier_structure_id": "lts_128f4b460e4c4bedf6",
+                                "tier_ids": [
+                                  "lt_128f4b46808c4bee07"
+                                ]
+                              }
+                            ]
+                          },
+                          "effects": [
+                            {
+                              "type": "POINTS",
+                              "points": {
+                                "value": 10,
+                                "card_definition_id": "lcdef_1329efb2af8ba6486f"
+                              }
+                            }
+                          ]
+                        }
+                      ],
+                      "trigger": {
+                        "event": "customer.order.paid"
+                      },
+                      "validity_hours": {
+                        "type": "DAILY",
+                        "daily": [
+                          {
+                            "days_of_week": [
+                              0,
+                              5,
+                              6
+                            ],
+                            "start_time": "14:00",
+                            "end_time": "16:30"
+                          }
+                        ]
+                      },
+                      "start_date": null,
+                      "end_date": null,
+                      "trigger_limits": {
+                        "cooldown": {
+                          "type": "FIXED_COOLDOWN",
+                          "fixed_cooldown": {
+                            "period": {
+                              "value": 15,
+                              "unit": "DAY"
+                            }
+                          }
+                        },
+                        "frequency": {
+                          "type": "LIMITED",
+                          "limits": [
+                            {
+                              "type": "TIME_BASED",
+                              "period": {
+                                "type": "CURRENT_PERIOD",
+                                "current_period": {
+                                  "unit": "DAY"
+                                }
+                              },
+                              "triggers": {
+                                "max": 3
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      "earning_limits": {
+                        "global": {
+                          "type": "LIMITED",
+                          "limits": [
+                            {
+                              "type": "TIME_BASED",
+                              "period": {
+                                "type": "CURRENT_PERIOD",
+                                "current_period": {
+                                  "unit": "DAY"
+                                }
+                              },
+                              "points": {
+                                "max": 10
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      "metadata": {
+                        "Temporal": "true"
+                      },
+                      "created_at": "2026-10-09T13:32:13.008Z",
+                      "updated_at": null,
+                      "object": "earning_rule"
+                    }
+                  }
                 }
               }
             }
           },
           "404": {
-            "description": "Resource not found.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
+            "description": "The earning rule doesn't exist. A deleted earning rule is not found. `key` is `not_found` and `resource_type` is `earning_rule`.",
             "content": {
               "application/json": {
                 "schema": {
@@ -160105,7 +160240,7 @@
           "LV2-Benefits"
         ],
         "summary": "Get benefit",
-        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nReturns a single benefit by its ID.",
+        "description": "Returns a single benefit by its ID.",
         "responses": {
           "200": {
             "description": "The benefit",
@@ -160117,28 +160252,8 @@
               }
             }
           },
-          "400": {
-            "description": "Validation error - request body or query parameters failed validation, or the operation is not allowed in the current resource state.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
           "404": {
-            "description": "Resource not found.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
+            "description": "The benefit doesn't exist. A deleted benefit is not found. Returned for any unknown benefit id, including a value that does not match `lben_[a-f0-9]+`. `key` is `not_found` and `resource_type` is `benefit`.",
             "content": {
               "application/json": {
                 "schema": {
@@ -161139,7 +161254,7 @@
           "LV2-Rewards"
         ],
         "summary": "Get reward by ID",
-        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nReturns a single reward by its ID.",
+        "description": "Returns a single reward by its ID.",
         "parameters": [
           {
             "name": "rewardId",
@@ -161191,7 +161306,10 @@
                               "points": 100,
                               "card_definition_id": "lcdef_128f495f720c4bec8c"
                             }
-                          ]
+                          ],
+                          "tier_rules": {
+                            "type": "NO_REQUIREMENTS"
+                          }
                         }
                       ],
                       "purchase_limits": {
@@ -161232,28 +161350,8 @@
               }
             }
           },
-          "400": {
-            "description": "Validation error - request body or query parameters failed validation, or the operation is not allowed in the current resource state.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
           "404": {
-            "description": "Resource not found.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
+            "description": "The reward doesn't exist. A deleted reward is not found. Returned for any unknown reward id, including a value that does not match `lrew_[a-f0-9]+`. `key` is `not_found` and `resource_type` is `reward`.",
             "content": {
               "application/json": {
                 "schema": {
