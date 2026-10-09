@@ -81574,34 +81574,26 @@
           },
           "rules": {
             "description": "Validation rules group. Absent when the earning has no rules.",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/EarningRuleRulesGroup"
-              },
-              {
-                "type": "null"
-              }
-            ]
+            "$ref": "#/components/schemas/EarningRuleRulesGroup"
           },
           "tier_rules": {
             "description": "Tier requirements. Defaults to `{ \"type\": \"NO_REQUIREMENTS\" }` when not explicitly configured.",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/EarningRuleTierRules"
-              },
-              {
-                "type": "null"
-              }
-            ]
+            "$ref": "#/components/schemas/EarningRuleTierRules"
           },
           "effects": {
             "type": "array",
-            "description": "Effects applied when the rules match.",
+            "minItems": 1,
+            "description": "Effects applied when the rules match. Contains at least one effect.",
             "items": {
               "$ref": "#/components/schemas/EarningRuleEffect"
             }
           }
-        }
+        },
+        "required": [
+          "id",
+          "tier_rules",
+          "effects"
+        ]
       },
       "EarningRuleResponse": {
         "type": "object",
@@ -81628,7 +81620,8 @@
           },
           "earnings": {
             "type": "array",
-            "description": "Earning definitions of the rule.",
+            "minItems": 1,
+            "description": "Earning definitions of the rule. Contains at least one earning.",
             "items": {
               "$ref": "#/components/schemas/EarningRuleEarningResponse"
             }
@@ -81638,14 +81631,7 @@
           },
           "error": {
             "description": "Default error configuration. Absent when not configured.",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/LoyaltyV2ActivityEarningRuleError"
-              },
-              {
-                "type": "null"
-              }
-            ]
+            "$ref": "#/components/schemas/LoyaltyV2ActivityEarningRuleError"
           },
           "validity_hours": {
             "$ref": "#/components/schemas/EarningRuleValidityHours",
@@ -81668,15 +81654,31 @@
             "description": "Date-time until which the rule is active. Can be `null`."
           },
           "trigger_limits": {
-            "description": "Cooldown and frequency limits. In responses, `frequency.limits` is always an array (empty for `NO_LIMIT`).",
-            "oneOf": [
+            "description": "Cooldown and frequency limits. Always present. `cooldown` and `frequency` are always objects. `frequency.limits` is always an array and is empty when `frequency.type` is `NO_LIMIT`.",
+            "allOf": [
               {
                 "$ref": "#/components/schemas/EarningRuleTriggerLimits"
               },
               {
-                "type": "null"
+                "type": "object",
+                "required": [
+                  "cooldown",
+                  "frequency"
+                ],
+                "properties": {
+                  "cooldown": {
+                    "$ref": "#/components/schemas/EarningRuleTriggerLimitsCooldown"
+                  },
+                  "frequency": {
+                    "$ref": "#/components/schemas/EarningRuleTriggerLimitsFrequency"
+                  }
+                }
               }
             ]
+          },
+          "earning_limits": {
+            "description": "Limits how many points this rule can award. Always present. Defaults to no global limit (`global.type` `NO_LIMIT` and `global.limits` `[]`).",
+            "$ref": "#/components/schemas/LoyaltyV2ActivityEarningRuleEarningLimits"
           },
           "metadata": {
             "$ref": "#/components/schemas/LoyaltyV2ActivityMetadata",
@@ -81700,7 +81702,23 @@
             "const": "earning_rule",
             "description": "Object type marker. Always `earning_rule`."
           }
-        }
+        },
+        "required": [
+          "id",
+          "name",
+          "status",
+          "earnings",
+          "trigger",
+          "validity_hours",
+          "start_date",
+          "end_date",
+          "trigger_limits",
+          "earning_limits",
+          "metadata",
+          "created_at",
+          "updated_at",
+          "object"
+        ]
       },
       "EarningRuleListCursor": {
         "type": [
@@ -157728,7 +157746,7 @@
         ],
         "operationId": "getEarningRule",
         "summary": "Get earning rule",
-        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nReturns a single earning rule by its ID.",
+        "description": "Returns a single earning rule by its ID.",
         "responses": {
           "200": {
             "description": "Earning rule",
@@ -157740,28 +157758,8 @@
               }
             }
           },
-          "400": {
-            "description": "Validation error - request body or query parameters failed validation, or the operation is not allowed in the current resource state.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
           "404": {
-            "description": "Resource not found.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
+            "description": "The earning rule doesn't exist. A deleted earning rule is not found. `key` is `not_found` and `resource_type` is `earning_rule`.",
             "content": {
               "application/json": {
                 "schema": {

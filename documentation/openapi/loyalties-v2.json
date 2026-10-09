@@ -12462,7 +12462,7 @@
         ],
         "operationId": "getEarningRule",
         "summary": "Get earning rule",
-        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nReturns a single earning rule by its ID.",
+        "description": "Returns a single earning rule by its ID.",
         "responses": {
           "200": {
             "description": "Earning rule",
@@ -12474,28 +12474,8 @@
               }
             }
           },
-          "400": {
-            "description": "Validation error - request body or query parameters failed validation, or the operation is not allowed in the current resource state.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
           "404": {
-            "description": "Resource not found.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
+            "description": "The earning rule doesn't exist. A deleted earning rule is not found. `key` is `not_found` and `resource_type` is `earning_rule`.",
             "content": {
               "application/json": {
                 "schema": {
@@ -21642,7 +21622,8 @@
           },
           "earnings": {
             "type": "array",
-            "description": "Earning definitions of the rule.",
+            "minItems": 1,
+            "description": "Earning definitions of the rule. Contains at least one earning.",
             "items": {
               "$ref": "#/components/schemas/EarningRuleEarningResponse"
             }
@@ -21652,14 +21633,7 @@
           },
           "error": {
             "description": "Default error configuration. Absent when not configured.",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/LoyaltyV2ActivityEarningRuleError"
-              },
-              {
-                "type": "null"
-              }
-            ]
+            "$ref": "#/components/schemas/LoyaltyV2ActivityEarningRuleError"
           },
           "validity_hours": {
             "$ref": "#/components/schemas/EarningRuleValidityHours",
@@ -21682,15 +21656,31 @@
             "description": "Date-time until which the rule is active. Can be `null`."
           },
           "trigger_limits": {
-            "description": "Cooldown and frequency limits. In responses, `frequency.limits` is always an array (empty for `NO_LIMIT`).",
-            "oneOf": [
+            "description": "Cooldown and frequency limits. Always present. `cooldown` and `frequency` are always objects. `frequency.limits` is always an array and is empty when `frequency.type` is `NO_LIMIT`.",
+            "allOf": [
               {
                 "$ref": "#/components/schemas/EarningRuleTriggerLimits"
               },
               {
-                "type": "null"
+                "type": "object",
+                "required": [
+                  "cooldown",
+                  "frequency"
+                ],
+                "properties": {
+                  "cooldown": {
+                    "$ref": "#/components/schemas/EarningRuleTriggerLimitsCooldown"
+                  },
+                  "frequency": {
+                    "$ref": "#/components/schemas/EarningRuleTriggerLimitsFrequency"
+                  }
+                }
               }
             ]
+          },
+          "earning_limits": {
+            "description": "Limits how many points this rule can award. Always present. Defaults to no global limit (`global.type` `NO_LIMIT` and `global.limits` `[]`).",
+            "$ref": "#/components/schemas/LoyaltyV2ActivityEarningRuleEarningLimits"
           },
           "metadata": {
             "$ref": "#/components/schemas/LoyaltyV2ActivityMetadata",
@@ -21714,7 +21704,23 @@
             "const": "earning_rule",
             "description": "Object type marker. Always `earning_rule`."
           }
-        }
+        },
+        "required": [
+          "id",
+          "name",
+          "status",
+          "earnings",
+          "trigger",
+          "validity_hours",
+          "start_date",
+          "end_date",
+          "trigger_limits",
+          "earning_limits",
+          "metadata",
+          "created_at",
+          "updated_at",
+          "object"
+        ]
       },
       "LoyaltiesEarningRulesListRequestQuery": {
         "type": "object",
@@ -32243,34 +32249,197 @@
           },
           "rules": {
             "description": "Validation rules group. Absent when the earning has no rules.",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/EarningRuleRulesGroup"
-              },
-              {
-                "type": "null"
-              }
-            ]
+            "$ref": "#/components/schemas/EarningRuleRulesGroup"
           },
           "tier_rules": {
             "description": "Tier requirements. Defaults to `{ \"type\": \"NO_REQUIREMENTS\" }` when not explicitly configured.",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/EarningRuleTierRules"
-              },
-              {
-                "type": "null"
-              }
-            ]
+            "$ref": "#/components/schemas/EarningRuleTierRules"
           },
           "effects": {
             "type": "array",
-            "description": "Effects applied when the rules match.",
+            "minItems": 1,
+            "description": "Effects applied when the rules match. Contains at least one effect.",
             "items": {
               "$ref": "#/components/schemas/EarningRuleEffect"
             }
           }
-        }
+        },
+        "required": [
+          "id",
+          "tier_rules",
+          "effects"
+        ]
+      },
+      "EarningRuleTriggerLimitsCooldown": {
+        "type": "object",
+        "description": "Cooldown between consecutive triggers per member. With `NO_COOLDOWN`, `fixed_cooldown` must be null/absent. With `FIXED_COOLDOWN`, `fixed_cooldown` is required.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "NO_COOLDOWN",
+              "FIXED_COOLDOWN"
+            ],
+            "description": "Cooldown type."
+          },
+          "fixed_cooldown": {
+            "description": "Fixed cooldown configuration. Can be `null`.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/EarningRuleTriggerLimitsCooldownFixedCooldown"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "required": [
+              "type"
+            ]
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "NO_COOLDOWN"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "fixed_cooldown": {
+                  "type": "null"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "FIXED_COOLDOWN"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "fixed_cooldown"
+              ],
+              "properties": {
+                "fixed_cooldown": {
+                  "$ref": "#/components/schemas/EarningRuleTriggerLimitsCooldownFixedCooldown"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "EarningRuleTriggerLimitsFrequency": {
+        "type": "object",
+        "description": "Frequency limit for triggers per member. With `NO_LIMIT`, `limits` must be null or an empty array. With `LIMITED`, `limits` is required and must contain exactly one limit.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "NO_LIMIT",
+              "LIMITED"
+            ],
+            "description": "Frequency limit type."
+          },
+          "limits": {
+            "description": "Frequency limits (at most one). Can be `null`.",
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "type": "array",
+                "minItems": 0,
+                "maxItems": 1,
+                "items": {
+                  "$ref": "#/components/schemas/EarningRuleTriggerLimitsFrequencyLimit"
+                }
+              }
+            ]
+          }
+        },
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "required": [
+              "type"
+            ]
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "NO_LIMIT"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "limits": {
+                  "oneOf": [
+                    {
+                      "type": "array",
+                      "minItems": 0,
+                      "maxItems": 0,
+                      "items": {
+                        "$ref": "#/components/schemas/EarningRuleTriggerLimitsFrequencyLimit"
+                      }
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "LIMITED"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "limits"
+              ],
+              "properties": {
+                "limits": {
+                  "type": "array",
+                  "minItems": 1,
+                  "maxItems": 1,
+                  "items": {
+                    "$ref": "#/components/schemas/EarningRuleTriggerLimitsFrequencyLimit"
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      "LoyaltyV2ActivityEarningRuleEarningLimits": {
+        "type": "object",
+        "description": "Limits on points earned through this rule. Always present. Defaults to `{ \"global\": { \"type\": \"NO_LIMIT\", \"limits\": [] } }`. Unlike card definition earning limits, this object has no `transactions` key.",
+        "properties": {
+          "global": {
+            "$ref": "#/components/schemas/LoyaltyV2ActivityEarningRuleEarningLimitsGlobal"
+          }
+        },
+        "required": [
+          "global"
+        ],
+        "additionalProperties": false
       },
       "LoyaltiesEarningRulesListRequestQueryName": {
         "type": "object",
@@ -39454,77 +39623,59 @@
         ],
         "additionalProperties": false
       },
-      "EarningRuleTriggerLimitsCooldown": {
+      "EarningRuleTriggerLimitsCooldownFixedCooldown": {
         "type": "object",
-        "description": "Cooldown between consecutive triggers per member. With `NO_COOLDOWN`, `fixed_cooldown` must be null/absent. With `FIXED_COOLDOWN`, `fixed_cooldown` is required.",
+        "description": "Fixed cooldown period configuration.",
+        "properties": {
+          "period": {
+            "$ref": "#/components/schemas/LoyaltyV2ActivityEarningRuleTriggerLimitsCooldownFixedCooldownPeriod"
+          }
+        },
+        "required": [
+          "period"
+        ],
+        "additionalProperties": false
+      },
+      "EarningRuleTriggerLimitsFrequencyLimit": {
+        "type": "object",
+        "description": "A single frequency limit. Currently only the `TIME_BASED` variant exists (discriminated by `type`), which requires `period` and `triggers`.",
+        "required": [
+          "type"
+        ],
         "properties": {
           "type": {
             "type": "string",
             "enum": [
-              "NO_COOLDOWN",
-              "FIXED_COOLDOWN"
+              "TIME_BASED"
             ],
-            "description": "Cooldown type."
-          },
-          "fixed_cooldown": {
-            "description": "Fixed cooldown configuration. Can be `null`.",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/EarningRuleTriggerLimitsCooldownFixedCooldown"
-              },
-              {
-                "type": "null"
-              }
-            ]
+            "description": "Frequency limit variant."
           }
         },
-        "additionalProperties": false,
-        "allOf": [
+        "oneOf": [
           {
+            "type": "object",
+            "properties": {
+              "type": {
+                "const": "TIME_BASED"
+              },
+              "period": {
+                "$ref": "#/components/schemas/EarningRuleTriggerLimitsFrequencyLimitTimeBasedPeriod"
+              },
+              "triggers": {
+                "$ref": "#/components/schemas/LoyaltyV2ActivityEarningRuleTriggerLimitsFrequencyLimitTimeBasedTriggers"
+              }
+            },
             "required": [
-              "type"
-            ]
-          },
-          {
-            "if": {
-              "properties": {
-                "type": {
-                  "const": "NO_COOLDOWN"
-                }
-              }
-            },
-            "then": {
-              "properties": {
-                "fixed_cooldown": {
-                  "type": "null"
-                }
-              }
-            }
-          },
-          {
-            "if": {
-              "properties": {
-                "type": {
-                  "const": "FIXED_COOLDOWN"
-                }
-              }
-            },
-            "then": {
-              "required": [
-                "fixed_cooldown"
-              ],
-              "properties": {
-                "fixed_cooldown": {
-                  "$ref": "#/components/schemas/EarningRuleTriggerLimitsCooldownFixedCooldown"
-                }
-              }
-            }
+              "period",
+              "triggers"
+            ],
+            "additionalProperties": false
           }
         ]
       },
-      "EarningRuleTriggerLimitsFrequency": {
+      "LoyaltyV2ActivityEarningRuleEarningLimitsGlobal": {
         "type": "object",
-        "description": "Frequency limit for triggers per member. With `NO_LIMIT`, `limits` must be null or an empty array. With `LIMITED`, `limits` is required and must contain exactly one limit.",
+        "description": "Global (per member, across this rule) earning limits. With `NO_LIMIT`, `limits` is an empty array. With `LIMITED`, `limits` contains exactly one `TIME_BASED` limit.",
         "properties": {
           "type": {
             "type": "string",
@@ -39532,23 +39683,16 @@
               "NO_LIMIT",
               "LIMITED"
             ],
-            "description": "Frequency limit type."
+            "description": "Whether global earning limits apply."
           },
           "limits": {
-            "description": "Frequency limits (at most one). Can be `null`.",
-            "oneOf": [
-              {
-                "type": "null"
-              },
-              {
-                "type": "array",
-                "minItems": 0,
-                "maxItems": 1,
-                "items": {
-                  "$ref": "#/components/schemas/EarningRuleTriggerLimitsFrequencyLimit"
-                }
-              }
-            ]
+            "type": "array",
+            "description": "Earning limits (at most one). Empty array when `type` is `NO_LIMIT`.",
+            "minItems": 0,
+            "maxItems": 1,
+            "items": {
+              "$ref": "#/components/schemas/LoyaltyV2ActivityEarningRuleEarningLimitsGlobalLimit"
+            }
           }
         },
         "additionalProperties": false,
@@ -39569,19 +39713,12 @@
             "then": {
               "properties": {
                 "limits": {
-                  "oneOf": [
-                    {
-                      "type": "array",
-                      "minItems": 0,
-                      "maxItems": 0,
-                      "items": {
-                        "$ref": "#/components/schemas/EarningRuleTriggerLimitsFrequencyLimit"
-                      }
-                    },
-                    {
-                      "type": "null"
-                    }
-                  ]
+                  "type": "array",
+                  "minItems": 0,
+                  "maxItems": 0,
+                  "items": {
+                    "$ref": "#/components/schemas/LoyaltyV2ActivityEarningRuleEarningLimitsGlobalLimit"
+                  }
                 }
               }
             }
@@ -39604,7 +39741,7 @@
                   "minItems": 1,
                   "maxItems": 1,
                   "items": {
-                    "$ref": "#/components/schemas/EarningRuleTriggerLimitsFrequencyLimit"
+                    "$ref": "#/components/schemas/LoyaltyV2ActivityEarningRuleEarningLimitsGlobalLimit"
                   }
                 }
               }
@@ -42938,22 +43075,196 @@
         ],
         "additionalProperties": false
       },
-      "EarningRuleTriggerLimitsCooldownFixedCooldown": {
+      "LoyaltyV2ActivityEarningRuleTriggerLimitsCooldownFixedCooldownPeriod": {
         "type": "object",
-        "description": "Fixed cooldown period configuration.",
+        "description": "Cooldown period. The maximum `value` depends on `unit`: `HOUR` - 24, `DAY` - 90, `WEEK` - 52, `MONTH` - 12, `YEAR` - 1.",
         "properties": {
-          "period": {
-            "$ref": "#/components/schemas/LoyaltyV2ActivityEarningRuleTriggerLimitsCooldownFixedCooldownPeriod"
+          "value": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Period length. Maximum depends on `unit`: 24 for HOUR, 90 for DAY, 52 for WEEK, 12 for MONTH, 1 for YEAR."
+          },
+          "unit": {
+            "type": "string",
+            "enum": [
+              "HOUR",
+              "DAY",
+              "WEEK",
+              "MONTH",
+              "YEAR"
+            ],
+            "description": "Period unit."
+          }
+        },
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "required": [
+              "value",
+              "unit"
+            ]
+          },
+          {
+            "if": {
+              "properties": {
+                "unit": {
+                  "const": "HOUR"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "value": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 24
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "unit": {
+                  "const": "DAY"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "value": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 90
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "unit": {
+                  "const": "WEEK"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "value": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 52
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "unit": {
+                  "const": "MONTH"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "value": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 12
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "unit": {
+                  "const": "YEAR"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "value": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 1
+                }
+              }
+            }
+          }
+        ]
+      },
+      "EarningRuleTriggerLimitsFrequencyLimitTimeBasedPeriod": {
+        "type": "object",
+        "description": "Time-based frequency limit period. Currently only `CURRENT_PERIOD` is supported; when selected, `current_period` is required.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "CURRENT_PERIOD"
+            ],
+            "description": "Period type."
+          },
+          "current_period": {
+            "description": "Current calendar period configuration. Can be `null`.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LoyaltyV2ActivityEarningRuleTriggerLimitsFrequencyLimitTimeBasedCurrentPeriod"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "required": [
+              "type"
+            ]
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "CURRENT_PERIOD"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "current_period"
+              ],
+              "properties": {
+                "current_period": {
+                  "$ref": "#/components/schemas/LoyaltyV2ActivityEarningRuleTriggerLimitsFrequencyLimitTimeBasedCurrentPeriod"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "LoyaltyV2ActivityEarningRuleTriggerLimitsFrequencyLimitTimeBasedTriggers": {
+        "type": "object",
+        "description": "Maximum number of triggers allowed within the period.",
+        "properties": {
+          "max": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Maximum number of triggers per period."
           }
         },
         "required": [
-          "period"
+          "max"
         ],
         "additionalProperties": false
       },
-      "EarningRuleTriggerLimitsFrequencyLimit": {
+      "LoyaltyV2ActivityEarningRuleEarningLimitsGlobalLimit": {
         "type": "object",
-        "description": "A single frequency limit. Currently only the `TIME_BASED` variant exists (discriminated by `type`), which requires `period` and `triggers`.",
+        "description": "A single global earning limit. Currently only the `TIME_BASED` variant exists (discriminated by `type`), which requires `period` and `points`.",
         "required": [
           "type"
         ],
@@ -42963,7 +43274,7 @@
             "enum": [
               "TIME_BASED"
             ],
-            "description": "Frequency limit variant."
+            "description": "Earning limit variant."
           }
         },
         "oneOf": [
@@ -42974,15 +43285,15 @@
                 "const": "TIME_BASED"
               },
               "period": {
-                "$ref": "#/components/schemas/EarningRuleTriggerLimitsFrequencyLimitTimeBasedPeriod"
+                "$ref": "#/components/schemas/LoyaltyV2ActivityEarningRuleEarningLimitsGlobalTimeBasedPeriod"
               },
-              "triggers": {
-                "$ref": "#/components/schemas/LoyaltyV2ActivityEarningRuleTriggerLimitsFrequencyLimitTimeBasedTriggers"
+              "points": {
+                "$ref": "#/components/schemas/LoyaltyV2ActivityEarningRuleEarningLimitsGlobalTimeBasedPoints"
               }
             },
             "required": [
               "period",
-              "triggers"
+              "points"
             ],
             "additionalProperties": false
           }
@@ -44534,130 +44845,30 @@
         },
         "additionalProperties": false
       },
-      "LoyaltyV2ActivityEarningRuleTriggerLimitsCooldownFixedCooldownPeriod": {
+      "LoyaltyV2ActivityEarningRuleTriggerLimitsFrequencyLimitTimeBasedCurrentPeriod": {
         "type": "object",
-        "description": "Cooldown period. The maximum `value` depends on `unit`: `HOUR` - 24, `DAY` - 90, `WEEK` - 52, `MONTH` - 12, `YEAR` - 1.",
+        "description": "Current calendar period unit for the frequency limit.",
         "properties": {
-          "value": {
-            "type": "integer",
-            "minimum": 1,
-            "description": "Period length. Maximum depends on `unit`: 24 for HOUR, 90 for DAY, 52 for WEEK, 12 for MONTH, 1 for YEAR."
-          },
           "unit": {
             "type": "string",
             "enum": [
-              "HOUR",
               "DAY",
               "WEEK",
               "MONTH",
+              "QUARTER",
               "YEAR"
             ],
-            "description": "Period unit."
+            "description": "Calendar period unit."
           }
         },
-        "additionalProperties": false,
-        "allOf": [
-          {
-            "required": [
-              "value",
-              "unit"
-            ]
-          },
-          {
-            "if": {
-              "properties": {
-                "unit": {
-                  "const": "HOUR"
-                }
-              }
-            },
-            "then": {
-              "properties": {
-                "value": {
-                  "type": "integer",
-                  "minimum": 1,
-                  "maximum": 24
-                }
-              }
-            }
-          },
-          {
-            "if": {
-              "properties": {
-                "unit": {
-                  "const": "DAY"
-                }
-              }
-            },
-            "then": {
-              "properties": {
-                "value": {
-                  "type": "integer",
-                  "minimum": 1,
-                  "maximum": 90
-                }
-              }
-            }
-          },
-          {
-            "if": {
-              "properties": {
-                "unit": {
-                  "const": "WEEK"
-                }
-              }
-            },
-            "then": {
-              "properties": {
-                "value": {
-                  "type": "integer",
-                  "minimum": 1,
-                  "maximum": 52
-                }
-              }
-            }
-          },
-          {
-            "if": {
-              "properties": {
-                "unit": {
-                  "const": "MONTH"
-                }
-              }
-            },
-            "then": {
-              "properties": {
-                "value": {
-                  "type": "integer",
-                  "minimum": 1,
-                  "maximum": 12
-                }
-              }
-            }
-          },
-          {
-            "if": {
-              "properties": {
-                "unit": {
-                  "const": "YEAR"
-                }
-              }
-            },
-            "then": {
-              "properties": {
-                "value": {
-                  "type": "integer",
-                  "minimum": 1,
-                  "maximum": 1
-                }
-              }
-            }
-          }
-        ]
+        "required": [
+          "unit"
+        ],
+        "additionalProperties": false
       },
-      "EarningRuleTriggerLimitsFrequencyLimitTimeBasedPeriod": {
+      "LoyaltyV2ActivityEarningRuleEarningLimitsGlobalTimeBasedPeriod": {
         "type": "object",
-        "description": "Time-based frequency limit period. Currently only `CURRENT_PERIOD` is supported; when selected, `current_period` is required.",
+        "description": "Time-based earning limit period. Currently only `CURRENT_PERIOD` is supported; when selected, `current_period` is required.",
         "properties": {
           "type": {
             "type": "string",
@@ -44670,7 +44881,7 @@
             "description": "Current calendar period configuration. Can be `null`.",
             "oneOf": [
               {
-                "$ref": "#/components/schemas/LoyaltyV2ActivityEarningRuleTriggerLimitsFrequencyLimitTimeBasedCurrentPeriod"
+                "$ref": "#/components/schemas/LoyaltyV2ActivityEarningRuleEarningLimitsGlobalTimeBasedCurrentPeriod"
               },
               {
                 "type": "null"
@@ -44699,21 +44910,21 @@
               ],
               "properties": {
                 "current_period": {
-                  "$ref": "#/components/schemas/LoyaltyV2ActivityEarningRuleTriggerLimitsFrequencyLimitTimeBasedCurrentPeriod"
+                  "$ref": "#/components/schemas/LoyaltyV2ActivityEarningRuleEarningLimitsGlobalTimeBasedCurrentPeriod"
                 }
               }
             }
           }
         ]
       },
-      "LoyaltyV2ActivityEarningRuleTriggerLimitsFrequencyLimitTimeBasedTriggers": {
+      "LoyaltyV2ActivityEarningRuleEarningLimitsGlobalTimeBasedPoints": {
         "type": "object",
-        "description": "Maximum number of triggers allowed within the period.",
+        "description": "Maximum points that can be earned in the period.",
         "properties": {
           "max": {
             "type": "integer",
             "minimum": 1,
-            "description": "Maximum number of triggers per period."
+            "description": "Maximum points in the period."
           }
         },
         "required": [
@@ -45481,9 +45692,9 @@
         ],
         "additionalProperties": false
       },
-      "LoyaltyV2ActivityEarningRuleTriggerLimitsFrequencyLimitTimeBasedCurrentPeriod": {
+      "LoyaltyV2ActivityEarningRuleEarningLimitsGlobalTimeBasedCurrentPeriod": {
         "type": "object",
-        "description": "Current calendar period unit for the frequency limit.",
+        "description": "Current calendar period unit for the earning limit.",
         "properties": {
           "unit": {
             "type": "string",
