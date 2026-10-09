@@ -72843,6 +72843,153 @@
           "object"
         ]
       },
+      "LoyaltiesProgramsMembersCardsExpiringPointsListRequestQuery": {
+        "type": "object",
+        "description": "Request query schema for **GET** `/v2/loyalties/programs/{programId}/members/{memberId}/cards/{cardId}/expiring-points`.",
+        "properties": {
+          "junction": {
+            "description": "How multiple field filters are combined. Defaults to `AND`.",
+            "oneOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "AND",
+                  "OR"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "card_definition_id": {
+            "description": "Filters by card definition ID (ID conditions, values matching `^lcdef_[a-f0-9]+$`).",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LoyaltiesProgramsMembersCardsExpiringPointsListRequestQueryCardDefinitionId"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "expiration_date": {
+            "description": "Filters by expiration date (date conditions).",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/DateFilter"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false,
+        "title": "Loyalties Programs Members Cards Expiring Points List Request Query"
+      },
+      "LoyaltiesProgramsMembersCardsExpiringPointsListRequestQueryCardDefinitionId": {
+        "type": "object",
+        "description": "ID filter conditions for card definition IDs. At least one condition is required.",
+        "properties": {
+          "conditions": {
+            "type": "object",
+            "minProperties": 1,
+            "properties": {
+              "$is": {
+                "description": "Value equals. Single value or an array with exactly one value.",
+                "oneOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^lcdef_[a-f0-9]+$"
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "pattern": "^lcdef_[a-f0-9]+$"
+                    },
+                    "minItems": 1,
+                    "maxItems": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "$is_not": {
+                "description": "Value does not equal. Single value or an array with exactly one value.",
+                "oneOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^lcdef_[a-f0-9]+$"
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "pattern": "^lcdef_[a-f0-9]+$"
+                    },
+                    "minItems": 1,
+                    "maxItems": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "$in": {
+                "description": "Value is one of. Single value or an array of 1-100 values.",
+                "oneOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^lcdef_[a-f0-9]+$"
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "pattern": "^lcdef_[a-f0-9]+$"
+                    },
+                    "minItems": 1,
+                    "maxItems": 100
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "$not_in": {
+                "description": "Value is not one of. Single value or an array of 1-100 values.",
+                "oneOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^lcdef_[a-f0-9]+$"
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "pattern": "^lcdef_[a-f0-9]+$"
+                    },
+                    "minItems": 1,
+                    "maxItems": 100
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "conditions"
+        ],
+        "additionalProperties": false,
+        "title": "Loyalties Programs Members Cards Expiring Points List Request Query Card Definition Id"
+      },
       "LoyaltiesProgramsMembersCardsExpiringPointsListResponseBody": {
         "type": "object",
         "description": "Response body schema for **GET** `/v2/loyalties/programs/{programId}/members/{memberId}/cards/{cardId}/expiring-points`.\n\nCursor-paginated list of points expiration buckets.",
@@ -151224,7 +151371,7 @@
           "LV2-Programs"
         ],
         "summary": "List card expiring points buckets",
-        "description": "Returns a cursor-paginated list of `ACTIVE` point expiration buckets of the member's card. Each bucket groups active points sharing the same expiration date and expiration type. This means that expiration buckets can contain points earned through separate transactions.\n\nResults can be ordered by `expiration_date`.\n\nReturns an empty list if there are no `ACTIVE` buckets or if there are no point expiration settings for the card definition or earning rule (`NO_EXPIRATION`). Returns Returns `400` for invalid query parameters or an invalid, expired, or mismatched pagination cursor. Returns `404` when the program, member, or card does not exist.",
+        "description": "Returns a cursor-paginated list of `ACTIVE` point expiration buckets for the member's card. Each bucket groups points that share an expiration date and expiration type, including points from separate transactions.\n\nThe list starts on the current project day. Earlier buckets are omitted.\n\nResults can be filtered by card definition ID and expiration date, and ordered by `expiration_date`.\n\nReturns an empty list when the card has no matching buckets. Returns `400` when the query is invalid or the cursor is invalid, expired, or doesn't match the query. Returns `404` when the program or the member doesn't exist, or when the card isn't assigned to that member.",
         "parameters": [
           {
             "name": "limit",
@@ -151283,6 +151430,24 @@
               ],
               "pattern": "^lcrspeb_[a-f0-9]+$"
             }
+          },
+          {
+            "name": "filters",
+            "in": "query",
+            "required": false,
+            "style": "deepObject",
+            "explode": true,
+            "description": "Field-specific filter conditions, passed as a deep object, for example `filters[card_definition_id][conditions][$is]=lcdef_1297339938ae248cea`.",
+            "schema": {
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/LoyaltiesProgramsMembersCardsExpiringPointsListRequestQuery"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
           }
         ],
         "responses": {
@@ -151316,7 +151481,10 @@
                           "object": "card_points_bucket"
                         }
                       ],
-                      "cursor": "lcrspeb_12f5022f1ce873e0b5",
+                      "cursor": {
+                        "next": "lcrspeb_12f5022f1ce873e0b5",
+                        "expires_at": "2026-09-04T10:38:10.405Z"
+                      },
                       "object": "list"
                     }
                   }
