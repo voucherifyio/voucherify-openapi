@@ -12450,6 +12450,148 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/EarningRuleResponse"
+                },
+                "examples": {
+                  "Draft earning rule with effects": {
+                    "value": {
+                      "id": "lern_1329f334d5cba64cfb",
+                      "name": "Earning Rule Q42026",
+                      "status": "DRAFT",
+                      "earnings": [
+                        {
+                          "id": "lernei_1329f334d24ba64cf9",
+                          "name": "Earning VIP",
+                          "rules": {
+                            "1": {
+                              "name": "customer.segment",
+                              "conditions": {
+                                "$is": [
+                                  "seg_HFJezEkKnc0iHK50NWl6c6da"
+                                ]
+                              }
+                            },
+                            "logic": "1"
+                          },
+                          "tier_rules": {
+                            "type": "ANY_OF",
+                            "any_of": [
+                              {
+                                "tier_structure_id": "lts_128f4b460e4c4bedf6",
+                                "tier_ids": [
+                                  "lt_128f4b46808c4bee07"
+                                ]
+                              }
+                            ]
+                          },
+                          "effects": [
+                            {
+                              "type": "POINTS",
+                              "points": {
+                                "value": 30,
+                                "card_definition_id": "lcdef_1329efb2af8ba6486f"
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "id": "lernei_1329f334d24ba64cfa",
+                          "name": "Earning non-VIP",
+                          "tier_rules": {
+                            "type": "ANY_OF",
+                            "any_of": [
+                              {
+                                "tier_structure_id": "lts_128f4b460e4c4bedf6",
+                                "tier_ids": [
+                                  "lt_128f4b46808c4bee07"
+                                ]
+                              }
+                            ]
+                          },
+                          "effects": [
+                            {
+                              "type": "POINTS",
+                              "points": {
+                                "value": 10,
+                                "card_definition_id": "lcdef_1329efb2af8ba6486f"
+                              }
+                            }
+                          ]
+                        }
+                      ],
+                      "trigger": {
+                        "event": "customer.order.paid"
+                      },
+                      "validity_hours": {
+                        "type": "DAILY",
+                        "daily": [
+                          {
+                            "days_of_week": [
+                              0,
+                              5,
+                              6
+                            ],
+                            "start_time": "14:00",
+                            "end_time": "16:30"
+                          }
+                        ]
+                      },
+                      "start_date": null,
+                      "end_date": null,
+                      "trigger_limits": {
+                        "cooldown": {
+                          "type": "FIXED_COOLDOWN",
+                          "fixed_cooldown": {
+                            "period": {
+                              "value": 15,
+                              "unit": "DAY"
+                            }
+                          }
+                        },
+                        "frequency": {
+                          "type": "LIMITED",
+                          "limits": [
+                            {
+                              "type": "TIME_BASED",
+                              "period": {
+                                "type": "CURRENT_PERIOD",
+                                "current_period": {
+                                  "unit": "DAY"
+                                }
+                              },
+                              "triggers": {
+                                "max": 3
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      "earning_limits": {
+                        "global": {
+                          "type": "LIMITED",
+                          "limits": [
+                            {
+                              "type": "TIME_BASED",
+                              "period": {
+                                "type": "CURRENT_PERIOD",
+                                "current_period": {
+                                  "unit": "DAY"
+                                }
+                              },
+                              "points": {
+                                "max": 10
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      "metadata": {
+                        "Temporal": "true"
+                      },
+                      "created_at": "2026-10-09T13:32:13.008Z",
+                      "updated_at": null,
+                      "object": "earning_rule"
+                    }
+                  }
                 }
               }
             }
@@ -31932,7 +32074,7 @@
             "description": "Triggering event type."
           },
           "custom_event": {
-            "description": "Custom event trigger context. Required when `event` is `customer.custom_event`; must be null for other events.",
+            "description": "Required when `event` is `customer.custom_event`. Absent for other events.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/LoyaltyV2ActivityEarningRuleTriggerCustomEvent"
@@ -31943,7 +32085,7 @@
             ]
           },
           "segment": {
-            "description": "Segment trigger context. Required when `event` is `customer.segment.entered`; must be null for other events.",
+            "description": "Required when `event` is `customer.segment.entered`. Absent for other events.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/LoyaltyV2ActivityEarningRuleTriggerSegment"
@@ -32229,7 +32371,8 @@
           "effects": {
             "type": "array",
             "minItems": 1,
-            "description": "Effects applied when the rules match. Contains at least one effect.",
+            "maxItems": 10,
+            "description": "Effects applied when the rules match. Contains 1 to 10 effects.",
             "items": {
               "$ref": "#/components/schemas/EarningRuleEffect"
             }
@@ -45589,71 +45732,21 @@
       },
       "EarningRuleEffectPointsExpirationSlidingExpiration": {
         "type": "object",
-        "description": "Sliding expiration - points expire after a period of member inactivity. At least one of `earning_activity`, `spending_activity` or `custom_activity` must be `true`. When `custom_activity` is `true`, `custom_activity_types` is required (1-10 unique items).",
+        "description": "Sliding expiration. Points expire after a period of member inactivity.",
         "properties": {
           "earning_activity": {
             "type": "boolean",
             "description": "Whether earning activity resets the expiration window."
           },
-          "spending_activity": {
-            "type": "boolean",
-            "description": "Whether spending activity resets the expiration window."
-          },
-          "custom_activity": {
-            "type": "boolean",
-            "description": "Whether the listed custom activity types reset the expiration window."
-          },
-          "custom_activity_types": {
-            "description": "Custom activity type names. Required (1-10 unique items) when `custom_activity` is true. Can be `null`.",
-            "oneOf": [
-              {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                }
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
           "period": {
             "$ref": "#/components/schemas/LoyaltyV2ActivityEarningRuleEffectPointsExpirationSlidingExpirationPeriod"
           }
         },
-        "additionalProperties": false,
-        "allOf": [
-          {
-            "required": [
-              "period"
-            ]
-          },
-          {
-            "if": {
-              "properties": {
-                "custom_activity": {
-                  "const": true
-                }
-              }
-            },
-            "then": {
-              "required": [
-                "custom_activity_types"
-              ],
-              "properties": {
-                "custom_activity_types": {
-                  "type": "array",
-                  "minItems": 1,
-                  "maxItems": 10,
-                  "uniqueItems": true,
-                  "items": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          }
-        ]
+        "required": [
+          "earning_activity",
+          "period"
+        ],
+        "additionalProperties": false
       },
       "LoyaltyV2ActivityEarningRulePointsProportionalEvery": {
         "type": "object",
@@ -45922,7 +46015,7 @@
       },
       "LoyaltyV2ActivityEarningRuleEffectPointsExpirationRollingExpirationRounding": {
         "type": "object",
-        "description": "Rounding of the rolling expiration date. `value` (the month number, 1-12) is required for `END_OF_PARTICULAR_MONTH` and must be null for all other rounding types.",
+        "description": "`value` is the month (1-12). Required when `type` is `END_OF_PARTICULAR_MONTH`. Absent for other rounding types.",
         "properties": {
           "type": {
             "type": "string",
@@ -45936,7 +46029,7 @@
             "description": "Rounding type."
           },
           "value": {
-            "description": "Month number (1-12), only for `END_OF_PARTICULAR_MONTH`. `null`able otherwise.",
+            "description": "Month number (1-12). Present only when `type` is `END_OF_PARTICULAR_MONTH`.",
             "oneOf": [
               {
                 "type": "integer",
