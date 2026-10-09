@@ -11463,6 +11463,240 @@
         ]
       }
     },
+    "/v2/loyalties/programs/{programId}/reports/rewards/spendings/daily": {
+      "parameters": [
+        {
+          "name": "programId",
+          "in": "path",
+          "required": true,
+          "description": "Unique loyalty program identifier (format: `lprg_` followed by hexadecimal characters).",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "operationId": "getProgramRewardsSpendingsDailyReport",
+        "tags": [
+          "Programs"
+        ],
+        "summary": "Get program rewards spendings daily report",
+        "description": "Returns aggregated points spent on reward purchases for the program over the given date range and resolution. Each row covers one reward, reward cost, reward spending, card definition, and period with an approved point spend. Periods without an approved point spend are omitted. Optionally filters by reward, cost, spending, and card definition. A filter that matches no rows returns an empty `data` array.\n\nThe date range is limited per resolution:\n- 90 days for `day`,\n- 12 weeks for `week`,\n- 12 months for `month`,\n- 4 quarters for `quarter`,\n- `start_date` must be before `end_date`,\n- `start_date` and `end_date` are inclusive.\n\nReturns `400` when query validation fails. Returns `404` when the program does not exist.",
+        "parameters": [
+          {
+            "name": "start_date",
+            "in": "query",
+            "required": true,
+            "description": "Start of the report date range (inclusive), in `YYYY-MM-DD` format.",
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+            }
+          },
+          {
+            "name": "end_date",
+            "in": "query",
+            "required": true,
+            "description": "End of the report date range (inclusive), in `YYYY-MM-DD` format. Must be after `start_date`.",
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+            }
+          },
+          {
+            "name": "resolution",
+            "in": "query",
+            "required": true,
+            "description": "Aggregation resolution of the report. The allowed date range depends on the resolution: `day` – max 90 days; `week` – max 12 weeks; `month` – max 12 months; `quarter` – max 4 quarters.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "day",
+                "week",
+                "month",
+                "quarter"
+              ]
+            }
+          },
+          {
+            "name": "filters",
+            "in": "query",
+            "required": false,
+            "style": "deepObject",
+            "explode": true,
+            "description": "Filters rows by field conditions, e.g. `filters[reward_id][conditions][$is]=lrew_...`.",
+            "schema": {
+              "$ref": "#/components/schemas/RewardsSpendingsReportListFilters"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Program rewards spendings daily report.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoyaltiesProgramsReportsRewardsSpendingsDailyListResponseBody"
+                },
+                "examples": {
+                  "Daily rewards spendings report": {
+                    "value": {
+                      "data": [
+                        {
+                          "date": "2026-07-01",
+                          "reward_id": "lrew_128f4a88414c4bed6a",
+                          "cost_id": "lrcst_128f4a88414c4bed6b",
+                          "spending_id": "lrspn_128f4a88414c4bed6c",
+                          "card_definition_id": "lcdef_128f4a88414c4bed6d",
+                          "success_count": 1,
+                          "points": 100,
+                          "object": "program_rewards_spendings_daily_report"
+                        }
+                      ],
+                      "object": "report"
+                    }
+                  },
+                  "Empty rewards spendings daily report": {
+                    "value": {
+                      "data": [],
+                      "object": "report"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Query parameters failed validation, or `start_date` is not before `end_date`.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Invalid query parameters: `start_date` is required": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Query must have required property 'start_date'",
+                      "request_id": "v-131e4b76ad2e098941"
+                    }
+                  },
+                  "Invalid query parameters: `end_date` is required": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Query must have required property 'end_date'",
+                      "request_id": "v-131e4b76ad2e098942"
+                    }
+                  },
+                  "Invalid query parameters: `resolution` is required": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Query must have required property 'resolution'",
+                      "request_id": "v-131e4b76ad2e098943"
+                    }
+                  },
+                  "Invalid query parameters: `resolution` is invalid": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Property .resolution must be equal to one of the allowed values [ day, week, month, quarter ]",
+                      "request_id": "v-131e4b76ad2e098944"
+                    }
+                  },
+                  "Invalid query parameters: `start_date` is invalid": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Property .start_date cannot be recognized as a ISO-8601 compliant date",
+                      "request_id": "v-131e4b76ad2e098945"
+                    }
+                  },
+                  "Invalid query parameters: date range exceeds limit": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Query date range exceeds maximum allowed 90 days for resolution 'day'",
+                      "request_id": "v-131e4b76ad2e098946"
+                    }
+                  },
+                  "Invalid payload: `start_date` is not before `end_date`": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_payload",
+                      "message": "Invalid payload",
+                      "details": "Property 'start_date' must be before 'end_date'",
+                      "request_id": "v-131e4b76ad2e098947"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Program not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find program with id lprg_128f58429fc4bf7b2",
+                      "request_id": "v-131e4b76ad2e098948",
+                      "resource_id": "lprg_128f58429fc4bf7b2",
+                      "resource_type": "program"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Internal server error": {
+                    "value": {
+                      "code": 500,
+                      "key": "api_error",
+                      "message": "Something went wrong. Don't worry, your campaigns are still safe and the Voucherify Team has been notified. Check out our Help Center and forums for help, or head back to home."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": []
+          },
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
     "/v2/loyalties/programs/{programId}/reports/points-earnings/daily": {
       "get": {
         "operationId": "getProgramPointsEarningsDailyReport",
@@ -21745,6 +21979,95 @@
           "object"
         ]
       },
+      "RewardsSpendingsReportListFilters": {
+        "type": "object",
+        "description": "Filters for program rewards spendings reports.",
+        "properties": {
+          "junction": {
+            "description": "Logical junction between the field filters. Defaults to AND behavior.",
+            "oneOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "AND",
+                  "OR"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "reward_id": {
+            "description": "Filters by reward id.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/RewardsReportFilterRewardIdConditions"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "card_definition_id": {
+            "description": "Filters by card definition id.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/SpendingReportFilterCardDefinitionIdConditions"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "cost_id": {
+            "description": "Filters by reward cost id.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/RewardsSpendingsReportFilterCostIdConditions"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "spending_id": {
+            "description": "Filters by reward spending id.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/RewardsSpendingsReportFilterSpendingIdConditions"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "LoyaltiesProgramsReportsRewardsSpendingsDailyListResponseBody": {
+        "type": "object",
+        "title": "Loyalties Programs Reports Rewards Spendings Daily List Response Body",
+        "description": "Response body schema for **GET** `/v2/loyalties/programs/{programId}/reports/rewards/spendings/daily`.",
+        "properties": {
+          "data": {
+            "type": "array",
+            "description": "List of report entries, one per reward, cost, spending, card definition, and aggregation period with an approved point spend, ordered by `date` ascending. Empty when no approved point spend was recorded in the range.",
+            "items": {
+              "$ref": "#/components/schemas/RewardsSpendingsReportDailyEntry"
+            }
+          },
+          "object": {
+            "type": "string",
+            "const": "report",
+            "description": "Object type marker. Always `report`."
+          }
+        },
+        "required": [
+          "data",
+          "object"
+        ]
+      },
       "PointsEarningsReportListFilters": {
         "type": "object",
         "description": "Filters for program points-earnings reports.",
@@ -31284,6 +31607,262 @@
           "success_count",
           "failures_count",
           "failures_breakdown",
+          "object"
+        ]
+      },
+      "RewardsSpendingsReportFilterCostIdConditions": {
+        "type": "object",
+        "description": "ID filter conditions for reward cost id. Values must match pattern `^lrcst_[a-f0-9]+$`. `$is` and `$is_not` accept a single value (string or 1-element array). `$in` and `$not_in` accept a string or an array of 1-100 values.",
+        "properties": {
+          "conditions": {
+            "type": "object",
+            "minProperties": 1,
+            "additionalProperties": false,
+            "properties": {
+              "$is": {
+                "description": "Matches rows whose reward cost id equals the given value.",
+                "oneOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^lrcst_[a-f0-9]+$"
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "pattern": "^lrcst_[a-f0-9]+$"
+                    },
+                    "minItems": 1,
+                    "maxItems": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "$is_not": {
+                "description": "Matches rows whose reward cost id does not equal the given value.",
+                "oneOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^lrcst_[a-f0-9]+$"
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "pattern": "^lrcst_[a-f0-9]+$"
+                    },
+                    "minItems": 1,
+                    "maxItems": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "$in": {
+                "description": "Matches rows whose reward cost id is one of the given values.",
+                "oneOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^lrcst_[a-f0-9]+$"
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "pattern": "^lrcst_[a-f0-9]+$"
+                    },
+                    "minItems": 1,
+                    "maxItems": 100
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "$not_in": {
+                "description": "Matches rows whose reward cost id is not one of the given values.",
+                "oneOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^lrcst_[a-f0-9]+$"
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "pattern": "^lrcst_[a-f0-9]+$"
+                    },
+                    "minItems": 1,
+                    "maxItems": 100
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "required": [
+          "conditions"
+        ],
+        "additionalProperties": false
+      },
+      "RewardsSpendingsReportFilterSpendingIdConditions": {
+        "type": "object",
+        "description": "ID filter conditions for reward spending id. Values must match pattern `^lrspn_[a-f0-9]+$`. `$is` and `$is_not` accept a single value (string or 1-element array). `$in` and `$not_in` accept a string or an array of 1-100 values.",
+        "properties": {
+          "conditions": {
+            "type": "object",
+            "minProperties": 1,
+            "additionalProperties": false,
+            "properties": {
+              "$is": {
+                "description": "Matches rows whose reward spending id equals the given value.",
+                "oneOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^lrspn_[a-f0-9]+$"
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "pattern": "^lrspn_[a-f0-9]+$"
+                    },
+                    "minItems": 1,
+                    "maxItems": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "$is_not": {
+                "description": "Matches rows whose reward spending id does not equal the given value.",
+                "oneOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^lrspn_[a-f0-9]+$"
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "pattern": "^lrspn_[a-f0-9]+$"
+                    },
+                    "minItems": 1,
+                    "maxItems": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "$in": {
+                "description": "Matches rows whose reward spending id is one of the given values.",
+                "oneOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^lrspn_[a-f0-9]+$"
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "pattern": "^lrspn_[a-f0-9]+$"
+                    },
+                    "minItems": 1,
+                    "maxItems": 100
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "$not_in": {
+                "description": "Matches rows whose reward spending id is not one of the given values.",
+                "oneOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^lrspn_[a-f0-9]+$"
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "pattern": "^lrspn_[a-f0-9]+$"
+                    },
+                    "minItems": 1,
+                    "maxItems": 100
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "required": [
+          "conditions"
+        ],
+        "additionalProperties": false
+      },
+      "RewardsSpendingsReportDailyEntry": {
+        "type": "object",
+        "description": "Aggregated points spent on one reward cost and spending for one period and card definition. Counts and points that did not occur in the period are 0.",
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date",
+            "description": "Identifies the start of the truncated aggregation period (`YYYY-MM-DD`). For `week` this is Monday. For `month` this is the first day. For `quarter` this is the quarter start."
+          },
+          "reward_id": {
+            "type": "string",
+            "pattern": "^lrew_[a-f0-9]+$",
+            "description": "Identifies the reward (`lrew_...`)."
+          },
+          "cost_id": {
+            "type": "string",
+            "pattern": "^lrcst_[a-f0-9]+$",
+            "description": "Identifies the reward cost (`lrcst_...`)."
+          },
+          "spending_id": {
+            "type": "string",
+            "pattern": "^lrspn_[a-f0-9]+$",
+            "description": "Identifies the reward spending (`lrspn_...`)."
+          },
+          "card_definition_id": {
+            "type": "string",
+            "pattern": "^lcdef_[a-f0-9]+$",
+            "description": "Identifies the card definition (`lcdef_...`)."
+          },
+          "success_count": {
+            "type": "number",
+            "description": "Counts approved reward point spends in the period."
+          },
+          "points": {
+            "type": "number",
+            "description": "Totals points spent on those reward spends in the period."
+          },
+          "object": {
+            "type": "string",
+            "const": "program_rewards_spendings_daily_report",
+            "description": "Object type marker. Always `program_rewards_spendings_daily_report`."
+          }
+        },
+        "required": [
+          "date",
+          "reward_id",
+          "cost_id",
+          "spending_id",
+          "card_definition_id",
+          "success_count",
+          "points",
           "object"
         ]
       },
