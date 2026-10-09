@@ -7139,7 +7139,7 @@
           "Programs"
         ],
         "summary": "Refund reward purchase",
-        "description": "Refunds an `APPROVED` reward purchase made by a program member. The purchase transaction is marked `REFUNDED`, a new `REFUND` reward transaction is created with status `APPROVED`, and the points spent on the purchase are returned to the member's card.\n\nThe request body is optional and an empty payload is allowed. Policies default to `refund: DEFAULT` and `stock: DEFAULT`.\n\nThe endpoint responds with `202` before the card balance changes. A `POINTS_RETURNED` card transaction is created for the member's card and processed shortly after the response. Returned points receive a new expiration date, resolved from the member's tier or card definition points expiration settings. They do not inherit the expiration of the originally spent points.\n\nFor a `LOYALTY_CARD_POINTS` reward, the points credited to the target card are also reversed, with a `POINTS_PURCHASE_REVERSED` card transaction on that card.\n\nOnly rewards whose `refunds.type` is `REFUNDABLE` can be refunded. Any other reward is rejected with `423` and key `reward_refund_policy_does_not_allow_refunds`. Send `policies.refund: ALLOW` to force the refund.\n\nThe program and the reward transaction must exist within the project, otherwise the request fails with `404`. The request is rejected with `423` when:\n- The program is not `ACTIVE` (`non_active_program`) or is outside its validity hours (`program_outside_validity_window`),\n- The transaction is not a purchase (`non_purchase_reward_transaction`) or is not `APPROVED` (`non_approved_reward_transaction`); refunding the same purchase twice fails here,\n- The reward, its program assignment, the member's card, or the card definition no longer exists,\n- For `LOYALTY_CARD_POINTS` rewards, the target card no longer holds the purchased points, or returning the cost would exceed the source card earning limits.",
+        "description": "Refunds an `APPROVED` reward purchase made by a program member. The purchase transaction is marked `REFUNDED`, a new `REFUND` reward transaction is created with status `APPROVED`, and the points spent on the purchase are returned to the member's card.\n\nThe request body is optional and an empty payload is allowed. Policies default to `refund: DEFAULT` and `stock: DEFAULT`.\n\nThe endpoint responds with `202` before the card balance changes. A `POINTS_RETURNED` card transaction is created for the member's card and processed shortly after the response. When the member's tier or the card definition expires points, returned points receive a new expiration date from that setting. They don't inherit the expiration of the originally spent points. A `NO_EXPIRATION` setting leaves the returned points without an expiration date. Card earning limits don't block the refund.\n\nFor a `LOYALTY_CARD_POINTS` reward, the points credited to the target card are also reversed, with a `POINTS_PURCHASE_REVERSED` card transaction on that card. That transaction is processed shortly after the response. Its expiration is copied from the original points-purchased transaction.\n\nA `DISCOUNT_COUPONS` refund deletes the issued vouchers. `details.result.digital.discount_coupons[].result` is `DELETED`, or `SKIPPED` when the voucher isn't deleted. A `GIFT_VOUCHERS` refund subtracts the credited amount. `details.result.digital.gift_vouchers[].result` is `CREDITS_SUBTRACTED`, or `SKIPPED` when the balance update is rejected.\n\nThe refund reverses that purchase in the reward's purchase limits for the project-local day of the original purchase. A day whose purchases are all refunded no longer counts as the member's last purchase.\n\nOnly rewards whose `refunds.type` is `REFUNDABLE` can be refunded. Any other reward is rejected with `423` and key `reward_refund_policy_does_not_allow_refunds`. `policies.refund` set to `ALLOW` refunds it anyway.\n\nThe program must exist, and the reward transaction must belong to that program. Otherwise the request fails with `404`. The program is checked first. The request is rejected with `423` when:\n- The program isn't `ACTIVE` (`non_active_program`) or is outside its validity window (`program_outside_validity_window`),\n- The transaction isn't a purchase (`non_purchase_reward_transaction`) or isn't `APPROVED` (`non_approved_reward_transaction`); refunding the same purchase twice fails here,\n- The reward no longer exists (`reward_not_found`), isn't assigned to the program (`refund_reward_not_assigned_to_program`), the member's card is gone (`refund_card_not_found`), or the card definition is gone (`refund_card_definition_not_found`),\n- The reward type isn't supported (`reward_type_not_supported_for_refunds`),\n- For a `LOYALTY_CARD_POINTS` reward, the purchase result is missing (`loyalty_card_points_purchase_result_not_found`), the target card is gone (`loyalty_card_points_target_card_not_found`), the points-purchased card transaction is missing (`loyalty_card_points_purchase_not_found`), the target card's available balance is lower than the purchased points (`loyalty_card_points_insufficient_balance`), or the target card definition is gone (`loyalty_card_points_target_card_definition_not_found`).",
         "parameters": [],
         "requestBody": {
           "required": false,
@@ -7245,7 +7245,7 @@
             }
           },
           "404": {
-            "description": "Program or reward transaction not found.",
+            "description": "The program doesn't exist (`resource_type` `program`), or the reward transaction doesn't belong to that program (`resource_type` `reward_transaction`). The program is checked first.",
             "content": {
               "application/json": {
                 "schema": {
@@ -7279,7 +7279,7 @@
             }
           },
           "423": {
-            "description": "Locked. The program is not `ACTIVE` or is outside its validity window (`non_active_program`, `program_outside_validity_window`), the transaction is not an `APPROVED` `PURCHASE` (`non_purchase_reward_transaction`, `non_approved_reward_transaction`), or the reward refund policy does not allow refunds (`reward_refund_policy_does_not_allow_refunds`).",
+            "description": "Locked. The program isn't `ACTIVE` (`non_active_program`) or is outside its validity window (`program_outside_validity_window`). The transaction isn't an `APPROVED` `PURCHASE` (`non_purchase_reward_transaction`, `non_approved_reward_transaction`). The reward refund policy doesn't allow refunds (`reward_refund_policy_does_not_allow_refunds`). The reward, its program assignment, the source card, or the card definition is missing (`reward_not_found`, `refund_reward_not_assigned_to_program`, `refund_card_not_found`, `refund_card_definition_not_found`). The reward type isn't supported (`reward_type_not_supported_for_refunds`). For a `LOYALTY_CARD_POINTS` reward, the purchase result, target card, points-purchased transaction, or target card definition is missing, or the target card's available balance is lower than the purchased points (`loyalty_card_points_purchase_result_not_found`, `loyalty_card_points_target_card_not_found`, `loyalty_card_points_purchase_not_found`, `loyalty_card_points_insufficient_balance`, `loyalty_card_points_target_card_definition_not_found`).",
             "content": {
               "application/json": {
                 "schema": {
@@ -7302,6 +7302,15 @@
                       "message": "Cannot refund reward when transaction status is not APPROVED",
                       "details": "Invalid reward_transaction status",
                       "request_id": "v-12fa3cdc7fa4066775"
+                    }
+                  },
+                  "Target card balance too low": {
+                    "value": {
+                      "code": 423,
+                      "key": "loyalty_card_points_insufficient_balance",
+                      "message": "Cannot refund reward",
+                      "details": "Target card lcrd_128f962dbd8c4ba5e1 does not have enough points to reverse the loyalty card points purchase",
+                      "request_id": "v-12fa3cdc7fa4066776"
                     }
                   }
                 }
@@ -19806,14 +19815,7 @@
         "properties": {
           "transaction": {
             "description": "The created REFUND-type reward transaction.",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/RewardPurchaseTransaction"
-              },
-              {
-                "type": "null"
-              }
-            ]
+            "$ref": "#/components/schemas/RewardPurchaseTransaction"
           },
           "status": {
             "type": "string",
