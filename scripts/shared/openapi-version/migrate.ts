@@ -1,3 +1,5 @@
+import { mergeJsonSchemaConditionals } from "./merge-json-schema-conditionals";
+
 /**
  * Converts this repository's OpenAPI 3.0.1 dialect to 3.1.0 and back.
  *
@@ -25,6 +27,10 @@
  * replaces it with a one-value `enum` in the same key position and marks
  * that enum with `x-openapi-31-const`. Upgrade restores `const` only when
  * the mark is present, so a one-value enum written by hand stays an enum.
+ *
+ * `if`, `then`, `else`, and `not` stay in this reversible downgrade.
+ * Generator entry points fold them afterwards with
+ * `mergeJsonSchemaConditionals`. That fold is not reversed by upgrade.
  *
  * Key order is part of the round-trip. `nullable` immediately before
  * `type` is encoded as `["null", "<type>"]`. Any other position is stored
@@ -108,8 +114,10 @@ export function ensureOpenApi301<T extends { openapi: string }>(
 
 /**
  * SDK prep opts in with `downgradeTo301`. Generators that must keep today's
- * 3.0.1 output call `ensureOpenApi301` directly.
+ * 3.0.1 output call this directly.
  * The clone goes through JSON so a TypeScript JSON import can be copied.
+ * After the reversible downgrade, `if` / `then` / `else` / `not` are folded
+ * into the parent object. Upgrade does not restore those keywords.
  */
 export function applySdkOpenApiVersion<T extends { openapi: string }>(
   document: T,
@@ -118,7 +126,8 @@ export function applySdkOpenApiVersion<T extends { openapi: string }>(
   if (!downgradeTo301) {
     return document;
   }
-  return ensureOpenApi301(JSON.parse(JSON.stringify(document)) as T);
+  const cloned = JSON.parse(JSON.stringify(document)) as T;
+  return mergeJsonSchemaConditionals(ensureOpenApi301(cloned));
 }
 
 function upgradeValue(value: JsonValue, path: string): JsonValue {

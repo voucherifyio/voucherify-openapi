@@ -49,6 +49,7 @@ SDK prep and the production build both:
 
 - drop Loyalty v2 paths and schemas only those paths reach before downgrade (`documentWithoutLoyaltyV2`)
 - downgrade 3.1.0 to 3.0.1 (`scripts/shared/openapi-version/migrate.ts`)
+- fold JSON Schema `if` / `then` / `else` / `not` into the parent object (`mergeJsonSchemaConditionals`) so a generator never sees those keywords
 - drop the `webhooks` key (`omitWebhooks` in `scripts/shared/openapi-webhooks/reachable-schemas.ts`)
 - keep only schemas reachable from `paths`
 - turn a bare `"type": "null"` into an OpenAPI 3.0 nullable object (`parseNullsToNullableObjects`)

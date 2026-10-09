@@ -8,6 +8,7 @@ import {
   ensureOpenApi301,
   upgradeOpenApi301To310,
 } from "./migrate";
+import { mergeJsonSchemaConditionals } from "./merge-json-schema-conditionals";
 
 const stringify = (value: unknown) => JSON.stringify(value, null, 2);
 
@@ -608,11 +609,14 @@ describe("OpenAPI 3.0.1 ↔ 3.1.0", () => {
 
     expect(document.openapi).toBe("3.1.0");
     // SDK prep drops Loyalty v2 before downgrade. `type: ["null"]` there
-    // cannot be written as OpenAPI 3.0.1 nullable.
+    // cannot be written as OpenAPI 3.0.1 nullable. The generator fold then
+    // deletes if/then/not, which upgrade does not restore.
     const api = documentWithoutLoyaltyV2(document);
     const as301 = applySdkOpenApiVersion(api, true);
     expect(as301.openapi).toBe("3.0.1");
-    expect(stringify(upgradeOpenApi301To310(as301))).toBe(stringify(api));
+    expect(stringify(upgradeOpenApi301To310(as301))).toBe(
+      stringify(mergeJsonSchemaConditionals(api)),
+    );
   });
 
   it("round-trips reference/OpenAPI.json without trailing spaces", () => {
@@ -620,7 +624,9 @@ describe("OpenAPI 3.0.1 ↔ 3.1.0", () => {
     const raw = fs.readFileSync(filePath, "utf8");
     const document = JSON.parse(raw);
 
-    expect(serializeOpenApiDocument(document)).toBe(raw.replace(/[ \t]+$/gm, ""));
+    expect(serializeOpenApiDocument(document)).toBe(
+      raw.replace(/[ \t]+$/gm, ""),
+    );
 
     if (document.openapi === "3.0.1") {
       const upgraded = upgradeOpenApi301To310(document);
