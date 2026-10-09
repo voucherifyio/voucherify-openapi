@@ -5726,7 +5726,7 @@
           "Programs"
         ],
         "summary": "Activate pending point bucket",
-        "description": "Manually activates a pending points bucket before its scheduled activation date, creating a `PENDING_POINTS_ACTIVATED` card transaction (status `PENDING`, processed asynchronously). No request body.\n\nThe program and member must be in the `ACTIVE` status now, the card definition must have pending points enabled, the bucket must be in `PENDING` status, and the bucket's activation date must be in the future (`423` otherwise). Returns `404` when the program, member, card or bucket does not exist.",
+        "description": "Activates a pending points bucket and creates a `PENDING_POINTS_ACTIVATED` card transaction. The transaction is created with status `PENDING` and processed asynchronously. No request body.\n\nThe bucket must be `PENDING`, and its `date` must be after the current project day. The program and the member must be `ACTIVE`, and the program must be inside its validity window. Otherwise the response is `423`.\n\nReturns `404` when the program or the member doesn't exist, when the card isn't assigned to that member, or when the bucket isn't on that card.",
         "responses": {
           "200": {
             "description": "Result of the pending points activation.",
@@ -5826,7 +5826,7 @@
             }
           },
           "423": {
-            "description": "Resource locked. Returned when activation is not allowed (inactive program/member, pending points disabled, bucket not `PENDING`, activation date not in the future, or program outside its validity window).",
+            "description": "The program or member isn't `ACTIVE`, the program is outside its validity window, the bucket isn't `PENDING`, or the bucket `date` isn't after the current project day.",
             "content": {
               "application/json": {
                 "schema": {
@@ -5840,6 +5840,42 @@
                       "message": "Invalid pending points bucket status",
                       "details": "Pending points bucket must be in PENDING status in order to be activated",
                       "request_id": "v-12d782251047858c7e"
+                    }
+                  },
+                  "Bucket date not in the future": {
+                    "value": {
+                      "code": 423,
+                      "key": "bucket_not_eligible_for_manual_activation",
+                      "message": "Manual activation not available",
+                      "details": "Only future-dated buckets can be manually activated",
+                      "request_id": "v-12d782251047858c7f"
+                    }
+                  },
+                  "Program inactive": {
+                    "value": {
+                      "code": 423,
+                      "key": "non_active_program",
+                      "message": "Cannot activate member's card pending points when program status is not ACTIVE",
+                      "details": "Invalid program status",
+                      "request_id": "v-12d782251047858c80"
+                    }
+                  },
+                  "Program outside validity window": {
+                    "value": {
+                      "code": 423,
+                      "key": "program_outside_validity_window",
+                      "message": "Program is not available at this time",
+                      "details": "Cannot activate member's card pending points when program is not active at this time",
+                      "request_id": "v-12d782251047858c81"
+                    }
+                  },
+                  "Member inactive": {
+                    "value": {
+                      "code": 423,
+                      "key": "non_active_member",
+                      "message": "Cannot activate member's card pending points when member status is not ACTIVE",
+                      "details": "Invalid member status",
+                      "request_id": "v-12d782251047858c82"
                     }
                   }
                 }
@@ -19422,26 +19458,21 @@
         "description": "Response body schema for **POST** `/v2/loyalties/programs/{programId}/members/{memberId}/cards/{cardId}/pending-points/{bucketId}/activate`.\n\nResult of a manual pending points activation. This endpoint always returns status `TRANSACTION_CREATED` on success.",
         "properties": {
           "transaction": {
-            "description": "The created `PENDING_POINTS_ACTIVATED` card transaction, or `null`.",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/CardTransaction"
-              },
-              {
-                "type": "null"
-              }
-            ]
+            "description": "The created `PENDING_POINTS_ACTIVATED` card transaction.",
+            "$ref": "#/components/schemas/CardTransaction"
           },
           "status": {
             "type": "string",
             "enum": [
-              "TRANSACTION_CREATED",
-              "NO_ACTIVATION"
+              "TRANSACTION_CREATED"
             ],
-            "description": "Result status. The API endpoint returns `TRANSACTION_CREATED`."
+            "description": "Result status. Always `TRANSACTION_CREATED`."
           },
           "message": {
             "type": "string",
+            "enum": [
+              "Points activation transaction created"
+            ],
             "description": "Human-readable result message - \"Points activation transaction created\"."
           }
         },
