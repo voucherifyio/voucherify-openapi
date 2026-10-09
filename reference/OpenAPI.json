@@ -93062,18 +93062,16 @@
       },
       "EarningRulesReportFailuresBreakdown": {
         "type": "object",
-        "description": "Breakdown of earning-rule failures by reason. Keys such as `cooldown` and `frequency` report counts for each failure reason. Defaults to `{}`.",
-        "additionalProperties": {
-          "type": "number"
-        },
+        "description": "Counts failed trigger-limit checks by reason. `COOLDOWN` and `FREQUENCY` are present only when that reason was recorded. Empty when no failures were recorded.",
+        "additionalProperties": false,
         "properties": {
-          "cooldown": {
+          "COOLDOWN": {
             "type": "number",
-            "description": "Number of failures caused by cooldown restrictions."
+            "description": "Counts failures caused by the cooldown limit."
           },
-          "frequency": {
+          "FREQUENCY": {
             "type": "number",
-            "description": "Number of failures caused by frequency restrictions."
+            "description": "Counts failures caused by the frequency limit."
           }
         }
       },
@@ -93125,7 +93123,8 @@
         "properties": {
           "id": {
             "type": "string",
-            "description": "Unique identifier of the summary row."
+            "pattern": "^lpers_[a-f0-9]+$",
+            "description": "Identifies the summary row (format: `lpers_` followed by hexadecimal characters)."
           },
           "earning_rule_id": {
             "type": "string",
@@ -93134,22 +93133,30 @@
           },
           "success_count": {
             "type": "number",
-            "description": "Total number of successful earning-rule evaluations."
+            "description": "Counts eligibility checks that passed the trigger limit."
           },
           "failures_count": {
             "type": "number",
-            "description": "Total number of failed earning-rule evaluations."
+            "description": "Counts eligibility checks that failed the trigger limit."
           },
           "failures_breakdown": {
             "$ref": "#/components/schemas/EarningRulesReportFailuresBreakdown",
-            "description": "Breakdown of failures by reason."
+            "description": "Counts failed trigger-limit checks by reason. Empty when no failures were recorded."
           },
           "object": {
             "type": "string",
             "const": "program_earning_rules_summary_report",
             "description": "Object type marker. Always `program_earning_rules_summary_report`."
           }
-        }
+        },
+        "required": [
+          "id",
+          "earning_rule_id",
+          "success_count",
+          "failures_count",
+          "failures_breakdown",
+          "object"
+        ]
       },
       "EarningRulesReportDailyResponse": {
         "type": "object",
@@ -93179,7 +93186,7 @@
         "properties": {
           "data": {
             "type": "array",
-            "description": "Report entries, one per earning rule.",
+            "description": "List of summary rows, one per earning rule with recorded activity, ordered by `id` descending. Contains at most 100 rows. Empty when no activity was recorded.",
             "items": {
               "$ref": "#/components/schemas/EarningRulesReportSummaryEntry"
             }
@@ -93189,7 +93196,11 @@
             "const": "report",
             "description": "Object type marker. Always `report`."
           }
-        }
+        },
+        "required": [
+          "data",
+          "object"
+        ]
       },
       "EarningRuleDailyReportEntry": {
         "type": "object",
@@ -157068,7 +157079,7 @@
           "LV2-Programs"
         ],
         "summary": "Get program earning-rules summary report",
-        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nReturns total earning-rule evaluation statistics for the program (all time), optionally filtered by earning rule. Includes success and failure counts with a failures breakdown.",
+        "description": "Returns total earning-rule evaluation statistics for the program (all time), optionally filtered by earning rule. Includes success and failure counts with a failures breakdown. Each entry counts eligibility checks for one earning rule. Returns at most 100 rows, ordered by `id` descending. `limit` and `order` are not query parameters. A filter that matches no rows returns an empty `data` array.\n\nReturns `400` when query validation fails. Returns `404` when the program does not exist.",
         "parameters": [
           {
             "name": "programId",
@@ -157099,16 +157110,67 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/EarningRulesReportSummaryResponse"
+                },
+                "examples": {
+                  "Program earning-rules summary report": {
+                    "value": {
+                      "data": [
+                        {
+                          "id": "lpers_12c2bc3be20c8cb533",
+                          "earning_rule_id": "lern_128f9ee63cc4ba558",
+                          "success_count": 1,
+                          "failures_count": 0,
+                          "failures_breakdown": {},
+                          "object": "program_earning_rules_summary_report"
+                        }
+                      ],
+                      "object": "report"
+                    }
+                  },
+                  "Program earning-rules summary report: Cooldown failure": {
+                    "value": {
+                      "data": [
+                        {
+                          "id": "lpers_12c2bc3be20c8cb534",
+                          "earning_rule_id": "lern_128f9ee63cc4ba558",
+                          "success_count": 0,
+                          "failures_count": 1,
+                          "failures_breakdown": {
+                            "COOLDOWN": 1
+                          },
+                          "object": "program_earning_rules_summary_report"
+                        }
+                      ],
+                      "object": "report"
+                    }
+                  },
+                  "Program earning-rules summary report: No activity": {
+                    "value": {
+                      "data": [],
+                      "object": "report"
+                    }
+                  }
                 }
               }
             }
           },
           "400": {
-            "description": "Validation error - request body or query parameters failed validation, or the operation is not allowed in the current resource state.",
+            "description": "Query parameters failed validation.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Invalid query parameters: `earning_rule_id` is invalid": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Property .filters.earning_rule_id.conditions.$is must match pattern \"^lern_[a-f0-9]+$\"",
+                      "request_id": "v-131e4b76ad2e098947"
+                    }
+                  }
                 }
               }
             }
@@ -157119,6 +157181,19 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Program not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find program with id lprg_28f58429f4c4bf7b2",
+                      "request_id": "v-131e61d450c264502f",
+                      "resource_id": "lprg_28f58429f4c4bf7b2",
+                      "resource_type": "program"
+                    }
+                  }
                 }
               }
             }
