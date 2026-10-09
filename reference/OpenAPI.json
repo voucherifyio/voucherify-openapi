@@ -92907,6 +92907,132 @@
           "object"
         ]
       },
+      "MembersReportDailyEntry": {
+        "type": "object",
+        "description": "Member and card changes for one aggregation period. Counters that did not change in the period are 0.",
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date",
+            "description": "Identifies the start of the truncated aggregation period (`YYYY-MM-DD`). For `week` this is Monday. For `month` this is the first day. For `quarter` this is the quarter start."
+          },
+          "members_joined": {
+            "type": "number",
+            "description": "Counts members who joined the program in the period."
+          },
+          "members_deactivated": {
+            "type": "number",
+            "description": "Counts members deactivated in the period. Decreases by 1 when a member is activated again."
+          },
+          "members_deleted": {
+            "type": "number",
+            "description": "Counts members deleted in the period."
+          },
+          "cards": {
+            "type": "number",
+            "description": "Counts cards created in the period. Decreases by 1 when a card is unassigned."
+          },
+          "object": {
+            "type": "string",
+            "const": "program_members_daily_report",
+            "description": "Object type marker. Always `program_members_daily_report`."
+          }
+        },
+        "required": [
+          "date",
+          "members_joined",
+          "members_deactivated",
+          "members_deleted",
+          "cards",
+          "object"
+        ]
+      },
+      "LoyaltiesProgramsReportsMembersDailyListResponseBody": {
+        "type": "object",
+        "title": "Loyalties Programs Reports Members Daily List Response Body",
+        "description": "Response body schema for **GET** `/v2/loyalties/programs/{programId}/reports/members/daily`.",
+        "properties": {
+          "data": {
+            "type": "array",
+            "description": "List of report entries, one per aggregation period with recorded activity, ordered by `date` ascending. Empty when no activity was recorded in the range.",
+            "items": {
+              "$ref": "#/components/schemas/MembersReportDailyEntry"
+            }
+          },
+          "object": {
+            "type": "string",
+            "const": "report",
+            "description": "Object type marker. Always `report`."
+          }
+        },
+        "required": [
+          "data",
+          "object"
+        ]
+      },
+      "MembersReportSummaryEntry": {
+        "type": "object",
+        "description": "All-time member and card changes for the program. Counters that did not change are 0.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^lpmrs_[a-f0-9]+$",
+            "description": "Identifies the summary row (format: `lpmrs_` followed by hexadecimal characters)."
+          },
+          "members_joined": {
+            "type": "number",
+            "description": "Counts members who joined the program."
+          },
+          "members_deactivated": {
+            "type": "number",
+            "description": "Counts members deactivated. Decreases by 1 when a member is activated again."
+          },
+          "members_deleted": {
+            "type": "number",
+            "description": "Counts members deleted."
+          },
+          "cards": {
+            "type": "number",
+            "description": "Counts cards created. Decreases by 1 when a card is unassigned."
+          },
+          "object": {
+            "type": "string",
+            "const": "program_members_summary_report",
+            "description": "Object type marker. Always `program_members_summary_report`."
+          }
+        },
+        "required": [
+          "id",
+          "members_joined",
+          "members_deactivated",
+          "members_deleted",
+          "cards",
+          "object"
+        ]
+      },
+      "LoyaltiesProgramsReportsMembersSummaryListResponseBody": {
+        "type": "object",
+        "title": "Loyalties Programs Reports Members Summary List Response Body",
+        "description": "Response body schema for **GET** `/v2/loyalties/programs/{programId}/reports/members/summary`.",
+        "properties": {
+          "data": {
+            "type": "array",
+            "description": "List of summary rows for the program. Contains one row when activity was recorded, ordered by `id` descending. Empty when no activity was recorded.",
+            "items": {
+              "$ref": "#/components/schemas/MembersReportSummaryEntry"
+            }
+          },
+          "object": {
+            "type": "string",
+            "const": "report",
+            "description": "Object type marker. Always `report`."
+          }
+        },
+        "required": [
+          "data",
+          "object"
+        ]
+      },
       "MemberTierProgressTier": {
         "type": "object",
         "description": "Tier reference with id and name.",
@@ -158026,6 +158152,344 @@
                       "message": "Resource not found",
                       "details": "Cannot find program with id lprg_128f58429fc4bf7b2",
                       "request_id": "v-131e4b76ad2e098952",
+                      "resource_id": "lprg_128f58429fc4bf7b2",
+                      "resource_type": "program"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Internal server error": {
+                    "value": {
+                      "code": 500,
+                      "key": "api_error",
+                      "message": "Something went wrong. Don't worry, your campaigns are still safe and the Voucherify Team has been notified. Check out our Help Center and forums for help, or head back to home."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": []
+          },
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/v2/loyalties/programs/{programId}/reports/members/daily": {
+      "parameters": [
+        {
+          "name": "programId",
+          "in": "path",
+          "required": true,
+          "description": "Unique loyalty program identifier (format: `lprg_` followed by hexadecimal characters).",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "operationId": "getProgramMembersDailyReport",
+        "tags": [
+          "LV2-Programs"
+        ],
+        "summary": "Get program members daily report",
+        "description": "Returns member and card changes for the program over the given date range and resolution. Each row covers one period with recorded activity. Periods without activity are omitted.\n\nThe date range is limited per resolution:\n- 90 days for `day`,\n- 12 weeks for `week`,\n- 12 months for `month`,\n- 4 quarters for `quarter`,\n- `start_date` must be before `end_date`,\n- `start_date` and `end_date` are inclusive.\n\nReturns `400` when query validation fails. Returns `404` when the program does not exist.",
+        "parameters": [
+          {
+            "name": "start_date",
+            "in": "query",
+            "required": true,
+            "description": "Start of the report date range (inclusive), in `YYYY-MM-DD` format.",
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+            }
+          },
+          {
+            "name": "end_date",
+            "in": "query",
+            "required": true,
+            "description": "End of the report date range (inclusive), in `YYYY-MM-DD` format. Must be after `start_date`.",
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+            }
+          },
+          {
+            "name": "resolution",
+            "in": "query",
+            "required": true,
+            "description": "Aggregation resolution of the report. The allowed date range depends on the resolution: `day` – max 90 days; `week` – max 12 weeks; `month` – max 12 months; `quarter` – max 4 quarters.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "day",
+                "week",
+                "month",
+                "quarter"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Program members daily report.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoyaltiesProgramsReportsMembersDailyListResponseBody"
+                },
+                "examples": {
+                  "Daily members report": {
+                    "value": {
+                      "data": [
+                        {
+                          "date": "2026-07-01",
+                          "members_joined": 1,
+                          "members_deactivated": 0,
+                          "members_deleted": 0,
+                          "cards": 1,
+                          "object": "program_members_daily_report"
+                        }
+                      ],
+                      "object": "report"
+                    }
+                  },
+                  "Empty members daily report": {
+                    "value": {
+                      "data": [],
+                      "object": "report"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Query parameters failed validation, or `start_date` is not before `end_date`.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Invalid query parameters: `start_date` is required": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Query must have required property 'start_date'",
+                      "request_id": "v-131e4b76ad2e098961"
+                    }
+                  },
+                  "Invalid query parameters: `end_date` is required": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Query must have required property 'end_date'",
+                      "request_id": "v-131e4b76ad2e098962"
+                    }
+                  },
+                  "Invalid query parameters: `resolution` is required": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Query must have required property 'resolution'",
+                      "request_id": "v-131e4b76ad2e098963"
+                    }
+                  },
+                  "Invalid query parameters: `resolution` is invalid": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Property .resolution must be equal to one of the allowed values [ day, week, month, quarter ]",
+                      "request_id": "v-131e4b76ad2e098964"
+                    }
+                  },
+                  "Invalid query parameters: `start_date` is invalid": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Property .start_date cannot be recognized as a ISO-8601 compliant date",
+                      "request_id": "v-131e4b76ad2e098965"
+                    }
+                  },
+                  "Invalid query parameters: date range exceeds limit": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Query date range exceeds maximum allowed 90 days for resolution 'day'",
+                      "request_id": "v-131e4b76ad2e098966"
+                    }
+                  },
+                  "Invalid payload: `start_date` is not before `end_date`": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_payload",
+                      "message": "Invalid payload",
+                      "details": "Property 'start_date' must be before 'end_date'",
+                      "request_id": "v-131e4b76ad2e098967"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Program not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find program with id lprg_128f58429fc4bf7b2",
+                      "request_id": "v-131e4b76ad2e098968",
+                      "resource_id": "lprg_128f58429fc4bf7b2",
+                      "resource_type": "program"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Internal server error": {
+                    "value": {
+                      "code": 500,
+                      "key": "api_error",
+                      "message": "Something went wrong. Don't worry, your campaigns are still safe and the Voucherify Team has been notified. Check out our Help Center and forums for help, or head back to home."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": []
+          },
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/v2/loyalties/programs/{programId}/reports/members/summary": {
+      "parameters": [
+        {
+          "name": "programId",
+          "in": "path",
+          "required": true,
+          "description": "Unique loyalty program identifier (format: `lprg_` followed by hexadecimal characters).",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "operationId": "getProgramMembersSummaryReport",
+        "tags": [
+          "LV2-Programs"
+        ],
+        "summary": "Get program members summary report",
+        "description": "Returns all-time member and card totals for the program. The response contains one row when activity was recorded, and an empty `data` array otherwise. `limit` and `order` are not query parameters.\n\nReturns `400` when query validation fails. Returns `404` when the program does not exist.",
+        "responses": {
+          "200": {
+            "description": "Program members summary report.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoyaltiesProgramsReportsMembersSummaryListResponseBody"
+                },
+                "examples": {
+                  "Summary members report": {
+                    "value": {
+                      "data": [
+                        {
+                          "id": "lpmrs_128f4a88414c4bed6f",
+                          "members_joined": 1,
+                          "members_deactivated": 0,
+                          "members_deleted": 0,
+                          "cards": 1,
+                          "object": "program_members_summary_report"
+                        }
+                      ],
+                      "object": "report"
+                    }
+                  },
+                  "Empty members summary report": {
+                    "value": {
+                      "data": [],
+                      "object": "report"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Query parameters failed validation.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Program not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find program with id lprg_128f58429fc4bf7b2",
+                      "request_id": "v-131e4b76ad2e098972",
                       "resource_id": "lprg_128f58429fc4bf7b2",
                       "resource_type": "program"
                     }
