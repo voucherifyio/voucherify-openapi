@@ -93062,18 +93062,16 @@
       },
       "EarningRulesReportFailuresBreakdown": {
         "type": "object",
-        "description": "Breakdown of earning-rule failures by reason. Keys such as `cooldown` and `frequency` report counts for each failure reason. Defaults to `{}`.",
-        "additionalProperties": {
-          "type": "number"
-        },
+        "description": "Counts failed trigger-limit checks by reason. `COOLDOWN` and `FREQUENCY` are present only when that reason was recorded. Empty when no failures were recorded.",
+        "additionalProperties": false,
         "properties": {
-          "cooldown": {
+          "COOLDOWN": {
             "type": "number",
-            "description": "Number of failures caused by cooldown restrictions."
+            "description": "Counts failures caused by the cooldown limit."
           },
-          "frequency": {
+          "FREQUENCY": {
             "type": "number",
-            "description": "Number of failures caused by frequency restrictions."
+            "description": "Counts failures caused by the frequency limit."
           }
         }
       },
@@ -93084,7 +93082,7 @@
           "date": {
             "type": "string",
             "format": "date",
-            "description": "Date of the aggregation period (`YYYY-MM-DD`)."
+            "description": "Identifies the start of the truncated aggregation period (`YYYY-MM-DD`). For `week` this is Monday. For `month` this is the first day. For `quarter` this is the quarter start."
           },
           "earning_rule_id": {
             "type": "string",
@@ -93093,22 +93091,31 @@
           },
           "success_count": {
             "type": "number",
-            "description": "Number of successful earning-rule evaluations in the period."
+            "description": "Counts eligibility checks that passed the trigger limit in the period."
           },
           "failures_count": {
             "type": "number",
-            "description": "Number of failed earning-rule evaluations in the period."
+            "description": "Counts eligibility checks that failed the trigger limit in the period."
           },
           "failures_breakdown": {
-            "$ref": "#/components/schemas/EarningRulesReportFailuresBreakdown",
-            "description": "Breakdown of failures by reason."
+            "type": "object",
+            "description": "Always an empty object.",
+            "additionalProperties": false
           },
           "object": {
             "type": "string",
             "const": "program_earning_rules_daily_report",
             "description": "Object type marker. Always `program_earning_rules_daily_report`."
           }
-        }
+        },
+        "required": [
+          "date",
+          "earning_rule_id",
+          "success_count",
+          "failures_count",
+          "failures_breakdown",
+          "object"
+        ]
       },
       "EarningRulesReportSummaryEntry": {
         "type": "object",
@@ -93116,7 +93123,8 @@
         "properties": {
           "id": {
             "type": "string",
-            "description": "Unique identifier of the summary row."
+            "pattern": "^lpers_[a-f0-9]+$",
+            "description": "Identifies the summary row (format: `lpers_` followed by hexadecimal characters)."
           },
           "earning_rule_id": {
             "type": "string",
@@ -93125,22 +93133,30 @@
           },
           "success_count": {
             "type": "number",
-            "description": "Total number of successful earning-rule evaluations."
+            "description": "Counts eligibility checks that passed the trigger limit."
           },
           "failures_count": {
             "type": "number",
-            "description": "Total number of failed earning-rule evaluations."
+            "description": "Counts eligibility checks that failed the trigger limit."
           },
           "failures_breakdown": {
             "$ref": "#/components/schemas/EarningRulesReportFailuresBreakdown",
-            "description": "Breakdown of failures by reason."
+            "description": "Counts failed trigger-limit checks by reason. Empty when no failures were recorded."
           },
           "object": {
             "type": "string",
             "const": "program_earning_rules_summary_report",
             "description": "Object type marker. Always `program_earning_rules_summary_report`."
           }
-        }
+        },
+        "required": [
+          "id",
+          "earning_rule_id",
+          "success_count",
+          "failures_count",
+          "failures_breakdown",
+          "object"
+        ]
       },
       "EarningRulesReportDailyResponse": {
         "type": "object",
@@ -93148,7 +93164,7 @@
         "properties": {
           "data": {
             "type": "array",
-            "description": "Report entries, one per aggregation period and earning rule.",
+            "description": "List of report entries, one per aggregation period and earning rule with recorded activity, ordered by `date` ascending. Empty when no activity was recorded in the range.",
             "items": {
               "$ref": "#/components/schemas/EarningRulesReportDailyEntry"
             }
@@ -93158,7 +93174,11 @@
             "const": "report",
             "description": "Object type marker. Always `report`."
           }
-        }
+        },
+        "required": [
+          "data",
+          "object"
+        ]
       },
       "EarningRulesReportSummaryResponse": {
         "type": "object",
@@ -93166,7 +93186,7 @@
         "properties": {
           "data": {
             "type": "array",
-            "description": "Report entries, one per earning rule.",
+            "description": "List of summary rows, one per earning rule with recorded activity, ordered by `id` descending. Contains at most 100 rows. Empty when no activity was recorded.",
             "items": {
               "$ref": "#/components/schemas/EarningRulesReportSummaryEntry"
             }
@@ -93176,7 +93196,11 @@
             "const": "report",
             "description": "Object type marker. Always `report`."
           }
-        }
+        },
+        "required": [
+          "data",
+          "object"
+        ]
       },
       "EarningRuleDailyReportEntry": {
         "type": "object",
@@ -156824,7 +156848,7 @@
           "LV2-Programs"
         ],
         "summary": "Get program earning-rules daily report",
-        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nReturns aggregated daily earning-rule evaluation statistics for the program over the given date range and resolution, optionally filtered by earning rule. Includes success and failure counts with a failures breakdown.\n\nThe date range is limited per resolution:\nmaximum 90 days for `day`, 12 weeks for `week`, 12 months for `month`, 4 quarters for `quarter`.",
+        "description": "Returns aggregated daily earning-rule evaluation statistics for the program over the given date range and resolution, optionally filtered by earning rule. Each entry counts eligibility checks for one period and earning rule. Periods without recorded activity are omitted. `failures_breakdown` is always an empty object. A filter that matches no rows returns an empty `data` array.\n\nThe date range is limited per resolution:\n- 90 days for `day`,\n- 12 weeks for `week`,\n- 12 months for `month`,\n- 4 quarters for `quarter`,\n- `start_date` must be before `end_date`,\n- `start_date` and `end_date` are inclusive.\n\nReturns `400` when query validation fails. Returns `404` when the program does not exist.",
         "parameters": [
           {
             "name": "programId",
@@ -156851,7 +156875,7 @@
             "name": "end_date",
             "in": "query",
             "required": true,
-            "description": "End of the report date range, in `YYYY-MM-DD` format. Must be after `start_date`.",
+            "description": "End of the report date range (inclusive), in `YYYY-MM-DD` format. Must be after `start_date`.",
             "schema": {
               "type": "string",
               "format": "date",
@@ -156892,16 +156916,104 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/EarningRulesReportDailyResponse"
+                },
+                "examples": {
+                  "Program earning-rules daily report: Day resolution": {
+                    "value": {
+                      "data": [
+                        {
+                          "date": "2026-07-01",
+                          "earning_rule_id": "lern_128f9ee63cc4ba558",
+                          "success_count": 1,
+                          "failures_count": 0,
+                          "failures_breakdown": {},
+                          "object": "program_earning_rules_daily_report"
+                        }
+                      ],
+                      "object": "report"
+                    }
+                  },
+                  "Program earning-rules daily report: No activity": {
+                    "value": {
+                      "data": [],
+                      "object": "report"
+                    }
+                  }
                 }
               }
             }
           },
           "400": {
-            "description": "Validation error - request body or query parameters failed validation, or the operation is not allowed in the current resource state.",
+            "description": "Query parameters failed validation, or `start_date` is not before `end_date`.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Invalid query parameters: `start_date` is required": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Query must have required property 'start_date'",
+                      "request_id": "v-130eb43b3685e26454"
+                    }
+                  },
+                  "Invalid query parameters: `end_date` is required": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Query must have required property 'end_date'",
+                      "request_id": "v-130eb46d6c45e264b2"
+                    }
+                  },
+                  "Invalid query parameters: `resolution` is required": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Query must have required property 'resolution'",
+                      "request_id": "v-130eb4847405e264e3"
+                    }
+                  },
+                  "Invalid query parameters: `resolution` is invalid": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Property .resolution must be equal to one of the allowed values [ day, week, month, quarter ]",
+                      "request_id": "v-130eb4847405e264e4"
+                    }
+                  },
+                  "Invalid query parameters: `start_date` is invalid": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Property .start_date cannot be recognized as a ISO-8601 compliant date",
+                      "request_id": "v-130eb43b3685e26455"
+                    }
+                  },
+                  "Invalid query parameters: date range exceeds limit": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Query date range exceeds maximum allowed 90 days for resolution 'day'",
+                      "request_id": "v-130eb43b3685e26456"
+                    }
+                  },
+                  "Invalid payload: `start_date` is not before `end_date`": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_payload",
+                      "message": "Invalid payload",
+                      "details": "Property 'start_date' must be before 'end_date'",
+                      "request_id": "v-130eb43b3685e26457"
+                    }
+                  }
                 }
               }
             }
@@ -156912,6 +157024,19 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Program not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find program with id lprg_28f58429f4c4bf7b2",
+                      "request_id": "v-131e61d450c264502d",
+                      "resource_id": "lprg_28f58429f4c4bf7b2",
+                      "resource_type": "program"
+                    }
+                  }
                 }
               }
             }
@@ -156954,7 +157079,7 @@
           "LV2-Programs"
         ],
         "summary": "Get program earning-rules summary report",
-        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nReturns total earning-rule evaluation statistics for the program (all time), optionally filtered by earning rule. Includes success and failure counts with a failures breakdown.",
+        "description": "Returns total earning-rule evaluation statistics for the program (all time), optionally filtered by earning rule. Includes success and failure counts with a failures breakdown. Each entry counts eligibility checks for one earning rule. Returns at most 100 rows, ordered by `id` descending. `limit` and `order` are not query parameters. A filter that matches no rows returns an empty `data` array.\n\nReturns `400` when query validation fails. Returns `404` when the program does not exist.",
         "parameters": [
           {
             "name": "programId",
@@ -156985,16 +157110,67 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/EarningRulesReportSummaryResponse"
+                },
+                "examples": {
+                  "Program earning-rules summary report": {
+                    "value": {
+                      "data": [
+                        {
+                          "id": "lpers_12c2bc3be20c8cb533",
+                          "earning_rule_id": "lern_128f9ee63cc4ba558",
+                          "success_count": 1,
+                          "failures_count": 0,
+                          "failures_breakdown": {},
+                          "object": "program_earning_rules_summary_report"
+                        }
+                      ],
+                      "object": "report"
+                    }
+                  },
+                  "Program earning-rules summary report: Cooldown failure": {
+                    "value": {
+                      "data": [
+                        {
+                          "id": "lpers_12c2bc3be20c8cb534",
+                          "earning_rule_id": "lern_128f9ee63cc4ba558",
+                          "success_count": 0,
+                          "failures_count": 1,
+                          "failures_breakdown": {
+                            "COOLDOWN": 1
+                          },
+                          "object": "program_earning_rules_summary_report"
+                        }
+                      ],
+                      "object": "report"
+                    }
+                  },
+                  "Program earning-rules summary report: No activity": {
+                    "value": {
+                      "data": [],
+                      "object": "report"
+                    }
+                  }
                 }
               }
             }
           },
           "400": {
-            "description": "Validation error - request body or query parameters failed validation, or the operation is not allowed in the current resource state.",
+            "description": "Query parameters failed validation.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Invalid query parameters: `earning_rule_id` is invalid": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Property .filters.earning_rule_id.conditions.$is must match pattern \"^lern_[a-f0-9]+$\"",
+                      "request_id": "v-131e4b76ad2e098947"
+                    }
+                  }
                 }
               }
             }
@@ -157005,6 +157181,19 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Program not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find program with id lprg_28f58429f4c4bf7b2",
+                      "request_id": "v-131e61d450c264502f",
+                      "resource_id": "lprg_28f58429f4c4bf7b2",
+                      "resource_type": "program"
+                    }
+                  }
                 }
               }
             }
