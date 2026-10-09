@@ -5442,7 +5442,7 @@
           "Programs"
         ],
         "summary": "List card pending point buckets",
-        "description": "Returns a cursor-paginated list of pending point buckets (`status` is `PENDING`) of the member's card. Pending points are earned points waiting for activation (period-based, fixed-dates or event-based activation, per the card definition's pending points settings).\n\nResults can be ordered by activation `date`.\n\nReturns `404` when the program, member, or card does not exist.\n\nUse this endpoint to get the list of IDs of pending point bucket to use the [POST Activate pending point bucket](/api-reference/programs/activate-pending-point-bucket) or [POST Cancel pending point bucket](/api-reference/programs/cancel-pending-point-bucket).",
+        "description": "Returns a cursor-paginated list of pending point buckets for the member's card. Every bucket has status `PENDING`. Pending points wait for activation (`PERIOD_BASED`, `FIXED_DATES`, or `EVENT_BASED`), following the card definition.\n\nThe list starts on the next project day. The current day's bucket is omitted because it's still accumulating.\n\nResults can be filtered by card definition ID and ordered by `date`.\n\nReturns `404` when the program or the member doesn't exist, or when the card isn't assigned to that member.\n\nBucket IDs from this list are the `bucketId` for [Activate pending point bucket](/api-reference/programs/activate-pending-point-bucket) and [Cancel pending point bucket](/api-reference/programs/cancel-pending-point-bucket).",
         "parameters": [
           {
             "name": "limit",
@@ -5501,6 +5501,24 @@
               ],
               "pattern": "^lcrscppb_[a-f0-9]+$"
             }
+          },
+          {
+            "name": "filters",
+            "in": "query",
+            "required": false,
+            "style": "deepObject",
+            "explode": true,
+            "description": "Field-specific filter conditions, passed as a deep object, for example `filters[card_definition_id][conditions][$is]=lcdef_128f495f720c4bec8c`.",
+            "schema": {
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/LoyaltiesProgramsMembersCardsPendingPointsListRequestQuery"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
           }
         ],
         "responses": {
@@ -5545,7 +5563,7 @@
             }
           },
           "400": {
-            "description": "Validation error or the cursor is invalid or expired.",
+            "description": "The query failed validation, the cursor is invalid or expired, or the cursor doesn't match the query.",
             "content": {
               "application/json": {
                 "schema": {
@@ -5559,6 +5577,24 @@
                       "message": "Invalid or expired cursor",
                       "details": "The provided cursor is invalid or has expired",
                       "request_id": "v-12d75fbdd02d464373"
+                    }
+                  },
+                  "Invalid query params": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Property .cursor must match pattern \"^lcrscppb_[a-f0-9]+$\"",
+                      "request_id": "v-12d75fbdd02d464374"
+                    }
+                  },
+                  "Cursor and query mismatch": {
+                    "value": {
+                      "code": 400,
+                      "key": "cursor_and_query_mismatch",
+                      "message": "Cursor and query mismatch",
+                      "details": "The provided cursor does not match the query, either the cursor is invalid or the query has changed",
+                      "request_id": "v-12d75fbdd02d464375"
                     }
                   }
                 }
@@ -19312,6 +19348,40 @@
           "object"
         ]
       },
+      "LoyaltiesProgramsMembersCardsPendingPointsListRequestQuery": {
+        "type": "object",
+        "description": "Request query schema for **GET** `/v2/loyalties/programs/{programId}/members/{memberId}/cards/{cardId}/pending-points`.",
+        "properties": {
+          "junction": {
+            "description": "How multiple field filters are combined. Defaults to `AND`.",
+            "oneOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "AND",
+                  "OR"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "card_definition_id": {
+            "description": "Filters by card definition ID (ID conditions, values matching `^lcdef_[a-f0-9]+$`).",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LoyaltiesProgramsMembersCardsPendingPointsListRequestQueryCardDefinitionId"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false,
+        "title": "Loyalties Programs Members Cards Pending Points List Request Query"
+      },
       "LoyaltiesProgramsMembersCardsPendingPointsListResponseBody": {
         "type": "object",
         "properties": {
@@ -27187,6 +27257,108 @@
           "data",
           "created_at"
         ]
+      },
+      "LoyaltiesProgramsMembersCardsPendingPointsListRequestQueryCardDefinitionId": {
+        "type": "object",
+        "description": "ID filter conditions for card definition IDs. At least one condition is required.",
+        "properties": {
+          "conditions": {
+            "type": "object",
+            "minProperties": 1,
+            "properties": {
+              "$is": {
+                "description": "Value equals. Single value or an array with exactly one value.",
+                "oneOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^lcdef_[a-f0-9]+$"
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "pattern": "^lcdef_[a-f0-9]+$"
+                    },
+                    "minItems": 1,
+                    "maxItems": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "$is_not": {
+                "description": "Value does not equal. Single value or an array with exactly one value.",
+                "oneOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^lcdef_[a-f0-9]+$"
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "pattern": "^lcdef_[a-f0-9]+$"
+                    },
+                    "minItems": 1,
+                    "maxItems": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "$in": {
+                "description": "Value is one of. Single value or an array of 1-100 values.",
+                "oneOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^lcdef_[a-f0-9]+$"
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "pattern": "^lcdef_[a-f0-9]+$"
+                    },
+                    "minItems": 1,
+                    "maxItems": 100
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "$not_in": {
+                "description": "Value is not one of. Single value or an array of 1-100 values.",
+                "oneOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^lcdef_[a-f0-9]+$"
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "pattern": "^lcdef_[a-f0-9]+$"
+                    },
+                    "minItems": 1,
+                    "maxItems": 100
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "conditions"
+        ],
+        "additionalProperties": false,
+        "title": "Loyalties Programs Members Cards Pending Points List Request Query Card Definition Id"
       },
       "CardPendingPointsBucket": {
         "type": "object",
