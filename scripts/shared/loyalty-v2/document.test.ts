@@ -398,16 +398,16 @@ describe("Loyalty v2 document", () => {
         properties: {
           transaction: {
             properties: {
-              card_transaction_id: { type: string };
-              updated_at: { type: string };
+              card_transaction_id: { type: string | string[] };
+              updated_at: { type: string | string[] };
             };
           };
         };
       }
     ).properties.transaction.properties;
 
-    expect(transaction.card_transaction_id.type).toBe("null");
-    expect(transaction.updated_at.type).toBe("null");
+    expect(transaction.card_transaction_id.type).toEqual(["null"]);
+    expect(transaction.updated_at.type).toEqual(["null"]);
     expect(kept.paths?.["/v2/loyalties/programs"]).toBeUndefined();
     expect(
       (
@@ -427,6 +427,21 @@ describe("Loyalty v2 document", () => {
 
     const as301 = applySdkOpenApiVersion(kept, true);
     expect(as301.openapi).toBe("3.0.1");
+    const downgradedTransaction = (
+      as301.components?.schemas
+        ?.LoyaltiesProgramsMembersOrdersPaymentsCreateDryRunResponseBody as {
+        properties: {
+          transaction: {
+            properties: {
+              card_transaction_id: { type: string };
+              updated_at: { type: string };
+            };
+          };
+        };
+      }
+    ).properties.transaction.properties;
+    expect(downgradedTransaction.card_transaction_id.type).toBe("null");
+    expect(downgradedTransaction.updated_at.type).toBe("null");
     expect(as301.paths?.["/v2/loyalties/examine/rewards"]).toBeDefined();
     expect(as301.paths?.["/v2/loyalties/programs"]).toBeUndefined();
   });

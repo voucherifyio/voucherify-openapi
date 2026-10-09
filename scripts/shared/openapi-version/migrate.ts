@@ -137,7 +137,9 @@ export function applySdkOpenApiVersion<T extends { openapi: string }>(
  * `number`, and `null` cannot round-trip, so this runs only on the generator
  * entry. Amount, price, and quantity fields keep `number`. Other fields,
  * including source IDs, keep `string`. The description still says the API
- * accepts both. `downgradeOpenApi310To301` does not call this.
+ * accepts both. A type array that is only `null` becomes `"type": "null"`,
+ * which a later step turns into a nullable object. Upgrade does not restore
+ * the one-element array. `downgradeOpenApi310To301` does not call this.
  */
 function collapseGeneratorNullUnions<T>(document: T): T {
   return collapseGeneratorNullUnionsValue(document as JsonValue) as T;
@@ -161,6 +163,10 @@ function collapseGeneratorNullUnionsValue(value: JsonValue): JsonValue {
     return next;
   }
   const types = next.type;
+  if (types.length === 1 && types[0] === "null") {
+    next.type = "null";
+    return next;
+  }
   const nonNull = types.filter((type) => type !== "null");
   if (
     types.length !== 3 ||

@@ -58,6 +58,37 @@ describe("OpenAPI 3.0.1 ↔ 3.1.0", () => {
     );
   });
 
+  it("rewrites a null-only type array on the generator entry only", () => {
+    const document = {
+      openapi: "3.1.0",
+      info: { title: "fixture", version: "1" },
+      paths: {},
+      components: {
+        schemas: {
+          DryRun: {
+            type: "object",
+            properties: {
+              card_transaction_id: {
+                type: ["null"],
+                description: "`null` for DRY_RUN.",
+              },
+            },
+          },
+        },
+      },
+    };
+
+    const as301 = applySdkOpenApiVersion(document, true);
+
+    expect(
+      as301.components.schemas.DryRun.properties.card_transaction_id,
+    ).toEqual({
+      type: "null",
+      description: "`null` for DRY_RUN.",
+    });
+    expect(() => downgradeOpenApi310To301(document)).toThrow(/\["null"\]/);
+  });
+
   it("changes only the version when the document has no nullable schemas", () => {
     const document = baseDocument();
 
@@ -647,9 +678,10 @@ describe("OpenAPI 3.0.1 ↔ 3.1.0", () => {
     }
 
     expect(document.openapi).toBe("3.1.0");
-    // SDK prep drops Loyalty v2 before downgrade. `type: ["null"]` there
-    // cannot be written as OpenAPI 3.0.1 nullable. The generator fold then
-    // deletes if/then/not, which upgrade does not restore.
+    // This comparison drops every Loyalty v2 path. The generator fold then
+    // deletes if/then/not, which upgrade does not restore. A null-only type
+    // array is rewritten only on the generator entry, so it is not part of
+    // this round trip.
     const api = documentWithoutLoyaltyV2(document);
     const as301 = applySdkOpenApiVersion(api, true);
     expect(as301.openapi).toBe("3.0.1");
