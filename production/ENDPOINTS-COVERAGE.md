@@ -378,61 +378,65 @@
 | /client/v1/redeem           | post   | Redeem Voucher (client-side)               |                                      |  <font color='red'>deprecated</font> |
 | /client/v1/publish          | post   | Create Publication (client-side)           |                                      |                                      |
 ## LV2-Programs
-| endpoint                                                                                                | method | summary                                    | is supported | is deprecated |
-| ------------------------------------------------------------------------------------------------------- | ------ | ------------------------------------------ | ------------ | ------------- |
-| /v2/loyalties/programs                                                                                  | post   | Create program                             |              |               |
-| /v2/loyalties/programs                                                                                  | get    | List programs                              |              |               |
-| /v2/loyalties/programs/{programId}                                                                      | get    | Get program                                |              |               |
-| /v2/loyalties/programs/{programId}                                                                      | put    | Update program                             |              |               |
-| /v2/loyalties/programs/{programId}                                                                      | delete | Delete program                             |              |               |
-| /v2/loyalties/programs/{programId}/activate                                                             | post   | Activate program                           |              |               |
-| /v2/loyalties/programs/{programId}/deactivate                                                           | post   | Deactivate program                         |              |               |
-| /v2/loyalties/programs/{programId}/activities                                                           | get    | List program activities                    |              |               |
-| /v2/loyalties/programs/{programId}/card-definitions                                                     | get    | List program card definition assignments   |              |               |
-| /v2/loyalties/programs/{programId}/card-definitions/batch                                               | post   | Batch assign/unassign card definitions     |              |               |
-| /v2/loyalties/programs/{programId}/earning-rules                                                        | get    | List program earning rule assignments      |              |               |
-| /v2/loyalties/programs/{programId}/earning-rules/batch                                                  | post   | Batch assign/unassign earning rules        |              |               |
-| /v2/loyalties/programs/{programId}/tier-structures                                                      | get    | List program tier structure assignments    |              |               |
-| /v2/loyalties/programs/{programId}/tier-structures/batch                                                | post   | Batch assign/unassign tier structures      |              |               |
-| /v2/loyalties/programs/{programId}/rewards                                                              | get    | List program reward assignments            |              |               |
-| /v2/loyalties/programs/{programId}/rewards/batch                                                        | post   | Batch assign/unassign rewards              |              |               |
-| /v2/loyalties/programs/{programId}/rewards/{rewardId}                                                   | put    | Update program reward assignment           |              |               |
-| /v2/loyalties/programs/{programId}/members                                                              | post   | Create program member                      |              |               |
-| /v2/loyalties/programs/{programId}/members                                                              | get    | List program members                       |              |               |
-| /v2/loyalties/programs/{programId}/members/batch                                                        | post   | Batch create program members               |              |               |
-| /v2/loyalties/programs/{programId}/members/{memberId}                                                   | get    | Get program member                         |              |               |
-| /v2/loyalties/programs/{programId}/members/{memberId}                                                   | put    | Update program member                      |              |               |
-| /v2/loyalties/programs/{programId}/members/{memberId}                                                   | delete | Delete program member                      |              |               |
-| /v2/loyalties/memberships/{customerId}                                                                  | get    | Get customer memberships                   |              |               |
-| /v2/loyalties/programs/{programId}/memberships/{customerId}                                             | get    | Get program membership                     |              |               |
-| /v2/loyalties/programs/{programId}/members/{memberId}/activate                                          | post   | Activate program member                    |              |               |
-| /v2/loyalties/programs/{programId}/members/{memberId}/deactivate                                        | post   | Deactivate program member                  |              |               |
-| /v2/loyalties/programs/{programId}/members/{memberId}/activities                                        | get    | List program member activities             |              |               |
-| /v2/loyalties/programs/{programId}/members/{memberId}/cards/{cardId}/points                             | post   | Adjust card points                         |              |               |
-| /v2/loyalties/programs/{programId}/members/{memberId}/cards/{cardId}/activities                         | get    | List card activities                       |              |               |
-| /v2/loyalties/programs/{programId}/members/{memberId}/cards/{cardId}/pending-points                     | get    | List card pending point buckets            |              |               |
-| /v2/loyalties/programs/{programId}/members/{memberId}/cards/{cardId}/pending-points/{bucketId}/activate | post   | Activate pending point bucket              |              |               |
-| /v2/loyalties/programs/{programId}/members/{memberId}/cards/{cardId}/pending-points/{bucketId}/cancel   | post   | Cancel pending point bucket                |              |               |
-| /v2/loyalties/programs/{programId}/members/{memberId}/cards/{cardId}/expiring-points                    | get    | List card expiring points buckets          |              |               |
-| /v2/loyalties/programs/{programId}/members/{memberId}/cards/{cardId}/expiring-points/{bucketId}/expire  | post   | Expire point bucket                        |              |               |
-| /v2/loyalties/programs/{programId}/members/{memberId}/cards/{cardId}/transactions                       | get    | List card transactions                     |              |               |
-| /v2/loyalties/programs/{programId}/rewards/purchases/{rewardTransactionId}/refund                       | post   | Refund reward purchase                     |              |               |
-| /v2/loyalties/programs/{programId}/members/{memberId}/rewards/purchases                                 | get    | List member reward purchases               |              |               |
-| /v2/loyalties/programs/{programId}/members/{memberId}/rewards/purchases                                 | post   | Purchase reward with points                |              |               |
-| /v2/loyalties/programs/{programId}/members/{memberId}/orders/payments                                   | get    | List member order payments                 |              |               |
-| /v2/loyalties/programs/{programId}/members/{memberId}/orders/payments                                   | post   | Pay for order with points                  |              |               |
-| /v2/loyalties/programs/{programId}/members/{memberId}/benefits/transactions                             | get    | List member benefit transactions           |              |               |
-| /v2/loyalties/programs/{programId}/members/{memberId}/tiers/transactions                                | get    | List member tier transactions              |              |               |
-| /v2/loyalties/programs/{programId}/members/{memberId}/cards/{cardId}/reports/daily                      | get    | List card daily points reports             |              |               |
-| /v2/loyalties/programs/{programId}/members/{memberId}/earning-rules/{earningRuleId}/reports/daily       | get    | Get member earning-rule daily report       |              |               |
-| /v2/loyalties/programs/{programId}/reports/spending/daily                                               | get    | List program spending daily reports        |              |               |
-| /v2/loyalties/programs/{programId}/reports/spending/summary                                             | get    | List program spending summary reports      |              |               |
-| /v2/loyalties/programs/{programId}/reports/tiers/daily                                                  | get    | Get program tiers daily report             |              |               |
-| /v2/loyalties/programs/{programId}/reports/tiers/summary                                                | get    | Get program tiers summary report           |              |               |
-| /v2/loyalties/programs/{programId}/reports/points-earnings/daily                                        | get    | Get program points-earnings daily report   |              |               |
-| /v2/loyalties/programs/{programId}/reports/points-earnings/summary                                      | get    | Get program points-earnings summary report |              |               |
-| /v2/loyalties/programs/{programId}/reports/earning-rules/daily                                          | get    | Get program earning-rules daily report     |              |               |
-| /v2/loyalties/programs/{programId}/reports/earning-rules/summary                                        | get    | Get program earning-rules summary report   |              |               |
+| endpoint                                                                                                | method | summary                                      | is supported | is deprecated |
+| ------------------------------------------------------------------------------------------------------- | ------ | -------------------------------------------- | ------------ | ------------- |
+| /v2/loyalties/programs                                                                                  | post   | Create program                               |              |               |
+| /v2/loyalties/programs                                                                                  | get    | List programs                                |              |               |
+| /v2/loyalties/programs/{programId}                                                                      | get    | Get program                                  |              |               |
+| /v2/loyalties/programs/{programId}                                                                      | put    | Update program                               |              |               |
+| /v2/loyalties/programs/{programId}                                                                      | delete | Delete program                               |              |               |
+| /v2/loyalties/programs/{programId}/activate                                                             | post   | Activate program                             |              |               |
+| /v2/loyalties/programs/{programId}/deactivate                                                           | post   | Deactivate program                           |              |               |
+| /v2/loyalties/programs/{programId}/activities                                                           | get    | List program activities                      |              |               |
+| /v2/loyalties/programs/{programId}/card-definitions                                                     | get    | List program card definition assignments     |              |               |
+| /v2/loyalties/programs/{programId}/card-definitions/batch                                               | post   | Batch assign/unassign card definitions       |              |               |
+| /v2/loyalties/programs/{programId}/earning-rules                                                        | get    | List program earning rule assignments        |              |               |
+| /v2/loyalties/programs/{programId}/earning-rules/batch                                                  | post   | Batch assign/unassign earning rules          |              |               |
+| /v2/loyalties/programs/{programId}/tier-structures                                                      | get    | List program tier structure assignments      |              |               |
+| /v2/loyalties/programs/{programId}/tier-structures/batch                                                | post   | Batch assign/unassign tier structures        |              |               |
+| /v2/loyalties/programs/{programId}/rewards                                                              | get    | List program reward assignments              |              |               |
+| /v2/loyalties/programs/{programId}/rewards/batch                                                        | post   | Batch assign/unassign rewards                |              |               |
+| /v2/loyalties/programs/{programId}/rewards/{rewardId}                                                   | put    | Update program reward assignment             |              |               |
+| /v2/loyalties/programs/{programId}/members                                                              | post   | Create program member                        |              |               |
+| /v2/loyalties/programs/{programId}/members                                                              | get    | List program members                         |              |               |
+| /v2/loyalties/programs/{programId}/members/batch                                                        | post   | Batch create program members                 |              |               |
+| /v2/loyalties/programs/{programId}/members/{memberId}                                                   | get    | Get program member                           |              |               |
+| /v2/loyalties/programs/{programId}/members/{memberId}                                                   | put    | Update program member                        |              |               |
+| /v2/loyalties/programs/{programId}/members/{memberId}                                                   | delete | Delete program member                        |              |               |
+| /v2/loyalties/memberships/{customerId}                                                                  | get    | Get customer memberships                     |              |               |
+| /v2/loyalties/programs/{programId}/memberships/{customerId}                                             | get    | Get program membership                       |              |               |
+| /v2/loyalties/programs/{programId}/members/{memberId}/activate                                          | post   | Activate program member                      |              |               |
+| /v2/loyalties/programs/{programId}/members/{memberId}/deactivate                                        | post   | Deactivate program member                    |              |               |
+| /v2/loyalties/programs/{programId}/members/{memberId}/activities                                        | get    | List program member activities               |              |               |
+| /v2/loyalties/programs/{programId}/members/{memberId}/cards/{cardId}/points                             | post   | Adjust card points                           |              |               |
+| /v2/loyalties/programs/{programId}/members/{memberId}/cards/{cardId}/activities                         | get    | List card activities                         |              |               |
+| /v2/loyalties/programs/{programId}/members/{memberId}/cards/{cardId}/pending-points                     | get    | List card pending point buckets              |              |               |
+| /v2/loyalties/programs/{programId}/members/{memberId}/cards/{cardId}/pending-points/{bucketId}/activate | post   | Activate pending point bucket                |              |               |
+| /v2/loyalties/programs/{programId}/members/{memberId}/cards/{cardId}/pending-points/{bucketId}/cancel   | post   | Cancel pending point bucket                  |              |               |
+| /v2/loyalties/programs/{programId}/members/{memberId}/cards/{cardId}/expiring-points                    | get    | List card expiring points buckets            |              |               |
+| /v2/loyalties/programs/{programId}/members/{memberId}/cards/{cardId}/expiring-points/{bucketId}/expire  | post   | Expire point bucket                          |              |               |
+| /v2/loyalties/programs/{programId}/members/{memberId}/cards/{cardId}/transactions                       | get    | List card transactions                       |              |               |
+| /v2/loyalties/programs/{programId}/rewards/purchases/{rewardTransactionId}/refund                       | post   | Refund reward purchase                       |              |               |
+| /v2/loyalties/programs/{programId}/members/{memberId}/rewards/purchases                                 | get    | List member reward purchases                 |              |               |
+| /v2/loyalties/programs/{programId}/members/{memberId}/rewards/purchases                                 | post   | Purchase reward with points                  |              |               |
+| /v2/loyalties/programs/{programId}/members/{memberId}/orders/payments                                   | get    | List member order payments                   |              |               |
+| /v2/loyalties/programs/{programId}/members/{memberId}/orders/payments                                   | post   | Pay for order with points                    |              |               |
+| /v2/loyalties/programs/{programId}/members/{memberId}/benefits/transactions                             | get    | List member benefit transactions             |              |               |
+| /v2/loyalties/programs/{programId}/members/{memberId}/tiers/transactions                                | get    | List member tier transactions                |              |               |
+| /v2/loyalties/programs/{programId}/members/{memberId}/cards/{cardId}/reports/daily                      | get    | List card daily points reports               |              |               |
+| /v2/loyalties/programs/{programId}/members/{memberId}/earning-rules/{earningRuleId}/reports/daily       | get    | Get member earning-rule daily report         |              |               |
+| /v2/loyalties/programs/{programId}/reports/spending/daily                                               | get    | List program spending daily reports          |              |               |
+| /v2/loyalties/programs/{programId}/reports/spending/summary                                             | get    | List program spending summary reports        |              |               |
+| /v2/loyalties/programs/{programId}/reports/tiers/daily                                                  | get    | Get program tiers daily report               |              |               |
+| /v2/loyalties/programs/{programId}/reports/tiers/summary                                                | get    | Get program tiers summary report             |              |               |
+| /v2/loyalties/programs/{programId}/reports/rewards/daily                                                | get    | Get program rewards daily report             |              |               |
+| /v2/loyalties/programs/{programId}/reports/rewards/summary                                              | get    | Get program rewards summary report           |              |               |
+| /v2/loyalties/programs/{programId}/reports/rewards/spendings/daily                                      | get    | Get program rewards spendings daily report   |              |               |
+| /v2/loyalties/programs/{programId}/reports/rewards/spendings/summary                                    | get    | Get program rewards spendings summary report |              |               |
+| /v2/loyalties/programs/{programId}/reports/points-earnings/daily                                        | get    | Get program points-earnings daily report     |              |               |
+| /v2/loyalties/programs/{programId}/reports/points-earnings/summary                                      | get    | Get program points-earnings summary report   |              |               |
+| /v2/loyalties/programs/{programId}/reports/earning-rules/daily                                          | get    | Get program earning-rules daily report       |              |               |
+| /v2/loyalties/programs/{programId}/reports/earning-rules/summary                                        | get    | Get program earning-rules summary report     |              |               |
 ## LV2-Card Definitions
 | endpoint                                                     | method | summary                         | is supported | is deprecated |
 | ------------------------------------------------------------ | ------ | ------------------------------- | ------------ | ------------- |
