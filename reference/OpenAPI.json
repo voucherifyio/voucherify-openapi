@@ -71359,24 +71359,8 @@
             "description": "Member snapshot. Present only for `vl.card.assigned` and `vl.card.unassigned`."
           },
           "member_card": {
-            "description": "Member-card assignment snapshot. Present only for `vl.card.assigned` and `vl.card.unassigned`.",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/MemberCard"
-              },
-              {
-                "type": "object",
-                "properties": {
-                  "tier_progress": {
-                    "type": "null",
-                    "description": "Always `null` for `vl.card.assigned` and `vl.card.unassigned`. The snapshot is built from the card assignment record, which does not include tier progress."
-                  }
-                },
-                "required": [
-                  "tier_progress"
-                ]
-              }
-            ]
+            "$ref": "#/components/schemas/MemberCard",
+            "description": "Assignment snapshot. Present for `vl.card.assigned` and `vl.card.unassigned`. Omits `tier_progress`."
           },
           "result": {
             "$ref": "#/components/schemas/CardCodeGenerationFailureResult",
@@ -150141,13 +150125,13 @@
           "LV2-Programs"
         ],
         "summary": "List card activities",
-        "description": "Returns a cursor-paginated list of activities recorded for the member's card. Results can be filtered by `id`, `type`, or `created_at`.\n\nReturns `400` when the provided cursor is invalid or has expired. Returns `404` when the program, member, or currently assigned card does not exist.",
+        "description": "Returns a cursor-paginated list of activities recorded for the member's card. The card must still be assigned to that member. Filters are `id`, `type`, and `created_at`. Default order is `-created_at`, then `id` ascending.\n\nReturns 404 when the program doesn't exist, when the member doesn't exist in that program, or when the card isn't currently assigned to that member. The program is checked first, then the member. A DELETED member returns 404 with `resource_type` `member`. A missing assignment and a missing or deleted card both return 404 with `resource_type` `card`.\n\nReturns 400 with key `invalid_query_params` when the query fails validation. That check runs before the program, member, and card lookup. A cursor that doesn't match `^lcrsacrd_[a-f0-9]+$`, a `limit` outside 1 to 100, an `order` other than `created_at` or `-created_at`, or an array that orders by both directions fails here.\n\nAfter the program, member, and card are found, an unknown or expired cursor returns `invalid_or_expired_cursor`. A cursor recorded for different `filters` or `order` returns `cursor_and_query_mismatch`. The cursor stays valid when only `limit` changes.",
         "parameters": [
           {
             "name": "limit",
             "in": "query",
             "required": false,
-            "description": "Maximum number of activities to return. Must be between 1 and 100. Defaults to 10 when not provided.",
+            "description": "Maximum number of activities to return. An integer from 1 to 100. Numeric strings are accepted and rounded to the nearest integer. Defaults to 10 when omitted.",
             "schema": {
               "type": [
                 "integer",
@@ -150162,13 +150146,17 @@
             "name": "order",
             "in": "query",
             "required": false,
-            "description": "Field(s) to order results by. Valid orders are `created_at` and `-created_at`; defaults to `-created_at`. Accepts a single value or an array of values (unrecognized values in the array form are ignored and the default order applies). Ordering by the same field in both directions simultaneously is rejected.",
+            "description": "Sort field. Allowed values are `created_at` and `-created_at`. Defaults to `-created_at` when omitted, null, or an empty array. Accepts one value or an array of those values. Any other value is rejected. An array that contains both directions is rejected. Rows that share a `created_at` millisecond are then ordered by `id` ascending.",
             "schema": {
               "oneOf": [
                 {
                   "type": "array",
                   "items": {
-                    "type": "string"
+                    "type": "string",
+                    "enum": [
+                      "created_at",
+                      "-created_at"
+                    ]
                   }
                 },
                 {
@@ -150387,8 +150375,7 @@
                               },
                               "object": "member_card",
                               "created_at": "2026-06-11T15:59:41.303Z",
-                              "member_role": "OWNER",
-                              "tier_progress": null
+                              "member_role": "OWNER"
                             }
                           },
                           "created_at": "2026-06-11T15:59:41.303Z",
@@ -150475,7 +150462,7 @@
             }
           },
           "400": {
-            "description": "Query parameters failed validation.",
+            "description": "The query failed validation (`invalid_query_params`), the cursor is unknown or expired (`invalid_or_expired_cursor`), or the cursor was recorded for different `filters` or `order` (`cursor_and_query_mismatch`). Query validation runs before the program, member, and card lookup. Cursor checks run after all three are found. The cursor stays valid when only `limit` changes.",
             "content": {
               "application/json": {
                 "schema": {
@@ -150496,7 +150483,7 @@
             }
           },
           "404": {
-            "description": "The program, member, or currently assigned card was not found.",
+            "description": "The program doesn't exist (`resource_type` `program`), the member doesn't exist in that program (`resource_type` `member`), or the card isn't currently assigned to that member (`resource_type` `card`). The program is checked first, then the member. A DELETED member returns 404. A missing assignment and a deleted card both use `resource_type` `card`.",
             "content": {
               "application/json": {
                 "schema": {
