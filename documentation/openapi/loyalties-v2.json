@@ -15813,7 +15813,7 @@
           "Rewards"
         ],
         "summary": "Get reward by ID",
-        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nReturns a single reward by its ID.",
+        "description": "Returns a single reward by its ID.",
         "parameters": [
           {
             "name": "rewardId",
@@ -15865,7 +15865,10 @@
                               "points": 100,
                               "card_definition_id": "lcdef_128f495f720c4bec8c"
                             }
-                          ]
+                          ],
+                          "tier_rules": {
+                            "type": "NO_REQUIREMENTS"
+                          }
                         }
                       ],
                       "purchase_limits": {
@@ -15906,28 +15909,8 @@
               }
             }
           },
-          "400": {
-            "description": "Validation error - request body or query parameters failed validation, or the operation is not allowed in the current resource state.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
           "404": {
-            "description": "Resource not found.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
+            "description": "The reward doesn't exist. A deleted reward is not found. Returned for any unknown reward id, including a value that does not match `lrew_[a-f0-9]+`. `key` is `not_found` and `resource_type` is `reward`.",
             "content": {
               "application/json": {
                 "schema": {
@@ -24012,12 +23995,15 @@
           "name",
           "type",
           "status",
+          "start_date",
+          "end_date",
           "validity_hours",
           "refunds",
           "costs",
           "purchase_limits",
           "metadata",
           "created_at",
+          "updated_at",
           "object"
         ]
       },
@@ -36874,7 +36860,7 @@
       },
       "RewardCostResponse": {
         "type": "object",
-        "description": "A reward cost. `rules` is omitted when the cost has no\nrule definitions; `spending` is null when no spending is defined.",
+        "description": "A reward cost. `rules` is omitted when the cost has no\nrule definitions; `spending` is null when no spending is defined. `tier_rules` is always present and defaults to `NO_REQUIREMENTS`.",
         "properties": {
           "id": {
             "type": "string",
@@ -36894,10 +36880,15 @@
             "items": {
               "$ref": "#/components/schemas/LoyaltyV2ActivityRewardCostSpendingResponse"
             }
+          },
+          "tier_rules": {
+            "$ref": "#/components/schemas/RewardCostTierRulesResponse",
+            "description": "Defines which tiers can use this cost. Always present. Defaults to `NO_REQUIREMENTS`."
           }
         },
         "required": [
-          "id"
+          "id",
+          "tier_rules"
         ]
       },
       "RewardPurchaseLimits": {
@@ -36912,7 +36903,11 @@
             "$ref": "#/components/schemas/RewardPurchaseLimitsFrequency",
             "description": "How many times the reward can be purchased in a period."
           }
-        }
+        },
+        "required": [
+          "cooldown",
+          "frequency"
+        ]
       },
       "RewardCostUpdateRequest": {
         "type": "object",
@@ -40857,6 +40852,48 @@
           "card_definition_id"
         ]
       },
+      "RewardCostTierRulesResponse": {
+        "type": "object",
+        "description": "Tier requirements for a reward cost. `any_of` is omitted when `type` is `NO_REQUIREMENTS`.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "NO_REQUIREMENTS",
+              "ANY_OF"
+            ],
+            "description": "Tier requirement type."
+          },
+          "any_of": {
+            "type": "array",
+            "minItems": 1,
+            "description": "Lists tier combinations that qualify. Present when `type` is `ANY_OF`.",
+            "items": {
+              "$ref": "#/components/schemas/RewardCostTierRulesAnyOfEntryResponse"
+            }
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "ANY_OF"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "any_of"
+              ]
+            }
+          }
+        ]
+      },
       "RewardPurchaseLimitsCooldown": {
         "type": "object",
         "description": "Purchase cooldown limits for a reward.",
@@ -43704,6 +43741,31 @@
             }
           }
         }
+      },
+      "RewardCostTierRulesAnyOfEntryResponse": {
+        "type": "object",
+        "description": "Tier structure with the tiers that qualify for this cost.",
+        "properties": {
+          "tier_structure_id": {
+            "type": "string",
+            "pattern": "^lts_[a-f0-9]+$",
+            "description": "Identifies the tier structure."
+          },
+          "tier_ids": {
+            "type": "array",
+            "minItems": 1,
+            "description": "Lists the qualifying tier IDs.",
+            "items": {
+              "type": "string",
+              "pattern": "^lt_[a-f0-9]+$"
+            }
+          }
+        },
+        "required": [
+          "tier_structure_id",
+          "tier_ids"
+        ],
+        "additionalProperties": false
       },
       "RewardPurchaseLimitsCooldownFixedCooldown": {
         "type": "object",
