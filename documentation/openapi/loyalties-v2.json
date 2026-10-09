@@ -11254,7 +11254,7 @@
           "Programs"
         ],
         "summary": "Get program points-earnings summary report",
-        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nReturns total points-earnings statistics for the program (all time), optionally filtered by earning rule and card definition.",
+        "description": "Returns total points-earnings statistics for the program (all time), optionally filtered by earning rule and card definition. Each entry sums earning operations for one earning rule, earning item, and card definition. Returns at most 100 rows, ordered by `id` descending. `limit` and `order` are not query parameters. A filter that matches no rows returns an empty `data` array.\n\nReturns `400` when query validation fails. Returns `404` when the program does not exist.",
         "parameters": [
           {
             "name": "programId",
@@ -11285,16 +11285,52 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/PointsEarningsReportSummaryResponse"
+                },
+                "examples": {
+                  "Program points-earnings summary report": {
+                    "value": {
+                      "data": [
+                        {
+                          "id": "lppes_12c2bc3be20c8cb533",
+                          "earning_rule_id": "lern_128f9ee63cc4ba558",
+                          "earning_item_id": "lernei_128f582238cc4bf78e",
+                          "card_definition_id": "lcdef_128f58429f4c4bf7b2",
+                          "success_count": 1,
+                          "points": 100,
+                          "pending_points": 0,
+                          "object": "program_points_earnings_summary_report"
+                        }
+                      ],
+                      "object": "report"
+                    }
+                  },
+                  "Program points-earnings summary report: No activity": {
+                    "value": {
+                      "data": [],
+                      "object": "report"
+                    }
+                  }
                 }
               }
             }
           },
           "400": {
-            "description": "Validation error - request body or query parameters failed validation, or the operation is not allowed in the current resource state.",
+            "description": "Query parameters failed validation.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Invalid query parameters: `earning_rule_id` is invalid": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Property .filters.earning_rule_id.conditions.$is must match pattern \"^lern_[a-f0-9]+$\"",
+                      "request_id": "v-131e4b76ad2e098946"
+                    }
+                  }
                 }
               }
             }
@@ -11305,6 +11341,19 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Program not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find program with id lprg_28f58429f4c4bf7b2",
+                      "request_id": "v-131e61d450c264502e",
+                      "resource_id": "lprg_28f58429f4c4bf7b2",
+                      "resource_type": "program"
+                    }
+                  }
                 }
               }
             }
@@ -21067,7 +21116,7 @@
         "properties": {
           "data": {
             "type": "array",
-            "description": "Report entries, one per earning rule, earning item, and card definition.",
+            "description": "List of summary rows, one per earning rule, earning item, and card definition with recorded activity, ordered by `id` descending. Contains at most 100 rows. Empty when no activity was recorded.",
             "items": {
               "$ref": "#/components/schemas/PointsEarningsReportSummaryEntry"
             }
@@ -21077,7 +21126,11 @@
             "const": "report",
             "description": "Object type marker. Always `report`."
           }
-        }
+        },
+        "required": [
+          "data",
+          "object"
+        ]
       },
       "EarningRulesReportListFilters": {
         "type": "object",
@@ -30579,7 +30632,8 @@
         "properties": {
           "id": {
             "type": "string",
-            "description": "Unique identifier of the summary row."
+            "pattern": "^lppes_[a-f0-9]+$",
+            "description": "Identifies the summary row (format: `lppes_` followed by hexadecimal characters)."
           },
           "earning_rule_id": {
             "type": "string",
@@ -30588,7 +30642,8 @@
           },
           "earning_item_id": {
             "type": "string",
-            "description": "Identifier of the earning item that produced the points."
+            "pattern": "^lernei_[a-f0-9]+$",
+            "description": "Identifies the earning item that produced the points (format: `lernei_` followed by hexadecimal characters)."
           },
           "card_definition_id": {
             "type": "string",
@@ -30597,22 +30652,32 @@
           },
           "success_count": {
             "type": "number",
-            "description": "Total number of successful earning operations."
+            "description": "Counts earning operations that credited points or added pending points."
           },
           "points": {
             "type": "number",
-            "description": "Total points earned."
+            "description": "Sums points credited immediately by earning rules. Pending points activated later are not included."
           },
           "pending_points": {
             "type": "number",
-            "description": "Total pending points earned."
+            "description": "Sums pending points added. Activated and canceled pending points are not deducted."
           },
           "object": {
             "type": "string",
             "const": "program_points_earnings_summary_report",
             "description": "Object type marker. Always `program_points_earnings_summary_report`."
           }
-        }
+        },
+        "required": [
+          "id",
+          "earning_rule_id",
+          "earning_item_id",
+          "card_definition_id",
+          "success_count",
+          "points",
+          "pending_points",
+          "object"
+        ]
       },
       "EarningRulesReportFilterEarningRuleIdConditions": {
         "type": "object",
