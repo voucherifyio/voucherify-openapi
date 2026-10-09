@@ -10727,7 +10727,7 @@
           "Programs"
         ],
         "summary": "Get program tiers daily report",
-        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nReturns aggregated daily tier-movement statistics for the program over the given\ndate range and resolution, optionally filtered by tier structure and tier.\n\nThe date range is limited per resolution:\nmaximum 90 days for `day`, 12 weeks for `week`, 12 months for `month`, 4 quarters\nfor `quarter`.",
+        "description": "Returns aggregated tier-movement statistics for the program over the given date range and resolution, optionally filtered by tier structure and tier. Each row covers one tier structure, one tier, and one period with recorded movement. Periods without recorded movement are omitted. A filter that matches no rows returns an empty `data` array.\n\nThe date range is limited per resolution:\n- 90 days for `day`,\n- 12 weeks for `week`,\n- 12 months for `month`,\n- 4 quarters for `quarter`,\n- `start_date` must be before `end_date`,\n- `start_date` and `end_date` are inclusive.\n\nReturns `400` when query validation fails. Returns `404` when the program does not exist.",
         "parameters": [
           {
             "name": "start_date",
@@ -10744,7 +10744,7 @@
             "name": "end_date",
             "in": "query",
             "required": true,
-            "description": "End of the report date range, in `YYYY-MM-DD` format.",
+            "description": "End of the report date range (inclusive), in `YYYY-MM-DD` format. Must be after `start_date`.",
             "schema": {
               "type": "string",
               "format": "date",
@@ -10804,17 +10804,88 @@
                       ],
                       "object": "report"
                     }
+                  },
+                  "Empty tiers daily report": {
+                    "value": {
+                      "data": [],
+                      "object": "report"
+                    }
                   }
                 }
               }
             }
           },
           "400": {
-            "description": "Validation error - query parameters failed validation, or the operation is not allowed in the current resource state.",
+            "description": "Query parameters failed validation, or `start_date` is not before `end_date`.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Invalid query parameters: `start_date` is required": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Query must have required property 'start_date'",
+                      "request_id": "v-131e4b76ad2e098901"
+                    }
+                  },
+                  "Invalid query parameters: `end_date` is required": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Query must have required property 'end_date'",
+                      "request_id": "v-131e4b76ad2e098902"
+                    }
+                  },
+                  "Invalid query parameters: `resolution` is required": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Query must have required property 'resolution'",
+                      "request_id": "v-131e4b76ad2e098903"
+                    }
+                  },
+                  "Invalid query parameters: `resolution` is invalid": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Property .resolution must be equal to one of the allowed values [ day, week, month, quarter ]",
+                      "request_id": "v-131e4b76ad2e098904"
+                    }
+                  },
+                  "Invalid query parameters: `start_date` is invalid": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Property .start_date cannot be recognized as a ISO-8601 compliant date",
+                      "request_id": "v-131e4b76ad2e098905"
+                    }
+                  },
+                  "Invalid query parameters: date range exceeds limit": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Query date range exceeds maximum allowed 90 days for resolution 'day'",
+                      "request_id": "v-131e4b76ad2e098906"
+                    }
+                  },
+                  "Invalid payload: `start_date` is not before `end_date`": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_payload",
+                      "message": "Invalid payload",
+                      "details": "Property 'start_date' must be before 'end_date'",
+                      "request_id": "v-131e4b76ad2e098907"
+                    }
+                  }
                 }
               }
             }
@@ -10825,6 +10896,19 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Program not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find program with id lprg_128f4a88414c4bed69",
+                      "request_id": "v-131e4b76ad2e098908",
+                      "resource_id": "lprg_128f4a88414c4bed69",
+                      "resource_type": "program"
+                    }
+                  }
                 }
               }
             }
@@ -21179,7 +21263,7 @@
         "properties": {
           "data": {
             "type": "array",
-            "description": "Report entries, one per aggregation period, tier structure, and tier.",
+            "description": "List of report entries, one per tier structure, tier, and aggregation period with recorded movement, ordered by `date` ascending. Empty when no movement was recorded in the range.",
             "items": {
               "$ref": "#/components/schemas/TiersReportDailyEntry"
             }
@@ -21189,7 +21273,11 @@
             "const": "report",
             "description": "Object type marker. Always `report`."
           }
-        }
+        },
+        "required": [
+          "data",
+          "object"
+        ]
       },
       "TiersReportSummaryResponse": {
         "type": "object",
@@ -30460,7 +30548,7 @@
           "date": {
             "type": "string",
             "format": "date",
-            "description": "Date of the aggregation period (`YYYY-MM-DD`)."
+            "description": "Identifies the start of the truncated aggregation period (`YYYY-MM-DD`). For `week` this is Monday. For `month` this is the first day. For `quarter` this is the quarter start."
           },
           "tier_structure_id": {
             "type": "string",
@@ -30490,14 +30578,25 @@
           },
           "prolongs": {
             "type": "number",
-            "description": "Number of tier prolongations in the period."
+            "description": "Counts expiration-date changes for members who stayed on this tier in the period."
           },
           "object": {
             "type": "string",
             "const": "program_tiers_daily_report",
             "description": "Object type marker. Always `program_tiers_daily_report`."
           }
-        }
+        },
+        "required": [
+          "date",
+          "tier_structure_id",
+          "tier_id",
+          "joins",
+          "upgrades",
+          "downgrades",
+          "lefts",
+          "prolongs",
+          "object"
+        ]
       },
       "TiersReportSummaryEntry": {
         "type": "object",
