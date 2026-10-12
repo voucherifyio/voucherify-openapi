@@ -23,6 +23,7 @@ import {
   removeStoplightTag,
   snakeToCamel,
 } from "./utils";
+import { liftUnconditionalRequired } from "../openapi-version/merge-json-schema-conditionals";
 import { applySdkOpenApiVersion } from "../openapi-version/migrate";
 import {
   documentWithoutLoyaltyV2,
@@ -132,8 +133,11 @@ const savePreparedOpenApiFile = async (lang: string, openAPI: object) => {
 };
 
 const main = async (languageOptions: LanguageOptions) => {
+  // Downgrades to 3.0.1 and folds if/then/not. See prepare-open-api/AGENTS.md.
   openAPIContent = applySdkOpenApiVersion(
-    documentWithoutLoyaltyV2(openAPIContent),
+    documentWithoutLoyaltyV2(openAPIContent, {
+      keepSdkPublishedPaths: true,
+    }),
     languageOptions.downgradeTo301,
   );
   const prohibited = [
@@ -246,9 +250,22 @@ const main = async (languageOptions: LanguageOptions) => {
     openAPIContent.components.parameters,
   );
 
+  // removeOneOf does not walk properties while allOf is present. That leftover
+  // allOf is what keeps a nullable oneOf. Lift a required-only item only after
+  // that pass, then copy $ref aliases.
+  const schemasWithRequiredLifted = Object.fromEntries(
+    Object.entries(schemas).map(([schemaName, schema]) => [
+      schemaName,
+      schema && typeof schema === "object"
+        ? liftUnconditionalRequired(schema as any)
+        : schema,
+    ]),
+  );
   const schemasWithFixedTitles: any = fixSchemasTitles(
     removeUnwantedProperties(
-      parseNullsToNullableObjects(copySchemasIfUsedAsAllOfInBase(schemas)),
+      parseNullsToNullableObjects(
+        copySchemasIfUsedAsAllOfInBase(schemasWithRequiredLifted),
+      ),
       ["title"],
     ),
   );

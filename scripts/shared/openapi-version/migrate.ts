@@ -1,3 +1,5 @@
+import { mergeJsonSchemaConditionals } from "./merge-json-schema-conditionals";
+
 /**
  * Converts this repository's OpenAPI 3.0.1 dialect to 3.1.0 and back.
  *
@@ -25,6 +27,10 @@
  * replaces it with a one-value `enum` in the same key position and marks
  * that enum with `x-openapi-31-const`. Upgrade restores `const` only when
  * the mark is present, so a one-value enum written by hand stays an enum.
+ *
+ * `if`, `then`, `else`, and `not` stay in this reversible downgrade.
+ * Generator entry points fold them afterwards with
+ * `mergeJsonSchemaConditionals`. That fold is not reversed by upgrade.
  *
  * Key order is part of the round-trip. `nullable` immediately before
  * `type` is encoded as `["null", "<type>"]`. Any other position is stored
@@ -108,8 +114,10 @@ export function ensureOpenApi301<T extends { openapi: string }>(
 
 /**
  * SDK prep opts in with `downgradeTo301`. Generators that must keep today's
- * 3.0.1 output call `ensureOpenApi301` directly.
+ * 3.0.1 output call this directly.
  * The clone goes through JSON so a TypeScript JSON import can be copied.
+ * After the reversible downgrade, `if` / `then` / `else` / `not` are folded
+ * into the parent object. Upgrade does not restore those keywords.
  */
 export function applySdkOpenApiVersion<T extends { openapi: string }>(
   document: T,
@@ -118,7 +126,62 @@ export function applySdkOpenApiVersion<T extends { openapi: string }>(
   if (!downgradeTo301) {
     return document;
   }
-  return ensureOpenApi301(JSON.parse(JSON.stringify(document)) as T);
+  const cloned = JSON.parse(JSON.stringify(document)) as T;
+  return mergeJsonSchemaConditionals(
+    ensureOpenApi301(collapseGeneratorNullUnions(cloned) as T),
+  );
+}
+
+/**
+ * OpenAPI 3.0.1 nullable is one type plus `nullable`. A union of `string`,
+ * `number`, and `null` cannot round-trip, so this runs only on the generator
+ * entry. Amount, price, and quantity fields keep `number`. Other fields,
+ * including source IDs, keep `string`. The description still says the API
+ * accepts both. A type array that is only `null` becomes `"type": "null"`,
+ * which a later step turns into a nullable object. Upgrade does not restore
+ * the one-element array. `downgradeOpenApi310To301` does not call this.
+ */
+function collapseGeneratorNullUnions<T>(document: T): T {
+  return collapseGeneratorNullUnionsValue(document as JsonValue) as T;
+}
+
+function collapseGeneratorNullUnionsValue(value: JsonValue): JsonValue {
+  if (Array.isArray(value)) {
+    return value.map((item) => collapseGeneratorNullUnionsValue(item));
+  }
+  if (!isObject(value)) {
+    return value;
+  }
+
+  const next: JsonObject = {};
+  for (const [key, child] of Object.entries(value)) {
+    next[key] = INSTANCE_KEYS.has(key)
+      ? child
+      : collapseGeneratorNullUnionsValue(child);
+  }
+  if (!Array.isArray(next.type)) {
+    return next;
+  }
+  const types = next.type;
+  if (types.length === 1 && types[0] === "null") {
+    next.type = "null";
+    return next;
+  }
+  const nonNull = types.filter((type) => type !== "null");
+  if (
+    types.length !== 3 ||
+    nonNull.length !== 2 ||
+    !types.includes("null") ||
+    !nonNull.includes("string") ||
+    !nonNull.includes("number")
+  ) {
+    return next;
+  }
+  const description =
+    typeof next.description === "string" ? next.description : "";
+  const keepNumber = /integer|quantity|price|amount/i.test(description);
+  next.type = [keepNumber ? "number" : "string", "null"];
+  return next;
 }
 
 function upgradeValue(value: JsonValue, path: string): JsonValue {

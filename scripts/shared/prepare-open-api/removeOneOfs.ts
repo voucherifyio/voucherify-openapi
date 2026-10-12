@@ -259,10 +259,18 @@ const propertiesIntersection = (
         p2 = mergeAllOfObjects(getObjects(p2, schemas), schemas, title);
       }
       if (p1?.oneOf) {
-        p1 = removeOneOf(p1, schemas, p1.title).schema;
+        p1 = removeOneOf(
+          p1,
+          schemas,
+          p1.title || title + upperFirst(camelCase(key)),
+        ).schema;
       }
       if (p2?.oneOf) {
-        p2 = removeOneOf(p2, schemas, p2.title).schema;
+        p2 = removeOneOf(
+          p2,
+          schemas,
+          p2.title || title + upperFirst(camelCase(key)),
+        ).schema;
       }
       // console.log(p1, p2);
       return [
