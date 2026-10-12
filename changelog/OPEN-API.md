@@ -43,6 +43,14 @@ Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
   - Added `400` examples for invalid query parameters and for `start_date` not before `end_date`.
   - Added `404` examples for a missing program, member, or earning rule, including ids that do not match the pattern. A missing or unassigned earning rule uses `resource_type` `earning_rule`.
 
+## 2026-10-08
+
+- Marked unused validation rule names as deprecated in the `name` list on `ValidationRuleRules`, `ValidationRuleRules01`, `ValidationRuleRules02`, `ValidationRuleRules03`, `WebhookValidationRuleRules`, `WebhookValidationRuleRules01`, `WebhookValidationRuleRules02`, and `WebhookValidationRuleRules03`.
+  - `order.items.metadata_any` and `order.items.metadata_each`.
+  - `product.id`, `product.price`, `product.quantity`, `product.discount_applicable`, `product.metadata`, `product.metadata.aggregated_quantity`, `product.metadata.aggregated_amount`, `product.metadata.discount_applicable`, and `product.metadata.match_all`.
+  - `sku.id`, `sku.price`, `sku.quantity`, and `sku.discount_applicable`.
+- Clarified `total` on `CustomerRedeemablesList` and `RedeemableHoldersList` as the number of results returned on this page.
+
 ## 2026-10-07
 
 - Published `reference/OpenAPI.json` as OpenAPI 3.1.0 (DEV-4255). Nullable fields use a `null` type (`type` array, or `anyOf` of a schema and `null`) instead of `nullable: true`.
