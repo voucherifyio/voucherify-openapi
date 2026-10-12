@@ -7,10 +7,12 @@
  *
  * The parent object is the schema generators see. A branch does not add
  * properties, does not add `required`, and does not replace a property with
- * `type: "null"`. An `allOf` item that is only `required` is unconditional,
- * so those names join the parent `required` and that item is removed. A `not`
- * that forbids a property keeps the property and
- * records the rule on that property, or on the parent when the property is
+ * `type: "null"`. An `allOf` item that is only `required` stays in place.
+ * `removeOneOf` does not walk properties while `allOf` is present, and that
+ * is what keeps a nullable `oneOf` intact. SDK prep calls
+ * `liftUnconditionalRequired` after that pass. A `not` that forbids a
+ * property keeps the property and records the rule on that property, or on
+ * the parent when the property is
  * only a `$ref` (OpenAPI 3.0 ignores sibling keywords of `$ref`). The parent
  * description records that the API still validates the dropped combinations.
  *
@@ -70,7 +72,7 @@ function requiredOnlyNames(item: JsonValue): string[] | null {
   return item.required as string[];
 }
 
-function liftUnconditionalRequired(schema: JsonObject): JsonObject {
+export function liftUnconditionalRequired(schema: JsonObject): JsonObject {
   if (!Array.isArray(schema.allOf)) {
     return schema;
   }
@@ -377,7 +379,7 @@ function foldConditionals(schema: JsonObject): JsonObject {
   if (!wroteDescription && description !== schema.description) {
     next.description = description;
   }
-  return liftUnconditionalRequired(next);
+  return next;
 }
 
 function mergeValue(value: JsonValue): JsonValue {
