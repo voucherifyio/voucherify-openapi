@@ -100,6 +100,20 @@ function isPureConditional(value: unknown): boolean {
   );
 }
 
+function requiredOnlyNames(value: unknown): string[] | null {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    return null;
+  }
+  const record = value as Record<string, unknown>;
+  if (Object.keys(record).join() !== "required" || !Array.isArray(record.required)) {
+    return null;
+  }
+  if (!record.required.every((name) => typeof name === "string")) {
+    return null;
+  }
+  return record.required as string[];
+}
+
 function assertParentShape(original: unknown, merged: unknown) {
   if (Array.isArray(original)) {
     expect(Array.isArray(merged)).toBe(true);
@@ -123,8 +137,25 @@ function assertParentShape(original: unknown, merged: unknown) {
       Object.keys(source.properties as object),
     );
   }
-  if (Array.isArray(source.required)) {
-    expect(result.required).toEqual(source.required);
+  const lifted: string[] = [];
+  if (Array.isArray(source.allOf)) {
+    for (const item of source.allOf) {
+      const names = requiredOnlyNames(item);
+      if (names) {
+        lifted.push(...names);
+      }
+    }
+  }
+  if (Array.isArray(source.required) || lifted.length > 0) {
+    const expected = Array.isArray(source.required)
+      ? [...(source.required as string[])]
+      : [];
+    for (const name of lifted) {
+      if (!expected.includes(name)) {
+        expected.push(name);
+      }
+    }
+    expect(result.required).toEqual(expected);
   }
   for (const [key, child] of Object.entries(source)) {
     if (INSTANCE_KEYS.has(key)) {
@@ -132,7 +163,9 @@ function assertParentShape(original: unknown, merged: unknown) {
       continue;
     }
     if (key === "allOf" && Array.isArray(child)) {
-      const kept = child.filter((item) => !isPureConditional(item));
+      const kept = child.filter(
+        (item) => !isPureConditional(item) && !requiredOnlyNames(item),
+      );
       if (kept.length === 0) {
         expect(result.allOf).toBeUndefined();
       } else {
@@ -257,7 +290,7 @@ describe("merge JSON Schema conditionals for OpenAPI 3.0.1", () => {
     expect(merged.allOf).toBeUndefined();
   });
 
-  it("leaves a branch-only property and a branch required array off the parent", () => {
+  it("lifts an unconditional required list and leaves a branch-only property off the parent", () => {
     const schema: { [key: string]: any } = {
       type: "object",
       properties: {
@@ -283,8 +316,33 @@ describe("merge JSON Schema conditionals for OpenAPI 3.0.1", () => {
     expect(merged.properties).toEqual({
       value: { type: "integer", minimum: 1 },
     });
-    expect(merged.allOf).toEqual([{ required: ["value"] }]);
+    expect(merged.required).toEqual(["value"]);
+    expect(merged.allOf).toBeUndefined();
     expect(merged.description).toBe(FIELD_COMBINATIONS_NOTE);
+  });
+
+  it("keeps a $ref sibling when it lifts an unconditional required list", () => {
+    const schema: { [key: string]: any } = {
+      type: "object",
+      properties: {
+        type: { type: "string" },
+      },
+      required: ["type"],
+      allOf: [
+        { required: ["type", "name"] },
+        { $ref: "#/components/schemas/Named" },
+        {
+          if: { properties: { type: { const: "POINTS" } } },
+          then: { required: ["points"] },
+        },
+      ],
+    };
+
+    const merged = mergeJsonSchemaConditionals(schema);
+
+    expect(merged.required).toEqual(["type", "name"]);
+    expect(merged.allOf).toEqual([{ $ref: "#/components/schemas/Named" }]);
+    expect(merged.properties).toEqual({ type: { type: "string" } });
   });
 
   it("puts a forbid rule on the parent when the property is only a ref", () => {
