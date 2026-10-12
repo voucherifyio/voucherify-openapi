@@ -1566,24 +1566,26 @@
       }
     },
     "/v2/loyalties/programs/{programId}/tier-structures": {
+      "parameters": [
+        {
+          "name": "programId",
+          "in": "path",
+          "required": true,
+          "description": "Unique program identifier.",
+          "schema": {
+            "type": "string",
+            "pattern": "^lprg_[a-f0-9]+$"
+          }
+        }
+      ],
       "get": {
         "operationId": "listProgramTierStructureAssignments",
         "tags": [
           "Programs"
         ],
         "summary": "List program tier structure assignments",
-        "description": "Returns a cursor-paginated list of tier structures assigned to the program.",
+        "description": "Returns a cursor-paginated list of tier structures assigned to the program. Currently, a program can have only one tier structure assigned.",
         "parameters": [
-          {
-            "name": "programId",
-            "in": "path",
-            "required": true,
-            "description": "Unique program identifier.",
-            "schema": {
-              "type": "string",
-              "pattern": "^lprg_[a-f0-9]+$"
-            }
-          },
           {
             "name": "limit",
             "in": "query",
@@ -1604,7 +1606,7 @@
             "name": "order",
             "in": "query",
             "required": false,
-            "description": "Sorting order. A single value or an array of values. Prefix with `-` for descending.\nDefaults to `-created_at`. The same field cannot be used in both ascending and\ndescending order at once.",
+            "description": "Sorting order. A single value or an array of values. Prefix with `-` for descending. Defaults to `-created_at`. The same field cannot be used in both ascending and descending order at once.",
             "schema": {
               "oneOf": [
                 {
@@ -1651,6 +1653,21 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/V2LoyaltiesProgramsTierStructuresListResponseBody"
+                },
+                "examples": {
+                  "List of program tier structures": {
+                    "value": {
+                      "data": [
+                        {
+                          "tier_structure_id": "lts_128f4b460e4c4bedf6",
+                          "created_at": "2026-06-11T13:03:57.028Z",
+                          "object": "program_tier_structure"
+                        }
+                      ],
+                      "cursor": null,
+                      "object": "list"
+                    }
+                  }
                 }
               }
             }
@@ -1661,6 +1678,80 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Invalid cursor format": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Property .cursor must match pattern \"^lcrstsa_[a-f0-9]+$\"",
+                      "request_id": "v-12f9006245061134b0"
+                    }
+                  },
+                  "Cursor invalid or expired": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_or_expired_cursor",
+                      "message": "Invalid or expired cursor",
+                      "details": "The provided cursor is invalid or has expired",
+                      "request_id": "v-12f9006245061134b1"
+                    }
+                  },
+                  "Cursor does not match query": {
+                    "value": {
+                      "code": 400,
+                      "key": "cursor_and_query_mismatch",
+                      "message": "Cursor and query mismatch",
+                      "details": "The provided cursor does not match the query, either the cursor is invalid or the query has changed",
+                      "request_id": "v-12f9006245061134b2"
+                    }
+                  },
+                  "Cursor from another list": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_cursor",
+                      "message": "Invalid cursor",
+                      "details": "The provided cursor is invalid",
+                      "request_id": "v-12f9006245061134b3"
+                    }
+                  },
+                  "Limit too high": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Property .limit cannot be greater than 100",
+                      "request_id": "v-12f9006245061134b4"
+                    }
+                  },
+                  "Limit too low": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Property .limit cannot be lower than 1",
+                      "request_id": "v-12f9006245061134b5"
+                    }
+                  },
+                  "Unsupported order value": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Property .order must be equal to one of the allowed values [ -created_at, created_at ]",
+                      "request_id": "v-12f9006245061134b6"
+                    }
+                  },
+                  "Conflicting order values": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Query cannot be ordered by 'created_at' and '-created_at' at the same time",
+                      "request_id": "v-12f9006245061134b7"
+                    }
+                  }
                 }
               }
             }
@@ -1671,6 +1762,30 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Program not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find program with id lprg_18f58429f4c4bf7b2",
+                      "request_id": "v-131f936f8b622332e0",
+                      "resource_id": "lprg_18f58429f4c4bf7b2",
+                      "resource_type": "program"
+                    }
+                  },
+                  "Program id does not match the pattern": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find program with id non-existent-program-id",
+                      "request_id": "v-131f936f8b622332e1",
+                      "resource_id": "non-existent-program-id",
+                      "resource_type": "program"
+                    }
+                  }
                 }
               }
             }
@@ -1819,6 +1934,18 @@
       }
     },
     "/v2/loyalties/programs/{programId}/rewards": {
+      "parameters": [
+        {
+          "name": "programId",
+          "in": "path",
+          "required": true,
+          "description": "Unique program identifier.",
+          "schema": {
+            "type": "string",
+            "pattern": "^lprg_[a-f0-9]+$"
+          }
+        }
+      ],
       "get": {
         "operationId": "listProgramRewardAssignments",
         "tags": [
@@ -1827,16 +1954,6 @@
         "summary": "List program reward assignments",
         "description": "Returns a cursor-paginated list of rewards assigned to the program, including their stock configuration and redemption counters.",
         "parameters": [
-          {
-            "name": "programId",
-            "in": "path",
-            "required": true,
-            "description": "Unique program identifier.",
-            "schema": {
-              "type": "string",
-              "pattern": "^lprg_[a-f0-9]+$"
-            }
-          },
           {
             "name": "limit",
             "in": "query",
@@ -1857,7 +1974,7 @@
             "name": "order",
             "in": "query",
             "required": false,
-            "description": "Sorting order. A single value or an array of values. Prefix with `-` for descending.\nDefaults to `-created_at`. The same field cannot be used in both ascending and\ndescending order at once.",
+            "description": "Sorting order. A single value or an array of values. Prefix with `-` for descending. Defaults to `-created_at`. The same field cannot be used in both ascending and descending order at once.",
             "schema": {
               "oneOf": [
                 {
@@ -1903,7 +2020,56 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2LoyaltiesProgramsRewardsListResponseBody"
+                  "$ref": "#/components/schemas/LoyaltiesProgramsRewardsListResponseBody"
+                },
+                "examples": {
+                  "List of program reward assignments": {
+                    "value": {
+                      "data": [
+                        {
+                          "reward_id": "lrew_1294cebb458e4904a0",
+                          "stock": {
+                            "type": "LIMITED",
+                            "limited": {
+                              "quantity": 92
+                            }
+                          },
+                          "redeemed": 10,
+                          "created_at": "2026-06-15T17:19:10.897Z",
+                          "updated_at": "2026-07-27T16:10:01.905Z",
+                          "object": "program_reward"
+                        },
+                        {
+                          "reward_id": "lrew_128f4c6710947c85d1",
+                          "stock": {
+                            "type": "LIMITED",
+                            "limited": {
+                              "quantity": 999
+                            }
+                          },
+                          "redeemed": 1,
+                          "created_at": "2026-06-11T15:58:06.017Z",
+                          "updated_at": "2026-06-17T15:29:44.542Z",
+                          "object": "program_reward"
+                        },
+                        {
+                          "reward_id": "lrew_128f4cab04147c8608",
+                          "stock": {
+                            "type": "UNLIMITED"
+                          },
+                          "redeemed": 0,
+                          "created_at": "2026-06-11T15:57:54.021Z",
+                          "updated_at": null,
+                          "object": "program_reward"
+                        }
+                      ],
+                      "cursor": {
+                        "next": "lcrsrewa_132d7ff1a7df244d31",
+                        "expires_at": "2026-10-12T07:52:33.119Z"
+                      },
+                      "object": "list"
+                    }
+                  }
                 }
               }
             }
@@ -1914,6 +2080,80 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Invalid cursor format": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Property .cursor must match pattern \"^lcrsrewa_[a-f0-9]+$\"",
+                      "request_id": "v-12f9006245061134c0"
+                    }
+                  },
+                  "Cursor invalid or expired": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_or_expired_cursor",
+                      "message": "Invalid or expired cursor",
+                      "details": "The provided cursor is invalid or has expired",
+                      "request_id": "v-12f9006245061134c1"
+                    }
+                  },
+                  "Cursor does not match query": {
+                    "value": {
+                      "code": 400,
+                      "key": "cursor_and_query_mismatch",
+                      "message": "Cursor and query mismatch",
+                      "details": "The provided cursor does not match the query, either the cursor is invalid or the query has changed",
+                      "request_id": "v-12f9006245061134c2"
+                    }
+                  },
+                  "Cursor from another list": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_cursor",
+                      "message": "Invalid cursor",
+                      "details": "The provided cursor is invalid",
+                      "request_id": "v-12f9006245061134c3"
+                    }
+                  },
+                  "Limit too high": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Property .limit cannot be greater than 100",
+                      "request_id": "v-12f9006245061134c4"
+                    }
+                  },
+                  "Limit too low": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Property .limit cannot be lower than 1",
+                      "request_id": "v-12f9006245061134c5"
+                    }
+                  },
+                  "Unsupported order value": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Property .order must be equal to one of the allowed values [ -created_at, created_at ]",
+                      "request_id": "v-12f9006245061134c6"
+                    }
+                  },
+                  "Conflicting order values": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Query cannot be ordered by 'created_at' and '-created_at' at the same time",
+                      "request_id": "v-12f9006245061134c7"
+                    }
+                  }
                 }
               }
             }
@@ -1924,6 +2164,30 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Program not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find program with id lprg_18f58429f4c4bf7b2",
+                      "request_id": "v-131f936f8b622332e2",
+                      "resource_id": "lprg_18f58429f4c4bf7b2",
+                      "resource_type": "program"
+                    }
+                  },
+                  "Program id does not match the pattern": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find program with id non-existent-program-id",
+                      "request_id": "v-131f936f8b622332e3",
+                      "resource_id": "non-existent-program-id",
+                      "resource_type": "program"
+                    }
+                  }
                 }
               }
             }
@@ -3355,7 +3619,7 @@
           "Programs"
         ],
         "summary": "Delete program member",
-        "description": "Deletes the member and sets `status` to `DELETED`. Removes the member's card assignments in this program. The cards stay.\n\nReturns the member without a `cards` array. Delete doesn't change `updated_at`.\n\nRecords a `vl.member.deleted` activity. Each unassigned card also records `vl.member.card.unassigned` and `vl.card.unassigned`. When an assignment has a tier, the delete records a `LEFT` tier transaction with origin `member_card_deleted`.\n\nThe same customer can join the program again. The new member gets a new id.\n\nReturns `404` when the program doesn't exist, or when the member doesn't exist in that program. The program is checked first. Deleting a member that is already `DELETED` returns `404`.",
+        "description": "Deletes the member and sets `status` to `DELETED`. Removes the member's card assignments in this program.\n\nReturns the member without a `cards` array. Delete doesn't change `updated_at`.\n\nRecords a `vl.member.deleted` activity. Each unassigned card also records `vl.member.card.unassigned` and `vl.card.unassigned`. When an assignment has a tier, the delete records a `LEFT` tier transaction with origin `member_card_deleted`.\n\nThe same customer can join the program again. The new member gets a new id.\n\nReturns `404` when the program doesn't exist, or when the member doesn't exist in that program. The program is checked first. Deleting a member that is already `DELETED` returns `404`.",
         "parameters": [],
         "responses": {
           "200": {
@@ -9708,6 +9972,15 @@
                       "request_id": "v-130eb43b3685e26455"
                     }
                   },
+                  "Invalid query parameters: `end_date` is invalid": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Property .end_date cannot be recognized as a ISO-8601 compliant date",
+                      "request_id": "v-130eb43b3685e26458"
+                    }
+                  },
                   "Invalid query parameters: date range exceeds limit": {
                     "value": {
                       "code": 400,
@@ -9768,6 +10041,39 @@
                       "details": "Cannot find card with id lcrd_128f9ee63cc4ba558",
                       "request_id": "v-131e61ff0dc2645083",
                       "resource_id": "lcrd_128f9ee63cc4ba558",
+                      "resource_type": "card"
+                    }
+                  },
+                  "Program ID does not match the pattern": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find program with id missing",
+                      "request_id": "v-131e61d450c264502e",
+                      "resource_id": "missing",
+                      "resource_type": "program"
+                    }
+                  },
+                  "Member ID does not match the pattern": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find member with id missing",
+                      "request_id": "v-131e61f4dcee09b661",
+                      "resource_id": "missing",
+                      "resource_type": "member"
+                    }
+                  },
+                  "Card ID does not match the pattern": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find card with id missing",
+                      "request_id": "v-131e61ff0dc2645084",
+                      "resource_id": "missing",
                       "resource_type": "card"
                     }
                   }
@@ -9898,9 +10204,46 @@
                     "value": {
                       "data": [
                         {
+                          "date": "2026-07-10",
+                          "count": 1,
+                          "object": "earning_rule_daily_report"
+                        },
+                        {
+                          "date": "2026-07-15",
+                          "count": 11,
+                          "object": "earning_rule_daily_report"
+                        },
+                        {
+                          "date": "2026-07-30",
+                          "count": 1,
+                          "object": "earning_rule_daily_report"
+                        },
+                        {
+                          "date": "2026-08-06",
+                          "count": 13,
+                          "object": "earning_rule_daily_report"
+                        }
+                      ],
+                      "object": "report"
+                    }
+                  },
+                  "Member earning-rule daily report: Month resolution": {
+                    "value": {
+                      "data": [
+                        {
+                          "date": "2026-06-01",
+                          "count": 4,
+                          "object": "earning_rule_daily_report"
+                        },
+                        {
                           "date": "2026-07-01",
-                          "object": "earning_rule_daily_report",
-                          "count": 1
+                          "count": 13,
+                          "object": "earning_rule_daily_report"
+                        },
+                        {
+                          "date": "2026-08-01",
+                          "count": 13,
+                          "object": "earning_rule_daily_report"
                         }
                       ],
                       "object": "report"
@@ -9969,6 +10312,15 @@
                       "request_id": "v-130eb43b3685e26455"
                     }
                   },
+                  "Invalid query parameters: `end_date` is invalid": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Property .end_date cannot be recognized as a ISO-8601 compliant date",
+                      "request_id": "v-130eb43b3685e26459"
+                    }
+                  },
                   "Invalid query parameters: date range exceeds limit": {
                     "value": {
                       "code": 400,
@@ -10029,6 +10381,39 @@
                       "details": "Cannot find earning_rule with id lern_128f9ee63cc4ba558",
                       "request_id": "v-131e61ff0dc2645083",
                       "resource_id": "lern_128f9ee63cc4ba558",
+                      "resource_type": "earning_rule"
+                    }
+                  },
+                  "Program ID does not match the pattern": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find program with id missing",
+                      "request_id": "v-131e61d450c264502f",
+                      "resource_id": "missing",
+                      "resource_type": "program"
+                    }
+                  },
+                  "Member ID does not match the pattern": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find member with id missing",
+                      "request_id": "v-131e61f4dcee09b662",
+                      "resource_id": "missing",
+                      "resource_type": "member"
+                    }
+                  },
+                  "Earning rule ID does not match the pattern": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find earning_rule with id missing",
+                      "request_id": "v-131e61ff0dc2645085",
+                      "resource_id": "missing",
                       "resource_type": "earning_rule"
                     }
                   }
@@ -13699,6 +14084,18 @@
       }
     },
     "/v2/loyalties/earning-rules/{earningRuleId}": {
+      "parameters": [
+        {
+          "name": "earningRuleId",
+          "in": "path",
+          "required": true,
+          "description": "Earning rule ID.",
+          "schema": {
+            "type": "string",
+            "pattern": "^lern_[a-f0-9]+$"
+          }
+        }
+      ],
       "get": {
         "tags": [
           "Earning Rules"
@@ -13889,18 +14286,7 @@
             }
           }
         },
-        "parameters": [
-          {
-            "name": "earningRuleId",
-            "in": "path",
-            "required": true,
-            "description": "Earning rule ID.",
-            "schema": {
-              "type": "string",
-              "pattern": "^lern_[a-f0-9]+$"
-            }
-          }
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id": [],
@@ -13989,18 +14375,7 @@
             }
           }
         },
-        "parameters": [
-          {
-            "name": "earningRuleId",
-            "in": "path",
-            "required": true,
-            "description": "Earning rule ID.",
-            "schema": {
-              "type": "string",
-              "pattern": "^lern_[a-f0-9]+$"
-            }
-          }
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id": [],
@@ -14079,18 +14454,7 @@
             }
           }
         },
-        "parameters": [
-          {
-            "name": "earningRuleId",
-            "in": "path",
-            "required": true,
-            "description": "Earning rule ID.",
-            "schema": {
-              "type": "string",
-              "pattern": "^lern_[a-f0-9]+$"
-            }
-          }
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id": [],
@@ -16212,6 +16576,31 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/V2LoyaltiesBenefitsGetResponseBody"
+                },
+                "examples": {
+                  "Sample benefit": {
+                    "value": {
+                      "id": "lben_128f4bba81947c8542",
+                      "name": "Coffee sample Ethiopia",
+                      "type": "MATERIAL",
+                      "status": "ACTIVE",
+                      "stock": {
+                        "type": "LIMITED",
+                        "limited": {
+                          "quantity": 495
+                        }
+                      },
+                      "material": {
+                        "type": "PRODUCT",
+                        "product": {
+                          "id": "prod_128f4baa45547c8530"
+                        }
+                      },
+                      "created_at": "2026-06-11T10:34:24.645Z",
+                      "updated_at": "2026-09-02T15:05:31.533Z",
+                      "object": "benefit"
+                    }
+                  }
                 }
               }
             }
@@ -16222,6 +16611,19 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Benefit not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find benefit with id lben_128f4bba81947c854",
+                      "request_id": "v-132d84aa1315d651a9",
+                      "resource_id": "lben_128f4bba81947c854",
+                      "resource_type": "benefit"
+                    }
+                  }
                 }
               }
             }
@@ -17212,6 +17614,18 @@
       }
     },
     "/v2/loyalties/rewards/{rewardId}": {
+      "parameters": [
+        {
+          "name": "rewardId",
+          "in": "path",
+          "required": true,
+          "description": "Unique reward identifier, prefixed with `lrew_`.",
+          "schema": {
+            "type": "string",
+            "pattern": "^lrew_[a-f0-9]+$"
+          }
+        }
+      ],
       "get": {
         "operationId": "getReward",
         "tags": [
@@ -17219,18 +17633,7 @@
         ],
         "summary": "Get reward by ID",
         "description": "Returns a single reward by its ID.",
-        "parameters": [
-          {
-            "name": "rewardId",
-            "in": "path",
-            "required": true,
-            "description": "Unique reward identifier, prefixed with `lrew_`.",
-            "schema": {
-              "type": "string",
-              "pattern": "^lrew_[a-f0-9]+$"
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "The reward.",
@@ -17240,7 +17643,7 @@
                   "$ref": "#/components/schemas/V2LoyaltiesRewardsGetResponseBody"
                 },
                 "examples": {
-                  "Get reward": {
+                  "Material reward": {
                     "value": {
                       "id": "lrew_12cad1abefa2311e10",
                       "name": "Daily coffee voucher",
@@ -17273,7 +17676,8 @@
                           ],
                           "tier_rules": {
                             "type": "NO_REQUIREMENTS"
-                          }
+                          },
+                          "name": "Cost one"
                         }
                       ],
                       "purchase_limits": {
@@ -17320,6 +17724,30 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Reward not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find reward with id lrew_18f58429f4c4bf7b2",
+                      "request_id": "v-131f936f8b62233301",
+                      "resource_id": "lrew_18f58429f4c4bf7b2",
+                      "resource_type": "reward"
+                    }
+                  },
+                  "Reward ID does not match the pattern": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find reward with id non-existent-id",
+                      "request_id": "v-131f936f8b62233302",
+                      "resource_id": "non-existent-id",
+                      "resource_type": "reward"
+                    }
+                  }
                 }
               }
             }
@@ -17361,18 +17789,7 @@
         ],
         "summary": "Update a reward",
         "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nUpdates an existing reward. When `type` is provided as `MATERIAL` the `material`\nobject is required and `digital` must be null; when `type` is provided as `DIGITAL`\nthe `digital` object is required and `material` must be null.\n\nIn `DRAFT` status all properties can be updated. In `ACTIVE`/`INACTIVE` status only\nthe following properties can be updated: `name`, `metadata`, `refunds`,\n`validity_hours`, `start_date`, `end_date`, `costs`.",
-        "parameters": [
-          {
-            "name": "rewardId",
-            "in": "path",
-            "required": true,
-            "description": "Unique reward identifier, prefixed with `lrew_`.",
-            "schema": {
-              "type": "string",
-              "pattern": "^lrew_[a-f0-9]+$"
-            }
-          }
-        ],
+        "parameters": [],
         "requestBody": {
           "required": true,
           "content": {
@@ -17564,18 +17981,7 @@
         ],
         "summary": "Delete a reward",
         "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nDeletes a reward (moves it to the DELETED status). Returns the deleted reward.",
-        "parameters": [
-          {
-            "name": "rewardId",
-            "in": "path",
-            "required": true,
-            "description": "Unique reward identifier, prefixed with `lrew_`.",
-            "schema": {
-              "type": "string",
-              "pattern": "^lrew_[a-f0-9]+$"
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "The deleted reward.",
@@ -20101,8 +20507,8 @@
           }
         }
       },
-      "V2LoyaltiesProgramsRewardsListResponseBody": {
-        "title": "V2 Loyalties Programs Rewards List Response Body",
+      "LoyaltiesProgramsRewardsListResponseBody": {
+        "title": "Loyalties Programs Rewards List Response Body",
         "type": "object",
         "description": "Response body schema for **GET** `/v2/loyalties/programs/{programId}/rewards`.",
         "allOf": [
@@ -20228,7 +20634,7 @@
           },
           "object": {
             "type": "string",
-            "description": "Object type marker.",
+            "description": "Object type marker. Always `program_reward`.",
             "const": "program_reward"
           }
         },
@@ -24905,7 +25311,7 @@
       },
       "Benefit": {
         "type": "object",
-        "description": "A benefit object. Exactly one type-specific configuration object\n(`points`, `points_proportional`, `material`, or `digital`) is present, matching the `type`;\nthe others are omitted.",
+        "description": "A benefit object. Exactly one type-specific configuration object (`points`, `points_proportional`, `material`, or `digital`) is present, matching the `type`; the others are omitted.",
         "properties": {
           "id": {
             "type": "string",
@@ -25383,7 +25789,7 @@
             "description": "Refund policy for the reward. Defaults to `{ \"type\": \"NONE\" }` when omitted.",
             "oneOf": [
               {
-                "$ref": "#/components/schemas/RewardRefundsRequest"
+                "$ref": "#/components/schemas/LoyaltyV2ActivityRewardRefunds"
               },
               {
                 "type": "null"
@@ -25465,7 +25871,7 @@
             "description": "Digital reward definition. Present only when `type` is DIGITAL; omitted otherwise."
           },
           "refunds": {
-            "$ref": "#/components/schemas/LoyaltyV2ActivityRewardRefundsResponse",
+            "$ref": "#/components/schemas/LoyaltyV2ActivityRewardRefunds",
             "description": "Refund policy. Always present; defaults to `{ \"type\": \"NONE\" }`."
           },
           "costs": {
@@ -25600,7 +26006,7 @@
             "description": "Refund policy for the reward.",
             "oneOf": [
               {
-                "$ref": "#/components/schemas/RewardRefundsRequest"
+                "$ref": "#/components/schemas/LoyaltyV2ActivityRewardRefunds"
               },
               {
                 "type": "null"
@@ -27376,7 +27782,7 @@
         "properties": {
           "object": {
             "type": "string",
-            "description": "Object type marker.",
+            "description": "Object type marker. Always `list`.",
             "const": "list"
           },
           "data": {
@@ -27421,7 +27827,7 @@
       },
       "ProgramRewardAssignmentStock": {
         "type": "object",
-        "description": "Reward stock configuration. When `type` is `UNLIMITED`, `limited` must not be provided.\nWhen `type` is `LIMITED`, `limited` is required.",
+        "description": "Reward stock configuration. When `type` is `UNLIMITED`, `limited` must not be provided. When `type` is `LIMITED`, `limited` is required.",
         "properties": {
           "type": {
             "type": "string",
@@ -27432,15 +27838,8 @@
             ]
           },
           "limited": {
-            "description": "Limited stock details. Required when `type` is `LIMITED`; must not be provided when `type` is `UNLIMITED`.",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/ProgramRewardAssignmentStockLimited"
-              },
-              {
-                "type": "null"
-              }
-            ]
+            "description": "Limited stock details. Required when `type` is `LIMITED`. Absent when `type` is `UNLIMITED`.",
+            "$ref": "#/components/schemas/ProgramRewardAssignmentStockLimited"
           }
         },
         "required": [
@@ -37100,7 +37499,7 @@
       },
       "BenefitPointsProportional": {
         "type": "object",
-        "description": "Proportional points effect - points are calculated from an order amount, order items,\nor a metadata property. Exactly one calculation source object (`order`, `customer`,\n`custom_event`, or `order_items`) is required, determined by `calculation_type`;\nthe remaining source properties must be omitted or `null`.",
+        "description": "Proportional points effect - points are calculated from an order amount, order items, or a metadata property. Exactly one calculation source object (`order`, `customer`, `custom_event`, or `order_items`) is required, determined by `calculation_type`. In requests, the remaining source properties may be omitted or set to `null`. In responses, they are omitted.",
         "properties": {
           "calculation_type": {
             "type": "string",
@@ -37122,7 +37521,7 @@
             "description": "ID of the card definition whose cards receive the points. The card definition must exist and be ACTIVE."
           },
           "order": {
-            "description": "Order-based calculation configuration (for `PRE_DISCOUNT_ORDER_AMOUNT`, `POST_DISCOUNT_ORDER_AMOUNT`, `ORDER_METADATA_VALUE`).",
+            "description": "Order-based calculation configuration. Required for `PRE_DISCOUNT_ORDER_AMOUNT`, `POST_DISCOUNT_ORDER_AMOUNT`, and `ORDER_METADATA_VALUE`. For other calculation types, requests may omit it or set it to `null`; responses omit it.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/BenefitPointsProportionalOrder"
@@ -37133,7 +37532,7 @@
             ]
           },
           "customer": {
-            "description": "Customer-metadata-based calculation configuration (for `CUSTOMER_METADATA_VALUE`).",
+            "description": "Customer-metadata-based calculation configuration. Required for `CUSTOMER_METADATA_VALUE`. For other calculation types, requests may omit it or set it to `null`; responses omit it.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/BenefitPointsProportionalCustomer"
@@ -37144,7 +37543,7 @@
             ]
           },
           "custom_event": {
-            "description": "Custom-event-metadata-based calculation configuration (for `CUSTOM_EVENT_METADATA_VALUE`).",
+            "description": "Custom-event-metadata-based calculation configuration. Required for `CUSTOM_EVENT_METADATA_VALUE`. For other calculation types, requests may omit it or set it to `null`; responses omit it.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/BenefitPointsProportionalCustomEvent"
@@ -37155,7 +37554,7 @@
             ]
           },
           "order_items": {
-            "description": "Order-items-based calculation configuration (for `PRE_DISCOUNT_ORDER_ITEMS_AMOUNT`, `POST_DISCOUNT_ORDER_ITEMS_AMOUNT`, `ORDER_ITEMS_QUANTITY`).",
+            "description": "Order-items-based calculation configuration. Required for `PRE_DISCOUNT_ORDER_ITEMS_AMOUNT`, `POST_DISCOUNT_ORDER_ITEMS_AMOUNT`, and `ORDER_ITEMS_QUANTITY`. For other calculation types, requests may omit it or set it to `null`; responses omit it.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/BenefitPointsProportionalOrderItems"
@@ -37418,7 +37817,7 @@
       },
       "BenefitMaterial": {
         "type": "object",
-        "description": "Material benefit - a physical product or SKU. Exactly one of `product` or `sku` is\nrequired, matching the `type`; the other must be omitted or `null`.",
+        "description": "Material benefit - a physical product or SKU. Exactly one of `product` or `sku` is required, matching the `type`. In requests, the other property may be omitted or set to `null`. In responses, it is omitted.",
         "properties": {
           "type": {
             "type": "string",
@@ -37429,7 +37828,7 @@
             "description": "Whether the benefit is a whole product or a specific SKU."
           },
           "product": {
-            "description": "Product reference. Required when `type` is `PRODUCT`, must be null otherwise. The product must exist.",
+            "description": "Product reference. Required when `type` is `PRODUCT`. When `type` is `SKU`, requests may omit it or set it to `null`; responses omit it. The product must exist.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitMaterialProduct"
@@ -37440,7 +37839,7 @@
             ]
           },
           "sku": {
-            "description": "SKU reference. Required when `type` is `SKU`, must be null otherwise. The SKU must exist under the given product.",
+            "description": "SKU reference. Required when `type` is `SKU`. When `type` is `PRODUCT`, requests may omit it or set it to `null`; responses omit it. The SKU must exist under the given product.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitMaterialSKU"
@@ -37506,7 +37905,7 @@
       },
       "BenefitDigital": {
         "type": "object",
-        "description": "Digital benefit - a reward sourced from a Voucherify campaign. Exactly one of\n`gift_vouchers` or `discount_coupons` is required, matching the `type`; the other must\nbe omitted or `null`. The referenced campaign must exist and its campaign type must match\nthe benefit's digital type.",
+        "description": "Digital benefit - a reward sourced from a Voucherify campaign. Exactly one of `gift_vouchers` or `discount_coupons` is required, matching the `type`. In requests, the other property may be omitted or set to `null`. In responses, it is omitted. The referenced campaign must exist and its campaign type must match the benefit's digital type.",
         "properties": {
           "type": {
             "type": "string",
@@ -37517,7 +37916,7 @@
             "description": "Type of the digital reward."
           },
           "gift_vouchers": {
-            "description": "Gift vouchers configuration. Required when `type` is `GIFT_VOUCHERS`, must be null otherwise.",
+            "description": "Gift vouchers configuration. Required when `type` is `GIFT_VOUCHERS`. When `type` is `DISCOUNT_COUPONS`, requests may omit it or set it to `null`; responses omit it.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitDigitalGiftVouchers"
@@ -37528,7 +37927,7 @@
             ]
           },
           "discount_coupons": {
-            "description": "Discount coupons configuration. Required when `type` is `DISCOUNT_COUPONS`, must be null otherwise.",
+            "description": "Discount coupons configuration. Required when `type` is `DISCOUNT_COUPONS`. When `type` is `GIFT_VOUCHERS`, requests may omit it or set it to `null`; responses omit it.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitDigitalDiscountCoupons"
@@ -37594,7 +37993,7 @@
       },
       "BenefitStock": {
         "type": "object",
-        "description": "Stock configuration of the benefit. When `type` is `LIMITED` the `limited` object is\nrequired; when `type` is `UNLIMITED` the `limited` object must be omitted or `null`.",
+        "description": "Stock configuration of the benefit. When `type` is `LIMITED`, the `limited` object is required. When `type` is `UNLIMITED`, requests may omit `limited` or set it to `null`; responses omit it.",
         "properties": {
           "type": {
             "type": "string",
@@ -37605,7 +38004,7 @@
             "description": "Whether the benefit has unlimited or limited stock."
           },
           "limited": {
-            "description": "Limited stock configuration. Required when `type` is `LIMITED`, must be null otherwise.",
+            "description": "Limited stock configuration. Required when `type` is `LIMITED`. When `type` is `UNLIMITED`, requests may omit it or set it to `null`; responses omit it.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitStockLimited"
@@ -38596,7 +38995,7 @@
             "description": "Product delivered by the reward. Required when `type` is PRODUCT; must be null when `type` is SKU.",
             "oneOf": [
               {
-                "$ref": "#/components/schemas/RewardMaterialProductRequest"
+                "$ref": "#/components/schemas/LoyaltyV2ActivityRewardMaterialProduct"
               },
               {
                 "type": "null"
@@ -38607,7 +39006,7 @@
             "description": "SKU delivered by the reward. Required when `type` is SKU; must be null when `type` is PRODUCT.",
             "oneOf": [
               {
-                "$ref": "#/components/schemas/RewardMaterialSKURequest"
+                "$ref": "#/components/schemas/LoyaltyV2ActivityRewardMaterialSKU"
               },
               {
                 "type": "null"
@@ -38637,7 +39036,7 @@
             "description": "Discount coupons configuration. Required when `type` is DISCOUNT_COUPONS; must be null otherwise.",
             "oneOf": [
               {
-                "$ref": "#/components/schemas/RewardDigitalDiscountCouponsRequest"
+                "$ref": "#/components/schemas/LoyaltyV2ActivityRewardDigitalDiscountCoupons"
               },
               {
                 "type": "null"
@@ -38724,7 +39123,7 @@
         },
         "additionalProperties": false
       },
-      "RewardRefundsRequest": {
+      "LoyaltyV2ActivityRewardRefunds": {
         "type": "object",
         "description": "Refund policy for the reward.",
         "properties": {
@@ -38779,11 +39178,11 @@
             "description": "Kind of material reward."
           },
           "product": {
-            "$ref": "#/components/schemas/LoyaltyV2ActivityRewardMaterialProductResponse",
+            "$ref": "#/components/schemas/LoyaltyV2ActivityRewardMaterialProduct",
             "description": "Product delivered by the reward. Present only when `type` is PRODUCT; omitted otherwise."
           },
           "sku": {
-            "$ref": "#/components/schemas/LoyaltyV2ActivityRewardMaterialSKUResponse",
+            "$ref": "#/components/schemas/LoyaltyV2ActivityRewardMaterialSKU",
             "description": "SKU delivered by the reward. Present only when `type` is SKU; omitted otherwise."
           }
         },
@@ -38805,7 +39204,7 @@
             "description": "Kind of digital reward."
           },
           "discount_coupons": {
-            "$ref": "#/components/schemas/LoyaltyV2ActivityRewardDigitalDiscountCouponsResponse",
+            "$ref": "#/components/schemas/LoyaltyV2ActivityRewardDigitalDiscountCoupons",
             "description": "Discount coupons configuration. Present only when `type` is DISCOUNT_COUPONS."
           },
           "gift_vouchers": {
@@ -38821,31 +39220,22 @@
           "type"
         ]
       },
-      "LoyaltyV2ActivityRewardRefundsResponse": {
-        "type": "object",
-        "description": "Refund policy.",
-        "properties": {
-          "type": {
-            "type": "string",
-            "enum": [
-              "NONE",
-              "REFUNDABLE"
-            ],
-            "description": "Whether reward purchases can be refunded. Defaults to NONE."
-          }
-        },
-        "required": [
-          "type"
-        ]
-      },
       "RewardCostResponse": {
         "type": "object",
-        "description": "A reward cost. `rules` is omitted when the cost has no\nrule definitions; `spending` is null when no spending is defined. `tier_rules` is always present and defaults to `NO_REQUIREMENTS`.",
+        "description": "A reward cost. `rules` is omitted when the cost has no rule definitions; `spending` is `null` when no spending is defined. `tier_rules` is always present and defaults to `NO_REQUIREMENTS`.",
         "properties": {
           "id": {
             "type": "string",
             "pattern": "^lrcst_[a-f0-9]+$",
             "description": "Unique cost identifier, prefixed with `lrcst_`."
+          },
+          "name": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 200,
+            "description": "Display name of the cost. Omitted when not set. `null` when cleared."
           },
           "rules": {
             "$ref": "#/components/schemas/RewardCostRuleGroupResponse",
@@ -39738,7 +40128,7 @@
         "properties": {
           "quantity": {
             "type": "integer",
-            "description": "Available stock quantity.",
+            "description": "Available stock quantity. For responses, updates with each reward purchase.",
             "minimum": 0,
             "maximum": 9007199254740991
           }
@@ -42739,7 +43129,7 @@
             "type": "integer",
             "minimum": 0,
             "maximum": 9007199254740991,
-            "description": "Remaining stock quantity."
+            "description": "Available Remaining stock quantity. For responses, updates with each benefit purchase."
           }
         },
         "required": [
@@ -42824,7 +43214,7 @@
         ],
         "additionalProperties": false
       },
-      "RewardMaterialProductRequest": {
+      "LoyaltyV2ActivityRewardMaterialProduct": {
         "type": "object",
         "description": "Product reference for a material reward.",
         "properties": {
@@ -42839,7 +43229,7 @@
         ],
         "additionalProperties": false
       },
-      "RewardMaterialSKURequest": {
+      "LoyaltyV2ActivityRewardMaterialSKU": {
         "type": "object",
         "description": "SKU reference for a material reward.",
         "properties": {
@@ -42860,7 +43250,7 @@
         ],
         "additionalProperties": false
       },
-      "RewardDigitalDiscountCouponsRequest": {
+      "LoyaltyV2ActivityRewardDigitalDiscountCoupons": {
         "type": "object",
         "description": "Discount coupons digital reward configuration.",
         "properties": {
@@ -43066,54 +43456,6 @@
           "end_time"
         ]
       },
-      "LoyaltyV2ActivityRewardMaterialProductResponse": {
-        "type": "object",
-        "description": "Product reference.",
-        "properties": {
-          "id": {
-            "type": "string",
-            "pattern": "^prod_[a-f0-9]+",
-            "description": "Product identifier, prefixed with `prod_`."
-          }
-        },
-        "required": [
-          "id"
-        ]
-      },
-      "LoyaltyV2ActivityRewardMaterialSKUResponse": {
-        "type": "object",
-        "description": "SKU reference.",
-        "properties": {
-          "product_id": {
-            "type": "string",
-            "pattern": "^prod_[a-f0-9]+",
-            "description": "Unique identifier of the product the SKU belongs to, prefixed with `prod_`."
-          },
-          "id": {
-            "type": "string",
-            "pattern": "^sku_[a-f0-9]+",
-            "description": "SKU identifier, prefixed with `sku_`."
-          }
-        },
-        "required": [
-          "product_id",
-          "id"
-        ]
-      },
-      "LoyaltyV2ActivityRewardDigitalDiscountCouponsResponse": {
-        "type": "object",
-        "description": "Discount coupons configuration.",
-        "properties": {
-          "campaign_id": {
-            "type": "string",
-            "pattern": "^camp_[a-zA-Z0-9]+",
-            "description": "Unique identifier of the discount coupons campaign, prefixed with `camp_`."
-          }
-        },
-        "required": [
-          "campaign_id"
-        ]
-      },
       "LoyaltyV2ActivityRewardDigitalGiftVouchersResponse": {
         "type": "object",
         "description": "Gift vouchers configuration.",
@@ -43154,7 +43496,7 @@
       },
       "RewardCostRuleGroupResponse": {
         "type": "object",
-        "description": "Rules group. Contains a `logic` formula string plus\nnumbered rule definition properties (positive-integer keys).",
+        "description": "Rules group. Contains a `logic` formula string plus numbered rule definition properties (positive-integer keys).",
         "properties": {
           "logic": {
             "type": "string",
@@ -43255,15 +43597,8 @@
             "description": "Cooldown type. `NO_COOLDOWN` - no cooldown. `FIXED_COOLDOWN` - wait a fixed period after each purchase."
           },
           "fixed_cooldown": {
-            "description": "Fixed cooldown details. Present when `type` is `FIXED_COOLDOWN`; omitted or `null` for `NO_COOLDOWN`.",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/RewardPurchaseLimitsCooldownFixedCooldown"
-              },
-              {
-                "type": "null"
-              }
-            ]
+            "$ref": "#/components/schemas/RewardPurchaseLimitsCooldownFixedCooldown",
+            "description": "Fixed cooldown details. Present when `type` is `FIXED_COOLDOWN`. Omitted when `type` is `NO_COOLDOWN`."
           }
         },
         "required": [
@@ -47344,7 +47679,7 @@
       },
       "BenefitPointsProportionalApplicableTo": {
         "type": "object",
-        "description": "A single applicability rule. Exactly one of `product`, `sku`, or `products_collection`\nis required, matching the `type`; the other two must be omitted or `null`.",
+        "description": "A single applicability rule. Exactly one of `product`, `sku`, or `products_collection` is required, matching the `type`. In requests, the other two may be omitted or set to `null`. In responses, they are omitted.",
         "properties": {
           "type": {
             "type": "string",
@@ -47356,7 +47691,7 @@
             "description": "Type of the referenced object."
           },
           "product": {
-            "description": "Product reference. Required when `type` is `product`, must be null otherwise.",
+            "description": "Product reference. Required when `type` is `product`. For other types, requests may omit it or set it to `null`; responses omit it.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitPointsProportionalApplicableToProduct"
@@ -47367,7 +47702,7 @@
             ]
           },
           "sku": {
-            "description": "SKU reference. Required when `type` is `sku`, must be null otherwise.",
+            "description": "SKU reference. Required when `type` is `sku`. For other types, requests may omit it or set it to `null`; responses omit it.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitPointsProportionalApplicableToSku"
@@ -47378,7 +47713,7 @@
             ]
           },
           "products_collection": {
-            "description": "Products collection reference. Required when `type` is `products_collection`, must be null otherwise.",
+            "description": "Products collection reference. Required when `type` is `products_collection`. For other types, requests may omit it or set it to `null`; responses omit it.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitPointsProportionalApplicableToProductsCollection"
