@@ -1681,7 +1681,7 @@
             "description": "Digital reward definition. Present only when `type` is DIGITAL; omitted otherwise."
           },
           "refunds": {
-            "$ref": "#/components/schemas/LoyaltyV2ActivityRewardRefunds",
+            "$ref": "#/components/schemas/LoyaltyV2ActivityRewardRefundsResponse",
             "description": "Refund policy. Always present; defaults to `{ \"type\": \"NONE\" }`."
           },
           "costs": {
@@ -2781,11 +2781,11 @@
             "description": "Kind of material reward."
           },
           "product": {
-            "$ref": "#/components/schemas/LoyaltyV2ActivityRewardMaterialProduct",
+            "$ref": "#/components/schemas/LoyaltyV2ActivityRewardMaterialProductResponse",
             "description": "Product delivered by the reward. Present only when `type` is PRODUCT; omitted otherwise."
           },
           "sku": {
-            "$ref": "#/components/schemas/LoyaltyV2ActivityRewardMaterialSKU",
+            "$ref": "#/components/schemas/LoyaltyV2ActivityRewardMaterialSKUResponse",
             "description": "SKU delivered by the reward. Present only when `type` is SKU; omitted otherwise."
           }
         },
@@ -2807,7 +2807,7 @@
             "description": "Kind of digital reward."
           },
           "discount_coupons": {
-            "$ref": "#/components/schemas/LoyaltyV2ActivityRewardDigitalDiscountCoupons",
+            "$ref": "#/components/schemas/LoyaltyV2ActivityRewardDigitalDiscountCouponsResponse",
             "description": "Discount coupons configuration. Present only when `type` is DISCOUNT_COUPONS."
           },
           "gift_vouchers": {
@@ -2823,9 +2823,9 @@
           "type"
         ]
       },
-      "LoyaltyV2ActivityRewardRefunds": {
+      "LoyaltyV2ActivityRewardRefundsResponse": {
         "type": "object",
-        "description": "Refund policy for the reward.",
+        "description": "Refund policy.",
         "properties": {
           "type": {
             "type": "string",
@@ -2833,13 +2833,12 @@
               "NONE",
               "REFUNDABLE"
             ],
-            "description": "Whether reward purchases can be refunded."
+            "description": "Whether reward purchases can be refunded. Defaults to NONE."
           }
         },
         "required": [
           "type"
-        ],
-        "additionalProperties": false
+        ]
       },
       "LoyaltyV2ActivityRewardCostResponse": {
         "type": "object",
@@ -4538,9 +4537,9 @@
           "end_time"
         ]
       },
-      "LoyaltyV2ActivityRewardMaterialProduct": {
+      "LoyaltyV2ActivityRewardMaterialProductResponse": {
         "type": "object",
-        "description": "Product reference for a material reward.",
+        "description": "Product reference.",
         "properties": {
           "id": {
             "type": "string",
@@ -4550,12 +4549,11 @@
         },
         "required": [
           "id"
-        ],
-        "additionalProperties": false
+        ]
       },
-      "LoyaltyV2ActivityRewardMaterialSKU": {
+      "LoyaltyV2ActivityRewardMaterialSKUResponse": {
         "type": "object",
-        "description": "SKU reference for a material reward.",
+        "description": "SKU reference.",
         "properties": {
           "product_id": {
             "type": "string",
@@ -4571,23 +4569,21 @@
         "required": [
           "product_id",
           "id"
-        ],
-        "additionalProperties": false
+        ]
       },
-      "LoyaltyV2ActivityRewardDigitalDiscountCoupons": {
+      "LoyaltyV2ActivityRewardDigitalDiscountCouponsResponse": {
         "type": "object",
-        "description": "Discount coupons digital reward configuration.",
+        "description": "Discount coupons configuration.",
         "properties": {
           "campaign_id": {
             "type": "string",
             "pattern": "^camp_[a-zA-Z0-9]+",
-            "description": "Unique identifier of the discount coupons campaign to publish a coupon from, prefixed with `camp_`."
+            "description": "Unique identifier of the discount coupons campaign, prefixed with `camp_`."
           }
         },
         "required": [
           "campaign_id"
-        ],
-        "additionalProperties": false
+        ]
       },
       "LoyaltyV2ActivityRewardDigitalGiftVouchersResponse": {
         "type": "object",
@@ -4867,7 +4863,7 @@
             "type": "integer",
             "minimum": 0,
             "maximum": 9007199254740991,
-            "description": "Available Remaining stock quantity. For responses, updates with each benefit purchase."
+            "description": "Remaining stock quantity."
           }
         },
         "required": [
@@ -6918,21 +6914,71 @@
       },
       "LoyaltyV2ActivityEarningRuleEffectPointsExpirationSlidingExpiration": {
         "type": "object",
-        "description": "Sliding expiration. Points expire after a period of member inactivity.",
+        "description": "Sliding expiration – points expire after a period of member inactivity. At least one of `earning_activity`, `spending_activity` or `custom_activity` must be `true`. When `custom_activity` is `true`, `custom_activity_types` is required (1-10 unique items).",
         "properties": {
           "earning_activity": {
             "type": "boolean",
             "description": "Whether earning activity resets the expiration window."
           },
+          "spending_activity": {
+            "type": "boolean",
+            "description": "Whether spending activity resets the expiration window."
+          },
+          "custom_activity": {
+            "type": "boolean",
+            "description": "Whether the listed custom activity types reset the expiration window."
+          },
+          "custom_activity_types": {
+            "description": "Custom activity type names. Required (1-10 unique items) when `custom_activity` is true. Can be `null`.",
+            "oneOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "period": {
             "$ref": "#/components/schemas/LoyaltyV2ActivityEarningRuleEffectPointsExpirationSlidingExpirationPeriod"
           }
         },
-        "required": [
-          "earning_activity",
-          "period"
-        ],
-        "additionalProperties": false
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "required": [
+              "period"
+            ]
+          },
+          {
+            "if": {
+              "properties": {
+                "custom_activity": {
+                  "const": true
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "custom_activity_types"
+              ],
+              "properties": {
+                "custom_activity_types": {
+                  "type": "array",
+                  "minItems": 1,
+                  "maxItems": 10,
+                  "uniqueItems": true,
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        ]
       },
       "LoyaltyV2ActivityEarningRulePointsProportionalEvery": {
         "type": "object",
@@ -7193,7 +7239,7 @@
       },
       "LoyaltyV2ActivityEarningRuleEffectPointsExpirationRollingExpirationRounding": {
         "type": "object",
-        "description": "`value` is the month (1-12). Required when `type` is `END_OF_PARTICULAR_MONTH`. Absent for other rounding types.",
+        "description": "Rounding of the rolling expiration date. `value` (the month number, 1-12) is required for `END_OF_PARTICULAR_MONTH` and must be null for all other rounding types.",
         "properties": {
           "type": {
             "type": "string",
@@ -7207,7 +7253,7 @@
             "description": "Rounding type."
           },
           "value": {
-            "description": "Month number (1-12). Present only when `type` is `END_OF_PARTICULAR_MONTH`.",
+            "description": "Month number (1-12), only for `END_OF_PARTICULAR_MONTH`. `null`able otherwise.",
             "oneOf": [
               {
                 "type": "integer",
