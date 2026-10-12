@@ -7,8 +7,12 @@
  *
  * The parent object is the schema generators see. A branch does not add
  * properties, does not add `required`, and does not replace a property with
- * `type: "null"`. A `not` that forbids a property keeps the property and
- * records the rule on that property, or on the parent when the property is
+ * `type: "null"`. An `allOf` item that is only `required` stays in place.
+ * `removeOneOf` does not walk properties while `allOf` is present, and that
+ * is what keeps a nullable `oneOf` intact. SDK prep calls
+ * `liftUnconditionalRequired` after that pass. A `not` that forbids a
+ * property keeps the property and records the rule on that property, or on
+ * the parent when the property is
  * only a `$ref` (OpenAPI 3.0 ignores sibling keywords of `$ref`). The parent
  * description records that the API still validates the dropped combinations.
  *
@@ -48,6 +52,71 @@ function isPureConditional(value: JsonValue): value is JsonObject {
   }
   const keys = Object.keys(value);
   return keys.length > 0 && keys.every((key) => CONDITIONAL_KEYS.has(key));
+}
+
+function requiredOnlyNames(item: JsonValue): string[] | null {
+  if (!isObject(item)) {
+    return null;
+  }
+  const keys = Object.keys(item);
+  if (
+    keys.length !== 1 ||
+    keys[0] !== "required" ||
+    !Array.isArray(item.required)
+  ) {
+    return null;
+  }
+  if (!item.required.every((name) => typeof name === "string")) {
+    return null;
+  }
+  return item.required as string[];
+}
+
+export function liftUnconditionalRequired(schema: JsonObject): JsonObject {
+  if (!Array.isArray(schema.allOf)) {
+    return schema;
+  }
+  const rest: JsonValue[] = [];
+  const lifted: string[] = [];
+  for (const item of schema.allOf) {
+    const names = requiredOnlyNames(item);
+    if (names) {
+      lifted.push(...names);
+    } else {
+      rest.push(item);
+    }
+  }
+  if (lifted.length === 0) {
+    return schema;
+  }
+  const required = Array.isArray(schema.required)
+    ? [...(schema.required as string[])]
+    : [];
+  for (const name of lifted) {
+    if (!required.includes(name)) {
+      required.push(name);
+    }
+  }
+  const next: JsonObject = {};
+  let wroteRequired = false;
+  for (const [key, value] of Object.entries(schema)) {
+    if (key === "allOf") {
+      if (rest.length > 0) {
+        next.allOf = rest;
+      }
+      continue;
+    }
+    if (key === "required") {
+      next.required = required;
+      wroteRequired = true;
+      continue;
+    }
+    next[key] = value;
+  }
+  if (!wroteRequired) {
+    next.required = required;
+  }
+  return next;
 }
 
 function readConst(schema: JsonObject): JsonValue | undefined {

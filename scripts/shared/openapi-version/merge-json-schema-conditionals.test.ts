@@ -4,6 +4,7 @@ import { documentWithoutLoyaltyV2 } from "../loyalty-v2/document";
 import { downgradeOpenApi310To301 } from "./migrate";
 import {
   FIELD_COMBINATIONS_NOTE,
+  liftUnconditionalRequired,
   mergeJsonSchemaConditionals,
 } from "./merge-json-schema-conditionals";
 
@@ -257,7 +258,7 @@ describe("merge JSON Schema conditionals for OpenAPI 3.0.1", () => {
     expect(merged.allOf).toBeUndefined();
   });
 
-  it("leaves a branch-only property and a branch required array off the parent", () => {
+  it("leaves an unconditional required list in allOf and a branch-only property off the parent", () => {
     const schema: { [key: string]: any } = {
       type: "object",
       properties: {
@@ -283,8 +284,44 @@ describe("merge JSON Schema conditionals for OpenAPI 3.0.1", () => {
     expect(merged.properties).toEqual({
       value: { type: "integer", minimum: 1 },
     });
+    expect(merged.required).toBeUndefined();
     expect(merged.allOf).toEqual([{ required: ["value"] }]);
     expect(merged.description).toBe(FIELD_COMBINATIONS_NOTE);
+
+    const lifted = liftUnconditionalRequired(merged);
+    expect(lifted.required).toEqual(["value"]);
+    expect(lifted.allOf).toBeUndefined();
+    expect(lifted.properties).toEqual(merged.properties);
+  });
+
+  it("lifts required after the fold and keeps a $ref sibling", () => {
+    const schema: { [key: string]: any } = {
+      type: "object",
+      properties: {
+        type: { type: "string" },
+      },
+      required: ["type"],
+      allOf: [
+        { required: ["type", "name"] },
+        { $ref: "#/components/schemas/Named" },
+        {
+          if: { properties: { type: { const: "POINTS" } } },
+          then: { required: ["points"] },
+        },
+      ],
+    };
+
+    const merged = mergeJsonSchemaConditionals(schema);
+    expect(merged.required).toEqual(["type"]);
+    expect(merged.allOf).toEqual([
+      { required: ["type", "name"] },
+      { $ref: "#/components/schemas/Named" },
+    ]);
+
+    const lifted = liftUnconditionalRequired(merged);
+    expect(lifted.required).toEqual(["type", "name"]);
+    expect(lifted.allOf).toEqual([{ $ref: "#/components/schemas/Named" }]);
+    expect(lifted.properties).toEqual({ type: { type: "string" } });
   });
 
   it("puts a forbid rule on the parent when the property is only a ref", () => {
