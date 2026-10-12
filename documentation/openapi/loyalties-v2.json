@@ -1836,6 +1836,18 @@
       }
     },
     "/v2/loyalties/programs/{programId}/rewards": {
+      "parameters": [
+        {
+          "name": "programId",
+          "in": "path",
+          "required": true,
+          "description": "Unique program identifier.",
+          "schema": {
+            "type": "string",
+            "pattern": "^lprg_[a-f0-9]+$"
+          }
+        }
+      ],
       "get": {
         "operationId": "listProgramRewardAssignments",
         "tags": [
@@ -1844,16 +1856,6 @@
         "summary": "List program reward assignments",
         "description": "Returns a cursor-paginated list of rewards assigned to the program, including their stock configuration and redemption counters.",
         "parameters": [
-          {
-            "name": "programId",
-            "in": "path",
-            "required": true,
-            "description": "Unique program identifier.",
-            "schema": {
-              "type": "string",
-              "pattern": "^lprg_[a-f0-9]+$"
-            }
-          },
           {
             "name": "limit",
             "in": "query",
@@ -1874,7 +1876,7 @@
             "name": "order",
             "in": "query",
             "required": false,
-            "description": "Sorting order. A single value or an array of values. Prefix with `-` for descending.\nDefaults to `-created_at`. The same field cannot be used in both ascending and\ndescending order at once.",
+            "description": "Sorting order. A single value or an array of values. Prefix with `-` for descending. Defaults to `-created_at`. The same field cannot be used in both ascending and descending order at once.",
             "schema": {
               "oneOf": [
                 {
@@ -1920,7 +1922,56 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2LoyaltiesProgramsRewardsListResponseBody"
+                  "$ref": "#/components/schemas/LoyaltiesProgramsRewardsListResponseBody"
+                },
+                "examples": {
+                  "List of program reward assignments": {
+                    "value": {
+                      "data": [
+                        {
+                          "reward_id": "lrew_1294cebb458e4904a0",
+                          "stock": {
+                            "type": "LIMITED",
+                            "limited": {
+                              "quantity": 92
+                            }
+                          },
+                          "redeemed": 10,
+                          "created_at": "2026-06-15T17:19:10.897Z",
+                          "updated_at": "2026-07-27T16:10:01.905Z",
+                          "object": "program_reward"
+                        },
+                        {
+                          "reward_id": "lrew_128f4c6710947c85d1",
+                          "stock": {
+                            "type": "LIMITED",
+                            "limited": {
+                              "quantity": 999
+                            }
+                          },
+                          "redeemed": 1,
+                          "created_at": "2026-06-11T15:58:06.017Z",
+                          "updated_at": "2026-06-17T15:29:44.542Z",
+                          "object": "program_reward"
+                        },
+                        {
+                          "reward_id": "lrew_128f4cab04147c8608",
+                          "stock": {
+                            "type": "UNLIMITED"
+                          },
+                          "redeemed": 0,
+                          "created_at": "2026-06-11T15:57:54.021Z",
+                          "updated_at": null,
+                          "object": "program_reward"
+                        }
+                      ],
+                      "cursor": {
+                        "next": "lcrsrewa_132d7ff1a7df244d31",
+                        "expires_at": "2026-10-12T07:52:33.119Z"
+                      },
+                      "object": "list"
+                    }
+                  }
                 }
               }
             }
@@ -18834,8 +18885,8 @@
           }
         }
       },
-      "V2LoyaltiesProgramsRewardsListResponseBody": {
-        "title": "V2 Loyalties Programs Rewards List Response Body",
+      "LoyaltiesProgramsRewardsListResponseBody": {
+        "title": "Loyalties Programs Rewards List Response Body",
         "type": "object",
         "description": "Response body schema for **GET** `/v2/loyalties/programs/{programId}/rewards`.",
         "allOf": [
@@ -18961,7 +19012,7 @@
           },
           "object": {
             "type": "string",
-            "description": "Object type marker.",
+            "description": "Object type marker. Always `program_reward`.",
             "const": "program_reward"
           }
         },
@@ -25974,7 +26025,7 @@
         "properties": {
           "object": {
             "type": "string",
-            "description": "Object type marker.",
+            "description": "Object type marker. Always `list`.",
             "const": "list"
           },
           "data": {
@@ -26019,7 +26070,7 @@
       },
       "ProgramRewardAssignmentStock": {
         "type": "object",
-        "description": "Reward stock configuration. When `type` is `UNLIMITED`, `limited` must not be provided.\nWhen `type` is `LIMITED`, `limited` is required.",
+        "description": "Reward stock configuration. When `type` is `UNLIMITED`, `limited` must not be provided. When `type` is `LIMITED`, `limited` is required.",
         "properties": {
           "type": {
             "type": "string",
@@ -26030,15 +26081,8 @@
             ]
           },
           "limited": {
-            "description": "Limited stock details. Required when `type` is `LIMITED`; must not be provided when `type` is `UNLIMITED`.",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/ProgramRewardAssignmentStockLimited"
-              },
-              {
-                "type": "null"
-              }
-            ]
+            "description": "Limited stock details. Required when `type` is `LIMITED`. Absent when `type` is `UNLIMITED`.",
+            "$ref": "#/components/schemas/ProgramRewardAssignmentStockLimited"
           }
         },
         "required": [
@@ -37947,7 +37991,7 @@
         "properties": {
           "quantity": {
             "type": "integer",
-            "description": "Available stock quantity.",
+            "description": "Currently available stock quantity. Updates with each reward purchase.",
             "minimum": 0,
             "maximum": 9007199254740991
           }
