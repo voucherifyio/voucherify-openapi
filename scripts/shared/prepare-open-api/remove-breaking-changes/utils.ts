@@ -17,25 +17,51 @@ export const restoreLoyaltyExpirationRulesPeriodTypeDefault = (schema: {
   };
 };
 
-/** SDKs: keep the inline `error` object with a single `message`; the shared `ValidationRuleError` $ref renames the generated models. */
+/**
+ * Keep validation-rule `error` inline so the generated model stays
+ * `ValidationRules*Error`. A `$ref` to `ValidationRuleError` renames that model.
+ * The inline object keeps `message`, `mode`, `messages`, and `library`.
+ */
 export const restoreValidationRuleErrorObjects = (schemas: any) => {
-  const inlineError = (description: string, messageDescription: string) => ({
+  const inlineError = {
     type: "object",
-    description,
+    description:
+      "Defines the custom error returned when validation or redemption fails this rule. Use legacy `message`, `mode: MESSAGES` with per-language `messages`, or `mode: LIBRARY` with a library `key`. `MESSAGES` and `LIBRARY` are mutually exclusive. At validation or redemption time the API resolves this object to a single `{ message }` using `options.language`.",
     properties: {
       message: {
         type: "string",
-        description: messageDescription,
+        maxLength: 255,
+        nullable: true,
+        description:
+          "Legacy single-language error message. Used when `mode` is omitted. In `MESSAGES` mode, used when neither the requested language nor the default language has a translation.",
+      },
+      mode: {
+        type: "string",
+        nullable: true,
+        enum: ["MESSAGES", "LIBRARY"],
+        description:
+          "Selects how the custom error is defined. `MESSAGES` stores per-language text in `messages`. `LIBRARY` references an Error Message Library entry in `library`. Omit `mode` to use the legacy `message` field only.",
+      },
+      messages: {
+        type: "object",
+        nullable: true,
+        maxProperties: 100,
+        additionalProperties: {
+          type: "string",
+          maxLength: 255,
+        },
+        description:
+          "Per-language custom messages keyed by language code (`en`, `pl`, `en-US`). Required when `mode` is `MESSAGES`. Must be omitted or `null` when `mode` is `LIBRARY`.",
+      },
+      library: {
+        $ref: "#/components/schemas/ValidationRuleErrorLibrary",
       },
     },
-  });
+  };
 
   if (schemas.ValidationRuleBundleRules?.additionalProperties?.properties) {
     schemas.ValidationRuleBundleRules.additionalProperties.properties.error =
-      inlineError(
-        "**CURRENTLY UNSUPPORTED**. Contains the error message returned from API when validation / redemption fails to meet requirements of defined rule.",
-        "The error message returned from API when validation / redemption fails to meet requirements of defined rule.",
-      );
+      inlineError;
   }
 
   [
@@ -45,18 +71,12 @@ export const restoreValidationRuleErrorObjects = (schemas: any) => {
     "ValidationRuleRules03",
   ].forEach((schemaName) => {
     if (schemas[schemaName]?.additionalProperties?.properties) {
-      schemas[schemaName].additionalProperties.properties.error = inlineError(
-        "Contains the error message returned from API when validation / redemption fails to meet requirements of defined rule.",
-        "The error message returned from API when validation / redemption fails to meet requirements of defined rule.",
-      );
+      schemas[schemaName].additionalProperties.properties.error = inlineError;
     }
   });
 
   if (schemas.ValidationRuleBase?.properties) {
-    schemas.ValidationRuleBase.properties.error = inlineError(
-      "Contains the error message returned from API when validation / redemption fails to meet requirements of defined rules.",
-      "The error message returned from API when validation / redemption fails to meet requirements of defined rules.",
-    );
+    schemas.ValidationRuleBase.properties.error = inlineError;
   }
 };
 
