@@ -8311,7 +8311,7 @@
             "schema": {
               "oneOf": [
                 {
-                  "$ref": "#/components/schemas/LoyaltiesProgramsMembersOrdersPaymentsListRequestQuery"
+                  "$ref": "#/components/schemas/V2LoyaltiesProgramsMembersOrdersPaymentsListRequestQuery"
                 },
                 {
                   "type": "null"
@@ -8326,7 +8326,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/LoyaltiesProgramsMembersOrdersPaymentsListResponseBody"
+                  "$ref": "#/components/schemas/V2LoyaltiesProgramsMembersOrdersPaymentsListResponseBody"
                 },
                 "examples": {
                   "Member pay-with-points transactions": {
@@ -21293,7 +21293,7 @@
           }
         ]
       },
-      "LoyaltiesProgramsMembersOrdersPaymentsListRequestQuery": {
+      "V2LoyaltiesProgramsMembersOrdersPaymentsListRequestQuery": {
         "type": "object",
         "description": "Request query schema for **GET** `/v2/loyalties/programs/{programId}/members/{memberId}/orders/payments`.",
         "properties": {
@@ -21347,48 +21347,17 @@
           }
         },
         "additionalProperties": false,
-        "title": "Loyalties Programs Members Orders Payments List Request Query"
+        "title": "V2 Loyalties Programs Members Orders Payments List Request Query"
       },
-      "LoyaltiesProgramsMembersOrdersPaymentsListResponseBody": {
+      "V2LoyaltiesProgramsMembersOrdersPaymentsListResponseBody": {
+        "title": "V2 Loyalties Programs Members Orders Payments List Response Body",
         "type": "object",
-        "properties": {
-          "data": {
-            "type": "array",
-            "description": "Order payment transactions.",
-            "items": {
-              "$ref": "#/components/schemas/OrderPaymentTransaction"
-            }
-          },
-          "cursor": {
-            "description": "Pagination cursor. `null` when there are no more results.",
-            "oneOf": [
-              {
-                "type": "object",
-                "properties": {
-                  "next": {
-                    "type": "string",
-                    "description": "Pass as the `cursor` query parameter to fetch the next page (format `lcrsotx_...`)."
-                  },
-                  "expires_at": {
-                    "type": "string",
-                    "format": "date-time",
-                    "description": "Timestamp when the cursor expires (ISO 8601)."
-                  }
-                }
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "object": {
-            "type": "string",
-            "const": "list",
-            "description": "Object type marker. Always `list`."
+        "description": "Response body schema for **GET** `/v2/loyalties/programs/{programId}/members/{memberId}/orders/payments`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MemberOrderPaymentListResponse"
           }
-        },
-        "title": "Loyalties Programs Members Orders Payments List Response Body",
-        "description": "Response body schema for **GET** `/v2/loyalties/programs/{programId}/members/{memberId}/orders/payments`."
+        ]
       },
       "LoyaltiesProgramsMembersOrdersPaymentsCreateRequestBody": {
         "type": "object",
@@ -28871,87 +28840,43 @@
         "additionalProperties": false,
         "title": "Loyalties Programs Members Orders Payments List Request Query Id"
       },
-      "OrderPaymentTransaction": {
+      "MemberOrderPaymentListResponse": {
         "type": "object",
-        "description": "An order transaction representing a pay-with-points payment. List endpoints return only persisted transactions; `SIMULATED` appears only on dry-run create responses.",
+        "description": "Cursor-paginated list of order payment transactions.",
         "properties": {
-          "id": {
-            "type": "string",
-            "description": "Identifies the order transaction (`lotx_...`). Absent on dry-run (`SIMULATED`) create responses, which are never persisted. Always present in list responses."
+          "data": {
+            "type": "array",
+            "description": "Order payment transactions.",
+            "items": {
+              "$ref": "#/components/schemas/OrderPaymentTransaction"
+            }
           },
-          "program_id": {
-            "type": "string",
-            "description": "Unique identifier of the loyalty program (format `lprg_...`)."
-          },
-          "member_id": {
-            "type": "string",
-            "description": "Unique identifier of the program member (format `lmbr_...`)."
-          },
-          "card_id": {
-            "type": "string",
-            "description": "Unique identifier of the loyalty card the points were spent from (format `lcrd_...`)."
-          },
-          "card_definition_id": {
-            "type": "string",
-            "description": "Identifies the card definition (format `lcdef_...`)."
-          },
-          "card_transaction_id": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "description": "Identifies of the underlying card transaction (format `lctx_...`). `null` for DRY_RUN (SIMULATED) transactions."
-          },
-          "order_id": {
-            "type": "string",
-            "description": "Identifies the paid order (format `ord_...`)."
-          },
-          "status": {
-            "type": "string",
-            "enum": [
-              "PENDING",
-              "PROCESSING",
-              "APPROVED",
-              "REJECTED",
-              "SIMULATED"
-            ],
-            "description": "Transaction status. `PENDING` - created, awaiting processing; `PROCESSING` - being processed; `APPROVED` - completed successfully; `REJECTED` - rejected (see `details.rejection`); `SIMULATED` - dry-run create result, not persisted (not returned by list)."
-          },
-          "type": {
-            "type": "string",
-            "enum": [
-              "PAY_WITH_POINTS"
-            ],
-            "description": "Defines the transaction type. Always `PAY_WITH_POINTS`."
-          },
-          "details": {
-            "description": "Transaction details for the `PAY_WITH_POINTS` type.",
+          "cursor": {
+            "description": "Pagination cursor. `null` when there are no more results.",
             "oneOf": [
               {
-                "$ref": "#/components/schemas/OrderPaymentTransactionDetails"
+                "type": "object",
+                "properties": {
+                  "next": {
+                    "type": "string",
+                    "description": "Pass as the `cursor` query parameter to fetch the next page (format `lcrsotx_...`)."
+                  },
+                  "expires_at": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "Timestamp when the cursor expires (ISO 8601)."
+                  }
+                }
               },
               {
                 "type": "null"
               }
             ]
           },
-          "created_at": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Timestamp when the transaction was created (ISO 8601)."
-          },
-          "updated_at": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "format": "date-time",
-            "description": "Timestamp when the transaction was last updated (ISO 8601), or `null`."
-          },
           "object": {
             "type": "string",
-            "const": "order_transaction",
-            "description": "Object type marker. Always `order_transaction`."
+            "const": "list",
+            "description": "Object type marker. Always `list`."
           }
         }
       },
@@ -29073,6 +28998,90 @@
               "value"
             ],
             "additionalProperties": false
+          }
+        }
+      },
+      "OrderPaymentTransaction": {
+        "type": "object",
+        "description": "An order transaction representing a pay-with-points payment. List endpoints return only persisted transactions; `SIMULATED` appears only on dry-run create responses.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Identifies the order transaction (`lotx_...`). Absent on dry-run (`SIMULATED`) create responses, which are never persisted. Always present in list responses."
+          },
+          "program_id": {
+            "type": "string",
+            "description": "Unique identifier of the loyalty program (format `lprg_...`)."
+          },
+          "member_id": {
+            "type": "string",
+            "description": "Unique identifier of the program member (format `lmbr_...`)."
+          },
+          "card_id": {
+            "type": "string",
+            "description": "Unique identifier of the loyalty card the points were spent from (format `lcrd_...`)."
+          },
+          "card_definition_id": {
+            "type": "string",
+            "description": "Identifies the card definition (format `lcdef_...`)."
+          },
+          "card_transaction_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Identifies of the underlying card transaction (format `lctx_...`). `null` for DRY_RUN (SIMULATED) transactions."
+          },
+          "order_id": {
+            "type": "string",
+            "description": "Identifies the paid order (format `ord_...`)."
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "PENDING",
+              "PROCESSING",
+              "APPROVED",
+              "REJECTED",
+              "SIMULATED"
+            ],
+            "description": "Transaction status. `PENDING` - created, awaiting processing; `PROCESSING` - being processed; `APPROVED` - completed successfully; `REJECTED` - rejected (see `details.rejection`); `SIMULATED` - dry-run create result, not persisted (not returned by list)."
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "PAY_WITH_POINTS"
+            ],
+            "description": "Defines the transaction type. Always `PAY_WITH_POINTS`."
+          },
+          "details": {
+            "description": "Transaction details for the `PAY_WITH_POINTS` type.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/OrderPaymentTransactionDetails"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp when the transaction was created (ISO 8601)."
+          },
+          "updated_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time",
+            "description": "Timestamp when the transaction was last updated (ISO 8601), or `null`."
+          },
+          "object": {
+            "type": "string",
+            "const": "order_transaction",
+            "description": "Object type marker. Always `order_transaction`."
           }
         }
       },
