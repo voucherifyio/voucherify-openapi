@@ -434,7 +434,7 @@
 | /v2/loyalties/programs/{programId}/reports/rewards/spendings/daily                                      | get    | Get program rewards spendings daily report   |              |               |
 | /v2/loyalties/programs/{programId}/reports/rewards/spendings/summary                                    | get    | Get program rewards spendings summary report |              |               |
 | /v2/loyalties/programs/{programId}/reports/members/daily                                                | get    | List program members daily reports           |              |               |
-| /v2/loyalties/programs/{programId}/reports/members/summary                                              | get    | Get program members summary report           |              |               |
+| /v2/loyalties/programs/{programId}/reports/members/summary                                              | get    | List program members summary reports         |              |               |
 | /v2/loyalties/programs/{programId}/reports/points-earnings/daily                                        | get    | List program points-earnings daily reports   |              |               |
 | /v2/loyalties/programs/{programId}/reports/points-earnings/summary                                      | get    | List program points-earnings summary reports |              |               |
 | /v2/loyalties/programs/{programId}/reports/earning-rules/daily                                          | get    | Get program earning-rules daily report       |              |               |
