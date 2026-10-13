@@ -15557,7 +15557,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/TierStructureCreateRequest"
+                "$ref": "#/components/schemas/V2LoyaltiesTierStructuresCreateRequestBody"
               }
             }
           }
@@ -15568,7 +15568,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/TierStructure"
+                  "$ref": "#/components/schemas/V2LoyaltiesTierStructuresCreateResponseBody"
                 }
               }
             }
@@ -23806,223 +23806,24 @@
           }
         ]
       },
-      "TierStructureCreateRequest": {
+      "V2LoyaltiesTierStructuresCreateRequestBody": {
+        "title": "V2 Loyalties Tier Structures Create Request Body",
         "type": "object",
-        "description": "Request body for creating a tier structure. No additional properties are allowed.",
-        "properties": {
-          "name": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 200,
-            "description": "Display name of the tier structure. Required."
-          },
-          "type": {
-            "type": "string",
-            "enum": [
-              "POINT_BALANCE",
-              "POINT_EARNED"
-            ],
-            "description": "Tier qualification tracking model. `POINT_BALANCE` qualifies members by their\ncurrent point balance; `POINT_EARNED` qualifies members by points earned within\na tracking period. Required."
-          },
-          "point_balance": {
-            "description": "Point balance tracking settings. Required (non-null) when `type` is\n`POINT_BALANCE`; must be null/omitted when `type` is `POINT_EARNED`.",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/TierStructurePointBalanceUpsert"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "point_earned": {
-            "description": "Points earned tracking settings. Required (non-null) when `type` is\n`POINT_EARNED`; must be null/omitted when `type` is `POINT_BALANCE`.",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/TierStructurePointEarnedUpsert"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "expiration": {
-            "description": "Tier membership expiration settings. If omitted, defaults to\n`{ \"type\": \"NO_RETENTION\" }`.",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/TierStructureExpirationUpsert"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "downgrade": {
-            "description": "Downgrade behavior applied when tier membership expires. If omitted, defaults to\n`{ \"type\": \"NO_DOWNGRADE\" }`.",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/TierStructureDowngradeUpsert"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "metadata": {
-            "description": "Free-form key/value object holding custom attributes.",
-            "oneOf": [
-              {
-                "type": "object"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "status": {
-            "type": "string",
-            "enum": [
-              "DRAFT",
-              "ACTIVE"
-            ],
-            "description": "Initial status of the tier structure. Defaults to `DRAFT` when omitted."
-          }
-        },
-        "additionalProperties": false,
+        "description": "Request body schema for **POST** `/v2/loyalties/tier-structures`.",
         "allOf": [
           {
-            "required": [
-              "name",
-              "type"
-            ]
-          },
-          {
-            "if": {
-              "properties": {
-                "type": {
-                  "const": "POINT_EARNED"
-                }
-              }
-            },
-            "then": {
-              "required": [
-                "point_earned"
-              ],
-              "properties": {
-                "point_earned": {
-                  "$ref": "#/components/schemas/TierStructurePointEarnedUpsert"
-                },
-                "point_balance": {
-                  "type": "null"
-                }
-              }
-            }
-          },
-          {
-            "if": {
-              "properties": {
-                "type": {
-                  "const": "POINT_BALANCE"
-                }
-              }
-            },
-            "then": {
-              "required": [
-                "point_balance"
-              ],
-              "properties": {
-                "point_balance": {
-                  "$ref": "#/components/schemas/TierStructurePointBalanceUpsert"
-                },
-                "point_earned": {
-                  "type": "null"
-                }
-              }
-            }
+            "$ref": "#/components/schemas/TierStructureCreateRequest"
           }
         ]
       },
-      "TierStructure": {
+      "V2LoyaltiesTierStructuresCreateResponseBody": {
+        "title": "V2 Loyalties Tier Structures Create Response Body",
         "type": "object",
-        "description": "Tier structure resource.",
-        "properties": {
-          "id": {
-            "type": "string",
-            "pattern": "^lts_[a-f0-9]+$",
-            "description": "Unique tier structure identifier."
-          },
-          "name": {
-            "type": "string",
-            "description": "Display name of the tier structure."
-          },
-          "type": {
-            "type": "string",
-            "enum": [
-              "POINT_BALANCE",
-              "POINT_EARNED"
-            ],
-            "description": "Tier qualification tracking model."
-          },
-          "point_balance": {
-            "$ref": "#/components/schemas/LoyaltyV2ActivityTierStructurePointBalance",
-            "description": "Point balance tracking settings. Present only when `type` is `POINT_BALANCE`;\nomitted otherwise."
-          },
-          "point_earned": {
-            "$ref": "#/components/schemas/TierStructurePointEarned",
-            "description": "Points earned tracking settings. Present only when `type` is `POINT_EARNED`;\nomitted otherwise."
-          },
-          "expiration": {
-            "$ref": "#/components/schemas/TierStructureExpiration",
-            "description": "Tier membership expiration settings."
-          },
-          "downgrade": {
-            "$ref": "#/components/schemas/TierStructureDowngrade",
-            "description": "Downgrade behavior applied when tier membership expires."
-          },
-          "metadata": {
-            "type": "object",
-            "description": "Free-form key/value object holding custom attributes. Defaults to `{}`."
-          },
-          "status": {
-            "type": "string",
-            "enum": [
-              "DRAFT",
-              "ACTIVE",
-              "INACTIVE",
-              "DELETED"
-            ],
-            "description": "Current lifecycle status of the tier structure."
-          },
-          "created_at": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Creation timestamp (ISO 8601)."
-          },
-          "updated_at": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "format": "date-time",
-            "description": "Last update timestamp (ISO 8601), or `null` if never updated."
-          },
-          "object": {
-            "type": "string",
-            "const": "tier_structure",
-            "description": "Object type discriminator. Always `tier_structure`."
+        "description": "Response body schema for **POST** `/v2/loyalties/tier-structures`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/TierStructure"
           }
-        },
-        "required": [
-          "id",
-          "name",
-          "type",
-          "expiration",
-          "downgrade",
-          "metadata",
-          "status",
-          "created_at",
-          "updated_at",
-          "object"
         ]
       },
       "LoyaltiesTierStructuresListRequestQuery": {
@@ -24111,6 +23912,89 @@
           {
             "$ref": "#/components/schemas/TierStructureListResponse"
           }
+        ]
+      },
+      "TierStructure": {
+        "type": "object",
+        "description": "Tier structure resource.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^lts_[a-f0-9]+$",
+            "description": "Unique tier structure identifier."
+          },
+          "name": {
+            "type": "string",
+            "description": "Display name of the tier structure."
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "POINT_BALANCE",
+              "POINT_EARNED"
+            ],
+            "description": "Tier qualification tracking model."
+          },
+          "point_balance": {
+            "$ref": "#/components/schemas/LoyaltyV2ActivityTierStructurePointBalance",
+            "description": "Point balance tracking settings. Present only when `type` is `POINT_BALANCE`;\nomitted otherwise."
+          },
+          "point_earned": {
+            "$ref": "#/components/schemas/TierStructurePointEarned",
+            "description": "Points earned tracking settings. Present only when `type` is `POINT_EARNED`;\nomitted otherwise."
+          },
+          "expiration": {
+            "$ref": "#/components/schemas/TierStructureExpiration",
+            "description": "Tier membership expiration settings."
+          },
+          "downgrade": {
+            "$ref": "#/components/schemas/TierStructureDowngrade",
+            "description": "Downgrade behavior applied when tier membership expires."
+          },
+          "metadata": {
+            "type": "object",
+            "description": "Free-form key/value object holding custom attributes. Defaults to `{}`."
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "DRAFT",
+              "ACTIVE",
+              "INACTIVE",
+              "DELETED"
+            ],
+            "description": "Current lifecycle status of the tier structure."
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Creation timestamp (ISO 8601)."
+          },
+          "updated_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time",
+            "description": "Last update timestamp (ISO 8601), or `null` if never updated."
+          },
+          "object": {
+            "type": "string",
+            "const": "tier_structure",
+            "description": "Object type discriminator. Always `tier_structure`."
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "type",
+          "expiration",
+          "downgrade",
+          "metadata",
+          "status",
+          "created_at",
+          "updated_at",
+          "object"
         ]
       },
       "TierStructureUpdateRequest": {
@@ -34786,102 +34670,93 @@
           }
         }
       },
-      "TierStructurePointBalanceUpsert": {
+      "TierStructureCreateRequest": {
         "type": "object",
-        "description": "Point balance tracking settings. Members qualify for tiers based on the current\nbalance of the referenced card definition.",
+        "description": "Request body for creating a tier structure. No additional properties are allowed.",
         "properties": {
-          "card_definition_id": {
+          "name": {
             "type": "string",
-            "pattern": "^lcdef_[a-f0-9]+$",
-            "description": "Unique identifier of the card definition whose point balance is tracked."
-          }
-        },
-        "required": [
-          "card_definition_id"
-        ],
-        "additionalProperties": false
-      },
-      "TierStructurePointEarnedUpsert": {
-        "type": "object",
-        "description": "Points earned tracking settings. Members qualify for tiers based on points earned\non the referenced card definition within a tracking period.",
-        "properties": {
-          "card_definition_id": {
-            "type": "string",
-            "pattern": "^lcdef_[a-f0-9]+$",
-            "description": "Unique identifier of the card definition whose earned points are tracked."
-          },
-          "period": {
-            "$ref": "#/components/schemas/TierStructurePointEarnedPeriodUpsert",
-            "description": "Tracking period during which earned points are accumulated."
+            "minLength": 1,
+            "maxLength": 200,
+            "description": "Display name of the tier structure. Required."
           },
           "type": {
             "type": "string",
             "enum": [
-              "IMMEDIATELY",
-              "NEXT_TRACKING_PERIOD"
+              "POINT_BALANCE",
+              "POINT_EARNED"
             ],
-            "description": "When a tier change resulting from earned points takes effect: `IMMEDIATELY`\nor at the start of the `NEXT_TRACKING_PERIOD`."
-          }
-        },
-        "required": [
-          "card_definition_id",
-          "period",
-          "type"
-        ],
-        "additionalProperties": false
-      },
-      "TierStructureExpirationUpsert": {
-        "type": "object",
-        "description": "Tier membership expiration settings. Exactly the sub-object matching `type` is\nrequired; the remaining sub-objects must be null/omitted.",
-        "properties": {
-          "type": {
+            "description": "Tier qualification tracking model. `POINT_BALANCE` qualifies members by their\ncurrent point balance; `POINT_EARNED` qualifies members by points earned within\na tracking period. Required."
+          },
+          "point_balance": {
+            "description": "Point balance tracking settings. Required (non-null) when `type` is\n`POINT_BALANCE`; must be null/omitted when `type` is `POINT_EARNED`.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/TierStructurePointBalanceUpsert"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "point_earned": {
+            "description": "Points earned tracking settings. Required (non-null) when `type` is\n`POINT_EARNED`; must be null/omitted when `type` is `POINT_BALANCE`.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/TierStructurePointEarnedUpsert"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "expiration": {
+            "description": "Tier membership expiration settings. If omitted, defaults to\n`{ \"type\": \"NO_RETENTION\" }`.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/TierStructureExpirationUpsert"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "downgrade": {
+            "description": "Downgrade behavior applied when tier membership expires. If omitted, defaults to\n`{ \"type\": \"NO_DOWNGRADE\" }`.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/TierStructureDowngradeUpsert"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "metadata": {
+            "description": "Free-form key/value object holding custom attributes.",
+            "oneOf": [
+              {
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "status": {
             "type": "string",
             "enum": [
-              "NO_RETENTION",
-              "SLIDING_EXPIRATION",
-              "FIXED_DURATION",
-              "CALENDAR_EXPIRATION"
+              "DRAFT",
+              "ACTIVE"
             ],
-            "description": "Expiration model for tier membership. Required."
-          },
-          "fixed_duration": {
-            "description": "Fixed duration expiration settings. Required (non-null) when `type` is\n`FIXED_DURATION`; must be null/omitted otherwise.",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/TierStructureExpirationFixedDurationUpsert"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "calendar_expiration": {
-            "description": "Calendar expiration settings. Required (non-null) when `type` is\n`CALENDAR_EXPIRATION`; must be null/omitted otherwise.",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/TierStructureExpirationCalendarExpirationUpsert"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "sliding_expiration": {
-            "description": "Sliding expiration settings. Required (non-null) when `type` is\n`SLIDING_EXPIRATION`; must be null/omitted otherwise.",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/TierStructureExpirationSlidingExpirationUpsert"
-              },
-              {
-                "type": "null"
-              }
-            ]
+            "description": "Initial status of the tier structure. Defaults to `DRAFT` when omitted."
           }
         },
         "additionalProperties": false,
         "allOf": [
           {
             "required": [
+              "name",
               "type"
             ]
           },
@@ -34889,44 +34764,19 @@
             "if": {
               "properties": {
                 "type": {
-                  "const": "NO_RETENTION"
-                }
-              }
-            },
-            "then": {
-              "properties": {
-                "fixed_duration": {
-                  "type": "null"
-                },
-                "calendar_expiration": {
-                  "type": "null"
-                },
-                "sliding_expiration": {
-                  "type": "null"
-                }
-              }
-            }
-          },
-          {
-            "if": {
-              "properties": {
-                "type": {
-                  "const": "FIXED_DURATION"
+                  "const": "POINT_EARNED"
                 }
               }
             },
             "then": {
               "required": [
-                "fixed_duration"
+                "point_earned"
               ],
               "properties": {
-                "fixed_duration": {
-                  "$ref": "#/components/schemas/TierStructureExpirationFixedDurationUpsert"
+                "point_earned": {
+                  "$ref": "#/components/schemas/TierStructurePointEarnedUpsert"
                 },
-                "calendar_expiration": {
-                  "type": "null"
-                },
-                "sliding_expiration": {
+                "point_balance": {
                   "type": "null"
                 }
               }
@@ -34936,184 +34786,25 @@
             "if": {
               "properties": {
                 "type": {
-                  "const": "CALENDAR_EXPIRATION"
+                  "const": "POINT_BALANCE"
                 }
               }
             },
             "then": {
               "required": [
-                "calendar_expiration"
+                "point_balance"
               ],
               "properties": {
-                "fixed_duration": {
-                  "type": "null"
+                "point_balance": {
+                  "$ref": "#/components/schemas/TierStructurePointBalanceUpsert"
                 },
-                "calendar_expiration": {
-                  "$ref": "#/components/schemas/TierStructureExpirationCalendarExpirationUpsert"
-                },
-                "sliding_expiration": {
-                  "type": "null"
-                }
-              }
-            }
-          },
-          {
-            "if": {
-              "properties": {
-                "type": {
-                  "const": "SLIDING_EXPIRATION"
-                }
-              }
-            },
-            "then": {
-              "required": [
-                "sliding_expiration"
-              ],
-              "properties": {
-                "fixed_duration": {
-                  "type": "null"
-                },
-                "calendar_expiration": {
-                  "type": "null"
-                },
-                "sliding_expiration": {
-                  "$ref": "#/components/schemas/TierStructureExpirationSlidingExpirationUpsert"
-                }
-              }
-            }
-          }
-        ]
-      },
-      "TierStructureDowngradeUpsert": {
-        "type": "object",
-        "description": "Downgrade settings. Controls how members are moved to lower tiers on expiration.\nWhen `type` is `NO_DOWNGRADE`, `grace_period` must be null/omitted.",
-        "properties": {
-          "type": {
-            "type": "string",
-            "enum": [
-              "MULTI_LEVEL",
-              "SINGLE_LEVEL",
-              "NO_DOWNGRADE"
-            ],
-            "description": "Downgrade model. `MULTI_LEVEL` allows dropping multiple tiers at once,\n`SINGLE_LEVEL` drops one tier at a time, `NO_DOWNGRADE` disables downgrades.\nRequired."
-          },
-          "grace_period": {
-            "description": "Grace period before the downgrade takes effect. Must be null/omitted when\n`type` is `NO_DOWNGRADE`.",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/TierStructureDowngradeGracePeriodUpsert"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          }
-        },
-        "additionalProperties": false,
-        "allOf": [
-          {
-            "required": [
-              "type"
-            ]
-          },
-          {
-            "if": {
-              "properties": {
-                "type": {
-                  "const": "NO_DOWNGRADE"
-                }
-              }
-            },
-            "then": {
-              "properties": {
-                "grace_period": {
+                "point_earned": {
                   "type": "null"
                 }
               }
             }
           }
         ]
-      },
-      "LoyaltyV2ActivityTierStructurePointBalance": {
-        "type": "object",
-        "description": "Point balance tracking settings.",
-        "properties": {
-          "card_definition_id": {
-            "type": "string",
-            "pattern": "^lcdef_[a-f0-9]+$",
-            "description": "Unique identifier of the card definition whose point balance is tracked."
-          }
-        }
-      },
-      "TierStructurePointEarned": {
-        "type": "object",
-        "description": "Points earned tracking settings.",
-        "properties": {
-          "card_definition_id": {
-            "type": "string",
-            "pattern": "^lcdef_[a-f0-9]+$",
-            "description": "Unique identifier of the card definition whose earned points are tracked."
-          },
-          "period": {
-            "$ref": "#/components/schemas/LoyaltyV2ActivityTierStructurePointEarnedPeriod",
-            "description": "Tracking period during which earned points are accumulated."
-          },
-          "type": {
-            "type": "string",
-            "enum": [
-              "IMMEDIATELY",
-              "NEXT_TRACKING_PERIOD"
-            ],
-            "description": "When a tier change resulting from earned points takes effect."
-          }
-        }
-      },
-      "TierStructureExpiration": {
-        "type": "object",
-        "description": "Tier membership expiration settings. Only the sub-object matching `type` is\npresent; the others are omitted.",
-        "properties": {
-          "type": {
-            "type": "string",
-            "enum": [
-              "NO_RETENTION",
-              "SLIDING_EXPIRATION",
-              "FIXED_DURATION",
-              "CALENDAR_EXPIRATION"
-            ],
-            "description": "Expiration model for tier membership."
-          },
-          "fixed_duration": {
-            "$ref": "#/components/schemas/TierStructureExpirationFixedDuration",
-            "description": "Fixed duration settings. Present only when `type` is `FIXED_DURATION`."
-          },
-          "calendar_expiration": {
-            "$ref": "#/components/schemas/TierStructureExpirationCalendarExpiration",
-            "description": "Calendar expiration settings. Present only when `type` is `CALENDAR_EXPIRATION`."
-          },
-          "sliding_expiration": {
-            "$ref": "#/components/schemas/TierStructureExpirationSlidingExpiration",
-            "description": "Sliding expiration settings. Present only when `type` is `SLIDING_EXPIRATION`."
-          }
-        }
-      },
-      "TierStructureDowngrade": {
-        "type": "object",
-        "description": "Downgrade settings.",
-        "properties": {
-          "type": {
-            "type": "string",
-            "enum": [
-              "MULTI_LEVEL",
-              "SINGLE_LEVEL",
-              "NO_DOWNGRADE"
-            ],
-            "description": "Downgrade model."
-          },
-          "grace_period": {
-            "$ref": "#/components/schemas/LoyaltyV2ActivityTierStructureDowngradeGracePeriod",
-            "description": "Grace period before the downgrade takes effect. Omitted when not configured."
-          }
-        }
       },
       "LoyaltiesTierStructuresListRequestQueryId": {
         "type": "object",
@@ -35872,6 +35563,335 @@
           "data",
           "cursor",
           "object"
+        ]
+      },
+      "LoyaltyV2ActivityTierStructurePointBalance": {
+        "type": "object",
+        "description": "Point balance tracking settings.",
+        "properties": {
+          "card_definition_id": {
+            "type": "string",
+            "pattern": "^lcdef_[a-f0-9]+$",
+            "description": "Unique identifier of the card definition whose point balance is tracked."
+          }
+        }
+      },
+      "TierStructurePointEarned": {
+        "type": "object",
+        "description": "Points earned tracking settings.",
+        "properties": {
+          "card_definition_id": {
+            "type": "string",
+            "pattern": "^lcdef_[a-f0-9]+$",
+            "description": "Unique identifier of the card definition whose earned points are tracked."
+          },
+          "period": {
+            "$ref": "#/components/schemas/LoyaltyV2ActivityTierStructurePointEarnedPeriod",
+            "description": "Tracking period during which earned points are accumulated."
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "IMMEDIATELY",
+              "NEXT_TRACKING_PERIOD"
+            ],
+            "description": "When a tier change resulting from earned points takes effect."
+          }
+        }
+      },
+      "TierStructureExpiration": {
+        "type": "object",
+        "description": "Tier membership expiration settings. Only the sub-object matching `type` is\npresent; the others are omitted.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "NO_RETENTION",
+              "SLIDING_EXPIRATION",
+              "FIXED_DURATION",
+              "CALENDAR_EXPIRATION"
+            ],
+            "description": "Expiration model for tier membership."
+          },
+          "fixed_duration": {
+            "$ref": "#/components/schemas/TierStructureExpirationFixedDuration",
+            "description": "Fixed duration settings. Present only when `type` is `FIXED_DURATION`."
+          },
+          "calendar_expiration": {
+            "$ref": "#/components/schemas/TierStructureExpirationCalendarExpiration",
+            "description": "Calendar expiration settings. Present only when `type` is `CALENDAR_EXPIRATION`."
+          },
+          "sliding_expiration": {
+            "$ref": "#/components/schemas/TierStructureExpirationSlidingExpiration",
+            "description": "Sliding expiration settings. Present only when `type` is `SLIDING_EXPIRATION`."
+          }
+        }
+      },
+      "TierStructureDowngrade": {
+        "type": "object",
+        "description": "Downgrade settings.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "MULTI_LEVEL",
+              "SINGLE_LEVEL",
+              "NO_DOWNGRADE"
+            ],
+            "description": "Downgrade model."
+          },
+          "grace_period": {
+            "$ref": "#/components/schemas/LoyaltyV2ActivityTierStructureDowngradeGracePeriod",
+            "description": "Grace period before the downgrade takes effect. Omitted when not configured."
+          }
+        }
+      },
+      "TierStructurePointBalanceUpsert": {
+        "type": "object",
+        "description": "Point balance tracking settings. Members qualify for tiers based on the current\nbalance of the referenced card definition.",
+        "properties": {
+          "card_definition_id": {
+            "type": "string",
+            "pattern": "^lcdef_[a-f0-9]+$",
+            "description": "Unique identifier of the card definition whose point balance is tracked."
+          }
+        },
+        "required": [
+          "card_definition_id"
+        ],
+        "additionalProperties": false
+      },
+      "TierStructurePointEarnedUpsert": {
+        "type": "object",
+        "description": "Points earned tracking settings. Members qualify for tiers based on points earned\non the referenced card definition within a tracking period.",
+        "properties": {
+          "card_definition_id": {
+            "type": "string",
+            "pattern": "^lcdef_[a-f0-9]+$",
+            "description": "Unique identifier of the card definition whose earned points are tracked."
+          },
+          "period": {
+            "$ref": "#/components/schemas/TierStructurePointEarnedPeriodUpsert",
+            "description": "Tracking period during which earned points are accumulated."
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "IMMEDIATELY",
+              "NEXT_TRACKING_PERIOD"
+            ],
+            "description": "When a tier change resulting from earned points takes effect: `IMMEDIATELY`\nor at the start of the `NEXT_TRACKING_PERIOD`."
+          }
+        },
+        "required": [
+          "card_definition_id",
+          "period",
+          "type"
+        ],
+        "additionalProperties": false
+      },
+      "TierStructureExpirationUpsert": {
+        "type": "object",
+        "description": "Tier membership expiration settings. Exactly the sub-object matching `type` is\nrequired; the remaining sub-objects must be null/omitted.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "NO_RETENTION",
+              "SLIDING_EXPIRATION",
+              "FIXED_DURATION",
+              "CALENDAR_EXPIRATION"
+            ],
+            "description": "Expiration model for tier membership. Required."
+          },
+          "fixed_duration": {
+            "description": "Fixed duration expiration settings. Required (non-null) when `type` is\n`FIXED_DURATION`; must be null/omitted otherwise.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/TierStructureExpirationFixedDurationUpsert"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "calendar_expiration": {
+            "description": "Calendar expiration settings. Required (non-null) when `type` is\n`CALENDAR_EXPIRATION`; must be null/omitted otherwise.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/TierStructureExpirationCalendarExpirationUpsert"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "sliding_expiration": {
+            "description": "Sliding expiration settings. Required (non-null) when `type` is\n`SLIDING_EXPIRATION`; must be null/omitted otherwise.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/TierStructureExpirationSlidingExpirationUpsert"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "required": [
+              "type"
+            ]
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "NO_RETENTION"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "fixed_duration": {
+                  "type": "null"
+                },
+                "calendar_expiration": {
+                  "type": "null"
+                },
+                "sliding_expiration": {
+                  "type": "null"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "FIXED_DURATION"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "fixed_duration"
+              ],
+              "properties": {
+                "fixed_duration": {
+                  "$ref": "#/components/schemas/TierStructureExpirationFixedDurationUpsert"
+                },
+                "calendar_expiration": {
+                  "type": "null"
+                },
+                "sliding_expiration": {
+                  "type": "null"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "CALENDAR_EXPIRATION"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "calendar_expiration"
+              ],
+              "properties": {
+                "fixed_duration": {
+                  "type": "null"
+                },
+                "calendar_expiration": {
+                  "$ref": "#/components/schemas/TierStructureExpirationCalendarExpirationUpsert"
+                },
+                "sliding_expiration": {
+                  "type": "null"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "SLIDING_EXPIRATION"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "sliding_expiration"
+              ],
+              "properties": {
+                "fixed_duration": {
+                  "type": "null"
+                },
+                "calendar_expiration": {
+                  "type": "null"
+                },
+                "sliding_expiration": {
+                  "$ref": "#/components/schemas/TierStructureExpirationSlidingExpirationUpsert"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "TierStructureDowngradeUpsert": {
+        "type": "object",
+        "description": "Downgrade settings. Controls how members are moved to lower tiers on expiration.\nWhen `type` is `NO_DOWNGRADE`, `grace_period` must be null/omitted.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "MULTI_LEVEL",
+              "SINGLE_LEVEL",
+              "NO_DOWNGRADE"
+            ],
+            "description": "Downgrade model. `MULTI_LEVEL` allows dropping multiple tiers at once,\n`SINGLE_LEVEL` drops one tier at a time, `NO_DOWNGRADE` disables downgrades.\nRequired."
+          },
+          "grace_period": {
+            "description": "Grace period before the downgrade takes effect. Must be null/omitted when\n`type` is `NO_DOWNGRADE`.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/TierStructureDowngradeGracePeriodUpsert"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "required": [
+              "type"
+            ]
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "NO_DOWNGRADE"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "grace_period": {
+                  "type": "null"
+                }
+              }
+            }
+          }
         ]
       },
       "TierQualificationRulesUpsert": {
@@ -42624,6 +42644,102 @@
           }
         }
       },
+      "LoyaltyV2ActivityTierStructurePointEarnedPeriod": {
+        "type": "object",
+        "description": "Points earned tracking period.",
+        "properties": {
+          "value": {
+            "type": "integer",
+            "description": "Length of the tracking period, expressed in `unit` units."
+          },
+          "unit": {
+            "type": "string",
+            "enum": [
+              "DAY",
+              "WEEK",
+              "MONTH",
+              "YEAR"
+            ],
+            "description": "Unit of the tracking period."
+          }
+        }
+      },
+      "TierStructureExpirationFixedDuration": {
+        "type": "object",
+        "description": "Fixed duration expiration settings.",
+        "properties": {
+          "period": {
+            "$ref": "#/components/schemas/LoyaltyV2ActivityTierStructureExpirationPeriod",
+            "description": "Duration after which the tier membership expires."
+          }
+        }
+      },
+      "TierStructureExpirationCalendarExpiration": {
+        "type": "object",
+        "description": "Calendar expiration settings.",
+        "properties": {
+          "calendar_dates": {
+            "type": "array",
+            "description": "Calendar dates on which tier membership expires.",
+            "items": {
+              "$ref": "#/components/schemas/LoyaltyV2ActivityTierStructureExpirationCalendarDate"
+            }
+          }
+        }
+      },
+      "TierStructureExpirationSlidingExpiration": {
+        "type": "object",
+        "description": "Sliding expiration settings.",
+        "properties": {
+          "earning_activity": {
+            "type": "boolean",
+            "description": "Whether point earning activity extends the tier membership."
+          },
+          "spending_activity": {
+            "type": "boolean",
+            "description": "Whether point spending activity extends the tier membership."
+          },
+          "custom_activity": {
+            "type": "boolean",
+            "description": "Whether custom activities extend the tier membership."
+          },
+          "custom_activity_types": {
+            "type": "array",
+            "description": "Custom activity type names that extend the tier membership.",
+            "items": {
+              "type": "string",
+              "description": "Custom activity type name."
+            }
+          },
+          "period": {
+            "$ref": "#/components/schemas/LoyaltyV2ActivityTierStructureExpirationPeriod",
+            "description": "Sliding period after the last qualifying activity."
+          }
+        }
+      },
+      "LoyaltyV2ActivityTierStructureDowngradeGracePeriod": {
+        "type": "object",
+        "description": "Downgrade grace period.",
+        "properties": {
+          "value": {
+            "type": "integer",
+            "description": "Length of the grace period, expressed in `unit` units."
+          },
+          "unit": {
+            "type": "string",
+            "enum": [
+              "DAY",
+              "MONTH",
+              "YEAR"
+            ],
+            "description": "Unit of the grace period."
+          },
+          "round_up": {
+            "type": "boolean",
+            "description": "Whether the grace period end is rounded up to the end of the unit."
+          }
+        }
+      },
       "TierStructurePointEarnedPeriodUpsert": {
         "type": "object",
         "description": "Points earned tracking period. The maximum `value` depends on `unit`: 90 for\n`DAY`, 52 for `WEEK`, 12 for `MONTH`, 5 for `YEAR`.",
@@ -42831,102 +42947,6 @@
           "unit"
         ],
         "additionalProperties": false
-      },
-      "LoyaltyV2ActivityTierStructurePointEarnedPeriod": {
-        "type": "object",
-        "description": "Points earned tracking period.",
-        "properties": {
-          "value": {
-            "type": "integer",
-            "description": "Length of the tracking period, expressed in `unit` units."
-          },
-          "unit": {
-            "type": "string",
-            "enum": [
-              "DAY",
-              "WEEK",
-              "MONTH",
-              "YEAR"
-            ],
-            "description": "Unit of the tracking period."
-          }
-        }
-      },
-      "TierStructureExpirationFixedDuration": {
-        "type": "object",
-        "description": "Fixed duration expiration settings.",
-        "properties": {
-          "period": {
-            "$ref": "#/components/schemas/LoyaltyV2ActivityTierStructureExpirationPeriod",
-            "description": "Duration after which the tier membership expires."
-          }
-        }
-      },
-      "TierStructureExpirationCalendarExpiration": {
-        "type": "object",
-        "description": "Calendar expiration settings.",
-        "properties": {
-          "calendar_dates": {
-            "type": "array",
-            "description": "Calendar dates on which tier membership expires.",
-            "items": {
-              "$ref": "#/components/schemas/LoyaltyV2ActivityTierStructureExpirationCalendarDate"
-            }
-          }
-        }
-      },
-      "TierStructureExpirationSlidingExpiration": {
-        "type": "object",
-        "description": "Sliding expiration settings.",
-        "properties": {
-          "earning_activity": {
-            "type": "boolean",
-            "description": "Whether point earning activity extends the tier membership."
-          },
-          "spending_activity": {
-            "type": "boolean",
-            "description": "Whether point spending activity extends the tier membership."
-          },
-          "custom_activity": {
-            "type": "boolean",
-            "description": "Whether custom activities extend the tier membership."
-          },
-          "custom_activity_types": {
-            "type": "array",
-            "description": "Custom activity type names that extend the tier membership.",
-            "items": {
-              "type": "string",
-              "description": "Custom activity type name."
-            }
-          },
-          "period": {
-            "$ref": "#/components/schemas/LoyaltyV2ActivityTierStructureExpirationPeriod",
-            "description": "Sliding period after the last qualifying activity."
-          }
-        }
-      },
-      "LoyaltyV2ActivityTierStructureDowngradeGracePeriod": {
-        "type": "object",
-        "description": "Downgrade grace period.",
-        "properties": {
-          "value": {
-            "type": "integer",
-            "description": "Length of the grace period, expressed in `unit` units."
-          },
-          "unit": {
-            "type": "string",
-            "enum": [
-              "DAY",
-              "MONTH",
-              "YEAR"
-            ],
-            "description": "Unit of the grace period."
-          },
-          "round_up": {
-            "type": "boolean",
-            "description": "Whether the grace period end is rounded up to the end of the unit."
-          }
-        }
       },
       "TierQualificationRulesPointsUpsert": {
         "type": "object",
@@ -45925,6 +45945,43 @@
           }
         }
       },
+      "LoyaltyV2ActivityTierStructureExpirationPeriod": {
+        "type": "object",
+        "description": "Expiration period. The same shape is used for fixed duration and sliding\nexpiration periods.",
+        "properties": {
+          "value": {
+            "type": "integer",
+            "description": "Length of the period, expressed in `unit` units."
+          },
+          "unit": {
+            "type": "string",
+            "enum": [
+              "DAY",
+              "MONTH",
+              "YEAR"
+            ],
+            "description": "Unit of the period."
+          }
+        }
+      },
+      "LoyaltyV2ActivityTierStructureExpirationCalendarDate": {
+        "type": "object",
+        "description": "A recurring calendar date.",
+        "properties": {
+          "day": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 31,
+            "description": "Day of the month (1-31)."
+          },
+          "month": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 12,
+            "description": "Month of the year (1-12)."
+          }
+        }
+      },
       "TierStructureExpirationFixedDurationPeriodUpsert": {
         "type": "object",
         "description": "Fixed duration expiration period.",
@@ -46068,43 +46125,6 @@
           "unit"
         ],
         "additionalProperties": false
-      },
-      "LoyaltyV2ActivityTierStructureExpirationPeriod": {
-        "type": "object",
-        "description": "Expiration period. The same shape is used for fixed duration and sliding\nexpiration periods.",
-        "properties": {
-          "value": {
-            "type": "integer",
-            "description": "Length of the period, expressed in `unit` units."
-          },
-          "unit": {
-            "type": "string",
-            "enum": [
-              "DAY",
-              "MONTH",
-              "YEAR"
-            ],
-            "description": "Unit of the period."
-          }
-        }
-      },
-      "LoyaltyV2ActivityTierStructureExpirationCalendarDate": {
-        "type": "object",
-        "description": "A recurring calendar date.",
-        "properties": {
-          "day": {
-            "type": "integer",
-            "minimum": 1,
-            "maximum": 31,
-            "description": "Day of the month (1-31)."
-          },
-          "month": {
-            "type": "integer",
-            "minimum": 1,
-            "maximum": 12,
-            "description": "Month of the year (1-12)."
-          }
-        }
       },
       "LoyaltyV2ActivityBenefitPointsProportionalEvery": {
         "type": "object",
