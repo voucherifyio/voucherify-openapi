@@ -9358,7 +9358,7 @@
             "schema": {
               "oneOf": [
                 {
-                  "$ref": "#/components/schemas/LoyaltiesProgramsMembersTiersTransactionsListRequestQuery"
+                  "$ref": "#/components/schemas/V2LoyaltiesProgramsMembersTiersTransactionsListRequestQuery"
                 },
                 {
                   "type": "null"
@@ -9373,7 +9373,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/LoyaltiesProgramsMembersTiersTransactionsListResponseBody"
+                  "$ref": "#/components/schemas/V2LoyaltiesProgramsMembersTiersTransactionsListResponseBody"
                 },
                 "examples": {
                   "Tier transaction list": {
@@ -21444,7 +21444,7 @@
           }
         ]
       },
-      "LoyaltiesProgramsMembersTiersTransactionsListRequestQuery": {
+      "V2LoyaltiesProgramsMembersTiersTransactionsListRequestQuery": {
         "type": "object",
         "description": "Request query schema for **GET** `/v2/loyalties/programs/{programId}/members/{memberId}/tiers/transactions`.",
         "properties": {
@@ -21498,41 +21498,16 @@
           }
         },
         "additionalProperties": false,
-        "title": "Loyalties Programs Members Tiers Transactions List Request Query"
+        "title": "V2 Loyalties Programs Members Tiers Transactions List Request Query"
       },
-      "LoyaltiesProgramsMembersTiersTransactionsListResponseBody": {
+      "V2LoyaltiesProgramsMembersTiersTransactionsListResponseBody": {
+        "title": "V2 Loyalties Programs Members Tiers Transactions List Response Body",
         "type": "object",
         "description": "Response body schema for **GET** `/v2/loyalties/programs/{programId}/members/{memberId}/tiers/transactions`.",
-        "title": "Loyalties Programs Members Tiers Transactions List Response Body",
-        "properties": {
-          "data": {
-            "type": "array",
-            "description": "List of tier transactions.",
-            "items": {
-              "$ref": "#/components/schemas/TierTransaction"
-            }
-          },
-          "cursor": {
-            "description": "Pagination cursor, or `null` when there are no more results.",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/ListCursor"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "object": {
-            "type": "string",
-            "const": "list",
-            "description": "Object type marker. Always `list`."
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MemberTierTransactionListResponse"
           }
-        },
-        "required": [
-          "data",
-          "cursor",
-          "object"
         ]
       },
       "LoyaltiesProgramsMembersCardsReportsDailyListResponseBody": {
@@ -29219,117 +29194,38 @@
         ],
         "additionalProperties": false
       },
-      "TierTransaction": {
+      "MemberTierTransactionListResponse": {
         "type": "object",
-        "description": "A tier transaction. Records the outcome of a tier evaluation for a member card.",
+        "description": "Cursor-paginated list of tier transactions.",
         "properties": {
-          "id": {
-            "type": "string",
-            "description": "Unique tier transaction identifier (format `lttx_...`)."
+          "data": {
+            "type": "array",
+            "description": "List of tier transactions.",
+            "items": {
+              "$ref": "#/components/schemas/TierTransaction"
+            }
           },
-          "card_id": {
-            "type": "string",
-            "description": "Unique identifier of the related loyalty card (format `lcrd_...`)."
-          },
-          "program_id": {
-            "type": "string",
-            "description": "Unique identifier of the loyalty program (format `lprg_...`)."
-          },
-          "member_id": {
-            "type": "string",
-            "description": "Unique identifier of the program member (format `lmbr_...`)."
-          },
-          "card_definition_id": {
-            "type": "string",
-            "description": "Identifies the card definition (format `lcdef_...`)."
-          },
-          "tier_structure_id": {
-            "type": "string",
-            "description": "Unique identifier of the tier structure (format `lts_...`)."
-          },
-          "tier_id": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "description": "Unique identifier of the related tier (format `lt_...`), or `null`."
-          },
-          "type": {
-            "type": "string",
-            "enum": [
-              "UPGRADED",
-              "DOWNGRADED",
-              "JOINED",
-              "LEFT",
-              "EXPIRATION_CHANGED",
-              "EVALUATION_REFRESHED"
-            ],
-            "description": "Transaction type. `JOINED` - member joined a tier. `LEFT` - member left a tier. `UPGRADED` - member moved to a higher tier. `DOWNGRADED` - member moved to a lower tier. `EXPIRATION_CHANGED` - current tier unchanged; the expiration date was set, extended, or cleared. `EVALUATION_REFRESHED` - current tier and expiration day unchanged; the stored evaluation and points were recalculated."
-          },
-          "details": {
-            "$ref": "#/components/schemas/TierTransactionDetails"
-          },
-          "status": {
-            "type": "string",
-            "enum": [
-              "PENDING",
-              "APPROVED",
-              "REJECTED"
-            ],
-            "description": "Transaction status. `PENDING` - created, awaiting processing; `APPROVED` - completed successfully; `REJECTED` - rejected (see `details.rejection`)."
-          },
-          "created_at": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Timestamp when the transaction was created (ISO 8601)."
-          },
-          "updated_at": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "format": "date-time",
-            "description": "Timestamp when the transaction was last updated (ISO 8601), or `null`."
+          "cursor": {
+            "description": "Pagination cursor, or `null` when there are no more results.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/ListCursor"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "object": {
             "type": "string",
-            "const": "tier_transaction",
-            "description": "Object type marker. Always `tier_transaction`."
+            "const": "list",
+            "description": "Object type marker. Always `list`."
           }
         },
         "required": [
-          "id",
-          "card_id",
-          "program_id",
-          "member_id",
-          "card_definition_id",
-          "tier_structure_id",
-          "tier_id",
-          "type",
-          "details",
-          "status",
-          "created_at",
-          "updated_at",
+          "data",
+          "cursor",
           "object"
-        ]
-      },
-      "ListCursor": {
-        "type": "object",
-        "description": "Pagination cursor.",
-        "properties": {
-          "next": {
-            "type": "string",
-            "description": "Cursor value to pass as the `cursor` query parameter to fetch the next page."
-          },
-          "expires_at": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Timestamp when the cursor expires."
-          }
-        },
-        "required": [
-          "next",
-          "expires_at"
         ]
       },
       "CardDailyReportEntry": {
@@ -38179,6 +38075,25 @@
           "object"
         ]
       },
+      "ListCursor": {
+        "type": "object",
+        "description": "Pagination cursor.",
+        "properties": {
+          "next": {
+            "type": "string",
+            "description": "Cursor value to pass as the `cursor` query parameter to fetch the next page."
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp when the cursor expires."
+          }
+        },
+        "required": [
+          "next",
+          "expires_at"
+        ]
+      },
       "MembershipsCustomer": {
         "type": "object",
         "description": "Customer identity returned by the cross-program memberships endpoint.",
@@ -39199,78 +39114,98 @@
           }
         }
       },
-      "TierTransactionDetails": {
+      "TierTransaction": {
         "type": "object",
-        "description": "Details of the tier evaluation. Fields that do not apply to the transaction type are `null`. `JOINED` - `tier_to` set, `tier_from` null. `LEFT` - `tier_from` set, `tier_to` null. `UPGRADED` and `DOWNGRADED` - both `tier_from` and `tier_to` set. `EXPIRATION_CHANGED` - `expires_at` holds the new expiration; `tier_from` and `tier_to` null. `EVALUATION_REFRESHED` - `points` holds the recalculated value; `tier_from` and `tier_to` null.",
+        "description": "A tier transaction. Records the outcome of a tier evaluation for a member card.",
         "properties": {
-          "points": {
-            "type": [
-              "number",
-              "null"
-            ],
-            "description": "Qualifying points at the time of evaluation. Returns the point balance or the points earned in the tracking period, depending on the tier structure. `null` when points were not calculated."
+          "id": {
+            "type": "string",
+            "description": "Unique tier transaction identifier (format `lttx_...`)."
           },
-          "tier_from": {
+          "card_id": {
+            "type": "string",
+            "description": "Unique identifier of the related loyalty card (format `lcrd_...`)."
+          },
+          "program_id": {
+            "type": "string",
+            "description": "Unique identifier of the loyalty program (format `lprg_...`)."
+          },
+          "member_id": {
+            "type": "string",
+            "description": "Unique identifier of the program member (format `lmbr_...`)."
+          },
+          "card_definition_id": {
+            "type": "string",
+            "description": "Identifies the card definition (format `lcdef_...`)."
+          },
+          "tier_structure_id": {
+            "type": "string",
+            "description": "Unique identifier of the tier structure (format `lts_...`)."
+          },
+          "tier_id": {
             "type": [
               "string",
               "null"
             ],
-            "description": "Unique identifier of the tier the member moved from (format `lt_...`). `null` when there is no source tier, including `JOINED`, `EXPIRATION_CHANGED`, and `EVALUATION_REFRESHED` transactions."
+            "description": "Unique identifier of the related tier (format `lt_...`), or `null`."
           },
-          "tier_to": {
-            "type": [
-              "string",
-              "null"
+          "type": {
+            "type": "string",
+            "enum": [
+              "UPGRADED",
+              "DOWNGRADED",
+              "JOINED",
+              "LEFT",
+              "EXPIRATION_CHANGED",
+              "EVALUATION_REFRESHED"
             ],
-            "description": "Unique identifier of the tier the member moved to (format `lt_...`). `null` when there is no destination tier, including `LEFT`, `EXPIRATION_CHANGED`, and `EVALUATION_REFRESHED` transactions."
+            "description": "Transaction type. `JOINED` - member joined a tier. `LEFT` - member left a tier. `UPGRADED` - member moved to a higher tier. `DOWNGRADED` - member moved to a lower tier. `EXPIRATION_CHANGED` - current tier unchanged; the expiration date was set, extended, or cleared. `EVALUATION_REFRESHED` - current tier and expiration day unchanged; the stored evaluation and points were recalculated."
           },
-          "origin": {
-            "description": "What triggered the transaction.",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/TierTransactionOrigin"
-              },
-              {
-                "type": "null"
-              }
-            ]
+          "details": {
+            "$ref": "#/components/schemas/TierTransactionDetails"
           },
-          "rejection": {
-            "description": "Rejection details, present when the transaction was rejected. Known rejection reason: `SUPERSEDED_BY_LATER_TRANSACTION`.",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/TierTransactionRejection"
-              },
-              {
-                "type": "null"
-              }
-            ]
+          "status": {
+            "type": "string",
+            "enum": [
+              "PENDING",
+              "APPROVED",
+              "REJECTED"
+            ],
+            "description": "Transaction status. `PENDING` - created, awaiting processing; `APPROVED` - completed successfully; `REJECTED` - rejected (see `details.rejection`)."
           },
-          "start_at": {
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp when the transaction was created (ISO 8601)."
+          },
+          "updated_at": {
             "type": [
               "string",
               "null"
             ],
             "format": "date-time",
-            "description": "Start of the tier membership period, or `null`."
+            "description": "Timestamp when the transaction was last updated (ISO 8601), or `null`."
           },
-          "expires_at": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "format": "date-time",
-            "description": "Expiration of the tier membership period, or `null`."
+          "object": {
+            "type": "string",
+            "const": "tier_transaction",
+            "description": "Object type marker. Always `tier_transaction`."
           }
         },
         "required": [
-          "points",
-          "tier_from",
-          "tier_to",
-          "origin",
-          "rejection",
-          "start_at",
-          "expires_at"
+          "id",
+          "card_id",
+          "program_id",
+          "member_id",
+          "card_definition_id",
+          "tier_structure_id",
+          "tier_id",
+          "type",
+          "details",
+          "status",
+          "created_at",
+          "updated_at",
+          "object"
         ]
       },
       "EarningRuleDailyReportEntry": {
@@ -43657,55 +43592,78 @@
           }
         }
       },
-      "TierTransactionOrigin": {
+      "TierTransactionDetails": {
         "type": "object",
-        "description": "Origin of the tier transaction.",
+        "description": "Details of the tier evaluation. Fields that do not apply to the transaction type are `null`. `JOINED` - `tier_to` set, `tier_from` null. `LEFT` - `tier_from` set, `tier_to` null. `UPGRADED` and `DOWNGRADED` - both `tier_from` and `tier_to` set. `EXPIRATION_CHANGED` - `expires_at` holds the new expiration; `tier_from` and `tier_to` null. `EVALUATION_REFRESHED` - `points` holds the recalculated value; `tier_from` and `tier_to` null.",
         "properties": {
-          "type": {
-            "type": "string",
-            "enum": [
-              "card_operations",
-              "daily_task_operations",
-              "member_card_created",
-              "member_card_deleted",
-              "segment_change"
+          "points": {
+            "type": [
+              "number",
+              "null"
             ],
-            "description": "Origin type. `card_operations` - point operations on the card. `daily_task_operations` - scheduled daily tier processing. `member_card_created` - a member card was created. `member_card_deleted` - a member card was deleted. `segment_change` - the customer entered or left a segment used in tier qualification."
+            "description": "Qualifying points at the time of evaluation. Returns the point balance or the points earned in the tracking period, depending on the tier structure. `null` when points were not calculated."
           },
-          "card_transaction_ids": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "Unique identifiers of the card transactions that triggered the transaction (format `lctx_...`). Returned for the `card_operations` origin."
+          "tier_from": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Unique identifier of the tier the member moved from (format `lt_...`). `null` when there is no source tier, including `JOINED`, `EXPIRATION_CHANGED`, and `EVALUATION_REFRESHED` transactions."
           },
-          "segment_ids": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "Unique identifiers of the customer segments that triggered the transaction. Returned for the `segment_change` origin."
+          "tier_to": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Unique identifier of the tier the member moved to (format `lt_...`). `null` when there is no destination tier, including `LEFT`, `EXPIRATION_CHANGED`, and `EVALUATION_REFRESHED` transactions."
+          },
+          "origin": {
+            "description": "What triggered the transaction.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/TierTransactionOrigin"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "rejection": {
+            "description": "Rejection details, present when the transaction was rejected. Known rejection reason: `SUPERSEDED_BY_LATER_TRANSACTION`.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/TierTransactionRejection"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "start_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time",
+            "description": "Start of the tier membership period, or `null`."
+          },
+          "expires_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time",
+            "description": "Expiration of the tier membership period, or `null`."
           }
         },
         "required": [
-          "type"
-        ]
-      },
-      "TierTransactionRejection": {
-        "type": "object",
-        "description": "Rejection details for a tier transaction.",
-        "properties": {
-          "reason": {
-            "type": "string",
-            "description": "Machine-readable rejection reason. Known value: `SUPERSEDED_BY_LATER_TRANSACTION`."
-          },
-          "details": {
-            "type": "string",
-            "description": "Additional human-readable details about the rejection."
-          }
-        },
-        "required": [
-          "reason"
+          "points",
+          "tier_from",
+          "tier_to",
+          "origin",
+          "rejection",
+          "start_at",
+          "expires_at"
         ]
       },
       "EarningRulesReportFailuresBreakdown": {
@@ -46964,6 +46922,57 @@
           }
         },
         "additionalProperties": false
+      },
+      "TierTransactionOrigin": {
+        "type": "object",
+        "description": "Origin of the tier transaction.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "card_operations",
+              "daily_task_operations",
+              "member_card_created",
+              "member_card_deleted",
+              "segment_change"
+            ],
+            "description": "Origin type. `card_operations` - point operations on the card. `daily_task_operations` - scheduled daily tier processing. `member_card_created` - a member card was created. `member_card_deleted` - a member card was deleted. `segment_change` - the customer entered or left a segment used in tier qualification."
+          },
+          "card_transaction_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Unique identifiers of the card transactions that triggered the transaction (format `lctx_...`). Returned for the `card_operations` origin."
+          },
+          "segment_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Unique identifiers of the customer segments that triggered the transaction. Returned for the `segment_change` origin."
+          }
+        },
+        "required": [
+          "type"
+        ]
+      },
+      "TierTransactionRejection": {
+        "type": "object",
+        "description": "Rejection details for a tier transaction.",
+        "properties": {
+          "reason": {
+            "type": "string",
+            "description": "Machine-readable rejection reason. Known value: `SUPERSEDED_BY_LATER_TRANSACTION`."
+          },
+          "details": {
+            "type": "string",
+            "description": "Additional human-readable details about the rejection."
+          }
+        },
+        "required": [
+          "reason"
+        ]
       },
       "CardDefinitionPointsExpirationRollingExpirationPeriodInput": {
         "type": "object",
