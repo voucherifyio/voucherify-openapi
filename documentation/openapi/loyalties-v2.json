@@ -6977,6 +6977,38 @@
       }
     },
     "/v2/loyalties/programs/{programId}/members/{memberId}/cards/{cardId}/transactions": {
+      "parameters": [
+        {
+          "name": "programId",
+          "in": "path",
+          "required": true,
+          "description": "Unique loyalty program ID (format `lprg_[a-f0-9]+`).",
+          "schema": {
+            "type": "string",
+            "pattern": "^lprg_[a-f0-9]+$"
+          }
+        },
+        {
+          "name": "memberId",
+          "in": "path",
+          "required": true,
+          "description": "Program member ID (format `lmbr_[a-f0-9]+`).",
+          "schema": {
+            "type": "string",
+            "pattern": "^lmbr_[a-f0-9]+$"
+          }
+        },
+        {
+          "name": "cardId",
+          "in": "path",
+          "required": true,
+          "description": "Loyalty card ID (format `lcrd_[a-f0-9]+`).",
+          "schema": {
+            "type": "string",
+            "pattern": "^lcrd_[a-f0-9]+$"
+          }
+        }
+      ],
       "get": {
         "operationId": "listCardTransactions",
         "tags": [
@@ -6985,36 +7017,6 @@
         "summary": "List card transactions",
         "description": "Returns a cursor-paginated list of transactions on the member's card. Filter by `id`, `card_definition_id`, and `created_at`. Order by `id` (default `-id`, newest first). Returns `404` when the program, member, or card doesn't exist. The program is checked first, then the member, then the card. A member of another program, or a card that isn't assigned to this member, is not found.",
         "parameters": [
-          {
-            "name": "programId",
-            "in": "path",
-            "required": true,
-            "description": "Unique loyalty program ID (format `lprg_[a-f0-9]+`).",
-            "schema": {
-              "type": "string",
-              "pattern": "^lprg_[a-f0-9]+$"
-            }
-          },
-          {
-            "name": "memberId",
-            "in": "path",
-            "required": true,
-            "description": "Program member ID (format `lmbr_[a-f0-9]+`).",
-            "schema": {
-              "type": "string",
-              "pattern": "^lmbr_[a-f0-9]+$"
-            }
-          },
-          {
-            "name": "cardId",
-            "in": "path",
-            "required": true,
-            "description": "Loyalty card ID (format `lcrd_[a-f0-9]+`).",
-            "schema": {
-              "type": "string",
-              "pattern": "^lcrd_[a-f0-9]+$"
-            }
-          },
           {
             "name": "limit",
             "in": "query",
@@ -7083,7 +7085,7 @@
             "schema": {
               "oneOf": [
                 {
-                  "$ref": "#/components/schemas/LoyaltiesProgramsMembersCardsTransactionsListRequestQuery"
+                  "$ref": "#/components/schemas/V2LoyaltiesProgramsMembersCardsTransactionsListRequestQuery"
                 },
                 {
                   "type": "null"
@@ -7098,7 +7100,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/LoyaltiesProgramsMembersCardsTransactionsListResponseBody"
+                  "$ref": "#/components/schemas/V2LoyaltiesProgramsMembersCardsTransactionsListResponseBody"
                 },
                 "examples": {
                   "Card transaction list response": {
@@ -21098,7 +21100,7 @@
           }
         ]
       },
-      "LoyaltiesProgramsMembersCardsTransactionsListRequestQuery": {
+      "V2LoyaltiesProgramsMembersCardsTransactionsListRequestQuery": {
         "type": "object",
         "description": "Request query schema for **GET** `/v2/loyalties/programs/{programId}/members/{memberId}/cards/{cardId}/transactions`.",
         "properties": {
@@ -21152,42 +21154,17 @@
           }
         },
         "additionalProperties": false,
-        "title": "Loyalties Programs Members Cards Transactions List Request Query"
+        "title": "V2 Loyalties Programs Members Cards Transactions List Request Query"
       },
-      "LoyaltiesProgramsMembersCardsTransactionsListResponseBody": {
+      "V2LoyaltiesProgramsMembersCardsTransactionsListResponseBody": {
+        "title": "V2 Loyalties Programs Members Cards Transactions List Response Body",
         "type": "object",
-        "properties": {
-          "data": {
-            "type": "array",
-            "description": "Card transactions on the current page.",
-            "items": {
-              "$ref": "#/components/schemas/CardTransaction"
-            }
-          },
-          "cursor": {
-            "description": "Pagination cursor, or `null` when there are no more results.",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/ListCursor"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "object": {
-            "type": "string",
-            "const": "list",
-            "description": "Object type marker, always `list`."
+        "description": "Response body schema for **GET** `/v2/loyalties/programs/{programId}/members/{memberId}/cards/{cardId}/transactions`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/CardTransactionListResponse"
           }
-        },
-        "required": [
-          "data",
-          "cursor",
-          "object"
-        ],
-        "title": "Loyalties Programs Members Cards Transactions List Response Body",
-        "description": "Response body schema for **GET** `/v2/loyalties/programs/{programId}/members/{memberId}/cards/{cardId}/transactions`."
+        ]
       },
       "LoyaltiesProgramsRewardsPurchasesRefundRequestBody": {
         "type": "object",
@@ -28256,134 +28233,38 @@
         "additionalProperties": false,
         "title": "Loyalties Programs Members Cards Transactions List Request Query Card Definition Id"
       },
-      "CardTransaction": {
+      "CardTransactionListResponse": {
         "type": "object",
-        "description": "A card transaction.",
+        "description": "Cursor-paginated list of card transactions.",
         "properties": {
-          "id": {
-            "type": "string",
-            "pattern": "^lctx_[a-f0-9]+$",
-            "description": "Unique card transaction ID assigned by Voucherify."
+          "data": {
+            "type": "array",
+            "description": "Card transactions on the current page.",
+            "items": {
+              "$ref": "#/components/schemas/CardTransaction"
+            }
           },
-          "card_id": {
-            "type": "string",
-            "pattern": "^lcrd_[a-f0-9]+$",
-            "description": "ID of the card the transaction belongs to. Assigned by Voucherify."
-          },
-          "program_id": {
-            "type": "string",
-            "pattern": "^lprg_[a-f0-9]+$",
-            "description": "ID of the loyalty program. Assigned by Voucherify."
-          },
-          "member_id": {
-            "type": "string",
-            "pattern": "^lmbr_[a-f0-9]+$",
-            "description": "ID of the member owning the card. Assigned by Voucherify."
-          },
-          "card_definition_id": {
-            "type": "string",
-            "pattern": "^lcdef_[a-f0-9]+$",
-            "description": "ID of the card definition of the card. Assigned by Voucherify."
-          },
-          "card_type": {
-            "type": "string",
-            "enum": [
-              "INDIVIDUAL"
-            ],
-            "description": "Card type."
-          },
-          "type": {
-            "type": "string",
-            "enum": [
-              "ADMIN_CREDIT",
-              "ADMIN_DEBIT",
-              "ADMIN_POINTS_EXPIRATION",
-              "POINTS_EARNED",
-              "POINTS_SPENT_ON_REWARD",
-              "POINTS_PURCHASED",
-              "POINTS_PURCHASE_REVERSED",
-              "POINTS_SPENT_ON_ORDER",
-              "POINTS_REFUNDED",
-              "POINTS_RETURNED",
-              "POINTS_EXPIRED",
-              "PENDING_POINTS_ADDED",
-              "PENDING_POINTS_ACTIVATED",
-              "PENDING_POINTS_CANCELED"
-            ],
-            "description": "Transaction type. Options depend on the endpoint and the transaction variant."
-          },
-          "details": {
-            "description": "Card transaction details. `reason`, `rejection` and `metadata` are present on all variants; the remaining fields depend on the transaction `type`:\n\n- `ADMIN_CREDIT`: `points` (`total`, `expiration_date`)\n- `ADMIN_DEBIT`: `points` (`total`)\n- `ADMIN_POINTS_EXPIRATION`: `bucket` (the point bucket expired manually by an admin)\n- `POINTS_EARNED`: `points` (`total`, `expiration_date`)\n- `POINTS_EXPIRED`: `points` (`total`), `date`, `buckets`\n- `POINTS_SPENT_ON_REWARD`: `points` (`total`), `reward`, `reward_transaction`,`target_card`, `purchase_transaction`\n- `POINTS_PURCHASED`: `points` (`total`, `expiration_date`, `expiration_type`), `reward`, `reward_transaction`, `card_transaction`\n- `POINTS_PURCHASE_REVERSED`: `points` (`total`, `expiration_date`,\n  `expiration_type`), `reward`, `purchase`, `reward_transaction`\n- `POINTS_SPENT_ON_ORDER`: `points` (`total`), `order`, `order_transaction`\n- `POINTS_REFUNDED`: `points` (`total`)\n- `POINTS_RETURNED`: `points` (`total`, `expiration_date`, `expiration_type`), `reward`, `purchase`, `reward_transaction`\n- `PENDING_POINTS_ADDED` / `PENDING_POINTS_ACTIVATED` / `PENDING_POINTS_CANCELED`: `points` (`total`, `date`, `type`)",
+          "cursor": {
+            "description": "Pagination cursor, or `null` when there are no more results.",
             "oneOf": [
               {
-                "$ref": "#/components/schemas/CardTransactionDetails"
+                "$ref": "#/components/schemas/ListCursor"
               },
               {
                 "type": "null"
               }
             ]
           },
-          "status": {
-            "type": "string",
-            "enum": [
-              "PENDING",
-              "PROCESSING",
-              "APPROVED",
-              "REJECTED"
-            ],
-            "description": "Transaction processing status. Transactions are created as `PENDING` and processed asynchronously."
-          },
-          "created_at": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Timestamp when the transaction was created (ISO 8601)."
-          },
-          "updated_at": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "format": "date-time",
-            "description": "Timestamp when the transaction was last updated (ISO 8601), or `null`."
-          },
           "object": {
             "type": "string",
-            "const": "card_transaction",
-            "description": "Object type marker, always `card_transaction`."
+            "const": "list",
+            "description": "Object type marker, always `list`."
           }
         },
         "required": [
-          "id",
-          "card_id",
-          "program_id",
-          "member_id",
-          "card_definition_id",
-          "card_type",
-          "type",
-          "details",
-          "status",
-          "created_at",
-          "updated_at",
+          "data",
+          "cursor",
           "object"
-        ]
-      },
-      "ListCursor": {
-        "type": "object",
-        "description": "Pagination cursor.",
-        "properties": {
-          "next": {
-            "type": "string",
-            "description": "Cursor value to pass as the `cursor` query parameter to fetch the next page."
-          },
-          "expires_at": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Timestamp when the cursor expires."
-          }
-        },
-        "required": [
-          "next",
-          "expires_at"
         ]
       },
       "RewardPurchaseRefundPolicies": {
@@ -29792,6 +29673,25 @@
           "created_at",
           "updated_at",
           "object"
+        ]
+      },
+      "ListCursor": {
+        "type": "object",
+        "description": "Pagination cursor.",
+        "properties": {
+          "next": {
+            "type": "string",
+            "description": "Cursor value to pass as the `cursor` query parameter to fetch the next page."
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp when the cursor expires."
+          }
+        },
+        "required": [
+          "next",
+          "expires_at"
         ]
       },
       "CardDailyReportEntry": {
@@ -38816,6 +38716,117 @@
           "created_at"
         ]
       },
+      "CardTransaction": {
+        "type": "object",
+        "description": "A card transaction.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^lctx_[a-f0-9]+$",
+            "description": "Unique card transaction ID assigned by Voucherify."
+          },
+          "card_id": {
+            "type": "string",
+            "pattern": "^lcrd_[a-f0-9]+$",
+            "description": "ID of the card the transaction belongs to. Assigned by Voucherify."
+          },
+          "program_id": {
+            "type": "string",
+            "pattern": "^lprg_[a-f0-9]+$",
+            "description": "ID of the loyalty program. Assigned by Voucherify."
+          },
+          "member_id": {
+            "type": "string",
+            "pattern": "^lmbr_[a-f0-9]+$",
+            "description": "ID of the member owning the card. Assigned by Voucherify."
+          },
+          "card_definition_id": {
+            "type": "string",
+            "pattern": "^lcdef_[a-f0-9]+$",
+            "description": "ID of the card definition of the card. Assigned by Voucherify."
+          },
+          "card_type": {
+            "type": "string",
+            "enum": [
+              "INDIVIDUAL"
+            ],
+            "description": "Card type."
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "ADMIN_CREDIT",
+              "ADMIN_DEBIT",
+              "ADMIN_POINTS_EXPIRATION",
+              "POINTS_EARNED",
+              "POINTS_SPENT_ON_REWARD",
+              "POINTS_PURCHASED",
+              "POINTS_PURCHASE_REVERSED",
+              "POINTS_SPENT_ON_ORDER",
+              "POINTS_REFUNDED",
+              "POINTS_RETURNED",
+              "POINTS_EXPIRED",
+              "PENDING_POINTS_ADDED",
+              "PENDING_POINTS_ACTIVATED",
+              "PENDING_POINTS_CANCELED"
+            ],
+            "description": "Transaction type. Options depend on the endpoint and the transaction variant."
+          },
+          "details": {
+            "description": "Card transaction details. `reason`, `rejection` and `metadata` are present on all variants; the remaining fields depend on the transaction `type`:\n\n- `ADMIN_CREDIT`: `points` (`total`, `expiration_date`)\n- `ADMIN_DEBIT`: `points` (`total`)\n- `ADMIN_POINTS_EXPIRATION`: `bucket` (the point bucket expired manually by an admin)\n- `POINTS_EARNED`: `points` (`total`, `expiration_date`)\n- `POINTS_EXPIRED`: `points` (`total`), `date`, `buckets`\n- `POINTS_SPENT_ON_REWARD`: `points` (`total`), `reward`, `reward_transaction`,`target_card`, `purchase_transaction`\n- `POINTS_PURCHASED`: `points` (`total`, `expiration_date`, `expiration_type`), `reward`, `reward_transaction`, `card_transaction`\n- `POINTS_PURCHASE_REVERSED`: `points` (`total`, `expiration_date`,\n  `expiration_type`), `reward`, `purchase`, `reward_transaction`\n- `POINTS_SPENT_ON_ORDER`: `points` (`total`), `order`, `order_transaction`\n- `POINTS_REFUNDED`: `points` (`total`)\n- `POINTS_RETURNED`: `points` (`total`, `expiration_date`, `expiration_type`), `reward`, `purchase`, `reward_transaction`\n- `PENDING_POINTS_ADDED` / `PENDING_POINTS_ACTIVATED` / `PENDING_POINTS_CANCELED`: `points` (`total`, `date`, `type`)",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/CardTransactionDetails"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "PENDING",
+              "PROCESSING",
+              "APPROVED",
+              "REJECTED"
+            ],
+            "description": "Transaction processing status. Transactions are created as `PENDING` and processed asynchronously."
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp when the transaction was created (ISO 8601)."
+          },
+          "updated_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time",
+            "description": "Timestamp when the transaction was last updated (ISO 8601), or `null`."
+          },
+          "object": {
+            "type": "string",
+            "const": "card_transaction",
+            "description": "Object type marker, always `card_transaction`."
+          }
+        },
+        "required": [
+          "id",
+          "card_id",
+          "program_id",
+          "member_id",
+          "card_definition_id",
+          "card_type",
+          "type",
+          "details",
+          "status",
+          "created_at",
+          "updated_at",
+          "object"
+        ]
+      },
       "CardActivity": {
         "type": "object",
         "description": "An activity recorded for a card.",
@@ -39088,271 +39099,6 @@
           "updated_at",
           "object"
         ]
-      },
-      "CardTransactionDetails": {
-        "type": "object",
-        "description": "Card transaction details. Variant-dependent fields are not present on all variants.",
-        "properties": {
-          "reason": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "description": "Reason for the transaction (e.g. the reason provided in a manual adjustment request)."
-          },
-          "rejection": {
-            "description": "Rejection details when the transaction was rejected, or `null`.",
-            "oneOf": [
-              {
-                "type": "object",
-                "properties": {
-                  "reason": {
-                    "type": "string",
-                    "description": "Rejection reason."
-                  },
-                  "details": {
-                    "type": "string",
-                    "description": "Detailed rejection description."
-                  }
-                }
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "metadata": {
-            "type": "object",
-            "description": "Transaction metadata (empty object when none)."
-          },
-          "points": {
-            "type": "object",
-            "description": "Points affected by the transaction (variant-dependent fields; pending points don't return `expiration_date` and `expiration_type`.).",
-            "properties": {
-              "total": {
-                "type": "number",
-                "description": "Number of points. Negative for debits."
-              },
-              "expiration_date": {
-                "type": [
-                  "string",
-                  "null"
-                ],
-                "format": "date",
-                "description": "Expiration date of the affected points (`YYYY-MM-DD`), or `null`."
-              },
-              "expiration_type": {
-                "type": [
-                  "string",
-                  "null"
-                ],
-                "enum": [
-                  "NO_EXPIRATION",
-                  "ROLLING_EXPIRATION",
-                  "CALENDAR_EXPIRATION",
-                  "SLIDING_EXPIRATION",
-                  null
-                ],
-                "description": "Points expiration type of the affected points, or `null`."
-              },
-              "date": {
-                "type": "string",
-                "format": "date",
-                "description": "Activation date of the pending points (`YYYY-MM-DD`). Pending points variants only."
-              },
-              "type": {
-                "type": "string",
-                "enum": [
-                  "IMMEDIATE",
-                  "PERIOD_BASED",
-                  "FIXED_DATES",
-                  "EVENT_BASED"
-                ],
-                "description": "Pending points activation type. Pending points variants only."
-              }
-            }
-          },
-          "bucket": {
-            "$ref": "#/components/schemas/LoyaltyV2CardPointsBucketSimple",
-            "description": "The points bucket being expired (`ADMIN_POINTS_EXPIRATION` only)."
-          },
-          "buckets": {
-            "type": "array",
-            "description": "The points buckets that expired (`POINTS_EXPIRED` only).",
-            "items": {
-              "$ref": "#/components/schemas/LoyaltyV2CardPointsBucketSimple"
-            }
-          },
-          "date": {
-            "type": "string",
-            "format": "date",
-            "description": "Expiration date (`POINTS_EXPIRED` only, `YYYY-MM-DD`)."
-          },
-          "reward": {
-            "description": "Reference to the reward involved, or `null`.",
-            "oneOf": [
-              {
-                "type": "object",
-                "properties": {
-                  "id": {
-                    "type": "string",
-                    "description": "Reward ID (`lrew_[a-f0-9]+`) assigned by Voucherify."
-                  }
-                }
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "reward_transaction": {
-            "description": "Reference to the related reward transaction, or `null`.",
-            "oneOf": [
-              {
-                "type": "object",
-                "properties": {
-                  "id": {
-                    "type": "string",
-                    "description": "Reward transaction ID (`lrtx_[a-f0-9]+`) assigned by Voucherify."
-                  }
-                }
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "card_transaction": {
-            "description": "Reference to the linked card transaction (e.g. the spend side of a points purchase), or `null`.",
-            "oneOf": [
-              {
-                "type": "object",
-                "properties": {
-                  "id": {
-                    "type": "string",
-                    "description": "Card transaction ID (`lctx_[a-f0-9]+`) assigned by Voucherify."
-                  }
-                }
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "purchase": {
-            "description": "References to the original purchase transactions (reversal/return variants), or `null`.",
-            "oneOf": [
-              {
-                "type": "object",
-                "properties": {
-                  "card_transaction": {
-                    "oneOf": [
-                      {
-                        "type": "object",
-                        "properties": {
-                          "id": {
-                            "type": "string",
-                            "description": "Card transaction ID (`lctx_[a-f0-9]+`) assigned by Voucherify."
-                          }
-                        }
-                      },
-                      {
-                        "type": "null"
-                      }
-                    ]
-                  },
-                  "reward_transaction": {
-                    "oneOf": [
-                      {
-                        "type": "object",
-                        "properties": {
-                          "id": {
-                            "type": "string",
-                            "description": "Reward transaction ID (`lrtx_[a-f0-9]+`) assigned by Voucherify."
-                          }
-                        }
-                      },
-                      {
-                        "type": "null"
-                      }
-                    ]
-                  }
-                }
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "order": {
-            "description": "Reference to the order paid with points (`POINTS_SPENT_ON_ORDER` only), or `null`.",
-            "oneOf": [
-              {
-                "type": "object",
-                "properties": {
-                  "id": {
-                    "type": "string",
-                    "description": "Order ID assigned by Voucherify."
-                  }
-                }
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "order_transaction": {
-            "description": "Reference to the related order transaction (`POINTS_SPENT_ON_ORDER` only), or `null`.",
-            "oneOf": [
-              {
-                "type": "object",
-                "properties": {
-                  "id": {
-                    "type": "string",
-                    "description": "Order transaction ID (`lotx_[a-f0-9]+`) assigned by Voucherify."
-                  }
-                }
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "target_card": {
-            "description": "Reference to the target card credited by a points purchase (`POINTS_SPENT_ON_REWARD` only), or `null`.",
-            "oneOf": [
-              {
-                "type": "object",
-                "properties": {
-                  "id": {
-                    "type": "string",
-                    "description": "Card ID (`lcrd_[a-f0-9]+`) assigned by Voucherify."
-                  }
-                }
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "purchase_transaction": {
-            "description": "Reference to the linked purchase card transaction (`POINTS_SPENT_ON_REWARD` only), or `null`.",
-            "oneOf": [
-              {
-                "type": "object",
-                "properties": {
-                  "id": {
-                    "type": "string",
-                    "description": "Card transaction ID (`lctx_[a-f0-9]+`) assigned by Voucherify."
-                  }
-                }
-              },
-              {
-                "type": "null"
-              }
-            ]
-          }
-        }
       },
       "RewardPurchaseTransactionDetailsRefund": {
         "type": "object",
@@ -43516,6 +43262,271 @@
         ],
         "additionalProperties": false
       },
+      "CardTransactionDetails": {
+        "type": "object",
+        "description": "Card transaction details. Variant-dependent fields are not present on all variants.",
+        "properties": {
+          "reason": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Reason for the transaction (e.g. the reason provided in a manual adjustment request)."
+          },
+          "rejection": {
+            "description": "Rejection details when the transaction was rejected, or `null`.",
+            "oneOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "reason": {
+                    "type": "string",
+                    "description": "Rejection reason."
+                  },
+                  "details": {
+                    "type": "string",
+                    "description": "Detailed rejection description."
+                  }
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "metadata": {
+            "type": "object",
+            "description": "Transaction metadata (empty object when none)."
+          },
+          "points": {
+            "type": "object",
+            "description": "Points affected by the transaction (variant-dependent fields; pending points don't return `expiration_date` and `expiration_type`.).",
+            "properties": {
+              "total": {
+                "type": "number",
+                "description": "Number of points. Negative for debits."
+              },
+              "expiration_date": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "format": "date",
+                "description": "Expiration date of the affected points (`YYYY-MM-DD`), or `null`."
+              },
+              "expiration_type": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "enum": [
+                  "NO_EXPIRATION",
+                  "ROLLING_EXPIRATION",
+                  "CALENDAR_EXPIRATION",
+                  "SLIDING_EXPIRATION",
+                  null
+                ],
+                "description": "Points expiration type of the affected points, or `null`."
+              },
+              "date": {
+                "type": "string",
+                "format": "date",
+                "description": "Activation date of the pending points (`YYYY-MM-DD`). Pending points variants only."
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "IMMEDIATE",
+                  "PERIOD_BASED",
+                  "FIXED_DATES",
+                  "EVENT_BASED"
+                ],
+                "description": "Pending points activation type. Pending points variants only."
+              }
+            }
+          },
+          "bucket": {
+            "$ref": "#/components/schemas/LoyaltyV2CardPointsBucketSimple",
+            "description": "The points bucket being expired (`ADMIN_POINTS_EXPIRATION` only)."
+          },
+          "buckets": {
+            "type": "array",
+            "description": "The points buckets that expired (`POINTS_EXPIRED` only).",
+            "items": {
+              "$ref": "#/components/schemas/LoyaltyV2CardPointsBucketSimple"
+            }
+          },
+          "date": {
+            "type": "string",
+            "format": "date",
+            "description": "Expiration date (`POINTS_EXPIRED` only, `YYYY-MM-DD`)."
+          },
+          "reward": {
+            "description": "Reference to the reward involved, or `null`.",
+            "oneOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "Reward ID (`lrew_[a-f0-9]+`) assigned by Voucherify."
+                  }
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "reward_transaction": {
+            "description": "Reference to the related reward transaction, or `null`.",
+            "oneOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "Reward transaction ID (`lrtx_[a-f0-9]+`) assigned by Voucherify."
+                  }
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "card_transaction": {
+            "description": "Reference to the linked card transaction (e.g. the spend side of a points purchase), or `null`.",
+            "oneOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "Card transaction ID (`lctx_[a-f0-9]+`) assigned by Voucherify."
+                  }
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "purchase": {
+            "description": "References to the original purchase transactions (reversal/return variants), or `null`.",
+            "oneOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "card_transaction": {
+                    "oneOf": [
+                      {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "Card transaction ID (`lctx_[a-f0-9]+`) assigned by Voucherify."
+                          }
+                        }
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "reward_transaction": {
+                    "oneOf": [
+                      {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "Reward transaction ID (`lrtx_[a-f0-9]+`) assigned by Voucherify."
+                          }
+                        }
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "order": {
+            "description": "Reference to the order paid with points (`POINTS_SPENT_ON_ORDER` only), or `null`.",
+            "oneOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "Order ID assigned by Voucherify."
+                  }
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "order_transaction": {
+            "description": "Reference to the related order transaction (`POINTS_SPENT_ON_ORDER` only), or `null`.",
+            "oneOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "Order transaction ID (`lotx_[a-f0-9]+`) assigned by Voucherify."
+                  }
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "target_card": {
+            "description": "Reference to the target card credited by a points purchase (`POINTS_SPENT_ON_REWARD` only), or `null`.",
+            "oneOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "Card ID (`lcrd_[a-f0-9]+`) assigned by Voucherify."
+                  }
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "purchase_transaction": {
+            "description": "Reference to the linked purchase card transaction (`POINTS_SPENT_ON_REWARD` only), or `null`.",
+            "oneOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "Card transaction ID (`lctx_[a-f0-9]+`) assigned by Voucherify."
+                  }
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      },
       "CardActivityData": {
         "type": "object",
         "description": "Snapshots of the objects involved at the time of the activity. Always contains `card` and `program`. For `vl.card.assigned` and `vl.card.unassigned`, also contains `member` and `member_card`. For `vl.card.code_generation.failed`, also contains `result`.",
@@ -43546,52 +43557,6 @@
           "program"
         ],
         "additionalProperties": false
-      },
-      "LoyaltyV2CardPointsBucketSimple": {
-        "title": "Loyalty Card Points Bucket",
-        "type": "object",
-        "description": "Simple representation of a points expiration bucket, embedded in card\ntransaction details.",
-        "properties": {
-          "id": {
-            "type": "string",
-            "pattern": "^lcpeb_[a-f0-9]+$",
-            "description": "Point expiration bucket ID."
-          },
-          "points": {
-            "type": "object",
-            "description": "Points affected by the transaction.",
-            "properties": {
-              "total": {
-                "type": "number",
-                "description": "Number of points affected."
-              }
-            },
-            "required": [
-              "total"
-            ]
-          },
-          "expiration_date": {
-            "type": "string",
-            "format": "date",
-            "description": "Date when the points expire."
-          },
-          "expiration_type": {
-            "type": "string",
-            "enum": [
-              "NO_EXPIRATION",
-              "ROLLING_EXPIRATION",
-              "CALENDAR_EXPIRATION",
-              "SLIDING_EXPIRATION"
-            ],
-            "description": "Expiration type of the points."
-          }
-        },
-        "required": [
-          "id",
-          "points",
-          "expiration_date",
-          "expiration_type"
-        ]
       },
       "RewardPurchaseRefundPurchaseReference": {
         "type": "object",
@@ -46840,6 +46805,52 @@
           }
         },
         "additionalProperties": false
+      },
+      "LoyaltyV2CardPointsBucketSimple": {
+        "title": "Loyalty Card Points Bucket",
+        "type": "object",
+        "description": "Simple representation of a points expiration bucket, embedded in card\ntransaction details.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^lcpeb_[a-f0-9]+$",
+            "description": "Point expiration bucket ID."
+          },
+          "points": {
+            "type": "object",
+            "description": "Points affected by the transaction.",
+            "properties": {
+              "total": {
+                "type": "number",
+                "description": "Number of points affected."
+              }
+            },
+            "required": [
+              "total"
+            ]
+          },
+          "expiration_date": {
+            "type": "string",
+            "format": "date",
+            "description": "Date when the points expire."
+          },
+          "expiration_type": {
+            "type": "string",
+            "enum": [
+              "NO_EXPIRATION",
+              "ROLLING_EXPIRATION",
+              "CALENDAR_EXPIRATION",
+              "SLIDING_EXPIRATION"
+            ],
+            "description": "Expiration type of the points."
+          }
+        },
+        "required": [
+          "id",
+          "points",
+          "expiration_date",
+          "expiration_type"
+        ]
       },
       "CardCodeGenerationFailureResult": {
         "type": "object",
