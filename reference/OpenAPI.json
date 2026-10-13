@@ -90377,6 +90377,16 @@
         ],
         "additionalProperties": false
       },
+      "V2LoyaltiesRewardsActivateResponseBody": {
+        "title": "V2 Loyalties Rewards Activate Response Body",
+        "type": "object",
+        "description": "Response body schema for **POST** `/v2/loyalties/rewards/{rewardId}/activate`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/RewardResponse"
+          }
+        ]
+      },
       "V2LoyaltiesRewardsDeleteResponseBody": {
         "title": "V2 Loyalties Rewards Delete Response Body",
         "type": "object",
@@ -165821,32 +165831,32 @@
       }
     },
     "/v2/loyalties/rewards/{rewardId}/activate": {
+      "parameters": [
+        {
+          "name": "rewardId",
+          "in": "path",
+          "required": true,
+          "description": "Unique reward identifier, prefixed with `lrew_`.",
+          "schema": {
+            "type": "string",
+            "pattern": "^lrew_[a-f0-9]+$"
+          }
+        }
+      ],
       "post": {
         "operationId": "activateReward",
         "tags": [
           "LV2-Rewards"
         ],
         "summary": "Activate reward",
-        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nMoves the reward to the ACTIVE status. Allowed from DRAFT or INACTIVE status;\nother transitions are rejected with a conflict error. This endpoint takes no\nrequest body.",
-        "parameters": [
-          {
-            "name": "rewardId",
-            "in": "path",
-            "required": true,
-            "description": "Unique reward identifier, prefixed with `lrew_`.",
-            "schema": {
-              "type": "string",
-              "pattern": "^lrew_[a-f0-9]+$"
-            }
-          }
-        ],
+        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nMoves the reward to the ACTIVE status. Allowed from DRAFT or INACTIVE status;\nother transitions return 400 `invalid_state_transition`. This endpoint takes no\nrequest body. Activation returns 423 `resource_locked` when a linked card definition is not ACTIVE (`non_active_card_definition`), a tier structure in the tier rules is not ACTIVE (`non_active_tier_structure`), or a digital reward campaign is in `DRAFT` (`non_active_campaign`).",
         "responses": {
           "200": {
             "description": "The activated reward.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/RewardResponse"
+                  "$ref": "#/components/schemas/V2LoyaltiesRewardsActivateResponseBody"
                 }
               }
             }
@@ -165871,8 +165881,8 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
+          "423": {
+            "description": "Resource locked - a related resource is in a state that prevents this operation.",
             "content": {
               "application/json": {
                 "schema": {
