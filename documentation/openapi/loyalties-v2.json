@@ -925,6 +925,18 @@
       }
     },
     "/v2/loyalties/programs/{programId}/card-definitions": {
+      "parameters": [
+        {
+          "name": "programId",
+          "in": "path",
+          "required": true,
+          "description": "Unique program identifier.",
+          "schema": {
+            "type": "string",
+            "pattern": "^lprg_[a-f0-9]+$"
+          }
+        }
+      ],
       "get": {
         "operationId": "listProgramCardDefinitionAssignments",
         "tags": [
@@ -933,16 +945,6 @@
         "summary": "List program card definition assignments",
         "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nReturns a cursor-paginated list of card definitions assigned to the program.",
         "parameters": [
-          {
-            "name": "programId",
-            "in": "path",
-            "required": true,
-            "description": "Unique program identifier.",
-            "schema": {
-              "type": "string",
-              "pattern": "^lprg_[a-f0-9]+$"
-            }
-          },
           {
             "name": "limit",
             "in": "query",
@@ -1009,7 +1011,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProgramCardDefinitionAssignmentListResponse"
+                  "$ref": "#/components/schemas/V2LoyaltiesProgramsCardDefinitionsListResponseBody"
                 }
               }
             }
@@ -20576,34 +20578,15 @@
           }
         ]
       },
-      "ProgramCardDefinitionAssignmentListResponse": {
+      "V2LoyaltiesProgramsCardDefinitionsListResponseBody": {
+        "title": "V2 Loyalties Programs Card Definitions List Response Body",
         "type": "object",
-        "description": "Cursor-paginated list of card definition assignments.",
-        "properties": {
-          "object": {
-            "type": "string",
-            "description": "Object type marker.",
-            "const": "list"
-          },
-          "data": {
-            "type": "array",
-            "description": "Card definition assignments on the current page.",
-            "items": {
-              "$ref": "#/components/schemas/ProgramCardDefinitionAssignment"
-            }
-          },
-          "cursor": {
-            "description": "Pagination cursor, or `null` when there are no more results.",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/ProgramListCursor"
-              },
-              {
-                "type": "null"
-              }
-            ]
+        "description": "Response body schema for **GET** `/v2/loyalties/programs/{programId}/card-definitions`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ProgramCardDefinitionAssignmentListResponse"
           }
-        }
+        ]
       },
       "ProgramCardDefinitionBatchRequest": {
         "type": "object",
@@ -28122,46 +28105,32 @@
           }
         }
       },
-      "ProgramCardDefinitionAssignment": {
+      "ProgramCardDefinitionAssignmentListResponse": {
         "type": "object",
-        "description": "A card definition assigned to a program.",
+        "description": "Cursor-paginated list of card definition assignments.",
         "properties": {
-          "card_type": {
-            "type": "string",
-            "description": "Card type of the assigned card definition.",
-            "enum": [
-              "INDIVIDUAL"
-            ]
-          },
-          "card_definition_id": {
-            "type": "string",
-            "description": "Unique card definition identifier.",
-            "pattern": "^lcdef_[a-f0-9]+$"
-          },
-          "created_at": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Assignment creation timestamp (ISO 8601)."
-          },
           "object": {
             "type": "string",
             "description": "Object type marker.",
-            "const": "program_card_definition"
-          }
-        }
-      },
-      "ProgramListCursor": {
-        "type": "object",
-        "description": "Cursor for fetching the next page of results. Present only when more results are available.",
-        "properties": {
-          "next": {
-            "type": "string",
-            "description": "Cursor id to pass as the `cursor` query parameter in the next request."
+            "const": "list"
           },
-          "expires_at": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Timestamp after which the cursor expires and can no longer be used."
+          "data": {
+            "type": "array",
+            "description": "Card definition assignments on the current page.",
+            "items": {
+              "$ref": "#/components/schemas/ProgramCardDefinitionAssignment"
+            }
+          },
+          "cursor": {
+            "description": "Pagination cursor, or `null` when there are no more results.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/ProgramListCursor"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         }
       },
@@ -28195,6 +28164,34 @@
         ],
         "additionalProperties": false
       },
+      "ProgramCardDefinitionAssignment": {
+        "type": "object",
+        "description": "A card definition assigned to a program.",
+        "properties": {
+          "card_type": {
+            "type": "string",
+            "description": "Card type of the assigned card definition.",
+            "enum": [
+              "INDIVIDUAL"
+            ]
+          },
+          "card_definition_id": {
+            "type": "string",
+            "description": "Unique card definition identifier.",
+            "pattern": "^lcdef_[a-f0-9]+$"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Assignment creation timestamp (ISO 8601)."
+          },
+          "object": {
+            "type": "string",
+            "description": "Object type marker.",
+            "const": "program_card_definition"
+          }
+        }
+      },
       "ProgramEarningRuleAssignment": {
         "type": "object",
         "description": "An earning rule assigned to a program.",
@@ -28220,6 +28217,21 @@
           "created_at",
           "object"
         ]
+      },
+      "ProgramListCursor": {
+        "type": "object",
+        "description": "Cursor for fetching the next page of results. Present only when more results are available.",
+        "properties": {
+          "next": {
+            "type": "string",
+            "description": "Cursor id to pass as the `cursor` query parameter in the next request."
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp after which the cursor expires and can no longer be used."
+          }
+        }
       },
       "ProgramEarningRuleAssignItem": {
         "type": "object",
