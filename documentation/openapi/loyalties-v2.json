@@ -12535,31 +12535,33 @@
       }
     },
     "/v2/loyalties/programs/{programId}/reports/earning-rules/summary": {
+      "parameters": [
+        {
+          "name": "programId",
+          "in": "path",
+          "required": true,
+          "description": "Identifies the loyalty program. Format: `lprg_` followed by hexadecimal characters.",
+          "schema": {
+            "type": "string",
+            "pattern": "^lprg_[a-f0-9]+$"
+          }
+        }
+      ],
       "get": {
-        "operationId": "getProgramEarningRulesSummaryReport",
+        "operationId": "listProgramEarningRulesSummaryReports",
         "tags": [
           "Programs"
         ],
-        "summary": "Get program earning-rules summary report",
+        "summary": "List program earning-rules summary reports",
         "description": "Returns total earning-rule evaluation statistics for the program (all time), optionally filtered by earning rule. Includes success and failure counts with a failures breakdown. Each entry counts eligibility checks for one earning rule. Returns at most 100 rows, ordered by `id` descending. `limit` and `order` are not query parameters. A filter that matches no rows returns an empty `data` array.\n\nReturns `400` when query validation fails. Returns `404` when the program does not exist.",
         "parameters": [
-          {
-            "name": "programId",
-            "in": "path",
-            "required": true,
-            "description": "Unique loyalty program identifier (format: `lprg_` followed by hexadecimal characters).",
-            "schema": {
-              "type": "string",
-              "pattern": "^lprg_[a-f0-9]+$"
-            }
-          },
           {
             "name": "filters",
             "in": "query",
             "required": false,
             "style": "deepObject",
             "explode": true,
-            "description": "Field filters. Each field accepts a `conditions` object with condition operators.",
+            "description": "Filters rows by field. Each field accepts a `conditions` object with condition operators.",
             "schema": {
               "$ref": "#/components/schemas/EarningRulesReportListFilters"
             }
@@ -12578,11 +12580,47 @@
                     "value": {
                       "data": [
                         {
-                          "id": "lpers_12c2bc3be20c8cb533",
-                          "earning_rule_id": "lern_128f9ee63cc4ba558",
-                          "success_count": 1,
+                          "id": "lpers_12f8c3cb8fdaa184cd",
+                          "earning_rule_id": "lern_128f57ec40cc4bf762",
+                          "success_count": 3,
                           "failures_count": 0,
-                          "failures_breakdown": {},
+                          "failures_breakdown": {
+                            "COOLDOWN": 0,
+                            "FREQUENCY": 0
+                          },
+                          "object": "program_earning_rules_summary_report"
+                        },
+                        {
+                          "id": "lpers_12a92be41e477a33d8",
+                          "earning_rule_id": "lern_128f5834b30c4bf7a3",
+                          "success_count": 40,
+                          "failures_count": 0,
+                          "failures_breakdown": {
+                            "COOLDOWN": 0,
+                            "FREQUENCY": 0
+                          },
+                          "object": "program_earning_rules_summary_report"
+                        },
+                        {
+                          "id": "lpers_12a92be41b077a33d1",
+                          "earning_rule_id": "lern_128f5822398c4bf78f",
+                          "success_count": 40,
+                          "failures_count": 0,
+                          "failures_breakdown": {
+                            "COOLDOWN": 0,
+                            "FREQUENCY": 0
+                          },
+                          "object": "program_earning_rules_summary_report"
+                        },
+                        {
+                          "id": "lpers_12a92be418877a33ca",
+                          "earning_rule_id": "lern_128f48ee44cc4bec34",
+                          "success_count": 40,
+                          "failures_count": 0,
+                          "failures_breakdown": {
+                            "COOLDOWN": 0,
+                            "FREQUENCY": 0
+                          },
                           "object": "program_earning_rules_summary_report"
                         }
                       ],
@@ -12638,7 +12676,7 @@
             }
           },
           "404": {
-            "description": "Resource not found.",
+            "description": "The program does not exist.",
             "content": {
               "application/json": {
                 "schema": {
@@ -12653,6 +12691,17 @@
                       "details": "Cannot find program with id lprg_28f58429f4c4bf7b2",
                       "request_id": "v-131e61d450c264502f",
                       "resource_id": "lprg_28f58429f4c4bf7b2",
+                      "resource_type": "program"
+                    }
+                  },
+                  "Program id does not match the pattern": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find program with id missing",
+                      "request_id": "v-131e61d450c2645030",
+                      "resource_id": "missing",
                       "resource_type": "program"
                     }
                   }
@@ -40320,7 +40369,7 @@
           },
           "failures_breakdown": {
             "$ref": "#/components/schemas/EarningRulesReportFailuresBreakdown",
-            "description": "Counts failed trigger-limit checks by reason. Empty when no failures were recorded."
+            "description": "Counts failed trigger-limit checks by reason. Either key may be absent or `0`. The object is empty when no failure counts are stored yet."
           },
           "object": {
             "type": "string",
@@ -43508,7 +43557,7 @@
       },
       "EarningRulesReportFailuresBreakdown": {
         "type": "object",
-        "description": "Counts failed trigger-limit checks by reason. `COOLDOWN` and `FREQUENCY` are present only when that reason was recorded. Empty when no failures were recorded.",
+        "description": "Counts failed trigger-limit checks by reason. `COOLDOWN` and `FREQUENCY` are the only keys. Either key may be absent. A present key is `0` when that reason has no failures. The object is empty when no failure counts are stored yet.",
         "additionalProperties": false,
         "properties": {
           "COOLDOWN": {
