@@ -16062,20 +16062,32 @@
       }
     },
     "/v2/loyalties/tier-structures/{tierStructureId}/activate": {
+      "parameters": [
+        {
+          "name": "tierStructureId",
+          "in": "path",
+          "required": true,
+          "description": "Unique tier structure identifier.",
+          "schema": {
+            "type": "string",
+            "pattern": "^lts_[a-f0-9]+$"
+          }
+        }
+      ],
       "post": {
         "operationId": "activateTierStructure",
         "tags": [
           "Tier Structures"
         ],
         "summary": "Activate tier structure",
-        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nMoves the tier structure to the `ACTIVE` status. Allowed state transitions:\n`DRAFT` -> `ACTIVE` and `INACTIVE` -> `ACTIVE`. No request body.",
+        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nMoves the tier structure to `ACTIVE` from `DRAFT` or `INACTIVE`. No request body. Any other status returns `400` (`invalid_state_transition`). Returns `403` (`tier_structure_assignments_limit_exceeded`) when a program already has another `DRAFT` or `ACTIVE` tier structure assigned.",
         "responses": {
           "200": {
             "description": "The activated tier structure.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/TierStructure"
+                  "$ref": "#/components/schemas/V2LoyaltiesTierStructuresActivateResponseBody"
                 }
               }
             }
@@ -16090,8 +16102,8 @@
               }
             }
           },
-          "404": {
-            "description": "Resource not found.",
+          "403": {
+            "description": "A program already has another draft or active tier structure assigned.",
             "content": {
               "application/json": {
                 "schema": {
@@ -16100,8 +16112,8 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
+          "404": {
+            "description": "Resource not found.",
             "content": {
               "application/json": {
                 "schema": {
@@ -16130,18 +16142,6 @@
             }
           }
         },
-        "parameters": [
-          {
-            "name": "tierStructureId",
-            "in": "path",
-            "required": true,
-            "description": "Unique tier structure identifier.",
-            "schema": {
-              "type": "string",
-              "pattern": "^lts_[a-f0-9]+$"
-            }
-          }
-        ],
         "security": [
           {
             "X-App-Id": [],
@@ -23924,6 +23924,16 @@
         "title": "V2 Loyalties Tier Structures Delete Response Body",
         "type": "object",
         "description": "Response body schema for **DELETE** `/v2/loyalties/tier-structures/{tierStructureId}`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/TierStructure"
+          }
+        ]
+      },
+      "V2LoyaltiesTierStructuresActivateResponseBody": {
+        "title": "V2 Loyalties Tier Structures Activate Response Body",
+        "type": "object",
+        "description": "Response body schema for **POST** `/v2/loyalties/tier-structures/{tierStructureId}/activate`.",
         "allOf": [
           {
             "$ref": "#/components/schemas/TierStructure"
