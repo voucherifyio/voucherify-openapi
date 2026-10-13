@@ -1460,6 +1460,18 @@
       }
     },
     "/v2/loyalties/programs/{programId}/earning-rules/batch": {
+      "parameters": [
+        {
+          "name": "programId",
+          "in": "path",
+          "required": true,
+          "description": "Unique program identifier.",
+          "schema": {
+            "type": "string",
+            "pattern": "^lprg_[a-f0-9]+$"
+          }
+        }
+      ],
       "post": {
         "operationId": "batchProgramEarningRuleAssignments",
         "tags": [
@@ -1467,24 +1479,13 @@
         ],
         "summary": "Batch assign/unassign earning rules",
         "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nAssigns and/or unassigns earning rules to/from a program in a single batch.\nUnassign operations are processed before assign operations. When the program is\n`ACTIVE`, the batch is validated to leave at least one active earning rule assigned.\nIn strict mode (default) missing earning rules or missing assignments cause the whole\nbatch to fail.",
-        "parameters": [
-          {
-            "name": "programId",
-            "in": "path",
-            "required": true,
-            "description": "Unique program identifier.",
-            "schema": {
-              "type": "string",
-              "pattern": "^lprg_[a-f0-9]+$"
-            }
-          }
-        ],
+        "parameters": [],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ProgramEarningRuleBatchRequest"
+                "$ref": "#/components/schemas/V2LoyaltiesProgramsEarningRulesBatchRequestBody"
               }
             }
           }
@@ -1495,7 +1496,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProgramEarningRuleBatchResponse"
+                  "$ref": "#/components/schemas/V2LoyaltiesProgramsEarningRulesBatchResponseBody"
                 }
               }
             }
@@ -20644,76 +20645,25 @@
           "cursor"
         ]
       },
-      "ProgramEarningRuleBatchRequest": {
+      "V2LoyaltiesProgramsEarningRulesBatchRequestBody": {
+        "title": "V2 Loyalties Programs Earning Rules Batch Request Body",
         "type": "object",
-        "description": "Batch of earning rule assignment operations. `unassign` operations are processed\nbefore `assign` operations. Duplicate ids within a batch are rejected.",
-        "properties": {
-          "assign": {
-            "description": "Earning rules to assign.",
-            "oneOf": [
-              {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/ProgramEarningRuleAssignItem"
-                },
-                "maxItems": 10
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "unassign": {
-            "description": "Earning rules to unassign.",
-            "oneOf": [
-              {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/ProgramEarningRuleUnassignItem"
-                },
-                "maxItems": 10
-              },
-              {
-                "type": "null"
-              }
-            ]
+        "description": "Request body schema for **POST** `/v2/loyalties/programs/{programId}/earning-rules/batch`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ProgramEarningRuleBatchRequest"
           }
-        },
-        "additionalProperties": false
+        ]
       },
-      "ProgramEarningRuleBatchResponse": {
+      "V2LoyaltiesProgramsEarningRulesBatchResponseBody": {
+        "title": "V2 Loyalties Programs Earning Rules Batch Response Body",
         "type": "object",
-        "description": "Result of an earning rule assignment batch. Keys are null when the corresponding operation list was not provided.",
-        "properties": {
-          "assigned": {
-            "description": "Assignments created by the batch, or `null` when no assign operations were requested.",
-            "oneOf": [
-              {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/ProgramEarningRuleAssignment"
-                }
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "unassigned": {
-            "description": "Assignments removed by the batch, or `null` when no unassign operations were requested.",
-            "oneOf": [
-              {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/ProgramEarningRuleAssignment"
-                }
-              },
-              {
-                "type": "null"
-              }
-            ]
+        "description": "Response body schema for **POST** `/v2/loyalties/programs/{programId}/earning-rules/batch`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ProgramEarningRuleBatchResponse"
           }
-        }
+        ]
       },
       "V2LoyaltiesProgramsTierStructuresListResponseBody": {
         "title": "V2 Loyalties Programs Tier Structures List Response Body",
@@ -28207,35 +28157,87 @@
           }
         }
       },
-      "ProgramEarningRuleAssignItem": {
+      "ProgramEarningRuleBatchRequest": {
         "type": "object",
-        "description": "Earning rule to assign to the program.",
+        "description": "Batch of earning rule assignment operations. `unassign` operations are processed\nbefore `assign` operations. Duplicate ids within a batch are rejected.",
         "properties": {
-          "id": {
-            "type": "string",
-            "description": "Unique earning rule identifier.",
-            "pattern": "^lern_[a-f0-9]+$"
+          "assign": {
+            "description": "Earning rules to assign.",
+            "oneOf": [
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/ProgramEarningRuleAssignItem"
+                },
+                "maxItems": 10
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "unassign": {
+            "description": "Earning rules to unassign.",
+            "oneOf": [
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/ProgramEarningRuleUnassignItem"
+                },
+                "maxItems": 10
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "options": {
+            "description": "Batch behavior. Defaults to strict mode when omitted.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/ProgramEarningRuleBatchOptions"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         },
-        "required": [
-          "id"
-        ],
         "additionalProperties": false
       },
-      "ProgramEarningRuleUnassignItem": {
+      "ProgramEarningRuleBatchResponse": {
         "type": "object",
-        "description": "Earning rule to unassign from the program.",
+        "description": "Result of an earning rule assignment batch. Keys are null when the corresponding operation list was not provided.",
         "properties": {
-          "id": {
-            "type": "string",
-            "description": "Unique earning rule identifier.",
-            "pattern": "^lern_[a-f0-9]+$"
+          "assigned": {
+            "description": "Assignments created by the batch, or `null` when no assign operations were requested.",
+            "oneOf": [
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/ProgramEarningRuleAssignment"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "unassigned": {
+            "description": "Assignments removed by the batch, or `null` when no unassign operations were requested.",
+            "oneOf": [
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/ProgramEarningRuleAssignment"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
-        },
-        "required": [
-          "id"
-        ],
-        "additionalProperties": false
+        }
       },
       "ProgramTierStructureAssignmentListResponse": {
         "type": "object",
@@ -40760,6 +40762,21 @@
         ],
         "additionalProperties": false
       },
+      "ProgramEarningRuleAssignItem": {
+        "type": "object",
+        "description": "Earning rule to assign to the program.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique earning rule identifier.",
+            "pattern": "^lern_[a-f0-9]+$"
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "additionalProperties": false
+      },
       "ProgramCreateAssignedCardDefinition": {
         "type": "object",
         "description": "Card definition assigned during program creation.",
@@ -40932,6 +40949,33 @@
           "strict": {
             "type": "boolean",
             "description": "Fails the batch when a card definition is missing or inactive, or when an assignment to remove is missing. Defaults to `true`.",
+            "default": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProgramEarningRuleUnassignItem": {
+        "type": "object",
+        "description": "Earning rule to unassign from the program.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique earning rule identifier.",
+            "pattern": "^lern_[a-f0-9]+$"
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "additionalProperties": false
+      },
+      "ProgramEarningRuleBatchOptions": {
+        "type": "object",
+        "description": "Options for an earning rule assignment batch.",
+        "properties": {
+          "strict": {
+            "type": "boolean",
+            "description": "Fails the batch when an earning rule is missing, or when an assignment to remove is missing. Defaults to `true`.",
             "default": true
           }
         },
