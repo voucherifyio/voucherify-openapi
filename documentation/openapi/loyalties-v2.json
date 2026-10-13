@@ -16573,6 +16573,28 @@
       }
     },
     "/v2/loyalties/tier-structures/{tierStructureId}/tiers/{tierId}": {
+      "parameters": [
+        {
+          "name": "tierStructureId",
+          "in": "path",
+          "required": true,
+          "description": "Unique tier structure identifier.",
+          "schema": {
+            "type": "string",
+            "pattern": "^lts_[a-f0-9]+$"
+          }
+        },
+        {
+          "name": "tierId",
+          "in": "path",
+          "required": true,
+          "description": "Unique tier identifier.",
+          "schema": {
+            "type": "string",
+            "pattern": "^lt_[a-f0-9]+$"
+          }
+        }
+      ],
       "put": {
         "operationId": "updateTier",
         "tags": [
@@ -16585,7 +16607,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/TierUpdateRequest"
+                "$ref": "#/components/schemas/V2LoyaltiesTierStructuresTiersUpdateRequestBody"
               }
             }
           }
@@ -16596,7 +16618,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Tier"
+                  "$ref": "#/components/schemas/V2LoyaltiesTierStructuresTiersUpdateResponseBody"
                 }
               }
             }
@@ -16651,28 +16673,6 @@
             }
           }
         },
-        "parameters": [
-          {
-            "name": "tierStructureId",
-            "in": "path",
-            "required": true,
-            "description": "Unique tier structure identifier.",
-            "schema": {
-              "type": "string",
-              "pattern": "^lts_[a-f0-9]+$"
-            }
-          },
-          {
-            "name": "tierId",
-            "in": "path",
-            "required": true,
-            "description": "Unique tier identifier.",
-            "schema": {
-              "type": "string",
-              "pattern": "^lt_[a-f0-9]+$"
-            }
-          }
-        ],
         "security": [
           {
             "X-App-Id": [],
@@ -16751,28 +16751,6 @@
             }
           }
         },
-        "parameters": [
-          {
-            "name": "tierStructureId",
-            "in": "path",
-            "required": true,
-            "description": "Unique tier structure identifier.",
-            "schema": {
-              "type": "string",
-              "pattern": "^lts_[a-f0-9]+$"
-            }
-          },
-          {
-            "name": "tierId",
-            "in": "path",
-            "required": true,
-            "description": "Unique tier identifier.",
-            "schema": {
-              "type": "string",
-              "pattern": "^lt_[a-f0-9]+$"
-            }
-          }
-        ],
         "security": [
           {
             "X-App-Id": [],
@@ -23980,51 +23958,25 @@
           }
         ]
       },
-      "TierUpdateRequest": {
+      "V2LoyaltiesTierStructuresTiersUpdateRequestBody": {
+        "title": "V2 Loyalties Tier Structures Tiers Update Request Body",
         "type": "object",
-        "description": "Request body for updating a tier. All properties are optional; no additional\nproperties are allowed. When the parent tier structure is not in `DRAFT` status,\nonly `name` and `metadata` may be updated.",
-        "properties": {
-          "name": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 200,
-            "description": "Display name of the tier."
-          },
-          "qualification_rules": {
-            "description": "Rules determining which members qualify for this tier.",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/TierQualificationRulesUpsert"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "downgrade": {
-            "description": "Tier-level downgrade behavior.",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/TierDowngradeUpsert"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "metadata": {
-            "description": "Free-form key/value object holding custom attributes.",
-            "oneOf": [
-              {
-                "type": "object"
-              },
-              {
-                "type": "null"
-              }
-            ]
+        "description": "Request body schema for **PUT** `/v2/loyalties/tier-structures/{tierStructureId}/tiers/{tierId}`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/TierUpdateRequest"
           }
-        },
-        "additionalProperties": false
+        ]
+      },
+      "V2LoyaltiesTierStructuresTiersUpdateResponseBody": {
+        "title": "V2 Loyalties Tier Structures Tiers Update Response Body",
+        "type": "object",
+        "description": "Response body schema for **PUT** `/v2/loyalties/tier-structures/{tierStructureId}/tiers/{tierId}`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Tier"
+          }
+        ]
       },
       "Tier": {
         "type": "object",
@@ -35631,34 +35583,43 @@
           "object"
         ]
       },
-      "TierQualificationRulesUpsert": {
+      "TierUpdateRequest": {
         "type": "object",
-        "description": "Tier qualification rules. When `type` is `POINTS`, `points` is required and\n`segment` must be null/omitted; when `type` is `POINTS_AND_SEGMENT`, both `points`\nand `segment` are required.",
+        "description": "Request body for updating a tier. All properties are optional; no additional\nproperties are allowed. When the parent tier structure is not in `DRAFT` status,\nonly `name` and `metadata` may be updated.",
         "properties": {
-          "type": {
+          "name": {
             "type": "string",
-            "enum": [
-              "POINTS",
-              "POINTS_AND_SEGMENT"
-            ],
-            "description": "Qualification model. `POINTS` qualifies by point thresholds only;\n`POINTS_AND_SEGMENT` additionally requires membership in a customer segment.\nRequired."
+            "minLength": 1,
+            "maxLength": 200,
+            "description": "Display name of the tier."
           },
-          "points": {
-            "description": "Point thresholds for the tier. Required (non-null) when `type` is `POINTS`\nor `POINTS_AND_SEGMENT`.",
+          "qualification_rules": {
+            "description": "Rules determining which members qualify for this tier.",
             "oneOf": [
               {
-                "$ref": "#/components/schemas/TierQualificationRulesPointsUpsert"
+                "$ref": "#/components/schemas/TierQualificationRulesUpsert"
               },
               {
                 "type": "null"
               }
             ]
           },
-          "segment": {
-            "description": "Customer segment reference. Required (non-null) when `type` is\n`POINTS_AND_SEGMENT`; must be null/omitted when `type` is `POINTS`.",
+          "downgrade": {
+            "description": "Tier-level downgrade behavior.",
             "oneOf": [
               {
-                "$ref": "#/components/schemas/TierQualificationRulesSegmentUpsert"
+                "$ref": "#/components/schemas/TierDowngradeUpsert"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "metadata": {
+            "description": "Free-form key/value object holding custom attributes.",
+            "oneOf": [
+              {
+                "type": "object"
               },
               {
                 "type": "null"
@@ -35666,76 +35627,6 @@
             ]
           }
         },
-        "additionalProperties": false,
-        "allOf": [
-          {
-            "required": [
-              "type"
-            ]
-          },
-          {
-            "if": {
-              "properties": {
-                "type": {
-                  "const": "POINTS"
-                }
-              }
-            },
-            "then": {
-              "required": [
-                "points"
-              ],
-              "properties": {
-                "points": {
-                  "$ref": "#/components/schemas/TierQualificationRulesPointsUpsert"
-                },
-                "segment": {
-                  "type": "null"
-                }
-              }
-            }
-          },
-          {
-            "if": {
-              "properties": {
-                "type": {
-                  "const": "POINTS_AND_SEGMENT"
-                }
-              }
-            },
-            "then": {
-              "required": [
-                "points",
-                "segment"
-              ],
-              "properties": {
-                "points": {
-                  "$ref": "#/components/schemas/TierQualificationRulesPointsUpsert"
-                },
-                "segment": {
-                  "$ref": "#/components/schemas/TierQualificationRulesSegmentUpsert"
-                }
-              }
-            }
-          }
-        ]
-      },
-      "TierDowngradeUpsert": {
-        "type": "object",
-        "description": "Tier-level downgrade behavior.",
-        "properties": {
-          "type": {
-            "type": "string",
-            "enum": [
-              "INHERIT",
-              "NO_DOWNGRADE"
-            ],
-            "description": "`INHERIT` uses the parent tier structure downgrade settings; `NO_DOWNGRADE`\ndisables downgrades from this tier. Required."
-          }
-        },
-        "required": [
-          "type"
-        ],
         "additionalProperties": false
       },
       "TierQualificationRules": {
@@ -42710,40 +42601,110 @@
           }
         }
       },
-      "TierQualificationRulesPointsUpsert": {
+      "TierQualificationRulesUpsert": {
         "type": "object",
-        "description": "Point thresholds for tier qualification. Values must be non-negative numbers\nbetween 0 and 1,000,000,000.",
+        "description": "Tier qualification rules. When `type` is `POINTS`, `points` is required and\n`segment` must be null/omitted; when `type` is `POINTS_AND_SEGMENT`, both `points`\nand `segment` are required.",
         "properties": {
-          "min_value": {
-            "type": "number",
-            "minimum": 0,
-            "maximum": 1000000000,
-            "description": "Minimum number of points required to qualify for the tier. Required."
-          },
-          "max_value": {
-            "type": "number",
-            "minimum": 0,
-            "maximum": 1000000000,
-            "description": "Optional upper bound of points for the tier."
-          }
-        },
-        "required": [
-          "min_value"
-        ],
-        "additionalProperties": false
-      },
-      "TierQualificationRulesSegmentUpsert": {
-        "type": "object",
-        "description": "Customer segment reference for tier qualification.",
-        "properties": {
-          "id": {
+          "type": {
             "type": "string",
-            "minLength": 1,
-            "description": "Unique identifier of the customer segment."
+            "enum": [
+              "POINTS",
+              "POINTS_AND_SEGMENT"
+            ],
+            "description": "Qualification model. `POINTS` qualifies by point thresholds only;\n`POINTS_AND_SEGMENT` additionally requires membership in a customer segment.\nRequired."
+          },
+          "points": {
+            "description": "Point thresholds for the tier. Required (non-null) when `type` is `POINTS`\nor `POINTS_AND_SEGMENT`.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/TierQualificationRulesPointsUpsert"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "segment": {
+            "description": "Customer segment reference. Required (non-null) when `type` is\n`POINTS_AND_SEGMENT`; must be null/omitted when `type` is `POINTS`.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/TierQualificationRulesSegmentUpsert"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "required": [
+              "type"
+            ]
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "POINTS"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "points"
+              ],
+              "properties": {
+                "points": {
+                  "$ref": "#/components/schemas/TierQualificationRulesPointsUpsert"
+                },
+                "segment": {
+                  "type": "null"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "POINTS_AND_SEGMENT"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "points",
+                "segment"
+              ],
+              "properties": {
+                "points": {
+                  "$ref": "#/components/schemas/TierQualificationRulesPointsUpsert"
+                },
+                "segment": {
+                  "$ref": "#/components/schemas/TierQualificationRulesSegmentUpsert"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "TierDowngradeUpsert": {
+        "type": "object",
+        "description": "Tier-level downgrade behavior.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "INHERIT",
+              "NO_DOWNGRADE"
+            ],
+            "description": "`INHERIT` uses the parent tier structure downgrade settings; `NO_DOWNGRADE`\ndisables downgrades from this tier. Required."
           }
         },
         "required": [
-          "id"
+          "type"
         ],
         "additionalProperties": false
       },
@@ -46010,6 +45971,43 @@
             "description": "Whether the grace period end is rounded up to the end of the unit."
           }
         }
+      },
+      "TierQualificationRulesPointsUpsert": {
+        "type": "object",
+        "description": "Point thresholds for tier qualification. Values must be non-negative numbers\nbetween 0 and 1,000,000,000.",
+        "properties": {
+          "min_value": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1000000000,
+            "description": "Minimum number of points required to qualify for the tier. Required."
+          },
+          "max_value": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1000000000,
+            "description": "Optional upper bound of points for the tier."
+          }
+        },
+        "required": [
+          "min_value"
+        ],
+        "additionalProperties": false
+      },
+      "TierQualificationRulesSegmentUpsert": {
+        "type": "object",
+        "description": "Customer segment reference for tier qualification.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Unique identifier of the customer segment."
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "additionalProperties": false
       },
       "LoyaltyV2ActivityBenefitPointsProportionalEvery": {
         "type": "object",
