@@ -754,6 +754,18 @@
       }
     },
     "/v2/loyalties/programs/{programId}/activities": {
+      "parameters": [
+        {
+          "name": "programId",
+          "in": "path",
+          "required": true,
+          "description": "Unique program identifier.",
+          "schema": {
+            "type": "string",
+            "pattern": "^lprg_[a-f0-9]+$"
+          }
+        }
+      ],
       "get": {
         "operationId": "listProgramActivities",
         "tags": [
@@ -762,16 +774,6 @@
         "summary": "List program activities",
         "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nReturns a cursor-paginated list of activities recorded for a program (created, updated,\ndeleted, activated, deactivated and assignment changes). Supports filtering by activity\n`id`, `type` and `created_at`.",
         "parameters": [
-          {
-            "name": "programId",
-            "in": "path",
-            "required": true,
-            "description": "Unique program identifier.",
-            "schema": {
-              "type": "string",
-              "pattern": "^lprg_[a-f0-9]+$"
-            }
-          },
           {
             "name": "filters",
             "in": "query",
@@ -856,7 +858,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProgramActivityListResponse"
+                  "$ref": "#/components/schemas/V2LoyaltiesProgramsActivitiesListResponseBody"
                 }
               }
             }
@@ -20564,34 +20566,15 @@
         "additionalProperties": false,
         "title": "Loyalties Programs Activities List Request Query"
       },
-      "ProgramActivityListResponse": {
+      "V2LoyaltiesProgramsActivitiesListResponseBody": {
+        "title": "V2 Loyalties Programs Activities List Response Body",
         "type": "object",
-        "description": "Cursor-paginated list of program activities.",
-        "properties": {
-          "object": {
-            "type": "string",
-            "description": "Object type marker.",
-            "const": "list"
-          },
-          "data": {
-            "type": "array",
-            "description": "Activities on the current page.",
-            "items": {
-              "$ref": "#/components/schemas/ProgramActivity"
-            }
-          },
-          "cursor": {
-            "description": "Pagination cursor, or `null` when there are no more results.",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/ProgramListCursor"
-              },
-              {
-                "type": "null"
-              }
-            ]
+        "description": "Response body schema for **GET** `/v2/loyalties/programs/{programId}/activities`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ProgramActivityListResponse"
           }
-        }
+        ]
       },
       "ProgramCardDefinitionAssignmentListResponse": {
         "type": "object",
@@ -28110,71 +28093,32 @@
         ],
         "additionalProperties": false
       },
-      "ProgramActivity": {
+      "ProgramActivityListResponse": {
         "type": "object",
-        "description": "An activity recorded for a program. The `data` payload always contains the `program`\nobject snapshot; assignment activities additionally include the related resource\n(`card_definition`/`earning_rule`/`reward`/`tier_structure`) and the assignment object\n(`program_card_definition`/`program_earning_rule`/`program_reward`/`program_tier_structure`).",
+        "description": "Cursor-paginated list of program activities.",
         "properties": {
-          "id": {
+          "object": {
             "type": "string",
-            "description": "Unique activity identifier.",
-            "pattern": "^laprg_[a-f0-9]+$"
-          },
-          "program_id": {
-            "type": "string",
-            "description": "Unique identifier of the program the activity relates to.",
-            "pattern": "^lprg_[a-f0-9]+$"
-          },
-          "type": {
-            "type": "string",
-            "description": "Activity type.",
-            "enum": [
-              "vl.program.created",
-              "vl.program.updated",
-              "vl.program.deleted",
-              "vl.program.activated",
-              "vl.program.deactivated",
-              "vl.program.card_definition.assigned",
-              "vl.program.card_definition.unassigned",
-              "vl.program.earning_rule.assigned",
-              "vl.program.earning_rule.unassigned",
-              "vl.program.reward.assigned",
-              "vl.program.reward.unassigned",
-              "vl.program.reward.updated",
-              "vl.program.tier_structure.assigned",
-              "vl.program.tier_structure.unassigned"
-            ]
+            "description": "Object type marker.",
+            "const": "list"
           },
           "data": {
-            "type": "object",
-            "description": "Activity payload. Always includes a `program` snapshot; assignment activities also include the assigned/unassigned resource and assignment objects."
+            "type": "array",
+            "description": "Activities on the current page.",
+            "items": {
+              "$ref": "#/components/schemas/ProgramActivity"
+            }
           },
-          "created_at": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Activity timestamp (ISO 8601)."
-          },
-          "group_id": {
-            "type": "string",
-            "description": "Unique identifier grouping activities recorded within the same operation."
-          },
-          "source": {
-            "$ref": "#/components/schemas/ProgramActivitySource",
-            "description": "Origin of the activity. Omitted when unknown."
-          }
-        }
-      },
-      "ProgramListCursor": {
-        "type": "object",
-        "description": "Cursor for fetching the next page of results. Present only when more results are available.",
-        "properties": {
-          "next": {
-            "type": "string",
-            "description": "Cursor id to pass as the `cursor` query parameter in the next request."
-          },
-          "expires_at": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Timestamp after which the cursor expires and can no longer be used."
+          "cursor": {
+            "description": "Pagination cursor, or `null` when there are no more results.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/ProgramListCursor"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         }
       },
@@ -28203,6 +28147,21 @@
             "type": "string",
             "description": "Object type marker.",
             "const": "program_card_definition"
+          }
+        }
+      },
+      "ProgramListCursor": {
+        "type": "object",
+        "description": "Cursor for fetching the next page of results. Present only when more results are available.",
+        "properties": {
+          "next": {
+            "type": "string",
+            "description": "Cursor id to pass as the `cursor` query parameter in the next request."
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp after which the cursor expires and can no longer be used."
           }
         }
       },
@@ -40869,47 +40828,56 @@
           }
         }
       },
-      "ProgramActivitySource": {
+      "ProgramActivity": {
         "type": "object",
-        "description": "Origin of the activity.",
+        "description": "An activity recorded for a program. The `data` payload always contains the `program`\nobject snapshot; assignment activities additionally include the related resource\n(`card_definition`/`earning_rule`/`reward`/`tier_structure`) and the assignment object\n(`program_card_definition`/`program_earning_rule`/`program_reward`/`program_tier_structure`).",
         "properties": {
-          "channel": {
+          "id": {
             "type": "string",
-            "description": "Channel the activity originated from.",
+            "description": "Unique activity identifier.",
+            "pattern": "^laprg_[a-f0-9]+$"
+          },
+          "program_id": {
+            "type": "string",
+            "description": "Unique identifier of the program the activity relates to.",
+            "pattern": "^lprg_[a-f0-9]+$"
+          },
+          "type": {
+            "type": "string",
+            "description": "Activity type.",
             "enum": [
-              "USER_PORTAL",
-              "API",
-              "CLIENT_API",
-              "INTERNAL"
+              "vl.program.created",
+              "vl.program.updated",
+              "vl.program.deleted",
+              "vl.program.activated",
+              "vl.program.deactivated",
+              "vl.program.card_definition.assigned",
+              "vl.program.card_definition.unassigned",
+              "vl.program.earning_rule.assigned",
+              "vl.program.earning_rule.unassigned",
+              "vl.program.reward.assigned",
+              "vl.program.reward.unassigned",
+              "vl.program.reward.updated",
+              "vl.program.tier_structure.assigned",
+              "vl.program.tier_structure.unassigned"
             ]
           },
-          "user": {
+          "data": {
             "type": "object",
-            "description": "User that triggered the activity. Present for user-originated activities.",
-            "properties": {
-              "id": {
-                "type": "string",
-                "description": "User identifier."
-              }
-            }
+            "description": "Activity payload. Always includes a `program` snapshot; assignment activities also include the assigned/unassigned resource and assignment objects."
           },
-          "api_key": {
-            "type": "object",
-            "description": "API key that triggered the activity. Present for API-originated activities.",
-            "properties": {
-              "name": {
-                "type": "string",
-                "description": "API key name."
-              },
-              "app_id": {
-                "type": "string",
-                "description": "Application id of the API key."
-              },
-              "client_app_id": {
-                "type": "string",
-                "description": "Client application id of the API key."
-              }
-            }
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Activity timestamp (ISO 8601)."
+          },
+          "group_id": {
+            "type": "string",
+            "description": "Unique identifier grouping activities recorded within the same operation."
+          },
+          "source": {
+            "$ref": "#/components/schemas/ProgramActivitySource",
+            "description": "Origin of the activity. Omitted when unknown."
           }
         }
       },
@@ -44827,6 +44795,50 @@
           "end_time": {
             "type": "string",
             "description": "Window end time in `HH:mm` format."
+          }
+        }
+      },
+      "ProgramActivitySource": {
+        "type": "object",
+        "description": "Origin of the activity.",
+        "properties": {
+          "channel": {
+            "type": "string",
+            "description": "Channel the activity originated from.",
+            "enum": [
+              "USER_PORTAL",
+              "API",
+              "CLIENT_API",
+              "INTERNAL"
+            ]
+          },
+          "user": {
+            "type": "object",
+            "description": "User that triggered the activity. Present for user-originated activities.",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "User identifier."
+              }
+            }
+          },
+          "api_key": {
+            "type": "object",
+            "description": "API key that triggered the activity. Present for API-originated activities.",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "API key name."
+              },
+              "app_id": {
+                "type": "string",
+                "description": "Application id of the API key."
+              },
+              "client_app_id": {
+                "type": "string",
+                "description": "Client application id of the API key."
+              }
+            }
           }
         }
       },
