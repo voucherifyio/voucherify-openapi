@@ -3739,7 +3739,7 @@
           "Programs"
         ],
         "summary": "Get customer memberships",
-        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nReturns all loyalty memberships for a customer across programs, including the resolved customer identity and each membership's member, program, and cards. Use `identification_type` to choose how the `customerId` path value is interpreted. However, for `identifcation_type=member_id`, the results show only the membership data for the program where the member exists, not the related customer.\n\nReturns an empty `memberships` array when the customer exists but has no memberships. Returns `404` when the customer or member cannot be resolved.",
+        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nReturns all loyalty memberships for a customer across programs, including the resolved customer identity and each membership's member, program, and cards. Use `identification_type` to choose how the `customerId` path value is interpreted. However, for `identification_type=member_id`, the results show only the membership data for the program where the member exists, not the related customer.\n\nReturns an empty `memberships` array when the customer exists but has no memberships. Returns `404` when the customer or member cannot be resolved.",
         "parameters": [
           {
             "name": "identification_type",
@@ -3763,7 +3763,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MembershipsResult"
+                  "$ref": "#/components/schemas/V2LoyaltiesMembershipsGetResponseBody"
                 },
                 "examples": {
                   "Get customer memberships": {
@@ -20976,31 +20976,14 @@
           }
         ]
       },
-      "MembershipsResult": {
+      "V2LoyaltiesMembershipsGetResponseBody": {
+        "title": "V2 Loyalties Memberships Get Response Body",
         "type": "object",
-        "description": "Cross-program memberships result for a customer.",
-        "properties": {
-          "customer": {
-            "$ref": "#/components/schemas/MembershipsCustomer",
-            "description": "Resolved customer identity."
-          },
-          "memberships": {
-            "type": "array",
-            "description": "Memberships across all loyalty programs the customer belongs to. Empty when the customer has no memberships.",
-            "items": {
-              "$ref": "#/components/schemas/MembershipWithoutTierProgress"
-            }
-          },
-          "object": {
-            "type": "string",
-            "const": "memberships_result",
-            "description": "Object type marker. Always `memberships_result`."
+        "description": "Response body schema for **GET** `/v2/loyalties/memberships/{customerId}`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MembershipsResult"
           }
-        },
-        "required": [
-          "customer",
-          "memberships",
-          "object"
         ]
       },
       "LoyaltiesProgramsMembershipsGetResponseBody": {
@@ -29087,66 +29070,30 @@
           "object"
         ]
       },
-      "MembershipsCustomer": {
+      "MembershipsResult": {
         "type": "object",
-        "description": "Customer identity returned by the cross-program memberships endpoint.",
+        "description": "Cross-program memberships result for a customer.",
         "properties": {
-          "id": {
-            "type": "string",
-            "description": "Unique Voucherify customer identifier."
+          "customer": {
+            "$ref": "#/components/schemas/MembershipsCustomer",
+            "description": "Resolved customer identity."
           },
-          "source_id": {
-            "description": "Customer `source_id`, or `null` when not set.",
-            "oneOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "object": {
-            "type": "string",
-            "const": "customer",
-            "description": "Object type marker. Always `customer`."
-          }
-        },
-        "required": [
-          "id",
-          "source_id",
-          "object"
-        ]
-      },
-      "MembershipWithoutTierProgress": {
-        "type": "object",
-        "description": "A loyalty membership without tier-progress enrichment on cards. Combines the member, the program, and the member's loyalty cards.",
-        "properties": {
-          "member": {
-            "$ref": "#/components/schemas/Member",
-            "description": "The loyalty program member."
-          },
-          "program": {
-            "$ref": "#/components/schemas/ProgramSimple",
-            "description": "The loyalty program the member belongs to."
-          },
-          "cards": {
+          "memberships": {
             "type": "array",
-            "description": "Member's loyalty cards for the program. Card codes are generated asynchronously, so `card.code` may be `null` right after member creation. Tier progress is not included on this endpoint.",
+            "description": "Memberships across all loyalty programs the customer belongs to. Empty when the customer has no memberships.",
             "items": {
-              "$ref": "#/components/schemas/MemberCard"
+              "$ref": "#/components/schemas/MembershipWithoutTierProgress"
             }
           },
           "object": {
             "type": "string",
-            "const": "membership",
-            "description": "Object type marker, always `membership`."
+            "const": "memberships_result",
+            "description": "Object type marker. Always `memberships_result`."
           }
         },
         "required": [
-          "member",
-          "program",
-          "cards",
+          "customer",
+          "memberships",
           "object"
         ]
       },
@@ -41163,6 +41110,69 @@
           "balance",
           "next_expiration",
           "next_activation",
+          "object"
+        ]
+      },
+      "MembershipsCustomer": {
+        "type": "object",
+        "description": "Customer identity returned by the cross-program memberships endpoint.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique Voucherify customer identifier."
+          },
+          "source_id": {
+            "description": "Customer `source_id`, or `null` when not set.",
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "object": {
+            "type": "string",
+            "const": "customer",
+            "description": "Object type marker. Always `customer`."
+          }
+        },
+        "required": [
+          "id",
+          "source_id",
+          "object"
+        ]
+      },
+      "MembershipWithoutTierProgress": {
+        "type": "object",
+        "description": "A loyalty membership without tier-progress enrichment on cards. Combines the member, the program, and the member's loyalty cards.",
+        "properties": {
+          "member": {
+            "$ref": "#/components/schemas/Member",
+            "description": "The loyalty program member."
+          },
+          "program": {
+            "$ref": "#/components/schemas/ProgramSimple",
+            "description": "The loyalty program the member belongs to."
+          },
+          "cards": {
+            "type": "array",
+            "description": "Member's loyalty cards for the program. Card codes are generated asynchronously, so `card.code` may be `null` right after member creation. Tier progress is not included on this endpoint.",
+            "items": {
+              "$ref": "#/components/schemas/MemberCard"
+            }
+          },
+          "object": {
+            "type": "string",
+            "const": "membership",
+            "description": "Object type marker, always `membership`."
+          }
+        },
+        "required": [
+          "member",
+          "program",
+          "cards",
           "object"
         ]
       },
