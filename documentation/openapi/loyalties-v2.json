@@ -8533,7 +8533,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/LoyaltiesProgramsMembersOrdersPaymentsCreateRequestBody"
+                "$ref": "#/components/schemas/V2LoyaltiesProgramsMembersOrdersPaymentsCreateRequestBody"
               },
               "examples": {
                 "Card balance type": {
@@ -8588,7 +8588,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/LoyaltiesProgramsMembersOrdersPaymentsCreateDryRunResponseBody"
+                  "$ref": "#/components/schemas/V2LoyaltiesProgramsMembersOrdersPaymentsCreateDryRunResponseBody"
                 },
                 "examples": {
                   "Dry run: Point limit": {
@@ -8703,7 +8703,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/LoyaltiesProgramsMembersOrdersPaymentsCreateTransactionResponseBody"
+                  "$ref": "#/components/schemas/V2LoyaltiesProgramsMembersOrdersPaymentsCreateTransactionResponseBody"
                 },
                 "examples": {
                   "Transaction created: Point limit": {
@@ -21359,170 +21359,35 @@
           }
         ]
       },
-      "LoyaltiesProgramsMembersOrdersPaymentsCreateRequestBody": {
+      "V2LoyaltiesProgramsMembersOrdersPaymentsCreateRequestBody": {
+        "title": "V2 Loyalties Programs Members Orders Payments Create Request Body",
         "type": "object",
         "description": "Request body schema for **POST** `/v2/loyalties/programs/{programId}/members/{memberId}/orders/payments`.",
-        "properties": {
-          "card_id": {
-            "type": "string",
-            "description": "Unique identifier of the member's loyalty card to spend points from (format `lcrd_...`)."
-          },
-          "order": {
-            "$ref": "#/components/schemas/OrderPaymentOrder"
-          },
-          "payment_limit": {
-            "description": "Optional payment limit. When omitted or `null`, the default `CARD_BALANCE` limit is applied (spend up to the card balance).",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/LoyaltiesProgramsMembersOrdersPaymentsCreateRequestBodyLimit"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "mode": {
-            "description": "Payment mode. `TRANSACTION` creates a `PENDING` order transaction processed asynchronously (HTTP `202`). `DRY_RUN` only simulates the payment and returns the calculation result (HTTP `200`); no transaction is created. Defaults to `TRANSACTION` when omitted or `null`.",
-            "oneOf": [
-              {
-                "type": "string",
-                "enum": [
-                  "TRANSACTION",
-                  "DRY_RUN"
-                ]
-              },
-              {
-                "type": "null"
-              }
-            ]
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MemberOrderPaymentRequest"
           }
-        },
-        "required": [
-          "card_id",
-          "order"
-        ],
-        "additionalProperties": false,
-        "title": "Loyalties Programs Members Orders Payments Create Request Body"
+        ]
       },
-      "LoyaltiesProgramsMembersOrdersPaymentsCreateDryRunResponseBody": {
+      "V2LoyaltiesProgramsMembersOrdersPaymentsCreateDryRunResponseBody": {
+        "title": "V2 Loyalties Programs Members Orders Payments Create Dry Run Response Body",
         "type": "object",
-        "description": "Response body schema for **POST** `/v2/loyalties/programs/{programId}/members/{memberId}/orders/payments`.\n\nResult of a pay-with-points dry-run request.",
-        "properties": {
-          "transaction": {
-            "type": "object",
-            "description": "An order transaction representing a pay-with-points `SIMULATED` payment.",
-            "properties": {
-              "program_id": {
-                "type": "string",
-                "description": "Unique identifier of the loyalty program (format `lprg_...`)."
-              },
-              "member_id": {
-                "type": "string",
-                "description": "Unique identifier of the program member (format `lmbr_...`)."
-              },
-              "card_id": {
-                "type": "string",
-                "description": "Unique identifier of the loyalty card the points were spent from (format `lcrd_...`)."
-              },
-              "card_definition_id": {
-                "type": "string",
-                "description": "Identifies the card definition (format `lcdef_...`)."
-              },
-              "card_transaction_id": {
-                "type": [
-                  "null"
-                ],
-                "description": "`null` for `DRY_RUN` (`SIMULATED`) transactions."
-              },
-              "order_id": {
-                "type": "string",
-                "description": "Identifies the paid order (format `ord_...`)."
-              },
-              "status": {
-                "type": "string",
-                "enum": [
-                  "SIMULATED"
-                ],
-                "description": "Transaction status. `SIMULATED` - dry-run create result, not persisted."
-              },
-              "type": {
-                "type": "string",
-                "enum": [
-                  "PAY_WITH_POINTS"
-                ],
-                "description": "Defines the transaction type. Always `PAY_WITH_POINTS`."
-              },
-              "details": {
-                "description": "Transaction details for the `PAY_WITH_POINTS` type.",
-                "oneOf": [
-                  {
-                    "$ref": "#/components/schemas/OrderPaymentTransactionDetails"
-                  },
-                  {
-                    "type": "null"
-                  }
-                ]
-              },
-              "updated_at": {
-                "type": [
-                  "null"
-                ],
-                "description": "Timestamp when the transaction was last updated (ISO 8601), or `null` for `DRY_RUN` (`SIMULATED`) transactions."
-              },
-              "object": {
-                "type": "string",
-                "const": "order_transaction",
-                "description": "Object type marker. Always `order_transaction`."
-              }
-            }
-          },
-          "status": {
-            "type": "string",
-            "enum": [
-              "DRY_RUN"
-            ],
-            "description": "Result status. `DRY_RUN` for dry-run mode."
-          },
-          "message": {
-            "type": "string",
-            "description": "Human-readable result message. `DRY_RUN` mode: \"Dry run mode. No transaction was created. This is only a simulation.\"."
+        "description": "Response body schema for **POST** `/v2/loyalties/programs/{programId}/members/{memberId}/orders/payments`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MemberOrderPaymentDryRunResult"
           }
-        },
-        "required": [
-          "transaction",
-          "status",
-          "message"
-        ],
-        "title": "Loyalties Programs Members Orders Payments Create Dry Run Response Body"
+        ]
       },
-      "LoyaltiesProgramsMembersOrdersPaymentsCreateTransactionResponseBody": {
+      "V2LoyaltiesProgramsMembersOrdersPaymentsCreateTransactionResponseBody": {
+        "title": "V2 Loyalties Programs Members Orders Payments Create Transaction Response Body",
         "type": "object",
-        "description": "Response body schema for **POST** `/v2/loyalties/programs/{programId}/members/{memberId}/orders/payments`.\n\nResult of a pay-with-points request.",
-        "properties": {
-          "transaction": {
-            "description": "The created (or simulated) order transaction.",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/OrderPaymentTransaction"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "status": {
-            "type": "string",
-            "enum": [
-              "TRANSACTION_CREATED"
-            ],
-            "description": "Result status. `TRANSACTION_CREATED` for `TRANSACTION` mode."
-          },
-          "message": {
-            "type": "string",
-            "description": "Human-readable result message. `TRANSACTION` mode: \"Pay with points transaction created\"."
+        "description": "Response body schema for **POST** `/v2/loyalties/programs/{programId}/members/{memberId}/orders/payments`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MemberOrderPaymentTransactionResult"
           }
-        },
-        "title": "Loyalties Programs Members Orders Payments Create Transaction Response Body"
+        ]
       },
       "LoyaltiesProgramsMembersBenefitsTransactionsListRequestQuery": {
         "type": "object",
@@ -28880,28 +28745,37 @@
           }
         }
       },
-      "OrderPaymentOrder": {
+      "MemberOrderPaymentRequest": {
         "type": "object",
-        "description": "Reference to the order being paid. The order must already exist in the Voucherify system. At least one of `id` or `source_id` must be provided.",
+        "description": "Fields for paying an order with points.",
         "properties": {
-          "id": {
-            "description": "Voucherify order identifier.",
+          "card_id": {
+            "type": "string",
+            "description": "Unique identifier of the member's loyalty card to spend points from (format `lcrd_...`)."
+          },
+          "order": {
+            "$ref": "#/components/schemas/OrderPaymentOrder"
+          },
+          "payment_limit": {
+            "description": "Optional payment limit. When omitted or `null`, the default `CARD_BALANCE` limit is applied (spend up to the card balance).",
             "oneOf": [
               {
-                "type": "string",
-                "pattern": "^ord_[a-f0-9]+$"
+                "$ref": "#/components/schemas/LoyaltiesProgramsMembersOrdersPaymentsCreateRequestBodyLimit"
               },
               {
                 "type": "null"
               }
             ]
           },
-          "source_id": {
-            "description": "External (source) order identifier.",
+          "mode": {
+            "description": "Payment mode. `TRANSACTION` creates a `PENDING` order transaction processed asynchronously (HTTP `202`). `DRY_RUN` only simulates the payment and returns the calculation result (HTTP `200`); no transaction is created. Defaults to `TRANSACTION` when omitted or `null`.",
             "oneOf": [
               {
                 "type": "string",
-                "minLength": 1
+                "enum": [
+                  "TRANSACTION",
+                  "DRY_RUN"
+                ]
               },
               {
                 "type": "null"
@@ -28909,179 +28783,127 @@
             ]
           }
         },
+        "required": [
+          "card_id",
+          "order"
+        ],
         "additionalProperties": false
       },
-      "LoyaltiesProgramsMembersOrdersPaymentsCreateRequestBodyLimit": {
-        "title": "Loyalties Programs Members Orders Payments Create Request Body Limit",
-        "description": "Request body schema for **POST** `/v2/loyalties/programs/{programId}/members/{memberId}/orders/payments`.",
-        "oneOf": [
-          {
-            "$ref": "#/components/schemas/LoyaltiesProgramsMembersOrdersPaymentsCreateRequestBodyLimitCardBalance"
-          },
-          {
-            "$ref": "#/components/schemas/LoyaltiesProgramsMembersOrdersPaymentsCreateRequestBodyLimitPointsLimit"
-          },
-          {
-            "$ref": "#/components/schemas/LoyaltiesProgramsMembersOrdersPaymentsCreateRequestBodyLimitAmountLimit"
-          }
-        ]
-      },
-      "OrderPaymentTransactionDetails": {
+      "MemberOrderPaymentDryRunResult": {
         "type": "object",
-        "description": "Details of a `PAY_WITH_POINTS` order transaction.",
+        "description": "Result of a pay-with-points dry-run request.",
         "properties": {
-          "reason": {
-            "type": "string",
-            "description": "Human-readable reason: \"Points spent on order payment\"."
-          },
-          "rejection": {
-            "description": "Rejection details, present when the transaction was rejected.",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/OrderPaymentRejection"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "metadata": {
+          "transaction": {
             "type": "object",
-            "description": "Transaction metadata. For pay-with-points transactions this contains the flattened payment limits used for the calculation: `amount_limit` for the `AMOUNT_LIMIT` type and/or `points_limit` for the `POINTS_LIMIT` type. Empty object when the default `CARD_BALANCE` limit was used or when not set.",
+            "description": "An order transaction representing a pay-with-points `SIMULATED` payment.",
             "properties": {
-              "amount_limit": {
-                "type": "integer",
-                "description": "Maximum amount limit applied to the payment (if any)."
+              "program_id": {
+                "type": "string",
+                "description": "Unique identifier of the loyalty program (format `lprg_...`)."
               },
-              "points_limit": {
-                "type": "integer",
-                "description": "Maximum points limit applied to the payment (if any)."
-              }
-            },
-            "additionalProperties": true
-          },
-          "payment": {
-            "$ref": "#/components/schemas/OrderPaymentPaymentDetails"
-          },
-          "spending_cap": {
-            "description": "The cap that limited this payment. Create always returns it. Older list rows omit it.",
-            "type": "object",
-            "properties": {
+              "member_id": {
+                "type": "string",
+                "description": "Unique identifier of the program member (format `lmbr_...`)."
+              },
+              "card_id": {
+                "type": "string",
+                "description": "Unique identifier of the loyalty card the points were spent from (format `lcrd_...`)."
+              },
+              "card_definition_id": {
+                "type": "string",
+                "description": "Identifies the card definition (format `lcdef_...`)."
+              },
+              "card_transaction_id": {
+                "type": [
+                  "null"
+                ],
+                "description": "`null` for `DRY_RUN` (`SIMULATED`) transactions."
+              },
+              "order_id": {
+                "type": "string",
+                "description": "Identifies the paid order (format `ord_...`)."
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "SIMULATED"
+                ],
+                "description": "Transaction status. `SIMULATED` - dry-run create result, not persisted."
+              },
               "type": {
                 "type": "string",
                 "enum": [
-                  "CARD_SPENDING_GLOBAL_SPENDING_BASED_LIMIT",
-                  "CARD_SPENDING_GLOBAL_TIME_BASED_LIMIT",
-                  "CARD_SPENDING_TRANSACTIONS_LIMIT",
-                  "REQUEST_PAYMENT_LIMIT",
-                  "ORDER_TOTAL_AMOUNT",
-                  "CARD_BALANCE_POINTS"
+                  "PAY_WITH_POINTS"
                 ],
-                "description": "Identifies which cap limited the payment."
+                "description": "Defines the transaction type. Always `PAY_WITH_POINTS`."
               },
-              "unit": {
+              "details": {
+                "description": "Transaction details for the `PAY_WITH_POINTS` type.",
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/OrderPaymentTransactionDetails"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "updated_at": {
+                "type": [
+                  "null"
+                ],
+                "description": "Timestamp when the transaction was last updated (ISO 8601), or `null` for `DRY_RUN` (`SIMULATED`) transactions."
+              },
+              "object": {
                 "type": "string",
-                "enum": [
-                  "POINTS",
-                  "AMOUNT"
-                ],
-                "description": "Whether `value` is points or an amount."
-              },
-              "value": {
-                "type": "number",
-                "description": "Cap value in `unit`."
+                "const": "order_transaction",
+                "description": "Object type marker. Always `order_transaction`."
               }
-            },
-            "required": [
-              "type",
-              "unit",
-              "value"
-            ],
-            "additionalProperties": false
-          }
-        }
-      },
-      "OrderPaymentTransaction": {
-        "type": "object",
-        "description": "An order transaction representing a pay-with-points payment. List endpoints return only persisted transactions; `SIMULATED` appears only on dry-run create responses.",
-        "properties": {
-          "id": {
-            "type": "string",
-            "description": "Identifies the order transaction (`lotx_...`). Absent on dry-run (`SIMULATED`) create responses, which are never persisted. Always present in list responses."
-          },
-          "program_id": {
-            "type": "string",
-            "description": "Unique identifier of the loyalty program (format `lprg_...`)."
-          },
-          "member_id": {
-            "type": "string",
-            "description": "Unique identifier of the program member (format `lmbr_...`)."
-          },
-          "card_id": {
-            "type": "string",
-            "description": "Unique identifier of the loyalty card the points were spent from (format `lcrd_...`)."
-          },
-          "card_definition_id": {
-            "type": "string",
-            "description": "Identifies the card definition (format `lcdef_...`)."
-          },
-          "card_transaction_id": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "description": "Identifies of the underlying card transaction (format `lctx_...`). `null` for DRY_RUN (SIMULATED) transactions."
-          },
-          "order_id": {
-            "type": "string",
-            "description": "Identifies the paid order (format `ord_...`)."
+            }
           },
           "status": {
             "type": "string",
             "enum": [
-              "PENDING",
-              "PROCESSING",
-              "APPROVED",
-              "REJECTED",
-              "SIMULATED"
+              "DRY_RUN"
             ],
-            "description": "Transaction status. `PENDING` - created, awaiting processing; `PROCESSING` - being processed; `APPROVED` - completed successfully; `REJECTED` - rejected (see `details.rejection`); `SIMULATED` - dry-run create result, not persisted (not returned by list)."
+            "description": "Result status. `DRY_RUN` for dry-run mode."
           },
-          "type": {
+          "message": {
             "type": "string",
-            "enum": [
-              "PAY_WITH_POINTS"
-            ],
-            "description": "Defines the transaction type. Always `PAY_WITH_POINTS`."
-          },
-          "details": {
-            "description": "Transaction details for the `PAY_WITH_POINTS` type.",
+            "description": "Human-readable result message. `DRY_RUN` mode: \"Dry run mode. No transaction was created. This is only a simulation.\"."
+          }
+        },
+        "required": [
+          "transaction",
+          "status",
+          "message"
+        ]
+      },
+      "MemberOrderPaymentTransactionResult": {
+        "type": "object",
+        "description": "Result of a pay-with-points request.",
+        "properties": {
+          "transaction": {
+            "description": "The created (or simulated) order transaction.",
             "oneOf": [
               {
-                "$ref": "#/components/schemas/OrderPaymentTransactionDetails"
+                "$ref": "#/components/schemas/OrderPaymentTransaction"
               },
               {
                 "type": "null"
               }
             ]
           },
-          "created_at": {
+          "status": {
             "type": "string",
-            "format": "date-time",
-            "description": "Timestamp when the transaction was created (ISO 8601)."
-          },
-          "updated_at": {
-            "type": [
-              "string",
-              "null"
+            "enum": [
+              "TRANSACTION_CREATED"
             ],
-            "format": "date-time",
-            "description": "Timestamp when the transaction was last updated (ISO 8601), or `null`."
+            "description": "Result status. `TRANSACTION_CREATED` for `TRANSACTION` mode."
           },
-          "object": {
+          "message": {
             "type": "string",
-            "const": "order_transaction",
-            "description": "Object type marker. Always `order_transaction`."
+            "description": "Human-readable result message. `TRANSACTION` mode: \"Pay with points transaction created\"."
           }
         }
       },
@@ -39163,119 +38985,208 @@
           "result"
         ]
       },
-      "LoyaltiesProgramsMembersOrdersPaymentsCreateRequestBodyLimitCardBalance": {
-        "title": "Card Balance",
-        "description": "Request body schema for **POST** `/v2/loyalties/programs/{programId}/members/{memberId}/orders/payments`.",
+      "OrderPaymentTransaction": {
         "type": "object",
+        "description": "An order transaction representing a pay-with-points payment. List endpoints return only persisted transactions; `SIMULATED` appears only on dry-run create responses.",
         "properties": {
-          "type": {
+          "id": {
             "type": "string",
-            "const": "CARD_BALANCE",
-            "description": "Payment limit type."
-          }
-        },
-        "required": [
-          "type"
-        ],
-        "additionalProperties": false
-      },
-      "LoyaltiesProgramsMembersOrdersPaymentsCreateRequestBodyLimitPointsLimit": {
-        "title": "Points Limit",
-        "description": "Request body schema for **POST** `/v2/loyalties/programs/{programId}/members/{memberId}/orders/payments`.",
-        "type": "object",
-        "properties": {
-          "type": {
-            "type": "string",
-            "const": "POINTS_LIMIT",
-            "description": "Payment limit type."
+            "description": "Identifies the order transaction (`lotx_...`). Absent on dry-run (`SIMULATED`) create responses, which are never persisted. Always present in list responses."
           },
-          "points_limit": {
-            "description": "Maximum number of points to spend.",
-            "$ref": "#/components/schemas/OrderPaymentLimitDefinition"
-          }
-        },
-        "required": [
-          "type",
-          "points_limit"
-        ],
-        "additionalProperties": false
-      },
-      "LoyaltiesProgramsMembersOrdersPaymentsCreateRequestBodyLimitAmountLimit": {
-        "title": "Amount Limit",
-        "description": "Request body schema for **POST** `/v2/loyalties/programs/{programId}/members/{memberId}/orders/payments`.",
-        "type": "object",
-        "properties": {
+          "program_id": {
+            "type": "string",
+            "description": "Unique identifier of the loyalty program (format `lprg_...`)."
+          },
+          "member_id": {
+            "type": "string",
+            "description": "Unique identifier of the program member (format `lmbr_...`)."
+          },
+          "card_id": {
+            "type": "string",
+            "description": "Unique identifier of the loyalty card the points were spent from (format `lcrd_...`)."
+          },
+          "card_definition_id": {
+            "type": "string",
+            "description": "Identifies the card definition (format `lcdef_...`)."
+          },
+          "card_transaction_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Identifies of the underlying card transaction (format `lctx_...`). `null` for DRY_RUN (SIMULATED) transactions."
+          },
+          "order_id": {
+            "type": "string",
+            "description": "Identifies the paid order (format `ord_...`)."
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "PENDING",
+              "PROCESSING",
+              "APPROVED",
+              "REJECTED",
+              "SIMULATED"
+            ],
+            "description": "Transaction status. `PENDING` - created, awaiting processing; `PROCESSING` - being processed; `APPROVED` - completed successfully; `REJECTED` - rejected (see `details.rejection`); `SIMULATED` - dry-run create result, not persisted (not returned by list)."
+          },
           "type": {
             "type": "string",
-            "const": "AMOUNT_LIMIT",
-            "description": "Payment limit type."
-          },
-          "amount_limit": {
-            "description": "Maximum amount to pay.",
-            "$ref": "#/components/schemas/OrderPaymentLimitDefinition"
-          }
-        },
-        "required": [
-          "type",
-          "amount_limit"
-        ],
-        "additionalProperties": false
-      },
-      "OrderPaymentRejection": {
-        "type": "object",
-        "description": "Rejection details for a rejected order payment transaction.",
-        "properties": {
-          "reason": {
-            "type": "string",
-            "description": "Machine-readable rejection reason. Order-side: `ORDER_NOT_FOUND`, `PAYMENT_EXCEEDS_ORDER_TOTAL_AMOUNT`. Card-side (when the linked card transaction fails first): `NOT_ENOUGH_BALANCE`, `GLOBAL_SPENDING_LIMIT_EXCEEDED`, `TRANSACTION_SPENDING_LIMIT_EXCEEDED`."
+            "enum": [
+              "PAY_WITH_POINTS"
+            ],
+            "description": "Defines the transaction type. Always `PAY_WITH_POINTS`."
           },
           "details": {
-            "description": "Structured rejection context. Omitted when the reason carries no extra data (`ORDER_NOT_FOUND`, `PAYMENT_EXCEEDS_ORDER_TOTAL_AMOUNT`, `NOT_ENOUGH_BALANCE`). For `GLOBAL_SPENDING_LIMIT_EXCEEDED`: `type`, `limit`, `spendings`. For `TRANSACTION_SPENDING_LIMIT_EXCEEDED`: `type`, `limit`.",
+            "description": "Transaction details for the `PAY_WITH_POINTS` type.",
             "oneOf": [
               {
-                "type": "object",
-                "additionalProperties": true,
-                "properties": {
-                  "type": {
-                    "type": "string",
-                    "description": "Spending cap type that was exceeded."
-                  },
-                  "limit": {
-                    "type": "number",
-                    "description": "Configured spending limit."
-                  },
-                  "spendings": {
-                    "type": "number",
-                    "description": "Projected total spendings that exceeded the limit. Present for `GLOBAL_SPENDING_LIMIT_EXCEEDED`."
-                  }
-                }
+                "$ref": "#/components/schemas/OrderPaymentTransactionDetails"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp when the transaction was created (ISO 8601)."
+          },
+          "updated_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time",
+            "description": "Timestamp when the transaction was last updated (ISO 8601), or `null`."
+          },
+          "object": {
+            "type": "string",
+            "const": "order_transaction",
+            "description": "Object type marker. Always `order_transaction`."
+          }
+        }
+      },
+      "OrderPaymentOrder": {
+        "type": "object",
+        "description": "Reference to the order being paid. The order must already exist in the Voucherify system. At least one of `id` or `source_id` must be provided.",
+        "properties": {
+          "id": {
+            "description": "Voucherify order identifier.",
+            "oneOf": [
+              {
+                "type": "string",
+                "pattern": "^ord_[a-f0-9]+$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "source_id": {
+            "description": "External (source) order identifier.",
+            "oneOf": [
+              {
+                "type": "string",
+                "minLength": 1
               },
               {
                 "type": "null"
               }
             ]
           }
-        }
+        },
+        "additionalProperties": false
       },
-      "OrderPaymentPaymentDetails": {
+      "LoyaltiesProgramsMembersOrdersPaymentsCreateRequestBodyLimit": {
+        "title": "Loyalties Programs Members Orders Payments Create Request Body Limit",
+        "description": "Request body schema for **POST** `/v2/loyalties/programs/{programId}/members/{memberId}/orders/payments`.",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/LoyaltiesProgramsMembersOrdersPaymentsCreateRequestBodyLimitCardBalance"
+          },
+          {
+            "$ref": "#/components/schemas/LoyaltiesProgramsMembersOrdersPaymentsCreateRequestBodyLimitPointsLimit"
+          },
+          {
+            "$ref": "#/components/schemas/LoyaltiesProgramsMembersOrdersPaymentsCreateRequestBodyLimitAmountLimit"
+          }
+        ]
+      },
+      "OrderPaymentTransactionDetails": {
         "type": "object",
-        "description": "Payment calculation details.",
+        "description": "Details of a `PAY_WITH_POINTS` order transaction.",
         "properties": {
-          "id": {
+          "reason": {
             "type": "string",
-            "description": "Payment identifier. Omitted when not set."
+            "description": "Human-readable reason: \"Points spent on order payment\"."
           },
-          "amount": {
-            "type": "number",
-            "description": "Amount of the order paid with points."
+          "rejection": {
+            "description": "Rejection details, present when the transaction was rejected.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/OrderPaymentRejection"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
-          "points_spent": {
-            "type": "number",
-            "description": "Number of points spent on the payment."
+          "metadata": {
+            "type": "object",
+            "description": "Transaction metadata. For pay-with-points transactions this contains the flattened payment limits used for the calculation: `amount_limit` for the `AMOUNT_LIMIT` type and/or `points_limit` for the `POINTS_LIMIT` type. Empty object when the default `CARD_BALANCE` limit was used or when not set.",
+            "properties": {
+              "amount_limit": {
+                "type": "integer",
+                "description": "Maximum amount limit applied to the payment (if any)."
+              },
+              "points_limit": {
+                "type": "integer",
+                "description": "Maximum points limit applied to the payment (if any)."
+              }
+            },
+            "additionalProperties": true
           },
-          "exchange_ratio": {
-            "type": "number",
-            "description": "Points-to-amount exchange ratio evaluated from the card definition's pay-with-points formula."
+          "payment": {
+            "$ref": "#/components/schemas/OrderPaymentPaymentDetails"
+          },
+          "spending_cap": {
+            "description": "The cap that limited this payment. Create always returns it. Older list rows omit it.",
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "CARD_SPENDING_GLOBAL_SPENDING_BASED_LIMIT",
+                  "CARD_SPENDING_GLOBAL_TIME_BASED_LIMIT",
+                  "CARD_SPENDING_TRANSACTIONS_LIMIT",
+                  "REQUEST_PAYMENT_LIMIT",
+                  "ORDER_TOTAL_AMOUNT",
+                  "CARD_BALANCE_POINTS"
+                ],
+                "description": "Identifies which cap limited the payment."
+              },
+              "unit": {
+                "type": "string",
+                "enum": [
+                  "POINTS",
+                  "AMOUNT"
+                ],
+                "description": "Whether `value` is points or an amount."
+              },
+              "value": {
+                "type": "number",
+                "description": "Cap value in `unit`."
+              }
+            },
+            "required": [
+              "type",
+              "unit",
+              "value"
+            ],
+            "additionalProperties": false
           }
         }
       },
@@ -43621,20 +43532,121 @@
           }
         }
       },
-      "OrderPaymentLimitDefinition": {
+      "LoyaltiesProgramsMembersOrdersPaymentsCreateRequestBodyLimitCardBalance": {
+        "title": "Card Balance",
+        "description": "Request body schema for **POST** `/v2/loyalties/programs/{programId}/members/{memberId}/orders/payments`.",
         "type": "object",
-        "description": "Definition of a payment limit value.",
         "properties": {
-          "max": {
-            "type": "integer",
-            "minimum": 1,
-            "description": "Maximum value of the limit."
+          "type": {
+            "type": "string",
+            "const": "CARD_BALANCE",
+            "description": "Payment limit type."
           }
         },
         "required": [
-          "max"
+          "type"
         ],
         "additionalProperties": false
+      },
+      "LoyaltiesProgramsMembersOrdersPaymentsCreateRequestBodyLimitPointsLimit": {
+        "title": "Points Limit",
+        "description": "Request body schema for **POST** `/v2/loyalties/programs/{programId}/members/{memberId}/orders/payments`.",
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "POINTS_LIMIT",
+            "description": "Payment limit type."
+          },
+          "points_limit": {
+            "description": "Maximum number of points to spend.",
+            "$ref": "#/components/schemas/OrderPaymentLimitDefinition"
+          }
+        },
+        "required": [
+          "type",
+          "points_limit"
+        ],
+        "additionalProperties": false
+      },
+      "LoyaltiesProgramsMembersOrdersPaymentsCreateRequestBodyLimitAmountLimit": {
+        "title": "Amount Limit",
+        "description": "Request body schema for **POST** `/v2/loyalties/programs/{programId}/members/{memberId}/orders/payments`.",
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "AMOUNT_LIMIT",
+            "description": "Payment limit type."
+          },
+          "amount_limit": {
+            "description": "Maximum amount to pay.",
+            "$ref": "#/components/schemas/OrderPaymentLimitDefinition"
+          }
+        },
+        "required": [
+          "type",
+          "amount_limit"
+        ],
+        "additionalProperties": false
+      },
+      "OrderPaymentRejection": {
+        "type": "object",
+        "description": "Rejection details for a rejected order payment transaction.",
+        "properties": {
+          "reason": {
+            "type": "string",
+            "description": "Machine-readable rejection reason. Order-side: `ORDER_NOT_FOUND`, `PAYMENT_EXCEEDS_ORDER_TOTAL_AMOUNT`. Card-side (when the linked card transaction fails first): `NOT_ENOUGH_BALANCE`, `GLOBAL_SPENDING_LIMIT_EXCEEDED`, `TRANSACTION_SPENDING_LIMIT_EXCEEDED`."
+          },
+          "details": {
+            "description": "Structured rejection context. Omitted when the reason carries no extra data (`ORDER_NOT_FOUND`, `PAYMENT_EXCEEDS_ORDER_TOTAL_AMOUNT`, `NOT_ENOUGH_BALANCE`). For `GLOBAL_SPENDING_LIMIT_EXCEEDED`: `type`, `limit`, `spendings`. For `TRANSACTION_SPENDING_LIMIT_EXCEEDED`: `type`, `limit`.",
+            "oneOf": [
+              {
+                "type": "object",
+                "additionalProperties": true,
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "description": "Spending cap type that was exceeded."
+                  },
+                  "limit": {
+                    "type": "number",
+                    "description": "Configured spending limit."
+                  },
+                  "spendings": {
+                    "type": "number",
+                    "description": "Projected total spendings that exceeded the limit. Present for `GLOBAL_SPENDING_LIMIT_EXCEEDED`."
+                  }
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      },
+      "OrderPaymentPaymentDetails": {
+        "type": "object",
+        "description": "Payment calculation details.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Payment identifier. Omitted when not set."
+          },
+          "amount": {
+            "type": "number",
+            "description": "Amount of the order paid with points."
+          },
+          "points_spent": {
+            "type": "number",
+            "description": "Number of points spent on the payment."
+          },
+          "exchange_ratio": {
+            "type": "number",
+            "description": "Points-to-amount exchange ratio evaluated from the card definition's pay-with-points formula."
+          }
+        }
       },
       "BenefitTransactionRejection": {
         "type": "object",
@@ -46928,6 +46940,21 @@
             ]
           }
         }
+      },
+      "OrderPaymentLimitDefinition": {
+        "type": "object",
+        "description": "Definition of a payment limit value.",
+        "properties": {
+          "max": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Maximum value of the limit."
+          }
+        },
+        "required": [
+          "max"
+        ],
+        "additionalProperties": false
       },
       "CardDefinitionPointsExpirationRollingExpirationPeriodInput": {
         "type": "object",
