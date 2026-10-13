@@ -4,6 +4,43 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-10-13
+
+- Verified and updated GET `/v2/loyalties/programs/{programId}/reports/tiers/daily`.
+  - Removed the documentation-in-progress badge.
+  - Renamed the operation to `listProgramTiersDailyReports` (**List program tiers daily reports**).
+  - Pointed the 200 body at `V2LoyaltiesProgramsReportsTiersDailyListResponseBody`.
+  - Required `date`, `tier_structure_id`, `tier_id`, `joins`, `upgrades`, `downgrades`, `lefts`, `prolongs`, and `object` on each row. `data` and `object` are required on the result.
+  - `date` is the start of the period on the project-local calendar. For `week` it is Monday, for `month` the first day, and for `quarter` the quarter start. Periods without recorded movement are omitted.
+  - `start_date` must be before `end_date`. Both dates are inclusive.
+  - `prolongs` counts expiration-date changes for members who stayed on the tier.
+  - Corrected `400` to query validation or `start_date` not before `end_date`. Added examples for missing or invalid query parameters, range limits for `day`, `week`, `month`, and `quarter`, and `invalid_payload`.
+  - `404` is a missing program. Added examples for an unknown program and an id that does not match the pattern.
+- Verified and updated GET `/v2/loyalties/programs/{programId}/reports/tiers/summary`.
+  - Removed the documentation-in-progress badge.
+  - Renamed the operation to `listProgramTiersSummaryReports` (**List program tiers summary reports**).
+  - Pointed the 200 body at `V2LoyaltiesProgramsReportsTiersSummaryListResponseBody`.
+  - Required `id`, `tier_structure_id`, `tier_id`, `joins`, `upgrades`, `downgrades`, `lefts`, `prolongs`, and `object` on each row. `data` and `object` are required on the result.
+  - Returns at most 100 rows, ordered by `id` descending. `limit` and `order` are not query parameters.
+  - `prolongs` counts expiration-date changes for members who stayed on the tier.
+  - `filters.junction` is `AND` or `OR` and defaults to `AND`.
+  - Added `400` examples for an invalid `tier_structure_id` or `tier_id`, and `404` examples for a missing program and an id that does not match the pattern.
+- Verified and updated GET `/v2/loyalties/programs/{programId}/reports/earning-rules/daily`. Renamed the summary to "List program earning-rules daily reports".
+  - Removed the documentation-in-progress badge.
+  - Required `date`, `earning_rule_id`, `success_count`, `failures_count`, `failures_breakdown`, and `object` on each row. Required `data` and `object` on the response.
+  - `failures_breakdown` is always an empty object, even when `failures_count` is above zero. Periods without activity are omitted.
+  - `date` is the start of the truncated period (`week` starts on Monday). `start_date` and `end_date` are inclusive, with `start_date` before `end_date`. The range limit is 90 days, 12 weeks, 12 months, or 4 quarters.
+  - Pointed the 200 body at `V2LoyaltiesProgramsReportsEarningRulesDailyListResponseBody`.
+  - Added `400` examples for invalid query parameters, a date range past the resolution limit, and `start_date` not before `end_date` (`invalid_payload`).
+  - Added `404` examples for a missing program, including an id that does not match the pattern.
+- Verified and updated GET `/v2/loyalties/programs/{programId}/reports/earning-rules/summary`. Renamed the summary to "List program earning-rules summary reports".
+  - Removed the documentation-in-progress badge.
+  - Required `id`, `earning_rule_id`, `success_count`, `failures_count`, `failures_breakdown`, and `object` on each row. `id` uses the `lpers_` prefix. Required `data` and `object` on the response.
+  - `EarningRulesReportFailuresBreakdown` counts `COOLDOWN` and `FREQUENCY`. Either key may be absent. A present key is `0` when that reason has no failures. The object is empty when no failure counts are stored yet.
+  - Returns at most 100 rows, ordered by `id` descending. `limit` and `order` are not query parameters. A filter that matches no rows returns an empty `data` array.
+  - Pointed the 200 body at `V2LoyaltiesProgramsReportsEarningRulesSummaryListResponseBody`.
+  - Added a `400` example for an invalid `earning_rule_id`, and `404` examples for a missing program, including an id that does not match the pattern.
+
 ## 2026-10-12
 
 - Verified and updated GET `/v2/loyalties/earning-rules/{earningRuleId}`.
