@@ -13644,7 +13644,11 @@
             "required": false,
             "description": "Maximum number of card definitions to return. Minimum: 1, maximum: 100. Defaults to 10 when omitted.",
             "schema": {
-              "type": "integer",
+              "type": [
+                "number",
+                "string",
+                "null"
+              ],
               "minimum": 1,
               "maximum": 100,
               "default": 10
@@ -13685,6 +13689,9 @@
                       "created_at"
                     ]
                   }
+                },
+                {
+                  "type": "null"
                 }
               ]
             }
@@ -13695,7 +13702,10 @@
             "required": false,
             "description": "Pagination cursor returned by a previous call in `cursor.next`. Pattern: `^lcrscdef_[a-f0-9]+$`.",
             "schema": {
-              "type": "string",
+              "type": [
+                "string",
+                "null"
+              ],
               "pattern": "^lcrscdef_[a-f0-9]+$"
             }
           },
@@ -13707,7 +13717,14 @@
             "explode": true,
             "description": "Filter conditions per field, e.g. `filters[status][conditions][$is]=ACTIVE`.",
             "schema": {
-              "$ref": "#/components/schemas/LoyaltiesCardDefinitionsListRequestQuery"
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/LoyaltiesCardDefinitionsListRequestQuery"
+                },
+                {
+                  "type": "null"
+                }
+              ]
             }
           }
         ],
@@ -13717,7 +13734,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CardDefinitionListResponse"
+                  "$ref": "#/components/schemas/V2LoyaltiesCardDefinitionsListResponseBody"
                 }
               }
             }
@@ -23031,38 +23048,14 @@
         "additionalProperties": false,
         "title": "Loyalties Card Definitions List Request Query"
       },
-      "CardDefinitionListResponse": {
+      "V2LoyaltiesCardDefinitionsListResponseBody": {
+        "title": "V2 Loyalties Card Definitions List Response Body",
         "type": "object",
-        "description": "Cursor-paginated list of card definitions.",
-        "properties": {
-          "data": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/CardDefinition"
-            },
-            "description": "The card definitions in the current page."
-          },
-          "cursor": {
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/CardDefinitionListCursor"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "Pagination cursor. `null` when there are no more results."
-          },
-          "object": {
-            "type": "string",
-            "const": "list",
-            "description": "Object type marker. Always `list`."
+        "description": "Response body schema for **GET** `/v2/loyalties/card-definitions`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/CardDefinitionListResponse"
           }
-        },
-        "required": [
-          "data",
-          "cursor",
-          "object"
         ]
       },
       "CardDefinitionCreateRequest": {
@@ -34043,23 +34036,38 @@
         ],
         "additionalProperties": false
       },
-      "CardDefinitionListCursor": {
+      "CardDefinitionListResponse": {
         "type": "object",
-        "description": "Pagination cursor.",
+        "description": "Cursor-paginated list of card definitions.",
         "properties": {
-          "next": {
-            "type": "string",
-            "pattern": "^lcrscdef_[a-f0-9]+$",
-            "description": "Cursor ID to pass as the `cursor` query parameter to fetch the next page."
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CardDefinition"
+            },
+            "description": "The card definitions in the current page."
           },
-          "expires_at": {
+          "cursor": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/CardDefinitionListCursor"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Pagination cursor. `null` when there are no more results."
+          },
+          "object": {
             "type": "string",
-            "format": "date-time",
-            "description": "Timestamp after which the cursor expires."
+            "const": "list",
+            "description": "Object type marker. Always `list`."
           }
         },
         "required": [
-          "next"
+          "data",
+          "cursor",
+          "object"
         ]
       },
       "CardDefinitionCodeConfigInput": {
@@ -42387,6 +42395,25 @@
           "failures_count",
           "failures_breakdown",
           "object"
+        ]
+      },
+      "CardDefinitionListCursor": {
+        "type": "object",
+        "description": "Pagination cursor.",
+        "properties": {
+          "next": {
+            "type": "string",
+            "pattern": "^lcrscdef_[a-f0-9]+$",
+            "description": "Cursor ID to pass as the `cursor` query parameter to fetch the next page."
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp after which the cursor expires."
+          }
+        },
+        "required": [
+          "next"
         ]
       },
       "CardDefinitionPointsExpirationRollingExpirationInput": {
