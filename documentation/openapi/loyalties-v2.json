@@ -7979,7 +7979,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/LoyaltiesProgramsMembersRewardsPurchasesCreateRequestBody"
+                "$ref": "#/components/schemas/V2LoyaltiesProgramsMembersRewardsPurchasesCreateRequestBody"
               }
             }
           }
@@ -7990,7 +7990,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/LoyaltiesProgramsMembersRewardsPurchasesCreateDryRunResponseBody"
+                  "$ref": "#/components/schemas/V2LoyaltiesProgramsMembersRewardsPurchasesCreateDryRunResponseBody"
                 },
                 "examples": {
                   "Reward purchase dry run": {
@@ -8029,7 +8029,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/LoyaltiesProgramsMembersRewardsPurchasesCreateTransactionResponseBody"
+                  "$ref": "#/components/schemas/V2LoyaltiesProgramsMembersRewardsPurchasesCreateTransactionResponseBody"
                 },
                 "examples": {
                   "Reward purchase transaction created": {
@@ -21263,228 +21263,35 @@
           }
         ]
       },
-      "LoyaltiesProgramsMembersRewardsPurchasesCreateRequestBody": {
+      "V2LoyaltiesProgramsMembersRewardsPurchasesCreateRequestBody": {
+        "title": "V2 Loyalties Programs Members Rewards Purchases Create Request Body",
         "type": "object",
         "description": "Request body schema for **POST** `/v2/loyalties/programs/{programId}/members/{memberId}/rewards/purchases`.",
-        "properties": {
-          "reward_id": {
-            "type": "string",
-            "description": "Unique identifier of the reward to purchase (format `lrew_...`)."
-          },
-          "mode": {
-            "type": "string",
-            "enum": [
-              "TRANSACTION",
-              "DRY_RUN"
-            ],
-            "default": "TRANSACTION",
-            "description": "Purchase mode. `TRANSACTION` creates a `PENDING` reward transaction processed asynchronously (HTTP `202`). `DRY_RUN` only simulates the purchase and returns the calculation result (HTTP `200`); no transaction is created. Defaults to `TRANSACTION` when omitted."
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MemberRewardPurchaseRequest"
           }
-        },
-        "required": [
-          "reward_id"
-        ],
-        "additionalProperties": false,
-        "title": "Loyalties Programs Members Rewards Purchases Create Request Body"
+        ]
       },
-      "LoyaltiesProgramsMembersRewardsPurchasesCreateDryRunResponseBody": {
+      "V2LoyaltiesProgramsMembersRewardsPurchasesCreateDryRunResponseBody": {
+        "title": "V2 Loyalties Programs Members Rewards Purchases Create Dry Run Response Body",
         "type": "object",
-        "description": "Response body schema for **POST** `/v2/loyalties/programs/{programId}/members/{memberId}/rewards/purchases`.\n\nResult of a reward purchase request in dry-run mode.",
-        "properties": {
-          "transaction": {
-            "type": "object",
-            "description": "The simulated reward transaction.",
-            "properties": {
-              "card_id": {
-                "type": "string",
-                "description": "Unique identifier of the loyalty card the points are to be spent from (format `lcrd_...`)."
-              },
-              "card_definition_id": {
-                "type": "string",
-                "description": "Unique identifier of the card definition for that card (format `lcdef_...`)."
-              },
-              "card_transaction_id": {
-                "type": "null",
-                "description": "`null` for `DRY_RUN` (SIMULATED) transactions."
-              },
-              "program_id": {
-                "type": "string",
-                "description": "Unique identifier of the loyalty program (format `lprg_...`)."
-              },
-              "member_id": {
-                "type": "string",
-                "description": "Unique identifier of the program member (format `lmbr_...`)."
-              },
-              "reward_id": {
-                "type": "string",
-                "description": "Unique identifier of the purchased reward (format `lrew_...`)."
-              },
-              "status": {
-                "type": "string",
-                "enum": [
-                  "SIMULATED"
-                ],
-                "description": "Transaction status is `SIMULATED` for a dry-run result that is not persisted."
-              },
-              "type": {
-                "type": "string",
-                "const": "PURCHASE",
-                "description": "Transaction type. It contains purchase details for the simulated transaction."
-              },
-              "details": {
-                "description": "Transaction details. For a dry run purchase, it's always `PURCHASE`.",
-                "$ref": "#/components/schemas/RewardPurchaseTransactionDetailsPurchase"
-              },
-              "updated_at": {
-                "type": "null",
-                "description": "For `DRY_RUN` transactions, this is always `null`."
-              },
-              "object": {
-                "type": "string",
-                "const": "reward_transaction",
-                "description": "Object type marker. Always `reward_transaction`."
-              }
-            },
-            "required": [
-              "card_id",
-              "card_definition_id",
-              "card_transaction_id",
-              "program_id",
-              "member_id",
-              "reward_id",
-              "status",
-              "type",
-              "details",
-              "updated_at",
-              "object"
-            ]
-          },
-          "status": {
-            "type": "string",
-            "enum": [
-              "DRY_RUN"
-            ],
-            "description": "Result status. Always `DRY_RUN` for the dry-run mode."
-          },
-          "message": {
-            "type": "string",
-            "description": "Human-readable result message. `DRY_RUN` mode: \"Dry run mode. No transaction was created. This is only a simulation.\"."
+        "description": "Response body schema for **POST** `/v2/loyalties/programs/{programId}/members/{memberId}/rewards/purchases`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MemberRewardPurchaseDryRunResult"
           }
-        },
-        "required": [
-          "transaction",
-          "status",
-          "message"
-        ],
-        "title": "Loyalties Programs Members Rewards Purchases Create Dry Run Response Body"
+        ]
       },
-      "LoyaltiesProgramsMembersRewardsPurchasesCreateTransactionResponseBody": {
+      "V2LoyaltiesProgramsMembersRewardsPurchasesCreateTransactionResponseBody": {
+        "title": "V2 Loyalties Programs Members Rewards Purchases Create Transaction Response Body",
         "type": "object",
-        "description": "Response body schema for **POST** `/v2/loyalties/programs/{programId}/members/{memberId}/rewards/purchases`.\n\nResult of a reward purchase request.",
-        "properties": {
-          "transaction": {
-            "type": "object",
-            "description": "A reward transaction. Represents a reward purchase transaction.",
-            "properties": {
-              "id": {
-                "type": "string",
-                "description": "Unique reward transaction identifier (format `lrtx_...`)."
-              },
-              "card_id": {
-                "type": "string",
-                "description": "Unique identifier of the loyalty card the points were spent from (format `lcrd_...`)."
-              },
-              "card_definition_id": {
-                "type": "string",
-                "description": "Unique identifier of the card definition for that card (format `lcdef_...`)."
-              },
-              "card_transaction_id": {
-                "type": "string",
-                "description": "Unique identifier of the underlying card transaction (format `lctx_...`)."
-              },
-              "program_id": {
-                "type": "string",
-                "description": "Unique identifier of the loyalty program (format `lprg_...`)."
-              },
-              "member_id": {
-                "type": "string",
-                "description": "Unique identifier of the program member (format `lmbr_...`)."
-              },
-              "reward_id": {
-                "type": "string",
-                "description": "Unique identifier of the purchased reward (format `lrew_...`)."
-              },
-              "status": {
-                "type": "string",
-                "enum": [
-                  "PENDING"
-                ],
-                "description": "Transaction status:\n\n- `PENDING`: Created and awaiting processing."
-              },
-              "type": {
-                "type": "string",
-                "enum": [
-                  "PURCHASE"
-                ],
-                "description": "Transaction type."
-              },
-              "details": {
-                "description": "Purchase details. `result` is `null` until processing finishes.",
-                "$ref": "#/components/schemas/RewardPurchaseTransactionDetailsPurchase"
-              },
-              "created_at": {
-                "type": "string",
-                "format": "date-time",
-                "description": "Timestamp when the transaction was created (ISO 8601)."
-              },
-              "updated_at": {
-                "type": [
-                  "string",
-                  "null"
-                ],
-                "format": "date-time",
-                "description": "Timestamp when the transaction was last updated (ISO 8601), or `null`."
-              },
-              "object": {
-                "type": "string",
-                "const": "reward_transaction",
-                "description": "Object type marker. Always `reward_transaction`."
-              }
-            },
-            "required": [
-              "id",
-              "card_id",
-              "card_definition_id",
-              "card_transaction_id",
-              "program_id",
-              "member_id",
-              "reward_id",
-              "status",
-              "type",
-              "details",
-              "created_at",
-              "updated_at",
-              "object"
-            ]
-          },
-          "status": {
-            "type": "string",
-            "enum": [
-              "TRANSACTION_CREATED"
-            ],
-            "description": "Result status. `TRANSACTION_CREATED` for `TRANSACTION` mode."
-          },
-          "message": {
-            "type": "string",
-            "description": "Human-readable result message. `TRANSACTION` mode: \"Reward purchase transaction created\"."
+        "description": "Response body schema for **POST** `/v2/loyalties/programs/{programId}/members/{memberId}/rewards/purchases`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MemberRewardPurchaseTransactionResult"
           }
-        },
-        "required": [
-          "transaction",
-          "status",
-          "message"
-        ],
-        "title": "Loyalties Programs Members Rewards Purchases Create Transaction Response Body"
+        ]
       },
       "LoyaltiesProgramsMembersOrdersPaymentsListRequestQuery": {
         "type": "object",
@@ -28742,60 +28549,224 @@
           }
         }
       },
-      "RewardPurchaseTransactionDetailsPurchase": {
+      "MemberRewardPurchaseRequest": {
         "type": "object",
-        "title": "Purchase details",
-        "description": "Details of a `PURCHASE` reward transaction.",
+        "description": "Fields for purchasing a reward.",
         "properties": {
-          "reason": {
+          "reward_id": {
             "type": "string",
-            "description": "Human-readable reason. For purchases: \"Points spent on reward\"."
+            "description": "Unique identifier of the reward to purchase (format `lrew_...`)."
           },
-          "rejection": {
-            "description": "Rejection details, present when the transaction was rejected. `null` otherwise.",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/RewardPurchaseRejection"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "metadata": {
-            "type": "object",
-            "description": "Transaction metadata. Empty object when not set.",
-            "additionalProperties": true
-          },
-          "points": {
-            "description": "Points spent on the purchase.",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/RewardPurchasePoints"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "result": {
-            "description": "Fulfillment result, populated once the purchase is processed (APPROVED). `null` for `PENDING`/`SIMULATED` transactions.",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/RewardPurchaseResult"
-              },
-              {
-                "type": "null"
-              }
-            ]
+          "mode": {
+            "type": "string",
+            "enum": [
+              "TRANSACTION",
+              "DRY_RUN"
+            ],
+            "default": "TRANSACTION",
+            "description": "Purchase mode. `TRANSACTION` creates a `PENDING` reward transaction processed asynchronously (HTTP `202`). `DRY_RUN` only simulates the purchase and returns the calculation result (HTTP `200`); no transaction is created. Defaults to `TRANSACTION` when omitted."
           }
         },
         "required": [
-          "reason",
-          "rejection",
-          "metadata",
-          "points",
-          "result"
+          "reward_id"
+        ],
+        "additionalProperties": false
+      },
+      "MemberRewardPurchaseDryRunResult": {
+        "type": "object",
+        "description": "Result of a reward purchase request in dry-run mode.",
+        "properties": {
+          "transaction": {
+            "type": "object",
+            "description": "The simulated reward transaction.",
+            "properties": {
+              "card_id": {
+                "type": "string",
+                "description": "Unique identifier of the loyalty card the points are to be spent from (format `lcrd_...`)."
+              },
+              "card_definition_id": {
+                "type": "string",
+                "description": "Unique identifier of the card definition for that card (format `lcdef_...`)."
+              },
+              "card_transaction_id": {
+                "type": "null",
+                "description": "`null` for `DRY_RUN` (SIMULATED) transactions."
+              },
+              "program_id": {
+                "type": "string",
+                "description": "Unique identifier of the loyalty program (format `lprg_...`)."
+              },
+              "member_id": {
+                "type": "string",
+                "description": "Unique identifier of the program member (format `lmbr_...`)."
+              },
+              "reward_id": {
+                "type": "string",
+                "description": "Unique identifier of the purchased reward (format `lrew_...`)."
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "SIMULATED"
+                ],
+                "description": "Transaction status is `SIMULATED` for a dry-run result that is not persisted."
+              },
+              "type": {
+                "type": "string",
+                "const": "PURCHASE",
+                "description": "Transaction type. It contains purchase details for the simulated transaction."
+              },
+              "details": {
+                "description": "Transaction details. For a dry run purchase, it's always `PURCHASE`.",
+                "$ref": "#/components/schemas/RewardPurchaseTransactionDetailsPurchase"
+              },
+              "updated_at": {
+                "type": "null",
+                "description": "For `DRY_RUN` transactions, this is always `null`."
+              },
+              "object": {
+                "type": "string",
+                "const": "reward_transaction",
+                "description": "Object type marker. Always `reward_transaction`."
+              }
+            },
+            "required": [
+              "card_id",
+              "card_definition_id",
+              "card_transaction_id",
+              "program_id",
+              "member_id",
+              "reward_id",
+              "status",
+              "type",
+              "details",
+              "updated_at",
+              "object"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "DRY_RUN"
+            ],
+            "description": "Result status. Always `DRY_RUN` for the dry-run mode."
+          },
+          "message": {
+            "type": "string",
+            "description": "Human-readable result message. `DRY_RUN` mode: \"Dry run mode. No transaction was created. This is only a simulation.\"."
+          }
+        },
+        "required": [
+          "transaction",
+          "status",
+          "message"
+        ]
+      },
+      "MemberRewardPurchaseTransactionResult": {
+        "type": "object",
+        "description": "Result of a reward purchase request.",
+        "properties": {
+          "transaction": {
+            "type": "object",
+            "description": "A reward transaction. Represents a reward purchase transaction.",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Unique reward transaction identifier (format `lrtx_...`)."
+              },
+              "card_id": {
+                "type": "string",
+                "description": "Unique identifier of the loyalty card the points were spent from (format `lcrd_...`)."
+              },
+              "card_definition_id": {
+                "type": "string",
+                "description": "Unique identifier of the card definition for that card (format `lcdef_...`)."
+              },
+              "card_transaction_id": {
+                "type": "string",
+                "description": "Unique identifier of the underlying card transaction (format `lctx_...`)."
+              },
+              "program_id": {
+                "type": "string",
+                "description": "Unique identifier of the loyalty program (format `lprg_...`)."
+              },
+              "member_id": {
+                "type": "string",
+                "description": "Unique identifier of the program member (format `lmbr_...`)."
+              },
+              "reward_id": {
+                "type": "string",
+                "description": "Unique identifier of the purchased reward (format `lrew_...`)."
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "PENDING"
+                ],
+                "description": "Transaction status:\n\n- `PENDING`: Created and awaiting processing."
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "PURCHASE"
+                ],
+                "description": "Transaction type."
+              },
+              "details": {
+                "description": "Purchase details. `result` is `null` until processing finishes.",
+                "$ref": "#/components/schemas/RewardPurchaseTransactionDetailsPurchase"
+              },
+              "created_at": {
+                "type": "string",
+                "format": "date-time",
+                "description": "Timestamp when the transaction was created (ISO 8601)."
+              },
+              "updated_at": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "format": "date-time",
+                "description": "Timestamp when the transaction was last updated (ISO 8601), or `null`."
+              },
+              "object": {
+                "type": "string",
+                "const": "reward_transaction",
+                "description": "Object type marker. Always `reward_transaction`."
+              }
+            },
+            "required": [
+              "id",
+              "card_id",
+              "card_definition_id",
+              "card_transaction_id",
+              "program_id",
+              "member_id",
+              "reward_id",
+              "status",
+              "type",
+              "details",
+              "created_at",
+              "updated_at",
+              "object"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "TRANSACTION_CREATED"
+            ],
+            "description": "Result status. `TRANSACTION_CREATED` for `TRANSACTION` mode."
+          },
+          "message": {
+            "type": "string",
+            "description": "Human-readable result message. `TRANSACTION` mode: \"Reward purchase transaction created\"."
+          }
+        },
+        "required": [
+          "transaction",
+          "status",
+          "message"
         ]
       },
       "LoyaltiesProgramsMembersOrdersPaymentsListRequestQueryId": {
@@ -39127,82 +39098,61 @@
           }
         }
       },
-      "RewardPurchaseRejection": {
+      "RewardPurchaseTransactionDetailsPurchase": {
         "type": "object",
-        "description": "Details about a rejected reward purchase transaction.",
+        "title": "Purchase details",
+        "description": "Details of a `PURCHASE` reward transaction.",
         "properties": {
           "reason": {
             "type": "string",
-            "description": "Machine-readable rejection reason."
+            "description": "Human-readable reason. For purchases: \"Points spent on reward\"."
           },
-          "details": {
+          "rejection": {
+            "description": "Rejection details, present when the transaction was rejected. `null` otherwise.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/RewardPurchaseRejection"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "metadata": {
             "type": "object",
-            "description": "Additional structured context about the rejection. Fields depend on the rejection reason.",
+            "description": "Transaction metadata. Empty object when not set.",
             "additionalProperties": true
+          },
+          "points": {
+            "description": "Points spent on the purchase.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/RewardPurchasePoints"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "result": {
+            "description": "Fulfillment result, populated once the purchase is processed (APPROVED). `null` for `PENDING`/`SIMULATED` transactions.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/RewardPurchaseResult"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         },
         "required": [
-          "reason"
+          "reason",
+          "rejection",
+          "metadata",
+          "points",
+          "result"
         ]
-      },
-      "RewardPurchasePoints": {
-        "type": "object",
-        "description": "Points involved in the transaction.",
-        "properties": {
-          "total": {
-            "type": "number",
-            "description": "Total number of points."
-          }
-        },
-        "required": [
-          "total"
-        ]
-      },
-      "RewardPurchaseResult": {
-        "type": "object",
-        "description": "Reward fulfillment result. Contains the fulfilled reward reference, quantity and the material or digital fulfillment payload.",
-        "properties": {
-          "reward": {
-            "description": "Reference to the fulfilled reward.",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/RewardPurchaseResultReward"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "quantity": {
-            "type": [
-              "number",
-              "null"
-            ],
-            "description": "Fulfilled quantity."
-          },
-          "material": {
-            "description": "Material reward fulfillment payload. Present for `MATERIAL` rewards.",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/RewardPurchaseResultMaterial"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "digital": {
-            "description": "Digital reward fulfillment payload. Present for `DIGITAL` rewards.",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/RewardPurchaseResultDigital"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          }
-        }
       },
       "LoyaltiesProgramsMembersOrdersPaymentsCreateRequestBodyLimitCardBalance": {
         "title": "Card Balance",
@@ -43585,80 +43535,75 @@
           "purchase"
         ]
       },
-      "RewardPurchaseResultReward": {
+      "RewardPurchaseRejection": {
         "type": "object",
-        "description": "Reference to the fulfilled reward.",
+        "description": "Details about a rejected reward purchase transaction.",
         "properties": {
-          "id": {
+          "reason": {
             "type": "string",
-            "description": "Reward identifier (format `lrew_...`)."
+            "description": "Machine-readable rejection reason."
           },
-          "type": {
-            "type": "string",
-            "enum": [
-              "MATERIAL",
-              "DIGITAL"
-            ],
-            "description": "Reward type."
-          }
-        }
-      },
-      "RewardPurchaseResultMaterial": {
-        "type": "object",
-        "description": "Material reward fulfillment.",
-        "properties": {
-          "type": {
-            "type": "string",
-            "enum": [
-              "PRODUCT",
-              "SKU"
-            ],
-            "description": "Material reward type."
-          },
-          "product": {
+          "details": {
             "type": "object",
-            "description": "Product payload (present when `type` is `PRODUCT`).",
-            "additionalProperties": true
-          },
-          "sku": {
-            "type": "object",
-            "description": "SKU payload (present when `type` is `SKU`).",
+            "description": "Additional structured context about the rejection. Fields depend on the rejection reason.",
             "additionalProperties": true
           }
-        }
+        },
+        "required": [
+          "reason"
+        ]
       },
-      "RewardPurchaseResultDigital": {
+      "RewardPurchasePoints": {
         "type": "object",
-        "description": "Digital reward fulfillment.",
+        "description": "Points involved in the transaction.",
         "properties": {
-          "type": {
-            "type": "string",
-            "enum": [
-              "DISCOUNT_COUPONS",
-              "GIFT_VOUCHERS",
-              "LOYALTY_CARD_POINTS"
-            ],
-            "description": "Digital reward type."
-          },
-          "discount_coupons": {
-            "type": "array",
-            "description": "Fulfilled discount coupons (present when `type` is `DISCOUNT_COUPONS`).",
-            "items": {
-              "$ref": "#/components/schemas/RewardPurchaseDigitalCoupon"
-            }
-          },
-          "gift_vouchers": {
-            "type": "array",
-            "description": "Fulfilled gift vouchers (present when `type` is `GIFT_VOUCHERS`).",
-            "items": {
-              "$ref": "#/components/schemas/RewardPurchaseDigitalGiftVoucher"
-            }
-          },
-          "loyalty_card_points": {
-            "description": "Fulfilled loyalty card points (present when `type` is `LOYALTY_CARD_POINTS`).",
+          "total": {
+            "type": "number",
+            "description": "Total number of points."
+          }
+        },
+        "required": [
+          "total"
+        ]
+      },
+      "RewardPurchaseResult": {
+        "type": "object",
+        "description": "Reward fulfillment result. Contains the fulfilled reward reference, quantity and the material or digital fulfillment payload.",
+        "properties": {
+          "reward": {
+            "description": "Reference to the fulfilled reward.",
             "oneOf": [
               {
-                "$ref": "#/components/schemas/RewardPurchaseDigitalLoyaltyCardPoints"
+                "$ref": "#/components/schemas/RewardPurchaseResultReward"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "quantity": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "Fulfilled quantity."
+          },
+          "material": {
+            "description": "Material reward fulfillment payload. Present for `MATERIAL` rewards.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/RewardPurchaseResultMaterial"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "digital": {
+            "description": "Digital reward fulfillment payload. Present for `DIGITAL` rewards.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/RewardPurchaseResultDigital"
               },
               {
                 "type": "null"
@@ -46893,73 +46838,85 @@
           }
         }
       },
-      "RewardPurchaseDigitalCoupon": {
+      "RewardPurchaseResultReward": {
         "type": "object",
-        "description": "Discount coupon fulfillment entry.",
+        "description": "Reference to the fulfilled reward.",
         "properties": {
           "id": {
             "type": "string",
-            "description": "Voucher identifier of the coupon."
+            "description": "Reward identifier (format `lrew_...`)."
           },
-          "code": {
-            "type": "string",
-            "description": "Coupon code."
-          },
-          "result": {
+          "type": {
             "type": "string",
             "enum": [
-              "SKIPPED",
-              "DELETED"
+              "MATERIAL",
+              "DIGITAL"
             ],
-            "description": "Refund handling result for this coupon (present in refund results):\n\n- `DELETED`: The coupon was deleted.\n\n- `SKIPPED`: The coupon was left intact."
+            "description": "Reward type."
           }
         }
       },
-      "RewardPurchaseDigitalGiftVoucher": {
+      "RewardPurchaseResultMaterial": {
         "type": "object",
-        "description": "Gift voucher fulfillment entry.",
+        "description": "Material reward fulfillment.",
         "properties": {
-          "id": {
-            "type": "string",
-            "description": "Voucher identifier of the gift voucher."
-          },
-          "code": {
-            "type": "string",
-            "description": "Gift voucher code."
-          },
-          "amount": {
-            "type": "number",
-            "description": "Amount added to (or, for refunds, subtracted from) the gift voucher balance."
-          },
-          "balance": {
-            "type": "number",
-            "description": "Gift voucher balance after the operation."
-          },
-          "result": {
+          "type": {
             "type": "string",
             "enum": [
-              "SKIPPED",
-              "CREDITS_SUBTRACTED"
+              "PRODUCT",
+              "SKU"
             ],
-            "description": "Refund handling result for this gift voucher (present in refund results):\n\n- `CREDITS_SUBTRACTED`: The credited balance was subtracted.\n\n- `SKIPPED`: The voucher was left intact."
+            "description": "Material reward type."
+          },
+          "product": {
+            "type": "object",
+            "description": "Product payload (present when `type` is `PRODUCT`).",
+            "additionalProperties": true
+          },
+          "sku": {
+            "type": "object",
+            "description": "SKU payload (present when `type` is `SKU`).",
+            "additionalProperties": true
           }
         }
       },
-      "RewardPurchaseDigitalLoyaltyCardPoints": {
+      "RewardPurchaseResultDigital": {
         "type": "object",
-        "description": "Loyalty card points fulfillment entry.",
+        "description": "Digital reward fulfillment.",
         "properties": {
-          "points": {
-            "type": "number",
-            "description": "Number of points credited to the target loyalty card."
-          },
-          "card_definition_id": {
+          "type": {
             "type": "string",
-            "description": "Target card definition identifier (format `lcdef_...`)."
+            "enum": [
+              "DISCOUNT_COUPONS",
+              "GIFT_VOUCHERS",
+              "LOYALTY_CARD_POINTS"
+            ],
+            "description": "Digital reward type."
           },
-          "card_id": {
-            "type": "string",
-            "description": "Target loyalty card identifier (format `lcrd_...`)."
+          "discount_coupons": {
+            "type": "array",
+            "description": "Fulfilled discount coupons (present when `type` is `DISCOUNT_COUPONS`).",
+            "items": {
+              "$ref": "#/components/schemas/RewardPurchaseDigitalCoupon"
+            }
+          },
+          "gift_vouchers": {
+            "type": "array",
+            "description": "Fulfilled gift vouchers (present when `type` is `GIFT_VOUCHERS`).",
+            "items": {
+              "$ref": "#/components/schemas/RewardPurchaseDigitalGiftVoucher"
+            }
+          },
+          "loyalty_card_points": {
+            "description": "Fulfilled loyalty card points (present when `type` is `LOYALTY_CARD_POINTS`).",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/RewardPurchaseDigitalLoyaltyCardPoints"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         }
       },
@@ -49227,6 +49184,76 @@
           "current",
           "min"
         ]
+      },
+      "RewardPurchaseDigitalCoupon": {
+        "type": "object",
+        "description": "Discount coupon fulfillment entry.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Voucher identifier of the coupon."
+          },
+          "code": {
+            "type": "string",
+            "description": "Coupon code."
+          },
+          "result": {
+            "type": "string",
+            "enum": [
+              "SKIPPED",
+              "DELETED"
+            ],
+            "description": "Refund handling result for this coupon (present in refund results):\n\n- `DELETED`: The coupon was deleted.\n\n- `SKIPPED`: The coupon was left intact."
+          }
+        }
+      },
+      "RewardPurchaseDigitalGiftVoucher": {
+        "type": "object",
+        "description": "Gift voucher fulfillment entry.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Voucher identifier of the gift voucher."
+          },
+          "code": {
+            "type": "string",
+            "description": "Gift voucher code."
+          },
+          "amount": {
+            "type": "number",
+            "description": "Amount added to (or, for refunds, subtracted from) the gift voucher balance."
+          },
+          "balance": {
+            "type": "number",
+            "description": "Gift voucher balance after the operation."
+          },
+          "result": {
+            "type": "string",
+            "enum": [
+              "SKIPPED",
+              "CREDITS_SUBTRACTED"
+            ],
+            "description": "Refund handling result for this gift voucher (present in refund results):\n\n- `CREDITS_SUBTRACTED`: The credited balance was subtracted.\n\n- `SKIPPED`: The voucher was left intact."
+          }
+        }
+      },
+      "RewardPurchaseDigitalLoyaltyCardPoints": {
+        "type": "object",
+        "description": "Loyalty card points fulfillment entry.",
+        "properties": {
+          "points": {
+            "type": "number",
+            "description": "Number of points credited to the target loyalty card."
+          },
+          "card_definition_id": {
+            "type": "string",
+            "description": "Target card definition identifier (format `lcdef_...`)."
+          },
+          "card_id": {
+            "type": "string",
+            "description": "Target loyalty card identifier (format `lcrd_...`)."
+          }
+        }
       },
       "CardDefinitionEarningLimitsGlobalTimeBasedPeriodInput": {
         "type": "object",
