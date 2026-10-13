@@ -5303,7 +5303,7 @@
             "schema": {
               "oneOf": [
                 {
-                  "$ref": "#/components/schemas/LoyaltiesProgramsMembersCardsActivitiesListRequestQueryFilters"
+                  "$ref": "#/components/schemas/V2LoyaltiesProgramsMembersCardsActivitiesListRequestQueryFilters"
                 },
                 {
                   "type": "null"
@@ -5318,7 +5318,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/LoyaltiesProgramsMembersCardsActivitiesListResponseBody"
+                  "$ref": "#/components/schemas/V2LoyaltiesProgramsMembersCardsActivitiesListResponseBody"
                 },
                 "examples": {
                   "List of card activities": {
@@ -20901,7 +20901,7 @@
           }
         ]
       },
-      "LoyaltiesProgramsMembersCardsActivitiesListRequestQueryFilters": {
+      "V2LoyaltiesProgramsMembersCardsActivitiesListRequestQueryFilters": {
         "type": "object",
         "description": "Field-specific filters for **GET** `/v2/loyalties/programs/{programId}/members/{memberId}/cards/{cardId}/activities`.",
         "properties": {
@@ -20955,41 +20955,16 @@
           }
         },
         "additionalProperties": false,
-        "title": "Loyalties Programs Members Cards Activities List Request Query Filters"
+        "title": "V2 Loyalties Programs Members Cards Activities List Request Query Filters"
       },
-      "LoyaltiesProgramsMembersCardsActivitiesListResponseBody": {
-        "title": "Loyalties Programs Members Cards Activities List Response Body",
+      "V2LoyaltiesProgramsMembersCardsActivitiesListResponseBody": {
+        "title": "V2 Loyalties Programs Members Cards Activities List Response Body",
         "type": "object",
         "description": "Response body schema for **GET** `/v2/loyalties/programs/{programId}/members/{memberId}/cards/{cardId}/activities`.",
-        "properties": {
-          "data": {
-            "type": "array",
-            "description": "Card activities on the current page.",
-            "items": {
-              "$ref": "#/components/schemas/CardActivity"
-            }
-          },
-          "cursor": {
-            "description": "Pagination cursor, or `null` when there are no more results.",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/ListCursor"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "object": {
-            "type": "string",
-            "const": "list",
-            "description": "Object type marker, always `list`."
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/CardActivityListResponse"
           }
-        },
-        "required": [
-          "data",
-          "cursor",
-          "object"
         ]
       },
       "LoyaltiesProgramsMembersCardsPendingPointsListRequestQuery": {
@@ -27792,74 +27767,38 @@
         ],
         "additionalProperties": false
       },
-      "CardActivity": {
+      "CardActivityListResponse": {
         "type": "object",
-        "description": "An activity recorded for a card.",
+        "description": "Cursor-paginated list of card activities.",
         "properties": {
-          "id": {
-            "type": "string",
-            "pattern": "^lacrd_[a-f0-9]+$",
-            "description": "Unique activity ID."
-          },
-          "card_id": {
-            "type": "string",
-            "pattern": "^lcrd_[a-f0-9]+$",
-            "description": "ID of the card the activity relates to."
-          },
-          "type": {
-            "type": "string",
-            "enum": [
-              "vl.card.created",
-              "vl.card.assigned",
-              "vl.card.unassigned",
-              "vl.card.code_generation.succeeded",
-              "vl.card.code_generation.failed"
-            ],
-            "description": "Activity type. Allowed values: `vl.card.created`, `vl.card.assigned`, `vl.card.unassigned`, `vl.card.code_generation.succeeded`, and `vl.card.code_generation.failed`."
-          },
           "data": {
-            "$ref": "#/components/schemas/CardActivityData",
-            "description": "Contains snapshots of the objects involved at the time of the activity."
+            "type": "array",
+            "description": "Card activities on the current page.",
+            "items": {
+              "$ref": "#/components/schemas/CardActivity"
+            }
           },
-          "created_at": {
+          "cursor": {
+            "description": "Pagination cursor, or `null` when there are no more results.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/ListCursor"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "object": {
             "type": "string",
-            "format": "date-time",
-            "description": "Timestamp when the activity was recorded (ISO 8601)."
-          },
-          "group_id": {
-            "type": "string",
-            "description": "ID grouping activities recorded within the same request."
-          },
-          "source": {
-            "$ref": "#/components/schemas/ActivitySource",
-            "description": "Origin of the activity. Omitted when not available."
+            "const": "list",
+            "description": "Object type marker, always `list`."
           }
         },
         "required": [
-          "id",
-          "card_id",
-          "type",
           "data",
-          "created_at"
-        ]
-      },
-      "ListCursor": {
-        "type": "object",
-        "description": "Pagination cursor.",
-        "properties": {
-          "next": {
-            "type": "string",
-            "description": "Cursor value to pass as the `cursor` query parameter to fetch the next page."
-          },
-          "expires_at": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Timestamp when the cursor expires."
-          }
-        },
-        "required": [
-          "next",
-          "expires_at"
+          "cursor",
+          "object"
         ]
       },
       "LoyaltiesProgramsMembersCardsPendingPointsListRequestQueryCardDefinitionId": {
@@ -28070,6 +28009,25 @@
           "created_at",
           "updated_at",
           "object"
+        ]
+      },
+      "ListCursor": {
+        "type": "object",
+        "description": "Pagination cursor.",
+        "properties": {
+          "next": {
+            "type": "string",
+            "description": "Cursor value to pass as the `cursor` query parameter to fetch the next page."
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp when the cursor expires."
+          }
+        },
+        "required": [
+          "next",
+          "expires_at"
         ]
       },
       "CardTransaction": {
@@ -39033,64 +38991,56 @@
           "created_at"
         ]
       },
-      "CardActivityData": {
+      "CardActivity": {
         "type": "object",
-        "description": "Snapshots of the objects involved at the time of the activity. Always contains `card` and `program`. For `vl.card.assigned` and `vl.card.unassigned`, also contains `member` and `member_card`. For `vl.card.code_generation.failed`, also contains `result`.",
+        "description": "An activity recorded for a card.",
         "properties": {
-          "card": {
-            "$ref": "#/components/schemas/Card",
-            "description": "Full card snapshot at the time of the activity."
+          "id": {
+            "type": "string",
+            "pattern": "^lacrd_[a-f0-9]+$",
+            "description": "Unique activity ID."
           },
-          "program": {
-            "$ref": "#/components/schemas/Program",
-            "description": "Program snapshot at the time of the activity."
+          "card_id": {
+            "type": "string",
+            "pattern": "^lcrd_[a-f0-9]+$",
+            "description": "ID of the card the activity relates to."
           },
-          "member": {
-            "$ref": "#/components/schemas/Member",
-            "description": "Member snapshot. Present only for `vl.card.assigned` and `vl.card.unassigned`."
-          },
-          "member_card": {
-            "$ref": "#/components/schemas/MemberCard",
-            "description": "Assignment snapshot. Present for `vl.card.assigned` and `vl.card.unassigned`. Omits `tier_progress`."
-          },
-          "result": {
-            "$ref": "#/components/schemas/CardCodeGenerationFailureResult",
-            "description": "Failure details. Present only for `vl.card.code_generation.failed`."
-          }
-        },
-        "required": [
-          "card",
-          "program"
-        ],
-        "additionalProperties": false
-      },
-      "ActivitySource": {
-        "type": "object",
-        "description": "Origin of an activity.",
-        "properties": {
-          "channel": {
+          "type": {
             "type": "string",
             "enum": [
-              "USER_PORTAL",
-              "API",
-              "CLIENT_API",
-              "INTERNAL"
+              "vl.card.created",
+              "vl.card.assigned",
+              "vl.card.unassigned",
+              "vl.card.code_generation.succeeded",
+              "vl.card.code_generation.failed"
             ],
-            "description": "Channel through which the activity was triggered."
+            "description": "Activity type. Allowed values: `vl.card.created`, `vl.card.assigned`, `vl.card.unassigned`, `vl.card.code_generation.succeeded`, and `vl.card.code_generation.failed`."
           },
-          "user": {
-            "$ref": "#/components/schemas/ActivitySourceUser",
-            "description": "Dashboard user who triggered the activity. Omitted when not applicable."
+          "data": {
+            "$ref": "#/components/schemas/CardActivityData",
+            "description": "Contains snapshots of the objects involved at the time of the activity."
           },
-          "api_key": {
-            "$ref": "#/components/schemas/ActivitySourceApiKey",
-            "description": "API key used to trigger the activity. Omitted when not applicable."
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp when the activity was recorded (ISO 8601)."
+          },
+          "group_id": {
+            "type": "string",
+            "description": "ID grouping activities recorded within the same request."
+          },
+          "source": {
+            "$ref": "#/components/schemas/ActivitySource",
+            "description": "Origin of the activity. Omitted when not available."
           }
         },
         "required": [
-          "channel"
-        ],
-        "additionalProperties": false
+          "id",
+          "card_id",
+          "type",
+          "data",
+          "created_at"
+        ]
       },
       "CardTransactionDetails": {
         "type": "object",
@@ -43491,140 +43441,63 @@
         ],
         "additionalProperties": false
       },
-      "Card": {
+      "ActivitySource": {
         "type": "object",
-        "description": "A full loyalty card snapshot.",
+        "description": "Origin of an activity.",
         "properties": {
-          "id": {
-            "type": "string",
-            "pattern": "^lcrd_[a-f0-9]+$",
-            "description": "Identifies the card."
-          },
-          "program_id": {
-            "type": "string",
-            "pattern": "^lprg_[a-f0-9]+$",
-            "description": "Identifies the loyalty program."
-          },
-          "card_definition_id": {
-            "type": "string",
-            "pattern": "^lcdef_[a-f0-9]+$",
-            "description": "Identifies the card definition."
-          },
-          "card_type": {
+          "channel": {
             "type": "string",
             "enum": [
-              "INDIVIDUAL"
+              "USER_PORTAL",
+              "API",
+              "CLIENT_API",
+              "INTERNAL"
             ],
-            "description": "Card type. Currently only `INDIVIDUAL` is supported."
+            "description": "Channel through which the activity was triggered."
           },
-          "code": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "description": "Human-readable card code. `null` until asynchronous code generation finishes."
+          "user": {
+            "$ref": "#/components/schemas/ActivitySourceUser",
+            "description": "Dashboard user who triggered the activity. Omitted when not applicable."
           },
-          "lifetime_bucket": {
-            "$ref": "#/components/schemas/CardLifetimeBucket",
-            "description": "Lifetime point counters of the card."
-          },
-          "balance": {
-            "$ref": "#/components/schemas/CardBalance",
-            "description": "Current available balance calculated from the lifetime bucket."
-          },
-          "customer_id": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "pattern": "^cust_[a-zA-Z0-9]+",
-            "description": "Identifies the customer linked to the card."
-          },
-          "member_id": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "pattern": "^lmbr_[a-f0-9]+$",
-            "description": "Identifies the member linked to the card."
-          },
-          "created_at": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Records when the card was created (ISO 8601)."
-          },
-          "updated_at": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "format": "date-time",
-            "description": "Records the last update (ISO 8601). `null` if the card has never been updated."
-          },
-          "object": {
-            "type": "string",
-            "const": "card",
-            "description": "Object type. Always `card`."
+          "api_key": {
+            "$ref": "#/components/schemas/ActivitySourceApiKey",
+            "description": "API key used to trigger the activity. Omitted when not applicable."
           }
         },
         "required": [
-          "id",
-          "program_id",
-          "card_definition_id",
-          "card_type",
-          "code",
-          "lifetime_bucket",
-          "balance",
-          "created_at",
-          "updated_at",
-          "object"
-        ]
-      },
-      "CardCodeGenerationFailureResult": {
-        "type": "object",
-        "description": "Outcome of a failed card code generation.",
-        "properties": {
-          "details": {
-            "type": "string",
-            "description": "Explains why code generation failed."
-          }
-        },
-        "required": [
-          "details"
+          "channel"
         ],
         "additionalProperties": false
       },
-      "ActivitySourceUser": {
+      "CardActivityData": {
         "type": "object",
-        "description": "Dashboard user who triggered an activity.",
+        "description": "Snapshots of the objects involved at the time of the activity. Always contains `card` and `program`. For `vl.card.assigned` and `vl.card.unassigned`, also contains `member` and `member_card`. For `vl.card.code_generation.failed`, also contains `result`.",
         "properties": {
-          "id": {
-            "type": "string",
-            "description": "Identifies the user."
+          "card": {
+            "$ref": "#/components/schemas/Card",
+            "description": "Full card snapshot at the time of the activity."
+          },
+          "program": {
+            "$ref": "#/components/schemas/Program",
+            "description": "Program snapshot at the time of the activity."
+          },
+          "member": {
+            "$ref": "#/components/schemas/Member",
+            "description": "Member snapshot. Present only for `vl.card.assigned` and `vl.card.unassigned`."
+          },
+          "member_card": {
+            "$ref": "#/components/schemas/MemberCard",
+            "description": "Assignment snapshot. Present for `vl.card.assigned` and `vl.card.unassigned`. Omits `tier_progress`."
+          },
+          "result": {
+            "$ref": "#/components/schemas/CardCodeGenerationFailureResult",
+            "description": "Failure details. Present only for `vl.card.code_generation.failed`."
           }
         },
         "required": [
-          "id"
+          "card",
+          "program"
         ],
-        "additionalProperties": false
-      },
-      "ActivitySourceApiKey": {
-        "type": "object",
-        "description": "API key used to trigger an activity.",
-        "properties": {
-          "name": {
-            "type": "string",
-            "description": "API key name."
-          },
-          "app_id": {
-            "type": "string",
-            "description": "Application ID of the API key."
-          },
-          "client_app_id": {
-            "type": "string",
-            "description": "Client application ID of the API key."
-          }
-        },
         "additionalProperties": false
       },
       "LoyaltyV2CardPointsBucketSimple": {
@@ -46798,6 +46671,142 @@
           "tier",
           "points"
         ]
+      },
+      "Card": {
+        "type": "object",
+        "description": "A full loyalty card snapshot.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^lcrd_[a-f0-9]+$",
+            "description": "Identifies the card."
+          },
+          "program_id": {
+            "type": "string",
+            "pattern": "^lprg_[a-f0-9]+$",
+            "description": "Identifies the loyalty program."
+          },
+          "card_definition_id": {
+            "type": "string",
+            "pattern": "^lcdef_[a-f0-9]+$",
+            "description": "Identifies the card definition."
+          },
+          "card_type": {
+            "type": "string",
+            "enum": [
+              "INDIVIDUAL"
+            ],
+            "description": "Card type. Currently only `INDIVIDUAL` is supported."
+          },
+          "code": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Human-readable card code. `null` until asynchronous code generation finishes."
+          },
+          "lifetime_bucket": {
+            "$ref": "#/components/schemas/CardLifetimeBucket",
+            "description": "Lifetime point counters of the card."
+          },
+          "balance": {
+            "$ref": "#/components/schemas/CardBalance",
+            "description": "Current available balance calculated from the lifetime bucket."
+          },
+          "customer_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "pattern": "^cust_[a-zA-Z0-9]+",
+            "description": "Identifies the customer linked to the card."
+          },
+          "member_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "pattern": "^lmbr_[a-f0-9]+$",
+            "description": "Identifies the member linked to the card."
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Records when the card was created (ISO 8601)."
+          },
+          "updated_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time",
+            "description": "Records the last update (ISO 8601). `null` if the card has never been updated."
+          },
+          "object": {
+            "type": "string",
+            "const": "card",
+            "description": "Object type. Always `card`."
+          }
+        },
+        "required": [
+          "id",
+          "program_id",
+          "card_definition_id",
+          "card_type",
+          "code",
+          "lifetime_bucket",
+          "balance",
+          "created_at",
+          "updated_at",
+          "object"
+        ]
+      },
+      "ActivitySourceUser": {
+        "type": "object",
+        "description": "Dashboard user who triggered an activity.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Identifies the user."
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "additionalProperties": false
+      },
+      "ActivitySourceApiKey": {
+        "type": "object",
+        "description": "API key used to trigger an activity.",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "API key name."
+          },
+          "app_id": {
+            "type": "string",
+            "description": "Application ID of the API key."
+          },
+          "client_app_id": {
+            "type": "string",
+            "description": "Client application ID of the API key."
+          }
+        },
+        "additionalProperties": false
+      },
+      "CardCodeGenerationFailureResult": {
+        "type": "object",
+        "description": "Outcome of a failed card code generation.",
+        "properties": {
+          "details": {
+            "type": "string",
+            "description": "Explains why code generation failed."
+          }
+        },
+        "required": [
+          "details"
+        ],
+        "additionalProperties": false
       },
       "RewardPurchaseDigitalCoupon": {
         "type": "object",
