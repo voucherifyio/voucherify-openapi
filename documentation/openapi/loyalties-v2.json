@@ -1829,6 +1829,18 @@
       }
     },
     "/v2/loyalties/programs/{programId}/tier-structures/batch": {
+      "parameters": [
+        {
+          "name": "programId",
+          "in": "path",
+          "required": true,
+          "description": "Unique program identifier.",
+          "schema": {
+            "type": "string",
+            "pattern": "^lprg_[a-f0-9]+$"
+          }
+        }
+      ],
       "post": {
         "operationId": "batchProgramTierStructureAssignments",
         "tags": [
@@ -1836,24 +1848,13 @@
         ],
         "summary": "Batch assign/unassign tier structures",
         "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nAssigns and/or unassigns tier structures to/from a program in a single batch.\nUnassign operations are processed before assign operations. Unassigning is only\nallowed while the program is in `DRAFT` status - otherwise the request is rejected\nwith `423 Locked` (key `non_draft_program`). A program can have at most one tier\nstructure assigned. In strict mode (default) missing tier structures, inactive tier\nstructures or missing assignments cause the whole batch to fail.",
-        "parameters": [
-          {
-            "name": "programId",
-            "in": "path",
-            "required": true,
-            "description": "Unique program identifier.",
-            "schema": {
-              "type": "string",
-              "pattern": "^lprg_[a-f0-9]+$"
-            }
-          }
-        ],
+        "parameters": [],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ProgramTierStructureBatchRequest"
+                "$ref": "#/components/schemas/V2LoyaltiesProgramsTierStructuresBatchRequestBody"
               }
             }
           }
@@ -1864,7 +1865,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProgramTierStructureBatchResponse"
+                  "$ref": "#/components/schemas/V2LoyaltiesProgramsTierStructuresBatchResponseBody"
                 }
               }
             }
@@ -20675,76 +20676,25 @@
           }
         ]
       },
-      "ProgramTierStructureBatchRequest": {
+      "V2LoyaltiesProgramsTierStructuresBatchRequestBody": {
+        "title": "V2 Loyalties Programs Tier Structures Batch Request Body",
         "type": "object",
-        "description": "Batch of tier structure assignment operations. `unassign` operations are processed\nbefore `assign` operations. Duplicate ids within a batch are rejected.",
-        "properties": {
-          "assign": {
-            "description": "Tier structures to assign.",
-            "oneOf": [
-              {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/ProgramTierStructureAssignItem"
-                },
-                "maxItems": 10
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "unassign": {
-            "description": "Tier structures to unassign.",
-            "oneOf": [
-              {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/ProgramTierStructureUnassignItem"
-                },
-                "maxItems": 10
-              },
-              {
-                "type": "null"
-              }
-            ]
+        "description": "Request body schema for **POST** `/v2/loyalties/programs/{programId}/tier-structures/batch`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ProgramTierStructureBatchRequest"
           }
-        },
-        "additionalProperties": false
+        ]
       },
-      "ProgramTierStructureBatchResponse": {
+      "V2LoyaltiesProgramsTierStructuresBatchResponseBody": {
+        "title": "V2 Loyalties Programs Tier Structures Batch Response Body",
         "type": "object",
-        "description": "Result of a tier structure assignment batch. Keys are null when the corresponding operation list was not provided.",
-        "properties": {
-          "assigned": {
-            "description": "Assignments created by the batch, or `null` when no assign operations were requested.",
-            "oneOf": [
-              {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/ProgramTierStructureAssignment"
-                }
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "unassigned": {
-            "description": "Assignments removed by the batch, or `null` when no unassign operations were requested.",
-            "oneOf": [
-              {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/ProgramTierStructureAssignment"
-                }
-              },
-              {
-                "type": "null"
-              }
-            ]
+        "description": "Response body schema for **POST** `/v2/loyalties/programs/{programId}/tier-structures/batch`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ProgramTierStructureBatchResponse"
           }
-        }
+        ]
       },
       "LoyaltiesProgramsRewardsListResponseBody": {
         "title": "Loyalties Programs Rewards List Response Body",
@@ -28273,61 +28223,87 @@
           "cursor"
         ]
       },
-      "ProgramTierStructureAssignItem": {
+      "ProgramTierStructureBatchRequest": {
         "type": "object",
-        "description": "Tier structure to assign to the program.",
+        "description": "Batch of tier structure assignment operations. `unassign` operations are processed\nbefore `assign` operations. Duplicate ids within a batch are rejected.",
         "properties": {
-          "id": {
-            "type": "string",
-            "description": "Unique tier structure identifier.",
-            "pattern": "^lts_[a-f0-9]+$"
+          "assign": {
+            "description": "Tier structures to assign.",
+            "oneOf": [
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/ProgramTierStructureAssignItem"
+                },
+                "maxItems": 10
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "unassign": {
+            "description": "Tier structures to unassign.",
+            "oneOf": [
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/ProgramTierStructureUnassignItem"
+                },
+                "maxItems": 10
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "options": {
+            "description": "Batch behavior. Defaults to strict mode when omitted.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/ProgramTierStructureBatchOptions"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         },
-        "required": [
-          "id"
-        ],
         "additionalProperties": false
       },
-      "ProgramTierStructureUnassignItem": {
+      "ProgramTierStructureBatchResponse": {
         "type": "object",
-        "description": "Tier structure to unassign from the program.",
+        "description": "Result of a tier structure assignment batch. Keys are null when the corresponding operation list was not provided.",
         "properties": {
-          "id": {
-            "type": "string",
-            "description": "Unique tier structure identifier.",
-            "pattern": "^lts_[a-f0-9]+$"
-          }
-        },
-        "required": [
-          "id"
-        ],
-        "additionalProperties": false
-      },
-      "ProgramTierStructureAssignment": {
-        "type": "object",
-        "description": "A tier structure assigned to a program.",
-        "properties": {
-          "tier_structure_id": {
-            "type": "string",
-            "description": "Unique tier structure identifier.",
-            "pattern": "^lts_[a-f0-9]+$"
+          "assigned": {
+            "description": "Assignments created by the batch, or `null` when no assign operations were requested.",
+            "oneOf": [
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/ProgramTierStructureAssignment"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
-          "created_at": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Assignment creation timestamp (ISO 8601)."
-          },
-          "object": {
-            "type": "string",
-            "description": "Object type marker.",
-            "const": "program_tier_structure"
+          "unassigned": {
+            "description": "Assignments removed by the batch, or `null` when no unassign operations were requested.",
+            "oneOf": [
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/ProgramTierStructureAssignment"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
-        },
-        "required": [
-          "tier_structure_id",
-          "created_at",
-          "object"
-        ]
+        }
       },
       "ProgramRewardAssignmentListResponse": {
         "type": "object",
@@ -40777,6 +40753,21 @@
         ],
         "additionalProperties": false
       },
+      "ProgramTierStructureAssignItem": {
+        "type": "object",
+        "description": "Tier structure to assign to the program.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique tier structure identifier.",
+            "pattern": "^lts_[a-f0-9]+$"
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "additionalProperties": false
+      },
       "ProgramCreateAssignedCardDefinition": {
         "type": "object",
         "description": "Card definition assigned during program creation.",
@@ -40976,6 +40967,59 @@
           "strict": {
             "type": "boolean",
             "description": "Fails the batch when an earning rule is missing, or when an assignment to remove is missing. Defaults to `true`.",
+            "default": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProgramTierStructureAssignment": {
+        "type": "object",
+        "description": "A tier structure assigned to a program.",
+        "properties": {
+          "tier_structure_id": {
+            "type": "string",
+            "description": "Unique tier structure identifier.",
+            "pattern": "^lts_[a-f0-9]+$"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Assignment creation timestamp (ISO 8601)."
+          },
+          "object": {
+            "type": "string",
+            "description": "Object type marker.",
+            "const": "program_tier_structure"
+          }
+        },
+        "required": [
+          "tier_structure_id",
+          "created_at",
+          "object"
+        ]
+      },
+      "ProgramTierStructureUnassignItem": {
+        "type": "object",
+        "description": "Tier structure to unassign from the program.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique tier structure identifier.",
+            "pattern": "^lts_[a-f0-9]+$"
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "additionalProperties": false
+      },
+      "ProgramTierStructureBatchOptions": {
+        "type": "object",
+        "description": "Options for a tier structure assignment batch.",
+        "properties": {
+          "strict": {
+            "type": "boolean",
+            "description": "Fails the batch when a tier structure is missing or inactive, or when an assignment to remove is missing. Defaults to `true`.",
             "default": true
           }
         },
