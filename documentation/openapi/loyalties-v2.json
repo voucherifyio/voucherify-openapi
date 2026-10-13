@@ -3284,7 +3284,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MemberWithCards"
+                  "$ref": "#/components/schemas/V2LoyaltiesProgramsMembersGetResponseBody"
                 },
                 "examples": {
                   "Get member with cards": {
@@ -20733,26 +20733,13 @@
           }
         }
       },
-      "MemberWithCards": {
-        "description": "A loyalty program member together with its loyalty cards. Returned by member create and get endpoints.",
+      "V2LoyaltiesProgramsMembersGetResponseBody": {
+        "title": "V2 Loyalties Programs Members Get Response Body",
+        "type": "object",
+        "description": "Response body schema for **GET** `/v2/loyalties/programs/{programId}/members/{memberId}`.",
         "allOf": [
           {
-            "$ref": "#/components/schemas/Member"
-          },
-          {
-            "type": "object",
-            "properties": {
-              "cards": {
-                "description": "Member's loyalty cards - one per card definition assigned to the program. Card codes are generated asynchronously, so `card.code` may be `null` right after member creation.",
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/MemberCard"
-                }
-              }
-            },
-            "required": [
-              "cards"
-            ]
+            "$ref": "#/components/schemas/MemberWithCards"
           }
         ]
       },
@@ -26573,6 +26560,29 @@
           "customer_identification"
         ]
       },
+      "MemberWithCards": {
+        "description": "A loyalty program member together with its loyalty cards. Returned by member create and get endpoints.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Member"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "cards": {
+                "description": "Member's loyalty cards - one per card definition assigned to the program. Card codes are generated asynchronously, so `card.code` may be `null` right after member creation.",
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/MemberCard"
+                }
+              }
+            },
+            "required": [
+              "cards"
+            ]
+          }
+        ]
+      },
       "LoyaltiesProgramsMembersListRequestQueryId": {
         "type": "object",
         "description": "ID filter conditions for member IDs. At least one condition is required.",
@@ -27166,47 +27176,6 @@
           "metadata",
           "created_at",
           "updated_at",
-          "object"
-        ]
-      },
-      "MemberCard": {
-        "type": "object",
-        "description": "A member's loyalty card - the member's assignment to the card (`member_role`, `created_at`) combined with the card details in the `card` object.",
-        "properties": {
-          "member_role": {
-            "type": "string",
-            "enum": [
-              "OWNER",
-              "MEMBER"
-            ],
-            "description": "Role of the member on this card. Currently, loyalty program members can have only the `OWNER` role."
-          },
-          "created_at": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Timestamp when the card was assigned to the member (ISO 8601)."
-          },
-          "card": {
-            "description": "The loyalty card details, or `null` when the card is not available.",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/CardSimple"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "object": {
-            "type": "string",
-            "const": "member_card",
-            "description": "Object type marker, always `member_card`."
-          }
-        },
-        "required": [
-          "member_role",
-          "created_at",
-          "card",
           "object"
         ]
       },
@@ -38863,58 +38832,28 @@
           }
         ]
       },
-      "CardSimple": {
+      "MemberCard": {
         "type": "object",
-        "description": "A loyalty card in its simple representation, as embedded in member responses.",
+        "description": "A member's loyalty card - the member's assignment to the card (`member_role`, `created_at`) combined with the card details in the `card` object.",
         "properties": {
-          "id": {
-            "type": "string",
-            "pattern": "^lcrd_[a-f0-9]+$",
-            "description": "Unique Voucherify ID of the card."
-          },
-          "card_definition_id": {
-            "type": "string",
-            "pattern": "^lcdef_[a-f0-9]+$",
-            "description": "Unique Voucherify ID of the card definition the card was created from."
-          },
-          "card_type": {
+          "member_role": {
             "type": "string",
             "enum": [
-              "INDIVIDUAL"
+              "OWNER",
+              "MEMBER"
             ],
-            "description": "Card type. Currently only `INDIVIDUAL` is supported."
+            "description": "Role of the member on this card. Currently, loyalty program members can have only the `OWNER` role."
           },
-          "code": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "description": "Human-readable card code. Card code generation is asynchronous - this field is `null` right after member creation and is populated shortly after, once the background code generation completes."
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp when the card was assigned to the member (ISO 8601)."
           },
-          "lifetime_bucket": {
-            "$ref": "#/components/schemas/CardLifetimeBucket",
-            "description": "Lifetime point counters of the card."
-          },
-          "balance": {
-            "$ref": "#/components/schemas/CardBalance",
-            "description": "Current available balance calculated from the lifetime bucket."
-          },
-          "next_expiration": {
-            "description": "The nearest upcoming point expiration, or `null` when none is scheduled.",
+          "card": {
+            "description": "The loyalty card details, or `null` when the card is not available.",
             "oneOf": [
               {
-                "$ref": "#/components/schemas/CardNextExpiration"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "next_activation": {
-            "description": "The nearest upcoming pending point activation, or `null` when none is scheduled.",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/CardNextActivation"
+                "$ref": "#/components/schemas/CardSimple"
               },
               {
                 "type": "null"
@@ -38923,19 +38862,14 @@
           },
           "object": {
             "type": "string",
-            "const": "card",
-            "description": "Object type marker, always `card`."
+            "const": "member_card",
+            "description": "Object type marker, always `member_card`."
           }
         },
         "required": [
-          "id",
-          "card_definition_id",
-          "card_type",
-          "code",
-          "lifetime_bucket",
-          "balance",
-          "next_expiration",
-          "next_activation",
+          "member_role",
+          "created_at",
+          "card",
           "object"
         ]
       },
@@ -43381,97 +43315,80 @@
         ],
         "additionalProperties": false
       },
-      "CardLifetimeBucket": {
+      "CardSimple": {
         "type": "object",
-        "description": "Lifetime points counters of a card.",
+        "description": "A loyalty card in its simple representation, as embedded in member responses.",
         "properties": {
-          "points": {
-            "$ref": "#/components/schemas/CardLifetimeBucketPoints",
-            "description": "Lifetime counters of regular (active) points."
-          },
-          "pending_points": {
-            "$ref": "#/components/schemas/CardLifetimeBucketPendingPoints",
-            "description": "Lifetime counters of pending points."
-          }
-        },
-        "required": [
-          "points",
-          "pending_points"
-        ]
-      },
-      "CardBalance": {
-        "type": "object",
-        "description": "Current available balance of a card.",
-        "properties": {
-          "points": {
-            "type": "number",
-            "description": "Currently available regular points.",
-            "default": 0
-          },
-          "pending_points": {
-            "type": "number",
-            "description": "Currently pending (not yet activated) points.",
-            "default": 0
-          }
-        },
-        "required": [
-          "points",
-          "pending_points"
-        ]
-      },
-      "CardNextExpiration": {
-        "type": "object",
-        "description": "The nearest upcoming points expiration on a card.",
-        "properties": {
-          "points": {
-            "type": "number",
-            "description": "Number of points that will expire.",
-            "default": 0
-          },
-          "date": {
+          "id": {
             "type": "string",
-            "format": "date",
-            "description": "Date when the points expire (`YYYY-MM-DD`)."
-          }
-        },
-        "required": [
-          "points",
-          "date"
-        ]
-      },
-      "CardNextActivation": {
-        "type": "object",
-        "description": "The nearest upcoming pending points activation on a card. For the `EVENT_BASED` type, `date` is omitted and `cancel_date` is returned instead; for other types `date` is returned and `cancel_date` is omitted.",
-        "properties": {
-          "points": {
-            "type": "number",
-            "description": "Number of pending points to be activated.",
-            "default": 0
+            "pattern": "^lcrd_[a-f0-9]+$",
+            "description": "Unique Voucherify ID of the card."
           },
-          "type": {
+          "card_definition_id": {
+            "type": "string",
+            "pattern": "^lcdef_[a-f0-9]+$",
+            "description": "Unique Voucherify ID of the card definition the card was created from."
+          },
+          "card_type": {
             "type": "string",
             "enum": [
-              "IMMEDIATE",
-              "PERIOD_BASED",
-              "FIXED_DATES",
-              "EVENT_BASED"
+              "INDIVIDUAL"
             ],
-            "description": "Pending points activation type from the card definition."
+            "description": "Card type. Currently only `INDIVIDUAL` is supported."
           },
-          "date": {
-            "type": "string",
-            "format": "date",
-            "description": "Activation date (`YYYY-MM-DD`). Present for all types except `EVENT_BASED`."
+          "code": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Human-readable card code. Card code generation is asynchronous - this field is `null` right after member creation and is populated shortly after, once the background code generation completes."
           },
-          "cancel_date": {
+          "lifetime_bucket": {
+            "$ref": "#/components/schemas/CardLifetimeBucket",
+            "description": "Lifetime point counters of the card."
+          },
+          "balance": {
+            "$ref": "#/components/schemas/CardBalance",
+            "description": "Current available balance calculated from the lifetime bucket."
+          },
+          "next_expiration": {
+            "description": "The nearest upcoming point expiration, or `null` when none is scheduled.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/CardNextExpiration"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "next_activation": {
+            "description": "The nearest upcoming pending point activation, or `null` when none is scheduled.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/CardNextActivation"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "object": {
             "type": "string",
-            "format": "date",
-            "description": "Date when the pending points are canceled if the activating event does not occur (`YYYY-MM-DD`). Present only for the `EVENT_BASED` type."
+            "const": "card",
+            "description": "Object type marker, always `card`."
           }
         },
         "required": [
-          "points",
-          "type"
+          "id",
+          "card_definition_id",
+          "card_type",
+          "code",
+          "lifetime_bucket",
+          "balance",
+          "next_expiration",
+          "next_activation",
+          "object"
         ]
       },
       "MemberTierProgress": {
@@ -46571,110 +46488,97 @@
         ],
         "title": "Loyalties Examine Rewards Examine Response Body Card Reward Estimation"
       },
-      "CardLifetimeBucketPoints": {
+      "CardLifetimeBucket": {
         "type": "object",
-        "description": "Lifetime counters of regular points. All counters default to 0. The available balance is calculated as: `total` - `subtracted` - `expired` - `spent` - `refunded` + `returned` - `locked` + `unlocked` - `purchased_reversed`.",
+        "description": "Lifetime points counters of a card.",
         "properties": {
-          "total": {
-            "type": "number",
-            "description": "Total accumulated points, including points added manually, earned by fulfilling earning rules and activated from pending points (excluding returned points).",
-            "default": 0
+          "points": {
+            "$ref": "#/components/schemas/CardLifetimeBucketPoints",
+            "description": "Lifetime counters of regular (active) points."
           },
-          "earned": {
-            "type": "number",
-            "description": "Total points earned by fulfilling earning rules (does not include activated pending points or points added manually).",
-            "default": 0
-          },
-          "added": {
-            "type": "number",
-            "description": "Total manually added points.",
-            "default": 0
-          },
-          "purchased": {
-            "type": "number",
-            "description": "Total points purchased via a `LOYALTY_CARD_POINTS` reward (credited to the target card).",
-            "default": 0
-          },
-          "purchased_reversed": {
-            "type": "number",
-            "description": "Total purchased points reversed via reward refund.",
-            "default": 0
-          },
-          "subtracted": {
-            "type": "number",
-            "description": "Total manually subtracted points.",
-            "default": 0
-          },
-          "expired": {
-            "type": "number",
-            "description": "Total expired points.",
-            "default": 0
-          },
-          "spent": {
-            "type": "number",
-            "description": "Total points spent on rewards.",
-            "default": 0
-          },
-          "refunded": {
-            "type": "number",
-            "description": "Total refunded points (points that were earned by products which were later returned).",
-            "default": 0
-          },
-          "returned": {
-            "type": "number",
-            "description": "Total returned points (by returning a purchased reward).",
-            "default": 0
-          },
-          "locked": {
-            "type": "number",
-            "description": "Total locked points (by locking a purchased reward).",
-            "default": 0
-          },
-          "unlocked": {
-            "type": "number",
-            "description": "Total unlocked points (by unlocking a purchased reward).",
-            "default": 0
+          "pending_points": {
+            "$ref": "#/components/schemas/CardLifetimeBucketPendingPoints",
+            "description": "Lifetime counters of pending points."
           }
         },
         "required": [
-          "total",
-          "earned",
-          "added",
-          "purchased",
-          "purchased_reversed",
-          "subtracted",
-          "expired",
-          "spent",
-          "refunded",
-          "returned",
-          "locked",
-          "unlocked"
+          "points",
+          "pending_points"
         ]
       },
-      "CardLifetimeBucketPendingPoints": {
+      "CardBalance": {
         "type": "object",
-        "description": "Lifetime counters of pending points. The available pending balance is max(`total` - `activated` - `canceled`, 0).",
+        "description": "Current available balance of a card.",
         "properties": {
-          "total": {
+          "points": {
             "type": "number",
-            "description": "Total pending points ever added.",
+            "description": "Currently available regular points.",
             "default": 0
           },
-          "activated": {
+          "pending_points": {
             "type": "number",
-            "description": "Total pending points activated into regular points.",
-            "default": 0
-          },
-          "canceled": {
-            "type": "number",
-            "description": "Total pending points canceled.",
+            "description": "Currently pending (not yet activated) points.",
             "default": 0
           }
         },
         "required": [
-          "total",
-          "activated",
-          "canceled"
+          "points",
+          "pending_points"
+        ]
+      },
+      "CardNextExpiration": {
+        "type": "object",
+        "description": "The nearest upcoming points expiration on a card.",
+        "properties": {
+          "points": {
+            "type": "number",
+            "description": "Number of points that will expire.",
+            "default": 0
+          },
+          "date": {
+            "type": "string",
+            "format": "date",
+            "description": "Date when the points expire (`YYYY-MM-DD`)."
+          }
+        },
+        "required": [
+          "points",
+          "date"
+        ]
+      },
+      "CardNextActivation": {
+        "type": "object",
+        "description": "The nearest upcoming pending points activation on a card. For the `EVENT_BASED` type, `date` is omitted and `cancel_date` is returned instead; for other types `date` is returned and `cancel_date` is omitted.",
+        "properties": {
+          "points": {
+            "type": "number",
+            "description": "Number of pending points to be activated.",
+            "default": 0
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "IMMEDIATE",
+              "PERIOD_BASED",
+              "FIXED_DATES",
+              "EVENT_BASED"
+            ],
+            "description": "Pending points activation type from the card definition."
+          },
+          "date": {
+            "type": "string",
+            "format": "date",
+            "description": "Activation date (`YYYY-MM-DD`). Present for all types except `EVENT_BASED`."
+          },
+          "cancel_date": {
+            "type": "string",
+            "format": "date",
+            "description": "Date when the pending points are canceled if the activating event does not occur (`YYYY-MM-DD`). Present only for the `EVENT_BASED` type."
+          }
+        },
+        "required": [
+          "points",
+          "type"
         ]
       },
       "MemberTierProgressCurrent": {
@@ -49038,6 +48942,112 @@
           "object"
         ],
         "title": "Loyalties Examine Rewards Examine Response Body Reward Unavailability Reason"
+      },
+      "CardLifetimeBucketPoints": {
+        "type": "object",
+        "description": "Lifetime counters of regular points. All counters default to 0. The available balance is calculated as: `total` - `subtracted` - `expired` - `spent` - `refunded` + `returned` - `locked` + `unlocked` - `purchased_reversed`.",
+        "properties": {
+          "total": {
+            "type": "number",
+            "description": "Total accumulated points, including points added manually, earned by fulfilling earning rules and activated from pending points (excluding returned points).",
+            "default": 0
+          },
+          "earned": {
+            "type": "number",
+            "description": "Total points earned by fulfilling earning rules (does not include activated pending points or points added manually).",
+            "default": 0
+          },
+          "added": {
+            "type": "number",
+            "description": "Total manually added points.",
+            "default": 0
+          },
+          "purchased": {
+            "type": "number",
+            "description": "Total points purchased via a `LOYALTY_CARD_POINTS` reward (credited to the target card).",
+            "default": 0
+          },
+          "purchased_reversed": {
+            "type": "number",
+            "description": "Total purchased points reversed via reward refund.",
+            "default": 0
+          },
+          "subtracted": {
+            "type": "number",
+            "description": "Total manually subtracted points.",
+            "default": 0
+          },
+          "expired": {
+            "type": "number",
+            "description": "Total expired points.",
+            "default": 0
+          },
+          "spent": {
+            "type": "number",
+            "description": "Total points spent on rewards.",
+            "default": 0
+          },
+          "refunded": {
+            "type": "number",
+            "description": "Total refunded points (points that were earned by products which were later returned).",
+            "default": 0
+          },
+          "returned": {
+            "type": "number",
+            "description": "Total returned points (by returning a purchased reward).",
+            "default": 0
+          },
+          "locked": {
+            "type": "number",
+            "description": "Total locked points (by locking a purchased reward).",
+            "default": 0
+          },
+          "unlocked": {
+            "type": "number",
+            "description": "Total unlocked points (by unlocking a purchased reward).",
+            "default": 0
+          }
+        },
+        "required": [
+          "total",
+          "earned",
+          "added",
+          "purchased",
+          "purchased_reversed",
+          "subtracted",
+          "expired",
+          "spent",
+          "refunded",
+          "returned",
+          "locked",
+          "unlocked"
+        ]
+      },
+      "CardLifetimeBucketPendingPoints": {
+        "type": "object",
+        "description": "Lifetime counters of pending points. The available pending balance is max(`total` - `activated` - `canceled`, 0).",
+        "properties": {
+          "total": {
+            "type": "number",
+            "description": "Total pending points ever added.",
+            "default": 0
+          },
+          "activated": {
+            "type": "number",
+            "description": "Total pending points activated into regular points.",
+            "default": 0
+          },
+          "canceled": {
+            "type": "number",
+            "description": "Total pending points canceled.",
+            "default": 0
+          }
+        },
+        "required": [
+          "total",
+          "activated",
+          "canceled"
+        ]
       },
       "MemberTierProgressTier": {
         "type": "object",
