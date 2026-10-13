@@ -15647,7 +15647,11 @@
             "required": false,
             "description": "Maximum number of items returned per page. An integer between 1 and 100.\nDefaults to 10.",
             "schema": {
-              "type": "integer",
+              "type": [
+                "number",
+                "string",
+                "null"
+              ],
               "minimum": 1,
               "maximum": 100,
               "default": 10
@@ -15688,6 +15692,9 @@
                       "-status"
                     ]
                   }
+                },
+                {
+                  "type": "null"
                 }
               ]
             }
@@ -15698,7 +15705,10 @@
             "required": false,
             "description": "Pagination cursor returned in the `cursor.next` field of a previous response.\nMust match the tier structures cursor id format.",
             "schema": {
-              "type": "string",
+              "type": [
+                "string",
+                "null"
+              ],
               "pattern": "^lcrsts_[a-f0-9]+$"
             }
           },
@@ -15710,7 +15720,14 @@
             "explode": true,
             "description": "Field-specific filter conditions, passed as a deep object\n(e.g. `filters[status][conditions][$is]=ACTIVE`).",
             "schema": {
-              "$ref": "#/components/schemas/LoyaltiesTierStructuresListRequestQuery"
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/LoyaltiesTierStructuresListRequestQuery"
+                },
+                {
+                  "type": "null"
+                }
+              ]
             }
           }
         ],
@@ -15720,7 +15737,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/TierStructureListResponse"
+                  "$ref": "#/components/schemas/V2LoyaltiesTierStructuresListResponseBody"
                 }
               }
             }
@@ -24086,50 +24103,14 @@
         "additionalProperties": false,
         "title": "Loyalties Tier Structures List Request Query"
       },
-      "TierStructureListResponse": {
+      "V2LoyaltiesTierStructuresListResponseBody": {
+        "title": "V2 Loyalties Tier Structures List Response Body",
         "type": "object",
-        "description": "Cursor-paginated list of tier structures.",
-        "properties": {
-          "data": {
-            "type": "array",
-            "description": "Tier structures on the current page.",
-            "items": {
-              "$ref": "#/components/schemas/TierStructure"
-            }
-          },
-          "cursor": {
-            "description": "Pagination cursor for fetching the next page, or `null` when there are no more\nresults.",
-            "oneOf": [
-              {
-                "type": "object",
-                "properties": {
-                  "next": {
-                    "type": "string",
-                    "pattern": "^lcrsts_[a-f0-9]+$",
-                    "description": "Cursor id to pass as the `cursor` query parameter for the next page."
-                  },
-                  "expires_at": {
-                    "type": "string",
-                    "format": "date-time",
-                    "description": "Timestamp after which the cursor expires (ISO 8601)."
-                  }
-                }
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "object": {
-            "type": "string",
-            "const": "list",
-            "description": "Object type discriminator. Always `list`."
+        "description": "Response body schema for **GET** `/v2/loyalties/tier-structures`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/TierStructureListResponse"
           }
-        },
-        "required": [
-          "data",
-          "cursor",
-          "object"
         ]
       },
       "TierStructureUpdateRequest": {
@@ -35846,6 +35827,52 @@
           "conditions"
         ],
         "additionalProperties": false
+      },
+      "TierStructureListResponse": {
+        "type": "object",
+        "description": "Cursor-paginated list of tier structures.",
+        "properties": {
+          "data": {
+            "type": "array",
+            "description": "Tier structures on the current page.",
+            "items": {
+              "$ref": "#/components/schemas/TierStructure"
+            }
+          },
+          "cursor": {
+            "description": "Pagination cursor for fetching the next page, or `null` when there are no more\nresults.",
+            "oneOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "next": {
+                    "type": "string",
+                    "pattern": "^lcrsts_[a-f0-9]+$",
+                    "description": "Cursor id to pass as the `cursor` query parameter for the next page."
+                  },
+                  "expires_at": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "Timestamp after which the cursor expires (ISO 8601)."
+                  }
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "object": {
+            "type": "string",
+            "const": "list",
+            "description": "Object type discriminator. Always `list`."
+          }
+        },
+        "required": [
+          "data",
+          "cursor",
+          "object"
+        ]
       },
       "TierQualificationRulesUpsert": {
         "type": "object",
