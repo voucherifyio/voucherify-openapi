@@ -81988,6 +81988,16 @@
           }
         ]
       },
+      "V2LoyaltiesEarningRulesDraftResponseBody": {
+        "title": "V2 Loyalties Earning Rules Draft Response Body",
+        "type": "object",
+        "description": "Response body schema for **POST** `/v2/loyalties/earning-rules/{earningRuleId}/draft`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EarningRuleResponse"
+          }
+        ]
+      },
       "EarningRuleResponse": {
         "type": "object",
         "description": "Earning rule as returned by the API.",
@@ -162084,20 +162094,32 @@
       }
     },
     "/v2/loyalties/earning-rules/{earningRuleId}/draft": {
+      "parameters": [
+        {
+          "name": "earningRuleId",
+          "in": "path",
+          "required": true,
+          "description": "Earning rule ID.",
+          "schema": {
+            "type": "string",
+            "pattern": "^lern_[a-f0-9]+$"
+          }
+        }
+      ],
       "post": {
         "tags": [
           "LV2-Earning Rules"
         ],
         "operationId": "draftEarningRule",
         "summary": "Move earning rule to draft",
-        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nMoves the earning rule back to `DRAFT` status. No request body.\nAllowed transition: `ACTIVE -> DRAFT`.\nInvalid transitions are rejected with a conflict error.",
+        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nMoves the earning rule from `ACTIVE` to `DRAFT`. No request body. Any other status returns `400` (`invalid_state_transition`). Returns `423` (`connected_non_draft_program`) when a non-draft program still uses the earning rule.",
         "responses": {
           "200": {
             "description": "Drafted earning rule",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/EarningRuleResponse"
+                  "$ref": "#/components/schemas/V2LoyaltiesEarningRulesDraftResponseBody"
                 }
               }
             }
@@ -162122,8 +162144,8 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
+          "423": {
+            "description": "The earning rule is used by a non-draft program.",
             "content": {
               "application/json": {
                 "schema": {
@@ -162152,18 +162174,6 @@
             }
           }
         },
-        "parameters": [
-          {
-            "name": "earningRuleId",
-            "in": "path",
-            "required": true,
-            "description": "Earning rule ID.",
-            "schema": {
-              "type": "string",
-              "pattern": "^lern_[a-f0-9]+$"
-            }
-          }
-        ],
         "security": [
           {
             "X-App-Id": [],
