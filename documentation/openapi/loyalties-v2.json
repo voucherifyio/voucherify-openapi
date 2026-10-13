@@ -323,7 +323,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Program"
+                  "$ref": "#/components/schemas/V2LoyaltiesProgramsGetResponseBody"
                 }
               }
             }
@@ -20447,6 +20447,67 @@
           }
         ]
       },
+      "V2LoyaltiesProgramsGetResponseBody": {
+        "title": "V2 Loyalties Programs Get Response Body",
+        "type": "object",
+        "description": "Response body schema for **GET** `/v2/loyalties/programs/{programId}`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Program"
+          }
+        ]
+      },
+      "ProgramUpdateRequest": {
+        "type": "object",
+        "description": "Payload for updating a loyalty program. All properties are optional. When the program is\nnot in `DRAFT` status, only `name` and `metadata` may be changed.",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Program name.",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "start_date": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time",
+            "description": "Program validity start date, in ISO 8601 date-time format."
+          },
+          "end_date": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time",
+            "description": "Program validity end date, in ISO 8601 date-time format."
+          },
+          "validity_hours": {
+            "description": "Validity hours configuration.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/ProgramValidityHoursUpsert"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "metadata": {
+            "description": "Arbitrary key-value metadata. Validated against the `vl_program` metadata schema definition of the project.",
+            "oneOf": [
+              {
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
       "Program": {
         "type": "object",
         "description": "A loyalty program.",
@@ -20513,57 +20574,6 @@
             "const": "program"
           }
         }
-      },
-      "ProgramUpdateRequest": {
-        "type": "object",
-        "description": "Payload for updating a loyalty program. All properties are optional. When the program is\nnot in `DRAFT` status, only `name` and `metadata` may be changed.",
-        "properties": {
-          "name": {
-            "type": "string",
-            "description": "Program name.",
-            "minLength": 1,
-            "maxLength": 200
-          },
-          "start_date": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "format": "date-time",
-            "description": "Program validity start date, in ISO 8601 date-time format."
-          },
-          "end_date": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "format": "date-time",
-            "description": "Program validity end date, in ISO 8601 date-time format."
-          },
-          "validity_hours": {
-            "description": "Validity hours configuration.",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/ProgramValidityHoursUpsert"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "metadata": {
-            "description": "Arbitrary key-value metadata. Validated against the `vl_program` metadata schema definition of the project.",
-            "oneOf": [
-              {
-                "type": "object"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          }
-        },
-        "additionalProperties": false
       },
       "LoyaltiesProgramsActivitiesListRequestQuery": {
         "type": "object",
@@ -27727,27 +27737,6 @@
           }
         }
       },
-      "ProgramValidityHours": {
-        "type": "object",
-        "description": "Validity hours configuration of the program.",
-        "properties": {
-          "type": {
-            "type": "string",
-            "description": "Validity hours mode.",
-            "enum": [
-              "DAILY",
-              "ANY_TIME"
-            ]
-          },
-          "daily": {
-            "type": "array",
-            "description": "Daily validity windows. Present only when `type` is `DAILY`.",
-            "items": {
-              "$ref": "#/components/schemas/ProgramValidityDailyHours"
-            }
-          }
-        }
-      },
       "ProgramValidityHoursUpsert": {
         "type": "object",
         "description": "Validity hours configuration. When `type` is `ANY_TIME`, `daily` must be omitted or `null`.\nWhen `type` is `DAILY`, `daily` is required and must contain at least one window.",
@@ -27821,6 +27810,27 @@
             }
           }
         ]
+      },
+      "ProgramValidityHours": {
+        "type": "object",
+        "description": "Validity hours configuration of the program.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "Validity hours mode.",
+            "enum": [
+              "DAILY",
+              "ANY_TIME"
+            ]
+          },
+          "daily": {
+            "type": "array",
+            "description": "Daily validity windows. Present only when `type` is `DAILY`.",
+            "items": {
+              "$ref": "#/components/schemas/ProgramValidityDailyHours"
+            }
+          }
+        }
       },
       "LoyaltiesProgramsActivitiesListRequestQueryId": {
         "type": "object",
@@ -40808,29 +40818,6 @@
           }
         }
       },
-      "ProgramValidityDailyHours": {
-        "type": "object",
-        "description": "A single daily validity-hours window.",
-        "properties": {
-          "days_of_week": {
-            "type": "array",
-            "description": "Days of week the window applies to. 0 = Sunday through 6 = Saturday.",
-            "items": {
-              "type": "integer",
-              "minimum": 0,
-              "maximum": 6
-            }
-          },
-          "start_time": {
-            "type": "string",
-            "description": "Window start time in `HH:mm` format."
-          },
-          "end_time": {
-            "type": "string",
-            "description": "Window end time in `HH:mm` format."
-          }
-        }
-      },
       "ProgramValidityDailyHoursUpsert": {
         "type": "object",
         "description": "A single daily validity-hours window definition.",
@@ -40864,6 +40851,29 @@
           "end_time"
         ],
         "additionalProperties": false
+      },
+      "ProgramValidityDailyHours": {
+        "type": "object",
+        "description": "A single daily validity-hours window.",
+        "properties": {
+          "days_of_week": {
+            "type": "array",
+            "description": "Days of week the window applies to. 0 = Sunday through 6 = Saturday.",
+            "items": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 6
+            }
+          },
+          "start_time": {
+            "type": "string",
+            "description": "Window start time in `HH:mm` format."
+          },
+          "end_time": {
+            "type": "string",
+            "description": "Window end time in `HH:mm` format."
+          }
+        }
       },
       "ProgramActivitySource": {
         "type": "object",
