@@ -79338,6 +79338,16 @@
           }
         ]
       },
+      "V2LoyaltiesCardDefinitionsDraftResponseBody": {
+        "title": "V2 Loyalties Card Definitions Draft Response Body",
+        "type": "object",
+        "description": "Response body schema for **POST** `/v2/loyalties/card-definitions/{cardDefinitionId}/draft`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/CardDefinition"
+          }
+        ]
+      },
       "V2LoyaltiesCardDefinitionsCreateResponseBody": {
         "title": "V2 Loyalties Card Definitions Create Response Body",
         "type": "object",
@@ -160922,20 +160932,32 @@
       }
     },
     "/v2/loyalties/card-definitions/{cardDefinitionId}/draft": {
+      "parameters": [
+        {
+          "name": "cardDefinitionId",
+          "in": "path",
+          "required": true,
+          "description": "Unique card definition ID. Pattern: `^lcdef_[a-f0-9]+$`.",
+          "schema": {
+            "type": "string",
+            "pattern": "^lcdef_[a-f0-9]+$"
+          }
+        }
+      ],
       "post": {
         "operationId": "draftCardDefinition",
         "tags": [
           "LV2-Card Definitions"
         ],
         "summary": "Draft Card Definition",
-        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nTransitions the card definition from `ACTIVE` back to `DRAFT`.\nNo request body. Drafting from any other state results in an\ninvalid state transition error (409).",
+        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nTransitions the card definition from `ACTIVE` to `DRAFT`. No request body. Drafting from any other state returns `400` (`invalid_state_transition`). Returns `423` when the card definition is still used by a non-draft program (`connected_non_draft_program`), reward (`connected_non_draft_reward`), earning rule (`connected_non_draft_earning_rule`), benefit (`connected_non_draft_benefit`), or tier structure (`connected_non_draft_tier_structure`).",
         "responses": {
           "200": {
             "description": "The drafted card definition.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CardDefinition"
+                  "$ref": "#/components/schemas/V2LoyaltiesCardDefinitionsDraftResponseBody"
                 }
               }
             }
@@ -160960,8 +160982,8 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict - invalid state transition",
+          "423": {
+            "description": "The card definition is used by a non-draft program, reward, earning rule, benefit, or tier structure.",
             "content": {
               "application/json": {
                 "schema": {
@@ -160990,18 +161012,6 @@
             }
           }
         },
-        "parameters": [
-          {
-            "name": "cardDefinitionId",
-            "in": "path",
-            "required": true,
-            "description": "Unique card definition ID. Pattern: `^lcdef_[a-f0-9]+$`.",
-            "schema": {
-              "type": "string",
-              "pattern": "^lcdef_[a-f0-9]+$"
-            }
-          }
-        ],
         "security": [
           {
             "X-App-Id": [],
