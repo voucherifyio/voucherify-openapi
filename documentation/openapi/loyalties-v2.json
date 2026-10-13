@@ -18854,6 +18854,18 @@
       }
     },
     "/v2/loyalties/rewards/{rewardId}/activities": {
+      "parameters": [
+        {
+          "name": "rewardId",
+          "in": "path",
+          "required": true,
+          "description": "Unique reward identifier, prefixed with `lrew_`.",
+          "schema": {
+            "type": "string",
+            "pattern": "^lrew_[a-f0-9]+$"
+          }
+        }
+      ],
       "get": {
         "operationId": "listRewardActivities",
         "tags": [
@@ -18863,23 +18875,14 @@
         "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nReturns a cursor-paginated list of activities recorded for the given reward\n(created, updated, deleted, assigned, unassigned, activated, deactivated, drafted).\nReturns `404` when the reward does not exist.",
         "parameters": [
           {
-            "name": "rewardId",
-            "in": "path",
-            "required": true,
-            "description": "Unique reward identifier, prefixed with `lrew_`.",
-            "schema": {
-              "type": "string",
-              "pattern": "^lrew_[a-f0-9]+$"
-            }
-          },
-          {
             "name": "limit",
             "in": "query",
             "required": false,
             "description": "Maximum number of activities to return. Must be between 1 and 100.\nDefaults to 10 when not provided.",
             "schema": {
               "type": [
-                "integer",
+                "number",
+                "string",
                 "null"
               ],
               "minimum": 1,
@@ -18955,7 +18958,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/RewardActivityListResponse"
+                  "$ref": "#/components/schemas/V2LoyaltiesRewardsActivitiesListResponseBody"
                 }
               }
             }
@@ -18972,16 +18975,6 @@
           },
           "404": {
             "description": "Resource not found.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
             "content": {
               "application/json": {
                 "schema": {
@@ -24424,38 +24417,14 @@
         "additionalProperties": false,
         "title": "Loyalties Rewards Activities List Request Query"
       },
-      "RewardActivityListResponse": {
+      "V2LoyaltiesRewardsActivitiesListResponseBody": {
+        "title": "V2 Loyalties Rewards Activities List Response Body",
         "type": "object",
-        "description": "Cursor-paginated list of reward activities.",
-        "properties": {
-          "data": {
-            "type": "array",
-            "description": "The activities on the current page.",
-            "items": {
-              "$ref": "#/components/schemas/RewardActivity"
-            }
-          },
-          "cursor": {
-            "description": "Pagination cursor, or `null` when there are no more results.",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/RewardListCursor"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "object": {
-            "type": "string",
-            "const": "list",
-            "description": "Object type marker; always `list`."
+        "description": "Response body schema for **GET** `/v2/loyalties/rewards/{rewardId}/activities`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/RewardActivityListResponse"
           }
-        },
-        "required": [
-          "data",
-          "cursor",
-          "object"
         ]
       },
       "LoyaltiesExamineEarningRulesExamineRequestBody": {
@@ -37865,69 +37834,38 @@
         ],
         "additionalProperties": false
       },
-      "RewardActivity": {
+      "RewardActivityListResponse": {
         "type": "object",
-        "description": "A reward activity entry.",
+        "description": "Cursor-paginated list of reward activities.",
         "properties": {
-          "id": {
-            "type": "string",
-            "pattern": "^larew_[a-f0-9]+$",
-            "description": "Unique activity identifier, prefixed with `larew_`."
-          },
-          "type": {
-            "$ref": "#/components/schemas/RewardActivityType",
-            "description": "Type of the activity."
-          },
           "data": {
-            "$ref": "#/components/schemas/RewardActivityData",
-            "description": "Activity payload. Always contains a snapshot of the reward; assigned/unassigned activities also contain the program and the program-reward assignment."
+            "type": "array",
+            "description": "The activities on the current page.",
+            "items": {
+              "$ref": "#/components/schemas/RewardActivity"
+            }
           },
-          "created_at": {
+          "cursor": {
+            "description": "Pagination cursor, or `null` when there are no more results.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/RewardListCursor"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "object": {
             "type": "string",
-            "format": "date-time",
-            "description": "Timestamp when the activity occurred (ISO-8601)."
-          },
-          "group_id": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "description": "Unique identifier grouping related activities recorded together. Omitted or `null` when the activity is not part of a group."
-          },
-          "source": {
-            "$ref": "#/components/schemas/RewardActivitySource",
-            "description": "Origin of the activity. Omitted when not recorded."
-          },
-          "reward_id": {
-            "type": "string",
-            "pattern": "^lrew_[a-f0-9]+$",
-            "description": "Unique identifier of the reward the activity belongs to, prefixed with `lrew_`."
+            "const": "list",
+            "description": "Object type marker; always `list`."
           }
         },
         "required": [
-          "id",
-          "type",
           "data",
-          "created_at",
-          "reward_id"
-        ]
-      },
-      "RewardListCursor": {
-        "type": "object",
-        "description": "Pagination cursor.",
-        "properties": {
-          "next": {
-            "type": "string",
-            "description": "Cursor value to pass as the `cursor` query parameter to fetch the next page."
-          },
-          "expires_at": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Timestamp when the cursor expires."
-          }
-        },
-        "required": [
-          "next"
+          "cursor",
+          "object"
         ]
       },
       "LoyaltiesExamineEarningRulesExamineRequestBodyTrigger": {
@@ -42560,6 +42498,24 @@
           "benefit_id"
         ]
       },
+      "RewardListCursor": {
+        "type": "object",
+        "description": "Pagination cursor.",
+        "properties": {
+          "next": {
+            "type": "string",
+            "description": "Cursor value to pass as the `cursor` query parameter to fetch the next page."
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp when the cursor expires."
+          }
+        },
+        "required": [
+          "next"
+        ]
+      },
       "RewardValidityHoursRequest": {
         "type": "object",
         "description": "Validity hours definition. `type` is\nrequired. When `type` is `ANY_TIME`, `daily` must be null; when `type` is `DAILY`,\n`daily` is required and must contain at least one entry.",
@@ -42935,52 +42891,51 @@
           "vl.reward.drafted"
         ]
       },
-      "RewardActivityData": {
+      "RewardActivity": {
         "type": "object",
-        "description": "Activity payload. `reward` is always present and contains a full snapshot of the\nreward at the time of the activity. For `vl.reward.assigned` and\n`vl.reward.unassigned` activities, `program` (a snapshot of the program) and\n`program_reward` (a snapshot of the program-reward assignment) are also present.",
+        "description": "A reward activity entry.",
         "properties": {
-          "reward": {
-            "$ref": "#/components/schemas/RewardResponse",
-            "description": "Snapshot of the reward at the time of the activity."
-          },
-          "program": {
-            "type": "object",
-            "description": "Snapshot of the program. Present only for assigned/unassigned activities."
-          },
-          "program_reward": {
-            "type": "object",
-            "description": "Snapshot of the program-reward assignment. Present only for assigned/unassigned activities."
-          }
-        },
-        "required": [
-          "reward"
-        ]
-      },
-      "RewardActivitySource": {
-        "type": "object",
-        "description": "Origin of an activity.",
-        "properties": {
-          "channel": {
+          "id": {
             "type": "string",
-            "enum": [
-              "USER_PORTAL",
-              "API",
-              "CLIENT_API",
-              "INTERNAL"
+            "pattern": "^larew_[a-f0-9]+$",
+            "description": "Unique activity identifier, prefixed with `larew_`."
+          },
+          "type": {
+            "$ref": "#/components/schemas/RewardActivityType",
+            "description": "Type of the activity."
+          },
+          "data": {
+            "$ref": "#/components/schemas/RewardActivityData",
+            "description": "Activity payload. Always contains a snapshot of the reward; assigned/unassigned activities also contain the program and the program-reward assignment."
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp when the activity occurred (ISO-8601)."
+          },
+          "group_id": {
+            "type": [
+              "string",
+              "null"
             ],
-            "description": "Channel through which the change was made."
+            "description": "Unique identifier grouping related activities recorded together. Omitted or `null` when the activity is not part of a group."
           },
-          "user": {
-            "$ref": "#/components/schemas/RewardActivitySourceUser",
-            "description": "User who made the change. Omitted when not applicable."
+          "source": {
+            "$ref": "#/components/schemas/RewardActivitySource",
+            "description": "Origin of the activity. Omitted when not recorded."
           },
-          "api_key": {
-            "$ref": "#/components/schemas/RewardActivitySourceApiKey",
-            "description": "API key used to make the change. Omitted when not applicable."
+          "reward_id": {
+            "type": "string",
+            "pattern": "^lrew_[a-f0-9]+$",
+            "description": "Unique identifier of the reward the activity belongs to, prefixed with `lrew_`."
           }
         },
         "required": [
-          "channel"
+          "id",
+          "type",
+          "data",
+          "created_at",
+          "reward_id"
         ]
       },
       "LoyaltiesExamineEarningRulesExamineRequestBodyTriggerSpecific": {
@@ -46222,36 +46177,53 @@
           "limits"
         ]
       },
-      "RewardActivitySourceUser": {
+      "RewardActivityData": {
         "type": "object",
-        "description": "User reference in an activity source.",
+        "description": "Activity payload. `reward` is always present and contains a full snapshot of the\nreward at the time of the activity. For `vl.reward.assigned` and\n`vl.reward.unassigned` activities, `program` (a snapshot of the program) and\n`program_reward` (a snapshot of the program-reward assignment) are also present.",
         "properties": {
-          "id": {
-            "type": "string",
-            "description": "User identifier."
+          "reward": {
+            "$ref": "#/components/schemas/RewardResponse",
+            "description": "Snapshot of the reward at the time of the activity."
+          },
+          "program": {
+            "type": "object",
+            "description": "Snapshot of the program. Present only for assigned/unassigned activities."
+          },
+          "program_reward": {
+            "type": "object",
+            "description": "Snapshot of the program-reward assignment. Present only for assigned/unassigned activities."
           }
         },
         "required": [
-          "id"
+          "reward"
         ]
       },
-      "RewardActivitySourceApiKey": {
+      "RewardActivitySource": {
         "type": "object",
-        "description": "API key reference in an activity source.",
+        "description": "Origin of an activity.",
         "properties": {
-          "name": {
+          "channel": {
             "type": "string",
-            "description": "Name of the API key."
+            "enum": [
+              "USER_PORTAL",
+              "API",
+              "CLIENT_API",
+              "INTERNAL"
+            ],
+            "description": "Channel through which the change was made."
           },
-          "app_id": {
-            "type": "string",
-            "description": "Application identifier of the API key."
+          "user": {
+            "$ref": "#/components/schemas/RewardActivitySourceUser",
+            "description": "User who made the change. Omitted when not applicable."
           },
-          "client_app_id": {
-            "type": "string",
-            "description": "Client application identifier of the API key."
+          "api_key": {
+            "$ref": "#/components/schemas/RewardActivitySourceApiKey",
+            "description": "API key used to make the change. Omitted when not applicable."
           }
-        }
+        },
+        "required": [
+          "channel"
+        ]
       },
       "LoyaltiesExamineEarningRulesExamineRequestBodyOrderItem": {
         "type": "object",
@@ -48809,6 +48781,37 @@
           "period",
           "triggers"
         ]
+      },
+      "RewardActivitySourceUser": {
+        "type": "object",
+        "description": "User reference in an activity source.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "User identifier."
+          }
+        },
+        "required": [
+          "id"
+        ]
+      },
+      "RewardActivitySourceApiKey": {
+        "type": "object",
+        "description": "API key reference in an activity source.",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the API key."
+          },
+          "app_id": {
+            "type": "string",
+            "description": "Application identifier of the API key."
+          },
+          "client_app_id": {
+            "type": "string",
+            "description": "Client application identifier of the API key."
+          }
+        }
       },
       "LoyaltiesExamineEarningRulesExamineRequestBodyOrderItemProduct": {
         "type": "object",
