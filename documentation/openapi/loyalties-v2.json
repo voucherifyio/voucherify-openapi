@@ -4955,7 +4955,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/LoyaltiesProgramsMembersCardsPointsAdjustRequestBody"
+                "$ref": "#/components/schemas/V2LoyaltiesProgramsMembersCardsPointsAdjustRequestBody"
               },
               "examples": {
                 "Add points": {
@@ -4989,7 +4989,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/LoyaltiesProgramsMembersCardsPointsAdjustResponseBody"
+                  "$ref": "#/components/schemas/V2LoyaltiesProgramsMembersCardsPointsAdjustResponseBody"
                 },
                 "examples": {
                   "Points added: Result": {
@@ -20881,67 +20881,25 @@
           }
         ]
       },
-      "LoyaltiesProgramsMembersCardsPointsAdjustRequestBody": {
+      "V2LoyaltiesProgramsMembersCardsPointsAdjustRequestBody": {
+        "title": "V2 Loyalties Programs Members Cards Points Adjust Request Body",
         "type": "object",
-        "description": "Request body schema for **POST** `/v2/loyalties/programs/{programId}/members/{memberId}/cards/{cardId}/points`.\n\nNo additional properties are allowed.",
-        "properties": {
-          "points": {
-            "type": "integer",
-            "minimum": -9007199254740991,
-            "maximum": 9007199254740991,
-            "description": "Number of points to adjust. Positive values add points (`ADMIN_CREDIT` transaction), negative values subtract points (`ADMIN_DEBIT` transaction), zero results in no transaction (`NO_CHANGE`)."
-          },
-          "reason": {
-            "type": "string",
-            "maxLength": 255,
-            "description": "Optional reason for the adjustment, stored in the transaction details."
+        "description": "Request body schema for **POST** `/v2/loyalties/programs/{programId}/members/{memberId}/cards/{cardId}/points`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/CardPointsAdjust"
           }
-        },
-        "required": [
-          "points"
-        ],
-        "additionalProperties": false,
-        "title": "Loyalties Programs Members Cards Points Adjust Request Body"
+        ]
       },
-      "LoyaltiesProgramsMembersCardsPointsAdjustResponseBody": {
+      "V2LoyaltiesProgramsMembersCardsPointsAdjustResponseBody": {
+        "title": "V2 Loyalties Programs Members Cards Points Adjust Response Body",
         "type": "object",
-        "properties": {
-          "transaction": {
-            "description": "The created card transaction (`ADMIN_CREDIT` or `ADMIN_DEBIT`), or `null` when no transaction was created (status `NO_CHANGE`).",
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/CardTransaction"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "status": {
-            "type": "string",
-            "enum": [
-              "TRANSACTION_CREATED",
-              "NO_CHANGE"
-            ],
-            "description": "`TRANSACTION_CREATED` when a transaction was created, `NO_CHANGE` when the requested points amount was zero."
-          },
-          "message": {
-            "type": "string",
-            "enum": [
-              "Points addition transaction created",
-              "Points subtraction transaction created",
-              "Provided amount is zero, transaction was not created"
-            ],
-            "description": "Human-readable result message:\n- \"Points addition transaction created\",\n- \"Points subtraction transaction created\",\n- \"Provided amount is zero, transaction was not created\"."
+        "description": "Response body schema for **POST** `/v2/loyalties/programs/{programId}/members/{memberId}/cards/{cardId}/points`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/CardPointsAdjustResult"
           }
-        },
-        "required": [
-          "transaction",
-          "status",
-          "message"
-        ],
-        "title": "Loyalties Programs Members Cards Points Adjust Response Body",
-        "description": "Response body schema for **POST** `/v2/loyalties/programs/{programId}/members/{memberId}/cards/{cardId}/points`."
+        ]
       },
       "LoyaltiesProgramsMembersCardsActivitiesListRequestQueryFilters": {
         "type": "object",
@@ -27524,67 +27482,36 @@
           "object"
         ]
       },
-      "CardTransaction": {
+      "CardPointsAdjust": {
         "type": "object",
-        "description": "A card transaction.",
+        "description": "No additional properties are allowed.",
         "properties": {
-          "id": {
-            "type": "string",
-            "pattern": "^lctx_[a-f0-9]+$",
-            "description": "Unique card transaction ID assigned by Voucherify."
+          "points": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991,
+            "description": "Number of points to adjust. Positive values add points (`ADMIN_CREDIT` transaction), negative values subtract points (`ADMIN_DEBIT` transaction), zero results in no transaction (`NO_CHANGE`)."
           },
-          "card_id": {
+          "reason": {
             "type": "string",
-            "pattern": "^lcrd_[a-f0-9]+$",
-            "description": "ID of the card the transaction belongs to. Assigned by Voucherify."
-          },
-          "program_id": {
-            "type": "string",
-            "pattern": "^lprg_[a-f0-9]+$",
-            "description": "ID of the loyalty program. Assigned by Voucherify."
-          },
-          "member_id": {
-            "type": "string",
-            "pattern": "^lmbr_[a-f0-9]+$",
-            "description": "ID of the member owning the card. Assigned by Voucherify."
-          },
-          "card_definition_id": {
-            "type": "string",
-            "pattern": "^lcdef_[a-f0-9]+$",
-            "description": "ID of the card definition of the card. Assigned by Voucherify."
-          },
-          "card_type": {
-            "type": "string",
-            "enum": [
-              "INDIVIDUAL"
-            ],
-            "description": "Card type."
-          },
-          "type": {
-            "type": "string",
-            "enum": [
-              "ADMIN_CREDIT",
-              "ADMIN_DEBIT",
-              "ADMIN_POINTS_EXPIRATION",
-              "POINTS_EARNED",
-              "POINTS_SPENT_ON_REWARD",
-              "POINTS_PURCHASED",
-              "POINTS_PURCHASE_REVERSED",
-              "POINTS_SPENT_ON_ORDER",
-              "POINTS_REFUNDED",
-              "POINTS_RETURNED",
-              "POINTS_EXPIRED",
-              "PENDING_POINTS_ADDED",
-              "PENDING_POINTS_ACTIVATED",
-              "PENDING_POINTS_CANCELED"
-            ],
-            "description": "Transaction type. Options depend on the endpoint and the transaction variant."
-          },
-          "details": {
-            "description": "Card transaction details. `reason`, `rejection` and `metadata` are present on all variants; the remaining fields depend on the transaction `type`:\n\n- `ADMIN_CREDIT`: `points` (`total`, `expiration_date`)\n- `ADMIN_DEBIT`: `points` (`total`)\n- `ADMIN_POINTS_EXPIRATION`: `bucket` (the point bucket expired manually by an admin)\n- `POINTS_EARNED`: `points` (`total`, `expiration_date`)\n- `POINTS_EXPIRED`: `points` (`total`), `date`, `buckets`\n- `POINTS_SPENT_ON_REWARD`: `points` (`total`), `reward`, `reward_transaction`,`target_card`, `purchase_transaction`\n- `POINTS_PURCHASED`: `points` (`total`, `expiration_date`, `expiration_type`), `reward`, `reward_transaction`, `card_transaction`\n- `POINTS_PURCHASE_REVERSED`: `points` (`total`, `expiration_date`,\n  `expiration_type`), `reward`, `purchase`, `reward_transaction`\n- `POINTS_SPENT_ON_ORDER`: `points` (`total`), `order`, `order_transaction`\n- `POINTS_REFUNDED`: `points` (`total`)\n- `POINTS_RETURNED`: `points` (`total`, `expiration_date`, `expiration_type`), `reward`, `purchase`, `reward_transaction`\n- `PENDING_POINTS_ADDED` / `PENDING_POINTS_ACTIVATED` / `PENDING_POINTS_CANCELED`: `points` (`total`, `date`, `type`)",
-            "oneOf": [
+            "maxLength": 255,
+            "description": "Optional reason for the adjustment, stored in the transaction details."
+          }
+        },
+        "required": [
+          "points"
+        ],
+        "additionalProperties": false
+      },
+      "CardPointsAdjustResult": {
+        "type": "object",
+        "description": "Result of a manual card points adjustment.",
+        "properties": {
+          "transaction": {
+            "description": "The created card transaction (`ADMIN_CREDIT` or `ADMIN_DEBIT`), or `null` when no transaction was created (status `NO_CHANGE`).",
+            "anyOf": [
               {
-                "$ref": "#/components/schemas/CardTransactionDetails"
+                "$ref": "#/components/schemas/CardTransaction"
               },
               {
                 "type": "null"
@@ -27594,45 +27521,25 @@
           "status": {
             "type": "string",
             "enum": [
-              "PENDING",
-              "PROCESSING",
-              "APPROVED",
-              "REJECTED"
+              "TRANSACTION_CREATED",
+              "NO_CHANGE"
             ],
-            "description": "Transaction processing status. Transactions are created as `PENDING` and processed asynchronously."
+            "description": "`TRANSACTION_CREATED` when a transaction was created, `NO_CHANGE` when the requested points amount was zero."
           },
-          "created_at": {
+          "message": {
             "type": "string",
-            "format": "date-time",
-            "description": "Timestamp when the transaction was created (ISO 8601)."
-          },
-          "updated_at": {
-            "type": [
-              "string",
-              "null"
+            "enum": [
+              "Points addition transaction created",
+              "Points subtraction transaction created",
+              "Provided amount is zero, transaction was not created"
             ],
-            "format": "date-time",
-            "description": "Timestamp when the transaction was last updated (ISO 8601), or `null`."
-          },
-          "object": {
-            "type": "string",
-            "const": "card_transaction",
-            "description": "Object type marker, always `card_transaction`."
+            "description": "Human-readable result message:\n- \"Points addition transaction created\",\n- \"Points subtraction transaction created\",\n- \"Provided amount is zero, transaction was not created\"."
           }
         },
         "required": [
-          "id",
-          "card_id",
-          "program_id",
-          "member_id",
-          "card_definition_id",
-          "card_type",
-          "type",
-          "details",
+          "transaction",
           "status",
-          "created_at",
-          "updated_at",
-          "object"
+          "message"
         ]
       },
       "LoyaltiesProgramsMembersCardsActivitiesListRequestQueryFiltersId": {
@@ -28159,6 +28066,117 @@
           "points",
           "date",
           "type",
+          "status",
+          "created_at",
+          "updated_at",
+          "object"
+        ]
+      },
+      "CardTransaction": {
+        "type": "object",
+        "description": "A card transaction.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^lctx_[a-f0-9]+$",
+            "description": "Unique card transaction ID assigned by Voucherify."
+          },
+          "card_id": {
+            "type": "string",
+            "pattern": "^lcrd_[a-f0-9]+$",
+            "description": "ID of the card the transaction belongs to. Assigned by Voucherify."
+          },
+          "program_id": {
+            "type": "string",
+            "pattern": "^lprg_[a-f0-9]+$",
+            "description": "ID of the loyalty program. Assigned by Voucherify."
+          },
+          "member_id": {
+            "type": "string",
+            "pattern": "^lmbr_[a-f0-9]+$",
+            "description": "ID of the member owning the card. Assigned by Voucherify."
+          },
+          "card_definition_id": {
+            "type": "string",
+            "pattern": "^lcdef_[a-f0-9]+$",
+            "description": "ID of the card definition of the card. Assigned by Voucherify."
+          },
+          "card_type": {
+            "type": "string",
+            "enum": [
+              "INDIVIDUAL"
+            ],
+            "description": "Card type."
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "ADMIN_CREDIT",
+              "ADMIN_DEBIT",
+              "ADMIN_POINTS_EXPIRATION",
+              "POINTS_EARNED",
+              "POINTS_SPENT_ON_REWARD",
+              "POINTS_PURCHASED",
+              "POINTS_PURCHASE_REVERSED",
+              "POINTS_SPENT_ON_ORDER",
+              "POINTS_REFUNDED",
+              "POINTS_RETURNED",
+              "POINTS_EXPIRED",
+              "PENDING_POINTS_ADDED",
+              "PENDING_POINTS_ACTIVATED",
+              "PENDING_POINTS_CANCELED"
+            ],
+            "description": "Transaction type. Options depend on the endpoint and the transaction variant."
+          },
+          "details": {
+            "description": "Card transaction details. `reason`, `rejection` and `metadata` are present on all variants; the remaining fields depend on the transaction `type`:\n\n- `ADMIN_CREDIT`: `points` (`total`, `expiration_date`)\n- `ADMIN_DEBIT`: `points` (`total`)\n- `ADMIN_POINTS_EXPIRATION`: `bucket` (the point bucket expired manually by an admin)\n- `POINTS_EARNED`: `points` (`total`, `expiration_date`)\n- `POINTS_EXPIRED`: `points` (`total`), `date`, `buckets`\n- `POINTS_SPENT_ON_REWARD`: `points` (`total`), `reward`, `reward_transaction`,`target_card`, `purchase_transaction`\n- `POINTS_PURCHASED`: `points` (`total`, `expiration_date`, `expiration_type`), `reward`, `reward_transaction`, `card_transaction`\n- `POINTS_PURCHASE_REVERSED`: `points` (`total`, `expiration_date`,\n  `expiration_type`), `reward`, `purchase`, `reward_transaction`\n- `POINTS_SPENT_ON_ORDER`: `points` (`total`), `order`, `order_transaction`\n- `POINTS_REFUNDED`: `points` (`total`)\n- `POINTS_RETURNED`: `points` (`total`, `expiration_date`, `expiration_type`), `reward`, `purchase`, `reward_transaction`\n- `PENDING_POINTS_ADDED` / `PENDING_POINTS_ACTIVATED` / `PENDING_POINTS_CANCELED`: `points` (`total`, `date`, `type`)",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/CardTransactionDetails"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "PENDING",
+              "PROCESSING",
+              "APPROVED",
+              "REJECTED"
+            ],
+            "description": "Transaction processing status. Transactions are created as `PENDING` and processed asynchronously."
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp when the transaction was created (ISO 8601)."
+          },
+          "updated_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time",
+            "description": "Timestamp when the transaction was last updated (ISO 8601), or `null`."
+          },
+          "object": {
+            "type": "string",
+            "const": "card_transaction",
+            "description": "Object type marker, always `card_transaction`."
+          }
+        },
+        "required": [
+          "id",
+          "card_id",
+          "program_id",
+          "member_id",
+          "card_definition_id",
+          "card_type",
+          "type",
+          "details",
           "status",
           "created_at",
           "updated_at",
@@ -39015,6 +39033,65 @@
           "created_at"
         ]
       },
+      "CardActivityData": {
+        "type": "object",
+        "description": "Snapshots of the objects involved at the time of the activity. Always contains `card` and `program`. For `vl.card.assigned` and `vl.card.unassigned`, also contains `member` and `member_card`. For `vl.card.code_generation.failed`, also contains `result`.",
+        "properties": {
+          "card": {
+            "$ref": "#/components/schemas/Card",
+            "description": "Full card snapshot at the time of the activity."
+          },
+          "program": {
+            "$ref": "#/components/schemas/Program",
+            "description": "Program snapshot at the time of the activity."
+          },
+          "member": {
+            "$ref": "#/components/schemas/Member",
+            "description": "Member snapshot. Present only for `vl.card.assigned` and `vl.card.unassigned`."
+          },
+          "member_card": {
+            "$ref": "#/components/schemas/MemberCard",
+            "description": "Assignment snapshot. Present for `vl.card.assigned` and `vl.card.unassigned`. Omits `tier_progress`."
+          },
+          "result": {
+            "$ref": "#/components/schemas/CardCodeGenerationFailureResult",
+            "description": "Failure details. Present only for `vl.card.code_generation.failed`."
+          }
+        },
+        "required": [
+          "card",
+          "program"
+        ],
+        "additionalProperties": false
+      },
+      "ActivitySource": {
+        "type": "object",
+        "description": "Origin of an activity.",
+        "properties": {
+          "channel": {
+            "type": "string",
+            "enum": [
+              "USER_PORTAL",
+              "API",
+              "CLIENT_API",
+              "INTERNAL"
+            ],
+            "description": "Channel through which the activity was triggered."
+          },
+          "user": {
+            "$ref": "#/components/schemas/ActivitySourceUser",
+            "description": "Dashboard user who triggered the activity. Omitted when not applicable."
+          },
+          "api_key": {
+            "$ref": "#/components/schemas/ActivitySourceApiKey",
+            "description": "API key used to trigger the activity. Omitted when not applicable."
+          }
+        },
+        "required": [
+          "channel"
+        ],
+        "additionalProperties": false
+      },
       "CardTransactionDetails": {
         "type": "object",
         "description": "Card transaction details. Variant-dependent fields are not present on all variants.",
@@ -39279,65 +39356,6 @@
             ]
           }
         }
-      },
-      "CardActivityData": {
-        "type": "object",
-        "description": "Snapshots of the objects involved at the time of the activity. Always contains `card` and `program`. For `vl.card.assigned` and `vl.card.unassigned`, also contains `member` and `member_card`. For `vl.card.code_generation.failed`, also contains `result`.",
-        "properties": {
-          "card": {
-            "$ref": "#/components/schemas/Card",
-            "description": "Full card snapshot at the time of the activity."
-          },
-          "program": {
-            "$ref": "#/components/schemas/Program",
-            "description": "Program snapshot at the time of the activity."
-          },
-          "member": {
-            "$ref": "#/components/schemas/Member",
-            "description": "Member snapshot. Present only for `vl.card.assigned` and `vl.card.unassigned`."
-          },
-          "member_card": {
-            "$ref": "#/components/schemas/MemberCard",
-            "description": "Assignment snapshot. Present for `vl.card.assigned` and `vl.card.unassigned`. Omits `tier_progress`."
-          },
-          "result": {
-            "$ref": "#/components/schemas/CardCodeGenerationFailureResult",
-            "description": "Failure details. Present only for `vl.card.code_generation.failed`."
-          }
-        },
-        "required": [
-          "card",
-          "program"
-        ],
-        "additionalProperties": false
-      },
-      "ActivitySource": {
-        "type": "object",
-        "description": "Origin of an activity.",
-        "properties": {
-          "channel": {
-            "type": "string",
-            "enum": [
-              "USER_PORTAL",
-              "API",
-              "CLIENT_API",
-              "INTERNAL"
-            ],
-            "description": "Channel through which the activity was triggered."
-          },
-          "user": {
-            "$ref": "#/components/schemas/ActivitySourceUser",
-            "description": "Dashboard user who triggered the activity. Omitted when not applicable."
-          },
-          "api_key": {
-            "$ref": "#/components/schemas/ActivitySourceApiKey",
-            "description": "API key used to trigger the activity. Omitted when not applicable."
-          }
-        },
-        "required": [
-          "channel"
-        ],
-        "additionalProperties": false
       },
       "RewardPurchaseTransactionDetailsRefund": {
         "type": "object",
@@ -43473,52 +43491,6 @@
         ],
         "additionalProperties": false
       },
-      "LoyaltyV2CardPointsBucketSimple": {
-        "title": "Loyalty Card Points Bucket",
-        "type": "object",
-        "description": "Simple representation of a points expiration bucket, embedded in card\ntransaction details.",
-        "properties": {
-          "id": {
-            "type": "string",
-            "pattern": "^lcpeb_[a-f0-9]+$",
-            "description": "Point expiration bucket ID."
-          },
-          "points": {
-            "type": "object",
-            "description": "Points affected by the transaction.",
-            "properties": {
-              "total": {
-                "type": "number",
-                "description": "Number of points affected."
-              }
-            },
-            "required": [
-              "total"
-            ]
-          },
-          "expiration_date": {
-            "type": "string",
-            "format": "date",
-            "description": "Date when the points expire."
-          },
-          "expiration_type": {
-            "type": "string",
-            "enum": [
-              "NO_EXPIRATION",
-              "ROLLING_EXPIRATION",
-              "CALENDAR_EXPIRATION",
-              "SLIDING_EXPIRATION"
-            ],
-            "description": "Expiration type of the points."
-          }
-        },
-        "required": [
-          "id",
-          "points",
-          "expiration_date",
-          "expiration_type"
-        ]
-      },
       "Card": {
         "type": "object",
         "description": "A full loyalty card snapshot.",
@@ -43654,6 +43626,52 @@
           }
         },
         "additionalProperties": false
+      },
+      "LoyaltyV2CardPointsBucketSimple": {
+        "title": "Loyalty Card Points Bucket",
+        "type": "object",
+        "description": "Simple representation of a points expiration bucket, embedded in card\ntransaction details.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^lcpeb_[a-f0-9]+$",
+            "description": "Point expiration bucket ID."
+          },
+          "points": {
+            "type": "object",
+            "description": "Points affected by the transaction.",
+            "properties": {
+              "total": {
+                "type": "number",
+                "description": "Number of points affected."
+              }
+            },
+            "required": [
+              "total"
+            ]
+          },
+          "expiration_date": {
+            "type": "string",
+            "format": "date",
+            "description": "Date when the points expire."
+          },
+          "expiration_type": {
+            "type": "string",
+            "enum": [
+              "NO_EXPIRATION",
+              "ROLLING_EXPIRATION",
+              "CALENDAR_EXPIRATION",
+              "SLIDING_EXPIRATION"
+            ],
+            "description": "Expiration type of the points."
+          }
+        },
+        "required": [
+          "id",
+          "points",
+          "expiration_date",
+          "expiration_type"
+        ]
       },
       "RewardPurchaseRefundPurchaseReference": {
         "type": "object",
