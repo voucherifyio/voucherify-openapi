@@ -9972,6 +9972,15 @@
                       "request_id": "v-130eb43b3685e26455"
                     }
                   },
+                  "Invalid query parameters: `end_date` is invalid": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Property .end_date cannot be recognized as a ISO-8601 compliant date",
+                      "request_id": "v-130eb43b3685e26458"
+                    }
+                  },
                   "Invalid query parameters: date range exceeds limit": {
                     "value": {
                       "code": 400,
@@ -10032,6 +10041,39 @@
                       "details": "Cannot find card with id lcrd_128f9ee63cc4ba558",
                       "request_id": "v-131e61ff0dc2645083",
                       "resource_id": "lcrd_128f9ee63cc4ba558",
+                      "resource_type": "card"
+                    }
+                  },
+                  "Program ID does not match the pattern": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find program with id missing",
+                      "request_id": "v-131e61d450c264502e",
+                      "resource_id": "missing",
+                      "resource_type": "program"
+                    }
+                  },
+                  "Member ID does not match the pattern": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find member with id missing",
+                      "request_id": "v-131e61f4dcee09b661",
+                      "resource_id": "missing",
+                      "resource_type": "member"
+                    }
+                  },
+                  "Card ID does not match the pattern": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find card with id missing",
+                      "request_id": "v-131e61ff0dc2645084",
+                      "resource_id": "missing",
                       "resource_type": "card"
                     }
                   }
@@ -10109,7 +10151,7 @@
           "Programs"
         ],
         "summary": "Get member earning-rule daily report",
-        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nReturns aggregated daily usage statistics for a specific earning rule and member over the given date range and resolution.\n\nThe date range is limited per resolution:\nmaximum 90 days for `day`, 12 weeks for `week`, 12 months for `month`, 4 quarters for `quarter`.",
+        "description": "Returns aggregated daily usage statistics for a specific earning rule and member over the given date range and resolution. Each entry sums successful earning-rule triggers recorded in one period. Periods without recorded activity are omitted.\n\nThe date range is limited per resolution:\n- 90 days for `day`,\n- 12 weeks for `week`,\n- 12 months for `month`,\n- 4 quarters for `quarter`,\n- `start_date` must be before `end_date`,\n- `start_date` and `end_date` are inclusive.\n\nReturns `400` when query validation fails. Returns `404` when the program or member does not exist, or when the earning rule does not exist or is not assigned to the program.",
         "parameters": [
           {
             "name": "start_date",
@@ -10126,7 +10168,7 @@
             "name": "end_date",
             "in": "query",
             "required": true,
-            "description": "End of the report date range, in `YYYY-MM-DD` format. Must be after `start_date`.",
+            "description": "End of the report date range (inclusive), in `YYYY-MM-DD` format. Must be after `start_date`.",
             "schema": {
               "type": "string",
               "format": "date",
@@ -10155,17 +10197,148 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/EarningRuleDailyReportResponse"
+                  "$ref": "#/components/schemas/V2LoyaltiesProgramsMembersEarningRulesReportsDailyListResponseBody"
+                },
+                "examples": {
+                  "Member earning-rule daily report: Day resolution": {
+                    "value": {
+                      "data": [
+                        {
+                          "date": "2026-07-10",
+                          "count": 1,
+                          "object": "earning_rule_daily_report"
+                        },
+                        {
+                          "date": "2026-07-15",
+                          "count": 11,
+                          "object": "earning_rule_daily_report"
+                        },
+                        {
+                          "date": "2026-07-30",
+                          "count": 1,
+                          "object": "earning_rule_daily_report"
+                        },
+                        {
+                          "date": "2026-08-06",
+                          "count": 13,
+                          "object": "earning_rule_daily_report"
+                        }
+                      ],
+                      "object": "report"
+                    }
+                  },
+                  "Member earning-rule daily report: Month resolution": {
+                    "value": {
+                      "data": [
+                        {
+                          "date": "2026-06-01",
+                          "count": 4,
+                          "object": "earning_rule_daily_report"
+                        },
+                        {
+                          "date": "2026-07-01",
+                          "count": 13,
+                          "object": "earning_rule_daily_report"
+                        },
+                        {
+                          "date": "2026-08-01",
+                          "count": 13,
+                          "object": "earning_rule_daily_report"
+                        }
+                      ],
+                      "object": "report"
+                    }
+                  },
+                  "Member earning-rule daily report: No activity": {
+                    "value": {
+                      "data": [],
+                      "object": "report"
+                    }
+                  }
                 }
               }
             }
           },
           "400": {
-            "description": "Validation error - request body or query parameters failed validation, or the operation is not allowed in the current resource state.",
+            "description": "Query parameters failed validation, or `start_date` is not before `end_date`.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Invalid query parameters: `start_date` is required": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Query must have required property 'start_date'",
+                      "request_id": "v-130eb43b3685e26454"
+                    }
+                  },
+                  "Invalid query parameters: `end_date` is required": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Query must have required property 'end_date'",
+                      "request_id": "v-130eb46d6c45e264b2"
+                    }
+                  },
+                  "Invalid query parameters: `resolution` is required": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Query must have required property 'resolution'",
+                      "request_id": "v-130eb4847405e264e3"
+                    }
+                  },
+                  "Invalid query parameters: `resolution` is invalid": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Property .resolution must be equal to one of the allowed values [ day, week, month, quarter ]",
+                      "request_id": "v-130eb4847405e264e4"
+                    }
+                  },
+                  "Invalid query parameters: `start_date` is invalid": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Property .start_date cannot be recognized as a ISO-8601 compliant date",
+                      "request_id": "v-130eb43b3685e26455"
+                    }
+                  },
+                  "Invalid query parameters: `end_date` is invalid": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Property .end_date cannot be recognized as a ISO-8601 compliant date",
+                      "request_id": "v-130eb43b3685e26459"
+                    }
+                  },
+                  "Invalid query parameters: date range exceeds limit": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Query date range exceeds maximum allowed 90 days for resolution 'day'",
+                      "request_id": "v-130eb43b3685e26456"
+                    }
+                  },
+                  "Invalid payload: `start_date` is not before `end_date`": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_payload",
+                      "message": "Invalid payload",
+                      "details": "Property 'start_date' must be before 'end_date'",
+                      "request_id": "v-130eb43b3685e26457"
+                    }
+                  }
                 }
               }
             }
@@ -10176,6 +10349,74 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Program not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find program with id lprg_28f58429f4c4bf7b2",
+                      "request_id": "v-131e61d450c264502d",
+                      "resource_id": "lprg_28f58429f4c4bf7b2",
+                      "resource_type": "program"
+                    }
+                  },
+                  "Member not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find member with id lmbr_128f9ee624c4ba553",
+                      "request_id": "v-131e61f4dcee09b660",
+                      "resource_id": "lmbr_128f9ee624c4ba553",
+                      "resource_type": "member"
+                    }
+                  },
+                  "Earning rule not found or not assigned to the program": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find earning_rule with id lern_128f9ee63cc4ba558",
+                      "request_id": "v-131e61ff0dc2645083",
+                      "resource_id": "lern_128f9ee63cc4ba558",
+                      "resource_type": "earning_rule"
+                    }
+                  },
+                  "Program ID does not match the pattern": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find program with id missing",
+                      "request_id": "v-131e61d450c264502f",
+                      "resource_id": "missing",
+                      "resource_type": "program"
+                    }
+                  },
+                  "Member ID does not match the pattern": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find member with id missing",
+                      "request_id": "v-131e61f4dcee09b662",
+                      "resource_id": "missing",
+                      "resource_type": "member"
+                    }
+                  },
+                  "Earning rule ID does not match the pattern": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find earning_rule with id missing",
+                      "request_id": "v-131e61ff0dc2645085",
+                      "resource_id": "missing",
+                      "resource_type": "earning_rule"
+                    }
+                  }
                 }
               }
             }
@@ -20970,23 +21211,15 @@
           "object"
         ]
       },
-      "EarningRuleDailyReportResponse": {
+      "V2LoyaltiesProgramsMembersEarningRulesReportsDailyListResponseBody": {
+        "title": "V2 Loyalties Programs Members Earning Rules Reports Daily List Response Body",
         "type": "object",
-        "description": "Member earning-rule daily report result.",
-        "properties": {
-          "data": {
-            "type": "array",
-            "description": "Report entries, one per aggregation period.",
-            "items": {
-              "$ref": "#/components/schemas/EarningRuleDailyReportEntry"
-            }
-          },
-          "object": {
-            "type": "string",
-            "const": "report",
-            "description": "Object type marker. Always `report`."
+        "description": "Response body schema for **GET** `/v2/loyalties/programs/{programId}/members/{memberId}/earning-rules/{earningRuleId}/reports/daily`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EarningRuleDailyReportResponse"
           }
-        }
+        ]
       },
       "SpendingReportListFilters": {
         "type": "object",
@@ -30019,25 +30252,27 @@
           "object"
         ]
       },
-      "EarningRuleDailyReportEntry": {
+      "EarningRuleDailyReportResponse": {
         "type": "object",
-        "description": "Aggregated daily earning-rule usage statistics for one member and earning rule in one period. Numeric fields default to 0.",
+        "description": "Member earning-rule daily report result.",
         "properties": {
-          "date": {
-            "type": "string",
-            "format": "date",
-            "description": "Date of the aggregation period (`YYYY-MM-DD`)."
-          },
-          "count": {
-            "type": "number",
-            "description": "Number of times the earning rule was successfully applied for the member in the period."
+          "data": {
+            "type": "array",
+            "description": "List of report entries, one per aggregation period with recorded activity, ordered by `date` ascending. Empty when no activity was recorded in the range.",
+            "items": {
+              "$ref": "#/components/schemas/EarningRuleDailyReportEntry"
+            }
           },
           "object": {
             "type": "string",
-            "const": "earning_rule_daily_report",
-            "description": "Object type marker. Always `earning_rule_daily_report`."
+            "const": "report",
+            "description": "Object type marker. Always `report`."
           }
-        }
+        },
+        "required": [
+          "data",
+          "object"
+        ]
       },
       "SpendingReportFilterCardDefinitionIdConditions": {
         "type": "object",
@@ -39132,6 +39367,31 @@
           "rejection",
           "start_at",
           "expires_at"
+        ]
+      },
+      "EarningRuleDailyReportEntry": {
+        "type": "object",
+        "description": "Aggregated daily earning-rule usage statistics for one member and earning rule in one period. Numeric fields default to 0.",
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date",
+            "description": "Identifies the start of the truncated aggregation period (`YYYY-MM-DD`). For `week` this is Monday. For `month` this is the first day. For `quarter` this is the quarter start."
+          },
+          "count": {
+            "type": "number",
+            "description": "Counts successful earning-rule triggers for the member in the period. A trigger rejected by its limit check is not included."
+          },
+          "object": {
+            "type": "string",
+            "const": "earning_rule_daily_report",
+            "description": "Object type marker. Always `earning_rule_daily_report`."
+          }
+        },
+        "required": [
+          "date",
+          "count",
+          "object"
         ]
       },
       "EarningRulesReportFailuresBreakdown": {

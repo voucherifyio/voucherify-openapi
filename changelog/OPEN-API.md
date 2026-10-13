@@ -4,6 +4,45 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-10-12
+
+- Verified and updated GET `/v2/loyalties/earning-rules/{earningRuleId}`.
+  - Added `earning_limits` on `EarningRuleResponse`. The response requires the stored fields, including `earning_limits`.
+  - Pointed the 200 body at `V2LoyaltiesEarningRulesGetResponseBody`.
+  - Removed `400` and `409`. A missing earning rule returns `404`.
+- Verified and updated GET `/v2/loyalties/programs/{programId}/tier-structures`.
+  - Required `tier_structure_id`, `created_at`, and `object` on each row.
+  - Pointed the 200 body at `V2LoyaltiesProgramsTierStructuresListResponseBody`.
+  - Removed `409`. Added `400` examples for cursor, limit, and order errors, and `404` examples for a missing program and an id that does not match the pattern.
+- Verified and updated GET `/v2/loyalties/programs/{programId}/rewards`.
+  - Required `reward_id`, `stock`, `redeemed`, `created_at`, `updated_at`, and `object` on each row.
+  - `stock.limited` is present for limited stock and omitted for unlimited stock.
+  - Pointed the 200 body at `LoyaltiesProgramsRewardsListResponseBody`.
+  - Removed `409`. Added the same `400` and `404` examples as the tier-structure list.
+- Verified and updated GET `/v2/loyalties/benefits/{benefitId}`.
+  - Required `stock` and `updated_at`.
+  - Clarified fields that requests may omit or set to `null` and that responses omit, including `BenefitStock.limited` when `type` is `UNLIMITED`.
+  - Pointed the 200 body at `V2LoyaltiesBenefitsGetResponseBody`.
+  - Removed `400` and `409`. Added a `404` example for a missing benefit.
+- Verified and updated GET `/v2/loyalties/rewards/{rewardId}`.
+  - Required `start_date`, `end_date`, and `updated_at` on `RewardResponse`.
+  - Added optional `name` on `RewardCostResponse` and required `tier_rules`.
+  - `fixed_cooldown` is present when `type` is `FIXED_COOLDOWN` and omitted when `type` is `NO_COOLDOWN`.
+  - Pointed the 200 body at `V2LoyaltiesRewardsGetResponseBody`.
+  - Removed `400` and `409`. Added `404` examples for a missing reward and an id that does not match the pattern.
+- Unified the request and response schemas for a material product, a material SKU, discount coupons, and refunds: `LoyaltyV2ActivityRewardMaterialProduct`, `LoyaltyV2ActivityRewardMaterialSKU`, `LoyaltyV2ActivityRewardDigitalDiscountCoupons`, and `LoyaltyV2ActivityRewardRefunds`.
+- Removed `custom_activity`, `custom_activity_types`, and `spending_activity` from `EarningRuleEffectPointsExpirationSlidingExpiration`.
+- Updated GET `/v2/loyalties/programs/{programId}/members/{memberId}/cards/{cardId}/reports/daily`.
+  - Added a `400` example for an invalid `end_date`.
+  - Added `404` examples when the program, member, or card id does not match the id pattern.
+- Verified and updated GET `/v2/loyalties/programs/{programId}/members/{memberId}/earning-rules/{earningRuleId}/reports/daily`.
+  - Removed the documentation-in-progress badge.
+  - Required `date`, `count`, and `object` on each row. `count` is the number of successful earning-rule triggers. A trigger rejected by its limit check is not included.
+  - Documented `start_date` and `end_date` as inclusive.
+  - Pointed the 200 body at `V2LoyaltiesProgramsMembersEarningRulesReportsDailyListResponseBody`.
+  - Added `400` examples for invalid query parameters and for `start_date` not before `end_date`.
+  - Added `404` examples for a missing program, member, or earning rule, including ids that do not match the pattern. A missing or unassigned earning rule uses `resource_type` `earning_rule`.
+
 ## 2026-10-08
 
 - Marked unused validation rule names as deprecated in the `name` list on `ValidationRuleRules`, `ValidationRuleRules01`, `ValidationRuleRules02`, `ValidationRuleRules03`, `WebhookValidationRuleRules`, `WebhookValidationRuleRules01`, `WebhookValidationRuleRules02`, and `WebhookValidationRuleRules03`.
