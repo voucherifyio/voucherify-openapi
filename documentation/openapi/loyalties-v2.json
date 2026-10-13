@@ -1078,6 +1078,18 @@
       }
     },
     "/v2/loyalties/programs/{programId}/card-definitions/batch": {
+      "parameters": [
+        {
+          "name": "programId",
+          "in": "path",
+          "required": true,
+          "description": "Unique program identifier.",
+          "schema": {
+            "type": "string",
+            "pattern": "^lprg_[a-f0-9]+$"
+          }
+        }
+      ],
       "post": {
         "operationId": "batchProgramCardDefinitionAssignments",
         "tags": [
@@ -1085,24 +1097,13 @@
         ],
         "summary": "Batch assign/unassign card definitions",
         "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nAssigns and/or unassigns card definitions to/from a program in a single batch.\nUnassign operations are processed before assign operations.\nThe program must be in `DRAFT` status - otherwise the request is rejected with\n`423 Locked` (key `non_draft_program`). In strict mode (default) missing card\ndefinitions, inactive card definitions or missing assignments cause the whole\nbatch to fail.",
-        "parameters": [
-          {
-            "name": "programId",
-            "in": "path",
-            "required": true,
-            "description": "Unique program identifier.",
-            "schema": {
-              "type": "string",
-              "pattern": "^lprg_[a-f0-9]+$"
-            }
-          }
-        ],
+        "parameters": [],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ProgramCardDefinitionBatchRequest"
+                "$ref": "#/components/schemas/V2LoyaltiesProgramsCardDefinitionsBatchRequestBody"
               }
             }
           }
@@ -1113,7 +1114,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProgramCardDefinitionBatchResponse"
+                  "$ref": "#/components/schemas/V2LoyaltiesProgramsCardDefinitionsBatchResponseBody"
                 }
               }
             }
@@ -20588,76 +20589,25 @@
           }
         ]
       },
-      "ProgramCardDefinitionBatchRequest": {
+      "V2LoyaltiesProgramsCardDefinitionsBatchRequestBody": {
+        "title": "V2 Loyalties Programs Card Definitions Batch Request Body",
         "type": "object",
-        "description": "Batch of card definition assignment operations. `unassign` operations are processed\nbefore `assign` operations. Duplicate ids within a batch are rejected.",
-        "properties": {
-          "assign": {
-            "description": "Card definitions to assign.",
-            "oneOf": [
-              {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/ProgramCardDefinitionAssignItem"
-                },
-                "maxItems": 10
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "unassign": {
-            "description": "Card definitions to unassign.",
-            "oneOf": [
-              {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/ProgramCardDefinitionUnassignItem"
-                },
-                "maxItems": 10
-              },
-              {
-                "type": "null"
-              }
-            ]
+        "description": "Request body schema for **POST** `/v2/loyalties/programs/{programId}/card-definitions/batch`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ProgramCardDefinitionBatchRequest"
           }
-        },
-        "additionalProperties": false
+        ]
       },
-      "ProgramCardDefinitionBatchResponse": {
+      "V2LoyaltiesProgramsCardDefinitionsBatchResponseBody": {
+        "title": "V2 Loyalties Programs Card Definitions Batch Response Body",
         "type": "object",
-        "description": "Result of a card definition assignment batch. Keys are null when the corresponding operation list was not provided.",
-        "properties": {
-          "assigned": {
-            "description": "Assignments created by the batch, or `null` when no assign operations were requested.",
-            "oneOf": [
-              {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/ProgramCardDefinitionAssignment"
-                }
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "unassigned": {
-            "description": "Assignments removed by the batch, or `null` when no unassign operations were requested.",
-            "oneOf": [
-              {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/ProgramCardDefinitionAssignment"
-                }
-              },
-              {
-                "type": "null"
-              }
-            ]
+        "description": "Response body schema for **POST** `/v2/loyalties/programs/{programId}/card-definitions/batch`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ProgramCardDefinitionBatchResponse"
           }
-        }
+        ]
       },
       "LoyaltiesProgramsEarningRulesListResponseBody": {
         "type": "object",
@@ -28134,61 +28084,85 @@
           }
         }
       },
-      "ProgramCardDefinitionAssignItem": {
+      "ProgramCardDefinitionBatchRequest": {
         "type": "object",
-        "description": "Card definition to assign to the program.",
+        "description": "Batch of card definition assignment operations. `unassign` operations are processed\nbefore `assign` operations. Duplicate ids within a batch are rejected.",
         "properties": {
-          "id": {
-            "type": "string",
-            "description": "Unique card definition identifier.",
-            "pattern": "^lcdef_[a-f0-9]+$"
-          }
-        },
-        "required": [
-          "id"
-        ],
-        "additionalProperties": false
-      },
-      "ProgramCardDefinitionUnassignItem": {
-        "type": "object",
-        "description": "Card definition to unassign from the program.",
-        "properties": {
-          "id": {
-            "type": "string",
-            "description": "Unique card definition identifier.",
-            "pattern": "^lcdef_[a-f0-9]+$"
-          }
-        },
-        "required": [
-          "id"
-        ],
-        "additionalProperties": false
-      },
-      "ProgramCardDefinitionAssignment": {
-        "type": "object",
-        "description": "A card definition assigned to a program.",
-        "properties": {
-          "card_type": {
-            "type": "string",
-            "description": "Card type of the assigned card definition.",
-            "enum": [
-              "INDIVIDUAL"
+          "assign": {
+            "description": "Card definitions to assign.",
+            "oneOf": [
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/ProgramCardDefinitionAssignItem"
+                },
+                "maxItems": 10
+              },
+              {
+                "type": "null"
+              }
             ]
           },
-          "card_definition_id": {
-            "type": "string",
-            "description": "Unique card definition identifier.",
-            "pattern": "^lcdef_[a-f0-9]+$"
+          "unassign": {
+            "description": "Card definitions to unassign.",
+            "oneOf": [
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/ProgramCardDefinitionUnassignItem"
+                },
+                "maxItems": 10
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
-          "created_at": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Assignment creation timestamp (ISO 8601)."
+          "options": {
+            "description": "Batch behavior. Defaults to strict mode when omitted.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/ProgramCardDefinitionBatchOptions"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProgramCardDefinitionBatchResponse": {
+        "type": "object",
+        "description": "Result of a card definition assignment batch. Keys are null when the corresponding operation list was not provided.",
+        "properties": {
+          "assigned": {
+            "description": "Assignments created by the batch, or `null` when no assign operations were requested.",
+            "oneOf": [
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/ProgramCardDefinitionAssignment"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
-          "object": {
-            "type": "string",
-            "description": "Object type marker.",
-            "const": "program_card_definition"
+          "unassigned": {
+            "description": "Assignments removed by the batch, or `null` when no unassign operations were requested.",
+            "oneOf": [
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/ProgramCardDefinitionAssignment"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         }
       },
@@ -40771,6 +40745,21 @@
           }
         ]
       },
+      "ProgramCardDefinitionAssignItem": {
+        "type": "object",
+        "description": "Card definition to assign to the program.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique card definition identifier.",
+            "pattern": "^lcdef_[a-f0-9]+$"
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "additionalProperties": false
+      },
       "ProgramCreateAssignedCardDefinition": {
         "type": "object",
         "description": "Card definition assigned during program creation.",
@@ -40892,6 +40881,61 @@
             "description": "Origin of the activity. Omitted when unknown."
           }
         }
+      },
+      "ProgramCardDefinitionAssignment": {
+        "type": "object",
+        "description": "A card definition assigned to a program.",
+        "properties": {
+          "card_type": {
+            "type": "string",
+            "description": "Card type of the assigned card definition.",
+            "enum": [
+              "INDIVIDUAL"
+            ]
+          },
+          "card_definition_id": {
+            "type": "string",
+            "description": "Unique card definition identifier.",
+            "pattern": "^lcdef_[a-f0-9]+$"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Assignment creation timestamp (ISO 8601)."
+          },
+          "object": {
+            "type": "string",
+            "description": "Object type marker.",
+            "const": "program_card_definition"
+          }
+        }
+      },
+      "ProgramCardDefinitionUnassignItem": {
+        "type": "object",
+        "description": "Card definition to unassign from the program.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique card definition identifier.",
+            "pattern": "^lcdef_[a-f0-9]+$"
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "additionalProperties": false
+      },
+      "ProgramCardDefinitionBatchOptions": {
+        "type": "object",
+        "description": "Options for a card definition assignment batch.",
+        "properties": {
+          "strict": {
+            "type": "boolean",
+            "description": "Fails the batch when a card definition is missing or inactive, or when an assignment to remove is missing. Defaults to `true`.",
+            "default": true
+          }
+        },
+        "additionalProperties": false
       },
       "ProgramRewardAssignmentStockLimited": {
         "type": "object",
