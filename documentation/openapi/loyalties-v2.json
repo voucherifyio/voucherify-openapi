@@ -17537,6 +17537,18 @@
       }
     },
     "/v2/loyalties/benefits/{benefitId}/draft": {
+      "parameters": [
+        {
+          "name": "benefitId",
+          "in": "path",
+          "required": true,
+          "description": "Unique benefit ID, prefixed with `lben_`.",
+          "schema": {
+            "type": "string",
+            "pattern": "^lben_[a-f0-9]+$"
+          }
+        }
+      ],
       "post": {
         "operationId": "draftBenefit",
         "tags": [
@@ -17544,25 +17556,13 @@
         ],
         "summary": "Move benefit to draft",
         "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nMoves a benefit from `ACTIVE` back to `DRAFT` status. No request body. Only the\n`ACTIVE` -> `DRAFT` transition is allowed; drafting from any other state returns\n400 `invalid_state_transition`. A benefit assigned to an active earning rule cannot\nbe moved to draft (423 `resource_locked`, key `connected_active_earning_rule`).",
-        "parameters": [
-          {
-            "name": "benefitId",
-            "in": "path",
-            "required": true,
-            "description": "Unique benefit ID, prefixed with `lben_`.",
-            "schema": {
-              "type": "string",
-              "pattern": "^lben_[a-f0-9]+$"
-            }
-          }
-        ],
         "responses": {
           "200": {
             "description": "The drafted benefit",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Benefit"
+                  "$ref": "#/components/schemas/V2LoyaltiesBenefitsDraftResponseBody"
                 }
               }
             }
@@ -17579,16 +17579,6 @@
           },
           "404": {
             "description": "Resource not found.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
             "content": {
               "application/json": {
                 "schema": {
@@ -24165,106 +24155,14 @@
           }
         ]
       },
-      "Benefit": {
+      "V2LoyaltiesBenefitsDraftResponseBody": {
+        "title": "V2 Loyalties Benefits Draft Response Body",
         "type": "object",
-        "description": "A benefit object. Exactly one type-specific configuration object (`points`, `points_proportional`, `material`, or `digital`) is present, matching the `type`; the others are omitted.",
-        "properties": {
-          "id": {
-            "type": "string",
-            "pattern": "^lben_[a-f0-9]+$",
-            "description": "Unique benefit ID, prefixed with `lben_`."
-          },
-          "name": {
-            "type": "string",
-            "description": "Benefit name, unique within the project."
-          },
-          "type": {
-            "type": "string",
-            "enum": [
-              "POINTS",
-              "POINTS_PROPORTIONAL",
-              "MATERIAL",
-              "DIGITAL"
-            ],
-            "description": "Benefit type."
-          },
-          "status": {
-            "type": "string",
-            "enum": [
-              "DRAFT",
-              "ACTIVE",
-              "DELETED"
-            ],
-            "description": "Current benefit status. `DELETED` appears only in the response of the delete endpoint and in activity snapshots."
-          },
-          "stock": {
-            "description": "Stock configuration. Always present. Null stock is returned as `UNLIMITED` with `limited` omitted.",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/BenefitStock"
-              }
-            ]
-          },
-          "points": {
-            "description": "Fixed points configuration. Present only when `type` is `POINTS`.",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitPoints"
-              }
-            ]
-          },
-          "points_proportional": {
-            "description": "Proportional points configuration. Present only when `type` is `POINTS_PROPORTIONAL`.",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/BenefitPointsProportional"
-              }
-            ]
-          },
-          "material": {
-            "description": "Material configuration. Present only when `type` is `MATERIAL`.",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/BenefitMaterial"
-              }
-            ]
-          },
-          "digital": {
-            "description": "Digital configuration. Present only when `type` is `DIGITAL`.",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/BenefitDigital"
-              }
-            ]
-          },
-          "created_at": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Timestamp of when the benefit was created, in ISO 8601 format."
-          },
-          "updated_at": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "format": "date-time",
-            "description": "Timestamp of the last update, in ISO 8601 format. `null` when the benefit was never updated."
-          },
-          "object": {
-            "type": "string",
-            "const": "benefit",
-            "description": "Type of the object. Always `benefit`."
+        "description": "Response body schema for **POST** `/v2/loyalties/benefits/{benefitId}/draft`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Benefit"
           }
-        },
-        "required": [
-          "id",
-          "name",
-          "type",
-          "status",
-          "stock",
-          "created_at",
-          "updated_at",
-          "object"
         ]
       },
       "LoyaltiesBenefitsActivitiesListRequestQuery": {
@@ -36606,6 +36504,108 @@
           }
         ]
       },
+      "Benefit": {
+        "type": "object",
+        "description": "A benefit object. Exactly one type-specific configuration object (`points`, `points_proportional`, `material`, or `digital`) is present, matching the `type`; the others are omitted.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^lben_[a-f0-9]+$",
+            "description": "Unique benefit ID, prefixed with `lben_`."
+          },
+          "name": {
+            "type": "string",
+            "description": "Benefit name, unique within the project."
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "POINTS",
+              "POINTS_PROPORTIONAL",
+              "MATERIAL",
+              "DIGITAL"
+            ],
+            "description": "Benefit type."
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "DRAFT",
+              "ACTIVE",
+              "DELETED"
+            ],
+            "description": "Current benefit status. `DELETED` appears only in the response of the delete endpoint and in activity snapshots."
+          },
+          "stock": {
+            "description": "Stock configuration. Always present. Null stock is returned as `UNLIMITED` with `limited` omitted.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/BenefitStock"
+              }
+            ]
+          },
+          "points": {
+            "description": "Fixed points configuration. Present only when `type` is `POINTS`.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitPoints"
+              }
+            ]
+          },
+          "points_proportional": {
+            "description": "Proportional points configuration. Present only when `type` is `POINTS_PROPORTIONAL`.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/BenefitPointsProportional"
+              }
+            ]
+          },
+          "material": {
+            "description": "Material configuration. Present only when `type` is `MATERIAL`.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/BenefitMaterial"
+              }
+            ]
+          },
+          "digital": {
+            "description": "Digital configuration. Present only when `type` is `DIGITAL`.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/BenefitDigital"
+              }
+            ]
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp of when the benefit was created, in ISO 8601 format."
+          },
+          "updated_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time",
+            "description": "Timestamp of the last update, in ISO 8601 format. `null` when the benefit was never updated."
+          },
+          "object": {
+            "type": "string",
+            "const": "benefit",
+            "description": "Type of the object. Always `benefit`."
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "type",
+          "status",
+          "stock",
+          "created_at",
+          "updated_at",
+          "object"
+        ]
+      },
       "BenefitUpdateRequest": {
         "type": "object",
         "description": "Request body for updating a benefit. All properties are optional; omitted properties keep\ntheir current values. When the benefit is `ACTIVE`, only `name` and `stock` may be updated.\nAfter the update, the type-specific configuration must stay consistent with the (possibly\nupdated) `type`.",
@@ -36683,588 +36683,6 @@
           }
         },
         "additionalProperties": false
-      },
-      "BenefitStock": {
-        "type": "object",
-        "description": "Stock configuration of the benefit. When `type` is `LIMITED`, the `limited` object is required. When `type` is `UNLIMITED`, requests may omit `limited` or set it to `null`; responses omit it.",
-        "properties": {
-          "type": {
-            "type": "string",
-            "enum": [
-              "UNLIMITED",
-              "LIMITED"
-            ],
-            "description": "Whether the benefit has unlimited or limited stock."
-          },
-          "limited": {
-            "description": "Limited stock configuration. Required when `type` is `LIMITED`. When `type` is `UNLIMITED`, requests may omit it or set it to `null`; responses omit it.",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitStockLimited"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          }
-        },
-        "required": [
-          "type"
-        ],
-        "additionalProperties": false,
-        "allOf": [
-          {
-            "if": {
-              "properties": {
-                "type": {
-                  "const": "UNLIMITED"
-                }
-              }
-            },
-            "then": {
-              "properties": {
-                "limited": {
-                  "type": "null"
-                }
-              }
-            }
-          },
-          {
-            "if": {
-              "properties": {
-                "type": {
-                  "const": "LIMITED"
-                }
-              }
-            },
-            "then": {
-              "required": [
-                "limited"
-              ],
-              "properties": {
-                "limited": {
-                  "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitStockLimited"
-                }
-              }
-            }
-          }
-        ]
-      },
-      "LoyaltyV2ActivityBenefitPoints": {
-        "type": "object",
-        "description": "Fixed points effect - adds a fixed amount of points to a card of the given card definition.",
-        "properties": {
-          "value": {
-            "type": "integer",
-            "minimum": 0,
-            "maximum": 9007199254740991,
-            "description": "Number of points to add."
-          },
-          "card_definition_id": {
-            "type": "string",
-            "pattern": "^lcdef_[a-f0-9]+$",
-            "description": "ID of the card definition whose cards receive the points. The card definition must exist and be `ACTIVE`."
-          }
-        },
-        "required": [
-          "value",
-          "card_definition_id"
-        ],
-        "additionalProperties": false
-      },
-      "BenefitPointsProportional": {
-        "type": "object",
-        "description": "Proportional points effect - points are calculated from an order amount, order items, or a metadata property. Exactly one calculation source object (`order`, `customer`, `custom_event`, or `order_items`) is required, determined by `calculation_type`. In requests, the remaining source properties may be omitted or set to `null`. In responses, they are omitted.",
-        "properties": {
-          "calculation_type": {
-            "type": "string",
-            "enum": [
-              "PRE_DISCOUNT_ORDER_AMOUNT",
-              "POST_DISCOUNT_ORDER_AMOUNT",
-              "PRE_DISCOUNT_ORDER_ITEMS_AMOUNT",
-              "POST_DISCOUNT_ORDER_ITEMS_AMOUNT",
-              "ORDER_ITEMS_QUANTITY",
-              "ORDER_METADATA_VALUE",
-              "CUSTOMER_METADATA_VALUE",
-              "CUSTOM_EVENT_METADATA_VALUE"
-            ],
-            "description": "How the points are calculated:\n- `PRE_DISCOUNT_ORDER_AMOUNT` - points per every specified order amount before discounts (requires `order.amount`)\n- `POST_DISCOUNT_ORDER_AMOUNT` - points per every specified order amount after discounts (requires `order.total_amount`)\n- `PRE_DISCOUNT_ORDER_ITEMS_AMOUNT` - points per every specified amount spent on selected products before discounts (requires `order_items.amount`)\n- `POST_DISCOUNT_ORDER_ITEMS_AMOUNT` - points per every specified amount spent on selected products after discounts (requires `order_items.subtotal_amount`)\n- `ORDER_ITEMS_QUANTITY` - points per every specified quantity of selected products, excluding free items (requires `order_items.quantity`)\n- `ORDER_METADATA_VALUE` - points per every specified value in the order metadata (requires `order.metadata`)\n- `CUSTOMER_METADATA_VALUE` - points per every specified value in the customer metadata (requires `customer.metadata`)\n- `CUSTOM_EVENT_METADATA_VALUE` - points per every specified value in the custom event metadata (requires `custom_event.metadata`)"
-          },
-          "card_definition_id": {
-            "type": "string",
-            "pattern": "^lcdef_[a-f0-9]+$",
-            "description": "ID of the card definition whose cards receive the points. The card definition must exist and be ACTIVE."
-          },
-          "order": {
-            "description": "Order-based calculation configuration. Required for `PRE_DISCOUNT_ORDER_AMOUNT`, `POST_DISCOUNT_ORDER_AMOUNT`, and `ORDER_METADATA_VALUE`. For other calculation types, requests may omit it or set it to `null`; responses omit it.",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/BenefitPointsProportionalOrder"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "customer": {
-            "description": "Customer-metadata-based calculation configuration. Required for `CUSTOMER_METADATA_VALUE`. For other calculation types, requests may omit it or set it to `null`; responses omit it.",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/BenefitPointsProportionalCustomer"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "custom_event": {
-            "description": "Custom-event-metadata-based calculation configuration. Required for `CUSTOM_EVENT_METADATA_VALUE`. For other calculation types, requests may omit it or set it to `null`; responses omit it.",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/BenefitPointsProportionalCustomEvent"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "order_items": {
-            "description": "Order-items-based calculation configuration. Required for `PRE_DISCOUNT_ORDER_ITEMS_AMOUNT`, `POST_DISCOUNT_ORDER_ITEMS_AMOUNT`, and `ORDER_ITEMS_QUANTITY`. For other calculation types, requests may omit it or set it to `null`; responses omit it.",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/BenefitPointsProportionalOrderItems"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          }
-        },
-        "required": [
-          "calculation_type",
-          "card_definition_id"
-        ],
-        "additionalProperties": false,
-        "allOf": [
-          {
-            "if": {
-              "properties": {
-                "calculation_type": {
-                  "const": "PRE_DISCOUNT_ORDER_AMOUNT"
-                }
-              }
-            },
-            "then": {
-              "required": [
-                "order"
-              ],
-              "properties": {
-                "order": {
-                  "type": "object",
-                  "required": [
-                    "amount"
-                  ]
-                },
-                "customer": {
-                  "type": "null"
-                },
-                "custom_event": {
-                  "type": "null"
-                },
-                "order_items": {
-                  "type": "null"
-                }
-              }
-            }
-          },
-          {
-            "if": {
-              "properties": {
-                "calculation_type": {
-                  "const": "POST_DISCOUNT_ORDER_AMOUNT"
-                }
-              }
-            },
-            "then": {
-              "required": [
-                "order"
-              ],
-              "properties": {
-                "order": {
-                  "type": "object",
-                  "required": [
-                    "total_amount"
-                  ]
-                },
-                "customer": {
-                  "type": "null"
-                },
-                "custom_event": {
-                  "type": "null"
-                },
-                "order_items": {
-                  "type": "null"
-                }
-              }
-            }
-          },
-          {
-            "if": {
-              "properties": {
-                "calculation_type": {
-                  "const": "ORDER_METADATA_VALUE"
-                }
-              }
-            },
-            "then": {
-              "required": [
-                "order"
-              ],
-              "properties": {
-                "order": {
-                  "type": "object",
-                  "required": [
-                    "metadata"
-                  ]
-                },
-                "customer": {
-                  "type": "null"
-                },
-                "custom_event": {
-                  "type": "null"
-                },
-                "order_items": {
-                  "type": "null"
-                }
-              }
-            }
-          },
-          {
-            "if": {
-              "properties": {
-                "calculation_type": {
-                  "const": "CUSTOMER_METADATA_VALUE"
-                }
-              }
-            },
-            "then": {
-              "required": [
-                "customer"
-              ],
-              "properties": {
-                "customer": {
-                  "$ref": "#/components/schemas/BenefitPointsProportionalCustomer"
-                },
-                "order": {
-                  "type": "null"
-                },
-                "custom_event": {
-                  "type": "null"
-                },
-                "order_items": {
-                  "type": "null"
-                }
-              }
-            }
-          },
-          {
-            "if": {
-              "properties": {
-                "calculation_type": {
-                  "const": "CUSTOM_EVENT_METADATA_VALUE"
-                }
-              }
-            },
-            "then": {
-              "required": [
-                "custom_event"
-              ],
-              "properties": {
-                "custom_event": {
-                  "$ref": "#/components/schemas/BenefitPointsProportionalCustomEvent"
-                },
-                "order": {
-                  "type": "null"
-                },
-                "customer": {
-                  "type": "null"
-                },
-                "order_items": {
-                  "type": "null"
-                }
-              }
-            }
-          },
-          {
-            "if": {
-              "properties": {
-                "calculation_type": {
-                  "const": "PRE_DISCOUNT_ORDER_ITEMS_AMOUNT"
-                }
-              }
-            },
-            "then": {
-              "required": [
-                "order_items"
-              ],
-              "properties": {
-                "order_items": {
-                  "type": "object",
-                  "required": [
-                    "amount"
-                  ]
-                },
-                "order": {
-                  "type": "null"
-                },
-                "customer": {
-                  "type": "null"
-                },
-                "custom_event": {
-                  "type": "null"
-                }
-              }
-            }
-          },
-          {
-            "if": {
-              "properties": {
-                "calculation_type": {
-                  "const": "POST_DISCOUNT_ORDER_ITEMS_AMOUNT"
-                }
-              }
-            },
-            "then": {
-              "required": [
-                "order_items"
-              ],
-              "properties": {
-                "order_items": {
-                  "type": "object",
-                  "required": [
-                    "subtotal_amount"
-                  ]
-                },
-                "order": {
-                  "type": "null"
-                },
-                "customer": {
-                  "type": "null"
-                },
-                "custom_event": {
-                  "type": "null"
-                }
-              }
-            }
-          },
-          {
-            "if": {
-              "properties": {
-                "calculation_type": {
-                  "const": "ORDER_ITEMS_QUANTITY"
-                }
-              }
-            },
-            "then": {
-              "required": [
-                "order_items"
-              ],
-              "properties": {
-                "order_items": {
-                  "type": "object",
-                  "required": [
-                    "quantity"
-                  ]
-                },
-                "order": {
-                  "type": "null"
-                },
-                "customer": {
-                  "type": "null"
-                },
-                "custom_event": {
-                  "type": "null"
-                }
-              }
-            }
-          }
-        ]
-      },
-      "BenefitMaterial": {
-        "type": "object",
-        "description": "Material benefit - a physical product or SKU. Exactly one of `product` or `sku` is required, matching the `type`. In requests, the other property may be omitted or set to `null`. In responses, it is omitted.",
-        "properties": {
-          "type": {
-            "type": "string",
-            "enum": [
-              "PRODUCT",
-              "SKU"
-            ],
-            "description": "Whether the benefit is a whole product or a specific SKU."
-          },
-          "product": {
-            "description": "Product reference. Required when `type` is `PRODUCT`. When `type` is `SKU`, requests may omit it or set it to `null`; responses omit it. The product must exist.",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitMaterialProduct"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "sku": {
-            "description": "SKU reference. Required when `type` is `SKU`. When `type` is `PRODUCT`, requests may omit it or set it to `null`; responses omit it. The SKU must exist under the given product.",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitMaterialSKU"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          }
-        },
-        "additionalProperties": false,
-        "allOf": [
-          {
-            "required": [
-              "type"
-            ]
-          },
-          {
-            "if": {
-              "properties": {
-                "type": {
-                  "const": "PRODUCT"
-                }
-              }
-            },
-            "then": {
-              "required": [
-                "product"
-              ],
-              "properties": {
-                "product": {
-                  "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitMaterialProduct"
-                },
-                "sku": {
-                  "type": "null"
-                }
-              }
-            }
-          },
-          {
-            "if": {
-              "properties": {
-                "type": {
-                  "const": "SKU"
-                }
-              }
-            },
-            "then": {
-              "required": [
-                "sku"
-              ],
-              "properties": {
-                "sku": {
-                  "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitMaterialSKU"
-                },
-                "product": {
-                  "type": "null"
-                }
-              }
-            }
-          }
-        ]
-      },
-      "BenefitDigital": {
-        "type": "object",
-        "description": "Digital benefit - a reward sourced from a Voucherify campaign. Exactly one of `gift_vouchers` or `discount_coupons` is required, matching the `type`. In requests, the other property may be omitted or set to `null`. In responses, it is omitted. The referenced campaign must exist and its campaign type must match the benefit's digital type.",
-        "properties": {
-          "type": {
-            "type": "string",
-            "enum": [
-              "GIFT_VOUCHERS",
-              "DISCOUNT_COUPONS"
-            ],
-            "description": "Type of the digital reward."
-          },
-          "gift_vouchers": {
-            "description": "Gift vouchers configuration. Required when `type` is `GIFT_VOUCHERS`. When `type` is `DISCOUNT_COUPONS`, requests may omit it or set it to `null`; responses omit it.",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitDigitalGiftVouchers"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "discount_coupons": {
-            "description": "Discount coupons configuration. Required when `type` is `DISCOUNT_COUPONS`. When `type` is `GIFT_VOUCHERS`, requests may omit it or set it to `null`; responses omit it.",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitDigitalDiscountCoupons"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          }
-        },
-        "additionalProperties": false,
-        "allOf": [
-          {
-            "required": [
-              "type"
-            ]
-          },
-          {
-            "if": {
-              "properties": {
-                "type": {
-                  "const": "DISCOUNT_COUPONS"
-                }
-              }
-            },
-            "then": {
-              "required": [
-                "discount_coupons"
-              ],
-              "properties": {
-                "discount_coupons": {
-                  "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitDigitalDiscountCoupons"
-                },
-                "gift_vouchers": {
-                  "type": "null"
-                }
-              }
-            }
-          },
-          {
-            "if": {
-              "properties": {
-                "type": {
-                  "const": "GIFT_VOUCHERS"
-                }
-              }
-            },
-            "then": {
-              "required": [
-                "gift_vouchers"
-              ],
-              "properties": {
-                "gift_vouchers": {
-                  "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitDigitalGiftVouchers"
-                },
-                "discount_coupons": {
-                  "type": "null"
-                }
-              }
-            }
-          }
-        ]
       },
       "LoyaltiesBenefitsActivitiesListRequestQueryId": {
         "type": "object",
@@ -42751,197 +42169,587 @@
           "tier_structure_id"
         ]
       },
-      "LoyaltyV2ActivityBenefitStockLimited": {
+      "LoyaltyV2ActivityBenefitPoints": {
         "type": "object",
-        "title": "Benefit Stock Limited",
-        "description": "Limited stock configuration.",
+        "description": "Fixed points effect - adds a fixed amount of points to a card of the given card definition.",
         "properties": {
-          "quantity": {
+          "value": {
             "type": "integer",
             "minimum": 0,
             "maximum": 9007199254740991,
-            "description": "Available Remaining stock quantity. For responses, updates with each benefit purchase."
-          }
-        },
-        "required": [
-          "quantity"
-        ],
-        "additionalProperties": false
-      },
-      "BenefitPointsProportionalOrder": {
-        "type": "object",
-        "description": "Order-based proportional calculation. Provide the property matching the `calculation_type`.",
-        "properties": {
-          "amount": {
-            "description": "Points per every specified pre-discount order amount (for `PRE_DISCOUNT_ORDER_AMOUNT`).",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitPointsProportionalEvery"
-              }
-            ]
+            "description": "Number of points to add."
           },
-          "total_amount": {
-            "description": "Points per every specified post-discount order amount (for `POST_DISCOUNT_ORDER_AMOUNT`).",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitPointsProportionalEvery"
-              }
-            ]
-          },
-          "metadata": {
-            "description": "Points per every specified value of an order metadata property (for `ORDER_METADATA_VALUE`).",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitPointsProportionalMetadata"
-              }
-            ]
-          }
-        },
-        "additionalProperties": false
-      },
-      "BenefitPointsProportionalCustomer": {
-        "type": "object",
-        "description": "Customer-metadata-based proportional calculation.",
-        "properties": {
-          "metadata": {
-            "description": "Points per every specified value of a customer metadata property.",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitPointsProportionalMetadata"
-              }
-            ]
-          }
-        },
-        "required": [
-          "metadata"
-        ],
-        "additionalProperties": false
-      },
-      "BenefitPointsProportionalCustomEvent": {
-        "type": "object",
-        "description": "Custom-event-metadata-based proportional calculation.",
-        "properties": {
-          "metadata": {
-            "description": "Points per every specified value of a custom event metadata property.",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitPointsProportionalMetadata"
-              }
-            ]
-          }
-        },
-        "required": [
-          "metadata"
-        ],
-        "additionalProperties": false
-      },
-      "BenefitPointsProportionalOrderItems": {
-        "type": "object",
-        "description": "Order-items-based proportional calculation. Provide the property matching the `calculation_type`.",
-        "properties": {
-          "amount": {
-            "description": "Points per every specified pre-discount amount spent on the selected items (for `PRE_DISCOUNT_ORDER_ITEMS_AMOUNT`).",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/BenefitPointsProportionalOrderItemsCalculation"
-              }
-            ]
-          },
-          "subtotal_amount": {
-            "description": "Points per every specified post-discount amount spent on the selected items (for `POST_DISCOUNT_ORDER_ITEMS_AMOUNT`).",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/BenefitPointsProportionalOrderItemsCalculation"
-              }
-            ]
-          },
-          "quantity": {
-            "description": "Points per every specified quantity of the selected items, excluding free items (for `ORDER_ITEMS_QUANTITY`).",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/BenefitPointsProportionalOrderItemsCalculation"
-              }
-            ]
-          }
-        },
-        "additionalProperties": false
-      },
-      "LoyaltyV2ActivityBenefitMaterialProduct": {
-        "type": "object",
-        "title": "Benefit Material Product",
-        "description": "Product reference for a material benefit.",
-        "properties": {
-          "id": {
+          "card_definition_id": {
             "type": "string",
-            "pattern": "^prod_[a-f0-9]+",
-            "description": "Product ID, prefixed with `prod_`."
+            "pattern": "^lcdef_[a-f0-9]+$",
+            "description": "ID of the card definition whose cards receive the points. The card definition must exist and be `ACTIVE`."
           }
         },
         "required": [
-          "id"
+          "value",
+          "card_definition_id"
         ],
         "additionalProperties": false
       },
-      "LoyaltyV2ActivityBenefitMaterialSKU": {
+      "BenefitPointsProportional": {
         "type": "object",
-        "title": "Benefit Material SKU",
-        "description": "SKU reference for a material benefit.",
+        "description": "Proportional points effect - points are calculated from an order amount, order items, or a metadata property. Exactly one calculation source object (`order`, `customer`, `custom_event`, or `order_items`) is required, determined by `calculation_type`. In requests, the remaining source properties may be omitted or set to `null`. In responses, they are omitted.",
         "properties": {
-          "product_id": {
+          "calculation_type": {
             "type": "string",
-            "pattern": "^prod_[a-f0-9]+",
-            "description": "ID of the product the SKU belongs to, prefixed with `prod_`."
+            "enum": [
+              "PRE_DISCOUNT_ORDER_AMOUNT",
+              "POST_DISCOUNT_ORDER_AMOUNT",
+              "PRE_DISCOUNT_ORDER_ITEMS_AMOUNT",
+              "POST_DISCOUNT_ORDER_ITEMS_AMOUNT",
+              "ORDER_ITEMS_QUANTITY",
+              "ORDER_METADATA_VALUE",
+              "CUSTOMER_METADATA_VALUE",
+              "CUSTOM_EVENT_METADATA_VALUE"
+            ],
+            "description": "How the points are calculated:\n- `PRE_DISCOUNT_ORDER_AMOUNT` - points per every specified order amount before discounts (requires `order.amount`)\n- `POST_DISCOUNT_ORDER_AMOUNT` - points per every specified order amount after discounts (requires `order.total_amount`)\n- `PRE_DISCOUNT_ORDER_ITEMS_AMOUNT` - points per every specified amount spent on selected products before discounts (requires `order_items.amount`)\n- `POST_DISCOUNT_ORDER_ITEMS_AMOUNT` - points per every specified amount spent on selected products after discounts (requires `order_items.subtotal_amount`)\n- `ORDER_ITEMS_QUANTITY` - points per every specified quantity of selected products, excluding free items (requires `order_items.quantity`)\n- `ORDER_METADATA_VALUE` - points per every specified value in the order metadata (requires `order.metadata`)\n- `CUSTOMER_METADATA_VALUE` - points per every specified value in the customer metadata (requires `customer.metadata`)\n- `CUSTOM_EVENT_METADATA_VALUE` - points per every specified value in the custom event metadata (requires `custom_event.metadata`)"
           },
-          "id": {
+          "card_definition_id": {
             "type": "string",
-            "pattern": "^sku_[a-f0-9]+",
-            "description": "SKU ID, prefixed with `sku_`."
-          }
-        },
-        "required": [
-          "product_id",
-          "id"
-        ],
-        "additionalProperties": false
-      },
-      "LoyaltyV2ActivityBenefitDigitalGiftVouchers": {
-        "type": "object",
-        "title": "Benefit Digital Gift Vouchers",
-        "description": "Gift vouchers digital benefit configuration.",
-        "properties": {
-          "campaign_id": {
-            "type": "string",
-            "pattern": "^camp_[a-zA-Z0-9]+",
-            "description": "ID of the `GIFT_VOUCHERS` campaign the vouchers are sourced from, prefixed with `camp_`."
+            "pattern": "^lcdef_[a-f0-9]+$",
+            "description": "ID of the card definition whose cards receive the points. The card definition must exist and be ACTIVE."
           },
-          "balance": {
-            "type": "number",
-            "minimum": 0,
-            "maximum": 9007199254740991,
-            "description": "Balance loaded onto the gift voucher."
+          "order": {
+            "description": "Order-based calculation configuration. Required for `PRE_DISCOUNT_ORDER_AMOUNT`, `POST_DISCOUNT_ORDER_AMOUNT`, and `ORDER_METADATA_VALUE`. For other calculation types, requests may omit it or set it to `null`; responses omit it.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/BenefitPointsProportionalOrder"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "customer": {
+            "description": "Customer-metadata-based calculation configuration. Required for `CUSTOMER_METADATA_VALUE`. For other calculation types, requests may omit it or set it to `null`; responses omit it.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/BenefitPointsProportionalCustomer"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "custom_event": {
+            "description": "Custom-event-metadata-based calculation configuration. Required for `CUSTOM_EVENT_METADATA_VALUE`. For other calculation types, requests may omit it or set it to `null`; responses omit it.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/BenefitPointsProportionalCustomEvent"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "order_items": {
+            "description": "Order-items-based calculation configuration. Required for `PRE_DISCOUNT_ORDER_ITEMS_AMOUNT`, `POST_DISCOUNT_ORDER_ITEMS_AMOUNT`, and `ORDER_ITEMS_QUANTITY`. For other calculation types, requests may omit it or set it to `null`; responses omit it.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/BenefitPointsProportionalOrderItems"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         },
         "required": [
-          "campaign_id",
-          "balance"
+          "calculation_type",
+          "card_definition_id"
         ],
-        "additionalProperties": false
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "calculation_type": {
+                  "const": "PRE_DISCOUNT_ORDER_AMOUNT"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "order"
+              ],
+              "properties": {
+                "order": {
+                  "type": "object",
+                  "required": [
+                    "amount"
+                  ]
+                },
+                "customer": {
+                  "type": "null"
+                },
+                "custom_event": {
+                  "type": "null"
+                },
+                "order_items": {
+                  "type": "null"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "calculation_type": {
+                  "const": "POST_DISCOUNT_ORDER_AMOUNT"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "order"
+              ],
+              "properties": {
+                "order": {
+                  "type": "object",
+                  "required": [
+                    "total_amount"
+                  ]
+                },
+                "customer": {
+                  "type": "null"
+                },
+                "custom_event": {
+                  "type": "null"
+                },
+                "order_items": {
+                  "type": "null"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "calculation_type": {
+                  "const": "ORDER_METADATA_VALUE"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "order"
+              ],
+              "properties": {
+                "order": {
+                  "type": "object",
+                  "required": [
+                    "metadata"
+                  ]
+                },
+                "customer": {
+                  "type": "null"
+                },
+                "custom_event": {
+                  "type": "null"
+                },
+                "order_items": {
+                  "type": "null"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "calculation_type": {
+                  "const": "CUSTOMER_METADATA_VALUE"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "customer"
+              ],
+              "properties": {
+                "customer": {
+                  "$ref": "#/components/schemas/BenefitPointsProportionalCustomer"
+                },
+                "order": {
+                  "type": "null"
+                },
+                "custom_event": {
+                  "type": "null"
+                },
+                "order_items": {
+                  "type": "null"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "calculation_type": {
+                  "const": "CUSTOM_EVENT_METADATA_VALUE"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "custom_event"
+              ],
+              "properties": {
+                "custom_event": {
+                  "$ref": "#/components/schemas/BenefitPointsProportionalCustomEvent"
+                },
+                "order": {
+                  "type": "null"
+                },
+                "customer": {
+                  "type": "null"
+                },
+                "order_items": {
+                  "type": "null"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "calculation_type": {
+                  "const": "PRE_DISCOUNT_ORDER_ITEMS_AMOUNT"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "order_items"
+              ],
+              "properties": {
+                "order_items": {
+                  "type": "object",
+                  "required": [
+                    "amount"
+                  ]
+                },
+                "order": {
+                  "type": "null"
+                },
+                "customer": {
+                  "type": "null"
+                },
+                "custom_event": {
+                  "type": "null"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "calculation_type": {
+                  "const": "POST_DISCOUNT_ORDER_ITEMS_AMOUNT"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "order_items"
+              ],
+              "properties": {
+                "order_items": {
+                  "type": "object",
+                  "required": [
+                    "subtotal_amount"
+                  ]
+                },
+                "order": {
+                  "type": "null"
+                },
+                "customer": {
+                  "type": "null"
+                },
+                "custom_event": {
+                  "type": "null"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "calculation_type": {
+                  "const": "ORDER_ITEMS_QUANTITY"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "order_items"
+              ],
+              "properties": {
+                "order_items": {
+                  "type": "object",
+                  "required": [
+                    "quantity"
+                  ]
+                },
+                "order": {
+                  "type": "null"
+                },
+                "customer": {
+                  "type": "null"
+                },
+                "custom_event": {
+                  "type": "null"
+                }
+              }
+            }
+          }
+        ]
       },
-      "LoyaltyV2ActivityBenefitDigitalDiscountCoupons": {
+      "BenefitMaterial": {
         "type": "object",
-        "title": "Benefit Digital Discount Coupons",
-        "description": "Discount coupons digital benefit configuration.",
+        "description": "Material benefit - a physical product or SKU. Exactly one of `product` or `sku` is required, matching the `type`. In requests, the other property may be omitted or set to `null`. In responses, it is omitted.",
         "properties": {
-          "campaign_id": {
+          "type": {
             "type": "string",
-            "pattern": "^camp_[a-zA-Z0-9]+",
-            "description": "ID of the `DISCOUNT_COUPONS` campaign the coupons are sourced from, prefixed with `camp_`."
+            "enum": [
+              "PRODUCT",
+              "SKU"
+            ],
+            "description": "Whether the benefit is a whole product or a specific SKU."
+          },
+          "product": {
+            "description": "Product reference. Required when `type` is `PRODUCT`. When `type` is `SKU`, requests may omit it or set it to `null`; responses omit it. The product must exist.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitMaterialProduct"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "sku": {
+            "description": "SKU reference. Required when `type` is `SKU`. When `type` is `PRODUCT`, requests may omit it or set it to `null`; responses omit it. The SKU must exist under the given product.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitMaterialSKU"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "required": [
+              "type"
+            ]
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "PRODUCT"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "product"
+              ],
+              "properties": {
+                "product": {
+                  "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitMaterialProduct"
+                },
+                "sku": {
+                  "type": "null"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "SKU"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "sku"
+              ],
+              "properties": {
+                "sku": {
+                  "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitMaterialSKU"
+                },
+                "product": {
+                  "type": "null"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "BenefitDigital": {
+        "type": "object",
+        "description": "Digital benefit - a reward sourced from a Voucherify campaign. Exactly one of `gift_vouchers` or `discount_coupons` is required, matching the `type`. In requests, the other property may be omitted or set to `null`. In responses, it is omitted. The referenced campaign must exist and its campaign type must match the benefit's digital type.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "GIFT_VOUCHERS",
+              "DISCOUNT_COUPONS"
+            ],
+            "description": "Type of the digital reward."
+          },
+          "gift_vouchers": {
+            "description": "Gift vouchers configuration. Required when `type` is `GIFT_VOUCHERS`. When `type` is `DISCOUNT_COUPONS`, requests may omit it or set it to `null`; responses omit it.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitDigitalGiftVouchers"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "discount_coupons": {
+            "description": "Discount coupons configuration. Required when `type` is `DISCOUNT_COUPONS`. When `type` is `GIFT_VOUCHERS`, requests may omit it or set it to `null`; responses omit it.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitDigitalDiscountCoupons"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "required": [
+              "type"
+            ]
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "DISCOUNT_COUPONS"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "discount_coupons"
+              ],
+              "properties": {
+                "discount_coupons": {
+                  "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitDigitalDiscountCoupons"
+                },
+                "gift_vouchers": {
+                  "type": "null"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "GIFT_VOUCHERS"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "gift_vouchers"
+              ],
+              "properties": {
+                "gift_vouchers": {
+                  "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitDigitalGiftVouchers"
+                },
+                "discount_coupons": {
+                  "type": "null"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "BenefitStock": {
+        "type": "object",
+        "description": "Stock configuration of the benefit. When `type` is `LIMITED`, the `limited` object is required. When `type` is `UNLIMITED`, requests may omit `limited` or set it to `null`; responses omit it.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "UNLIMITED",
+              "LIMITED"
+            ],
+            "description": "Whether the benefit has unlimited or limited stock."
+          },
+          "limited": {
+            "description": "Limited stock configuration. Required when `type` is `LIMITED`. When `type` is `UNLIMITED`, requests may omit it or set it to `null`; responses omit it.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitStockLimited"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         },
         "required": [
-          "campaign_id"
+          "type"
         ],
-        "additionalProperties": false
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "UNLIMITED"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "limited": {
+                  "type": "null"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "LIMITED"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "limited"
+              ],
+              "properties": {
+                "limited": {
+                  "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitStockLimited"
+                }
+              }
+            }
+          }
+        ]
       },
       "BenefitActivityData": {
         "type": "object",
@@ -46052,87 +45860,195 @@
           }
         }
       },
-      "LoyaltyV2ActivityBenefitPointsProportionalEvery": {
+      "BenefitPointsProportionalOrder": {
         "type": "object",
-        "description": "Ratio definition - `value` points for every `every` units.",
+        "description": "Order-based proportional calculation. Provide the property matching the `calculation_type`.",
         "properties": {
-          "every": {
-            "type": "integer",
-            "minimum": 1,
-            "maximum": 9007199254740991,
-            "description": "Unit step (e.g. order amount in cents) for which `value` points are granted."
+          "amount": {
+            "description": "Points per every specified pre-discount order amount (for `PRE_DISCOUNT_ORDER_AMOUNT`).",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitPointsProportionalEvery"
+              }
+            ]
           },
-          "value": {
-            "type": "number",
-            "minimum": 0,
-            "maximum": 9007199254740991,
-            "description": "Number of points granted per `every` units."
+          "total_amount": {
+            "description": "Points per every specified post-discount order amount (for `POST_DISCOUNT_ORDER_AMOUNT`).",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitPointsProportionalEvery"
+              }
+            ]
+          },
+          "metadata": {
+            "description": "Points per every specified value of an order metadata property (for `ORDER_METADATA_VALUE`).",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitPointsProportionalMetadata"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "BenefitPointsProportionalCustomer": {
+        "type": "object",
+        "description": "Customer-metadata-based proportional calculation.",
+        "properties": {
+          "metadata": {
+            "description": "Points per every specified value of a customer metadata property.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitPointsProportionalMetadata"
+              }
+            ]
           }
         },
         "required": [
-          "every",
-          "value"
+          "metadata"
         ],
         "additionalProperties": false
       },
-      "LoyaltyV2ActivityBenefitPointsProportionalMetadata": {
+      "BenefitPointsProportionalCustomEvent": {
         "type": "object",
-        "description": "Metadata-based ratio definition - `value` points for every `every` units of the metadata property.",
+        "description": "Custom-event-metadata-based proportional calculation.",
         "properties": {
-          "every": {
-            "type": "integer",
-            "minimum": 1,
-            "maximum": 9007199254740991,
-            "description": "Unit step of the metadata property value for which `value` points are granted."
+          "metadata": {
+            "description": "Points per every specified value of a custom event metadata property.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitPointsProportionalMetadata"
+              }
+            ]
+          }
+        },
+        "required": [
+          "metadata"
+        ],
+        "additionalProperties": false
+      },
+      "BenefitPointsProportionalOrderItems": {
+        "type": "object",
+        "description": "Order-items-based proportional calculation. Provide the property matching the `calculation_type`.",
+        "properties": {
+          "amount": {
+            "description": "Points per every specified pre-discount amount spent on the selected items (for `PRE_DISCOUNT_ORDER_ITEMS_AMOUNT`).",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/BenefitPointsProportionalOrderItemsCalculation"
+              }
+            ]
           },
-          "value": {
-            "type": "number",
-            "minimum": 0,
-            "maximum": 9007199254740991,
-            "description": "Number of points granted per `every` units."
+          "subtotal_amount": {
+            "description": "Points per every specified post-discount amount spent on the selected items (for `POST_DISCOUNT_ORDER_ITEMS_AMOUNT`).",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/BenefitPointsProportionalOrderItemsCalculation"
+              }
+            ]
           },
-          "property": {
+          "quantity": {
+            "description": "Points per every specified quantity of the selected items, excluding free items (for `ORDER_ITEMS_QUANTITY`).",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/BenefitPointsProportionalOrderItemsCalculation"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "LoyaltyV2ActivityBenefitMaterialProduct": {
+        "type": "object",
+        "title": "Benefit Material Product",
+        "description": "Product reference for a material benefit.",
+        "properties": {
+          "id": {
             "type": "string",
-            "minLength": 1,
-            "description": "Name of the metadata property used for the calculation."
+            "pattern": "^prod_[a-f0-9]+",
+            "description": "Product ID, prefixed with `prod_`."
           }
         },
         "required": [
-          "every",
-          "value",
-          "property"
+          "id"
         ],
         "additionalProperties": false
       },
-      "BenefitPointsProportionalOrderItemsCalculation": {
+      "LoyaltyV2ActivityBenefitMaterialSKU": {
         "type": "object",
-        "description": "Order-items ratio definition with the list of applicable products/SKUs/collections.",
+        "title": "Benefit Material SKU",
+        "description": "SKU reference for a material benefit.",
         "properties": {
-          "every": {
-            "type": "integer",
-            "minimum": 1,
-            "maximum": 9007199254740991,
-            "description": "Unit step (amount or quantity) for which `value` points are granted."
+          "product_id": {
+            "type": "string",
+            "pattern": "^prod_[a-f0-9]+",
+            "description": "ID of the product the SKU belongs to, prefixed with `prod_`."
           },
-          "value": {
-            "type": "number",
-            "minimum": 0,
-            "maximum": 9007199254740991,
-            "description": "Number of points granted per `every` units."
-          },
-          "applicable_to": {
-            "type": "array",
-            "minItems": 1,
-            "description": "Products, SKUs, or product collections the calculation applies to.",
-            "items": {
-              "$ref": "#/components/schemas/BenefitPointsProportionalApplicableTo"
-            }
+          "id": {
+            "type": "string",
+            "pattern": "^sku_[a-f0-9]+",
+            "description": "SKU ID, prefixed with `sku_`."
           }
         },
         "required": [
-          "every",
-          "value",
-          "applicable_to"
+          "product_id",
+          "id"
+        ],
+        "additionalProperties": false
+      },
+      "LoyaltyV2ActivityBenefitDigitalGiftVouchers": {
+        "type": "object",
+        "title": "Benefit Digital Gift Vouchers",
+        "description": "Gift vouchers digital benefit configuration.",
+        "properties": {
+          "campaign_id": {
+            "type": "string",
+            "pattern": "^camp_[a-zA-Z0-9]+",
+            "description": "ID of the `GIFT_VOUCHERS` campaign the vouchers are sourced from, prefixed with `camp_`."
+          },
+          "balance": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 9007199254740991,
+            "description": "Balance loaded onto the gift voucher."
+          }
+        },
+        "required": [
+          "campaign_id",
+          "balance"
+        ],
+        "additionalProperties": false
+      },
+      "LoyaltyV2ActivityBenefitDigitalDiscountCoupons": {
+        "type": "object",
+        "title": "Benefit Digital Discount Coupons",
+        "description": "Discount coupons digital benefit configuration.",
+        "properties": {
+          "campaign_id": {
+            "type": "string",
+            "pattern": "^camp_[a-zA-Z0-9]+",
+            "description": "ID of the `DISCOUNT_COUPONS` campaign the coupons are sourced from, prefixed with `camp_`."
+          }
+        },
+        "required": [
+          "campaign_id"
+        ],
+        "additionalProperties": false
+      },
+      "LoyaltyV2ActivityBenefitStockLimited": {
+        "type": "object",
+        "title": "Benefit Stock Limited",
+        "description": "Limited stock configuration.",
+        "properties": {
+          "quantity": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991,
+            "description": "Available Remaining stock quantity. For responses, updates with each benefit purchase."
+          }
+        },
+        "required": [
+          "quantity"
         ],
         "additionalProperties": false
       },
@@ -48640,134 +48556,89 @@
           }
         }
       },
-      "BenefitPointsProportionalApplicableTo": {
+      "LoyaltyV2ActivityBenefitPointsProportionalEvery": {
         "type": "object",
-        "description": "A single applicability rule. Exactly one of `product`, `sku`, or `products_collection` is required, matching the `type`. In requests, the other two may be omitted or set to `null`. In responses, they are omitted.",
+        "description": "Ratio definition - `value` points for every `every` units.",
         "properties": {
-          "type": {
-            "type": "string",
-            "enum": [
-              "product",
-              "sku",
-              "products_collection"
-            ],
-            "description": "Type of the referenced object."
+          "every": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991,
+            "description": "Unit step (e.g. order amount in cents) for which `value` points are granted."
           },
-          "product": {
-            "description": "Product reference. Required when `type` is `product`. For other types, requests may omit it or set it to `null`; responses omit it.",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitPointsProportionalApplicableToProduct"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "sku": {
-            "description": "SKU reference. Required when `type` is `sku`. For other types, requests may omit it or set it to `null`; responses omit it.",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitPointsProportionalApplicableToSku"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "products_collection": {
-            "description": "Products collection reference. Required when `type` is `products_collection`. For other types, requests may omit it or set it to `null`; responses omit it.",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitPointsProportionalApplicableToProductsCollection"
-              },
-              {
-                "type": "null"
-              }
-            ]
+          "value": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 9007199254740991,
+            "description": "Number of points granted per `every` units."
           }
         },
         "required": [
-          "type"
+          "every",
+          "value"
         ],
-        "additionalProperties": false,
-        "allOf": [
-          {
-            "if": {
-              "properties": {
-                "type": {
-                  "const": "product"
-                }
-              }
-            },
-            "then": {
-              "required": [
-                "product"
-              ],
-              "properties": {
-                "product": {
-                  "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitPointsProportionalApplicableToProduct"
-                },
-                "sku": {
-                  "type": "null"
-                },
-                "products_collection": {
-                  "type": "null"
-                }
-              }
-            }
+        "additionalProperties": false
+      },
+      "LoyaltyV2ActivityBenefitPointsProportionalMetadata": {
+        "type": "object",
+        "description": "Metadata-based ratio definition - `value` points for every `every` units of the metadata property.",
+        "properties": {
+          "every": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991,
+            "description": "Unit step of the metadata property value for which `value` points are granted."
           },
-          {
-            "if": {
-              "properties": {
-                "type": {
-                  "const": "sku"
-                }
-              }
-            },
-            "then": {
-              "required": [
-                "sku"
-              ],
-              "properties": {
-                "sku": {
-                  "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitPointsProportionalApplicableToSku"
-                },
-                "product": {
-                  "type": "null"
-                },
-                "products_collection": {
-                  "type": "null"
-                }
-              }
-            }
+          "value": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 9007199254740991,
+            "description": "Number of points granted per `every` units."
           },
-          {
-            "if": {
-              "properties": {
-                "type": {
-                  "const": "products_collection"
-                }
-              }
-            },
-            "then": {
-              "required": [
-                "products_collection"
-              ],
-              "properties": {
-                "products_collection": {
-                  "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitPointsProportionalApplicableToProductsCollection"
-                },
-                "product": {
-                  "type": "null"
-                },
-                "sku": {
-                  "type": "null"
-                }
-              }
+          "property": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Name of the metadata property used for the calculation."
+          }
+        },
+        "required": [
+          "every",
+          "value",
+          "property"
+        ],
+        "additionalProperties": false
+      },
+      "BenefitPointsProportionalOrderItemsCalculation": {
+        "type": "object",
+        "description": "Order-items ratio definition with the list of applicable products/SKUs/collections.",
+        "properties": {
+          "every": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991,
+            "description": "Unit step (amount or quantity) for which `value` points are granted."
+          },
+          "value": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 9007199254740991,
+            "description": "Number of points granted per `every` units."
+          },
+          "applicable_to": {
+            "type": "array",
+            "minItems": 1,
+            "description": "Products, SKUs, or product collections the calculation applies to.",
+            "items": {
+              "$ref": "#/components/schemas/BenefitPointsProportionalApplicableTo"
             }
           }
-        ]
+        },
+        "required": [
+          "every",
+          "value",
+          "applicable_to"
+        ],
+        "additionalProperties": false
       },
       "RewardCostRuleErrorRequest": {
         "type": "object",
@@ -49612,53 +49483,134 @@
         ],
         "additionalProperties": false
       },
-      "LoyaltyV2ActivityBenefitPointsProportionalApplicableToProduct": {
+      "BenefitPointsProportionalApplicableTo": {
         "type": "object",
-        "title": "Benefit Point Proportional Applicable To Product",
-        "description": "Product reference.",
+        "description": "A single applicability rule. Exactly one of `product`, `sku`, or `products_collection` is required, matching the `type`. In requests, the other two may be omitted or set to `null`. In responses, they are omitted.",
         "properties": {
-          "id": {
+          "type": {
             "type": "string",
-            "pattern": "^prod_[a-f0-9]+",
-            "description": "Product ID, prefixed with `prod_`."
+            "enum": [
+              "product",
+              "sku",
+              "products_collection"
+            ],
+            "description": "Type of the referenced object."
+          },
+          "product": {
+            "description": "Product reference. Required when `type` is `product`. For other types, requests may omit it or set it to `null`; responses omit it.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitPointsProportionalApplicableToProduct"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "sku": {
+            "description": "SKU reference. Required when `type` is `sku`. For other types, requests may omit it or set it to `null`; responses omit it.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitPointsProportionalApplicableToSku"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "products_collection": {
+            "description": "Products collection reference. Required when `type` is `products_collection`. For other types, requests may omit it or set it to `null`; responses omit it.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitPointsProportionalApplicableToProductsCollection"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         },
         "required": [
-          "id"
+          "type"
         ],
-        "additionalProperties": false
-      },
-      "LoyaltyV2ActivityBenefitPointsProportionalApplicableToSku": {
-        "type": "object",
-        "title": "Benefit Point Proportional Applicable To SKU",
-        "description": "SKU reference.",
-        "properties": {
-          "id": {
-            "type": "string",
-            "pattern": "^sku_[a-f0-9]+",
-            "description": "SKU ID, prefixed with `sku_`."
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "product"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "product"
+              ],
+              "properties": {
+                "product": {
+                  "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitPointsProportionalApplicableToProduct"
+                },
+                "sku": {
+                  "type": "null"
+                },
+                "products_collection": {
+                  "type": "null"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "sku"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "sku"
+              ],
+              "properties": {
+                "sku": {
+                  "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitPointsProportionalApplicableToSku"
+                },
+                "product": {
+                  "type": "null"
+                },
+                "products_collection": {
+                  "type": "null"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "products_collection"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "products_collection"
+              ],
+              "properties": {
+                "products_collection": {
+                  "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitPointsProportionalApplicableToProductsCollection"
+                },
+                "product": {
+                  "type": "null"
+                },
+                "sku": {
+                  "type": "null"
+                }
+              }
+            }
           }
-        },
-        "required": [
-          "id"
-        ],
-        "additionalProperties": false
-      },
-      "LoyaltyV2ActivityBenefitPointsProportionalApplicableToProductsCollection": {
-        "type": "object",
-        "title": "Benefit Point Proportional Products Collection",
-        "description": "Products collection reference.",
-        "properties": {
-          "id": {
-            "type": "string",
-            "pattern": "^pc_[a-zA-Z0-9]+",
-            "description": "Products collection ID, prefixed with `pc_`."
-          }
-        },
-        "required": [
-          "id"
-        ],
-        "additionalProperties": false
+        ]
       },
       "RewardCostRuleConditionObjectRequest": {
         "type": "object",
@@ -49923,6 +49875,54 @@
         },
         "required": [
           "unit"
+        ],
+        "additionalProperties": false
+      },
+      "LoyaltyV2ActivityBenefitPointsProportionalApplicableToProduct": {
+        "type": "object",
+        "title": "Benefit Point Proportional Applicable To Product",
+        "description": "Product reference.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^prod_[a-f0-9]+",
+            "description": "Product ID, prefixed with `prod_`."
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "additionalProperties": false
+      },
+      "LoyaltyV2ActivityBenefitPointsProportionalApplicableToSku": {
+        "type": "object",
+        "title": "Benefit Point Proportional Applicable To SKU",
+        "description": "SKU reference.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^sku_[a-f0-9]+",
+            "description": "SKU ID, prefixed with `sku_`."
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "additionalProperties": false
+      },
+      "LoyaltyV2ActivityBenefitPointsProportionalApplicableToProductsCollection": {
+        "type": "object",
+        "title": "Benefit Point Proportional Products Collection",
+        "description": "Products collection reference.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^pc_[a-zA-Z0-9]+",
+            "description": "Products collection ID, prefixed with `pc_`."
+          }
+        },
+        "required": [
+          "id"
         ],
         "additionalProperties": false
       },
