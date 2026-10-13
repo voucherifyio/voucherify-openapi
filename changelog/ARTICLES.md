@@ -5,6 +5,10 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-10-12
+
+Updated `loyalty-v2-reports-overview.mdx` so the earning-rule daily report link points at the list page.
+
 ## 2026-10-08
 
 Updated Workflows articles for versions, unfinished drafts, publish confirmation, step IDs, overlapping triggers, and designer shortcuts (DEV-4328 / DEV-4329 / DEV-4334 / DEV-4341 / DEV-4348 / DEV-4465 / DEV-4467 / DEV-4512).
