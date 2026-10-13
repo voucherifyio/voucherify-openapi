@@ -90377,6 +90377,16 @@
         ],
         "additionalProperties": false
       },
+      "V2LoyaltiesRewardsDraftResponseBody": {
+        "title": "V2 Loyalties Rewards Draft Response Body",
+        "type": "object",
+        "description": "Response body schema for **POST** `/v2/loyalties/rewards/{rewardId}/draft`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/RewardResponse"
+          }
+        ]
+      },
       "V2LoyaltiesRewardsDeactivateResponseBody": {
         "title": "V2 Loyalties Rewards Deactivate Response Body",
         "type": "object",
@@ -166015,32 +166025,32 @@
       }
     },
     "/v2/loyalties/rewards/{rewardId}/draft": {
+      "parameters": [
+        {
+          "name": "rewardId",
+          "in": "path",
+          "required": true,
+          "description": "Unique reward identifier, prefixed with `lrew_`.",
+          "schema": {
+            "type": "string",
+            "pattern": "^lrew_[a-f0-9]+$"
+          }
+        }
+      ],
       "post": {
         "operationId": "draftReward",
         "tags": [
           "LV2-Rewards"
         ],
         "summary": "Move reward back to draft",
-        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nMoves the reward back to the DRAFT status. Allowed only from `ACTIVE` status;\nother transitions are rejected with a conflict error. The reward can't be assigned to a loyalty program. This endpoint takes no\nrequest body.",
-        "parameters": [
-          {
-            "name": "rewardId",
-            "in": "path",
-            "required": true,
-            "description": "Unique reward identifier, prefixed with `lrew_`.",
-            "schema": {
-              "type": "string",
-              "pattern": "^lrew_[a-f0-9]+$"
-            }
-          }
-        ],
+        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nMoves the reward back to the DRAFT status. Allowed only from `ACTIVE` status;\nother transitions return 400 `invalid_state_transition`. A reward assigned to a program that is not in `DRAFT` cannot be drafted (423 `resource_locked`, key `connected_non_draft_program`). This endpoint takes no\nrequest body.",
         "responses": {
           "200": {
             "description": "The drafted reward.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/RewardResponse"
+                  "$ref": "#/components/schemas/V2LoyaltiesRewardsDraftResponseBody"
                 }
               }
             }
@@ -166065,8 +166075,8 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
+          "423": {
+            "description": "Resource locked - a related resource is in a state that prevents this operation.",
             "content": {
               "application/json": {
                 "schema": {
