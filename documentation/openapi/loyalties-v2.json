@@ -15383,6 +15383,18 @@
       }
     },
     "/v2/loyalties/earning-rules/{earningRuleId}/activities": {
+      "parameters": [
+        {
+          "name": "earningRuleId",
+          "in": "path",
+          "required": true,
+          "description": "Earning rule ID.",
+          "schema": {
+            "type": "string",
+            "pattern": "^lern_[a-f0-9]+$"
+          }
+        }
+      ],
       "get": {
         "tags": [
           "Earning Rules"
@@ -15392,22 +15404,16 @@
         "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nReturns a cursor-paginated list of activities (audit trail) for a single earning rule.\nThe same field cannot be used in both ascending and descending order at once.\nDefault order is `-created_at`.",
         "parameters": [
           {
-            "name": "earningRuleId",
-            "in": "path",
-            "required": true,
-            "description": "Earning rule ID.",
-            "schema": {
-              "type": "string",
-              "pattern": "^lern_[a-f0-9]+$"
-            }
-          },
-          {
             "name": "limit",
             "in": "query",
             "required": false,
             "description": "Number of items to return. Between 1 and 100, defaults to 10.",
             "schema": {
-              "type": "integer",
+              "type": [
+                "number",
+                "string",
+                "null"
+              ],
               "minimum": 1,
               "maximum": 100,
               "default": 10
@@ -15437,6 +15443,9 @@
                       "-created_at"
                     ]
                   }
+                },
+                {
+                  "type": "null"
                 }
               ]
             }
@@ -15447,7 +15456,10 @@
             "required": false,
             "description": "Pagination cursor returned in `cursor.next` of a previous response. Must match the pattern `^lcrsaer_[a-f0-9]+$`.",
             "schema": {
-              "type": "string",
+              "type": [
+                "string",
+                "null"
+              ],
               "pattern": "^lcrsaer_[a-f0-9]+$"
             }
           },
@@ -15459,7 +15471,14 @@
             "explode": true,
             "description": "Filters as a deep object, e.g. `filters[type][conditions][$is]=vl.earning_rule.updated`.",
             "schema": {
-              "$ref": "#/components/schemas/LoyaltiesEarningRulesActivitiesListRequestQuery"
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/LoyaltiesEarningRulesActivitiesListRequestQuery"
+                },
+                {
+                  "type": "null"
+                }
+              ]
             }
           }
         ],
@@ -15469,7 +15488,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/EarningRuleActivitiesListResponse"
+                  "$ref": "#/components/schemas/V2LoyaltiesEarningRulesActivitiesListResponseBody"
                 }
               }
             }
@@ -15486,16 +15505,6 @@
           },
           "404": {
             "description": "Resource not found.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
             "content": {
               "application/json": {
                 "schema": {
@@ -23770,41 +23779,15 @@
         "additionalProperties": false,
         "title": "Loyalties Earning Rules Activities List Request Query"
       },
-      "EarningRuleActivitiesListResponse": {
+      "V2LoyaltiesEarningRulesActivitiesListResponseBody": {
+        "title": "V2 Loyalties Earning Rules Activities List Response Body",
         "type": "object",
-        "description": "Cursor-paginated list of earning rule activities.",
-        "properties": {
-          "data": {
-            "type": "array",
-            "description": "Activities on the current page.",
-            "items": {
-              "$ref": "#/components/schemas/EarningRuleActivityResponse"
-            }
-          },
-          "cursor": {
-            "type": [
-              "object",
-              "null"
-            ],
-            "description": "Pagination cursor. `null` when there are no more results.",
-            "properties": {
-              "next": {
-                "type": "string",
-                "description": "Cursor ID to pass as the `cursor` query parameter (matches `^lcrsaer_[a-f0-9]+$`)."
-              },
-              "expires_at": {
-                "type": "string",
-                "format": "date-time",
-                "description": "Cursor expiration timestamp."
-              }
-            }
-          },
-          "object": {
-            "type": "string",
-            "const": "list",
-            "description": "Object type marker. Always `list`."
+        "description": "Response body schema for **GET** `/v2/loyalties/earning-rules/{earningRuleId}/activities`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EarningRuleActivitiesListResponse"
           }
-        }
+        ]
       },
       "TierStructureCreateRequest": {
         "type": "object",
@@ -34786,40 +34769,39 @@
           "vl.earning_rule.unassigned"
         ]
       },
-      "EarningRuleActivityResponse": {
+      "EarningRuleActivitiesListResponse": {
         "type": "object",
-        "description": "A single earning rule activity.",
+        "description": "Cursor-paginated list of earning rule activities.",
         "properties": {
-          "id": {
-            "type": "string",
-            "pattern": "^laer_[a-f0-9]+$",
-            "description": "Activity ID (`laer_...`)."
-          },
-          "earning_rule_id": {
-            "type": "string",
-            "pattern": "^lern_[a-f0-9]+$",
-            "description": "ID of the earning rule the activity belongs to."
-          },
-          "type": {
-            "$ref": "#/components/schemas/EarningRuleActivityType"
-          },
           "data": {
-            "type": "object",
-            "description": "Activity payload. For created/updated/deleted/activated/deactivated/drafted activities it contains an `earning_rule` snapshot (the full earning rule object at the time of the change).",
-            "additionalProperties": true
+            "type": "array",
+            "description": "Activities on the current page.",
+            "items": {
+              "$ref": "#/components/schemas/EarningRuleActivityResponse"
+            }
           },
-          "created_at": {
+          "cursor": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "description": "Pagination cursor. `null` when there are no more results.",
+            "properties": {
+              "next": {
+                "type": "string",
+                "description": "Cursor ID to pass as the `cursor` query parameter (matches `^lcrsaer_[a-f0-9]+$`)."
+              },
+              "expires_at": {
+                "type": "string",
+                "format": "date-time",
+                "description": "Cursor expiration timestamp."
+              }
+            }
+          },
+          "object": {
             "type": "string",
-            "format": "date-time",
-            "description": "Activity timestamp (ISO 8601)."
-          },
-          "group_id": {
-            "type": "string",
-            "description": "Groups related activities recorded together."
-          },
-          "source": {
-            "$ref": "#/components/schemas/EarningRuleActivitySource",
-            "description": "Origin of the activity. Absent when not recorded."
+            "const": "list",
+            "description": "Object type marker. Always `list`."
           }
         }
       },
@@ -42578,47 +42560,40 @@
         ],
         "additionalProperties": false
       },
-      "EarningRuleActivitySource": {
+      "EarningRuleActivityResponse": {
         "type": "object",
-        "description": "Origin of the activity.",
+        "description": "A single earning rule activity.",
         "properties": {
-          "channel": {
+          "id": {
             "type": "string",
-            "enum": [
-              "USER_PORTAL",
-              "API",
-              "CLIENT_API",
-              "INTERNAL"
-            ],
-            "description": "Channel through which the change was made."
+            "pattern": "^laer_[a-f0-9]+$",
+            "description": "Activity ID (`laer_...`)."
           },
-          "user": {
-            "type": "object",
-            "description": "User who made the change (present for USER_PORTAL channel).",
-            "properties": {
-              "id": {
-                "type": "string",
-                "description": "User ID."
-              }
-            }
+          "earning_rule_id": {
+            "type": "string",
+            "pattern": "^lern_[a-f0-9]+$",
+            "description": "ID of the earning rule the activity belongs to."
           },
-          "api_key": {
+          "type": {
+            "$ref": "#/components/schemas/EarningRuleActivityType"
+          },
+          "data": {
             "type": "object",
-            "description": "API key used to make the change (present for API/CLIENT_API channels).",
-            "properties": {
-              "name": {
-                "type": "string",
-                "description": "API key name."
-              },
-              "app_id": {
-                "type": "string",
-                "description": "Application ID of the API key."
-              },
-              "client_app_id": {
-                "type": "string",
-                "description": "Client application ID (for CLIENT_API keys)."
-              }
-            }
+            "description": "Activity payload. For created/updated/deleted/activated/deactivated/drafted activities it contains an `earning_rule` snapshot (the full earning rule object at the time of the change).",
+            "additionalProperties": true
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Activity timestamp (ISO 8601)."
+          },
+          "group_id": {
+            "type": "string",
+            "description": "Groups related activities recorded together."
+          },
+          "source": {
+            "$ref": "#/components/schemas/EarningRuleActivitySource",
+            "description": "Origin of the activity. Absent when not recorded."
           }
         }
       },
@@ -45878,6 +45853,50 @@
             }
           }
         ]
+      },
+      "EarningRuleActivitySource": {
+        "type": "object",
+        "description": "Origin of the activity.",
+        "properties": {
+          "channel": {
+            "type": "string",
+            "enum": [
+              "USER_PORTAL",
+              "API",
+              "CLIENT_API",
+              "INTERNAL"
+            ],
+            "description": "Channel through which the change was made."
+          },
+          "user": {
+            "type": "object",
+            "description": "User who made the change (present for USER_PORTAL channel).",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "User ID."
+              }
+            }
+          },
+          "api_key": {
+            "type": "object",
+            "description": "API key used to make the change (present for API/CLIENT_API channels).",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "API key name."
+              },
+              "app_id": {
+                "type": "string",
+                "description": "Application ID of the API key."
+              },
+              "client_app_id": {
+                "type": "string",
+                "description": "Client application ID (for CLIENT_API keys)."
+              }
+            }
+          }
+        }
       },
       "TierStructureExpirationFixedDurationPeriodUpsert": {
         "type": "object",

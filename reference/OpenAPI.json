@@ -83094,6 +83094,16 @@
           }
         }
       },
+      "V2LoyaltiesEarningRulesActivitiesListResponseBody": {
+        "title": "V2 Loyalties Earning Rules Activities List Response Body",
+        "type": "object",
+        "description": "Response body schema for **GET** `/v2/loyalties/earning-rules/{earningRuleId}/activities`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EarningRuleActivitiesListResponse"
+          }
+        ]
+      },
       "EarningRuleActivitiesListResponse": {
         "type": "object",
         "description": "Cursor-paginated list of earning rule activities.",
@@ -162186,6 +162196,18 @@
       }
     },
     "/v2/loyalties/earning-rules/{earningRuleId}/activities": {
+      "parameters": [
+        {
+          "name": "earningRuleId",
+          "in": "path",
+          "required": true,
+          "description": "Earning rule ID.",
+          "schema": {
+            "type": "string",
+            "pattern": "^lern_[a-f0-9]+$"
+          }
+        }
+      ],
       "get": {
         "tags": [
           "LV2-Earning Rules"
@@ -162195,22 +162217,16 @@
         "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nReturns a cursor-paginated list of activities (audit trail) for a single earning rule.\nThe same field cannot be used in both ascending and descending order at once.\nDefault order is `-created_at`.",
         "parameters": [
           {
-            "name": "earningRuleId",
-            "in": "path",
-            "required": true,
-            "description": "Earning rule ID.",
-            "schema": {
-              "type": "string",
-              "pattern": "^lern_[a-f0-9]+$"
-            }
-          },
-          {
             "name": "limit",
             "in": "query",
             "required": false,
             "description": "Number of items to return. Between 1 and 100, defaults to 10.",
             "schema": {
-              "type": "integer",
+              "type": [
+                "number",
+                "string",
+                "null"
+              ],
               "minimum": 1,
               "maximum": 100,
               "default": 10
@@ -162240,6 +162256,9 @@
                       "-created_at"
                     ]
                   }
+                },
+                {
+                  "type": "null"
                 }
               ]
             }
@@ -162250,7 +162269,10 @@
             "required": false,
             "description": "Pagination cursor returned in `cursor.next` of a previous response. Must match the pattern `^lcrsaer_[a-f0-9]+$`.",
             "schema": {
-              "type": "string",
+              "type": [
+                "string",
+                "null"
+              ],
               "pattern": "^lcrsaer_[a-f0-9]+$"
             }
           },
@@ -162262,7 +162284,14 @@
             "explode": true,
             "description": "Filters as a deep object, e.g. `filters[type][conditions][$is]=vl.earning_rule.updated`.",
             "schema": {
-              "$ref": "#/components/schemas/LoyaltiesEarningRulesActivitiesListRequestQuery"
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/LoyaltiesEarningRulesActivitiesListRequestQuery"
+                },
+                {
+                  "type": "null"
+                }
+              ]
             }
           }
         ],
@@ -162272,7 +162301,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/EarningRuleActivitiesListResponse"
+                  "$ref": "#/components/schemas/V2LoyaltiesEarningRulesActivitiesListResponseBody"
                 }
               }
             }
@@ -162289,16 +162318,6 @@
           },
           "404": {
             "description": "Resource not found.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
             "content": {
               "application/json": {
                 "schema": {
