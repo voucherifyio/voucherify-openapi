@@ -9056,7 +9056,7 @@
             "schema": {
               "oneOf": [
                 {
-                  "$ref": "#/components/schemas/LoyaltiesProgramsMembersBenefitsTransactionsListRequestQuery"
+                  "$ref": "#/components/schemas/V2LoyaltiesProgramsMembersBenefitsTransactionsListRequestQuery"
                 },
                 {
                   "type": "null"
@@ -9071,7 +9071,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/LoyaltiesProgramsMembersBenefitsTransactionsListResponseBody"
+                  "$ref": "#/components/schemas/V2LoyaltiesProgramsMembersBenefitsTransactionsListResponseBody"
                 },
                 "examples": {
                   "Benefit transaction list": {
@@ -21389,7 +21389,7 @@
           }
         ]
       },
-      "LoyaltiesProgramsMembersBenefitsTransactionsListRequestQuery": {
+      "V2LoyaltiesProgramsMembersBenefitsTransactionsListRequestQuery": {
         "type": "object",
         "description": "Request query schema for **GET** `/v2/loyalties/programs/{programId}/members/{memberId}/benefits/transactions`.",
         "properties": {
@@ -21432,56 +21432,16 @@
           }
         },
         "additionalProperties": false,
-        "title": "Loyalties Programs Members Benefits Transactions List Request Query"
+        "title": "V2 Loyalties Programs Members Benefits Transactions List Request Query"
       },
-      "LoyaltiesProgramsMembersBenefitsTransactionsListResponseBody": {
+      "V2LoyaltiesProgramsMembersBenefitsTransactionsListResponseBody": {
+        "title": "V2 Loyalties Programs Members Benefits Transactions List Response Body",
         "type": "object",
         "description": "Response body schema for **GET** `/v2/loyalties/programs/{programId}/members/{memberId}/benefits/transactions`.",
-        "title": "Loyalties Programs Members Benefits Transactions List Response Body",
-        "properties": {
-          "data": {
-            "type": "array",
-            "description": "List of benefit transactions.",
-            "items": {
-              "$ref": "#/components/schemas/BenefitTransaction"
-            }
-          },
-          "cursor": {
-            "description": "Pagination cursor. `null` when there are no more results.",
-            "oneOf": [
-              {
-                "type": "object",
-                "properties": {
-                  "next": {
-                    "type": "string",
-                    "description": "Cursor to pass as the `cursor` query parameter to fetch the next page (format `lcrsbtx_...`)."
-                  },
-                  "expires_at": {
-                    "type": "string",
-                    "format": "date-time",
-                    "description": "Timestamp when the cursor expires."
-                  }
-                },
-                "required": [
-                  "next",
-                  "expires_at"
-                ]
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "object": {
-            "type": "string",
-            "const": "list",
-            "description": "Object type marker. Always `list`."
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MemberBenefitTransactionListResponse"
           }
-        },
-        "required": [
-          "data",
-          "cursor",
-          "object"
         ]
       },
       "LoyaltiesProgramsMembersTiersTransactionsListRequestQuery": {
@@ -29008,76 +28968,54 @@
         ],
         "additionalProperties": false
       },
-      "BenefitTransaction": {
+      "MemberBenefitTransactionListResponse": {
         "type": "object",
-        "description": "A benefit transaction. Represents a benefit fulfillment.",
+        "description": "Cursor-paginated list of benefit transactions.",
         "properties": {
-          "id": {
-            "type": "string",
-            "description": "Unique benefit transaction identifier (format `lbtx_...`)."
+          "data": {
+            "type": "array",
+            "description": "List of benefit transactions.",
+            "items": {
+              "$ref": "#/components/schemas/BenefitTransaction"
+            }
           },
-          "benefit_id": {
-            "type": "string",
-            "description": "Unique identifier of the fulfilled benefit (format `lben_...`)."
-          },
-          "program_id": {
-            "type": "string",
-            "description": "Unique identifier of the loyalty program (format `lprg_...`)."
-          },
-          "member_id": {
-            "type": "string",
-            "description": "Unique identifier of the program member (format `lmbr_...`)."
-          },
-          "earning_rule_id": {
-            "type": "string",
-            "description": "Unique identifier of the earning rule that triggered the fulfillment (format `lern_...`)."
-          },
-          "type": {
-            "type": "string",
-            "enum": [
-              "FULFILLMENT"
-            ],
-            "description": "Transaction type. Always `FULFILLMENT`."
-          },
-          "details": {
-            "description": "Transaction details for the `FULFILLMENT` type.",
+          "cursor": {
+            "description": "Pagination cursor. `null` when there are no more results.",
             "oneOf": [
               {
-                "$ref": "#/components/schemas/BenefitTransactionDetails"
+                "type": "object",
+                "properties": {
+                  "next": {
+                    "type": "string",
+                    "description": "Cursor to pass as the `cursor` query parameter to fetch the next page (format `lcrsbtx_...`)."
+                  },
+                  "expires_at": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "Timestamp when the cursor expires."
+                  }
+                },
+                "required": [
+                  "next",
+                  "expires_at"
+                ]
               },
               {
                 "type": "null"
               }
             ]
           },
-          "status": {
-            "type": "string",
-            "enum": [
-              "PENDING",
-              "APPROVED",
-              "REJECTED"
-            ],
-            "description": "Transaction status. `PENDING` - created, awaiting processing; `APPROVED` - completed successfully; `REJECTED` - rejected (see `details.rejection`)."
-          },
-          "created_at": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Timestamp when the transaction was created (ISO 8601)."
-          },
-          "updated_at": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "format": "date-time",
-            "description": "Timestamp when the transaction was last updated (ISO 8601), or `null`."
-          },
           "object": {
             "type": "string",
-            "const": "benefit_transaction",
-            "description": "Object type marker. Always `benefit_transaction`."
+            "const": "list",
+            "description": "Object type marker. Always `list`."
           }
-        }
+        },
+        "required": [
+          "data",
+          "cursor",
+          "object"
+        ]
       },
       "LoyaltiesProgramsMembersTiersTransactionsListRequestQueryCardId": {
         "type": "object",
@@ -39190,86 +39128,74 @@
           }
         }
       },
-      "BenefitTransactionDetails": {
+      "BenefitTransaction": {
         "type": "object",
-        "description": "Details of a `FULFILLMENT` benefit transaction.",
+        "description": "A benefit transaction. Represents a benefit fulfillment.",
         "properties": {
-          "reason": {
+          "id": {
+            "type": "string",
+            "description": "Unique benefit transaction identifier (format `lbtx_...`)."
+          },
+          "benefit_id": {
+            "type": "string",
+            "description": "Unique identifier of the fulfilled benefit (format `lben_...`)."
+          },
+          "program_id": {
+            "type": "string",
+            "description": "Unique identifier of the loyalty program (format `lprg_...`)."
+          },
+          "member_id": {
+            "type": "string",
+            "description": "Unique identifier of the program member (format `lmbr_...`)."
+          },
+          "earning_rule_id": {
+            "type": "string",
+            "description": "Unique identifier of the earning rule that triggered the fulfillment (format `lern_...`)."
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "FULFILLMENT"
+            ],
+            "description": "Transaction type. Always `FULFILLMENT`."
+          },
+          "details": {
+            "description": "Transaction details for the `FULFILLMENT` type.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/BenefitTransactionDetails"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "PENDING",
+              "APPROVED",
+              "REJECTED"
+            ],
+            "description": "Transaction status. `PENDING` - created, awaiting processing; `APPROVED` - completed successfully; `REJECTED` - rejected (see `details.rejection`)."
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp when the transaction was created (ISO 8601)."
+          },
+          "updated_at": {
             "type": [
               "string",
               "null"
             ],
-            "description": "Human-readable reason for the fulfillment. Typically `{program name} / {earning rule name}`."
+            "format": "date-time",
+            "description": "Timestamp when the transaction was last updated (ISO 8601), or `null`."
           },
-          "rejection": {
-            "description": "Rejection details. Populated for `REJECTED` transactions. `null` for `APPROVED` and `PENDING`.",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/BenefitTransactionRejection"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "metadata": {
-            "description": "Transaction metadata. Empty object when not set.",
-            "$ref": "#/components/schemas/BenefitTransactionDetailsMetadata"
-          },
-          "result": {
-            "description": "Fulfillment result. Populated for `APPROVED` transactions. `null` for `REJECTED` and `PENDING`.",
-            "oneOf": [
-              {
-                "type": "object",
-                "description": "Benefit fulfillment result envelope.",
-                "properties": {
-                  "details": {
-                    "type": "object",
-                    "description": "Fulfillment payload. Shape depends on the benefit type (`MATERIAL` or `DIGITAL`). Digital fulfillments also include published voucher fields at this level.",
-                    "properties": {
-                      "material": {
-                        "description": "Material benefit effect that was fulfilled. Present for `MATERIAL` benefits. Absent for `DIGITAL` benefits.",
-                        "oneOf": [
-                          {
-                            "$ref": "#/components/schemas/BenefitMaterial"
-                          },
-                          {
-                            "type": "null"
-                          }
-                        ]
-                      },
-                      "digital": {
-                        "description": "Digital benefit effect that was fulfilled. Present for `DIGITAL` benefits. Absent for `MATERIAL` benefits.",
-                        "oneOf": [
-                          {
-                            "$ref": "#/components/schemas/BenefitDigital"
-                          },
-                          {
-                            "type": "null"
-                          }
-                        ]
-                      },
-                      "voucher_id": {
-                        "type": "string",
-                        "description": "Published voucher ID for digital fulfillments."
-                      },
-                      "code": {
-                        "type": "string",
-                        "description": "Published voucher code for digital fulfillments."
-                      },
-                      "balance": {
-                        "type": "number",
-                        "description": "Gift voucher balance after credit. Present for `GIFT_VOUCHERS` digital fulfillments. Distinct from `digital.gift_vouchers.balance`, which is the configured credit amount."
-                      }
-                    },
-                    "additionalProperties": true
-                  }
-                }
-              },
-              {
-                "type": "null"
-              }
-            ]
+          "object": {
+            "type": "string",
+            "const": "benefit_transaction",
+            "description": "Object type marker. Always `benefit_transaction`."
           }
         }
       },
@@ -43648,94 +43574,88 @@
           }
         }
       },
-      "BenefitTransactionRejection": {
+      "BenefitTransactionDetails": {
         "type": "object",
-        "description": "Rejection details for a benefit transaction.",
+        "description": "Details of a `FULFILLMENT` benefit transaction.",
         "properties": {
           "reason": {
-            "type": "string",
-            "description": "Machine-readable rejection reason. Known values are `OUT_OF_STOCK`, `BENEFIT_NOT_FOUND`, `UNEXPECTED_ERROR`, `TRIGGER_LIMIT_COOLDOWN_NOT_PASSED`, and `TRIGGER_LIMIT_FREQUENCY_EXCEEDED`. Other error keys can be passed through, so treat this list as non-exhaustive."
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Human-readable reason for the fulfillment. Typically `{program name} / {earning rule name}`."
           },
-          "details": {
-            "description": "Additional rejection context. Stock, not-found, and unexpected-error rejections use a string. Trigger-limit rejections use an object.",
+          "rejection": {
+            "description": "Rejection details. Populated for `REJECTED` transactions. `null` for `APPROVED` and `PENDING`.",
             "oneOf": [
               {
-                "type": "string",
-                "description": "Human-readable rejection message. Used for `OUT_OF_STOCK`, `BENEFIT_NOT_FOUND`, and `UNEXPECTED_ERROR`."
+                "$ref": "#/components/schemas/BenefitTransactionRejection"
               },
               {
-                "type": "object",
-                "title": "Trigger-limit cooldown rejection details",
-                "description": "Trigger-limit cooldown rejection details. Returned when `reason` is `TRIGGER_LIMIT_COOLDOWN_NOT_PASSED`.",
-                "properties": {
-                  "type": {
-                    "type": "string",
-                    "const": "COOLDOWN",
-                    "description": "Trigger-limit check that failed. Always `COOLDOWN`."
-                  },
-                  "remaining_ms": {
-                    "type": "number",
-                    "description": "Milliseconds remaining before the earning rule cooldown ends."
-                  }
-                },
-                "required": [
-                  "type",
-                  "remaining_ms"
-                ],
-                "additionalProperties": false
-              },
-              {
-                "type": "object",
-                "title": "Trigger-limit frequency rejection details",
-                "description": "Trigger-limit frequency rejection details. Returned when `reason` is `TRIGGER_LIMIT_FREQUENCY_EXCEEDED`.",
-                "properties": {
-                  "type": {
-                    "type": "string",
-                    "const": "FREQUENCY",
-                    "description": "Trigger-limit check that failed. Always `FREQUENCY`."
-                  },
-                  "current_count": {
-                    "type": "number",
-                    "description": "Number of times the earning rule has already triggered in the limited period."
-                  },
-                  "limit": {
-                    "type": "number",
-                    "description": "Maximum number of times the earning rule may trigger in the limited period."
-                  }
-                },
-                "required": [
-                  "type",
-                  "current_count",
-                  "limit"
-                ],
-                "additionalProperties": false
+                "type": "null"
               }
             ]
-          }
-        }
-      },
-      "BenefitTransactionDetailsMetadata": {
-        "type": "object",
-        "description": "Benefit transaction metadata written at fulfillment time.",
-        "properties": {
-          "event_id": {
-            "type": "string",
-            "description": "Unique identifier of the event that triggered the fulfillment. Custom events use the `evcus_` prefix; other source events use their own ID formats."
           },
-          "earning_item_id": {
-            "description": "Identifier of the earning item that produced the benefit (format `lernei_...`). `null` when the earning item is unknown.",
+          "metadata": {
+            "description": "Transaction metadata. Empty object when not set.",
+            "$ref": "#/components/schemas/BenefitTransactionDetailsMetadata"
+          },
+          "result": {
+            "description": "Fulfillment result. Populated for `APPROVED` transactions. `null` for `REJECTED` and `PENDING`.",
             "oneOf": [
               {
-                "type": "string",
-                "pattern": "^lernei_[a-f0-9]+$"
+                "type": "object",
+                "description": "Benefit fulfillment result envelope.",
+                "properties": {
+                  "details": {
+                    "type": "object",
+                    "description": "Fulfillment payload. Shape depends on the benefit type (`MATERIAL` or `DIGITAL`). Digital fulfillments also include published voucher fields at this level.",
+                    "properties": {
+                      "material": {
+                        "description": "Material benefit effect that was fulfilled. Present for `MATERIAL` benefits. Absent for `DIGITAL` benefits.",
+                        "oneOf": [
+                          {
+                            "$ref": "#/components/schemas/BenefitMaterial"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "digital": {
+                        "description": "Digital benefit effect that was fulfilled. Present for `DIGITAL` benefits. Absent for `MATERIAL` benefits.",
+                        "oneOf": [
+                          {
+                            "$ref": "#/components/schemas/BenefitDigital"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "voucher_id": {
+                        "type": "string",
+                        "description": "Published voucher ID for digital fulfillments."
+                      },
+                      "code": {
+                        "type": "string",
+                        "description": "Published voucher code for digital fulfillments."
+                      },
+                      "balance": {
+                        "type": "number",
+                        "description": "Gift voucher balance after credit. Present for `GIFT_VOUCHERS` digital fulfillments. Distinct from `digital.gift_vouchers.balance`, which is the configured credit amount."
+                      }
+                    },
+                    "additionalProperties": true
+                  }
+                }
               },
               {
                 "type": "null"
               }
             ]
           }
-        },
-        "additionalProperties": false
+        }
       },
       "TierTransactionOrigin": {
         "type": "object",
@@ -46954,6 +46874,95 @@
         "required": [
           "max"
         ],
+        "additionalProperties": false
+      },
+      "BenefitTransactionRejection": {
+        "type": "object",
+        "description": "Rejection details for a benefit transaction.",
+        "properties": {
+          "reason": {
+            "type": "string",
+            "description": "Machine-readable rejection reason. Known values are `OUT_OF_STOCK`, `BENEFIT_NOT_FOUND`, `UNEXPECTED_ERROR`, `TRIGGER_LIMIT_COOLDOWN_NOT_PASSED`, and `TRIGGER_LIMIT_FREQUENCY_EXCEEDED`. Other error keys can be passed through, so treat this list as non-exhaustive."
+          },
+          "details": {
+            "description": "Additional rejection context. Stock, not-found, and unexpected-error rejections use a string. Trigger-limit rejections use an object.",
+            "oneOf": [
+              {
+                "type": "string",
+                "description": "Human-readable rejection message. Used for `OUT_OF_STOCK`, `BENEFIT_NOT_FOUND`, and `UNEXPECTED_ERROR`."
+              },
+              {
+                "type": "object",
+                "title": "Trigger-limit cooldown rejection details",
+                "description": "Trigger-limit cooldown rejection details. Returned when `reason` is `TRIGGER_LIMIT_COOLDOWN_NOT_PASSED`.",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "const": "COOLDOWN",
+                    "description": "Trigger-limit check that failed. Always `COOLDOWN`."
+                  },
+                  "remaining_ms": {
+                    "type": "number",
+                    "description": "Milliseconds remaining before the earning rule cooldown ends."
+                  }
+                },
+                "required": [
+                  "type",
+                  "remaining_ms"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "title": "Trigger-limit frequency rejection details",
+                "description": "Trigger-limit frequency rejection details. Returned when `reason` is `TRIGGER_LIMIT_FREQUENCY_EXCEEDED`.",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "const": "FREQUENCY",
+                    "description": "Trigger-limit check that failed. Always `FREQUENCY`."
+                  },
+                  "current_count": {
+                    "type": "number",
+                    "description": "Number of times the earning rule has already triggered in the limited period."
+                  },
+                  "limit": {
+                    "type": "number",
+                    "description": "Maximum number of times the earning rule may trigger in the limited period."
+                  }
+                },
+                "required": [
+                  "type",
+                  "current_count",
+                  "limit"
+                ],
+                "additionalProperties": false
+              }
+            ]
+          }
+        }
+      },
+      "BenefitTransactionDetailsMetadata": {
+        "type": "object",
+        "description": "Benefit transaction metadata written at fulfillment time.",
+        "properties": {
+          "event_id": {
+            "type": "string",
+            "description": "Unique identifier of the event that triggered the fulfillment. Custom events use the `evcus_` prefix; other source events use their own ID formats."
+          },
+          "earning_item_id": {
+            "description": "Identifier of the earning item that produced the benefit (format `lernei_...`). `null` when the earning item is unknown.",
+            "oneOf": [
+              {
+                "type": "string",
+                "pattern": "^lernei_[a-f0-9]+$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
         "additionalProperties": false
       },
       "CardDefinitionPointsExpirationRollingExpirationPeriodInput": {
