@@ -87233,6 +87233,16 @@
           }
         ]
       },
+      "V2LoyaltiesBenefitsActivateResponseBody": {
+        "title": "V2 Loyalties Benefits Activate Response Body",
+        "type": "object",
+        "description": "Response body schema for **POST** `/v2/loyalties/benefits/{benefitId}/activate`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Benefit"
+          }
+        ]
+      },
       "V2LoyaltiesBenefitsDeleteResponseBody": {
         "title": "V2 Loyalties Benefits Delete Response Body",
         "type": "object",
@@ -164488,32 +164498,32 @@
       }
     },
     "/v2/loyalties/benefits/{benefitId}/activate": {
+      "parameters": [
+        {
+          "name": "benefitId",
+          "in": "path",
+          "required": true,
+          "description": "Unique benefit ID, prefixed with `lben_`.",
+          "schema": {
+            "type": "string",
+            "pattern": "^lben_[a-f0-9]+$"
+          }
+        }
+      ],
       "post": {
         "operationId": "activateBenefit",
         "tags": [
           "LV2-Benefits"
         ],
         "summary": "Activate benefit",
-        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nMoves a benefit from `DRAFT` to `ACTIVE` status. No request body. Only the\n`DRAFT` -> `ACTIVE` transition is allowed; activating from any other state returns\n400 `invalid_state_transition`. A points-based benefit cannot be activated when its\nconnected card definition does not exist or is not ACTIVE (423 `resource_locked`).",
-        "parameters": [
-          {
-            "name": "benefitId",
-            "in": "path",
-            "required": true,
-            "description": "Unique benefit ID, prefixed with `lben_`.",
-            "schema": {
-              "type": "string",
-              "pattern": "^lben_[a-f0-9]+$"
-            }
-          }
-        ],
+        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nMoves a benefit from `DRAFT` to `ACTIVE` status. No request body. Only the\n`DRAFT` -> `ACTIVE` transition is allowed; activating from any other state returns\n400 `invalid_state_transition`. A points-based benefit cannot be activated when its\nconnected card definition does not exist (`non_existing_card_definition`) or is not ACTIVE (`non_active_card_definition`). A digital benefit cannot be activated when its campaign is in `DRAFT` (`non_active_campaign`). Those cases return 423 `resource_locked`.",
         "responses": {
           "200": {
             "description": "The activated benefit",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Benefit"
+                  "$ref": "#/components/schemas/V2LoyaltiesBenefitsActivateResponseBody"
                 }
               }
             }
@@ -164530,16 +164540,6 @@
           },
           "404": {
             "description": "Resource not found.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
             "content": {
               "application/json": {
                 "schema": {
