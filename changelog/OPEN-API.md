@@ -42,6 +42,25 @@ Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
   - Pointed the 200 body at `V2LoyaltiesProgramsMembersEarningRulesReportsDailyListResponseBody`.
   - Added `400` examples for invalid query parameters and for `start_date` not before `end_date`.
   - Added `404` examples for a missing program, member, or earning rule, including ids that do not match the pattern. A missing or unassigned earning rule uses `resource_type` `earning_rule`.
+  - Renamed the summary to "List member earning-rule daily reports".
+- Verified and updated GET `/v2/loyalties/programs/{programId}/reports/points-earnings/daily`. Renamed the summary to "List program points-earnings daily reports".
+  - Removed the documentation-in-progress badge.
+  - Required `date`, `earning_rule_id`, `earning_item_id`, `card_definition_id`, `success_count`, `points`, `pending_points`, and `object` on each row. Required `data` and `object` on the response.
+  - `points` sums points credited immediately. `pending_points` sums pending points added. Activating or canceling pending points does not change these totals. `success_count` counts operations that credited points or added pending points.
+  - `date` is the start of the truncated period (`week` starts on Monday). Periods without activity are omitted. `earning_item_id` uses the `lernei_` prefix.
+  - Documented `start_date` and `end_date` as inclusive, with `start_date` before `end_date`. The range limit is 90 days, 12 weeks, 12 months, or 4 quarters.
+  - `filters` may be omitted or set to `null`. `junction` is `AND` or `OR` and defaults to `AND`.
+  - Pointed the 200 body at `V2LoyaltiesProgramsReportsPointsEarningsDailyListResponseBody`.
+  - Added `400` examples for invalid query parameters, a date range past the resolution limit, and `start_date` not before `end_date`.
+  - Added `404` examples for a missing program, including an id that does not match the pattern.
+- Verified and updated GET `/v2/loyalties/programs/{programId}/reports/points-earnings/summary`. Renamed the summary to "List program points-earnings summary reports".
+  - Removed the documentation-in-progress badge.
+  - Required `id`, `earning_rule_id`, `earning_item_id`, `card_definition_id`, `success_count`, `points`, `pending_points`, and `object` on each row. `id` uses the `lppes_` prefix. Required `data` and `object` on the response.
+  - `points` and `pending_points` follow the same rules as the daily report.
+  - Returns at most 100 rows, ordered by `id` descending. `limit` and `order` are not query parameters. A filter that matches no rows returns an empty `data` array.
+  - `filters` may be omitted or set to `null`.
+  - Pointed the 200 body at `V2LoyaltiesProgramsReportsPointsEarningsSummaryListResponseBody`.
+  - Added a `400` example for an invalid `earning_rule_id`, and `404` examples for a missing program, including an id that does not match the pattern.
 
 ## 2026-10-08
 
