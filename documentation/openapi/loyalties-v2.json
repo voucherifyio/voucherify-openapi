@@ -15117,20 +15117,32 @@
       }
     },
     "/v2/loyalties/earning-rules/{earningRuleId}/activate": {
+      "parameters": [
+        {
+          "name": "earningRuleId",
+          "in": "path",
+          "required": true,
+          "description": "Earning rule ID.",
+          "schema": {
+            "type": "string",
+            "pattern": "^lern_[a-f0-9]+$"
+          }
+        }
+      ],
       "post": {
         "tags": [
           "Earning Rules"
         ],
         "operationId": "activateEarningRule",
         "summary": "Activate earning rule",
-        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nMoves the earning rule to `ACTIVE` status. No request body.\nAllowed transitions: `DRAFT -> ACTIVE`, `INACTIVE -> ACTIVE`.\nInvalid transitions are rejected with a conflict error.",
+        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nMoves the earning rule to `ACTIVE` from `DRAFT` or `INACTIVE`. No request body. Any other status returns `400` (`invalid_state_transition`). Returns `423` when an effect or tier rule still points at a non-active benefit (`non_active_benefit`), card definition (`non_active_card_definition`), or tier structure (`non_active_tier_structure`).",
         "responses": {
           "200": {
             "description": "Activated earning rule",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/EarningRuleResponse"
+                  "$ref": "#/components/schemas/V2LoyaltiesEarningRulesActivateResponseBody"
                 }
               }
             }
@@ -15155,8 +15167,8 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
+          "423": {
+            "description": "A benefit, card definition, or tier structure used by the earning rule is not active.",
             "content": {
               "application/json": {
                 "schema": {
@@ -15185,18 +15197,6 @@
             }
           }
         },
-        "parameters": [
-          {
-            "name": "earningRuleId",
-            "in": "path",
-            "required": true,
-            "description": "Earning rule ID.",
-            "schema": {
-              "type": "string",
-              "pattern": "^lern_[a-f0-9]+$"
-            }
-          }
-        ],
         "security": [
           {
             "X-App-Id": [],
@@ -23526,6 +23526,16 @@
         "title": "V2 Loyalties Earning Rules Delete Response Body",
         "type": "object",
         "description": "Response body schema for **DELETE** `/v2/loyalties/earning-rules/{earningRuleId}`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EarningRuleResponse"
+          }
+        ]
+      },
+      "V2LoyaltiesEarningRulesActivateResponseBody": {
+        "title": "V2 Loyalties Earning Rules Activate Response Body",
+        "type": "object",
+        "description": "Response body schema for **POST** `/v2/loyalties/earning-rules/{earningRuleId}/activate`.",
         "allOf": [
           {
             "$ref": "#/components/schemas/EarningRuleResponse"
