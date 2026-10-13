@@ -17629,6 +17629,18 @@
       }
     },
     "/v2/loyalties/benefits/{benefitId}/activities": {
+      "parameters": [
+        {
+          "name": "benefitId",
+          "in": "path",
+          "required": true,
+          "description": "Unique benefit ID, prefixed with `lben_`.",
+          "schema": {
+            "type": "string",
+            "pattern": "^lben_[a-f0-9]+$"
+          }
+        }
+      ],
       "get": {
         "operationId": "listBenefitActivities",
         "tags": [
@@ -17638,23 +17650,14 @@
         "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nReturns a cursor-paginated list of activities recorded for the benefit (created, updated,\ndeleted, activated, drafted). Returns `404` when the benefit does not exist. Supports\nfiltering by activity `id`, `type`, and `created_at`, ordering by `created_at`\n(default `-created_at`), and cursor-based pagination.",
         "parameters": [
           {
-            "name": "benefitId",
-            "in": "path",
-            "required": true,
-            "description": "Unique benefit ID, prefixed with `lben_`.",
-            "schema": {
-              "type": "string",
-              "pattern": "^lben_[a-f0-9]+$"
-            }
-          },
-          {
             "name": "limit",
             "in": "query",
             "required": false,
             "description": "Maximum number of activities to return. An integer between 1 and 100.\nDefaults to 10 when omitted.",
             "schema": {
               "type": [
-                "integer",
+                "number",
+                "string",
                 "null"
               ],
               "minimum": 1,
@@ -17713,7 +17716,14 @@
             "explode": true,
             "description": "Field-specific filter conditions, e.g. `filters[type][conditions][$is]=vl.benefit.created`.\nConditions of multiple fields are combined with the `junction`.",
             "schema": {
-              "$ref": "#/components/schemas/LoyaltiesBenefitsActivitiesListRequestQuery"
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/LoyaltiesBenefitsActivitiesListRequestQuery"
+                },
+                {
+                  "type": "null"
+                }
+              ]
             }
           }
         ],
@@ -17723,7 +17733,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/BenefitActivityListResponse"
+                  "$ref": "#/components/schemas/V2LoyaltiesBenefitsActivitiesListResponseBody"
                 }
               }
             }
@@ -17740,16 +17750,6 @@
           },
           "404": {
             "description": "Resource not found.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
             "content": {
               "application/json": {
                 "schema": {
@@ -24221,38 +24221,14 @@
         "additionalProperties": false,
         "title": "Loyalties Benefits Activities List Request Query"
       },
-      "BenefitActivityListResponse": {
+      "V2LoyaltiesBenefitsActivitiesListResponseBody": {
+        "title": "V2 Loyalties Benefits Activities List Response Body",
         "type": "object",
-        "description": "Cursor-paginated list of benefit activities.",
-        "properties": {
-          "data": {
-            "type": "array",
-            "description": "Activities matching the query, in the requested order.",
-            "items": {
-              "$ref": "#/components/schemas/BenefitActivity"
-            }
-          },
-          "cursor": {
-            "description": "Pagination cursor. `null` when there are no more results.",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/BenefitListCursor"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "object": {
-            "type": "string",
-            "const": "list",
-            "description": "Type of the object. Always `list`."
+        "description": "Response body schema for **GET** `/v2/loyalties/benefits/{benefitId}/activities`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/BenefitActivityListResponse"
           }
-        },
-        "required": [
-          "data",
-          "cursor",
-          "object"
         ]
       },
       "LoyaltiesRewardsListRequestQuery": {
@@ -36934,76 +36910,38 @@
         ],
         "additionalProperties": false
       },
-      "BenefitActivity": {
+      "BenefitActivityListResponse": {
         "type": "object",
-        "description": "A single benefit activity.",
+        "description": "Cursor-paginated list of benefit activities.",
         "properties": {
-          "id": {
-            "type": "string",
-            "pattern": "^laben_[a-f0-9]+$",
-            "description": "Unique activity ID, prefixed with `laben_`."
-          },
-          "type": {
-            "type": "string",
-            "enum": [
-              "vl.benefit.created",
-              "vl.benefit.updated",
-              "vl.benefit.deleted",
-              "vl.benefit.activated",
-              "vl.benefit.drafted"
-            ],
-            "description": "Type of the recorded activity."
-          },
           "data": {
-            "$ref": "#/components/schemas/BenefitActivityData"
+            "type": "array",
+            "description": "Activities matching the query, in the requested order.",
+            "items": {
+              "$ref": "#/components/schemas/BenefitActivity"
+            }
           },
-          "created_at": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Timestamp of when the activity was recorded, in ISO 8601 format."
-          },
-          "group_id": {
-            "type": "string",
-            "description": "ID grouping activities recorded within the same operation."
-          },
-          "source": {
-            "description": "Origin of the activity. Omitted when unknown.",
+          "cursor": {
+            "description": "Pagination cursor. `null` when there are no more results.",
             "oneOf": [
               {
-                "$ref": "#/components/schemas/BenefitActivitySource"
+                "$ref": "#/components/schemas/BenefitListCursor"
+              },
+              {
+                "type": "null"
               }
             ]
           },
-          "benefit_id": {
+          "object": {
             "type": "string",
-            "pattern": "^lben_[a-f0-9]+$",
-            "description": "ID of the benefit the activity relates to."
+            "const": "list",
+            "description": "Type of the object. Always `list`."
           }
         },
         "required": [
-          "id",
-          "type",
           "data",
-          "created_at",
-          "benefit_id"
-        ]
-      },
-      "BenefitListCursor": {
-        "type": "object",
-        "description": "Pagination cursor pointing to the next page of results.",
-        "properties": {
-          "next": {
-            "type": "string",
-            "description": "Cursor ID to pass as the `cursor` query parameter to fetch the next page."
-          },
-          "expires_at": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Timestamp after which the cursor expires."
-          }
-        },
-        "required": [
-          "next"
+          "cursor",
+          "object"
         ]
       },
       "LoyaltiesRewardsListRequestQueryId": {
@@ -42169,6 +42107,24 @@
           "tier_structure_id"
         ]
       },
+      "BenefitListCursor": {
+        "type": "object",
+        "description": "Pagination cursor pointing to the next page of results.",
+        "properties": {
+          "next": {
+            "type": "string",
+            "description": "Cursor ID to pass as the `cursor` query parameter to fetch the next page."
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp after which the cursor expires."
+          }
+        },
+        "required": [
+          "next"
+        ]
+      },
       "LoyaltyV2ActivityBenefitPoints": {
         "type": "object",
         "description": "Fixed points effect - adds a fixed amount of points to a card of the given card definition.",
@@ -42751,49 +42707,59 @@
           }
         ]
       },
-      "BenefitActivityData": {
+      "BenefitActivity": {
         "type": "object",
-        "description": "Activity payload containing a snapshot of the benefit at the time of the activity.",
+        "description": "A single benefit activity.",
         "properties": {
-          "benefit": {
-            "$ref": "#/components/schemas/Benefit"
+          "id": {
+            "type": "string",
+            "pattern": "^laben_[a-f0-9]+$",
+            "description": "Unique activity ID, prefixed with `laben_`."
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "vl.benefit.created",
+              "vl.benefit.updated",
+              "vl.benefit.deleted",
+              "vl.benefit.activated",
+              "vl.benefit.drafted"
+            ],
+            "description": "Type of the recorded activity."
+          },
+          "data": {
+            "$ref": "#/components/schemas/BenefitActivityData"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp of when the activity was recorded, in ISO 8601 format."
+          },
+          "group_id": {
+            "type": "string",
+            "description": "ID grouping activities recorded within the same operation."
+          },
+          "source": {
+            "description": "Origin of the activity. Omitted when unknown.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/BenefitActivitySource"
+              }
+            ]
+          },
+          "benefit_id": {
+            "type": "string",
+            "pattern": "^lben_[a-f0-9]+$",
+            "description": "ID of the benefit the activity relates to."
           }
         },
         "required": [
-          "benefit"
+          "id",
+          "type",
+          "data",
+          "created_at",
+          "benefit_id"
         ]
-      },
-      "BenefitActivitySource": {
-        "type": "object",
-        "description": "Origin of the activity.",
-        "properties": {
-          "channel": {
-            "type": "string",
-            "enum": [
-              "USER_PORTAL",
-              "API",
-              "CLIENT_API",
-              "INTERNAL"
-            ],
-            "description": "Channel the activity originated from."
-          },
-          "user": {
-            "description": "User who triggered the activity. Present for user-originated activities.",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/BenefitActivitySourceUser"
-              }
-            ]
-          },
-          "api_key": {
-            "description": "API key used to trigger the activity. Present for API-originated activities.",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/BenefitActivitySourceApiKey"
-              }
-            ]
-          }
-        }
       },
       "RewardValidityDailyHoursRequest": {
         "type": "object",
@@ -46052,31 +46018,47 @@
         ],
         "additionalProperties": false
       },
-      "BenefitActivitySourceUser": {
+      "BenefitActivityData": {
         "type": "object",
-        "description": "User who triggered the activity.",
+        "description": "Activity payload containing a snapshot of the benefit at the time of the activity.",
         "properties": {
-          "id": {
-            "type": "string",
-            "description": "User ID."
+          "benefit": {
+            "$ref": "#/components/schemas/Benefit"
           }
-        }
+        },
+        "required": [
+          "benefit"
+        ]
       },
-      "BenefitActivitySourceApiKey": {
+      "BenefitActivitySource": {
         "type": "object",
-        "description": "API key used to trigger the activity.",
+        "description": "Origin of the activity.",
         "properties": {
-          "name": {
+          "channel": {
             "type": "string",
-            "description": "Name of the API key."
+            "enum": [
+              "USER_PORTAL",
+              "API",
+              "CLIENT_API",
+              "INTERNAL"
+            ],
+            "description": "Channel the activity originated from."
           },
-          "app_id": {
-            "type": "string",
-            "description": "Application ID of the API key."
+          "user": {
+            "description": "User who triggered the activity. Present for user-originated activities.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/BenefitActivitySourceUser"
+              }
+            ]
           },
-          "client_app_id": {
-            "type": "string",
-            "description": "Client application ID (for client-side API keys)."
+          "api_key": {
+            "description": "API key used to trigger the activity. Present for API-originated activities.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/BenefitActivitySourceApiKey"
+              }
+            ]
           }
         }
       },
@@ -48639,6 +48621,34 @@
           "applicable_to"
         ],
         "additionalProperties": false
+      },
+      "BenefitActivitySourceUser": {
+        "type": "object",
+        "description": "User who triggered the activity.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "User ID."
+          }
+        }
+      },
+      "BenefitActivitySourceApiKey": {
+        "type": "object",
+        "description": "API key used to trigger the activity.",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the API key."
+          },
+          "app_id": {
+            "type": "string",
+            "description": "Application ID of the API key."
+          },
+          "client_app_id": {
+            "type": "string",
+            "description": "Client application ID (for client-side API keys)."
+          }
+        }
       },
       "RewardCostRuleErrorRequest": {
         "type": "object",
