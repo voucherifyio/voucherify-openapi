@@ -16338,6 +16338,18 @@
       }
     },
     "/v2/loyalties/tier-structures/{tierStructureId}/tiers": {
+      "parameters": [
+        {
+          "name": "tierStructureId",
+          "in": "path",
+          "required": true,
+          "description": "Unique tier structure identifier.",
+          "schema": {
+            "type": "string",
+            "pattern": "^lts_[a-f0-9]+$"
+          }
+        }
+      ],
       "post": {
         "operationId": "createTier",
         "tags": [
@@ -16416,18 +16428,6 @@
             }
           }
         },
-        "parameters": [
-          {
-            "name": "tierStructureId",
-            "in": "path",
-            "required": true,
-            "description": "Unique tier structure identifier.",
-            "schema": {
-              "type": "string",
-              "pattern": "^lts_[a-f0-9]+$"
-            }
-          }
-        ],
         "security": [
           {
             "X-App-Id": [],
@@ -16447,22 +16447,16 @@
         "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nReturns a cursor-paginated list of tiers belonging to the tier structure. This\nendpoint does not support a `filters` parameter. The same field cannot be requested\nin both ascending and descending order at once. Default order is `-created_at`.",
         "parameters": [
           {
-            "name": "tierStructureId",
-            "in": "path",
-            "required": true,
-            "description": "Unique tier structure identifier.",
-            "schema": {
-              "type": "string",
-              "pattern": "^lts_[a-f0-9]+$"
-            }
-          },
-          {
             "name": "limit",
             "in": "query",
             "required": false,
             "description": "Maximum number of items returned per page. An integer between 1 and 100.\nDefaults to 10.",
             "schema": {
-              "type": "integer",
+              "type": [
+                "number",
+                "string",
+                "null"
+              ],
               "minimum": 1,
               "maximum": 100,
               "default": 10
@@ -16495,6 +16489,9 @@
                       "-name"
                     ]
                   }
+                },
+                {
+                  "type": "null"
                 }
               ]
             }
@@ -16505,7 +16502,10 @@
             "required": false,
             "description": "Pagination cursor returned in the `cursor.next` field of a previous response.\nMust match the tiers cursor id format.",
             "schema": {
-              "type": "string",
+              "type": [
+                "string",
+                "null"
+              ],
               "pattern": "^lcrst_[a-f0-9]+$"
             }
           }
@@ -16516,7 +16516,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/TierListResponse"
+                  "$ref": "#/components/schemas/V2LoyaltiesTierStructuresTiersListResponseBody"
                 }
               }
             }
@@ -16533,16 +16533,6 @@
           },
           "404": {
             "description": "Resource not found.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
             "content": {
               "application/json": {
                 "schema": {
@@ -24067,50 +24057,14 @@
           "object"
         ]
       },
-      "TierListResponse": {
+      "V2LoyaltiesTierStructuresTiersListResponseBody": {
+        "title": "V2 Loyalties Tier Structures Tiers List Response Body",
         "type": "object",
-        "description": "Cursor-paginated list of tiers.",
-        "properties": {
-          "data": {
-            "type": "array",
-            "description": "Tiers on the current page.",
-            "items": {
-              "$ref": "#/components/schemas/Tier"
-            }
-          },
-          "cursor": {
-            "description": "Pagination cursor for fetching the next page, or `null` when there are no more\nresults.",
-            "oneOf": [
-              {
-                "type": "object",
-                "properties": {
-                  "next": {
-                    "type": "string",
-                    "pattern": "^lcrst_[a-f0-9]+$",
-                    "description": "Cursor id to pass as the `cursor` query parameter for the next page."
-                  },
-                  "expires_at": {
-                    "type": "string",
-                    "format": "date-time",
-                    "description": "Timestamp after which the cursor expires (ISO 8601)."
-                  }
-                }
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "object": {
-            "type": "string",
-            "const": "list",
-            "description": "Object type discriminator. Always `list`."
+        "description": "Response body schema for **GET** `/v2/loyalties/tier-structures/{tierStructureId}/tiers`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/TierListResponse"
           }
-        },
-        "required": [
-          "data",
-          "cursor",
-          "object"
         ]
       },
       "TierUpdateRequest": {
@@ -35753,6 +35707,52 @@
             "description": "Downgrade model. Omitted when the tier has no downgrade configured."
           }
         }
+      },
+      "TierListResponse": {
+        "type": "object",
+        "description": "Cursor-paginated list of tiers.",
+        "properties": {
+          "data": {
+            "type": "array",
+            "description": "Tiers on the current page.",
+            "items": {
+              "$ref": "#/components/schemas/Tier"
+            }
+          },
+          "cursor": {
+            "description": "Pagination cursor for fetching the next page, or `null` when there are no more\nresults.",
+            "oneOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "next": {
+                    "type": "string",
+                    "pattern": "^lcrst_[a-f0-9]+$",
+                    "description": "Cursor id to pass as the `cursor` query parameter for the next page."
+                  },
+                  "expires_at": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "Timestamp after which the cursor expires (ISO 8601)."
+                  }
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "object": {
+            "type": "string",
+            "const": "list",
+            "description": "Object type discriminator. Always `list`."
+          }
+        },
+        "required": [
+          "data",
+          "cursor",
+          "object"
+        ]
       },
       "LoyaltiesTierStructuresActivitiesListRequestQueryId": {
         "type": "object",
