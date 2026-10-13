@@ -3077,6 +3077,18 @@
       }
     },
     "/v2/loyalties/programs/{programId}/members/batch": {
+      "parameters": [
+        {
+          "name": "programId",
+          "in": "path",
+          "required": true,
+          "description": "Unique loyalty program ID (format `lprg_[a-f0-9]+`).",
+          "schema": {
+            "type": "string",
+            "pattern": "^lprg_[a-f0-9]+$"
+          }
+        }
+      ],
       "post": {
         "operationId": "batchCreateProgramMembers",
         "tags": [
@@ -3084,24 +3096,13 @@
         ],
         "summary": "Batch create program members",
         "description": "Schedules creation of program members from a JSON array and returns `202` with `async_action_id`. The program must exist, be `ACTIVE`, and be inside its validity window. The body isn't checked before that response. Entries are processed in batches of 100. The raw body must be at most 10 MB.\n\nEach entry uses the same fields as [Create program member](/api-reference/programs/create-program-member). A failed entry is skipped. Its report row sets `created` to `false` and explains the failure in `error`. Skipped cases include an invalid `customer_identification`, an unknown customer, an invalid `status`, a duplicate customer in the batch (`Duplicate customer ID`), a customer who is already a member (`Member already exists`), metadata that doesn't match the `vl_member` schema, and entries past the loyalty members plan limit. Successful entries enroll the customer and create a loyalty card for each card definition on the program. Report columns are `identification_type`, `customer_id`, `customer_source_id`, `program_id`, `member_id`, `created`, and `error`.\n\nAn empty array or a `null` entry fails the async action with `invalid_request_payload`. A body that isn't a JSON array fails it with `top_level_object_should_be_an_array`. Use [Get async action](/api-reference/async-actions/get-async-action) to read the status and the report. You can also open the result from Audit log, [Background tasks](/analyze/audit-logs#background-tasks).",
-        "parameters": [
-          {
-            "name": "programId",
-            "in": "path",
-            "required": true,
-            "description": "Unique loyalty program ID (format `lprg_[a-f0-9]+`).",
-            "schema": {
-              "type": "string",
-              "pattern": "^lprg_[a-f0-9]+$"
-            }
-          }
-        ],
+        "parameters": [],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/LoyaltiesProgramsMembersCreateInBulkRequestBody"
+                "$ref": "#/components/schemas/V2LoyaltiesProgramsMembersCreateInBulkRequestBody"
               },
               "examples": {
                 "Create members": {
@@ -3131,7 +3132,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/LoyaltiesProgramsMembersCreateInBulkResponseBody"
+                  "$ref": "#/components/schemas/V2LoyaltiesProgramsMembersCreateInBulkResponseBody"
                 },
                 "examples": {
                   "Create members in batch: Async action": {
@@ -20695,28 +20696,24 @@
           }
         ]
       },
-      "LoyaltiesProgramsMembersCreateInBulkRequestBody": {
-        "type": "array",
-        "description": "Request body schema for **POST** `/v2/loyalties/programs/{programId}/members/batch`.\n\nA JSON array of member entries. The raw body is limited to 10485760 bytes (10 MB). The array isn't validated before the `202` response. Entries are processed asynchronously in batches of 100. Each entry should use the same fields as a single member create. Invalid entries are skipped and listed in the async action report.",
-        "items": {
-          "$ref": "#/components/schemas/MemberCreate"
-        },
-        "title": "Loyalties Programs Members Create In Bulk Request Body"
+      "V2LoyaltiesProgramsMembersCreateInBulkRequestBody": {
+        "title": "V2 Loyalties Programs Members Create In Bulk Request Body",
+        "description": "Request body schema for **POST** `/v2/loyalties/programs/{programId}/members/batch`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MemberCreateInBulk"
+          }
+        ]
       },
-      "LoyaltiesProgramsMembersCreateInBulkResponseBody": {
+      "V2LoyaltiesProgramsMembersCreateInBulkResponseBody": {
+        "title": "V2 Loyalties Programs Members Create In Bulk Response Body",
         "type": "object",
         "description": "Response body schema for **POST** `/v2/loyalties/programs/{programId}/members/batch`.",
-        "properties": {
-          "async_action_id": {
-            "type": "string",
-            "pattern": "^aa_[a-f0-9]+$",
-            "description": "Identifies the async action that processes the batch."
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MemberCreateInBulkResult"
           }
-        },
-        "required": [
-          "async_action_id"
-        ],
-        "title": "Loyalties Programs Members Create In Bulk Response Body"
+        ]
       },
       "VLBadRequest": {
         "type": "object",
@@ -27087,6 +27084,27 @@
           "data",
           "cursor",
           "object"
+        ]
+      },
+      "MemberCreateInBulk": {
+        "type": "array",
+        "description": "A JSON array of member entries. The raw body is limited to 10485760 bytes (10 MB). The array isn't validated before the `202` response. Entries are processed asynchronously in batches of 100. Each entry should use the same fields as a single member create. Invalid entries are skipped and listed in the async action report.",
+        "items": {
+          "$ref": "#/components/schemas/MemberCreate"
+        }
+      },
+      "MemberCreateInBulkResult": {
+        "type": "object",
+        "description": "Async action created to process a member creation batch.",
+        "properties": {
+          "async_action_id": {
+            "type": "string",
+            "pattern": "^aa_[a-f0-9]+$",
+            "description": "Identifies the async action that processes the batch."
+          }
+        },
+        "required": [
+          "async_action_id"
         ]
       },
       "Member": {
