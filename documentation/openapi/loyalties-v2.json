@@ -5775,7 +5775,7 @@
             "schema": {
               "oneOf": [
                 {
-                  "$ref": "#/components/schemas/LoyaltiesProgramsMembersCardsPendingPointsListRequestQuery"
+                  "$ref": "#/components/schemas/V2LoyaltiesProgramsMembersCardsPendingPointsListRequestQuery"
                 },
                 {
                   "type": "null"
@@ -5790,7 +5790,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/LoyaltiesProgramsMembersCardsPendingPointsListResponseBody"
+                  "$ref": "#/components/schemas/V2LoyaltiesProgramsMembersCardsPendingPointsListResponseBody"
                 },
                 "examples": {
                   "List of pending point buckets": {
@@ -20967,7 +20967,7 @@
           }
         ]
       },
-      "LoyaltiesProgramsMembersCardsPendingPointsListRequestQuery": {
+      "V2LoyaltiesProgramsMembersCardsPendingPointsListRequestQuery": {
         "type": "object",
         "description": "Request query schema for **GET** `/v2/loyalties/programs/{programId}/members/{memberId}/cards/{cardId}/pending-points`.",
         "properties": {
@@ -20999,42 +20999,17 @@
           }
         },
         "additionalProperties": false,
-        "title": "Loyalties Programs Members Cards Pending Points List Request Query"
+        "title": "V2 Loyalties Programs Members Cards Pending Points List Request Query"
       },
-      "LoyaltiesProgramsMembersCardsPendingPointsListResponseBody": {
+      "V2LoyaltiesProgramsMembersCardsPendingPointsListResponseBody": {
+        "title": "V2 Loyalties Programs Members Cards Pending Points List Response Body",
         "type": "object",
-        "properties": {
-          "data": {
-            "type": "array",
-            "description": "Pending point buckets on the current page.",
-            "items": {
-              "$ref": "#/components/schemas/CardPendingPointsBucket"
-            }
-          },
-          "cursor": {
-            "description": "Pagination cursor, or `null` when there are no more results.",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/ListCursor"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "object": {
-            "type": "string",
-            "const": "list",
-            "description": "Object type marker, always `list`."
+        "description": "Response body schema for **GET** `/v2/loyalties/programs/{programId}/members/{memberId}/cards/{cardId}/pending-points`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/CardPendingPointsListResponse"
           }
-        },
-        "required": [
-          "data",
-          "cursor",
-          "object"
-        ],
-        "title": "Loyalties Programs Members Cards Pending Points List Response Body",
-        "description": "Response body schema for **GET** `/v2/loyalties/programs/{programId}/members/{memberId}/cards/{cardId}/pending-points`."
+        ]
       },
       "LoyaltiesProgramsMembersCardsPendingPointsActivateResponseBody": {
         "type": "object",
@@ -27903,131 +27878,38 @@
         "additionalProperties": false,
         "title": "Loyalties Programs Members Cards Pending Points List Request Query Card Definition Id"
       },
-      "CardPendingPointsBucket": {
+      "CardPendingPointsListResponse": {
         "type": "object",
-        "description": "A pending point bucket of a card.",
+        "description": "Cursor-paginated list of pending point buckets.",
         "properties": {
-          "id": {
-            "type": "string",
-            "pattern": "^lcppb_[a-f0-9]+$",
-            "description": "Unique pending point bucket ID."
+          "data": {
+            "type": "array",
+            "description": "Pending point buckets on the current page.",
+            "items": {
+              "$ref": "#/components/schemas/CardPendingPointsBucket"
+            }
           },
-          "card_id": {
-            "type": "string",
-            "pattern": "^lcrd_[a-f0-9]+$",
-            "description": "ID of the card the bucket belongs to."
-          },
-          "card_definition_id": {
-            "type": "string",
-            "pattern": "^lcdef_[a-f0-9]+$",
-            "description": "ID of the card definition of the card."
-          },
-          "program_id": {
-            "type": "string",
-            "pattern": "^lprg_[a-f0-9]+$",
-            "description": "ID of the loyalty program."
-          },
-          "card_type": {
-            "type": "string",
-            "enum": [
-              "INDIVIDUAL"
-            ],
-            "description": "Card type."
-          },
-          "member_id": {
-            "type": "string",
-            "pattern": "^lmbr_[a-f0-9]+$",
-            "description": "ID of the member owning the card."
-          },
-          "points": {
-            "type": "object",
-            "description": "Points held in the bucket.",
-            "properties": {
-              "total": {
-                "type": "number",
-                "description": "Number of pending points in the bucket."
+          "cursor": {
+            "description": "Pagination cursor, or `null` when there are no more results.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/ListCursor"
+              },
+              {
+                "type": "null"
               }
-            },
-            "required": [
-              "total"
             ]
-          },
-          "date": {
-            "type": "string",
-            "format": "date",
-            "description": "Scheduled activation date of the pending points (`YYYY-MM-DD`). For the `EVENT_BASED` type this is the cancellation deadline."
-          },
-          "type": {
-            "type": "string",
-            "enum": [
-              "PERIOD_BASED",
-              "FIXED_DATES",
-              "EVENT_BASED"
-            ],
-            "description": "Pending points activation type from the card definition."
-          },
-          "status": {
-            "type": "string",
-            "enum": [
-              "PENDING",
-              "ACTIVATED",
-              "CANCELED",
-              "DELETED"
-            ],
-            "description": "Bucket status."
-          },
-          "created_at": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Timestamp when the bucket was created (ISO 8601)."
-          },
-          "updated_at": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "format": "date-time",
-            "description": "Timestamp when the bucket was last updated (ISO 8601), or `null`."
           },
           "object": {
             "type": "string",
-            "const": "card_pending_points_bucket",
-            "description": "Object type marker, always `card_pending_points_bucket`."
+            "const": "list",
+            "description": "Object type marker, always `list`."
           }
         },
         "required": [
-          "id",
-          "card_id",
-          "card_definition_id",
-          "program_id",
-          "card_type",
-          "member_id",
-          "points",
-          "date",
-          "type",
-          "status",
-          "created_at",
-          "updated_at",
+          "data",
+          "cursor",
           "object"
-        ]
-      },
-      "ListCursor": {
-        "type": "object",
-        "description": "Pagination cursor.",
-        "properties": {
-          "next": {
-            "type": "string",
-            "description": "Cursor value to pass as the `cursor` query parameter to fetch the next page."
-          },
-          "expires_at": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Timestamp when the cursor expires."
-          }
-        },
-        "required": [
-          "next",
-          "expires_at"
         ]
       },
       "CardTransaction": {
@@ -28355,6 +28237,25 @@
           "created_at",
           "updated_at",
           "object"
+        ]
+      },
+      "ListCursor": {
+        "type": "object",
+        "description": "Pagination cursor.",
+        "properties": {
+          "next": {
+            "type": "string",
+            "description": "Cursor value to pass as the `cursor` query parameter to fetch the next page."
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp when the cursor expires."
+          }
+        },
+        "required": [
+          "next",
+          "expires_at"
         ]
       },
       "LoyaltiesProgramsMembersCardsTransactionsListRequestQueryId": {
@@ -39040,6 +38941,114 @@
           "type",
           "data",
           "created_at"
+        ]
+      },
+      "CardPendingPointsBucket": {
+        "type": "object",
+        "description": "A pending point bucket of a card.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^lcppb_[a-f0-9]+$",
+            "description": "Unique pending point bucket ID."
+          },
+          "card_id": {
+            "type": "string",
+            "pattern": "^lcrd_[a-f0-9]+$",
+            "description": "ID of the card the bucket belongs to."
+          },
+          "card_definition_id": {
+            "type": "string",
+            "pattern": "^lcdef_[a-f0-9]+$",
+            "description": "ID of the card definition of the card."
+          },
+          "program_id": {
+            "type": "string",
+            "pattern": "^lprg_[a-f0-9]+$",
+            "description": "ID of the loyalty program."
+          },
+          "card_type": {
+            "type": "string",
+            "enum": [
+              "INDIVIDUAL"
+            ],
+            "description": "Card type."
+          },
+          "member_id": {
+            "type": "string",
+            "pattern": "^lmbr_[a-f0-9]+$",
+            "description": "ID of the member owning the card."
+          },
+          "points": {
+            "type": "object",
+            "description": "Points held in the bucket.",
+            "properties": {
+              "total": {
+                "type": "number",
+                "description": "Number of pending points in the bucket."
+              }
+            },
+            "required": [
+              "total"
+            ]
+          },
+          "date": {
+            "type": "string",
+            "format": "date",
+            "description": "Scheduled activation date of the pending points (`YYYY-MM-DD`). For the `EVENT_BASED` type this is the cancellation deadline."
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "PERIOD_BASED",
+              "FIXED_DATES",
+              "EVENT_BASED"
+            ],
+            "description": "Pending points activation type from the card definition."
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "PENDING",
+              "ACTIVATED",
+              "CANCELED",
+              "DELETED"
+            ],
+            "description": "Bucket status."
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp when the bucket was created (ISO 8601)."
+          },
+          "updated_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time",
+            "description": "Timestamp when the bucket was last updated (ISO 8601), or `null`."
+          },
+          "object": {
+            "type": "string",
+            "const": "card_pending_points_bucket",
+            "description": "Object type marker, always `card_pending_points_bucket`."
+          }
+        },
+        "required": [
+          "id",
+          "card_id",
+          "card_definition_id",
+          "program_id",
+          "card_type",
+          "member_id",
+          "points",
+          "date",
+          "type",
+          "status",
+          "created_at",
+          "updated_at",
+          "object"
         ]
       },
       "CardTransactionDetails": {
