@@ -6227,13 +6227,14 @@
         ],
         "summary": "Cancel pending point bucket",
         "description": "Cancels a pending points bucket so its points aren't activated. Creates a `PENDING_POINTS_CANCELED` card transaction. The transaction is created with status `PENDING` and processed asynchronously. No request body.\n\nThe bucket must be `PENDING`, and its `date` must be after the current project day. The program and the member must be `ACTIVE`, and the program must be inside its validity window. Otherwise the response is `423`.\n\nReturns `404` when the program or the member doesn't exist, when the card isn't assigned to that member, or when the bucket isn't on that card.",
+        "parameters": [],
         "responses": {
           "200": {
             "description": "Result of the pending points cancellation.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/LoyaltiesProgramsMembersCardsPendingPointsCancelResponseBody"
+                  "$ref": "#/components/schemas/V2LoyaltiesProgramsMembersCardsPendingPointsCancelResponseBody"
                 },
                 "examples": {
                   "Pending points bucket canceled": {
@@ -21022,35 +21023,15 @@
           }
         ]
       },
-      "LoyaltiesProgramsMembersCardsPendingPointsCancelResponseBody": {
+      "V2LoyaltiesProgramsMembersCardsPendingPointsCancelResponseBody": {
+        "title": "V2 Loyalties Programs Members Cards Pending Points Cancel Response Body",
         "type": "object",
-        "description": "Response body schema for **POST** `/v2/loyalties/programs/{programId}/members/{memberId}/cards/{cardId}/pending-points/{bucketId}/cancel`.\n\nResult of a pending points cancellation. This endpoint always returns status `TRANSACTION_CREATED` on success.",
-        "properties": {
-          "transaction": {
-            "description": "The created `PENDING_POINTS_CANCELED` card transaction.",
-            "$ref": "#/components/schemas/CardTransaction"
-          },
-          "status": {
-            "type": "string",
-            "enum": [
-              "TRANSACTION_CREATED"
-            ],
-            "description": "Result status. The API endpoint returns `TRANSACTION_CREATED`."
-          },
-          "message": {
-            "type": "string",
-            "enum": [
-              "Points cancellation transaction created"
-            ],
-            "description": "Human-readable result message - \"Points cancellation transaction created\"."
+        "description": "Response body schema for **POST** `/v2/loyalties/programs/{programId}/members/{memberId}/cards/{cardId}/pending-points/{bucketId}/cancel`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/CardPendingPointsCancelResult"
           }
-        },
-        "required": [
-          "transaction",
-          "status",
-          "message"
-        ],
-        "title": "Loyalties Programs Members Cards Pending Points Cancel Response Body"
+        ]
       },
       "LoyaltiesProgramsMembersCardsExpiringPointsListRequestQuery": {
         "type": "object",
@@ -27922,115 +27903,33 @@
           "message"
         ]
       },
-      "CardTransaction": {
+      "CardPendingPointsCancelResult": {
         "type": "object",
-        "description": "A card transaction.",
+        "description": "Result of a pending points cancellation. This endpoint always returns status `TRANSACTION_CREATED` on success.",
         "properties": {
-          "id": {
-            "type": "string",
-            "pattern": "^lctx_[a-f0-9]+$",
-            "description": "Unique card transaction ID assigned by Voucherify."
-          },
-          "card_id": {
-            "type": "string",
-            "pattern": "^lcrd_[a-f0-9]+$",
-            "description": "ID of the card the transaction belongs to. Assigned by Voucherify."
-          },
-          "program_id": {
-            "type": "string",
-            "pattern": "^lprg_[a-f0-9]+$",
-            "description": "ID of the loyalty program. Assigned by Voucherify."
-          },
-          "member_id": {
-            "type": "string",
-            "pattern": "^lmbr_[a-f0-9]+$",
-            "description": "ID of the member owning the card. Assigned by Voucherify."
-          },
-          "card_definition_id": {
-            "type": "string",
-            "pattern": "^lcdef_[a-f0-9]+$",
-            "description": "ID of the card definition of the card. Assigned by Voucherify."
-          },
-          "card_type": {
-            "type": "string",
-            "enum": [
-              "INDIVIDUAL"
-            ],
-            "description": "Card type."
-          },
-          "type": {
-            "type": "string",
-            "enum": [
-              "ADMIN_CREDIT",
-              "ADMIN_DEBIT",
-              "ADMIN_POINTS_EXPIRATION",
-              "POINTS_EARNED",
-              "POINTS_SPENT_ON_REWARD",
-              "POINTS_PURCHASED",
-              "POINTS_PURCHASE_REVERSED",
-              "POINTS_SPENT_ON_ORDER",
-              "POINTS_REFUNDED",
-              "POINTS_RETURNED",
-              "POINTS_EXPIRED",
-              "PENDING_POINTS_ADDED",
-              "PENDING_POINTS_ACTIVATED",
-              "PENDING_POINTS_CANCELED"
-            ],
-            "description": "Transaction type. Options depend on the endpoint and the transaction variant."
-          },
-          "details": {
-            "description": "Card transaction details. `reason`, `rejection` and `metadata` are present on all variants; the remaining fields depend on the transaction `type`:\n\n- `ADMIN_CREDIT`: `points` (`total`, `expiration_date`)\n- `ADMIN_DEBIT`: `points` (`total`)\n- `ADMIN_POINTS_EXPIRATION`: `bucket` (the point bucket expired manually by an admin)\n- `POINTS_EARNED`: `points` (`total`, `expiration_date`)\n- `POINTS_EXPIRED`: `points` (`total`), `date`, `buckets`\n- `POINTS_SPENT_ON_REWARD`: `points` (`total`), `reward`, `reward_transaction`,`target_card`, `purchase_transaction`\n- `POINTS_PURCHASED`: `points` (`total`, `expiration_date`, `expiration_type`), `reward`, `reward_transaction`, `card_transaction`\n- `POINTS_PURCHASE_REVERSED`: `points` (`total`, `expiration_date`,\n  `expiration_type`), `reward`, `purchase`, `reward_transaction`\n- `POINTS_SPENT_ON_ORDER`: `points` (`total`), `order`, `order_transaction`\n- `POINTS_REFUNDED`: `points` (`total`)\n- `POINTS_RETURNED`: `points` (`total`, `expiration_date`, `expiration_type`), `reward`, `purchase`, `reward_transaction`\n- `PENDING_POINTS_ADDED` / `PENDING_POINTS_ACTIVATED` / `PENDING_POINTS_CANCELED`: `points` (`total`, `date`, `type`)",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/CardTransactionDetails"
-              },
-              {
-                "type": "null"
-              }
-            ]
+          "transaction": {
+            "description": "The created `PENDING_POINTS_CANCELED` card transaction.",
+            "$ref": "#/components/schemas/CardTransaction"
           },
           "status": {
             "type": "string",
             "enum": [
-              "PENDING",
-              "PROCESSING",
-              "APPROVED",
-              "REJECTED"
+              "TRANSACTION_CREATED"
             ],
-            "description": "Transaction processing status. Transactions are created as `PENDING` and processed asynchronously."
+            "description": "Result status. The API endpoint returns `TRANSACTION_CREATED`."
           },
-          "created_at": {
+          "message": {
             "type": "string",
-            "format": "date-time",
-            "description": "Timestamp when the transaction was created (ISO 8601)."
-          },
-          "updated_at": {
-            "type": [
-              "string",
-              "null"
+            "enum": [
+              "Points cancellation transaction created"
             ],
-            "format": "date-time",
-            "description": "Timestamp when the transaction was last updated (ISO 8601), or `null`."
-          },
-          "object": {
-            "type": "string",
-            "const": "card_transaction",
-            "description": "Object type marker, always `card_transaction`."
+            "description": "Human-readable result message - \"Points cancellation transaction created\"."
           }
         },
         "required": [
-          "id",
-          "card_id",
-          "program_id",
-          "member_id",
-          "card_definition_id",
-          "card_type",
-          "type",
-          "details",
+          "transaction",
           "status",
-          "created_at",
-          "updated_at",
-          "object"
+          "message"
         ]
       },
       "LoyaltiesProgramsMembersCardsExpiringPointsListRequestQueryCardDefinitionId": {
@@ -28266,6 +28165,117 @@
         "required": [
           "next",
           "expires_at"
+        ]
+      },
+      "CardTransaction": {
+        "type": "object",
+        "description": "A card transaction.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^lctx_[a-f0-9]+$",
+            "description": "Unique card transaction ID assigned by Voucherify."
+          },
+          "card_id": {
+            "type": "string",
+            "pattern": "^lcrd_[a-f0-9]+$",
+            "description": "ID of the card the transaction belongs to. Assigned by Voucherify."
+          },
+          "program_id": {
+            "type": "string",
+            "pattern": "^lprg_[a-f0-9]+$",
+            "description": "ID of the loyalty program. Assigned by Voucherify."
+          },
+          "member_id": {
+            "type": "string",
+            "pattern": "^lmbr_[a-f0-9]+$",
+            "description": "ID of the member owning the card. Assigned by Voucherify."
+          },
+          "card_definition_id": {
+            "type": "string",
+            "pattern": "^lcdef_[a-f0-9]+$",
+            "description": "ID of the card definition of the card. Assigned by Voucherify."
+          },
+          "card_type": {
+            "type": "string",
+            "enum": [
+              "INDIVIDUAL"
+            ],
+            "description": "Card type."
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "ADMIN_CREDIT",
+              "ADMIN_DEBIT",
+              "ADMIN_POINTS_EXPIRATION",
+              "POINTS_EARNED",
+              "POINTS_SPENT_ON_REWARD",
+              "POINTS_PURCHASED",
+              "POINTS_PURCHASE_REVERSED",
+              "POINTS_SPENT_ON_ORDER",
+              "POINTS_REFUNDED",
+              "POINTS_RETURNED",
+              "POINTS_EXPIRED",
+              "PENDING_POINTS_ADDED",
+              "PENDING_POINTS_ACTIVATED",
+              "PENDING_POINTS_CANCELED"
+            ],
+            "description": "Transaction type. Options depend on the endpoint and the transaction variant."
+          },
+          "details": {
+            "description": "Card transaction details. `reason`, `rejection` and `metadata` are present on all variants; the remaining fields depend on the transaction `type`:\n\n- `ADMIN_CREDIT`: `points` (`total`, `expiration_date`)\n- `ADMIN_DEBIT`: `points` (`total`)\n- `ADMIN_POINTS_EXPIRATION`: `bucket` (the point bucket expired manually by an admin)\n- `POINTS_EARNED`: `points` (`total`, `expiration_date`)\n- `POINTS_EXPIRED`: `points` (`total`), `date`, `buckets`\n- `POINTS_SPENT_ON_REWARD`: `points` (`total`), `reward`, `reward_transaction`,`target_card`, `purchase_transaction`\n- `POINTS_PURCHASED`: `points` (`total`, `expiration_date`, `expiration_type`), `reward`, `reward_transaction`, `card_transaction`\n- `POINTS_PURCHASE_REVERSED`: `points` (`total`, `expiration_date`,\n  `expiration_type`), `reward`, `purchase`, `reward_transaction`\n- `POINTS_SPENT_ON_ORDER`: `points` (`total`), `order`, `order_transaction`\n- `POINTS_REFUNDED`: `points` (`total`)\n- `POINTS_RETURNED`: `points` (`total`, `expiration_date`, `expiration_type`), `reward`, `purchase`, `reward_transaction`\n- `PENDING_POINTS_ADDED` / `PENDING_POINTS_ACTIVATED` / `PENDING_POINTS_CANCELED`: `points` (`total`, `date`, `type`)",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/CardTransactionDetails"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "PENDING",
+              "PROCESSING",
+              "APPROVED",
+              "REJECTED"
+            ],
+            "description": "Transaction processing status. Transactions are created as `PENDING` and processed asynchronously."
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp when the transaction was created (ISO 8601)."
+          },
+          "updated_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time",
+            "description": "Timestamp when the transaction was last updated (ISO 8601), or `null`."
+          },
+          "object": {
+            "type": "string",
+            "const": "card_transaction",
+            "description": "Object type marker, always `card_transaction`."
+          }
+        },
+        "required": [
+          "id",
+          "card_id",
+          "program_id",
+          "member_id",
+          "card_definition_id",
+          "card_type",
+          "type",
+          "details",
+          "status",
+          "created_at",
+          "updated_at",
+          "object"
         ]
       },
       "LoyaltiesProgramsMembersCardsTransactionsListRequestQueryId": {
