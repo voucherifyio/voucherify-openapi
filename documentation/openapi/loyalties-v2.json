@@ -17081,7 +17081,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/BenefitCreateRequest"
+                "$ref": "#/components/schemas/V2LoyaltiesBenefitsCreateRequestBody"
               }
             }
           }
@@ -17092,7 +17092,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Benefit"
+                  "$ref": "#/components/schemas/V2LoyaltiesBenefitsCreateResponseBody"
                 }
               }
             }
@@ -24139,9 +24139,39 @@
           }
         ]
       },
-      "BenefitCreateRequest": {
+      "V2LoyaltiesBenefitsCreateRequestBody": {
+        "title": "V2 Loyalties Benefits Create Request Body",
         "type": "object",
-        "description": "Request body for creating a benefit. Exactly one type-specific configuration object\nis required, matching the `type`; the remaining type-specific properties must be\nomitted or `null`.",
+        "description": "Request body schema for **POST** `/v2/loyalties/benefits`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/BenefitCreateRequest"
+          }
+        ]
+      },
+      "V2LoyaltiesBenefitsCreateResponseBody": {
+        "title": "V2 Loyalties Benefits Create Response Body",
+        "type": "object",
+        "description": "Response body schema for **POST** `/v2/loyalties/benefits`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Benefit"
+          }
+        ]
+      },
+      "V2LoyaltiesBenefitsGetResponseBody": {
+        "title": "V2 Loyalties Benefits Get Response Body",
+        "type": "object",
+        "description": "Response body schema for **GET** `/v2/loyalties/benefits/{benefitId}`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Benefit"
+          }
+        ]
+      },
+      "BenefitUpdateRequest": {
+        "type": "object",
+        "description": "Request body for updating a benefit. All properties are optional; omitted properties keep\ntheir current values. When the benefit is `ACTIVE`, only `name` and `stock` may be updated.\nAfter the update, the type-specific configuration must stay consistent with the (possibly\nupdated) `type`.",
         "properties": {
           "name": {
             "type": "string",
@@ -24159,16 +24189,8 @@
             ],
             "description": "Benefit type. Determines which configuration object is required."
           },
-          "status": {
-            "type": "string",
-            "enum": [
-              "DRAFT",
-              "ACTIVE"
-            ],
-            "description": "Initial status of the benefit. Defaults to `DRAFT` when omitted."
-          },
           "points": {
-            "description": "Fixed points configuration. Required when `type` is `POINTS`, must be null otherwise.",
+            "description": "Fixed points configuration (for `type` `POINTS`).",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitPoints"
@@ -24179,7 +24201,7 @@
             ]
           },
           "points_proportional": {
-            "description": "Proportional points configuration. Required when `type` is `POINTS_PROPORTIONAL`, must be null otherwise.",
+            "description": "Proportional points configuration (for `type` `POINTS_PROPORTIONAL`).",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/BenefitPointsProportional"
@@ -24190,7 +24212,7 @@
             ]
           },
           "material": {
-            "description": "Material (physical product/SKU) configuration. Required when `type` is `MATERIAL`, must be null otherwise.",
+            "description": "Material (physical product/SKU) configuration (for `type` `MATERIAL`).",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/BenefitMaterial"
@@ -24201,7 +24223,7 @@
             ]
           },
           "digital": {
-            "description": "Digital (campaign-based) configuration. Required when `type` is `DIGITAL`, must be null otherwise.",
+            "description": "Digital (campaign-based) configuration (for `type` `DIGITAL`).",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/BenefitDigital"
@@ -24212,7 +24234,7 @@
             ]
           },
           "stock": {
-            "description": "Stock configuration. Defaults to `{ \"type\": \"UNLIMITED\" }` when omitted.",
+            "description": "Stock configuration.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/BenefitStock"
@@ -24223,127 +24245,7 @@
             ]
           }
         },
-        "additionalProperties": false,
-        "allOf": [
-          {
-            "required": [
-              "name",
-              "type"
-            ]
-          },
-          {
-            "if": {
-              "properties": {
-                "type": {
-                  "const": "POINTS"
-                }
-              }
-            },
-            "then": {
-              "required": [
-                "points"
-              ],
-              "properties": {
-                "points": {
-                  "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitPoints"
-                },
-                "points_proportional": {
-                  "type": "null"
-                },
-                "material": {
-                  "type": "null"
-                },
-                "digital": {
-                  "type": "null"
-                }
-              }
-            }
-          },
-          {
-            "if": {
-              "properties": {
-                "type": {
-                  "const": "POINTS_PROPORTIONAL"
-                }
-              }
-            },
-            "then": {
-              "required": [
-                "points_proportional"
-              ],
-              "properties": {
-                "points": {
-                  "type": "null"
-                },
-                "points_proportional": {
-                  "$ref": "#/components/schemas/BenefitPointsProportional"
-                },
-                "material": {
-                  "type": "null"
-                },
-                "digital": {
-                  "type": "null"
-                }
-              }
-            }
-          },
-          {
-            "if": {
-              "properties": {
-                "type": {
-                  "const": "MATERIAL"
-                }
-              }
-            },
-            "then": {
-              "required": [
-                "material"
-              ],
-              "properties": {
-                "points": {
-                  "type": "null"
-                },
-                "points_proportional": {
-                  "type": "null"
-                },
-                "material": {
-                  "$ref": "#/components/schemas/BenefitMaterial"
-                },
-                "digital": {
-                  "type": "null"
-                }
-              }
-            }
-          },
-          {
-            "if": {
-              "properties": {
-                "type": {
-                  "const": "DIGITAL"
-                }
-              }
-            },
-            "then": {
-              "required": [
-                "digital"
-              ],
-              "properties": {
-                "points": {
-                  "type": "null"
-                },
-                "points_proportional": {
-                  "type": "null"
-                },
-                "material": {
-                  "type": "null"
-                },
-                "digital": {
-                  "$ref": "#/components/schemas/BenefitDigital"
-                }
-              }
-            }
-          }
-        ]
+        "additionalProperties": false
       },
       "Benefit": {
         "type": "object",
@@ -24446,94 +24348,6 @@
           "updated_at",
           "object"
         ]
-      },
-      "V2LoyaltiesBenefitsGetResponseBody": {
-        "title": "V2 Loyalties Benefits Get Response Body",
-        "type": "object",
-        "description": "Response body schema for **GET** `/v2/loyalties/benefits/{benefitId}`.",
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/Benefit"
-          }
-        ]
-      },
-      "BenefitUpdateRequest": {
-        "type": "object",
-        "description": "Request body for updating a benefit. All properties are optional; omitted properties keep\ntheir current values. When the benefit is `ACTIVE`, only `name` and `stock` may be updated.\nAfter the update, the type-specific configuration must stay consistent with the (possibly\nupdated) `type`.",
-        "properties": {
-          "name": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 200,
-            "description": "Benefit name. Must be unique within the project."
-          },
-          "type": {
-            "type": "string",
-            "enum": [
-              "POINTS",
-              "POINTS_PROPORTIONAL",
-              "MATERIAL",
-              "DIGITAL"
-            ],
-            "description": "Benefit type. Determines which configuration object is required."
-          },
-          "points": {
-            "description": "Fixed points configuration (for `type` `POINTS`).",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitPoints"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "points_proportional": {
-            "description": "Proportional points configuration (for `type` `POINTS_PROPORTIONAL`).",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/BenefitPointsProportional"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "material": {
-            "description": "Material (physical product/SKU) configuration (for `type` `MATERIAL`).",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/BenefitMaterial"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "digital": {
-            "description": "Digital (campaign-based) configuration (for `type` `DIGITAL`).",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/BenefitDigital"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "stock": {
-            "description": "Stock configuration.",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/BenefitStock"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          }
-        },
-        "additionalProperties": false
       },
       "LoyaltiesBenefitsActivitiesListRequestQuery": {
         "type": "object",
@@ -36666,6 +36480,212 @@
           "data",
           "cursor",
           "object"
+        ]
+      },
+      "BenefitCreateRequest": {
+        "type": "object",
+        "description": "Request body for creating a benefit. Exactly one type-specific configuration object\nis required, matching the `type`; the remaining type-specific properties must be\nomitted or `null`.",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "description": "Benefit name. Must be unique within the project."
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "POINTS",
+              "POINTS_PROPORTIONAL",
+              "MATERIAL",
+              "DIGITAL"
+            ],
+            "description": "Benefit type. Determines which configuration object is required."
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "DRAFT",
+              "ACTIVE"
+            ],
+            "description": "Initial status of the benefit. Defaults to `DRAFT` when omitted."
+          },
+          "points": {
+            "description": "Fixed points configuration. Required when `type` is `POINTS`, must be null otherwise.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitPoints"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "points_proportional": {
+            "description": "Proportional points configuration. Required when `type` is `POINTS_PROPORTIONAL`, must be null otherwise.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/BenefitPointsProportional"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "material": {
+            "description": "Material (physical product/SKU) configuration. Required when `type` is `MATERIAL`, must be null otherwise.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/BenefitMaterial"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "digital": {
+            "description": "Digital (campaign-based) configuration. Required when `type` is `DIGITAL`, must be null otherwise.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/BenefitDigital"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "stock": {
+            "description": "Stock configuration. Defaults to `{ \"type\": \"UNLIMITED\" }` when omitted.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/BenefitStock"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "required": [
+              "name",
+              "type"
+            ]
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "POINTS"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "points"
+              ],
+              "properties": {
+                "points": {
+                  "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitPoints"
+                },
+                "points_proportional": {
+                  "type": "null"
+                },
+                "material": {
+                  "type": "null"
+                },
+                "digital": {
+                  "type": "null"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "POINTS_PROPORTIONAL"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "points_proportional"
+              ],
+              "properties": {
+                "points": {
+                  "type": "null"
+                },
+                "points_proportional": {
+                  "$ref": "#/components/schemas/BenefitPointsProportional"
+                },
+                "material": {
+                  "type": "null"
+                },
+                "digital": {
+                  "type": "null"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "MATERIAL"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "material"
+              ],
+              "properties": {
+                "points": {
+                  "type": "null"
+                },
+                "points_proportional": {
+                  "type": "null"
+                },
+                "material": {
+                  "$ref": "#/components/schemas/BenefitMaterial"
+                },
+                "digital": {
+                  "type": "null"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "DIGITAL"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "digital"
+              ],
+              "properties": {
+                "points": {
+                  "type": "null"
+                },
+                "points_proportional": {
+                  "type": "null"
+                },
+                "material": {
+                  "type": "null"
+                },
+                "digital": {
+                  "$ref": "#/components/schemas/BenefitDigital"
+                }
+              }
+            }
+          }
         ]
       },
       "LoyaltyV2ActivityBenefitPoints": {
