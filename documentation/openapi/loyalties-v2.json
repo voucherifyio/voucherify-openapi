@@ -11100,25 +11100,25 @@
           "name": "programId",
           "in": "path",
           "required": true,
-          "description": "Unique loyalty program identifier (format: `lprg_` followed by hexadecimal characters).",
+          "description": "Identifies the loyalty program. Format: `lprg_` followed by hexadecimal characters.",
           "schema": {
             "type": "string"
           }
         }
       ],
       "get": {
-        "operationId": "getProgramTiersDailyReport",
+        "operationId": "listProgramTiersDailyReports",
         "tags": [
           "Programs"
         ],
-        "summary": "Get program tiers daily report",
-        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nReturns aggregated daily tier-movement statistics for the program over the given\ndate range and resolution, optionally filtered by tier structure and tier.\n\nThe date range is limited per resolution:\nmaximum 90 days for `day`, 12 weeks for `week`, 12 months for `month`, 4 quarters\nfor `quarter`.",
+        "summary": "List program tiers daily reports",
+        "description": "Returns aggregated tier-movement statistics for the program over the given date range and resolution, optionally filtered by tier structure and tier. Each row covers one tier structure, one tier, and one period with recorded movement. Periods without recorded movement are omitted. A filter that matches no rows returns an empty `data` array.\n\nThe date range is limited per resolution:\n- 90 days for `day`,\n- 12 weeks for `week`,\n- 12 months for `month`,\n- 4 quarters for `quarter`,\n- `start_date` must be before `end_date`,\n- `start_date` and `end_date` are inclusive.\n\nReturns `400` when query validation fails. Returns `404` when the program does not exist.",
         "parameters": [
           {
             "name": "start_date",
             "in": "query",
             "required": true,
-            "description": "Start of the report date range (inclusive), in `YYYY-MM-DD` format.",
+            "description": "Sets the inclusive start of the range, in `YYYY-MM-DD` format.",
             "schema": {
               "type": "string",
               "format": "date",
@@ -11129,7 +11129,7 @@
             "name": "end_date",
             "in": "query",
             "required": true,
-            "description": "End of the report date range, in `YYYY-MM-DD` format.",
+            "description": "Sets the inclusive end of the range, in `YYYY-MM-DD` format. Must be after `start_date`.",
             "schema": {
               "type": "string",
               "format": "date",
@@ -11140,7 +11140,7 @@
             "name": "resolution",
             "in": "query",
             "required": true,
-            "description": "Aggregation resolution of the report. The allowed date range depends on the resolution: `day` – max 90 days; `week` – max 12 weeks; `month` – max 12 months; `quarter` – max 4 quarters.",
+            "description": "Sets the aggregation resolution. Allowed range: `day` up to 90 days, `week` up to 12 weeks, `month` up to 12 months, `quarter` up to 4 quarters.",
             "schema": {
               "type": "string",
               "enum": [
@@ -11157,7 +11157,7 @@
             "required": false,
             "style": "deepObject",
             "explode": true,
-            "description": "Field filters, e.g. `filters[tier_structure_id][conditions][$is]=lts_...` or `filters[tier_id][conditions][$is]=lt_...`. Each field accepts a `conditions` object with condition operators.",
+            "description": "Filters rows by `tier_structure_id` and `tier_id`. Example: `filters[tier_structure_id][conditions][$is]=lts_...`.",
             "schema": {
               "$ref": "#/components/schemas/TiersReportListFilters"
             }
@@ -11169,7 +11169,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/TiersReportDailyResponse"
+                  "$ref": "#/components/schemas/V2LoyaltiesProgramsReportsTiersDailyListResponseBody"
                 },
                 "examples": {
                   "Daily tiers report": {
@@ -11189,27 +11189,264 @@
                       ],
                       "object": "report"
                     }
+                  },
+                  "Monthly tiers report": {
+                    "value": {
+                      "data": [
+                        {
+                          "date": "2026-07-01",
+                          "tier_structure_id": "lts_128f4b460e4c4bedf6",
+                          "tier_id": "lt_128f4b46400c4bedfb",
+                          "joins": 0,
+                          "upgrades": 0,
+                          "downgrades": 2,
+                          "lefts": 0,
+                          "prolongs": 0,
+                          "object": "program_tiers_daily_report"
+                        },
+                        {
+                          "date": "2026-07-01",
+                          "tier_structure_id": "lts_128f4b460e4c4bedf6",
+                          "tier_id": "lt_128f4b46558c4bedff",
+                          "joins": 0,
+                          "upgrades": 0,
+                          "downgrades": 1,
+                          "lefts": 0,
+                          "prolongs": 0,
+                          "object": "program_tiers_daily_report"
+                        },
+                        {
+                          "date": "2026-07-01",
+                          "tier_structure_id": "lts_128f4b460e4c4bedf6",
+                          "tier_id": "lt_128f4b46808c4bee07",
+                          "joins": 0,
+                          "upgrades": 2,
+                          "downgrades": 0,
+                          "lefts": 0,
+                          "prolongs": 0,
+                          "object": "program_tiers_daily_report"
+                        },
+                        {
+                          "date": "2026-08-01",
+                          "tier_structure_id": "lts_128f4b460e4c4bedf6",
+                          "tier_id": "lt_128f4b46808c4bee07",
+                          "joins": 0,
+                          "upgrades": 1,
+                          "downgrades": 0,
+                          "lefts": 0,
+                          "prolongs": 0,
+                          "object": "program_tiers_daily_report"
+                        },
+                        {
+                          "date": "2026-08-01",
+                          "tier_structure_id": "lts_128f4b460e4c4bedf6",
+                          "tier_id": "lt_128f4b466a0c4bee03",
+                          "joins": 0,
+                          "upgrades": 1,
+                          "downgrades": 0,
+                          "lefts": 0,
+                          "prolongs": 0,
+                          "object": "program_tiers_daily_report"
+                        },
+                        {
+                          "date": "2026-08-01",
+                          "tier_structure_id": "lts_128f4b460e4c4bedf6",
+                          "tier_id": "lt_128f4b46400c4bedfb",
+                          "joins": 0,
+                          "upgrades": 0,
+                          "downgrades": 1,
+                          "lefts": 0,
+                          "prolongs": 0,
+                          "object": "program_tiers_daily_report"
+                        },
+                        {
+                          "date": "2026-09-01",
+                          "tier_structure_id": "lts_128f4b460e4c4bedf6",
+                          "tier_id": "lt_128f4b46808c4bee07",
+                          "joins": 0,
+                          "upgrades": 1,
+                          "downgrades": 0,
+                          "lefts": 0,
+                          "prolongs": 0,
+                          "object": "program_tiers_daily_report"
+                        },
+                        {
+                          "date": "2026-09-01",
+                          "tier_structure_id": "lts_128f4b460e4c4bedf6",
+                          "tier_id": "lt_128f4b46400c4bedfb",
+                          "joins": 2,
+                          "upgrades": 0,
+                          "downgrades": 0,
+                          "lefts": 1,
+                          "prolongs": 0,
+                          "object": "program_tiers_daily_report"
+                        },
+                        {
+                          "date": "2026-10-01",
+                          "tier_structure_id": "lts_128f4b460e4c4bedf6",
+                          "tier_id": "lt_128f4b46400c4bedfb",
+                          "joins": 1,
+                          "upgrades": 0,
+                          "downgrades": 1,
+                          "lefts": 0,
+                          "prolongs": 0,
+                          "object": "program_tiers_daily_report"
+                        }
+                      ],
+                      "object": "report"
+                    }
+                  },
+                  "Empty tiers daily report": {
+                    "value": {
+                      "data": [],
+                      "object": "report"
+                    }
                   }
                 }
               }
             }
           },
           "400": {
-            "description": "Validation error - query parameters failed validation, or the operation is not allowed in the current resource state.",
+            "description": "Query parameters failed validation, or `start_date` is not before `end_date`.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Invalid query parameters: `start_date` is required": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Query must have required property 'start_date'",
+                      "request_id": "v-131e4b76ad2e098901"
+                    }
+                  },
+                  "Invalid query parameters: `end_date` is required": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Query must have required property 'end_date'",
+                      "request_id": "v-131e4b76ad2e098902"
+                    }
+                  },
+                  "Invalid query parameters: `resolution` is required": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Query must have required property 'resolution'",
+                      "request_id": "v-131e4b76ad2e098903"
+                    }
+                  },
+                  "Invalid query parameters: `resolution` is invalid": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Property .resolution must be equal to one of the allowed values [ day, week, month, quarter ]",
+                      "request_id": "v-131e4b76ad2e098904"
+                    }
+                  },
+                  "Invalid query parameters: `start_date` is invalid": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Property .start_date cannot be recognized as a ISO-8601 compliant date",
+                      "request_id": "v-131e4b76ad2e098905"
+                    }
+                  },
+                  "Invalid query parameters: `end_date` is invalid": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Property .end_date cannot be recognized as a ISO-8601 compliant date",
+                      "request_id": "v-131e4b76ad2e098909"
+                    }
+                  },
+                  "Invalid query parameters: date range exceeds limit for `day`": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Query date range exceeds maximum allowed 90 days for resolution 'day'",
+                      "request_id": "v-131e4b76ad2e098906"
+                    }
+                  },
+                  "Invalid query parameters: date range exceeds limit for `week`": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Query date range exceeds maximum allowed 12 weeks for resolution 'week'",
+                      "request_id": "v-131e4b76ad2e09890a"
+                    }
+                  },
+                  "Invalid query parameters: date range exceeds limit for `month`": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Query date range exceeds maximum allowed 12 months for resolution 'month'",
+                      "request_id": "v-131e4b76ad2e09890b"
+                    }
+                  },
+                  "Invalid query parameters: date range exceeds limit for `quarter`": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Query date range exceeds maximum allowed 4 quarters for resolution 'quarter'",
+                      "request_id": "v-131e4b76ad2e09890c"
+                    }
+                  },
+                  "Invalid payload: `start_date` is not before `end_date`": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_payload",
+                      "message": "Invalid payload",
+                      "details": "Property 'start_date' must be before 'end_date'",
+                      "request_id": "v-131e4b76ad2e098907"
+                    }
+                  }
                 }
               }
             }
           },
           "404": {
-            "description": "Resource not found.",
+            "description": "Program not found.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Program not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find program with id lprg_128f4a88414c4bed69",
+                      "request_id": "v-131e4b76ad2e098908",
+                      "resource_id": "lprg_128f4a88414c4bed69",
+                      "resource_type": "program"
+                    }
+                  },
+                  "Program id does not match the pattern": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find program with id missing",
+                      "request_id": "v-131e4b76ad2e09890d",
+                      "resource_id": "missing",
+                      "resource_type": "program"
+                    }
+                  }
                 }
               }
             }
@@ -11251,67 +11488,27 @@
           "name": "programId",
           "in": "path",
           "required": true,
-          "description": "Unique loyalty program identifier (format: `lprg_` followed by hexadecimal characters).",
+          "description": "Identifies the loyalty program. Format: `lprg_` followed by hexadecimal characters.",
           "schema": {
             "type": "string"
           }
         }
       ],
       "get": {
-        "operationId": "getProgramTiersSummaryReport",
+        "operationId": "listProgramTiersSummaryReports",
         "tags": [
           "Programs"
         ],
-        "summary": "Get program tiers summary report",
-        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nReturns total tier-movement statistics for the program (all time), optionally\nfiltered by tier structure and tier.\n\nResults are capped by `limit` (default `100`) and sorted by `order` (default `-id`).",
+        "summary": "List program tiers summary reports",
+        "description": "Returns all-time tier-movement totals for the program, one row per tier structure and tier that has recorded movement. Filters rows with `filters[tier_structure_id]` and `filters[tier_id]`. Returns at most 100 rows, ordered by `id` descending. `limit` and `order` are not query parameters. A filter that matches no rows returns an empty `data` array.\n\nReturns `400` when query validation fails. Returns `404` when the program does not exist.",
         "parameters": [
-          {
-            "name": "limit",
-            "in": "query",
-            "required": false,
-            "description": "Maximum number of report entries to return. Minimum: 1, maximum: 100. Defaults to 100 when omitted.",
-            "schema": {
-              "type": "integer",
-              "minimum": 1,
-              "maximum": 100,
-              "default": 100
-            }
-          },
-          {
-            "name": "order",
-            "in": "query",
-            "required": false,
-            "description": "Sort order. A single field or an array of fields. Prefix a field with `-` for descending order. Defaults to `-id`. Allowed values: `id`, `-id`.",
-            "schema": {
-              "oneOf": [
-                {
-                  "type": "string",
-                  "enum": [
-                    "id",
-                    "-id"
-                  ]
-                },
-                {
-                  "type": "array",
-                  "items": {
-                    "type": "string",
-                    "enum": [
-                      "id",
-                      "-id"
-                    ]
-                  }
-                }
-              ],
-              "default": "-id"
-            }
-          },
           {
             "name": "filters",
             "in": "query",
             "required": false,
             "style": "deepObject",
             "explode": true,
-            "description": "Field filters, e.g. `filters[tier_structure_id][conditions][$is]=lts_...` or `filters[tier_id][conditions][$is]=lt_...`. Each field accepts a `conditions` object with condition operators.",
+            "description": "Filters rows by `tier_structure_id` and `tier_id`. Omitting `filters` or setting it to `null` applies no field filter. Example: `filters[tier_id][conditions][$is]=lt_...`.",
             "schema": {
               "$ref": "#/components/schemas/TiersReportListFilters"
             }
@@ -11323,24 +11520,63 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/TiersReportSummaryResponse"
+                  "$ref": "#/components/schemas/V2LoyaltiesProgramsReportsTiersSummaryListResponseBody"
                 },
                 "examples": {
                   "Summary tiers report": {
                     "value": {
                       "data": [
                         {
-                          "id": "lptrs_128f4a88414c4bed70",
-                          "tier_structure_id": "lts_128f4a88414c4bed69",
-                          "tier_id": "lt_128f4a88414c4bed6a",
-                          "joins": 1,
-                          "upgrades": 0,
+                          "id": "lptrs_12d1ada07056ba14da",
+                          "tier_structure_id": "lts_128f4b460e4c4bedf6",
+                          "tier_id": "lt_128f4b466a0c4bee03",
+                          "joins": 0,
+                          "upgrades": 1,
                           "downgrades": 0,
                           "lefts": 0,
                           "prolongs": 0,
                           "object": "program_tiers_summary_report"
+                        },
+                        {
+                          "id": "lptrs_12cad1af9bc1616fe5",
+                          "tier_structure_id": "lts_128f4b460e4c4bedf6",
+                          "tier_id": "lt_128f4b46558c4bedff",
+                          "joins": 0,
+                          "upgrades": 0,
+                          "downgrades": 1,
+                          "lefts": 0,
+                          "prolongs": 0,
+                          "object": "program_tiers_summary_report"
+                        },
+                        {
+                          "id": "lptrs_12cad001d441616ea8",
+                          "tier_structure_id": "lts_128f4b460e4c4bedf6",
+                          "tier_id": "lt_128f4b46808c4bee07",
+                          "joins": 0,
+                          "upgrades": 4,
+                          "downgrades": 0,
+                          "lefts": 0,
+                          "prolongs": 0,
+                          "object": "program_tiers_summary_report"
+                        },
+                        {
+                          "id": "lptrs_12cac273c0016164ec",
+                          "tier_structure_id": "lts_128f4b460e4c4bedf6",
+                          "tier_id": "lt_128f4b46400c4bedfb",
+                          "joins": 3,
+                          "upgrades": 0,
+                          "downgrades": 4,
+                          "lefts": 1,
+                          "prolongs": 0,
+                          "object": "program_tiers_summary_report"
                         }
                       ],
+                      "object": "report"
+                    }
+                  },
+                  "Empty tiers summary report": {
+                    "value": {
+                      "data": [],
                       "object": "report"
                     }
                   }
@@ -11349,21 +11585,65 @@
             }
           },
           "400": {
-            "description": "Validation error - request body or query parameters failed validation, or the operation is not allowed in the current resource state.",
+            "description": "Query parameters failed validation.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Invalid query parameters: `tier_structure_id` is invalid": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Property .filters.tier_structure_id.conditions.$is must match pattern \"^lts_[a-f0-9]+$\"",
+                      "request_id": "v-131e4b76ad2e098911"
+                    }
+                  },
+                  "Invalid query parameters: `tier_id` is invalid": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Property .filters.tier_id.conditions.$is must match pattern \"^lt_[a-f0-9]+$\"",
+                      "request_id": "v-131e4b76ad2e098913"
+                    }
+                  }
                 }
               }
             }
           },
           "404": {
-            "description": "Resource not found.",
+            "description": "Program not found.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Program not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find program with id lprg_128f4a88414c4bed69",
+                      "request_id": "v-131e4b76ad2e098912",
+                      "resource_id": "lprg_128f4a88414c4bed69",
+                      "resource_type": "program"
+                    }
+                  },
+                  "Program id does not match the pattern": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find program with id missing",
+                      "request_id": "v-131e4b76ad2e098914",
+                      "resource_id": "missing",
+                      "resource_type": "program"
+                    }
+                  }
                 }
               }
             }
@@ -22200,7 +22480,7 @@
         "description": "Filters for program tiers reports.",
         "properties": {
           "junction": {
-            "description": "Logical junction between the field filters. Defaults to AND behavior.",
+            "description": "Joins the field filters. Allowed values: `AND`, `OR`. Defaults to `AND`.",
             "oneOf": [
               {
                 "type": "string",
@@ -22239,41 +22519,25 @@
         },
         "additionalProperties": false
       },
-      "TiersReportDailyResponse": {
+      "V2LoyaltiesProgramsReportsTiersDailyListResponseBody": {
+        "title": "V2 Loyalties Programs Reports Tiers Daily List Response Body",
         "type": "object",
-        "description": "Program tiers daily report result.",
-        "properties": {
-          "data": {
-            "type": "array",
-            "description": "Report entries, one per aggregation period, tier structure, and tier.",
-            "items": {
-              "$ref": "#/components/schemas/TiersReportDailyEntry"
-            }
-          },
-          "object": {
-            "type": "string",
-            "const": "report",
-            "description": "Object type marker. Always `report`."
+        "description": "Response body schema for **GET** `/v2/loyalties/programs/{programId}/reports/tiers/daily`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/TiersReportDailyResponse"
           }
-        }
+        ]
       },
-      "TiersReportSummaryResponse": {
+      "V2LoyaltiesProgramsReportsTiersSummaryListResponseBody": {
+        "title": "V2 Loyalties Programs Reports Tiers Summary List Response Body",
         "type": "object",
-        "description": "Program tiers summary report result.",
-        "properties": {
-          "data": {
-            "type": "array",
-            "description": "Report entries, one per tier structure and tier.",
-            "items": {
-              "$ref": "#/components/schemas/TiersReportSummaryEntry"
-            }
-          },
-          "object": {
-            "type": "string",
-            "const": "report",
-            "description": "Object type marker. Always `report`."
+        "description": "Response body schema for **GET** `/v2/loyalties/programs/{programId}/reports/tiers/summary`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/TiersReportSummaryResponse"
           }
-        }
+        ]
       },
       "PointsEarningsReportListFilters": {
         "type": "object",
@@ -31468,7 +31732,7 @@
             "additionalProperties": false,
             "properties": {
               "$is": {
-                "description": "Matches rows whose tier id equals the given value.",
+                "description": "Matches rows whose tier ID equals the given value.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -31489,7 +31753,7 @@
                 ]
               },
               "$is_not": {
-                "description": "Matches rows whose tier id does not equal the given value.",
+                "description": "Matches rows whose tier ID does not equal the given value.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -31510,7 +31774,7 @@
                 ]
               },
               "$in": {
-                "description": "Matches rows whose tier id is one of the given values.",
+                "description": "Matches rows whose tier ID is one of the given values.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -31531,7 +31795,7 @@
                 ]
               },
               "$not_in": {
-                "description": "Matches rows whose tier id is not one of the given values.",
+                "description": "Matches rows whose tier ID is not one of the given values.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -31559,96 +31823,49 @@
         ],
         "additionalProperties": false
       },
-      "TiersReportDailyEntry": {
+      "TiersReportDailyResponse": {
         "type": "object",
-        "description": "Aggregated daily program tier-movement statistics for one period, tier structure, and tier. All numeric fields default to 0.",
+        "description": "Program tiers daily report result.",
         "properties": {
-          "date": {
-            "type": "string",
-            "format": "date",
-            "description": "Date of the aggregation period (`YYYY-MM-DD`)."
-          },
-          "tier_structure_id": {
-            "type": "string",
-            "pattern": "^lts_[a-f0-9]+$",
-            "description": "Unique identifier of the tier structure (format `lts_...`)."
-          },
-          "tier_id": {
-            "type": "string",
-            "pattern": "^lt_[a-f0-9]+$",
-            "description": "Unique identifier of the tier (format `lt_...`)."
-          },
-          "joins": {
-            "type": "number",
-            "description": "Number of members who joined this tier in the period."
-          },
-          "upgrades": {
-            "type": "number",
-            "description": "Number of upgrades into this tier in the period."
-          },
-          "downgrades": {
-            "type": "number",
-            "description": "Number of downgrades into this tier in the period."
-          },
-          "lefts": {
-            "type": "number",
-            "description": "Number of members who left this tier in the period."
-          },
-          "prolongs": {
-            "type": "number",
-            "description": "Number of tier prolongations in the period."
+          "data": {
+            "type": "array",
+            "description": "List of report entries, one per tier structure, tier, and aggregation period with recorded movement, ordered by `date` ascending. Empty when no movement was recorded in the range.",
+            "items": {
+              "$ref": "#/components/schemas/TiersReportDailyEntry"
+            }
           },
           "object": {
             "type": "string",
-            "const": "program_tiers_daily_report",
-            "description": "Object type marker. Always `program_tiers_daily_report`."
+            "const": "report",
+            "description": "Object type marker. Always `report`."
           }
-        }
+        },
+        "required": [
+          "data",
+          "object"
+        ]
       },
-      "TiersReportSummaryEntry": {
+      "TiersReportSummaryResponse": {
         "type": "object",
-        "description": "Total program tier-movement statistics for one tier structure and tier. All numeric fields default to 0.",
+        "description": "Program tiers summary report result.",
         "properties": {
-          "id": {
-            "type": "string",
-            "description": "Unique identifier of the summary row."
-          },
-          "tier_structure_id": {
-            "type": "string",
-            "pattern": "^lts_[a-f0-9]+$",
-            "description": "Unique identifier of the tier structure (format `lts_...`)."
-          },
-          "tier_id": {
-            "type": "string",
-            "pattern": "^lt_[a-f0-9]+$",
-            "description": "Unique identifier of the tier (format `lt_...`)."
-          },
-          "joins": {
-            "type": "number",
-            "description": "Total number of members who joined this tier."
-          },
-          "upgrades": {
-            "type": "number",
-            "description": "Total number of upgrades into this tier."
-          },
-          "downgrades": {
-            "type": "number",
-            "description": "Total number of downgrades into this tier."
-          },
-          "lefts": {
-            "type": "number",
-            "description": "Total number of members who left this tier."
-          },
-          "prolongs": {
-            "type": "number",
-            "description": "Total number of tier prolongations."
+          "data": {
+            "type": "array",
+            "description": "List of summary rows, one per tier structure and tier with recorded movement, ordered by `id` descending. Contains at most 100 rows. Empty when no movement was recorded.",
+            "items": {
+              "$ref": "#/components/schemas/TiersReportSummaryEntry"
+            }
           },
           "object": {
             "type": "string",
-            "const": "program_tiers_summary_report",
-            "description": "Object type marker. Always `program_tiers_summary_report`."
+            "const": "report",
+            "description": "Object type marker. Always `report`."
           }
-        }
+        },
+        "required": [
+          "data",
+          "object"
+        ]
       },
       "PointsEarningsReportFilterEarningRuleIdConditions": {
         "type": "object",
@@ -40194,6 +40411,120 @@
         "required": [
           "date",
           "count",
+          "object"
+        ]
+      },
+      "TiersReportDailyEntry": {
+        "type": "object",
+        "description": "Aggregated daily program tier-movement statistics for one period, tier structure, and tier. All numeric fields default to 0.",
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date",
+            "description": "Identifies the start of the aggregation period on the project-local calendar (`YYYY-MM-DD`). The date is truncated to the resolution. For `week` this is Monday. For `month` this is the first day. For `quarter` this is the quarter start."
+          },
+          "tier_structure_id": {
+            "type": "string",
+            "pattern": "^lts_[a-f0-9]+$",
+            "description": "Unique identifier of the tier structure (format `lts_...`)."
+          },
+          "tier_id": {
+            "type": "string",
+            "pattern": "^lt_[a-f0-9]+$",
+            "description": "Unique identifier of the tier (format `lt_...`)."
+          },
+          "joins": {
+            "type": "number",
+            "description": "Number of members who joined this tier in the period."
+          },
+          "upgrades": {
+            "type": "number",
+            "description": "Number of upgrades into this tier in the period."
+          },
+          "downgrades": {
+            "type": "number",
+            "description": "Number of downgrades into this tier in the period."
+          },
+          "lefts": {
+            "type": "number",
+            "description": "Number of members who left this tier in the period."
+          },
+          "prolongs": {
+            "type": "number",
+            "description": "Counts expiration-date changes for members who stayed on this tier in the period."
+          },
+          "object": {
+            "type": "string",
+            "const": "program_tiers_daily_report",
+            "description": "Object type marker. Always `program_tiers_daily_report`."
+          }
+        },
+        "required": [
+          "date",
+          "tier_structure_id",
+          "tier_id",
+          "joins",
+          "upgrades",
+          "downgrades",
+          "lefts",
+          "prolongs",
+          "object"
+        ]
+      },
+      "TiersReportSummaryEntry": {
+        "type": "object",
+        "description": "Total program tier-movement statistics for one tier structure and tier. All numeric fields default to 0.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^lptrs_[a-f0-9]+$",
+            "description": "Identifies the summary row (format: `lptrs_` followed by hexadecimal characters)."
+          },
+          "tier_structure_id": {
+            "type": "string",
+            "pattern": "^lts_[a-f0-9]+$",
+            "description": "Unique identifier of the tier structure (format `lts_...`)."
+          },
+          "tier_id": {
+            "type": "string",
+            "pattern": "^lt_[a-f0-9]+$",
+            "description": "Unique identifier of the tier (format `lt_...`)."
+          },
+          "joins": {
+            "type": "number",
+            "description": "Total number of members who joined this tier."
+          },
+          "upgrades": {
+            "type": "number",
+            "description": "Total number of upgrades into this tier."
+          },
+          "downgrades": {
+            "type": "number",
+            "description": "Total number of downgrades into this tier."
+          },
+          "lefts": {
+            "type": "number",
+            "description": "Total number of members who left this tier."
+          },
+          "prolongs": {
+            "type": "number",
+            "description": "Counts expiration-date changes for members who stayed on this tier."
+          },
+          "object": {
+            "type": "string",
+            "const": "program_tiers_summary_report",
+            "description": "Object type marker. Always `program_tiers_summary_report`."
+          }
+        },
+        "required": [
+          "id",
+          "tier_structure_id",
+          "tier_id",
+          "joins",
+          "upgrades",
+          "downgrades",
+          "lefts",
+          "prolongs",
           "object"
         ]
       },
