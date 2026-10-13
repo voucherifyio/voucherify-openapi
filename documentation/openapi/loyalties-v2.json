@@ -12231,25 +12231,25 @@
           "name": "programId",
           "in": "path",
           "required": true,
-          "description": "Unique loyalty program identifier (format: `lprg_` followed by hexadecimal characters).",
+          "description": "Identifies the loyalty program (`lprg_` followed by hexadecimal characters).",
           "schema": {
             "type": "string"
           }
         }
       ],
       "get": {
-        "operationId": "getProgramMembersDailyReport",
+        "operationId": "listProgramMembersDailyReports",
         "tags": [
           "Programs"
         ],
-        "summary": "Get program members daily report",
+        "summary": "List program members daily reports",
         "description": "Returns member and card changes for the program over the given date range and resolution. Each row covers one period with recorded activity. Periods without activity are omitted.\n\nThe date range is limited per resolution:\n- 90 days for `day`,\n- 12 weeks for `week`,\n- 12 months for `month`,\n- 4 quarters for `quarter`,\n- `start_date` must be before `end_date`,\n- `start_date` and `end_date` are inclusive.\n\nReturns `400` when query validation fails. Returns `404` when the program does not exist.",
         "parameters": [
           {
             "name": "start_date",
             "in": "query",
             "required": true,
-            "description": "Start of the report date range (inclusive), in `YYYY-MM-DD` format.",
+            "description": "Sets the inclusive start of the report date range, in `YYYY-MM-DD` format.",
             "schema": {
               "type": "string",
               "format": "date",
@@ -12260,7 +12260,7 @@
             "name": "end_date",
             "in": "query",
             "required": true,
-            "description": "End of the report date range (inclusive), in `YYYY-MM-DD` format. Must be after `start_date`.",
+            "description": "Sets the inclusive end of the report date range, in `YYYY-MM-DD` format. Requires `start_date` to be before `end_date`.",
             "schema": {
               "type": "string",
               "format": "date",
@@ -12271,7 +12271,7 @@
             "name": "resolution",
             "in": "query",
             "required": true,
-            "description": "Aggregation resolution of the report. The allowed date range depends on the resolution: `day` – max 90 days; `week` – max 12 weeks; `month` – max 12 months; `quarter` – max 4 quarters.",
+            "description": "Sets the aggregation resolution. Allows at most 90 days for `day`, 12 weeks for `week`, 12 months for `month`, and 4 quarters for `quarter`.",
             "schema": {
               "type": "string",
               "enum": [
@@ -12292,15 +12292,31 @@
                   "$ref": "#/components/schemas/LoyaltiesProgramsReportsMembersDailyListResponseBody"
                 },
                 "examples": {
-                  "Daily members report": {
+                  "Daily members report: Month resolution": {
                     "value": {
                       "data": [
                         {
                           "date": "2026-07-01",
-                          "members_joined": 1,
-                          "members_deactivated": 0,
+                          "members_joined": 10,
+                          "members_deactivated": 1,
+                          "members_deleted": 2,
+                          "cards": 0,
+                          "object": "program_members_daily_report"
+                        },
+                        {
+                          "date": "2026-09-01",
+                          "members_joined": 2,
+                          "members_deactivated": 3,
                           "members_deleted": 0,
-                          "cards": 1,
+                          "cards": 3,
+                          "object": "program_members_daily_report"
+                        },
+                        {
+                          "date": "2026-10-01",
+                          "members_joined": 1,
+                          "members_deactivated": 1,
+                          "members_deleted": 0,
+                          "cards": 3,
                           "object": "program_members_daily_report"
                         }
                       ],
@@ -12393,7 +12409,7 @@
             }
           },
           "404": {
-            "description": "Resource not found.",
+            "description": "Program not found.",
             "content": {
               "application/json": {
                 "schema": {
@@ -12408,6 +12424,17 @@
                       "details": "Cannot find program with id lprg_128f58429fc4bf7b2",
                       "request_id": "v-131e4b76ad2e098968",
                       "resource_id": "lprg_128f58429fc4bf7b2",
+                      "resource_type": "program"
+                    }
+                  },
+                  "Program id does not match the pattern": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find program with id missing",
+                      "request_id": "v-131e4b76ad2e098969",
+                      "resource_id": "missing",
                       "resource_type": "program"
                     }
                   }
@@ -33220,7 +33247,7 @@
           },
           "cards": {
             "type": "number",
-            "description": "Counts cards created in the period. Decreases by 1 when a card is unassigned."
+            "description": "Counts cards created in the period. Decreases by 1 when a card is unassigned (e.g. when a member is deleted)."
           },
           "object": {
             "type": "string",
