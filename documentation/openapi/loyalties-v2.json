@@ -2232,6 +2232,18 @@
       }
     },
     "/v2/loyalties/programs/{programId}/rewards/batch": {
+      "parameters": [
+        {
+          "name": "programId",
+          "in": "path",
+          "required": true,
+          "description": "Unique program identifier.",
+          "schema": {
+            "type": "string",
+            "pattern": "^lprg_[a-f0-9]+$"
+          }
+        }
+      ],
       "post": {
         "operationId": "batchProgramRewardAssignments",
         "tags": [
@@ -2239,24 +2251,13 @@
         ],
         "summary": "Batch assign/unassign rewards",
         "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nAssigns and/or unassigns rewards to/from a program in a single batch.\nUnassign operations are processed before assign operations. Each reward to assign\nmust include its `stock` configuration. In strict mode (default) missing rewards\nor missing assignments cause the whole batch to fail (`404 Not Found`).",
-        "parameters": [
-          {
-            "name": "programId",
-            "in": "path",
-            "required": true,
-            "description": "Unique program identifier.",
-            "schema": {
-              "type": "string",
-              "pattern": "^lprg_[a-f0-9]+$"
-            }
-          }
-        ],
+        "parameters": [],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ProgramRewardBatchRequest"
+                "$ref": "#/components/schemas/V2LoyaltiesProgramsRewardsBatchRequestBody"
               }
             }
           }
@@ -2267,7 +2268,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProgramRewardBatchResponse"
+                  "$ref": "#/components/schemas/V2LoyaltiesProgramsRewardsBatchResponseBody"
                 }
               }
             }
@@ -20706,76 +20707,25 @@
           }
         ]
       },
-      "ProgramRewardBatchRequest": {
+      "V2LoyaltiesProgramsRewardsBatchRequestBody": {
+        "title": "V2 Loyalties Programs Rewards Batch Request Body",
         "type": "object",
-        "description": "Batch of reward assignment operations. `unassign` operations are processed\nbefore `assign` operations. Duplicate ids within a batch are rejected.",
-        "properties": {
-          "assign": {
-            "description": "Rewards to assign, each with its stock configuration.",
-            "oneOf": [
-              {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/ProgramRewardAssignItem"
-                },
-                "maxItems": 10
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "unassign": {
-            "description": "Rewards to unassign.",
-            "oneOf": [
-              {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/ProgramRewardUnassignItem"
-                },
-                "maxItems": 10
-              },
-              {
-                "type": "null"
-              }
-            ]
+        "description": "Request body schema for **POST** `/v2/loyalties/programs/{programId}/rewards/batch`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ProgramRewardBatchRequest"
           }
-        },
-        "additionalProperties": false
+        ]
       },
-      "ProgramRewardBatchResponse": {
+      "V2LoyaltiesProgramsRewardsBatchResponseBody": {
+        "title": "V2 Loyalties Programs Rewards Batch Response Body",
         "type": "object",
-        "description": "Result of a reward assignment batch. Keys are null when the corresponding operation list was not provided.",
-        "properties": {
-          "assigned": {
-            "description": "Assignments created by the batch, or `null` when no assign operations were requested.",
-            "oneOf": [
-              {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/ProgramRewardAssignment"
-                }
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "unassigned": {
-            "description": "Assignments removed by the batch, or `null` when no unassign operations were requested.",
-            "oneOf": [
-              {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/ProgramRewardAssignment"
-                }
-              },
-              {
-                "type": "null"
-              }
-            ]
+        "description": "Response body schema for **POST** `/v2/loyalties/programs/{programId}/rewards/batch`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ProgramRewardBatchResponse"
           }
-        }
+        ]
       },
       "ProgramRewardAssignmentUpdateRequest": {
         "type": "object",
@@ -28339,39 +28289,87 @@
           "cursor"
         ]
       },
-      "ProgramRewardAssignItem": {
+      "ProgramRewardBatchRequest": {
         "type": "object",
-        "description": "Reward to assign to the program, together with its stock configuration.",
+        "description": "Batch of reward assignment operations. `unassign` operations are processed\nbefore `assign` operations. Duplicate ids within a batch are rejected.",
         "properties": {
-          "id": {
-            "type": "string",
-            "description": "Unique reward identifier.",
-            "pattern": "^lrew_[a-f0-9]+$"
+          "assign": {
+            "description": "Rewards to assign, each with its stock configuration.",
+            "oneOf": [
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/ProgramRewardAssignItem"
+                },
+                "maxItems": 10
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
-          "stock": {
-            "$ref": "#/components/schemas/ProgramRewardAssignmentStock"
+          "unassign": {
+            "description": "Rewards to unassign.",
+            "oneOf": [
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/ProgramRewardUnassignItem"
+                },
+                "maxItems": 10
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "options": {
+            "description": "Batch behavior. Defaults to strict mode when omitted.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/ProgramRewardBatchOptions"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         },
-        "required": [
-          "id",
-          "stock"
-        ],
         "additionalProperties": false
       },
-      "ProgramRewardUnassignItem": {
+      "ProgramRewardBatchResponse": {
         "type": "object",
-        "description": "Reward to unassign from the program.",
+        "description": "Result of a reward assignment batch. Keys are null when the corresponding operation list was not provided.",
         "properties": {
-          "id": {
-            "type": "string",
-            "description": "Unique reward identifier.",
-            "pattern": "^lrew_[a-f0-9]+$"
+          "assigned": {
+            "description": "Assignments created by the batch, or `null` when no assign operations were requested.",
+            "oneOf": [
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/ProgramRewardAssignment"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "unassigned": {
+            "description": "Assignments removed by the batch, or `null` when no unassign operations were requested.",
+            "oneOf": [
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/ProgramRewardAssignment"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
-        },
-        "required": [
-          "id"
-        ],
-        "additionalProperties": false
+        }
       },
       "ProgramRewardAssignmentStock": {
         "type": "object",
@@ -40753,6 +40751,25 @@
         ],
         "additionalProperties": false
       },
+      "ProgramRewardAssignItem": {
+        "type": "object",
+        "description": "Reward to assign to the program, together with its stock configuration.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique reward identifier.",
+            "pattern": "^lrew_[a-f0-9]+$"
+          },
+          "stock": {
+            "$ref": "#/components/schemas/ProgramRewardAssignmentStock"
+          }
+        },
+        "required": [
+          "id",
+          "stock"
+        ],
+        "additionalProperties": false
+      },
       "ProgramTierStructureAssignItem": {
         "type": "object",
         "description": "Tier structure to assign to the program.",
@@ -41020,6 +41037,33 @@
           "strict": {
             "type": "boolean",
             "description": "Fails the batch when a tier structure is missing or inactive, or when an assignment to remove is missing. Defaults to `true`.",
+            "default": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProgramRewardUnassignItem": {
+        "type": "object",
+        "description": "Reward to unassign from the program.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique reward identifier.",
+            "pattern": "^lrew_[a-f0-9]+$"
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "additionalProperties": false
+      },
+      "ProgramRewardBatchOptions": {
+        "type": "object",
+        "description": "Options for a reward assignment batch.",
+        "properties": {
+          "strict": {
+            "type": "boolean",
+            "description": "Fails the batch when a reward is missing, or when an assignment to remove is missing. Defaults to `true`.",
             "default": true
           }
         },
