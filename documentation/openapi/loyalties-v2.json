@@ -17953,7 +17953,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/RewardCreateRequest"
+                "$ref": "#/components/schemas/V2LoyaltiesRewardsCreateRequestBody"
               },
               "examples": {
                 "Create reward with purchase limits": {
@@ -18022,7 +18022,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/RewardResponse"
+                  "$ref": "#/components/schemas/V2LoyaltiesRewardsCreateResponseBody"
                 },
                 "examples": {
                   "Created reward": {
@@ -24299,239 +24299,24 @@
           }
         ]
       },
-      "RewardCreateRequest": {
+      "V2LoyaltiesRewardsCreateRequestBody": {
+        "title": "V2 Loyalties Rewards Create Request Body",
         "type": "object",
-        "description": "Request body for creating a reward.\nWhen `type` is `MATERIAL`, `material` is required and\n`digital` must be null; when `type` is `DIGITAL`, `digital` is required and\n`material` must be null.",
-        "properties": {
-          "name": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 200,
-            "description": "Display name of the reward."
-          },
-          "type": {
-            "type": "string",
-            "enum": [
-              "MATERIAL",
-              "DIGITAL"
-            ],
-            "description": "Reward type. MATERIAL rewards deliver a product or SKU; DIGITAL rewards deliver discount coupons, gift vouchers or loyalty card points."
-          },
-          "status": {
-            "type": "string",
-            "enum": [
-              "DRAFT",
-              "ACTIVE"
-            ],
-            "description": "Initial status of the reward. Defaults to DRAFT behavior when omitted."
-          },
-          "validity_hours": {
-            "description": "Hours during which the reward can be purchased. Defaults to `{ \"type\": \"ANY_TIME\" }` when omitted or `null`.",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/RewardValidityHoursRequest"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "start_date": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "format": "date-time",
-            "description": "Date from which the reward is available. Must be an ISO-8601 compliant date."
-          },
-          "end_date": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "format": "date-time",
-            "description": "Date until which the reward is available. Must be an ISO-8601 compliant date."
-          },
-          "material": {
-            "description": "Material reward definition. Required when `type` is MATERIAL; must be null when `type` is DIGITAL.",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/RewardMaterialRequest"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "digital": {
-            "description": "Digital reward definition. Required when `type` is DIGITAL; must be null when `type` is MATERIAL.",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/RewardDigitalRequest"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "costs": {
-            "type": "array",
-            "minItems": 1,
-            "maxItems": 10,
-            "description": "Point costs of the reward. Each cost defines the points to spend on a specific card definition, optionally guarded by rules.",
-            "items": {
-              "$ref": "#/components/schemas/RewardCostCreateRequest"
-            }
-          },
-          "purchase_limits": {
-            "description": "Optional purchase limits. When omitted, defaults to no cooldown and no frequency limit.",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/RewardPurchaseLimitsInput"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "refunds": {
-            "description": "Refund policy for the reward. Defaults to `{ \"type\": \"NONE\" }` when omitted.",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/LoyaltyV2ActivityRewardRefunds"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "metadata": {
-            "type": [
-              "object",
-              "null"
-            ],
-            "description": "Arbitrary key-value metadata attached to the reward, as a free-form object."
+        "description": "Request body schema for **POST** `/v2/loyalties/rewards`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/RewardCreateRequest"
           }
-        },
-        "required": [
-          "name",
-          "type",
-          "costs"
-        ],
-        "additionalProperties": false
+        ]
       },
-      "RewardResponse": {
+      "V2LoyaltiesRewardsCreateResponseBody": {
+        "title": "V2 Loyalties Rewards Create Response Body",
         "type": "object",
-        "description": "A reward, as returned by the API.",
-        "properties": {
-          "id": {
-            "type": "string",
-            "pattern": "^lrew_[a-f0-9]+$",
-            "description": "Unique reward identifier, prefixed with `lrew_`."
-          },
-          "name": {
-            "type": "string",
-            "description": "Display name of the reward."
-          },
-          "type": {
-            "type": "string",
-            "enum": [
-              "MATERIAL",
-              "DIGITAL"
-            ],
-            "description": "Reward type."
-          },
-          "status": {
-            "type": "string",
-            "enum": [
-              "ACTIVE",
-              "DRAFT",
-              "INACTIVE",
-              "DELETED"
-            ],
-            "description": "Current lifecycle status of the reward."
-          },
-          "start_date": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "format": "date-time",
-            "description": "Date from which the reward is available, or `null` when not set."
-          },
-          "end_date": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "format": "date-time",
-            "description": "Date until which the reward is available, or `null` when not set."
-          },
-          "validity_hours": {
-            "$ref": "#/components/schemas/RewardValidityHoursResponse",
-            "description": "Hours during which the reward can be purchased. Always present; defaults to `{ \"type\": \"ANY_TIME\" }`."
-          },
-          "material": {
-            "$ref": "#/components/schemas/RewardMaterialResponse",
-            "description": "Material reward definition. Present only when `type` is MATERIAL; omitted otherwise."
-          },
-          "digital": {
-            "$ref": "#/components/schemas/RewardDigitalResponse",
-            "description": "Digital reward definition. Present only when `type` is DIGITAL; omitted otherwise."
-          },
-          "refunds": {
-            "$ref": "#/components/schemas/LoyaltyV2ActivityRewardRefunds",
-            "description": "Refund policy. Always present; defaults to `{ \"type\": \"NONE\" }`."
-          },
-          "costs": {
-            "type": "array",
-            "description": "Point costs of the reward. Empty array when no costs are defined.",
-            "items": {
-              "$ref": "#/components/schemas/RewardCostResponse"
-            }
-          },
-          "purchase_limits": {
-            "$ref": "#/components/schemas/RewardPurchaseLimits",
-            "description": "Purchase limits. Always present; defaults to `{ \"cooldown\": { \"type\": \"NO_COOLDOWN\" }, \"frequency\": { \"type\": \"NO_LIMIT\", \"limits\": [] } }`."
-          },
-          "metadata": {
-            "type": "object",
-            "description": "Arbitrary key-value metadata attached to the reward. Empty object when not set."
-          },
-          "created_at": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Timestamp when the reward was created (ISO-8601)."
-          },
-          "updated_at": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "format": "date-time",
-            "description": "Timestamp when the reward was last updated (ISO-8601), or `null` when never updated."
-          },
-          "object": {
-            "type": "string",
-            "const": "reward",
-            "description": "Object type marker; always `reward`."
+        "description": "Response body schema for **POST** `/v2/loyalties/rewards`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/RewardResponse"
           }
-        },
-        "required": [
-          "id",
-          "name",
-          "type",
-          "status",
-          "start_date",
-          "end_date",
-          "validity_hours",
-          "refunds",
-          "costs",
-          "purchase_limits",
-          "metadata",
-          "created_at",
-          "updated_at",
-          "object"
         ]
       },
       "V2LoyaltiesRewardsGetResponseBody": {
@@ -24651,6 +24436,120 @@
           }
         },
         "additionalProperties": false
+      },
+      "RewardResponse": {
+        "type": "object",
+        "description": "A reward, as returned by the API.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^lrew_[a-f0-9]+$",
+            "description": "Unique reward identifier, prefixed with `lrew_`."
+          },
+          "name": {
+            "type": "string",
+            "description": "Display name of the reward."
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "MATERIAL",
+              "DIGITAL"
+            ],
+            "description": "Reward type."
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ACTIVE",
+              "DRAFT",
+              "INACTIVE",
+              "DELETED"
+            ],
+            "description": "Current lifecycle status of the reward."
+          },
+          "start_date": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time",
+            "description": "Date from which the reward is available, or `null` when not set."
+          },
+          "end_date": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time",
+            "description": "Date until which the reward is available, or `null` when not set."
+          },
+          "validity_hours": {
+            "$ref": "#/components/schemas/RewardValidityHoursResponse",
+            "description": "Hours during which the reward can be purchased. Always present; defaults to `{ \"type\": \"ANY_TIME\" }`."
+          },
+          "material": {
+            "$ref": "#/components/schemas/RewardMaterialResponse",
+            "description": "Material reward definition. Present only when `type` is MATERIAL; omitted otherwise."
+          },
+          "digital": {
+            "$ref": "#/components/schemas/RewardDigitalResponse",
+            "description": "Digital reward definition. Present only when `type` is DIGITAL; omitted otherwise."
+          },
+          "refunds": {
+            "$ref": "#/components/schemas/LoyaltyV2ActivityRewardRefunds",
+            "description": "Refund policy. Always present; defaults to `{ \"type\": \"NONE\" }`."
+          },
+          "costs": {
+            "type": "array",
+            "description": "Point costs of the reward. Empty array when no costs are defined.",
+            "items": {
+              "$ref": "#/components/schemas/RewardCostResponse"
+            }
+          },
+          "purchase_limits": {
+            "$ref": "#/components/schemas/RewardPurchaseLimits",
+            "description": "Purchase limits. Always present; defaults to `{ \"cooldown\": { \"type\": \"NO_COOLDOWN\" }, \"frequency\": { \"type\": \"NO_LIMIT\", \"limits\": [] } }`."
+          },
+          "metadata": {
+            "type": "object",
+            "description": "Arbitrary key-value metadata attached to the reward. Empty object when not set."
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp when the reward was created (ISO-8601)."
+          },
+          "updated_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time",
+            "description": "Timestamp when the reward was last updated (ISO-8601), or `null` when never updated."
+          },
+          "object": {
+            "type": "string",
+            "const": "reward",
+            "description": "Object type marker; always `reward`."
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "type",
+          "status",
+          "start_date",
+          "end_date",
+          "validity_hours",
+          "refunds",
+          "costs",
+          "purchase_limits",
+          "metadata",
+          "created_at",
+          "updated_at",
+          "object"
+        ]
       },
       "LoyaltiesRewardsActivitiesListRequestQuery": {
         "type": "object",
@@ -37512,6 +37411,175 @@
           "object"
         ]
       },
+      "RewardCreateRequest": {
+        "type": "object",
+        "description": "Request body for creating a reward.\nWhen `type` is `MATERIAL`, `material` is required and\n`digital` must be null; when `type` is `DIGITAL`, `digital` is required and\n`material` must be null.",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "description": "Display name of the reward."
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "MATERIAL",
+              "DIGITAL"
+            ],
+            "description": "Reward type. MATERIAL rewards deliver a product or SKU; DIGITAL rewards deliver discount coupons, gift vouchers or loyalty card points."
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "DRAFT",
+              "ACTIVE"
+            ],
+            "description": "Initial status of the reward. Defaults to DRAFT behavior when omitted."
+          },
+          "validity_hours": {
+            "description": "Hours during which the reward can be purchased. Defaults to `{ \"type\": \"ANY_TIME\" }` when omitted or `null`.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/RewardValidityHoursRequest"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "start_date": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time",
+            "description": "Date from which the reward is available. Must be an ISO-8601 compliant date."
+          },
+          "end_date": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time",
+            "description": "Date until which the reward is available. Must be an ISO-8601 compliant date."
+          },
+          "material": {
+            "description": "Material reward definition. Required when `type` is MATERIAL; must be null when `type` is DIGITAL.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/RewardMaterialRequest"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "digital": {
+            "description": "Digital reward definition. Required when `type` is DIGITAL; must be null when `type` is MATERIAL.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/RewardDigitalRequest"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "costs": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 10,
+            "description": "Point costs of the reward. Each cost defines the points to spend on a specific card definition, optionally guarded by rules.",
+            "items": {
+              "$ref": "#/components/schemas/RewardCostCreateRequest"
+            }
+          },
+          "purchase_limits": {
+            "description": "Optional purchase limits. When omitted, defaults to no cooldown and no frequency limit.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/RewardPurchaseLimitsInput"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "refunds": {
+            "description": "Refund policy for the reward. Defaults to `{ \"type\": \"NONE\" }` when omitted.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LoyaltyV2ActivityRewardRefunds"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "metadata": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "description": "Arbitrary key-value metadata attached to the reward, as a free-form object."
+          }
+        },
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "required": [
+              "name",
+              "type",
+              "costs"
+            ]
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "MATERIAL"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "material"
+              ],
+              "properties": {
+                "material": {
+                  "$ref": "#/components/schemas/RewardMaterialRequest"
+                },
+                "digital": {
+                  "type": "null"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "DIGITAL"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "digital"
+              ],
+              "properties": {
+                "digital": {
+                  "$ref": "#/components/schemas/RewardDigitalRequest"
+                },
+                "material": {
+                  "type": "null"
+                }
+              }
+            }
+          }
+        ]
+      },
       "RewardValidityHoursRequest": {
         "type": "object",
         "description": "Validity hours definition. `type` is\nrequired. When `type` is `ANY_TIME`, `daily` must be null; when `type` is `DAILY`,\n`daily` is required and must contain at least one entry.",
@@ -37637,13 +37705,36 @@
         ],
         "additionalProperties": false
       },
-      "RewardCostCreateRequest": {
+      "LoyaltyV2ActivityRewardRefunds": {
         "type": "object",
-        "description": "A reward cost for creation. `spending`\nis required. `rules`, when provided, must have between 1 and 10 properties (in\naddition to the constraints of the rules object itself).",
+        "description": "Refund policy for the reward.",
         "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "NONE",
+              "REFUNDABLE"
+            ],
+            "description": "Whether reward purchases can be refunded."
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "additionalProperties": false
+      },
+      "RewardCostUpdateRequest": {
+        "type": "object",
+        "description": "A reward cost for update. Same as the\ncreate variant plus an optional `id` referencing an existing cost.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^lrcst_[a-f0-9]+$",
+            "description": "Unique identifier of an existing cost to update, prefixed with `lrcst_`. Omit to create a new cost."
+          },
           "rules": {
             "$ref": "#/components/schemas/RewardCostRulesRequest",
-            "description": "Rules guarding this cost. Only members matching the rules can purchase the reward at this cost. Must have between 1 and 10 properties."
+            "description": "Rules guarding this cost. Must have between 1 and 10 properties."
           },
           "spending": {
             "type": "array",
@@ -37687,24 +37778,6 @@
             ]
           }
         },
-        "additionalProperties": false
-      },
-      "LoyaltyV2ActivityRewardRefunds": {
-        "type": "object",
-        "description": "Refund policy for the reward.",
-        "properties": {
-          "type": {
-            "type": "string",
-            "enum": [
-              "NONE",
-              "REFUNDABLE"
-            ],
-            "description": "Whether reward purchases can be refunded."
-          }
-        },
-        "required": [
-          "type"
-        ],
         "additionalProperties": false
       },
       "RewardValidityHoursResponse": {
@@ -37844,34 +37917,6 @@
           "cooldown",
           "frequency"
         ]
-      },
-      "RewardCostUpdateRequest": {
-        "type": "object",
-        "description": "A reward cost for update. Same as the\ncreate variant plus an optional `id` referencing an existing cost.",
-        "properties": {
-          "id": {
-            "type": "string",
-            "pattern": "^lrcst_[a-f0-9]+$",
-            "description": "Unique identifier of an existing cost to update, prefixed with `lrcst_`. Omit to create a new cost."
-          },
-          "rules": {
-            "$ref": "#/components/schemas/RewardCostRulesRequest",
-            "description": "Rules guarding this cost. Must have between 1 and 10 properties."
-          },
-          "spending": {
-            "type": "array",
-            "minItems": 1,
-            "maxItems": 1,
-            "description": "Points to spend on a specific card definition. Exactly one entry is allowed.",
-            "items": {
-              "$ref": "#/components/schemas/RewardCostSpendingRequest"
-            }
-          }
-        },
-        "required": [
-          "spending"
-        ],
-        "additionalProperties": false
       },
       "LoyaltiesRewardsActivitiesListRequestQueryId": {
         "type": "object",
@@ -42761,6 +42806,29 @@
           "created_at",
           "benefit_id"
         ]
+      },
+      "RewardCostCreateRequest": {
+        "type": "object",
+        "description": "A reward cost for creation. `spending`\nis required. `rules`, when provided, must have between 1 and 10 properties (in\naddition to the constraints of the rules object itself).",
+        "properties": {
+          "rules": {
+            "$ref": "#/components/schemas/RewardCostRulesRequest",
+            "description": "Rules guarding this cost. Only members matching the rules can purchase the reward at this cost. Must have between 1 and 10 properties."
+          },
+          "spending": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 1,
+            "description": "Points to spend on a specific card definition. Exactly one entry is allowed.",
+            "items": {
+              "$ref": "#/components/schemas/RewardCostSpendingRequest"
+            }
+          }
+        },
+        "required": [
+          "spending"
+        ],
+        "additionalProperties": false
       },
       "RewardValidityDailyHoursRequest": {
         "type": "object",

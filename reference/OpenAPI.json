@@ -88713,6 +88713,16 @@
         ],
         "additionalProperties": false
       },
+      "V2LoyaltiesRewardsCreateRequestBody": {
+        "title": "V2 Loyalties Rewards Create Request Body",
+        "type": "object",
+        "description": "Request body schema for **POST** `/v2/loyalties/rewards`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/RewardCreateRequest"
+          }
+        ]
+      },
       "RewardCreateRequest": {
         "type": "object",
         "description": "Request body for creating a reward.\nWhen `type` is `MATERIAL`, `material` is required and\n`digital` must be null; when `type` is `DIGITAL`, `digital` is required and\n`material` must be null.",
@@ -88827,12 +88837,60 @@
             "description": "Arbitrary key-value metadata attached to the reward, as a free-form object."
           }
         },
-        "required": [
-          "name",
-          "type",
-          "costs"
-        ],
-        "additionalProperties": false
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "required": [
+              "name",
+              "type",
+              "costs"
+            ]
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "MATERIAL"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "material"
+              ],
+              "properties": {
+                "material": {
+                  "$ref": "#/components/schemas/RewardMaterialRequest"
+                },
+                "digital": {
+                  "type": "null"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "DIGITAL"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "digital"
+              ],
+              "properties": {
+                "digital": {
+                  "$ref": "#/components/schemas/RewardDigitalRequest"
+                },
+                "material": {
+                  "type": "null"
+                }
+              }
+            }
+          }
+        ]
       },
       "RewardUpdateRequest": {
         "type": "object",
@@ -90256,6 +90314,16 @@
           "conditions"
         ],
         "additionalProperties": false
+      },
+      "V2LoyaltiesRewardsCreateResponseBody": {
+        "title": "V2 Loyalties Rewards Create Response Body",
+        "type": "object",
+        "description": "Response body schema for **POST** `/v2/loyalties/rewards`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/RewardResponse"
+          }
+        ]
       },
       "RewardResponse": {
         "type": "object",
@@ -165036,7 +165104,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/RewardCreateRequest"
+                "$ref": "#/components/schemas/V2LoyaltiesRewardsCreateRequestBody"
               },
               "examples": {
                 "Create reward with purchase limits": {
@@ -165105,7 +165173,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/RewardResponse"
+                  "$ref": "#/components/schemas/V2LoyaltiesRewardsCreateResponseBody"
                 },
                 "examples": {
                   "Created reward": {
