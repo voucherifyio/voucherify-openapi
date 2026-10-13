@@ -6523,7 +6523,7 @@
             "schema": {
               "oneOf": [
                 {
-                  "$ref": "#/components/schemas/LoyaltiesProgramsMembersCardsExpiringPointsListRequestQuery"
+                  "$ref": "#/components/schemas/V2LoyaltiesProgramsMembersCardsExpiringPointsListRequestQuery"
                 },
                 {
                   "type": "null"
@@ -6538,7 +6538,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/LoyaltiesProgramsMembersCardsExpiringPointsListResponseBody"
+                  "$ref": "#/components/schemas/V2LoyaltiesProgramsMembersCardsExpiringPointsListResponseBody"
                 },
                 "examples": {
                   "Card expiring points bucket list response": {
@@ -21033,7 +21033,7 @@
           }
         ]
       },
-      "LoyaltiesProgramsMembersCardsExpiringPointsListRequestQuery": {
+      "V2LoyaltiesProgramsMembersCardsExpiringPointsListRequestQuery": {
         "type": "object",
         "description": "Request query schema for **GET** `/v2/loyalties/programs/{programId}/members/{memberId}/cards/{cardId}/expiring-points`.",
         "properties": {
@@ -21076,42 +21076,17 @@
           }
         },
         "additionalProperties": false,
-        "title": "Loyalties Programs Members Cards Expiring Points List Request Query"
+        "title": "V2 Loyalties Programs Members Cards Expiring Points List Request Query"
       },
-      "LoyaltiesProgramsMembersCardsExpiringPointsListResponseBody": {
+      "V2LoyaltiesProgramsMembersCardsExpiringPointsListResponseBody": {
+        "title": "V2 Loyalties Programs Members Cards Expiring Points List Response Body",
         "type": "object",
-        "description": "Response body schema for **GET** `/v2/loyalties/programs/{programId}/members/{memberId}/cards/{cardId}/expiring-points`.\n\nCursor-paginated list of points expiration buckets.",
-        "properties": {
-          "data": {
-            "type": "array",
-            "description": "Points expiration buckets on the current page.",
-            "items": {
-              "$ref": "#/components/schemas/CardPointsBucket"
-            }
-          },
-          "cursor": {
-            "description": "Pagination cursor, or `null` when there are no more results.",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/ListCursor"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "object": {
-            "type": "string",
-            "const": "list",
-            "description": "Object type marker, always `list`."
+        "description": "Response body schema for **GET** `/v2/loyalties/programs/{programId}/members/{memberId}/cards/{cardId}/expiring-points`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/CardExpiringPointsListResponse"
           }
-        },
-        "required": [
-          "data",
-          "cursor",
-          "object"
-        ],
-        "title": "Loyalties Programs Members Cards Expiring Points List Response Body"
+        ]
       },
       "LoyaltiesProgramsMembersCardsExpiringPointsExpireResponseBody": {
         "type": "object",
@@ -28034,137 +28009,38 @@
         "additionalProperties": false,
         "title": "Loyalties Programs Members Cards Expiring Points List Request Query Card Definition Id"
       },
-      "CardPointsBucket": {
+      "CardExpiringPointsListResponse": {
         "type": "object",
-        "description": "A points expiration bucket of a card.",
+        "description": "Cursor-paginated list of points expiration buckets.",
         "properties": {
-          "id": {
-            "type": "string",
-            "pattern": "^lcpeb_[a-f0-9]+$",
-            "description": "Unique points expiration bucket ID."
+          "data": {
+            "type": "array",
+            "description": "Points expiration buckets on the current page.",
+            "items": {
+              "$ref": "#/components/schemas/CardPointsBucket"
+            }
           },
-          "card_id": {
-            "type": "string",
-            "pattern": "^lcrd_[a-f0-9]+$",
-            "description": "ID of the card the bucket belongs to."
-          },
-          "customer_id": {
-            "type": "string",
-            "pattern": "^cust_[a-zA-Z0-9]+",
-            "description": "Voucherify ID of the customer owning the card."
-          },
-          "card_definition_id": {
-            "type": "string",
-            "pattern": "^lcdef_[a-f0-9]+$",
-            "description": "ID of the card definition of the card."
-          },
-          "program_id": {
-            "type": "string",
-            "pattern": "^lprg_[a-f0-9]+$",
-            "description": "ID of the loyalty program."
-          },
-          "card_type": {
-            "type": "string",
-            "enum": [
-              "INDIVIDUAL"
-            ],
-            "description": "Card type. Currently, only `INDIVIDUAL` is supported."
-          },
-          "member_id": {
-            "type": "string",
-            "pattern": "^lmbr_[a-f0-9]+$",
-            "description": "ID of the member owning the card."
-          },
-          "points": {
-            "type": "object",
-            "description": "Points held in the bucket. The bucket may include points from multiple transactions.",
-            "properties": {
-              "total": {
-                "type": "number",
-                "description": "Number of points in the bucket."
+          "cursor": {
+            "description": "Pagination cursor, or `null` when there are no more results.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/ListCursor"
+              },
+              {
+                "type": "null"
               }
-            },
-            "required": [
-              "total"
             ]
-          },
-          "expiration_date": {
-            "type": "string",
-            "format": "date",
-            "description": "Date when the points in the bucket expire (`YYYY-MM-DD`)."
-          },
-          "expiration_type": {
-            "type": "string",
-            "enum": [
-              "NO_EXPIRATION",
-              "ROLLING_EXPIRATION",
-              "CALENDAR_EXPIRATION",
-              "SLIDING_EXPIRATION"
-            ],
-            "description": "Points expiration type for the bucket. It can be inherited from the card definition or overridden by the earning rule."
-          },
-          "status": {
-            "type": "string",
-            "enum": [
-              "ACTIVE",
-              "DELETED",
-              "EXPIRED"
-            ],
-            "description": "Bucket status. For the List card expiring points buckets, returns only `ACTIVE` buckets."
-          },
-          "created_at": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Timestamp when the bucket was created (ISO 8601)."
-          },
-          "updated_at": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "format": "date-time",
-            "description": "Timestamp when the bucket was last updated (ISO 8601), or `null`."
           },
           "object": {
             "type": "string",
-            "const": "card_points_bucket",
-            "description": "Object type marker, always `card_points_bucket`."
+            "const": "list",
+            "description": "Object type marker, always `list`."
           }
         },
         "required": [
-          "id",
-          "card_id",
-          "customer_id",
-          "card_definition_id",
-          "program_id",
-          "card_type",
-          "member_id",
-          "points",
-          "expiration_date",
-          "expiration_type",
-          "status",
-          "created_at",
-          "updated_at",
+          "data",
+          "cursor",
           "object"
-        ]
-      },
-      "ListCursor": {
-        "type": "object",
-        "description": "Pagination cursor.",
-        "properties": {
-          "next": {
-            "type": "string",
-            "description": "Cursor value to pass as the `cursor` query parameter to fetch the next page."
-          },
-          "expires_at": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Timestamp when the cursor expires."
-          }
-        },
-        "required": [
-          "next",
-          "expires_at"
         ]
       },
       "CardTransaction": {
@@ -28481,6 +28357,25 @@
         ],
         "additionalProperties": false,
         "title": "Loyalties Programs Members Cards Transactions List Request Query Card Definition Id"
+      },
+      "ListCursor": {
+        "type": "object",
+        "description": "Pagination cursor.",
+        "properties": {
+          "next": {
+            "type": "string",
+            "description": "Cursor value to pass as the `cursor` query parameter to fetch the next page."
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp when the cursor expires."
+          }
+        },
+        "required": [
+          "next",
+          "expires_at"
+        ]
       },
       "RewardPurchaseRefundPolicies": {
         "type": "object",
@@ -39065,6 +38960,120 @@
           "points",
           "date",
           "type",
+          "status",
+          "created_at",
+          "updated_at",
+          "object"
+        ]
+      },
+      "CardPointsBucket": {
+        "type": "object",
+        "description": "A points expiration bucket of a card.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^lcpeb_[a-f0-9]+$",
+            "description": "Unique points expiration bucket ID."
+          },
+          "card_id": {
+            "type": "string",
+            "pattern": "^lcrd_[a-f0-9]+$",
+            "description": "ID of the card the bucket belongs to."
+          },
+          "customer_id": {
+            "type": "string",
+            "pattern": "^cust_[a-zA-Z0-9]+",
+            "description": "Voucherify ID of the customer owning the card."
+          },
+          "card_definition_id": {
+            "type": "string",
+            "pattern": "^lcdef_[a-f0-9]+$",
+            "description": "ID of the card definition of the card."
+          },
+          "program_id": {
+            "type": "string",
+            "pattern": "^lprg_[a-f0-9]+$",
+            "description": "ID of the loyalty program."
+          },
+          "card_type": {
+            "type": "string",
+            "enum": [
+              "INDIVIDUAL"
+            ],
+            "description": "Card type. Currently, only `INDIVIDUAL` is supported."
+          },
+          "member_id": {
+            "type": "string",
+            "pattern": "^lmbr_[a-f0-9]+$",
+            "description": "ID of the member owning the card."
+          },
+          "points": {
+            "type": "object",
+            "description": "Points held in the bucket. The bucket may include points from multiple transactions.",
+            "properties": {
+              "total": {
+                "type": "number",
+                "description": "Number of points in the bucket."
+              }
+            },
+            "required": [
+              "total"
+            ]
+          },
+          "expiration_date": {
+            "type": "string",
+            "format": "date",
+            "description": "Date when the points in the bucket expire (`YYYY-MM-DD`)."
+          },
+          "expiration_type": {
+            "type": "string",
+            "enum": [
+              "NO_EXPIRATION",
+              "ROLLING_EXPIRATION",
+              "CALENDAR_EXPIRATION",
+              "SLIDING_EXPIRATION"
+            ],
+            "description": "Points expiration type for the bucket. It can be inherited from the card definition or overridden by the earning rule."
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ACTIVE",
+              "DELETED",
+              "EXPIRED"
+            ],
+            "description": "Bucket status. For the List card expiring points buckets, returns only `ACTIVE` buckets."
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp when the bucket was created (ISO 8601)."
+          },
+          "updated_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time",
+            "description": "Timestamp when the bucket was last updated (ISO 8601), or `null`."
+          },
+          "object": {
+            "type": "string",
+            "const": "card_points_bucket",
+            "description": "Object type marker, always `card_points_bucket`."
+          }
+        },
+        "required": [
+          "id",
+          "card_id",
+          "customer_id",
+          "card_definition_id",
+          "program_id",
+          "card_type",
+          "member_id",
+          "points",
+          "expiration_date",
+          "expiration_type",
           "status",
           "created_at",
           "updated_at",
