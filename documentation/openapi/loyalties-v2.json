@@ -16929,7 +16929,8 @@
             "description": "Maximum number of benefits to return. An integer between 1 and 100.\nDefaults to 10 when omitted.",
             "schema": {
               "type": [
-                "integer",
+                "number",
+                "string",
                 "null"
               ],
               "minimum": 1,
@@ -16996,7 +16997,14 @@
             "explode": true,
             "description": "Field-specific filter conditions, e.g. `filters[name][conditions][$contains]=gold`.\nConditions of multiple fields are combined with the `junction`.",
             "schema": {
-              "$ref": "#/components/schemas/LoyaltiesBenefitsListRequestQuery"
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/LoyaltiesBenefitsListRequestQuery"
+                },
+                {
+                  "type": "null"
+                }
+              ]
             }
           }
         ],
@@ -17006,7 +17014,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/BenefitListResponse"
+                  "$ref": "#/components/schemas/V2LoyaltiesBenefitsListResponseBody"
                 }
               }
             }
@@ -17023,16 +17031,6 @@
           },
           "404": {
             "description": "Resource not found.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
             "content": {
               "application/json": {
                 "schema": {
@@ -24131,38 +24129,14 @@
         "additionalProperties": false,
         "title": "Loyalties Benefits List Request Query"
       },
-      "BenefitListResponse": {
+      "V2LoyaltiesBenefitsListResponseBody": {
+        "title": "V2 Loyalties Benefits List Response Body",
         "type": "object",
-        "description": "Cursor-paginated list of benefits.",
-        "properties": {
-          "data": {
-            "type": "array",
-            "description": "Benefits matching the query, in the requested order.",
-            "items": {
-              "$ref": "#/components/schemas/Benefit"
-            }
-          },
-          "cursor": {
-            "description": "Pagination cursor. `null` when there are no more results.",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/BenefitListCursor"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "object": {
-            "type": "string",
-            "const": "list",
-            "description": "Type of the object. Always `list`."
+        "description": "Response body schema for **GET** `/v2/loyalties/benefits`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/BenefitListResponse"
           }
-        },
-        "required": [
-          "data",
-          "cursor",
-          "object"
         ]
       },
       "BenefitCreateRequest": {
@@ -36660,22 +36634,38 @@
         ],
         "additionalProperties": false
       },
-      "BenefitListCursor": {
+      "BenefitListResponse": {
         "type": "object",
-        "description": "Pagination cursor pointing to the next page of results.",
+        "description": "Cursor-paginated list of benefits.",
         "properties": {
-          "next": {
-            "type": "string",
-            "description": "Cursor ID to pass as the `cursor` query parameter to fetch the next page."
+          "data": {
+            "type": "array",
+            "description": "Benefits matching the query, in the requested order.",
+            "items": {
+              "$ref": "#/components/schemas/Benefit"
+            }
           },
-          "expires_at": {
+          "cursor": {
+            "description": "Pagination cursor. `null` when there are no more results.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/BenefitListCursor"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "object": {
             "type": "string",
-            "format": "date-time",
-            "description": "Timestamp after which the cursor expires."
+            "const": "list",
+            "description": "Type of the object. Always `list`."
           }
         },
         "required": [
-          "next"
+          "data",
+          "cursor",
+          "object"
         ]
       },
       "LoyaltyV2ActivityBenefitPoints": {
@@ -37562,6 +37552,24 @@
           "data",
           "created_at",
           "benefit_id"
+        ]
+      },
+      "BenefitListCursor": {
+        "type": "object",
+        "description": "Pagination cursor pointing to the next page of results.",
+        "properties": {
+          "next": {
+            "type": "string",
+            "description": "Cursor ID to pass as the `cursor` query parameter to fetch the next page."
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp after which the cursor expires."
+          }
+        },
+        "required": [
+          "next"
         ]
       },
       "LoyaltiesRewardsListRequestQueryId": {
