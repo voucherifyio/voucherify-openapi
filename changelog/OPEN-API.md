@@ -4,6 +4,36 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-10-13
+
+- Documented GET `/v2/loyalties/programs/{programId}/reports/rewards/daily`. Summary: "List program rewards daily reports".
+  - Required `date`, `reward_id`, `success_count`, `failures_count`, `failures_breakdown`, and `object` on each row. Required `data` and `object` on the response.
+  - `failures_breakdown` is always an empty object. `success_count` counts approved purchases. `failures_count` counts failed attempts.
+  - `date` is the start of the truncated period (`week` starts on Monday). Periods without recorded purchases are omitted.
+  - Documented `start_date` and `end_date` as inclusive, with `start_date` before `end_date`. The range limit is 90 days, 12 weeks, 12 months, or 4 quarters.
+  - Pointed the 200 body at `LoyaltiesProgramsReportsRewardsDailyListResponseBody`.
+  - Added `400` examples for invalid query parameters, a date range past the resolution limit, and `start_date` not before `end_date`.
+  - Added `404` examples for a missing program, including an id that does not match the pattern.
+- Documented GET `/v2/loyalties/programs/{programId}/reports/rewards/summary`. Summary: "List program rewards summary reports".
+  - Required `id`, `reward_id`, `success_count`, `failures_count`, `failures_breakdown`, and `object` on each row. `id` uses the `lprrs_` prefix. One row per reward with a recorded purchase attempt.
+  - `failures_breakdown` counts failed attempts by reason, including `COOLDOWN`, `FREQUENCY`, and processor rejection reasons. Empty when no failures were recorded.
+  - Returns at most 100 rows, ordered by `id` descending. `limit` and `order` are not query parameters.
+  - Pointed the 200 body at `LoyaltiesProgramsReportsRewardsSummaryListResponseBody`.
+  - Added a `400` example for an invalid `reward_id`, and `404` examples for a missing program, including an id that does not match the pattern.
+- Documented GET `/v2/loyalties/programs/{programId}/reports/rewards/spendings/daily`. Summary: "List program rewards spendings daily reports".
+  - Required `date`, `reward_id`, `cost_id`, `spending_id`, `card_definition_id`, `success_count`, `points`, and `object` on each row.
+  - Counts only approved point spends. A row covers one reward, cost, spending, card definition, and period. Periods without an approved point spend are omitted.
+  - `success_count` counts those spends. `points` totals the points spent.
+  - Same inclusive date range and resolution limits as the rewards daily report.
+  - Pointed the 200 body at `LoyaltiesProgramsReportsRewardsSpendingsDailyListResponseBody`.
+  - Added the same `400` and `404` examples as the rewards daily report.
+- Documented GET `/v2/loyalties/programs/{programId}/reports/rewards/spendings/summary`. Summary: "List program rewards spendings summary reports".
+  - Required `id`, `reward_id`, `cost_id`, `spending_id`, `card_definition_id`, `success_count`, `points`, and `object` on each row. `id` uses the `lprss_` prefix.
+  - Counts only approved point spends. One row per reward, cost, spending, and card definition.
+  - Returns at most 100 rows, ordered by `id` descending. `limit` and `order` are not query parameters.
+  - Pointed the 200 body at `LoyaltiesProgramsReportsRewardsSpendingsSummaryListResponseBody`.
+  - Added a `400` example for an invalid `reward_id`, and `404` examples for a missing program, including an id that does not match the pattern.
+
 ## 2026-10-12
 
 - Verified and updated GET `/v2/loyalties/earning-rules/{earningRuleId}`.
