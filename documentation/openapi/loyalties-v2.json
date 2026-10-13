@@ -14321,6 +14321,18 @@
       }
     },
     "/v2/loyalties/card-definitions/{cardDefinitionId}/activities": {
+      "parameters": [
+        {
+          "name": "cardDefinitionId",
+          "in": "path",
+          "required": true,
+          "description": "Unique card definition ID. Pattern: `^lcdef_[a-f0-9]+$`.",
+          "schema": {
+            "type": "string",
+            "pattern": "^lcdef_[a-f0-9]+$"
+          }
+        }
+      ],
       "get": {
         "operationId": "listCardDefinitionActivities",
         "tags": [
@@ -14330,22 +14342,16 @@
         "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nReturns a cursor-paginated list of activities recorded for the card definition\n(creation, updates, deletion, state transitions and program assignments).\nReturns `404` when the card definition does not exist.",
         "parameters": [
           {
-            "name": "cardDefinitionId",
-            "in": "path",
-            "required": true,
-            "description": "Unique card definition ID. Pattern: `^lcdef_[a-f0-9]+$`.",
-            "schema": {
-              "type": "string",
-              "pattern": "^lcdef_[a-f0-9]+$"
-            }
-          },
-          {
             "name": "limit",
             "in": "query",
             "required": false,
             "description": "Maximum number of activities to return. Minimum: 1, maximum: 100. Defaults to 10 when omitted.",
             "schema": {
-              "type": "integer",
+              "type": [
+                "number",
+                "string",
+                "null"
+              ],
               "minimum": 1,
               "maximum": 100,
               "default": 10
@@ -14374,6 +14380,9 @@
                       "-created_at"
                     ]
                   }
+                },
+                {
+                  "type": "null"
                 }
               ]
             }
@@ -14384,7 +14393,10 @@
             "required": false,
             "description": "Pagination cursor returned by a previous call in `cursor.next`. Pattern: `^lcrsacd_[a-f0-9]+$`.",
             "schema": {
-              "type": "string",
+              "type": [
+                "string",
+                "null"
+              ],
               "pattern": "^lcrsacd_[a-f0-9]+$"
             }
           },
@@ -14396,7 +14408,14 @@
             "explode": true,
             "description": "Filter conditions per field, e.g. `filters[type][conditions][$is]=vl.card_definition.created`.",
             "schema": {
-              "$ref": "#/components/schemas/LoyaltiesCardDefinitionsActivitiesListRequestQuery"
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/LoyaltiesCardDefinitionsActivitiesListRequestQuery"
+                },
+                {
+                  "type": "null"
+                }
+              ]
             }
           }
         ],
@@ -14406,7 +14425,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CardDefinitionActivityListResponse"
+                  "$ref": "#/components/schemas/V2LoyaltiesCardDefinitionsActivitiesListResponseBody"
                 }
               }
             }
@@ -14423,16 +14442,6 @@
           },
           "404": {
             "description": "Resource not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Conflict - invalid state transition",
             "content": {
               "application/json": {
                 "schema": {
@@ -23157,38 +23166,14 @@
         "additionalProperties": false,
         "title": "Loyalties Card Definitions Activities List Request Query"
       },
-      "CardDefinitionActivityListResponse": {
+      "V2LoyaltiesCardDefinitionsActivitiesListResponseBody": {
+        "title": "V2 Loyalties Card Definitions Activities List Response Body",
         "type": "object",
-        "description": "Cursor-paginated list of card definition activities.",
-        "properties": {
-          "data": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/CardDefinitionActivity"
-            },
-            "description": "The activities in the current page."
-          },
-          "cursor": {
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/CardDefinitionActivityListCursor"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "Pagination cursor. `null` when there are no more results."
-          },
-          "object": {
-            "type": "string",
-            "const": "list",
-            "description": "Object type marker. Always `list`."
+        "description": "Response body schema for **GET** `/v2/loyalties/card-definitions/{cardDefinitionId}/activities`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/CardDefinitionActivityListResponse"
           }
-        },
-        "required": [
-          "data",
-          "cursor",
-          "object"
         ]
       },
       "EarningRuleCreateRequest": {
@@ -34366,90 +34351,38 @@
         ],
         "additionalProperties": false
       },
-      "CardDefinitionActivity": {
+      "CardDefinitionActivityListResponse": {
         "type": "object",
-        "description": "A card definition activity entry.",
+        "description": "Cursor-paginated list of card definition activities.",
         "properties": {
-          "id": {
-            "type": "string",
-            "pattern": "^lacd_[a-f0-9]+$",
-            "description": "Unique activity ID."
-          },
-          "type": {
-            "type": "string",
-            "enum": [
-              "vl.card_definition.created",
-              "vl.card_definition.updated",
-              "vl.card_definition.deleted",
-              "vl.card_definition.activated",
-              "vl.card_definition.deactivated",
-              "vl.card_definition.drafted",
-              "vl.card_definition.assigned",
-              "vl.card_definition.unassigned"
-            ],
-            "description": "Activity type."
-          },
           "data": {
-            "type": "object",
-            "description": "Activity payload. For created/updated/deleted/activated/deactivated/drafted\nactivities it contains a `card_definition` snapshot (the state of the card\ndefinition at the time of the activity). For assigned/unassigned activities\nit additionally contains `program` and `program_card_definition` snapshots.",
-            "properties": {
-              "card_definition": {
-                "oneOf": [
-                  {
-                    "$ref": "#/components/schemas/CardDefinition"
-                  },
-                  {
-                    "type": "null"
-                  }
-                ],
-                "description": "Snapshot of the card definition at the time of the activity."
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CardDefinitionActivity"
+            },
+            "description": "The activities in the current page."
+          },
+          "cursor": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/CardDefinitionActivityListCursor"
+              },
+              {
+                "type": "null"
               }
-            }
+            ],
+            "description": "Pagination cursor. `null` when there are no more results."
           },
-          "created_at": {
+          "object": {
             "type": "string",
-            "format": "date-time",
-            "description": "Activity timestamp (ISO 8601)."
-          },
-          "group_id": {
-            "type": "string",
-            "description": "Groups related activities triggered by the same operation."
-          },
-          "card_definition_id": {
-            "type": "string",
-            "pattern": "^lcdef_[a-f0-9]+$",
-            "description": "ID of the card definition this activity belongs to."
-          },
-          "source": {
-            "$ref": "#/components/schemas/CardDefinitionActivitySource",
-            "description": "Source of the activity. Omitted when unknown."
+            "const": "list",
+            "description": "Object type marker. Always `list`."
           }
         },
         "required": [
-          "id",
-          "type",
           "data",
-          "created_at",
-          "card_definition_id"
-        ]
-      },
-      "CardDefinitionActivityListCursor": {
-        "type": "object",
-        "description": "Pagination cursor for the activities list.",
-        "properties": {
-          "next": {
-            "type": "string",
-            "pattern": "^lcrsacd_[a-f0-9]+$",
-            "description": "Cursor ID to pass as the `cursor` query parameter to fetch the next page."
-          },
-          "expires_at": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Timestamp after which the cursor expires."
-          }
-        },
-        "required": [
-          "next"
+          "cursor",
+          "object"
         ]
       },
       "EarningRuleTrigger": {
@@ -42462,49 +42395,91 @@
           "type"
         ]
       },
-      "CardDefinitionActivitySource": {
+      "CardDefinitionActivity": {
         "type": "object",
-        "description": "Source that triggered the activity.",
+        "description": "A card definition activity entry.",
         "properties": {
-          "channel": {
+          "id": {
+            "type": "string",
+            "pattern": "^lacd_[a-f0-9]+$",
+            "description": "Unique activity ID."
+          },
+          "type": {
             "type": "string",
             "enum": [
-              "USER_PORTAL",
-              "API",
-              "CLIENT_API",
-              "INTERNAL"
+              "vl.card_definition.created",
+              "vl.card_definition.updated",
+              "vl.card_definition.deleted",
+              "vl.card_definition.activated",
+              "vl.card_definition.deactivated",
+              "vl.card_definition.drafted",
+              "vl.card_definition.assigned",
+              "vl.card_definition.unassigned"
             ],
-            "description": "Channel through which the activity was triggered."
+            "description": "Activity type."
           },
-          "user": {
+          "data": {
             "type": "object",
-            "description": "User that triggered the activity. Omitted when not applicable.",
+            "description": "Activity payload. For created/updated/deleted/activated/deactivated/drafted\nactivities it contains a `card_definition` snapshot (the state of the card\ndefinition at the time of the activity). For assigned/unassigned activities\nit additionally contains `program` and `program_card_definition` snapshots.",
             "properties": {
-              "id": {
-                "type": "string",
-                "description": "User ID."
+              "card_definition": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/CardDefinition"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "description": "Snapshot of the card definition at the time of the activity."
               }
             }
           },
-          "api_key": {
-            "type": "object",
-            "description": "API key used to trigger the activity. Omitted when not applicable.",
-            "properties": {
-              "name": {
-                "type": "string",
-                "description": "API key name."
-              },
-              "app_id": {
-                "type": "string",
-                "description": "Application ID of the API key."
-              },
-              "client_app_id": {
-                "type": "string",
-                "description": "Client application ID of the API key."
-              }
-            }
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Activity timestamp (ISO 8601)."
+          },
+          "group_id": {
+            "type": "string",
+            "description": "Groups related activities triggered by the same operation."
+          },
+          "card_definition_id": {
+            "type": "string",
+            "pattern": "^lcdef_[a-f0-9]+$",
+            "description": "ID of the card definition this activity belongs to."
+          },
+          "source": {
+            "$ref": "#/components/schemas/CardDefinitionActivitySource",
+            "description": "Source of the activity. Omitted when unknown."
           }
-        }
+        },
+        "required": [
+          "id",
+          "type",
+          "data",
+          "created_at",
+          "card_definition_id"
+        ]
+      },
+      "CardDefinitionActivityListCursor": {
+        "type": "object",
+        "description": "Pagination cursor for the activities list.",
+        "properties": {
+          "next": {
+            "type": "string",
+            "pattern": "^lcrsacd_[a-f0-9]+$",
+            "description": "Cursor ID to pass as the `cursor` query parameter to fetch the next page."
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp after which the cursor expires."
+          }
+        },
+        "required": [
+          "next"
+        ]
       },
       "LoyaltyV2ActivityEarningRuleTriggerCustomEvent": {
         "type": "object",
@@ -45762,6 +45737,50 @@
           "type",
           "methods"
         ]
+      },
+      "CardDefinitionActivitySource": {
+        "type": "object",
+        "description": "Source that triggered the activity.",
+        "properties": {
+          "channel": {
+            "type": "string",
+            "enum": [
+              "USER_PORTAL",
+              "API",
+              "CLIENT_API",
+              "INTERNAL"
+            ],
+            "description": "Channel through which the activity was triggered."
+          },
+          "user": {
+            "type": "object",
+            "description": "User that triggered the activity. Omitted when not applicable.",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "User ID."
+              }
+            }
+          },
+          "api_key": {
+            "type": "object",
+            "description": "API key used to trigger the activity. Omitted when not applicable.",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "API key name."
+              },
+              "app_id": {
+                "type": "string",
+                "description": "Application ID of the API key."
+              },
+              "client_app_id": {
+                "type": "string",
+                "description": "Client application ID of the API key."
+              }
+            }
+          }
+        }
       },
       "EarningRuleDefinition": {
         "type": "object",

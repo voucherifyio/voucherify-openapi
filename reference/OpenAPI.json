@@ -80001,6 +80001,16 @@
           }
         }
       },
+      "V2LoyaltiesCardDefinitionsActivitiesListResponseBody": {
+        "title": "V2 Loyalties Card Definitions Activities List Response Body",
+        "type": "object",
+        "description": "Response body schema for **GET** `/v2/loyalties/card-definitions/{cardDefinitionId}/activities`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/CardDefinitionActivityListResponse"
+          }
+        ]
+      },
       "CardDefinitionActivityListResponse": {
         "type": "object",
         "description": "Cursor-paginated list of card definition activities.",
@@ -161024,6 +161034,18 @@
       }
     },
     "/v2/loyalties/card-definitions/{cardDefinitionId}/activities": {
+      "parameters": [
+        {
+          "name": "cardDefinitionId",
+          "in": "path",
+          "required": true,
+          "description": "Unique card definition ID. Pattern: `^lcdef_[a-f0-9]+$`.",
+          "schema": {
+            "type": "string",
+            "pattern": "^lcdef_[a-f0-9]+$"
+          }
+        }
+      ],
       "get": {
         "operationId": "listCardDefinitionActivities",
         "tags": [
@@ -161033,22 +161055,16 @@
         "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nReturns a cursor-paginated list of activities recorded for the card definition\n(creation, updates, deletion, state transitions and program assignments).\nReturns `404` when the card definition does not exist.",
         "parameters": [
           {
-            "name": "cardDefinitionId",
-            "in": "path",
-            "required": true,
-            "description": "Unique card definition ID. Pattern: `^lcdef_[a-f0-9]+$`.",
-            "schema": {
-              "type": "string",
-              "pattern": "^lcdef_[a-f0-9]+$"
-            }
-          },
-          {
             "name": "limit",
             "in": "query",
             "required": false,
             "description": "Maximum number of activities to return. Minimum: 1, maximum: 100. Defaults to 10 when omitted.",
             "schema": {
-              "type": "integer",
+              "type": [
+                "number",
+                "string",
+                "null"
+              ],
               "minimum": 1,
               "maximum": 100,
               "default": 10
@@ -161077,6 +161093,9 @@
                       "-created_at"
                     ]
                   }
+                },
+                {
+                  "type": "null"
                 }
               ]
             }
@@ -161087,7 +161106,10 @@
             "required": false,
             "description": "Pagination cursor returned by a previous call in `cursor.next`. Pattern: `^lcrsacd_[a-f0-9]+$`.",
             "schema": {
-              "type": "string",
+              "type": [
+                "string",
+                "null"
+              ],
               "pattern": "^lcrsacd_[a-f0-9]+$"
             }
           },
@@ -161099,7 +161121,14 @@
             "explode": true,
             "description": "Filter conditions per field, e.g. `filters[type][conditions][$is]=vl.card_definition.created`.",
             "schema": {
-              "$ref": "#/components/schemas/LoyaltiesCardDefinitionsActivitiesListRequestQuery"
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/LoyaltiesCardDefinitionsActivitiesListRequestQuery"
+                },
+                {
+                  "type": "null"
+                }
+              ]
             }
           }
         ],
@@ -161109,7 +161138,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CardDefinitionActivityListResponse"
+                  "$ref": "#/components/schemas/V2LoyaltiesCardDefinitionsActivitiesListResponseBody"
                 }
               }
             }
@@ -161126,16 +161155,6 @@
           },
           "404": {
             "description": "Resource not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Conflict - invalid state transition",
             "content": {
               "application/json": {
                 "schema": {
