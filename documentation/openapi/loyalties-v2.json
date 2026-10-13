@@ -14584,7 +14584,11 @@
             "required": false,
             "description": "Number of items to return. Between 1 and 100, defaults to 10.",
             "schema": {
-              "type": "integer",
+              "type": [
+                "number",
+                "string",
+                "null"
+              ],
               "minimum": 1,
               "maximum": 100,
               "default": 10
@@ -14618,6 +14622,9 @@
                       "-name"
                     ]
                   }
+                },
+                {
+                  "type": "null"
                 }
               ]
             }
@@ -14628,7 +14635,10 @@
             "required": false,
             "description": "Pagination cursor returned in `cursor.next` of a previous response. Must match the pattern `^lcrsern_[a-f0-9]+$`.",
             "schema": {
-              "type": "string",
+              "type": [
+                "string",
+                "null"
+              ],
               "pattern": "^lcrsern_[a-f0-9]+$"
             }
           },
@@ -14640,7 +14650,14 @@
             "explode": true,
             "description": "Filters as a deep object, e.g. `filters[status][conditions][$is]=ACTIVE` or `filters[name][conditions][$contains]=welcome`. See the schema for allowed fields and conditions.",
             "schema": {
-              "$ref": "#/components/schemas/LoyaltiesEarningRulesListRequestQuery"
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/LoyaltiesEarningRulesListRequestQuery"
+                },
+                {
+                  "type": "null"
+                }
+              ]
             }
           }
         ],
@@ -14650,7 +14667,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/EarningRuleListResponse"
+                  "$ref": "#/components/schemas/V2LoyaltiesEarningRulesListResponseBody"
                 }
               }
             }
@@ -23667,26 +23684,15 @@
         "additionalProperties": false,
         "title": "Loyalties Earning Rules List Request Query"
       },
-      "EarningRuleListResponse": {
+      "V2LoyaltiesEarningRulesListResponseBody": {
+        "title": "V2 Loyalties Earning Rules List Response Body",
         "type": "object",
-        "description": "Cursor-paginated list of earning rules.",
-        "properties": {
-          "data": {
-            "type": "array",
-            "description": "Earning rules on the current page.",
-            "items": {
-              "$ref": "#/components/schemas/EarningRuleResponse"
-            }
-          },
-          "cursor": {
-            "$ref": "#/components/schemas/EarningRuleListCursor"
-          },
-          "object": {
-            "type": "string",
-            "const": "list",
-            "description": "Object type marker. Always `list`."
+        "description": "Response body schema for **GET** `/v2/loyalties/earning-rules`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EarningRuleListResponse"
           }
-        }
+        ]
       },
       "V2LoyaltiesEarningRulesGetResponseBody": {
         "title": "V2 Loyalties Earning Rules Get Response Body",
@@ -35170,21 +35176,24 @@
           }
         }
       },
-      "EarningRuleListCursor": {
-        "type": [
-          "object",
-          "null"
-        ],
-        "description": "Pagination cursor. `null` when there are no more results.",
+      "EarningRuleListResponse": {
+        "type": "object",
+        "description": "Cursor-paginated list of earning rules.",
         "properties": {
-          "next": {
-            "type": "string",
-            "description": "Cursor ID to pass as the `cursor` query parameter to fetch the next page."
+          "data": {
+            "type": "array",
+            "description": "Earning rules on the current page.",
+            "items": {
+              "$ref": "#/components/schemas/EarningRuleResponse"
+            }
           },
-          "expires_at": {
+          "cursor": {
+            "$ref": "#/components/schemas/EarningRuleListCursor"
+          },
+          "object": {
             "type": "string",
-            "format": "date-time",
-            "description": "Cursor expiration timestamp."
+            "const": "list",
+            "description": "Object type marker. Always `list`."
           }
         }
       },
@@ -42871,6 +42880,24 @@
             }
           }
         ]
+      },
+      "EarningRuleListCursor": {
+        "type": [
+          "object",
+          "null"
+        ],
+        "description": "Pagination cursor. `null` when there are no more results.",
+        "properties": {
+          "next": {
+            "type": "string",
+            "description": "Cursor ID to pass as the `cursor` query parameter to fetch the next page."
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Cursor expiration timestamp."
+          }
+        }
       },
       "EarningRuleActivitySource": {
         "type": "object",
