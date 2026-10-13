@@ -2335,6 +2335,28 @@
       }
     },
     "/v2/loyalties/programs/{programId}/rewards/{rewardId}": {
+      "parameters": [
+        {
+          "name": "programId",
+          "in": "path",
+          "required": true,
+          "description": "Unique program identifier.",
+          "schema": {
+            "type": "string",
+            "pattern": "^lprg_[a-f0-9]+$"
+          }
+        },
+        {
+          "name": "rewardId",
+          "in": "path",
+          "required": true,
+          "description": "Unique reward identifier.",
+          "schema": {
+            "type": "string",
+            "pattern": "^lrew_[a-f0-9]+$"
+          }
+        }
+      ],
       "put": {
         "operationId": "updateProgramRewardAssignment",
         "tags": [
@@ -2342,34 +2364,13 @@
         ],
         "summary": "Update program reward assignment",
         "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nUpdates the stock configuration of a reward assigned to a program.\nReturns the updated reward assignment.",
-        "parameters": [
-          {
-            "name": "programId",
-            "in": "path",
-            "required": true,
-            "description": "Unique program identifier.",
-            "schema": {
-              "type": "string",
-              "pattern": "^lprg_[a-f0-9]+$"
-            }
-          },
-          {
-            "name": "rewardId",
-            "in": "path",
-            "required": true,
-            "description": "Unique reward identifier.",
-            "schema": {
-              "type": "string",
-              "pattern": "^lrew_[a-f0-9]+$"
-            }
-          }
-        ],
+        "parameters": [],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ProgramRewardAssignmentUpdateRequest"
+                "$ref": "#/components/schemas/V2LoyaltiesProgramsRewardsUpdateRequestBody"
               }
             }
           }
@@ -2380,7 +2381,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProgramRewardAssignment"
+                  "$ref": "#/components/schemas/V2LoyaltiesProgramsRewardsUpdateResponseBody"
                 }
               }
             }
@@ -20727,63 +20728,24 @@
           }
         ]
       },
-      "ProgramRewardAssignmentUpdateRequest": {
+      "V2LoyaltiesProgramsRewardsUpdateRequestBody": {
+        "title": "V2 Loyalties Programs Rewards Update Request Body",
         "type": "object",
-        "description": "Payload for updating the stock configuration of a reward assigned to a program.",
-        "properties": {
-          "stock": {
-            "$ref": "#/components/schemas/ProgramRewardAssignmentStock"
+        "description": "Request body schema for **PUT** `/v2/loyalties/programs/{programId}/rewards/{rewardId}`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ProgramRewardAssignmentUpdateRequest"
           }
-        },
-        "required": [
-          "stock"
-        ],
-        "minProperties": 1,
-        "additionalProperties": false
+        ]
       },
-      "ProgramRewardAssignment": {
+      "V2LoyaltiesProgramsRewardsUpdateResponseBody": {
+        "title": "V2 Loyalties Programs Rewards Update Response Body",
         "type": "object",
-        "description": "A reward assigned to a program, with stock configuration and redemption counter.",
-        "properties": {
-          "reward_id": {
-            "type": "string",
-            "description": "Unique reward identifier.",
-            "pattern": "^lrew_[a-f0-9]+$"
-          },
-          "stock": {
-            "$ref": "#/components/schemas/ProgramRewardAssignmentStock",
-            "description": "Stock configuration of the assignment."
-          },
-          "redeemed": {
-            "type": "number",
-            "description": "Number of times the reward has been redeemed within the program. Defaults to 0."
-          },
-          "created_at": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Assignment creation timestamp (ISO 8601)."
-          },
-          "updated_at": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "format": "date-time",
-            "description": "Last update timestamp (ISO 8601), or `null` when never updated."
-          },
-          "object": {
-            "type": "string",
-            "description": "Object type marker. Always `program_reward`.",
-            "const": "program_reward"
+        "description": "Response body schema for **PUT** `/v2/loyalties/programs/{programId}/rewards/{rewardId}`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ProgramRewardAssignment"
           }
-        },
-        "required": [
-          "reward_id",
-          "stock",
-          "redeemed",
-          "created_at",
-          "updated_at",
-          "object"
         ]
       },
       "LoyaltiesProgramsMembersCreateRequestBody": {
@@ -28371,63 +28333,63 @@
           }
         }
       },
-      "ProgramRewardAssignmentStock": {
+      "ProgramRewardAssignmentUpdateRequest": {
         "type": "object",
-        "description": "Reward stock configuration. When `type` is `UNLIMITED`, `limited` must not be provided. When `type` is `LIMITED`, `limited` is required.",
+        "description": "Payload for updating the stock configuration of a reward assigned to a program.",
         "properties": {
-          "type": {
-            "type": "string",
-            "description": "Stock type.",
-            "enum": [
-              "UNLIMITED",
-              "LIMITED"
-            ]
-          },
-          "limited": {
-            "description": "Limited stock details. Required when `type` is `LIMITED`. Absent when `type` is `UNLIMITED`.",
-            "$ref": "#/components/schemas/ProgramRewardAssignmentStockLimited"
+          "stock": {
+            "$ref": "#/components/schemas/ProgramRewardAssignmentStock"
           }
         },
         "required": [
-          "type"
+          "stock"
         ],
-        "additionalProperties": false,
-        "allOf": [
-          {
-            "if": {
-              "properties": {
-                "type": {
-                  "const": "UNLIMITED"
-                }
-              }
-            },
-            "then": {
-              "not": {
-                "required": [
-                  "limited"
-                ]
-              }
-            }
+        "minProperties": 1,
+        "additionalProperties": false
+      },
+      "ProgramRewardAssignment": {
+        "type": "object",
+        "description": "A reward assigned to a program, with stock configuration and redemption counter.",
+        "properties": {
+          "reward_id": {
+            "type": "string",
+            "description": "Unique reward identifier.",
+            "pattern": "^lrew_[a-f0-9]+$"
           },
-          {
-            "if": {
-              "properties": {
-                "type": {
-                  "const": "LIMITED"
-                }
-              }
-            },
-            "then": {
-              "required": [
-                "limited"
-              ],
-              "properties": {
-                "limited": {
-                  "$ref": "#/components/schemas/ProgramRewardAssignmentStockLimited"
-                }
-              }
-            }
+          "stock": {
+            "$ref": "#/components/schemas/ProgramRewardAssignmentStock",
+            "description": "Stock configuration of the assignment."
+          },
+          "redeemed": {
+            "type": "number",
+            "description": "Number of times the reward has been redeemed within the program. Defaults to 0."
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Assignment creation timestamp (ISO 8601)."
+          },
+          "updated_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time",
+            "description": "Last update timestamp (ISO 8601), or `null` when never updated."
+          },
+          "object": {
+            "type": "string",
+            "description": "Object type marker. Always `program_reward`.",
+            "const": "program_reward"
           }
+        },
+        "required": [
+          "reward_id",
+          "stock",
+          "redeemed",
+          "created_at",
+          "updated_at",
+          "object"
         ]
       },
       "MemberCreate": {
@@ -41069,21 +41031,64 @@
         },
         "additionalProperties": false
       },
-      "ProgramRewardAssignmentStockLimited": {
+      "ProgramRewardAssignmentStock": {
         "type": "object",
-        "description": "Limited stock configuration.",
+        "description": "Reward stock configuration. When `type` is `UNLIMITED`, `limited` must not be provided. When `type` is `LIMITED`, `limited` is required.",
         "properties": {
-          "quantity": {
-            "type": "integer",
-            "description": "Available stock quantity. For responses, updates with each reward purchase.",
-            "minimum": 0,
-            "maximum": 9007199254740991
+          "type": {
+            "type": "string",
+            "description": "Stock type.",
+            "enum": [
+              "UNLIMITED",
+              "LIMITED"
+            ]
+          },
+          "limited": {
+            "description": "Limited stock details. Required when `type` is `LIMITED`. Absent when `type` is `UNLIMITED`.",
+            "$ref": "#/components/schemas/ProgramRewardAssignmentStockLimited"
           }
         },
         "required": [
-          "quantity"
+          "type"
         ],
-        "additionalProperties": false
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "UNLIMITED"
+                }
+              }
+            },
+            "then": {
+              "not": {
+                "required": [
+                  "limited"
+                ]
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "LIMITED"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "limited"
+              ],
+              "properties": {
+                "limited": {
+                  "$ref": "#/components/schemas/ProgramRewardAssignmentStockLimited"
+                }
+              }
+            }
+          }
+        ]
       },
       "CardSimple": {
         "type": "object",
@@ -45029,6 +45034,22 @@
             }
           }
         }
+      },
+      "ProgramRewardAssignmentStockLimited": {
+        "type": "object",
+        "description": "Limited stock configuration.",
+        "properties": {
+          "quantity": {
+            "type": "integer",
+            "description": "Available stock quantity. For responses, updates with each reward purchase.",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          }
+        },
+        "required": [
+          "quantity"
+        ],
+        "additionalProperties": false
       },
       "CardLifetimeBucket": {
         "type": "object",
