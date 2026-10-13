@@ -16689,14 +16689,14 @@
           "Tier Structures"
         ],
         "summary": "Delete tier",
-        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nDeletes a tier from the tier structure and returns the deleted resource.",
+        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nDeletes a tier by marking it deleted and returns the deleted tier. Returns `400` (`resource_in_use`) when an earning rule or a reward still references the tier.",
         "responses": {
           "200": {
             "description": "The deleted tier.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Tier"
+                  "$ref": "#/components/schemas/V2LoyaltiesTierStructuresTiersDeleteResponseBody"
                 }
               }
             }
@@ -16713,16 +16713,6 @@
           },
           "404": {
             "description": "Resource not found.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
             "content": {
               "application/json": {
                 "schema": {
@@ -23978,64 +23968,14 @@
           }
         ]
       },
-      "Tier": {
+      "V2LoyaltiesTierStructuresTiersDeleteResponseBody": {
+        "title": "V2 Loyalties Tier Structures Tiers Delete Response Body",
         "type": "object",
-        "description": "Tier resource.",
-        "properties": {
-          "id": {
-            "type": "string",
-            "pattern": "^lt_[a-f0-9]+$",
-            "description": "Unique tier identifier."
-          },
-          "tier_structure_id": {
-            "type": "string",
-            "pattern": "^lts_[a-f0-9]+$",
-            "description": "Unique identifier of the parent tier structure."
-          },
-          "name": {
-            "type": "string",
-            "description": "Display name of the tier."
-          },
-          "qualification_rules": {
-            "$ref": "#/components/schemas/TierQualificationRules",
-            "description": "Rules determining which members qualify for this tier."
-          },
-          "downgrade": {
-            "$ref": "#/components/schemas/LoyaltyV2ActivityTierDowngrade",
-            "description": "Tier-level downgrade behavior. Always present; when the tier has no downgrade\nconfigured, an empty object (no `type`) is returned."
-          },
-          "metadata": {
-            "type": "object",
-            "description": "Free-form key/value object holding custom attributes. Defaults to `{}`."
-          },
-          "created_at": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Creation timestamp (ISO 8601)."
-          },
-          "updated_at": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "format": "date-time",
-            "description": "Last update timestamp (ISO 8601), or `null` if never updated."
-          },
-          "object": {
-            "type": "string",
-            "const": "tier",
-            "description": "Object type discriminator. Always `tier`."
+        "description": "Response body schema for **DELETE** `/v2/loyalties/tier-structures/{tierStructureId}/tiers/{tierId}`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Tier"
           }
-        },
-        "required": [
-          "id",
-          "tier_structure_id",
-          "name",
-          "downgrade",
-          "metadata",
-          "created_at",
-          "updated_at",
-          "object"
         ]
       },
       "LoyaltiesTierStructuresActivitiesListRequestQuery": {
@@ -35537,6 +35477,66 @@
         ],
         "additionalProperties": false
       },
+      "Tier": {
+        "type": "object",
+        "description": "Tier resource.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^lt_[a-f0-9]+$",
+            "description": "Unique tier identifier."
+          },
+          "tier_structure_id": {
+            "type": "string",
+            "pattern": "^lts_[a-f0-9]+$",
+            "description": "Unique identifier of the parent tier structure."
+          },
+          "name": {
+            "type": "string",
+            "description": "Display name of the tier."
+          },
+          "qualification_rules": {
+            "$ref": "#/components/schemas/TierQualificationRules",
+            "description": "Rules determining which members qualify for this tier."
+          },
+          "downgrade": {
+            "$ref": "#/components/schemas/LoyaltyV2ActivityTierDowngrade",
+            "description": "Tier-level downgrade behavior. Always present; when the tier has no downgrade\nconfigured, an empty object (no `type`) is returned."
+          },
+          "metadata": {
+            "type": "object",
+            "description": "Free-form key/value object holding custom attributes. Defaults to `{}`."
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Creation timestamp (ISO 8601)."
+          },
+          "updated_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time",
+            "description": "Last update timestamp (ISO 8601), or `null` if never updated."
+          },
+          "object": {
+            "type": "string",
+            "const": "tier",
+            "description": "Object type discriminator. Always `tier`."
+          }
+        },
+        "required": [
+          "id",
+          "tier_structure_id",
+          "name",
+          "downgrade",
+          "metadata",
+          "created_at",
+          "updated_at",
+          "object"
+        ]
+      },
       "TierListResponse": {
         "type": "object",
         "description": "Cursor-paginated list of tiers.",
@@ -35628,42 +35628,6 @@
           }
         },
         "additionalProperties": false
-      },
-      "TierQualificationRules": {
-        "type": "object",
-        "description": "Tier qualification rules.",
-        "properties": {
-          "type": {
-            "type": "string",
-            "enum": [
-              "POINTS",
-              "POINTS_AND_SEGMENT"
-            ],
-            "description": "Qualification model."
-          },
-          "points": {
-            "$ref": "#/components/schemas/LoyaltyV2ActivityTierQualificationRulesPoints",
-            "description": "Point thresholds for the tier. Omitted when not configured."
-          },
-          "segment": {
-            "$ref": "#/components/schemas/LoyaltyV2ActivityTierQualificationRulesSegment",
-            "description": "Customer segment reference. Present only when `type` is `POINTS_AND_SEGMENT`."
-          }
-        }
-      },
-      "LoyaltyV2ActivityTierDowngrade": {
-        "type": "object",
-        "description": "Tier-level downgrade behavior.",
-        "properties": {
-          "type": {
-            "type": "string",
-            "enum": [
-              "INHERIT",
-              "NO_DOWNGRADE"
-            ],
-            "description": "Downgrade model. Omitted when the tier has no downgrade configured."
-          }
-        }
       },
       "LoyaltiesTierStructuresActivitiesListRequestQueryId": {
         "type": "object",
@@ -42708,27 +42672,39 @@
         ],
         "additionalProperties": false
       },
-      "LoyaltyV2ActivityTierQualificationRulesPoints": {
+      "TierQualificationRules": {
         "type": "object",
-        "description": "Point thresholds for tier qualification.",
+        "description": "Tier qualification rules.",
         "properties": {
-          "min_value": {
-            "type": "number",
-            "description": "Minimum number of points required to qualify for the tier."
+          "type": {
+            "type": "string",
+            "enum": [
+              "POINTS",
+              "POINTS_AND_SEGMENT"
+            ],
+            "description": "Qualification model."
           },
-          "max_value": {
-            "type": "number",
-            "description": "Optional upper bound of points for the tier. Omitted when not set."
+          "points": {
+            "$ref": "#/components/schemas/LoyaltyV2ActivityTierQualificationRulesPoints",
+            "description": "Point thresholds for the tier. Omitted when not configured."
+          },
+          "segment": {
+            "$ref": "#/components/schemas/LoyaltyV2ActivityTierQualificationRulesSegment",
+            "description": "Customer segment reference. Present only when `type` is `POINTS_AND_SEGMENT`."
           }
         }
       },
-      "LoyaltyV2ActivityTierQualificationRulesSegment": {
+      "LoyaltyV2ActivityTierDowngrade": {
         "type": "object",
-        "description": "Customer segment reference.",
+        "description": "Tier-level downgrade behavior.",
         "properties": {
-          "id": {
+          "type": {
             "type": "string",
-            "description": "Unique identifier of the customer segment."
+            "enum": [
+              "INHERIT",
+              "NO_DOWNGRADE"
+            ],
+            "description": "Downgrade model. Omitted when the tier has no downgrade configured."
           }
         }
       },
@@ -46008,6 +45984,30 @@
           "id"
         ],
         "additionalProperties": false
+      },
+      "LoyaltyV2ActivityTierQualificationRulesPoints": {
+        "type": "object",
+        "description": "Point thresholds for tier qualification.",
+        "properties": {
+          "min_value": {
+            "type": "number",
+            "description": "Minimum number of points required to qualify for the tier."
+          },
+          "max_value": {
+            "type": "number",
+            "description": "Optional upper bound of points for the tier. Omitted when not set."
+          }
+        }
+      },
+      "LoyaltyV2ActivityTierQualificationRulesSegment": {
+        "type": "object",
+        "description": "Customer segment reference.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier of the customer segment."
+          }
+        }
       },
       "LoyaltyV2ActivityBenefitPointsProportionalEvery": {
         "type": "object",
