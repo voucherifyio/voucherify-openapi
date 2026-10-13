@@ -17169,6 +17169,18 @@
       }
     },
     "/v2/loyalties/benefits/{benefitId}": {
+      "parameters": [
+        {
+          "name": "benefitId",
+          "in": "path",
+          "required": true,
+          "description": "Unique benefit ID, prefixed with `lben_`.",
+          "schema": {
+            "type": "string",
+            "pattern": "^lben_[a-f0-9]+$"
+          }
+        }
+      ],
       "get": {
         "operationId": "getBenefit",
         "tags": [
@@ -17255,18 +17267,6 @@
             }
           }
         },
-        "parameters": [
-          {
-            "name": "benefitId",
-            "in": "path",
-            "required": true,
-            "description": "Unique benefit ID, prefixed with `lben_`.",
-            "schema": {
-              "type": "string",
-              "pattern": "^lben_[a-f0-9]+$"
-            }
-          }
-        ],
         "security": [
           {
             "X-App-Id": [],
@@ -17283,13 +17283,13 @@
           "Benefits"
         ],
         "summary": "Update benefit",
-        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nUpdates a benefit. When the benefit is in `DRAFT` status all properties can be updated.\nWhen the benefit is `ACTIVE`, only `name` and `stock` may be updated (400 `invalid_payload`\notherwise). Referenced resources (card definition, product/SKU, campaign) are validated\nthe same way as on create; a points-based benefit can only reference an ACTIVE card\ndefinition (423 `resource_locked` otherwise). The benefit name must remain unique per\nproject (409 `duplicate_found`).",
+        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nUpdates a benefit. When the benefit is in `DRAFT` status all properties can be updated.\nWhen the benefit is not in `DRAFT` status, only `name`, `stock`, `points`, `points_proportional`, and `digital` may be updated (400 `invalid_payload`\notherwise). Referenced resources (card definition, product/SKU, campaign) are validated\nthe same way as on create; a points-based benefit can only reference an ACTIVE card\ndefinition (423 `resource_locked` otherwise). The benefit name must remain unique per\nproject (409 `duplicate_found`).",
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/BenefitUpdateRequest"
+                "$ref": "#/components/schemas/V2LoyaltiesBenefitsUpdateRequestBody"
               }
             }
           }
@@ -17300,7 +17300,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Benefit"
+                  "$ref": "#/components/schemas/V2LoyaltiesBenefitsUpdateResponseBody"
                 }
               }
             }
@@ -17365,18 +17365,6 @@
             }
           }
         },
-        "parameters": [
-          {
-            "name": "benefitId",
-            "in": "path",
-            "required": true,
-            "description": "Unique benefit ID, prefixed with `lben_`.",
-            "schema": {
-              "type": "string",
-              "pattern": "^lben_[a-f0-9]+$"
-            }
-          }
-        ],
         "security": [
           {
             "X-App-Id": [],
@@ -17455,18 +17443,6 @@
             }
           }
         },
-        "parameters": [
-          {
-            "name": "benefitId",
-            "in": "path",
-            "required": true,
-            "description": "Unique benefit ID, prefixed with `lben_`.",
-            "schema": {
-              "type": "string",
-              "pattern": "^lben_[a-f0-9]+$"
-            }
-          }
-        ],
         "security": [
           {
             "X-App-Id": [],
@@ -24169,83 +24145,25 @@
           }
         ]
       },
-      "BenefitUpdateRequest": {
+      "V2LoyaltiesBenefitsUpdateRequestBody": {
+        "title": "V2 Loyalties Benefits Update Request Body",
         "type": "object",
-        "description": "Request body for updating a benefit. All properties are optional; omitted properties keep\ntheir current values. When the benefit is `ACTIVE`, only `name` and `stock` may be updated.\nAfter the update, the type-specific configuration must stay consistent with the (possibly\nupdated) `type`.",
-        "properties": {
-          "name": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 200,
-            "description": "Benefit name. Must be unique within the project."
-          },
-          "type": {
-            "type": "string",
-            "enum": [
-              "POINTS",
-              "POINTS_PROPORTIONAL",
-              "MATERIAL",
-              "DIGITAL"
-            ],
-            "description": "Benefit type. Determines which configuration object is required."
-          },
-          "points": {
-            "description": "Fixed points configuration (for `type` `POINTS`).",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitPoints"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "points_proportional": {
-            "description": "Proportional points configuration (for `type` `POINTS_PROPORTIONAL`).",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/BenefitPointsProportional"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "material": {
-            "description": "Material (physical product/SKU) configuration (for `type` `MATERIAL`).",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/BenefitMaterial"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "digital": {
-            "description": "Digital (campaign-based) configuration (for `type` `DIGITAL`).",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/BenefitDigital"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "stock": {
-            "description": "Stock configuration.",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/BenefitStock"
-              },
-              {
-                "type": "null"
-              }
-            ]
+        "description": "Request body schema for **PUT** `/v2/loyalties/benefits/{benefitId}`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/BenefitUpdateRequest"
           }
-        },
-        "additionalProperties": false
+        ]
+      },
+      "V2LoyaltiesBenefitsUpdateResponseBody": {
+        "title": "V2 Loyalties Benefits Update Response Body",
+        "type": "object",
+        "description": "Response body schema for **PUT** `/v2/loyalties/benefits/{benefitId}`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Benefit"
+          }
+        ]
       },
       "Benefit": {
         "type": "object",
@@ -36688,6 +36606,150 @@
           }
         ]
       },
+      "BenefitUpdateRequest": {
+        "type": "object",
+        "description": "Request body for updating a benefit. All properties are optional; omitted properties keep\ntheir current values. When the benefit is `ACTIVE`, only `name` and `stock` may be updated.\nAfter the update, the type-specific configuration must stay consistent with the (possibly\nupdated) `type`.",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "description": "Benefit name. Must be unique within the project."
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "POINTS",
+              "POINTS_PROPORTIONAL",
+              "MATERIAL",
+              "DIGITAL"
+            ],
+            "description": "Benefit type. Determines which configuration object is required."
+          },
+          "points": {
+            "description": "Fixed points configuration (for `type` `POINTS`).",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitPoints"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "points_proportional": {
+            "description": "Proportional points configuration (for `type` `POINTS_PROPORTIONAL`).",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/BenefitPointsProportional"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "material": {
+            "description": "Material (physical product/SKU) configuration (for `type` `MATERIAL`).",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/BenefitMaterial"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "digital": {
+            "description": "Digital (campaign-based) configuration (for `type` `DIGITAL`).",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/BenefitDigital"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "stock": {
+            "description": "Stock configuration.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/BenefitStock"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "BenefitStock": {
+        "type": "object",
+        "description": "Stock configuration of the benefit. When `type` is `LIMITED`, the `limited` object is required. When `type` is `UNLIMITED`, requests may omit `limited` or set it to `null`; responses omit it.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "UNLIMITED",
+              "LIMITED"
+            ],
+            "description": "Whether the benefit has unlimited or limited stock."
+          },
+          "limited": {
+            "description": "Limited stock configuration. Required when `type` is `LIMITED`. When `type` is `UNLIMITED`, requests may omit it or set it to `null`; responses omit it.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitStockLimited"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "UNLIMITED"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "limited": {
+                  "type": "null"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "LIMITED"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "limited"
+              ],
+              "properties": {
+                "limited": {
+                  "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitStockLimited"
+                }
+              }
+            }
+          }
+        ]
+      },
       "LoyaltyV2ActivityBenefitPoints": {
         "type": "object",
         "description": "Fixed points effect - adds a fixed amount of points to a card of the given card definition.",
@@ -37198,72 +37260,6 @@
                 },
                 "discount_coupons": {
                   "type": "null"
-                }
-              }
-            }
-          }
-        ]
-      },
-      "BenefitStock": {
-        "type": "object",
-        "description": "Stock configuration of the benefit. When `type` is `LIMITED`, the `limited` object is required. When `type` is `UNLIMITED`, requests may omit `limited` or set it to `null`; responses omit it.",
-        "properties": {
-          "type": {
-            "type": "string",
-            "enum": [
-              "UNLIMITED",
-              "LIMITED"
-            ],
-            "description": "Whether the benefit has unlimited or limited stock."
-          },
-          "limited": {
-            "description": "Limited stock configuration. Required when `type` is `LIMITED`. When `type` is `UNLIMITED`, requests may omit it or set it to `null`; responses omit it.",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitStockLimited"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          }
-        },
-        "required": [
-          "type"
-        ],
-        "additionalProperties": false,
-        "allOf": [
-          {
-            "if": {
-              "properties": {
-                "type": {
-                  "const": "UNLIMITED"
-                }
-              }
-            },
-            "then": {
-              "properties": {
-                "limited": {
-                  "type": "null"
-                }
-              }
-            }
-          },
-          {
-            "if": {
-              "properties": {
-                "type": {
-                  "const": "LIMITED"
-                }
-              }
-            },
-            "then": {
-              "required": [
-                "limited"
-              ],
-              "properties": {
-                "limited": {
-                  "$ref": "#/components/schemas/LoyaltyV2ActivityBenefitStockLimited"
                 }
               }
             }
@@ -42755,6 +42751,23 @@
           "tier_structure_id"
         ]
       },
+      "LoyaltyV2ActivityBenefitStockLimited": {
+        "type": "object",
+        "title": "Benefit Stock Limited",
+        "description": "Limited stock configuration.",
+        "properties": {
+          "quantity": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991,
+            "description": "Available Remaining stock quantity. For responses, updates with each benefit purchase."
+          }
+        },
+        "required": [
+          "quantity"
+        ],
+        "additionalProperties": false
+      },
       "BenefitPointsProportionalOrder": {
         "type": "object",
         "description": "Order-based proportional calculation. Provide the property matching the `calculation_type`.",
@@ -42927,23 +42940,6 @@
         },
         "required": [
           "campaign_id"
-        ],
-        "additionalProperties": false
-      },
-      "LoyaltyV2ActivityBenefitStockLimited": {
-        "type": "object",
-        "title": "Benefit Stock Limited",
-        "description": "Limited stock configuration.",
-        "properties": {
-          "quantity": {
-            "type": "integer",
-            "minimum": 0,
-            "maximum": 9007199254740991,
-            "description": "Available Remaining stock quantity. For responses, updates with each benefit purchase."
-          }
-        },
-        "required": [
-          "quantity"
         ],
         "additionalProperties": false
       },
