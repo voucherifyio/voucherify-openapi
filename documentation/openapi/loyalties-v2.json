@@ -661,6 +661,18 @@
       }
     },
     "/v2/loyalties/programs/{programId}/deactivate": {
+      "parameters": [
+        {
+          "name": "programId",
+          "in": "path",
+          "required": true,
+          "description": "Unique program identifier.",
+          "schema": {
+            "type": "string",
+            "pattern": "^lprg_[a-f0-9]+$"
+          }
+        }
+      ],
       "post": {
         "operationId": "deactivateProgram",
         "tags": [
@@ -668,25 +680,14 @@
         ],
         "summary": "Deactivate program",
         "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nTransitions the program to `INACTIVE` status. Only an `ACTIVE` program can be deactivated.\nAn invalid state transition is rejected with `400` (key `invalid_state_transition`).\nNo request body.",
-        "parameters": [
-          {
-            "name": "programId",
-            "in": "path",
-            "required": true,
-            "description": "Unique program identifier.",
-            "schema": {
-              "type": "string",
-              "pattern": "^lprg_[a-f0-9]+$"
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "The deactivated program.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Program"
+                  "$ref": "#/components/schemas/V2LoyaltiesProgramsDeactivateResponseBody"
                 }
               }
             }
@@ -20497,72 +20498,15 @@
           }
         ]
       },
-      "Program": {
+      "V2LoyaltiesProgramsDeactivateResponseBody": {
+        "title": "V2 Loyalties Programs Deactivate Response Body",
         "type": "object",
-        "description": "A loyalty program.",
-        "properties": {
-          "id": {
-            "type": "string",
-            "description": "Unique program identifier.",
-            "pattern": "^lprg_[a-f0-9]+$"
-          },
-          "name": {
-            "type": "string",
-            "description": "Program name."
-          },
-          "status": {
-            "type": "string",
-            "description": "Program status.",
-            "enum": [
-              "DRAFT",
-              "ACTIVE",
-              "INACTIVE",
-              "DELETED"
-            ]
-          },
-          "start_date": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "format": "date-time",
-            "description": "Program validity start date (ISO 8601), or `null` when not set."
-          },
-          "end_date": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "format": "date-time",
-            "description": "Program validity end date (ISO 8601), or `null` when not set."
-          },
-          "validity_hours": {
-            "$ref": "#/components/schemas/ProgramValidityHours",
-            "description": "Validity hours configuration. Defaults to type `ANY_TIME`."
-          },
-          "metadata": {
-            "type": "object",
-            "description": "Arbitrary key-value metadata. Defaults to `{}`."
-          },
-          "created_at": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Creation timestamp (ISO 8601)."
-          },
-          "updated_at": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "format": "date-time",
-            "description": "Last update timestamp (ISO 8601), or `null` when never updated."
-          },
-          "object": {
-            "type": "string",
-            "description": "Object type marker.",
-            "const": "program"
+        "description": "Response body schema for **POST** `/v2/loyalties/programs/{programId}/deactivate`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Program"
           }
-        }
+        ]
       },
       "LoyaltiesProgramsActivitiesListRequestQuery": {
         "type": "object",
@@ -27726,6 +27670,73 @@
           }
         }
       },
+      "Program": {
+        "type": "object",
+        "description": "A loyalty program.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique program identifier.",
+            "pattern": "^lprg_[a-f0-9]+$"
+          },
+          "name": {
+            "type": "string",
+            "description": "Program name."
+          },
+          "status": {
+            "type": "string",
+            "description": "Program status.",
+            "enum": [
+              "DRAFT",
+              "ACTIVE",
+              "INACTIVE",
+              "DELETED"
+            ]
+          },
+          "start_date": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time",
+            "description": "Program validity start date (ISO 8601), or `null` when not set."
+          },
+          "end_date": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time",
+            "description": "Program validity end date (ISO 8601), or `null` when not set."
+          },
+          "validity_hours": {
+            "$ref": "#/components/schemas/ProgramValidityHours",
+            "description": "Validity hours configuration. Defaults to type `ANY_TIME`."
+          },
+          "metadata": {
+            "type": "object",
+            "description": "Arbitrary key-value metadata. Defaults to `{}`."
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Creation timestamp (ISO 8601)."
+          },
+          "updated_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time",
+            "description": "Last update timestamp (ISO 8601), or `null` when never updated."
+          },
+          "object": {
+            "type": "string",
+            "description": "Object type marker.",
+            "const": "program"
+          }
+        }
+      },
       "ProgramUpdateRequest": {
         "type": "object",
         "description": "Payload for updating a loyalty program. All properties are optional. When the program is\nnot in `DRAFT` status, only `name`, `end_date`, and `metadata` may be changed.",
@@ -27776,27 +27787,6 @@
           }
         },
         "additionalProperties": false
-      },
-      "ProgramValidityHours": {
-        "type": "object",
-        "description": "Validity hours configuration of the program.",
-        "properties": {
-          "type": {
-            "type": "string",
-            "description": "Validity hours mode.",
-            "enum": [
-              "DAILY",
-              "ANY_TIME"
-            ]
-          },
-          "daily": {
-            "type": "array",
-            "description": "Daily validity windows. Present only when `type` is `DAILY`.",
-            "items": {
-              "$ref": "#/components/schemas/ProgramValidityDailyHours"
-            }
-          }
-        }
       },
       "LoyaltiesProgramsActivitiesListRequestQueryId": {
         "type": "object",
@@ -40858,26 +40848,24 @@
           }
         }
       },
-      "ProgramValidityDailyHours": {
+      "ProgramValidityHours": {
         "type": "object",
-        "description": "A single daily validity-hours window.",
+        "description": "Validity hours configuration of the program.",
         "properties": {
-          "days_of_week": {
+          "type": {
+            "type": "string",
+            "description": "Validity hours mode.",
+            "enum": [
+              "DAILY",
+              "ANY_TIME"
+            ]
+          },
+          "daily": {
             "type": "array",
-            "description": "Days of week the window applies to. 0 = Sunday through 6 = Saturday.",
+            "description": "Daily validity windows. Present only when `type` is `DAILY`.",
             "items": {
-              "type": "integer",
-              "minimum": 0,
-              "maximum": 6
+              "$ref": "#/components/schemas/ProgramValidityDailyHours"
             }
-          },
-          "start_time": {
-            "type": "string",
-            "description": "Window start time in `HH:mm` format."
-          },
-          "end_time": {
-            "type": "string",
-            "description": "Window end time in `HH:mm` format."
           }
         }
       },
@@ -44818,6 +44806,29 @@
           "end_time"
         ],
         "additionalProperties": false
+      },
+      "ProgramValidityDailyHours": {
+        "type": "object",
+        "description": "A single daily validity-hours window.",
+        "properties": {
+          "days_of_week": {
+            "type": "array",
+            "description": "Days of week the window applies to. 0 = Sunday through 6 = Saturday.",
+            "items": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 6
+            }
+          },
+          "start_time": {
+            "type": "string",
+            "description": "Window start time in `HH:mm` format."
+          },
+          "end_time": {
+            "type": "string",
+            "description": "Window end time in `HH:mm` format."
+          }
+        }
       },
       "CardLifetimeBucket": {
         "type": "object",
