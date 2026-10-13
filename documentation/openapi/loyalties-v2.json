@@ -394,14 +394,14 @@
           "Programs"
         ],
         "summary": "Update program",
-        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nUpdates a loyalty program. When the program is not in `DRAFT` status, only `name` and\n`metadata` may be changed (other properties are restricted after leaving draft).",
+        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nUpdates a loyalty program. When the program is not in `DRAFT` status, only `name`, `end_date`, and `metadata` may be changed.",
         "parameters": [],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ProgramUpdateRequest"
+                "$ref": "#/components/schemas/V2LoyaltiesProgramsUpdateRequestBody"
               }
             }
           }
@@ -412,7 +412,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Program"
+                  "$ref": "#/components/schemas/V2LoyaltiesProgramsUpdateResponseBody"
                 }
               }
             }
@@ -20457,56 +20457,25 @@
           }
         ]
       },
-      "ProgramUpdateRequest": {
+      "V2LoyaltiesProgramsUpdateRequestBody": {
+        "title": "V2 Loyalties Programs Update Request Body",
         "type": "object",
-        "description": "Payload for updating a loyalty program. All properties are optional. When the program is\nnot in `DRAFT` status, only `name` and `metadata` may be changed.",
-        "properties": {
-          "name": {
-            "type": "string",
-            "description": "Program name.",
-            "minLength": 1,
-            "maxLength": 200
-          },
-          "start_date": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "format": "date-time",
-            "description": "Program validity start date, in ISO 8601 date-time format."
-          },
-          "end_date": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "format": "date-time",
-            "description": "Program validity end date, in ISO 8601 date-time format."
-          },
-          "validity_hours": {
-            "description": "Validity hours configuration.",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/ProgramValidityHoursUpsert"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "metadata": {
-            "description": "Arbitrary key-value metadata. Validated against the `vl_program` metadata schema definition of the project.",
-            "oneOf": [
-              {
-                "type": "object"
-              },
-              {
-                "type": "null"
-              }
-            ]
+        "description": "Request body schema for **PUT** `/v2/loyalties/programs/{programId}`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ProgramUpdateRequest"
           }
-        },
-        "additionalProperties": false
+        ]
+      },
+      "V2LoyaltiesProgramsUpdateResponseBody": {
+        "title": "V2 Loyalties Programs Update Response Body",
+        "type": "object",
+        "description": "Response body schema for **PUT** `/v2/loyalties/programs/{programId}`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Program"
+          }
+        ]
       },
       "Program": {
         "type": "object",
@@ -27737,27 +27706,48 @@
           }
         }
       },
-      "ProgramValidityHoursUpsert": {
+      "ProgramUpdateRequest": {
         "type": "object",
-        "description": "Validity hours configuration. When `type` is `ANY_TIME`, `daily` must be omitted or `null`.\nWhen `type` is `DAILY`, `daily` is required and must contain at least one window.",
+        "description": "Payload for updating a loyalty program. All properties are optional. When the program is\nnot in `DRAFT` status, only `name`, `end_date`, and `metadata` may be changed.",
         "properties": {
-          "type": {
+          "name": {
             "type": "string",
-            "description": "Validity hours mode. `ANY_TIME` means the program is always valid; `DAILY` restricts validity to configured daily windows.",
-            "enum": [
-              "DAILY",
-              "ANY_TIME"
-            ]
+            "description": "Program name.",
+            "minLength": 1,
+            "maxLength": 200
           },
-          "daily": {
-            "description": "Daily validity windows. Required when `type` is `DAILY`; must be null/omitted when `type` is `ANY_TIME`.",
+          "start_date": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time",
+            "description": "Program validity start date, in ISO 8601 date-time format."
+          },
+          "end_date": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time",
+            "description": "Program validity end date, in ISO 8601 date-time format."
+          },
+          "validity_hours": {
+            "description": "Validity hours configuration.",
             "oneOf": [
               {
-                "type": "array",
-                "minItems": 1,
-                "items": {
-                  "$ref": "#/components/schemas/ProgramValidityDailyHoursUpsert"
-                }
+                "$ref": "#/components/schemas/ProgramValidityHoursUpsert"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "metadata": {
+            "description": "Arbitrary key-value metadata. Validated against the `vl_program` metadata schema definition of the project.",
+            "oneOf": [
+              {
+                "type": "object"
               },
               {
                 "type": "null"
@@ -27765,51 +27755,7 @@
             ]
           }
         },
-        "required": [
-          "type"
-        ],
-        "additionalProperties": false,
-        "allOf": [
-          {
-            "if": {
-              "properties": {
-                "type": {
-                  "const": "ANY_TIME"
-                }
-              }
-            },
-            "then": {
-              "properties": {
-                "daily": {
-                  "type": "null"
-                }
-              }
-            }
-          },
-          {
-            "if": {
-              "properties": {
-                "type": {
-                  "const": "DAILY"
-                }
-              }
-            },
-            "then": {
-              "required": [
-                "daily"
-              ],
-              "properties": {
-                "daily": {
-                  "type": "array",
-                  "minItems": 1,
-                  "items": {
-                    "$ref": "#/components/schemas/ProgramValidityDailyHoursUpsert"
-                  }
-                }
-              }
-            }
-          }
-        ]
+        "additionalProperties": false
       },
       "ProgramValidityHours": {
         "type": "object",
@@ -40770,6 +40716,80 @@
         ],
         "title": "Loyalties Examine Rewards Examine Response Body Membership"
       },
+      "ProgramValidityHoursUpsert": {
+        "type": "object",
+        "description": "Validity hours configuration. When `type` is `ANY_TIME`, `daily` must be omitted or `null`.\nWhen `type` is `DAILY`, `daily` is required and must contain at least one window.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "Validity hours mode. `ANY_TIME` means the program is always valid; `DAILY` restricts validity to configured daily windows.",
+            "enum": [
+              "DAILY",
+              "ANY_TIME"
+            ]
+          },
+          "daily": {
+            "description": "Daily validity windows. Required when `type` is `DAILY`; must be null/omitted when `type` is `ANY_TIME`.",
+            "oneOf": [
+              {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "$ref": "#/components/schemas/ProgramValidityDailyHoursUpsert"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "ANY_TIME"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "daily": {
+                  "type": "null"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "DAILY"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "daily"
+              ],
+              "properties": {
+                "daily": {
+                  "type": "array",
+                  "minItems": 1,
+                  "items": {
+                    "$ref": "#/components/schemas/ProgramValidityDailyHoursUpsert"
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
       "ProgramCreateAssignedCardDefinition": {
         "type": "object",
         "description": "Card definition assigned during program creation.",
@@ -40817,40 +40837,6 @@
             "pattern": "^lts_[a-f0-9]+$"
           }
         }
-      },
-      "ProgramValidityDailyHoursUpsert": {
-        "type": "object",
-        "description": "A single daily validity-hours window definition.",
-        "properties": {
-          "days_of_week": {
-            "type": "array",
-            "description": "Days of week the window applies to. 0 = Sunday through 6 = Saturday. Items must be unique.",
-            "items": {
-              "type": "integer",
-              "minimum": 0,
-              "maximum": 6
-            },
-            "minItems": 1,
-            "maxItems": 7,
-            "uniqueItems": true
-          },
-          "start_time": {
-            "type": "string",
-            "description": "Window start time in `HH:mm` format. If seconds are provided, they are ignored.",
-            "example": "09:00"
-          },
-          "end_time": {
-            "type": "string",
-            "description": "Window end time in `HH:mm` format. If seconds are provided, they are ignored.",
-            "example": "17:00"
-          }
-        },
-        "required": [
-          "days_of_week",
-          "start_time",
-          "end_time"
-        ],
-        "additionalProperties": false
       },
       "ProgramValidityDailyHours": {
         "type": "object",
@@ -44778,6 +44764,40 @@
           "object"
         ],
         "title": "Loyalties Examine Rewards Examine Response Body Card Estimation"
+      },
+      "ProgramValidityDailyHoursUpsert": {
+        "type": "object",
+        "description": "A single daily validity-hours window definition.",
+        "properties": {
+          "days_of_week": {
+            "type": "array",
+            "description": "Days of week the window applies to. 0 = Sunday through 6 = Saturday. Items must be unique.",
+            "items": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 6
+            },
+            "minItems": 1,
+            "maxItems": 7,
+            "uniqueItems": true
+          },
+          "start_time": {
+            "type": "string",
+            "description": "Window start time in `HH:mm` format. If seconds are provided, they are ignored.",
+            "example": "09:00"
+          },
+          "end_time": {
+            "type": "string",
+            "description": "Window end time in `HH:mm` format. If seconds are provided, they are ignored.",
+            "example": "17:00"
+          }
+        },
+        "required": [
+          "days_of_week",
+          "start_time",
+          "end_time"
+        ],
+        "additionalProperties": false
       },
       "CardLifetimeBucket": {
         "type": "object",
