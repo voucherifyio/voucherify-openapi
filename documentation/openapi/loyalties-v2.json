@@ -7414,7 +7414,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/LoyaltiesProgramsRewardsPurchasesRefundRequestBody"
+                "$ref": "#/components/schemas/V2LoyaltiesProgramsRewardsPurchasesRefundRequestBody"
               }
             }
           }
@@ -7425,7 +7425,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/LoyaltiesProgramsRewardsPurchasesRefundResponseBody"
+                  "$ref": "#/components/schemas/V2LoyaltiesProgramsRewardsPurchasesRefundResponseBody"
                 },
                 "examples": {
                   "Refund accepted": {
@@ -21166,50 +21166,24 @@
           }
         ]
       },
-      "LoyaltiesProgramsRewardsPurchasesRefundRequestBody": {
+      "V2LoyaltiesProgramsRewardsPurchasesRefundRequestBody": {
+        "title": "V2 Loyalties Programs Rewards Purchases Refund Request Body",
         "type": "object",
-        "title": "Loyalties Programs Rewards Purchases Refund Request Body",
         "description": "Request body schema for **POST** `/v2/loyalties/programs/{programId}/rewards/purchases/{rewardTransactionId}/refund`.",
-        "properties": {
-          "policies": {
-            "description": "Refund policies. When omitted or `null`, defaults are applied.",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/RewardPurchaseRefundPolicies"
-              },
-              {
-                "type": "null"
-              }
-            ]
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/RewardPurchaseRefundRequest"
           }
-        },
-        "additionalProperties": false
+        ]
       },
-      "LoyaltiesProgramsRewardsPurchasesRefundResponseBody": {
+      "V2LoyaltiesProgramsRewardsPurchasesRefundResponseBody": {
+        "title": "V2 Loyalties Programs Rewards Purchases Refund Response Body",
         "type": "object",
-        "title": "Loyalties Programs Rewards Purchases Refund Response Body",
         "description": "Response body schema for **POST** `/v2/loyalties/programs/{programId}/rewards/purchases/{rewardTransactionId}/refund`.",
-        "properties": {
-          "transaction": {
-            "description": "The created REFUND-type reward transaction.",
-            "$ref": "#/components/schemas/RewardPurchaseTransaction"
-          },
-          "status": {
-            "type": "string",
-            "enum": [
-              "APPROVED"
-            ],
-            "description": "Result status. Always `APPROVED` on success."
-          },
-          "message": {
-            "type": "string",
-            "description": "Returns the result message: \"Reward refund transaction created. Points will be returned to the member's card shortly.\"."
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/RewardPurchaseRefundResult"
           }
-        },
-        "required": [
-          "transaction",
-          "status",
-          "message"
         ]
       },
       "LoyaltiesProgramsMembersRewardsPurchasesListRequestQuery": {
@@ -28267,34 +28241,15 @@
           "object"
         ]
       },
-      "RewardPurchaseRefundPolicies": {
+      "RewardPurchaseRefundRequest": {
         "type": "object",
-        "description": "Refund policies for a reward purchase refund.",
+        "description": "Fields for refunding a reward purchase.",
         "properties": {
-          "refund": {
-            "description": "Applies the refund override. `DEFAULT` follows the reward's refunds setting. `ALLOW` refunds even when the reward is not refundable. Defaults to `DEFAULT`.",
+          "policies": {
+            "description": "Refund policies. When omitted or `null`, defaults are applied.",
             "oneOf": [
               {
-                "type": "string",
-                "enum": [
-                  "DEFAULT",
-                  "ALLOW"
-                ]
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "stock": {
-            "description": "Controls assignment stock. `DEFAULT` restores one unit when stock is limited. `WRITE_OFF` does not restore stock. Unlimited (`null`) stock is unchanged. Defaults to `DEFAULT`.",
-            "oneOf": [
-              {
-                "type": "string",
-                "enum": [
-                  "DEFAULT",
-                  "WRITE_OFF"
-                ]
+                "$ref": "#/components/schemas/RewardPurchaseRefundPolicies"
               },
               {
                 "type": "null"
@@ -28304,97 +28259,31 @@
         },
         "additionalProperties": false
       },
-      "RewardPurchaseTransaction": {
+      "RewardPurchaseRefundResult": {
         "type": "object",
-        "description": "A reward transaction. Represents a reward purchase or a reward refund.",
+        "description": "Result of a reward purchase refund.",
         "properties": {
-          "id": {
-            "type": "string",
-            "description": "Unique reward transaction identifier (format `lrtx_...`). Absent for `DRY_RUN` (SIMULATED) transactions, which are never persisted."
-          },
-          "card_id": {
-            "type": "string",
-            "description": "Unique identifier of the loyalty card the points were spent from (format `lcrd_...`)."
-          },
-          "card_definition_id": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "description": "Unique identifier of the card definition for that card (format `lcdef_...`). `null` when none is stored."
-          },
-          "card_transaction_id": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "description": "Identifies of the underlying card transaction (format `lctx_...`). `null` for `DRY_RUN` (SIMULATED) transactions."
-          },
-          "program_id": {
-            "type": "string",
-            "description": "Unique identifier of the loyalty program (format `lprg_...`)."
-          },
-          "member_id": {
-            "type": "string",
-            "description": "Unique identifier of the program member (format `lmbr_...`)."
-          },
-          "reward_id": {
-            "type": "string",
-            "description": "Unique identifier of the purchased reward (format `lrew_...`)."
+          "transaction": {
+            "description": "The created REFUND-type reward transaction.",
+            "$ref": "#/components/schemas/RewardPurchaseTransaction"
           },
           "status": {
             "type": "string",
             "enum": [
-              "PENDING",
-              "PROCESSING",
-              "APPROVED",
-              "REJECTED",
-              "SIMULATED",
-              "REFUNDED"
+              "APPROVED"
             ],
-            "description": "Transaction status:\n\n- `PENDING`: Created and awaiting processing.\n\n- `PROCESSING`: Being processed.\n\n- `APPROVED`: Completed successfully.\n\n- `REJECTED`: Rejected (see `details.rejection`).\n\n- `SIMULATED`: Dry-run result that is not persisted.\n\n- `REFUNDED`: Purchase has been refunded."
+            "description": "Result status. Always `APPROVED` on success."
           },
-          "type": {
+          "message": {
             "type": "string",
-            "enum": [
-              "PURCHASE",
-              "REFUND"
-            ],
-            "description": "Transaction type."
-          },
-          "details": {
-            "description": "Transaction details. Shape depends on `type` - purchase details for `PURCHASE`, refund details for `REFUND`.",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/RewardPurchaseTransactionDetailsPurchase"
-              },
-              {
-                "$ref": "#/components/schemas/RewardPurchaseTransactionDetailsRefund"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "created_at": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Timestamp when the transaction was created (ISO 8601)."
-          },
-          "updated_at": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "format": "date-time",
-            "description": "Timestamp when the transaction was last updated (ISO 8601), or `null`."
-          },
-          "object": {
-            "type": "string",
-            "const": "reward_transaction",
-            "description": "Object type marker. Always `reward_transaction`."
+            "description": "Returns the result message: \"Reward refund transaction created. Points will be returned to the member's card shortly.\"."
           }
-        }
+        },
+        "required": [
+          "transaction",
+          "status",
+          "message"
+        ]
       },
       "LoyaltiesProgramsMembersRewardsPurchasesListRequestQueryId": {
         "type": "object",
@@ -28843,6 +28732,98 @@
           "conditions"
         ],
         "additionalProperties": false
+      },
+      "RewardPurchaseTransaction": {
+        "type": "object",
+        "description": "A reward transaction. Represents a reward purchase or a reward refund.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique reward transaction identifier (format `lrtx_...`). Absent for `DRY_RUN` (SIMULATED) transactions, which are never persisted."
+          },
+          "card_id": {
+            "type": "string",
+            "description": "Unique identifier of the loyalty card the points were spent from (format `lcrd_...`)."
+          },
+          "card_definition_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Unique identifier of the card definition for that card (format `lcdef_...`). `null` when none is stored."
+          },
+          "card_transaction_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Identifies of the underlying card transaction (format `lctx_...`). `null` for `DRY_RUN` (SIMULATED) transactions."
+          },
+          "program_id": {
+            "type": "string",
+            "description": "Unique identifier of the loyalty program (format `lprg_...`)."
+          },
+          "member_id": {
+            "type": "string",
+            "description": "Unique identifier of the program member (format `lmbr_...`)."
+          },
+          "reward_id": {
+            "type": "string",
+            "description": "Unique identifier of the purchased reward (format `lrew_...`)."
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "PENDING",
+              "PROCESSING",
+              "APPROVED",
+              "REJECTED",
+              "SIMULATED",
+              "REFUNDED"
+            ],
+            "description": "Transaction status:\n\n- `PENDING`: Created and awaiting processing.\n\n- `PROCESSING`: Being processed.\n\n- `APPROVED`: Completed successfully.\n\n- `REJECTED`: Rejected (see `details.rejection`).\n\n- `SIMULATED`: Dry-run result that is not persisted.\n\n- `REFUNDED`: Purchase has been refunded."
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "PURCHASE",
+              "REFUND"
+            ],
+            "description": "Transaction type."
+          },
+          "details": {
+            "description": "Transaction details. Shape depends on `type` - purchase details for `PURCHASE`, refund details for `REFUND`.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/RewardPurchaseTransactionDetailsPurchase"
+              },
+              {
+                "$ref": "#/components/schemas/RewardPurchaseTransactionDetailsRefund"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp when the transaction was created (ISO 8601)."
+          },
+          "updated_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time",
+            "description": "Timestamp when the transaction was last updated (ISO 8601), or `null`."
+          },
+          "object": {
+            "type": "string",
+            "const": "reward_transaction",
+            "description": "Object type marker. Always `reward_transaction`."
+          }
+        }
       },
       "RewardPurchaseTransactionDetailsPurchase": {
         "type": "object",
@@ -39099,6 +39080,43 @@
           "updated_at",
           "object"
         ]
+      },
+      "RewardPurchaseRefundPolicies": {
+        "type": "object",
+        "description": "Refund policies for a reward purchase refund.",
+        "properties": {
+          "refund": {
+            "description": "Applies the refund override. `DEFAULT` follows the reward's refunds setting. `ALLOW` refunds even when the reward is not refundable. Defaults to `DEFAULT`.",
+            "oneOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "DEFAULT",
+                  "ALLOW"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "stock": {
+            "description": "Controls assignment stock. `DEFAULT` restores one unit when stock is limited. `WRITE_OFF` does not restore stock. Unlimited (`null`) stock is unchanged. Defaults to `DEFAULT`.",
+            "oneOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "DEFAULT",
+                  "WRITE_OFF"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false
       },
       "RewardPurchaseTransactionDetailsRefund": {
         "type": "object",
