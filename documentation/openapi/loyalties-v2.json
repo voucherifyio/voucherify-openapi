@@ -14494,7 +14494,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/EarningRuleCreateRequest"
+                "$ref": "#/components/schemas/V2LoyaltiesEarningRulesCreateRequestBody"
               }
             }
           }
@@ -14505,7 +14505,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/EarningRuleResponse"
+                  "$ref": "#/components/schemas/V2LoyaltiesEarningRulesCreateResponseBody"
                 }
               }
             }
@@ -23193,226 +23193,24 @@
           }
         ]
       },
-      "EarningRuleCreateRequest": {
+      "V2LoyaltiesEarningRulesCreateRequestBody": {
+        "title": "V2 Loyalties Earning Rules Create Request Body",
         "type": "object",
-        "description": "Request body for creating an earning rule.",
-        "properties": {
-          "name": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 200,
-            "description": "Earning rule name."
-          },
-          "trigger": {
-            "$ref": "#/components/schemas/EarningRuleTrigger"
-          },
-          "earnings": {
-            "type": "array",
-            "minItems": 1,
-            "description": "Earning definitions (rules and effects) evaluated when the trigger fires.",
-            "items": {
-              "$ref": "#/components/schemas/EarningRuleEarningCreate"
-            }
-          },
-          "status": {
-            "type": "string",
-            "enum": [
-              "DRAFT",
-              "ACTIVE"
-            ],
-            "description": "Initial status. Only `DRAFT` and `ACTIVE` are allowed at creation. Defaults to `DRAFT`."
-          },
-          "error": {
-            "description": "Default error returned when rule validation fails. Can be `null`.",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/LoyaltyV2ActivityEarningRuleError"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "validity_hours": {
-            "description": "Hours during which the rule is active. Defaults to `{ \"type\": \"ANY_TIME\" }` when omitted. Can be `null`.",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/EarningRuleValidityHours"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "start_date": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "format": "date-time",
-            "description": "Date-time from which the rule is active. Can be `null`."
-          },
-          "end_date": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "format": "date-time",
-            "description": "Date-time until which the rule is active. Can be `null`."
-          },
-          "metadata": {
-            "description": "Arbitrary key-value metadata. Can be `null`.",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/LoyaltyV2ActivityMetadata"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "trigger_limits": {
-            "description": "Cooldown and frequency limits for the trigger. Defaults to `{ \"cooldown\": { \"type\": \"NO_COOLDOWN\" }, \"frequency\": { \"type\": \"NO_LIMIT\" } }` when omitted. Can be `null`.",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/EarningRuleTriggerLimits"
-              },
-              {
-                "type": "null"
-              }
-            ]
+        "description": "Request body schema for **POST** `/v2/loyalties/earning-rules`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EarningRuleCreateRequest"
           }
-        },
-        "required": [
-          "name",
-          "trigger",
-          "earnings"
-        ],
-        "additionalProperties": false
+        ]
       },
-      "EarningRuleResponse": {
+      "V2LoyaltiesEarningRulesCreateResponseBody": {
+        "title": "V2 Loyalties Earning Rules Create Response Body",
         "type": "object",
-        "description": "Earning rule as returned by the API.",
-        "properties": {
-          "id": {
-            "type": "string",
-            "pattern": "^lern_[a-f0-9]+$",
-            "description": "Earning rule ID (`lern_...`)."
-          },
-          "name": {
-            "type": "string",
-            "maxLength": 200,
-            "description": "Earning rule name."
-          },
-          "status": {
-            "type": "string",
-            "enum": [
-              "DRAFT",
-              "ACTIVE",
-              "INACTIVE"
-            ],
-            "description": "Current status. `DELETED` also exists internally but deleted rules are excluded from API reads."
-          },
-          "earnings": {
-            "type": "array",
-            "minItems": 1,
-            "description": "Earning definitions of the rule. Contains at least one earning.",
-            "items": {
-              "$ref": "#/components/schemas/EarningRuleEarning"
-            }
-          },
-          "trigger": {
-            "$ref": "#/components/schemas/EarningRuleTrigger"
-          },
-          "error": {
-            "description": "Default error configuration. Absent when not configured.",
-            "$ref": "#/components/schemas/LoyaltyV2ActivityEarningRuleError"
-          },
-          "validity_hours": {
-            "$ref": "#/components/schemas/EarningRuleValidityHours",
-            "description": "Validity hours. Always present; defaults to `{ \"type\": \"ANY_TIME\" }`."
-          },
-          "start_date": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "format": "date-time",
-            "description": "Date-time from which the rule is active. Can be `null`."
-          },
-          "end_date": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "format": "date-time",
-            "description": "Date-time until which the rule is active. Can be `null`."
-          },
-          "trigger_limits": {
-            "description": "Cooldown and frequency limits. Always present. `cooldown` and `frequency` are always objects. `frequency.limits` is always an array and is empty when `frequency.type` is `NO_LIMIT`.",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/EarningRuleTriggerLimits"
-              },
-              {
-                "type": "object",
-                "required": [
-                  "cooldown",
-                  "frequency"
-                ],
-                "properties": {
-                  "cooldown": {
-                    "$ref": "#/components/schemas/EarningRuleTriggerLimitsCooldown"
-                  },
-                  "frequency": {
-                    "$ref": "#/components/schemas/EarningRuleTriggerLimitsFrequency"
-                  }
-                }
-              }
-            ]
-          },
-          "earning_limits": {
-            "description": "Limits how many points this rule can award. Always present. Defaults to no global limit (`global.type` `NO_LIMIT` and `global.limits` `[]`).",
-            "$ref": "#/components/schemas/LoyaltyV2ActivityEarningRuleEarningLimits"
-          },
-          "metadata": {
-            "$ref": "#/components/schemas/LoyaltyV2ActivityMetadata",
-            "description": "Arbitrary key-value metadata. Always present (empty object when unset)."
-          },
-          "created_at": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Creation timestamp (ISO 8601)."
-          },
-          "updated_at": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "format": "date-time",
-            "description": "Last update timestamp (ISO 8601). `null` when never updated."
-          },
-          "object": {
-            "type": "string",
-            "const": "earning_rule",
-            "description": "Object type marker. Always `earning_rule`."
+        "description": "Response body schema for **POST** `/v2/loyalties/earning-rules`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EarningRuleResponse"
           }
-        },
-        "required": [
-          "id",
-          "name",
-          "status",
-          "earnings",
-          "trigger",
-          "validity_hours",
-          "start_date",
-          "end_date",
-          "trigger_limits",
-          "earning_limits",
-          "metadata",
-          "created_at",
-          "updated_at",
-          "object"
         ]
       },
       "LoyaltiesEarningRulesListRequestQuery": {
@@ -23787,6 +23585,131 @@
           }
         },
         "additionalProperties": false
+      },
+      "EarningRuleResponse": {
+        "type": "object",
+        "description": "Earning rule as returned by the API.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^lern_[a-f0-9]+$",
+            "description": "Earning rule ID (`lern_...`)."
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 200,
+            "description": "Earning rule name."
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "DRAFT",
+              "ACTIVE",
+              "INACTIVE"
+            ],
+            "description": "Current status. `DELETED` also exists internally but deleted rules are excluded from API reads."
+          },
+          "earnings": {
+            "type": "array",
+            "minItems": 1,
+            "description": "Earning definitions of the rule. Contains at least one earning.",
+            "items": {
+              "$ref": "#/components/schemas/EarningRuleEarning"
+            }
+          },
+          "trigger": {
+            "$ref": "#/components/schemas/EarningRuleTrigger"
+          },
+          "error": {
+            "description": "Default error configuration. Absent when not configured.",
+            "$ref": "#/components/schemas/LoyaltyV2ActivityEarningRuleError"
+          },
+          "validity_hours": {
+            "$ref": "#/components/schemas/EarningRuleValidityHours",
+            "description": "Validity hours. Always present; defaults to `{ \"type\": \"ANY_TIME\" }`."
+          },
+          "start_date": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time",
+            "description": "Date-time from which the rule is active. Can be `null`."
+          },
+          "end_date": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time",
+            "description": "Date-time until which the rule is active. Can be `null`."
+          },
+          "trigger_limits": {
+            "description": "Cooldown and frequency limits. Always present. `cooldown` and `frequency` are always objects. `frequency.limits` is always an array and is empty when `frequency.type` is `NO_LIMIT`.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/EarningRuleTriggerLimits"
+              },
+              {
+                "type": "object",
+                "required": [
+                  "cooldown",
+                  "frequency"
+                ],
+                "properties": {
+                  "cooldown": {
+                    "$ref": "#/components/schemas/EarningRuleTriggerLimitsCooldown"
+                  },
+                  "frequency": {
+                    "$ref": "#/components/schemas/EarningRuleTriggerLimitsFrequency"
+                  }
+                }
+              }
+            ]
+          },
+          "earning_limits": {
+            "description": "Limits how many points this rule can award. Always present. Defaults to no global limit (`global.type` `NO_LIMIT` and `global.limits` `[]`).",
+            "$ref": "#/components/schemas/LoyaltyV2ActivityEarningRuleEarningLimits"
+          },
+          "metadata": {
+            "$ref": "#/components/schemas/LoyaltyV2ActivityMetadata",
+            "description": "Arbitrary key-value metadata. Always present (empty object when unset)."
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Creation timestamp (ISO 8601)."
+          },
+          "updated_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time",
+            "description": "Last update timestamp (ISO 8601). `null` when never updated."
+          },
+          "object": {
+            "type": "string",
+            "const": "earning_rule",
+            "description": "Object type marker. Always `earning_rule`."
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "status",
+          "earnings",
+          "trigger",
+          "validity_hours",
+          "start_date",
+          "end_date",
+          "trigger_limits",
+          "earning_limits",
+          "metadata",
+          "created_at",
+          "updated_at",
+          "object"
+        ]
       },
       "LoyaltiesEarningRulesActivitiesListRequestQuery": {
         "type": "object",
@@ -34391,6 +34314,414 @@
           "object"
         ]
       },
+      "EarningRuleCreateRequest": {
+        "type": "object",
+        "description": "Request body for creating an earning rule.",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "description": "Earning rule name."
+          },
+          "trigger": {
+            "$ref": "#/components/schemas/EarningRuleTrigger"
+          },
+          "earnings": {
+            "type": "array",
+            "minItems": 1,
+            "description": "Earning definitions (rules and effects) evaluated when the trigger fires.",
+            "items": {
+              "$ref": "#/components/schemas/EarningRuleEarningCreate"
+            }
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "DRAFT",
+              "ACTIVE"
+            ],
+            "description": "Initial status. Only `DRAFT` and `ACTIVE` are allowed at creation. Defaults to `DRAFT`."
+          },
+          "error": {
+            "description": "Default error returned when rule validation fails. Can be `null`.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LoyaltyV2ActivityEarningRuleError"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "validity_hours": {
+            "description": "Hours during which the rule is active. Defaults to `{ \"type\": \"ANY_TIME\" }` when omitted. Can be `null`.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/EarningRuleValidityHours"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "start_date": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time",
+            "description": "Date-time from which the rule is active. Can be `null`."
+          },
+          "end_date": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time",
+            "description": "Date-time until which the rule is active. Can be `null`."
+          },
+          "metadata": {
+            "description": "Arbitrary key-value metadata. Can be `null`.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LoyaltyV2ActivityMetadata"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "trigger_limits": {
+            "description": "Cooldown and frequency limits for the trigger. Defaults to `{ \"cooldown\": { \"type\": \"NO_COOLDOWN\" }, \"frequency\": { \"type\": \"NO_LIMIT\" } }` when omitted. Can be `null`.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/EarningRuleTriggerLimits"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "name",
+          "trigger",
+          "earnings"
+        ],
+        "additionalProperties": false
+      },
+      "LoyaltiesEarningRulesListRequestQueryName": {
+        "type": "object",
+        "description": "String field filter conditions. `$is`, `$is_not`, `$contains`, `$not_contain`, `$starts_with` and `$ends_with` take a single value (string or one-element array); `$in` and `$not_in` take up to 10 values; `$has_value` and `$is_unknown` are presence checks (value is ignored).",
+        "required": [
+          "conditions"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "conditions": {
+            "type": "object",
+            "minProperties": 1,
+            "additionalProperties": false,
+            "properties": {
+              "$is": {
+                "description": "Exactly matches the value.",
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "array",
+                    "minItems": 1,
+                    "maxItems": 1,
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                ]
+              },
+              "$is_not": {
+                "description": "Does not match the value.",
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "array",
+                    "minItems": 1,
+                    "maxItems": 1,
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                ]
+              },
+              "$contains": {
+                "description": "Contains the substring.",
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "array",
+                    "minItems": 1,
+                    "maxItems": 1,
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                ]
+              },
+              "$not_contain": {
+                "description": "Does not contain the substring.",
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "array",
+                    "minItems": 1,
+                    "maxItems": 1,
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                ]
+              },
+              "$starts_with": {
+                "description": "Starts with the prefix.",
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "array",
+                    "minItems": 1,
+                    "maxItems": 1,
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                ]
+              },
+              "$ends_with": {
+                "description": "Ends with the suffix.",
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "array",
+                    "minItems": 1,
+                    "maxItems": 1,
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                ]
+              },
+              "$in": {
+                "description": "Matches any of the values (up to 10).",
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "array",
+                    "minItems": 1,
+                    "maxItems": 10,
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                ]
+              },
+              "$not_in": {
+                "description": "Matches none of the values (up to 10).",
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "array",
+                    "minItems": 1,
+                    "maxItems": 10,
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                ]
+              },
+              "$has_value": {
+                "description": "Field has a value (presence check).",
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "array",
+                    "maxItems": 1
+                  }
+                ]
+              },
+              "$is_unknown": {
+                "description": "Field has no value (absence check).",
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "array",
+                    "maxItems": 1
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
+      "EarningRuleDateFilterConditions": {
+        "type": "object",
+        "description": "Date field filter conditions. `$before` and `$after` take a date string; `$is`, `$more_than` and `$less_than` take a non-negative integer number of days (relative comparison); `$has_value` and `$is_unknown` are presence checks.",
+        "required": [
+          "conditions"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "conditions": {
+            "type": "object",
+            "minProperties": 1,
+            "additionalProperties": false,
+            "properties": {
+              "$before": {
+                "description": "Before the given date (single date string).",
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "array",
+                    "minItems": 1,
+                    "maxItems": 1,
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                ]
+              },
+              "$after": {
+                "description": "After the given date (single date string).",
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "array",
+                    "minItems": 1,
+                    "maxItems": 1,
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                ]
+              },
+              "$is": {
+                "description": "Exactly N days ago (non-negative integer).",
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "array",
+                    "minItems": 1,
+                    "maxItems": 1,
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                ]
+              },
+              "$more_than": {
+                "description": "More than N days ago (non-negative integer).",
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "array",
+                    "minItems": 1,
+                    "maxItems": 1,
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                ]
+              },
+              "$less_than": {
+                "description": "Less than N days ago (non-negative integer).",
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "array",
+                    "minItems": 1,
+                    "maxItems": 1,
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                ]
+              },
+              "$has_value": {
+                "description": "Field has a value (presence check).",
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "array",
+                    "maxItems": 1
+                  }
+                ]
+              },
+              "$is_unknown": {
+                "description": "Field has no value (absence check).",
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "array",
+                    "maxItems": 1
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
+      "EarningRuleListResponse": {
+        "type": "object",
+        "description": "Cursor-paginated list of earning rules.",
+        "properties": {
+          "data": {
+            "type": "array",
+            "description": "Earning rules on the current page.",
+            "items": {
+              "$ref": "#/components/schemas/EarningRuleResponse"
+            }
+          },
+          "cursor": {
+            "$ref": "#/components/schemas/EarningRuleListCursor"
+          },
+          "object": {
+            "type": "string",
+            "const": "list",
+            "description": "Object type marker. Always `list`."
+          }
+        }
+      },
       "EarningRuleTrigger": {
         "type": "object",
         "description": "Event that triggers the earning rule. Depending on `event`, either `custom_event` or `segment` is required and the other trigger contexts must be null/absent.",
@@ -34499,10 +34830,15 @@
           }
         ]
       },
-      "EarningRuleEarningCreate": {
+      "EarningRuleEarningUpdate": {
         "type": "object",
-        "description": "A single earning definition combining optional validation rules with effects.",
+        "description": "A single earning definition for updates. Same as the create variant plus an optional `id` referencing an existing earning item.",
         "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^lernei_[a-f0-9]+$",
+            "description": "Existing earning item ID (`lernei_...`). Omit to create a new item."
+          },
           "rules": {
             "description": "Validation rules group evaluated before applying effects. Can be `null`.",
             "oneOf": [
@@ -34883,370 +35219,6 @@
         },
         "required": [
           "global"
-        ],
-        "additionalProperties": false
-      },
-      "LoyaltiesEarningRulesListRequestQueryName": {
-        "type": "object",
-        "description": "String field filter conditions. `$is`, `$is_not`, `$contains`, `$not_contain`, `$starts_with` and `$ends_with` take a single value (string or one-element array); `$in` and `$not_in` take up to 10 values; `$has_value` and `$is_unknown` are presence checks (value is ignored).",
-        "required": [
-          "conditions"
-        ],
-        "additionalProperties": false,
-        "properties": {
-          "conditions": {
-            "type": "object",
-            "minProperties": 1,
-            "additionalProperties": false,
-            "properties": {
-              "$is": {
-                "description": "Exactly matches the value.",
-                "oneOf": [
-                  {
-                    "type": "string"
-                  },
-                  {
-                    "type": "array",
-                    "minItems": 1,
-                    "maxItems": 1,
-                    "items": {
-                      "type": "string"
-                    }
-                  }
-                ]
-              },
-              "$is_not": {
-                "description": "Does not match the value.",
-                "oneOf": [
-                  {
-                    "type": "string"
-                  },
-                  {
-                    "type": "array",
-                    "minItems": 1,
-                    "maxItems": 1,
-                    "items": {
-                      "type": "string"
-                    }
-                  }
-                ]
-              },
-              "$contains": {
-                "description": "Contains the substring.",
-                "oneOf": [
-                  {
-                    "type": "string"
-                  },
-                  {
-                    "type": "array",
-                    "minItems": 1,
-                    "maxItems": 1,
-                    "items": {
-                      "type": "string"
-                    }
-                  }
-                ]
-              },
-              "$not_contain": {
-                "description": "Does not contain the substring.",
-                "oneOf": [
-                  {
-                    "type": "string"
-                  },
-                  {
-                    "type": "array",
-                    "minItems": 1,
-                    "maxItems": 1,
-                    "items": {
-                      "type": "string"
-                    }
-                  }
-                ]
-              },
-              "$starts_with": {
-                "description": "Starts with the prefix.",
-                "oneOf": [
-                  {
-                    "type": "string"
-                  },
-                  {
-                    "type": "array",
-                    "minItems": 1,
-                    "maxItems": 1,
-                    "items": {
-                      "type": "string"
-                    }
-                  }
-                ]
-              },
-              "$ends_with": {
-                "description": "Ends with the suffix.",
-                "oneOf": [
-                  {
-                    "type": "string"
-                  },
-                  {
-                    "type": "array",
-                    "minItems": 1,
-                    "maxItems": 1,
-                    "items": {
-                      "type": "string"
-                    }
-                  }
-                ]
-              },
-              "$in": {
-                "description": "Matches any of the values (up to 10).",
-                "oneOf": [
-                  {
-                    "type": "string"
-                  },
-                  {
-                    "type": "array",
-                    "minItems": 1,
-                    "maxItems": 10,
-                    "items": {
-                      "type": "string"
-                    }
-                  }
-                ]
-              },
-              "$not_in": {
-                "description": "Matches none of the values (up to 10).",
-                "oneOf": [
-                  {
-                    "type": "string"
-                  },
-                  {
-                    "type": "array",
-                    "minItems": 1,
-                    "maxItems": 10,
-                    "items": {
-                      "type": "string"
-                    }
-                  }
-                ]
-              },
-              "$has_value": {
-                "description": "Field has a value (presence check).",
-                "oneOf": [
-                  {
-                    "type": "string"
-                  },
-                  {
-                    "type": "array",
-                    "maxItems": 1
-                  }
-                ]
-              },
-              "$is_unknown": {
-                "description": "Field has no value (absence check).",
-                "oneOf": [
-                  {
-                    "type": "string"
-                  },
-                  {
-                    "type": "array",
-                    "maxItems": 1
-                  }
-                ]
-              }
-            }
-          }
-        }
-      },
-      "EarningRuleDateFilterConditions": {
-        "type": "object",
-        "description": "Date field filter conditions. `$before` and `$after` take a date string; `$is`, `$more_than` and `$less_than` take a non-negative integer number of days (relative comparison); `$has_value` and `$is_unknown` are presence checks.",
-        "required": [
-          "conditions"
-        ],
-        "additionalProperties": false,
-        "properties": {
-          "conditions": {
-            "type": "object",
-            "minProperties": 1,
-            "additionalProperties": false,
-            "properties": {
-              "$before": {
-                "description": "Before the given date (single date string).",
-                "oneOf": [
-                  {
-                    "type": "string"
-                  },
-                  {
-                    "type": "array",
-                    "minItems": 1,
-                    "maxItems": 1,
-                    "items": {
-                      "type": "string"
-                    }
-                  }
-                ]
-              },
-              "$after": {
-                "description": "After the given date (single date string).",
-                "oneOf": [
-                  {
-                    "type": "string"
-                  },
-                  {
-                    "type": "array",
-                    "minItems": 1,
-                    "maxItems": 1,
-                    "items": {
-                      "type": "string"
-                    }
-                  }
-                ]
-              },
-              "$is": {
-                "description": "Exactly N days ago (non-negative integer).",
-                "oneOf": [
-                  {
-                    "type": "string"
-                  },
-                  {
-                    "type": "array",
-                    "minItems": 1,
-                    "maxItems": 1,
-                    "items": {
-                      "type": "string"
-                    }
-                  }
-                ]
-              },
-              "$more_than": {
-                "description": "More than N days ago (non-negative integer).",
-                "oneOf": [
-                  {
-                    "type": "string"
-                  },
-                  {
-                    "type": "array",
-                    "minItems": 1,
-                    "maxItems": 1,
-                    "items": {
-                      "type": "string"
-                    }
-                  }
-                ]
-              },
-              "$less_than": {
-                "description": "Less than N days ago (non-negative integer).",
-                "oneOf": [
-                  {
-                    "type": "string"
-                  },
-                  {
-                    "type": "array",
-                    "minItems": 1,
-                    "maxItems": 1,
-                    "items": {
-                      "type": "string"
-                    }
-                  }
-                ]
-              },
-              "$has_value": {
-                "description": "Field has a value (presence check).",
-                "oneOf": [
-                  {
-                    "type": "string"
-                  },
-                  {
-                    "type": "array",
-                    "maxItems": 1
-                  }
-                ]
-              },
-              "$is_unknown": {
-                "description": "Field has no value (absence check).",
-                "oneOf": [
-                  {
-                    "type": "string"
-                  },
-                  {
-                    "type": "array",
-                    "maxItems": 1
-                  }
-                ]
-              }
-            }
-          }
-        }
-      },
-      "EarningRuleListResponse": {
-        "type": "object",
-        "description": "Cursor-paginated list of earning rules.",
-        "properties": {
-          "data": {
-            "type": "array",
-            "description": "Earning rules on the current page.",
-            "items": {
-              "$ref": "#/components/schemas/EarningRuleResponse"
-            }
-          },
-          "cursor": {
-            "$ref": "#/components/schemas/EarningRuleListCursor"
-          },
-          "object": {
-            "type": "string",
-            "const": "list",
-            "description": "Object type marker. Always `list`."
-          }
-        }
-      },
-      "EarningRuleEarningUpdate": {
-        "type": "object",
-        "description": "A single earning definition for updates. Same as the create variant plus an optional `id` referencing an existing earning item.",
-        "properties": {
-          "id": {
-            "type": "string",
-            "pattern": "^lernei_[a-f0-9]+$",
-            "description": "Existing earning item ID (`lernei_...`). Omit to create a new item."
-          },
-          "rules": {
-            "description": "Validation rules group evaluated before applying effects. Can be `null`.",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/EarningRuleRulesGroup"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "effects": {
-            "type": "array",
-            "minItems": 1,
-            "description": "Effects applied when the rules match.",
-            "items": {
-              "$ref": "#/components/schemas/EarningRuleEffect"
-            }
-          },
-          "name": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "maxLength": 200,
-            "description": "Optional earning item name. Can be `null`."
-          },
-          "tier_rules": {
-            "description": "Tier requirements restricting which members can earn. Can be `null`.",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/EarningRuleTierRules"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          }
-        },
-        "required": [
-          "effects"
         ],
         "additionalProperties": false
       },
@@ -42490,6 +42462,72 @@
           "next"
         ]
       },
+      "EarningRuleEarningCreate": {
+        "type": "object",
+        "description": "A single earning definition combining optional validation rules with effects.",
+        "properties": {
+          "rules": {
+            "description": "Validation rules group evaluated before applying effects. Can be `null`.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/EarningRuleRulesGroup"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "effects": {
+            "type": "array",
+            "minItems": 1,
+            "description": "Effects applied when the rules match.",
+            "items": {
+              "$ref": "#/components/schemas/EarningRuleEffect"
+            }
+          },
+          "name": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 200,
+            "description": "Optional earning item name. Can be `null`."
+          },
+          "tier_rules": {
+            "description": "Tier requirements restricting which members can earn. Can be `null`.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/EarningRuleTierRules"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "effects"
+        ],
+        "additionalProperties": false
+      },
+      "EarningRuleListCursor": {
+        "type": [
+          "object",
+          "null"
+        ],
+        "description": "Pagination cursor. `null` when there are no more results.",
+        "properties": {
+          "next": {
+            "type": "string",
+            "description": "Cursor ID to pass as the `cursor` query parameter to fetch the next page."
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Cursor expiration timestamp."
+          }
+        }
+      },
       "LoyaltyV2ActivityEarningRuleTriggerCustomEvent": {
         "type": "object",
         "description": "Custom event trigger configuration.",
@@ -42880,24 +42918,6 @@
             }
           }
         ]
-      },
-      "EarningRuleListCursor": {
-        "type": [
-          "object",
-          "null"
-        ],
-        "description": "Pagination cursor. `null` when there are no more results.",
-        "properties": {
-          "next": {
-            "type": "string",
-            "description": "Cursor ID to pass as the `cursor` query parameter to fetch the next page."
-          },
-          "expires_at": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Cursor expiration timestamp."
-          }
-        }
       },
       "EarningRuleActivitySource": {
         "type": "object",
