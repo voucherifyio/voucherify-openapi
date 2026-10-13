@@ -84907,6 +84907,16 @@
           }
         }
       },
+      "V2LoyaltiesTierStructuresActivitiesListResponseBody": {
+        "title": "V2 Loyalties Tier Structures Activities List Response Body",
+        "type": "object",
+        "description": "Response body schema for **GET** `/v2/loyalties/tier-structures/{tierStructureId}/activities`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/TierStructureActivityListResponse"
+          }
+        ]
+      },
       "TierStructureActivityListResponse": {
         "type": "object",
         "description": "Cursor-paginated list of tier structure activities.",
@@ -163726,6 +163736,18 @@
       }
     },
     "/v2/loyalties/tier-structures/{tierStructureId}/activities": {
+      "parameters": [
+        {
+          "name": "tierStructureId",
+          "in": "path",
+          "required": true,
+          "description": "Unique tier structure identifier.",
+          "schema": {
+            "type": "string",
+            "pattern": "^lts_[a-f0-9]+$"
+          }
+        }
+      ],
       "get": {
         "operationId": "listTierStructureActivities",
         "tags": [
@@ -163735,22 +163757,16 @@
         "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nReturns a cursor-paginated list of activities recorded for the tier structure\n(creation, updates, state transitions, assignments, and nested tier changes).\nThe same field cannot be requested in both ascending and descending order at once.\nDefault order is `-created_at`.",
         "parameters": [
           {
-            "name": "tierStructureId",
-            "in": "path",
-            "required": true,
-            "description": "Unique tier structure identifier.",
-            "schema": {
-              "type": "string",
-              "pattern": "^lts_[a-f0-9]+$"
-            }
-          },
-          {
             "name": "limit",
             "in": "query",
             "required": false,
             "description": "Maximum number of items returned per page. An integer between 1 and 100.\nDefaults to 10.",
             "schema": {
-              "type": "integer",
+              "type": [
+                "number",
+                "string",
+                "null"
+              ],
               "minimum": 1,
               "maximum": 100,
               "default": 10
@@ -163779,6 +163795,9 @@
                       "-created_at"
                     ]
                   }
+                },
+                {
+                  "type": "null"
                 }
               ]
             }
@@ -163789,7 +163808,10 @@
             "required": false,
             "description": "Pagination cursor returned in the `cursor.next` field of a previous response.\nMust match the tier structure activities cursor id format.",
             "schema": {
-              "type": "string",
+              "type": [
+                "string",
+                "null"
+              ],
               "pattern": "^lcrsats_[a-f0-9]+$"
             }
           },
@@ -163801,7 +163823,14 @@
             "explode": true,
             "description": "Field-specific filter conditions, passed as a deep object\n(e.g. `filters[type][conditions][$is]=vl.tier_structure.created`).",
             "schema": {
-              "$ref": "#/components/schemas/LoyaltiesTierStructuresActivitiesListRequestQuery"
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/LoyaltiesTierStructuresActivitiesListRequestQuery"
+                },
+                {
+                  "type": "null"
+                }
+              ]
             }
           }
         ],
@@ -163811,7 +163840,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/TierStructureActivityListResponse"
+                  "$ref": "#/components/schemas/V2LoyaltiesTierStructuresActivitiesListResponseBody"
                 }
               }
             }
@@ -163828,16 +163857,6 @@
           },
           "404": {
             "description": "Resource not found.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
             "content": {
               "application/json": {
                 "schema": {

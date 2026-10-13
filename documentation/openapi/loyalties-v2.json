@@ -16753,6 +16753,18 @@
       }
     },
     "/v2/loyalties/tier-structures/{tierStructureId}/activities": {
+      "parameters": [
+        {
+          "name": "tierStructureId",
+          "in": "path",
+          "required": true,
+          "description": "Unique tier structure identifier.",
+          "schema": {
+            "type": "string",
+            "pattern": "^lts_[a-f0-9]+$"
+          }
+        }
+      ],
       "get": {
         "operationId": "listTierStructureActivities",
         "tags": [
@@ -16762,22 +16774,16 @@
         "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nReturns a cursor-paginated list of activities recorded for the tier structure\n(creation, updates, state transitions, assignments, and nested tier changes).\nThe same field cannot be requested in both ascending and descending order at once.\nDefault order is `-created_at`.",
         "parameters": [
           {
-            "name": "tierStructureId",
-            "in": "path",
-            "required": true,
-            "description": "Unique tier structure identifier.",
-            "schema": {
-              "type": "string",
-              "pattern": "^lts_[a-f0-9]+$"
-            }
-          },
-          {
             "name": "limit",
             "in": "query",
             "required": false,
             "description": "Maximum number of items returned per page. An integer between 1 and 100.\nDefaults to 10.",
             "schema": {
-              "type": "integer",
+              "type": [
+                "number",
+                "string",
+                "null"
+              ],
               "minimum": 1,
               "maximum": 100,
               "default": 10
@@ -16806,6 +16812,9 @@
                       "-created_at"
                     ]
                   }
+                },
+                {
+                  "type": "null"
                 }
               ]
             }
@@ -16816,7 +16825,10 @@
             "required": false,
             "description": "Pagination cursor returned in the `cursor.next` field of a previous response.\nMust match the tier structure activities cursor id format.",
             "schema": {
-              "type": "string",
+              "type": [
+                "string",
+                "null"
+              ],
               "pattern": "^lcrsats_[a-f0-9]+$"
             }
           },
@@ -16828,7 +16840,14 @@
             "explode": true,
             "description": "Field-specific filter conditions, passed as a deep object\n(e.g. `filters[type][conditions][$is]=vl.tier_structure.created`).",
             "schema": {
-              "$ref": "#/components/schemas/LoyaltiesTierStructuresActivitiesListRequestQuery"
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/LoyaltiesTierStructuresActivitiesListRequestQuery"
+                },
+                {
+                  "type": "null"
+                }
+              ]
             }
           }
         ],
@@ -16838,7 +16857,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/TierStructureActivityListResponse"
+                  "$ref": "#/components/schemas/V2LoyaltiesTierStructuresActivitiesListResponseBody"
                 }
               }
             }
@@ -16855,16 +16874,6 @@
           },
           "404": {
             "description": "Resource not found.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
             "content": {
               "application/json": {
                 "schema": {
@@ -24034,50 +24043,14 @@
         "additionalProperties": false,
         "title": "Loyalties Tier Structures Activities List Request Query"
       },
-      "TierStructureActivityListResponse": {
+      "V2LoyaltiesTierStructuresActivitiesListResponseBody": {
+        "title": "V2 Loyalties Tier Structures Activities List Response Body",
         "type": "object",
-        "description": "Cursor-paginated list of tier structure activities.",
-        "properties": {
-          "data": {
-            "type": "array",
-            "description": "Activities on the current page.",
-            "items": {
-              "$ref": "#/components/schemas/TierStructureActivity"
-            }
-          },
-          "cursor": {
-            "description": "Pagination cursor for fetching the next page, or `null` when there are no more\nresults.",
-            "oneOf": [
-              {
-                "type": "object",
-                "properties": {
-                  "next": {
-                    "type": "string",
-                    "pattern": "^lcrsats_[a-f0-9]+$",
-                    "description": "Cursor id to pass as the `cursor` query parameter for the next page."
-                  },
-                  "expires_at": {
-                    "type": "string",
-                    "format": "date-time",
-                    "description": "Timestamp after which the cursor expires (ISO 8601)."
-                  }
-                }
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "object": {
-            "type": "string",
-            "const": "list",
-            "description": "Object type discriminator. Always `list`."
+        "description": "Response body schema for **GET** `/v2/loyalties/tier-structures/{tierStructureId}/activities`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/TierStructureActivityListResponse"
           }
-        },
-        "required": [
-          "data",
-          "cursor",
-          "object"
         ]
       },
       "LoyaltiesBenefitsListRequestQuery": {
@@ -35929,61 +35902,50 @@
         ],
         "additionalProperties": false
       },
-      "TierStructureActivity": {
+      "TierStructureActivityListResponse": {
         "type": "object",
-        "description": "A tier structure activity record.",
+        "description": "Cursor-paginated list of tier structure activities.",
         "properties": {
-          "id": {
-            "type": "string",
-            "pattern": "^lats_[a-f0-9]+$",
-            "description": "Unique activity identifier."
-          },
-          "type": {
-            "type": "string",
-            "enum": [
-              "vl.tier_structure.created",
-              "vl.tier_structure.updated",
-              "vl.tier_structure.deleted",
-              "vl.tier_structure.activated",
-              "vl.tier_structure.deactivated",
-              "vl.tier_structure.drafted",
-              "vl.tier_structure.assigned",
-              "vl.tier_structure.unassigned",
-              "vl.tier_structure.tier.created",
-              "vl.tier_structure.tier.updated",
-              "vl.tier_structure.tier.deleted"
-            ],
-            "description": "Activity type."
-          },
           "data": {
-            "$ref": "#/components/schemas/TierStructureActivityData",
-            "description": "Activity payload snapshot."
+            "type": "array",
+            "description": "Activities on the current page.",
+            "items": {
+              "$ref": "#/components/schemas/TierStructureActivity"
+            }
           },
-          "created_at": {
+          "cursor": {
+            "description": "Pagination cursor for fetching the next page, or `null` when there are no more\nresults.",
+            "oneOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "next": {
+                    "type": "string",
+                    "pattern": "^lcrsats_[a-f0-9]+$",
+                    "description": "Cursor id to pass as the `cursor` query parameter for the next page."
+                  },
+                  "expires_at": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "Timestamp after which the cursor expires (ISO 8601)."
+                  }
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "object": {
             "type": "string",
-            "format": "date-time",
-            "description": "Timestamp of when the activity occurred (ISO 8601)."
-          },
-          "group_id": {
-            "type": "string",
-            "description": "Unique identifier grouping related activities that were produced by the same operation.\nOmitted when not set."
-          },
-          "source": {
-            "$ref": "#/components/schemas/TierStructureActivitySource",
-            "description": "Origin of the activity (channel, user, API key). Omitted when not set."
-          },
-          "tier_structure_id": {
-            "type": "string",
-            "pattern": "^lts_[a-f0-9]+$",
-            "description": "Unique identifier of the tier structure the activity relates to."
+            "const": "list",
+            "description": "Object type discriminator. Always `list`."
           }
         },
         "required": [
-          "id",
-          "type",
           "data",
-          "created_at",
-          "tier_structure_id"
+          "cursor",
+          "object"
         ]
       },
       "LoyaltiesBenefitsListRequestQueryId": {
@@ -42708,74 +42670,62 @@
           }
         }
       },
-      "TierStructureActivityData": {
+      "TierStructureActivity": {
         "type": "object",
-        "description": "Activity payload. Always contains a `tier_structure` snapshot. For\n`vl.tier_structure.tier.*` activities it additionally contains a `tier` snapshot;\nfor `vl.tier_structure.assigned`/`vl.tier_structure.unassigned` activities it\nadditionally contains `program` and `program_tier_structure` snapshots.",
+        "description": "A tier structure activity record.",
         "properties": {
-          "tier_structure": {
-            "$ref": "#/components/schemas/TierStructure",
-            "description": "Snapshot of the tier structure at the time of the activity."
+          "id": {
+            "type": "string",
+            "pattern": "^lats_[a-f0-9]+$",
+            "description": "Unique activity identifier."
           },
-          "tier": {
-            "$ref": "#/components/schemas/Tier",
-            "description": "Snapshot of the tier. Present only for `vl.tier_structure.tier.created`,\n`vl.tier_structure.tier.updated` and `vl.tier_structure.tier.deleted` activities."
+          "type": {
+            "type": "string",
+            "enum": [
+              "vl.tier_structure.created",
+              "vl.tier_structure.updated",
+              "vl.tier_structure.deleted",
+              "vl.tier_structure.activated",
+              "vl.tier_structure.deactivated",
+              "vl.tier_structure.drafted",
+              "vl.tier_structure.assigned",
+              "vl.tier_structure.unassigned",
+              "vl.tier_structure.tier.created",
+              "vl.tier_structure.tier.updated",
+              "vl.tier_structure.tier.deleted"
+            ],
+            "description": "Activity type."
           },
-          "program": {
-            "type": "object",
-            "description": "Snapshot of the loyalty program (documented in the Programs domain).\nPresent only for `vl.tier_structure.assigned` and\n`vl.tier_structure.unassigned` activities."
+          "data": {
+            "$ref": "#/components/schemas/TierStructureActivityData",
+            "description": "Activity payload snapshot."
           },
-          "program_tier_structure": {
-            "type": "object",
-            "description": "Snapshot of the program-to-tier-structure assignment (documented in the\nPrograms domain). Present only for `vl.tier_structure.assigned` and\n`vl.tier_structure.unassigned` activities."
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp of when the activity occurred (ISO 8601)."
+          },
+          "group_id": {
+            "type": "string",
+            "description": "Unique identifier grouping related activities that were produced by the same operation.\nOmitted when not set."
+          },
+          "source": {
+            "$ref": "#/components/schemas/TierStructureActivitySource",
+            "description": "Origin of the activity (channel, user, API key). Omitted when not set."
+          },
+          "tier_structure_id": {
+            "type": "string",
+            "pattern": "^lts_[a-f0-9]+$",
+            "description": "Unique identifier of the tier structure the activity relates to."
           }
         },
         "required": [
-          "tier_structure"
+          "id",
+          "type",
+          "data",
+          "created_at",
+          "tier_structure_id"
         ]
-      },
-      "TierStructureActivitySource": {
-        "type": "object",
-        "description": "Origin of an activity.",
-        "properties": {
-          "channel": {
-            "type": "string",
-            "enum": [
-              "USER_PORTAL",
-              "API",
-              "CLIENT_API",
-              "INTERNAL"
-            ],
-            "description": "Channel through which the activity was triggered."
-          },
-          "user": {
-            "type": "object",
-            "description": "User who triggered the activity. Omitted when not applicable.",
-            "properties": {
-              "id": {
-                "type": "string",
-                "description": "Unique identifier of the user."
-              }
-            }
-          },
-          "api_key": {
-            "type": "object",
-            "description": "API key used to trigger the activity. Omitted when not applicable.",
-            "properties": {
-              "name": {
-                "type": "string",
-                "description": "Name of the API key."
-              },
-              "app_id": {
-                "type": "string",
-                "description": "Application id of the API key."
-              },
-              "client_app_id": {
-                "type": "string",
-                "description": "Client application id of the API key."
-              }
-            }
-          }
-        }
       },
       "BenefitPointsProportionalOrder": {
         "type": "object",
@@ -46006,6 +45956,75 @@
           "id": {
             "type": "string",
             "description": "Unique identifier of the customer segment."
+          }
+        }
+      },
+      "TierStructureActivityData": {
+        "type": "object",
+        "description": "Activity payload. Always contains a `tier_structure` snapshot. For\n`vl.tier_structure.tier.*` activities it additionally contains a `tier` snapshot;\nfor `vl.tier_structure.assigned`/`vl.tier_structure.unassigned` activities it\nadditionally contains `program` and `program_tier_structure` snapshots.",
+        "properties": {
+          "tier_structure": {
+            "$ref": "#/components/schemas/TierStructure",
+            "description": "Snapshot of the tier structure at the time of the activity."
+          },
+          "tier": {
+            "$ref": "#/components/schemas/Tier",
+            "description": "Snapshot of the tier. Present only for `vl.tier_structure.tier.created`,\n`vl.tier_structure.tier.updated` and `vl.tier_structure.tier.deleted` activities."
+          },
+          "program": {
+            "type": "object",
+            "description": "Snapshot of the loyalty program (documented in the Programs domain).\nPresent only for `vl.tier_structure.assigned` and\n`vl.tier_structure.unassigned` activities."
+          },
+          "program_tier_structure": {
+            "type": "object",
+            "description": "Snapshot of the program-to-tier-structure assignment (documented in the\nPrograms domain). Present only for `vl.tier_structure.assigned` and\n`vl.tier_structure.unassigned` activities."
+          }
+        },
+        "required": [
+          "tier_structure"
+        ]
+      },
+      "TierStructureActivitySource": {
+        "type": "object",
+        "description": "Origin of an activity.",
+        "properties": {
+          "channel": {
+            "type": "string",
+            "enum": [
+              "USER_PORTAL",
+              "API",
+              "CLIENT_API",
+              "INTERNAL"
+            ],
+            "description": "Channel through which the activity was triggered."
+          },
+          "user": {
+            "type": "object",
+            "description": "User who triggered the activity. Omitted when not applicable.",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Unique identifier of the user."
+              }
+            }
+          },
+          "api_key": {
+            "type": "object",
+            "description": "API key used to trigger the activity. Omitted when not applicable.",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Name of the API key."
+              },
+              "app_id": {
+                "type": "string",
+                "description": "Application id of the API key."
+              },
+              "client_app_id": {
+                "type": "string",
+                "description": "Client application id of the API key."
+              }
+            }
           }
         }
       },
