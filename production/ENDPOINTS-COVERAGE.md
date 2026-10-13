@@ -431,8 +431,8 @@
 | /v2/loyalties/programs/{programId}/reports/tiers/summary                                                | get    | List program tiers summary reports           |              |               |
 | /v2/loyalties/programs/{programId}/reports/points-earnings/daily                                        | get    | List program points-earnings daily reports   |              |               |
 | /v2/loyalties/programs/{programId}/reports/points-earnings/summary                                      | get    | List program points-earnings summary reports |              |               |
-| /v2/loyalties/programs/{programId}/reports/earning-rules/daily                                          | get    | Get program earning-rules daily report       |              |               |
-| /v2/loyalties/programs/{programId}/reports/earning-rules/summary                                        | get    | Get program earning-rules summary report     |              |               |
+| /v2/loyalties/programs/{programId}/reports/earning-rules/daily                                          | get    | List program earning-rules daily reports     |              |               |
+| /v2/loyalties/programs/{programId}/reports/earning-rules/summary                                        | get    | List program earning-rules summary reports   |              |               |
 ## LV2-Card Definitions
 | endpoint                                                     | method | summary                         | is supported | is deprecated |
 | ------------------------------------------------------------ | ------ | ------------------------------- | ------------ | ------------- |
