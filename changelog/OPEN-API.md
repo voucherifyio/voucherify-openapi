@@ -4,6 +4,17 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-10-14
+
+Shared copied Loyalty v2 schemas. Repeated fields now live on one schema, and each operation keeps its own description. Documented request and response fields stay in place.
+
+- Pointed duplicate objects at a shared body with `allOf`. `Card` and `CardSimple` use `CardBase`. Pending and expiring point buckets use `CardBucketBase`. `Membership` and `MembershipWithoutTierProgress` use `MembershipBase`. Reward-purchase and order-payment transactions use `MemberCardTransactionBase`. `BenefitTransaction` uses `MemberTransactionBase`. Earning-rule create and update requests use `EarningRuleRequestBase`. `Tier` and `TierStructure` use `TierMetadataBase`.
+- Pointed spending, rewards-spendings, and points-earnings report `card_definition_id` filters at `ReportCardDefinitionIdFilterConditions`. Removed `SpendingReportFilterCardDefinitionIdConditions` and `PointsEarningsReportFilterCardDefinitionIdConditions`. The shared description says "card definition IDs".
+- Pointed earning-rules and points-earnings report `earning_rule_id` filters at `EarningRuleIdFilterConditions`. Removed `EarningRulesReportFilterEarningRuleIdConditions` and `PointsEarningsReportFilterEarningRuleIdConditions`.
+- Pointed pending-points, expiring-points, and card-transactions list queries at `CardDefinitionIdFilterConditions`. Pending-points and expiring-points queries use it through `CardPointsListQuery`.
+- Pointed pending fixed-date and calendar expiration date inputs at `CardDefinitionCalendarDateInput`.
+- Fixed `LoyaltiesProgramsMembersTiersTransactionsListRequestQueryCardDefinitionId` so the description says "card definition IDs".
+
 ## 2026-10-13
 
 - Documented GET `/v2/loyalties/programs/{programId}/reports/members/daily`. Summary: "List program members daily reports".
