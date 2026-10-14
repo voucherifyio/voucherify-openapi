@@ -13644,7 +13644,11 @@
             "required": false,
             "description": "Maximum number of card definitions to return. Minimum: 1, maximum: 100. Defaults to 10 when omitted.",
             "schema": {
-              "type": "integer",
+              "type": [
+                "number",
+                "string",
+                "null"
+              ],
               "minimum": 1,
               "maximum": 100,
               "default": 10
@@ -13685,6 +13689,9 @@
                       "created_at"
                     ]
                   }
+                },
+                {
+                  "type": "null"
                 }
               ]
             }
@@ -13695,7 +13702,10 @@
             "required": false,
             "description": "Pagination cursor returned by a previous call in `cursor.next`. Pattern: `^lcrscdef_[a-f0-9]+$`.",
             "schema": {
-              "type": "string",
+              "type": [
+                "string",
+                "null"
+              ],
               "pattern": "^lcrscdef_[a-f0-9]+$"
             }
           },
@@ -13707,7 +13717,14 @@
             "explode": true,
             "description": "Filter conditions per field, e.g. `filters[status][conditions][$is]=ACTIVE`.",
             "schema": {
-              "$ref": "#/components/schemas/LoyaltiesCardDefinitionsListRequestQuery"
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/LoyaltiesCardDefinitionsListRequestQuery"
+                },
+                {
+                  "type": "null"
+                }
+              ]
             }
           }
         ],
@@ -13717,7 +13734,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CardDefinitionListResponse"
+                  "$ref": "#/components/schemas/V2LoyaltiesCardDefinitionsListResponseBody"
                 }
               }
             }
@@ -13794,7 +13811,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CardDefinitionCreateRequest"
+                "$ref": "#/components/schemas/V2LoyaltiesCardDefinitionsCreateRequestBody"
               }
             }
           }
@@ -13805,7 +13822,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CardDefinition"
+                  "$ref": "#/components/schemas/V2LoyaltiesCardDefinitionsCreateResponseBody"
                 }
               }
             }
@@ -13872,6 +13889,18 @@
       }
     },
     "/v2/loyalties/card-definitions/{cardDefinitionId}": {
+      "parameters": [
+        {
+          "name": "cardDefinitionId",
+          "in": "path",
+          "required": true,
+          "description": "Unique card definition ID. Pattern: `^lcdef_[a-f0-9]+$`.",
+          "schema": {
+            "type": "string",
+            "pattern": "^lcdef_[a-f0-9]+$"
+          }
+        }
+      ],
       "get": {
         "operationId": "getCardDefinition",
         "tags": [
@@ -13885,7 +13914,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CardDefinition"
+                  "$ref": "#/components/schemas/V2LoyaltiesCardDefinitionsGetResponseBody"
                 }
               }
             }
@@ -13940,18 +13969,6 @@
             }
           }
         },
-        "parameters": [
-          {
-            "name": "cardDefinitionId",
-            "in": "path",
-            "required": true,
-            "description": "Unique card definition ID. Pattern: `^lcdef_[a-f0-9]+$`.",
-            "schema": {
-              "type": "string",
-              "pattern": "^lcdef_[a-f0-9]+$"
-            }
-          }
-        ],
         "security": [
           {
             "X-App-Id": [],
@@ -13974,7 +13991,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CardDefinitionUpdateRequest"
+                "$ref": "#/components/schemas/V2LoyaltiesCardDefinitionsUpdateRequestBody"
               }
             }
           }
@@ -13985,7 +14002,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CardDefinition"
+                  "$ref": "#/components/schemas/V2LoyaltiesCardDefinitionsUpdateResponseBody"
                 }
               }
             }
@@ -14040,18 +14057,6 @@
             }
           }
         },
-        "parameters": [
-          {
-            "name": "cardDefinitionId",
-            "in": "path",
-            "required": true,
-            "description": "Unique card definition ID. Pattern: `^lcdef_[a-f0-9]+$`.",
-            "schema": {
-              "type": "string",
-              "pattern": "^lcdef_[a-f0-9]+$"
-            }
-          }
-        ],
         "security": [
           {
             "X-App-Id": [],
@@ -14068,14 +14073,14 @@
           "Card Definitions"
         ],
         "summary": "Delete Card Definition",
-        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nDeletes a card definition. Returns the deleted card definition.",
+        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nDeletes a card definition by setting `status` to `DELETED`. Returns the deleted card definition. Returns `400` (`resource_in_use`) when a program, reward, earning rule, tier structure, or benefit still references the card definition.",
         "responses": {
           "200": {
             "description": "The deleted card definition.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CardDefinition"
+                  "$ref": "#/components/schemas/V2LoyaltiesCardDefinitionsDeleteResponseBody"
                 }
               }
             }
@@ -14130,18 +14135,6 @@
             }
           }
         },
-        "parameters": [
-          {
-            "name": "cardDefinitionId",
-            "in": "path",
-            "required": true,
-            "description": "Unique card definition ID. Pattern: `^lcdef_[a-f0-9]+$`.",
-            "schema": {
-              "type": "string",
-              "pattern": "^lcdef_[a-f0-9]+$"
-            }
-          }
-        ],
         "security": [
           {
             "X-App-Id": [],
@@ -14154,20 +14147,32 @@
       }
     },
     "/v2/loyalties/card-definitions/{cardDefinitionId}/activate": {
+      "parameters": [
+        {
+          "name": "cardDefinitionId",
+          "in": "path",
+          "required": true,
+          "description": "Unique card definition ID. Pattern: `^lcdef_[a-f0-9]+$`.",
+          "schema": {
+            "type": "string",
+            "pattern": "^lcdef_[a-f0-9]+$"
+          }
+        }
+      ],
       "post": {
         "operationId": "activateCardDefinition",
         "tags": [
           "Card Definitions"
         ],
         "summary": "Activate Card Definition",
-        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nTransitions the card definition from `DRAFT` to `ACTIVE`.\nNo request body. Activating from any other state results in an\ninvalid state transition error (409).",
+        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nTransitions the card definition from `DRAFT` to `ACTIVE`. No request body. Activating from any other state returns `400` (`invalid_state_transition`).",
         "responses": {
           "200": {
             "description": "The activated card definition.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CardDefinition"
+                  "$ref": "#/components/schemas/V2LoyaltiesCardDefinitionsActivateResponseBody"
                 }
               }
             }
@@ -14184,16 +14189,6 @@
           },
           "404": {
             "description": "Resource not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Conflict - invalid state transition",
             "content": {
               "application/json": {
                 "schema": {
@@ -14222,18 +14217,6 @@
             }
           }
         },
-        "parameters": [
-          {
-            "name": "cardDefinitionId",
-            "in": "path",
-            "required": true,
-            "description": "Unique card definition ID. Pattern: `^lcdef_[a-f0-9]+$`.",
-            "schema": {
-              "type": "string",
-              "pattern": "^lcdef_[a-f0-9]+$"
-            }
-          }
-        ],
         "security": [
           {
             "X-App-Id": [],
@@ -14246,20 +14229,32 @@
       }
     },
     "/v2/loyalties/card-definitions/{cardDefinitionId}/draft": {
+      "parameters": [
+        {
+          "name": "cardDefinitionId",
+          "in": "path",
+          "required": true,
+          "description": "Unique card definition ID. Pattern: `^lcdef_[a-f0-9]+$`.",
+          "schema": {
+            "type": "string",
+            "pattern": "^lcdef_[a-f0-9]+$"
+          }
+        }
+      ],
       "post": {
         "operationId": "draftCardDefinition",
         "tags": [
           "Card Definitions"
         ],
         "summary": "Draft Card Definition",
-        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nTransitions the card definition from `ACTIVE` back to `DRAFT`.\nNo request body. Drafting from any other state results in an\ninvalid state transition error (409).",
+        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nTransitions the card definition from `ACTIVE` to `DRAFT`. No request body. Drafting from any other state returns `400` (`invalid_state_transition`). Returns `423` when the card definition is still used by a non-draft program (`connected_non_draft_program`), reward (`connected_non_draft_reward`), earning rule (`connected_non_draft_earning_rule`), benefit (`connected_non_draft_benefit`), or tier structure (`connected_non_draft_tier_structure`).",
         "responses": {
           "200": {
             "description": "The drafted card definition.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CardDefinition"
+                  "$ref": "#/components/schemas/V2LoyaltiesCardDefinitionsDraftResponseBody"
                 }
               }
             }
@@ -14284,8 +14279,8 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict - invalid state transition",
+          "423": {
+            "description": "The card definition is used by a non-draft program, reward, earning rule, benefit, or tier structure.",
             "content": {
               "application/json": {
                 "schema": {
@@ -14314,18 +14309,6 @@
             }
           }
         },
-        "parameters": [
-          {
-            "name": "cardDefinitionId",
-            "in": "path",
-            "required": true,
-            "description": "Unique card definition ID. Pattern: `^lcdef_[a-f0-9]+$`.",
-            "schema": {
-              "type": "string",
-              "pattern": "^lcdef_[a-f0-9]+$"
-            }
-          }
-        ],
         "security": [
           {
             "X-App-Id": [],
@@ -14338,6 +14321,18 @@
       }
     },
     "/v2/loyalties/card-definitions/{cardDefinitionId}/activities": {
+      "parameters": [
+        {
+          "name": "cardDefinitionId",
+          "in": "path",
+          "required": true,
+          "description": "Unique card definition ID. Pattern: `^lcdef_[a-f0-9]+$`.",
+          "schema": {
+            "type": "string",
+            "pattern": "^lcdef_[a-f0-9]+$"
+          }
+        }
+      ],
       "get": {
         "operationId": "listCardDefinitionActivities",
         "tags": [
@@ -14347,22 +14342,16 @@
         "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nReturns a cursor-paginated list of activities recorded for the card definition\n(creation, updates, deletion, state transitions and program assignments).\nReturns `404` when the card definition does not exist.",
         "parameters": [
           {
-            "name": "cardDefinitionId",
-            "in": "path",
-            "required": true,
-            "description": "Unique card definition ID. Pattern: `^lcdef_[a-f0-9]+$`.",
-            "schema": {
-              "type": "string",
-              "pattern": "^lcdef_[a-f0-9]+$"
-            }
-          },
-          {
             "name": "limit",
             "in": "query",
             "required": false,
             "description": "Maximum number of activities to return. Minimum: 1, maximum: 100. Defaults to 10 when omitted.",
             "schema": {
-              "type": "integer",
+              "type": [
+                "number",
+                "string",
+                "null"
+              ],
               "minimum": 1,
               "maximum": 100,
               "default": 10
@@ -14391,6 +14380,9 @@
                       "-created_at"
                     ]
                   }
+                },
+                {
+                  "type": "null"
                 }
               ]
             }
@@ -14401,7 +14393,10 @@
             "required": false,
             "description": "Pagination cursor returned by a previous call in `cursor.next`. Pattern: `^lcrsacd_[a-f0-9]+$`.",
             "schema": {
-              "type": "string",
+              "type": [
+                "string",
+                "null"
+              ],
               "pattern": "^lcrsacd_[a-f0-9]+$"
             }
           },
@@ -14413,7 +14408,14 @@
             "explode": true,
             "description": "Filter conditions per field, e.g. `filters[type][conditions][$is]=vl.card_definition.created`.",
             "schema": {
-              "$ref": "#/components/schemas/LoyaltiesCardDefinitionsActivitiesListRequestQuery"
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/LoyaltiesCardDefinitionsActivitiesListRequestQuery"
+                },
+                {
+                  "type": "null"
+                }
+              ]
             }
           }
         ],
@@ -14423,7 +14425,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CardDefinitionActivityListResponse"
+                  "$ref": "#/components/schemas/V2LoyaltiesCardDefinitionsActivitiesListResponseBody"
                 }
               }
             }
@@ -14440,16 +14442,6 @@
           },
           "404": {
             "description": "Resource not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Conflict - invalid state transition",
             "content": {
               "application/json": {
                 "schema": {
@@ -23031,376 +23023,95 @@
         "additionalProperties": false,
         "title": "Loyalties Card Definitions List Request Query"
       },
-      "CardDefinitionListResponse": {
+      "V2LoyaltiesCardDefinitionsListResponseBody": {
+        "title": "V2 Loyalties Card Definitions List Response Body",
         "type": "object",
-        "description": "Cursor-paginated list of card definitions.",
-        "properties": {
-          "data": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/CardDefinition"
-            },
-            "description": "The card definitions in the current page."
-          },
-          "cursor": {
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/CardDefinitionListCursor"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "Pagination cursor. `null` when there are no more results."
-          },
-          "object": {
-            "type": "string",
-            "const": "list",
-            "description": "Object type marker. Always `list`."
+        "description": "Response body schema for **GET** `/v2/loyalties/card-definitions`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/CardDefinitionListResponse"
           }
-        },
-        "required": [
-          "data",
-          "cursor",
-          "object"
         ]
       },
-      "CardDefinitionCreateRequest": {
+      "V2LoyaltiesCardDefinitionsCreateRequestBody": {
+        "title": "V2 Loyalties Card Definitions Create Request Body",
         "type": "object",
-        "description": "Request body for creating a card definition.\nCross-field rules apply: `balance_settings.allow_negative: true` requires\n`points_expiration.type` to be `NO_EXPIRATION`; the earned points refund mode\n`REVOKE_BELOW_ZERO` requires `allow_negative: true`; and the earned points refund\nmethod `REVOKE_FROM_PENDING` requires `pending_points.type` to be `PERIOD_BASED`,\n`FIXED_DATES` or `EVENT_BASED`.",
-        "properties": {
-          "name": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 200,
-            "description": "Card definition name."
-          },
-          "type": {
-            "type": "string",
-            "enum": [
-              "INDIVIDUAL"
-            ],
-            "description": "Card definition type. Currently only `INDIVIDUAL` is supported."
-          },
-          "status": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "enum": [
-              "DRAFT",
-              "ACTIVE",
-              null
-            ],
-            "description": "Initial status. Allowed values on create are `DRAFT` and `ACTIVE`. Defaults to `DRAFT` when omitted."
-          },
-          "code_config": {
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/CardDefinitionCodeConfigInput"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "Card code generation configuration. Defaults to a 10-character alphanumeric pattern."
-          },
-          "points_expiration": {
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/CardDefinitionPointsExpirationInput"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "Points expiration policy. Defaults to `NO_EXPIRATION`."
-          },
-          "pending_points": {
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/CardDefinitionPendingPointsInput"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "Pending points activation policy. Defaults to `IMMEDIATE`."
-          },
-          "earning_limits": {
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/CardDefinitionEarningLimitsInput"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "Points earning limits. Defaults to `NO_LIMIT` for both global and transaction limits."
-          },
-          "spending_limits": {
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/CardDefinitionSpendingLimitsInput"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "Points spending limits. Defaults to `NO_LIMIT` for both global and transaction limits."
-          },
-          "refunds": {
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/CardDefinitionRefundsInput"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "Refund handling configuration. Defaults to `NONE` for both spent and earned points."
-          },
-          "balance_settings": {
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/CardDefinitionBalanceSettingsInput"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "Card balance settings. Defaults to `allow_negative: false`."
-          },
-          "pay_with_points": {
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/CardDefinitionPayWithPointsInput"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "Pay-with-points configuration. Defaults to `NO_PAYMENTS`."
-          },
-          "metadata": {
-            "type": [
-              "object",
-              "null"
-            ],
-            "description": "Arbitrary key-value metadata attached to the card definition."
+        "description": "Request body schema for **POST** `/v2/loyalties/card-definitions`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/CardDefinitionCreateRequest"
           }
-        },
-        "required": [
-          "name",
-          "type"
-        ],
-        "additionalProperties": false
-      },
-      "CardDefinition": {
-        "type": "object",
-        "description": "A card definition.",
-        "properties": {
-          "id": {
-            "type": "string",
-            "pattern": "^lcdef_[a-f0-9]+$",
-            "description": "Unique card definition ID."
-          },
-          "name": {
-            "type": "string",
-            "description": "Card definition name."
-          },
-          "type": {
-            "type": "string",
-            "enum": [
-              "INDIVIDUAL"
-            ],
-            "description": "Card definition type."
-          },
-          "status": {
-            "type": "string",
-            "enum": [
-              "DRAFT",
-              "ACTIVE",
-              "DELETED"
-            ],
-            "description": "Current card definition status."
-          },
-          "code_config": {
-            "$ref": "#/components/schemas/LoyaltyV2ActivityCardDefinitionCodeConfig"
-          },
-          "points_expiration": {
-            "$ref": "#/components/schemas/CardDefinitionPointsExpiration"
-          },
-          "pending_points": {
-            "$ref": "#/components/schemas/CardDefinitionPendingPoints"
-          },
-          "earning_limits": {
-            "$ref": "#/components/schemas/CardDefinitionEarningLimits"
-          },
-          "spending_limits": {
-            "$ref": "#/components/schemas/CardDefinitionSpendingLimits"
-          },
-          "refunds": {
-            "$ref": "#/components/schemas/CardDefinitionRefunds"
-          },
-          "balance_settings": {
-            "$ref": "#/components/schemas/LoyaltyV2ActivityCardDefinitionBalanceSettings"
-          },
-          "pay_with_points": {
-            "$ref": "#/components/schemas/LoyaltyV2ActivityCardDefinitionPayWithPoints"
-          },
-          "metadata": {
-            "type": "object",
-            "description": "Arbitrary key-value metadata. Empty object when not set."
-          },
-          "created_at": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Creation timestamp (ISO 8601)."
-          },
-          "updated_at": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "format": "date-time",
-            "description": "Last update timestamp (ISO 8601). `null` when the card definition has never been updated."
-          },
-          "object": {
-            "type": "string",
-            "const": "card_definition",
-            "description": "Object type marker. Always `card_definition`."
-          }
-        },
-        "required": [
-          "id",
-          "name",
-          "type",
-          "status",
-          "code_config",
-          "points_expiration",
-          "pending_points",
-          "earning_limits",
-          "spending_limits",
-          "refunds",
-          "balance_settings",
-          "pay_with_points",
-          "metadata",
-          "created_at",
-          "updated_at",
-          "object"
         ]
       },
-      "CardDefinitionUpdateRequest": {
+      "V2LoyaltiesCardDefinitionsCreateResponseBody": {
+        "title": "V2 Loyalties Card Definitions Create Response Body",
         "type": "object",
-        "description": "Request body for updating a card definition.\nAll properties are optional. `type` and `status` cannot be updated.",
-        "properties": {
-          "name": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "minLength": 1,
-            "maxLength": 200,
-            "description": "Card definition name."
-          },
-          "code_config": {
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/CardDefinitionCodeConfigInput"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "Card code generation configuration."
-          },
-          "points_expiration": {
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/CardDefinitionPointsExpirationInput"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "Points expiration policy."
-          },
-          "pending_points": {
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/CardDefinitionPendingPointsInput"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "Pending points activation policy."
-          },
-          "earning_limits": {
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/CardDefinitionEarningLimitsInput"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "Points earning limits."
-          },
-          "spending_limits": {
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/CardDefinitionSpendingLimitsInput"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "Points spending limits."
-          },
-          "refunds": {
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/CardDefinitionRefundsInput"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "Refund handling configuration."
-          },
-          "balance_settings": {
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/CardDefinitionBalanceSettingsInput"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "Card balance settings."
-          },
-          "pay_with_points": {
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/CardDefinitionPayWithPointsInput"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "Pay-with-points configuration."
-          },
-          "metadata": {
-            "type": [
-              "object",
-              "null"
-            ],
-            "description": "Arbitrary key-value metadata attached to the card definition."
+        "description": "Response body schema for **POST** `/v2/loyalties/card-definitions`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/CardDefinition"
           }
-        },
-        "additionalProperties": false
+        ]
+      },
+      "V2LoyaltiesCardDefinitionsGetResponseBody": {
+        "title": "V2 Loyalties Card Definitions Get Response Body",
+        "type": "object",
+        "description": "Response body schema for **GET** `/v2/loyalties/card-definitions/{cardDefinitionId}`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/CardDefinition"
+          }
+        ]
+      },
+      "V2LoyaltiesCardDefinitionsUpdateRequestBody": {
+        "title": "V2 Loyalties Card Definitions Update Request Body",
+        "type": "object",
+        "description": "Request body schema for **PUT** `/v2/loyalties/card-definitions/{cardDefinitionId}`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/CardDefinitionUpdateRequest"
+          }
+        ]
+      },
+      "V2LoyaltiesCardDefinitionsUpdateResponseBody": {
+        "title": "V2 Loyalties Card Definitions Update Response Body",
+        "type": "object",
+        "description": "Response body schema for **PUT** `/v2/loyalties/card-definitions/{cardDefinitionId}`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/CardDefinition"
+          }
+        ]
+      },
+      "V2LoyaltiesCardDefinitionsDeleteResponseBody": {
+        "title": "V2 Loyalties Card Definitions Delete Response Body",
+        "type": "object",
+        "description": "Response body schema for **DELETE** `/v2/loyalties/card-definitions/{cardDefinitionId}`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/CardDefinition"
+          }
+        ]
+      },
+      "V2LoyaltiesCardDefinitionsActivateResponseBody": {
+        "title": "V2 Loyalties Card Definitions Activate Response Body",
+        "type": "object",
+        "description": "Response body schema for **POST** `/v2/loyalties/card-definitions/{cardDefinitionId}/activate`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/CardDefinition"
+          }
+        ]
+      },
+      "V2LoyaltiesCardDefinitionsDraftResponseBody": {
+        "title": "V2 Loyalties Card Definitions Draft Response Body",
+        "type": "object",
+        "description": "Response body schema for **POST** `/v2/loyalties/card-definitions/{cardDefinitionId}/draft`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/CardDefinition"
+          }
+        ]
       },
       "LoyaltiesCardDefinitionsActivitiesListRequestQuery": {
         "type": "object",
@@ -23455,38 +23166,14 @@
         "additionalProperties": false,
         "title": "Loyalties Card Definitions Activities List Request Query"
       },
-      "CardDefinitionActivityListResponse": {
+      "V2LoyaltiesCardDefinitionsActivitiesListResponseBody": {
+        "title": "V2 Loyalties Card Definitions Activities List Response Body",
         "type": "object",
-        "description": "Cursor-paginated list of card definition activities.",
-        "properties": {
-          "data": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/CardDefinitionActivity"
-            },
-            "description": "The activities in the current page."
-          },
-          "cursor": {
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/CardDefinitionActivityListCursor"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "Pagination cursor. `null` when there are no more results."
-          },
-          "object": {
-            "type": "string",
-            "const": "list",
-            "description": "Object type marker. Always `list`."
+        "description": "Response body schema for **GET** `/v2/loyalties/card-definitions/{cardDefinitionId}/activities`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/CardDefinitionActivityListResponse"
           }
-        },
-        "required": [
-          "data",
-          "cursor",
-          "object"
         ]
       },
       "EarningRuleCreateRequest": {
@@ -34043,457 +33730,376 @@
         ],
         "additionalProperties": false
       },
-      "CardDefinitionListCursor": {
+      "CardDefinitionListResponse": {
         "type": "object",
-        "description": "Pagination cursor.",
+        "description": "Cursor-paginated list of card definitions.",
         "properties": {
-          "next": {
-            "type": "string",
-            "pattern": "^lcrscdef_[a-f0-9]+$",
-            "description": "Cursor ID to pass as the `cursor` query parameter to fetch the next page."
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CardDefinition"
+            },
+            "description": "The card definitions in the current page."
           },
-          "expires_at": {
+          "cursor": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/CardDefinitionListCursor"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Pagination cursor. `null` when there are no more results."
+          },
+          "object": {
+            "type": "string",
+            "const": "list",
+            "description": "Object type marker. Always `list`."
+          }
+        },
+        "required": [
+          "data",
+          "cursor",
+          "object"
+        ]
+      },
+      "CardDefinitionCreateRequest": {
+        "type": "object",
+        "description": "Request body for creating a card definition.\nCross-field rules apply: `balance_settings.allow_negative: true` requires\n`points_expiration.type` to be `NO_EXPIRATION`; the earned points refund mode\n`REVOKE_BELOW_ZERO` requires `allow_negative: true`; and the earned points refund\nmethod `REVOKE_FROM_PENDING` requires `pending_points.type` to be `PERIOD_BASED`,\n`FIXED_DATES` or `EVENT_BASED`.",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "description": "Card definition name."
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "INDIVIDUAL"
+            ],
+            "description": "Card definition type. Currently only `INDIVIDUAL` is supported."
+          },
+          "status": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "enum": [
+              "DRAFT",
+              "ACTIVE",
+              null
+            ],
+            "description": "Initial status. Allowed values on create are `DRAFT` and `ACTIVE`. Defaults to `DRAFT` when omitted."
+          },
+          "code_config": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/CardDefinitionCodeConfigInput"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Card code generation configuration. Defaults to a 10-character alphanumeric pattern."
+          },
+          "points_expiration": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/CardDefinitionPointsExpirationInput"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Points expiration policy. Defaults to `NO_EXPIRATION`."
+          },
+          "pending_points": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/CardDefinitionPendingPointsInput"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Pending points activation policy. Defaults to `IMMEDIATE`."
+          },
+          "earning_limits": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/CardDefinitionEarningLimitsInput"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Points earning limits. Defaults to `NO_LIMIT` for both global and transaction limits."
+          },
+          "spending_limits": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/CardDefinitionSpendingLimitsInput"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Points spending limits. Defaults to `NO_LIMIT` for both global and transaction limits."
+          },
+          "refunds": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/CardDefinitionRefundsInput"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Refund handling configuration. Defaults to `NONE` for both spent and earned points."
+          },
+          "balance_settings": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/CardDefinitionBalanceSettingsInput"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Card balance settings. Defaults to `allow_negative: false`."
+          },
+          "pay_with_points": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/CardDefinitionPayWithPointsInput"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Pay-with-points configuration. Defaults to `NO_PAYMENTS`."
+          },
+          "metadata": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "description": "Arbitrary key-value metadata attached to the card definition."
+          }
+        },
+        "required": [
+          "name",
+          "type"
+        ],
+        "additionalProperties": false
+      },
+      "CardDefinition": {
+        "type": "object",
+        "description": "A card definition.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^lcdef_[a-f0-9]+$",
+            "description": "Unique card definition ID."
+          },
+          "name": {
+            "type": "string",
+            "description": "Card definition name."
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "INDIVIDUAL"
+            ],
+            "description": "Card definition type."
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "DRAFT",
+              "ACTIVE",
+              "DELETED"
+            ],
+            "description": "Current card definition status."
+          },
+          "code_config": {
+            "$ref": "#/components/schemas/LoyaltyV2ActivityCardDefinitionCodeConfig"
+          },
+          "points_expiration": {
+            "$ref": "#/components/schemas/CardDefinitionPointsExpiration"
+          },
+          "pending_points": {
+            "$ref": "#/components/schemas/CardDefinitionPendingPoints"
+          },
+          "earning_limits": {
+            "$ref": "#/components/schemas/CardDefinitionEarningLimits"
+          },
+          "spending_limits": {
+            "$ref": "#/components/schemas/CardDefinitionSpendingLimits"
+          },
+          "refunds": {
+            "$ref": "#/components/schemas/CardDefinitionRefunds"
+          },
+          "balance_settings": {
+            "$ref": "#/components/schemas/LoyaltyV2ActivityCardDefinitionBalanceSettings"
+          },
+          "pay_with_points": {
+            "$ref": "#/components/schemas/LoyaltyV2ActivityCardDefinitionPayWithPoints"
+          },
+          "metadata": {
+            "type": "object",
+            "description": "Arbitrary key-value metadata. Empty object when not set."
+          },
+          "created_at": {
             "type": "string",
             "format": "date-time",
-            "description": "Timestamp after which the cursor expires."
-          }
-        },
-        "required": [
-          "next"
-        ]
-      },
-      "CardDefinitionCodeConfigInput": {
-        "type": "object",
-        "description": "Card code generation configuration.\nWhen `pattern` is provided, the effective code length is the number of `#`\nplaceholders in the pattern; otherwise `length` (default 10) `#` placeholders are used.",
-        "properties": {
-          "length": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "description": "Number of generated characters in the code (ignored when `pattern` is provided).\nA positive integer. Defaults to 10."
+            "description": "Creation timestamp (ISO 8601)."
           },
-          "charset": {
+          "updated_at": {
             "type": [
               "string",
               "null"
             ],
-            "description": "Characters used for code generation. Defaults to alphanumeric: `0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ`."
+            "format": "date-time",
+            "description": "Last update timestamp (ISO 8601). `null` when the card definition has never been updated."
           },
-          "prefix": {
+          "object": {
+            "type": "string",
+            "const": "card_definition",
+            "description": "Object type marker. Always `card_definition`."
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "type",
+          "status",
+          "code_config",
+          "points_expiration",
+          "pending_points",
+          "earning_limits",
+          "spending_limits",
+          "refunds",
+          "balance_settings",
+          "pay_with_points",
+          "metadata",
+          "created_at",
+          "updated_at",
+          "object"
+        ]
+      },
+      "CardDefinitionUpdateRequest": {
+        "type": "object",
+        "description": "Request body for updating a card definition.\nAll properties are optional. `type` and `status` cannot be updated.",
+        "properties": {
+          "name": {
             "type": [
               "string",
               "null"
             ],
-            "description": "Fixed prefix prepended to every generated code. Defaults to an empty string."
+            "minLength": 1,
+            "maxLength": 200,
+            "description": "Card definition name."
           },
-          "postfix": {
+          "code_config": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/CardDefinitionCodeConfigInput"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Card code generation configuration."
+          },
+          "points_expiration": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/CardDefinitionPointsExpirationInput"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Points expiration policy."
+          },
+          "pending_points": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/CardDefinitionPendingPointsInput"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Pending points activation policy."
+          },
+          "earning_limits": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/CardDefinitionEarningLimitsInput"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Points earning limits."
+          },
+          "spending_limits": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/CardDefinitionSpendingLimitsInput"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Points spending limits."
+          },
+          "refunds": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/CardDefinitionRefundsInput"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Refund handling configuration."
+          },
+          "balance_settings": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/CardDefinitionBalanceSettingsInput"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Card balance settings."
+          },
+          "pay_with_points": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/CardDefinitionPayWithPointsInput"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Pay-with-points configuration."
+          },
+          "metadata": {
             "type": [
-              "string",
+              "object",
               "null"
             ],
-            "description": "Fixed postfix appended to every generated code. Defaults to an empty string."
-          },
-          "pattern": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "description": "Code pattern where each `#` is replaced with a random character from the charset, e.g. `###-###`. Defaults to `#` repeated `length` times."
+            "description": "Arbitrary key-value metadata attached to the card definition."
           }
         },
         "additionalProperties": false
-      },
-      "CardDefinitionPointsExpirationInput": {
-        "type": "object",
-        "description": "Points expiration policy.\nConditional requirements based on `type`:\n- `NO_EXPIRATION`: `rolling_expiration`, `calendar_expiration` and `sliding_expiration` must be null/absent.\n- `ROLLING_EXPIRATION`: `rolling_expiration` is required; the other two must be null/absent.\n- `CALENDAR_EXPIRATION`: `calendar_expiration` is required; the other two must be null/absent.\n- `SLIDING_EXPIRATION`: `sliding_expiration` is required; the other two must be null/absent.",
-        "properties": {
-          "type": {
-            "type": "string",
-            "enum": [
-              "NO_EXPIRATION",
-              "ROLLING_EXPIRATION",
-              "CALENDAR_EXPIRATION",
-              "SLIDING_EXPIRATION"
-            ],
-            "description": "Points expiration type."
-          },
-          "rolling_expiration": {
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/CardDefinitionPointsExpirationRollingExpirationInput"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "Rolling expiration configuration. Required when `type` is `ROLLING_EXPIRATION`, must be null otherwise."
-          },
-          "calendar_expiration": {
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/CardDefinitionPointsExpirationCalendarExpirationInput"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "Calendar expiration configuration. Required when `type` is `CALENDAR_EXPIRATION`, must be null otherwise."
-          },
-          "sliding_expiration": {
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/CardDefinitionPointsExpirationSlidingExpirationInput"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "Sliding expiration configuration. Required when `type` is `SLIDING_EXPIRATION`, must be null otherwise."
-          }
-        },
-        "required": [
-          "type"
-        ],
-        "additionalProperties": false
-      },
-      "CardDefinitionPendingPointsInput": {
-        "type": "object",
-        "description": "Pending points activation policy.\nConditional requirements based on `type`:\n- `IMMEDIATE`: `period_based`, `fixed_dates` and `event_based` must be null/absent.\n- `PERIOD_BASED`: `period_based` is required; the other two must be null/absent.\n- `FIXED_DATES`: `fixed_dates` is required; the other two must be null/absent.\n- `EVENT_BASED`: `event_based` is required; the other two must be null/absent.",
-        "properties": {
-          "type": {
-            "type": "string",
-            "enum": [
-              "IMMEDIATE",
-              "PERIOD_BASED",
-              "FIXED_DATES",
-              "EVENT_BASED"
-            ],
-            "description": "Pending points activation type. `IMMEDIATE` means no pending period."
-          },
-          "period_based": {
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/CardDefinitionPendingPointsPeriodBasedInput"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "Period-based activation. Required when `type` is `PERIOD_BASED`, must be null otherwise."
-          },
-          "fixed_dates": {
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/CardDefinitionPendingPointsFixedDatesInput"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "Fixed-dates activation. Required when `type` is `FIXED_DATES`, must be null otherwise."
-          },
-          "event_based": {
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/CardDefinitionPendingPointsEventBasedInput"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "Event-based activation. Required when `type` is `EVENT_BASED`, must be null otherwise."
-          }
-        },
-        "required": [
-          "type"
-        ],
-        "additionalProperties": false
-      },
-      "CardDefinitionEarningLimitsInput": {
-        "type": "object",
-        "description": "Points earning limits.",
-        "properties": {
-          "global": {
-            "$ref": "#/components/schemas/CardDefinitionEarningLimitsGlobalInput"
-          },
-          "transactions": {
-            "$ref": "#/components/schemas/CardDefinitionEarningLimitsTransactionsInput"
-          }
-        },
-        "required": [
-          "global",
-          "transactions"
-        ],
-        "additionalProperties": false
-      },
-      "CardDefinitionSpendingLimitsInput": {
-        "type": "object",
-        "description": "Points spending limits.",
-        "properties": {
-          "global": {
-            "$ref": "#/components/schemas/CardDefinitionSpendingLimitsGlobalInput"
-          },
-          "transactions": {
-            "$ref": "#/components/schemas/CardDefinitionSpendingLimitsTransactionsInput"
-          }
-        },
-        "required": [
-          "global",
-          "transactions"
-        ],
-        "additionalProperties": false
-      },
-      "CardDefinitionRefundsInput": {
-        "type": "object",
-        "description": "Refund handling configuration.",
-        "properties": {
-          "spent_points": {
-            "$ref": "#/components/schemas/CardDefinitionRefundsSpentPointsInput"
-          },
-          "earned_points": {
-            "$ref": "#/components/schemas/CardDefinitionRefundsEarnedPointsInput"
-          }
-        },
-        "required": [
-          "spent_points",
-          "earned_points"
-        ],
-        "additionalProperties": false
-      },
-      "CardDefinitionBalanceSettingsInput": {
-        "type": "object",
-        "description": "Card balance settings. `allow_negative` can only be `true` when\n`points_expiration.type` is `NO_EXPIRATION`.",
-        "properties": {
-          "allow_negative": {
-            "type": "boolean",
-            "description": "Whether the card balance is allowed to go below zero."
-          }
-        },
-        "required": [
-          "allow_negative"
-        ],
-        "additionalProperties": false
-      },
-      "CardDefinitionPayWithPointsInput": {
-        "description": "Pay-with-points configuration, discriminated by `type`:\n`NO_PAYMENTS` (paying with points disabled) or `EXCHANGE_RATIO`\n(points can be exchanged for money using a formula).",
-        "oneOf": [
-          {
-            "type": "object",
-            "description": "Paying with points is disabled.",
-            "properties": {
-              "type": {
-                "type": "string",
-                "const": "NO_PAYMENTS",
-                "description": "Pay-with-points type."
-              }
-            },
-            "required": [
-              "type"
-            ],
-            "additionalProperties": false
-          },
-          {
-            "type": "object",
-            "description": "Points can be exchanged for money at the configured ratio.",
-            "properties": {
-              "type": {
-                "type": "string",
-                "const": "EXCHANGE_RATIO",
-                "description": "Pay-with-points type."
-              },
-              "exchange_ratio": {
-                "$ref": "#/components/schemas/CardDefinitionPayWithPointsExchangeRatioInput"
-              }
-            },
-            "required": [
-              "type",
-              "exchange_ratio"
-            ],
-            "additionalProperties": false
-          }
-        ],
-        "discriminator": {
-          "propertyName": "type"
-        }
-      },
-      "LoyaltyV2ActivityCardDefinitionCodeConfig": {
-        "type": "object",
-        "description": "Card code generation configuration. Always present with server-side defaults applied.",
-        "properties": {
-          "pattern": {
-            "type": "string",
-            "description": "Code pattern where each `#` is replaced with a random character from the charset."
-          },
-          "length": {
-            "type": "integer",
-            "description": "Number of `#` placeholders in the pattern."
-          },
-          "charset": {
-            "type": "string",
-            "description": "Characters used for code generation."
-          },
-          "prefix": {
-            "type": "string",
-            "description": "Fixed prefix prepended to every generated code. Empty string when not set."
-          },
-          "postfix": {
-            "type": "string",
-            "description": "Fixed postfix appended to every generated code. Empty string when not set."
-          }
-        },
-        "required": [
-          "pattern",
-          "length",
-          "charset",
-          "prefix",
-          "postfix"
-        ]
-      },
-      "CardDefinitionPointsExpiration": {
-        "type": "object",
-        "description": "Points expiration policy. Always present; defaults to `NO_EXPIRATION`.",
-        "properties": {
-          "type": {
-            "type": "string",
-            "enum": [
-              "NO_EXPIRATION",
-              "ROLLING_EXPIRATION",
-              "CALENDAR_EXPIRATION",
-              "SLIDING_EXPIRATION"
-            ],
-            "description": "Points expiration type."
-          },
-          "rolling_expiration": {
-            "$ref": "#/components/schemas/CardDefinitionPointsExpirationRollingExpiration",
-            "description": "Rolling expiration configuration. Only present when `type` is `ROLLING_EXPIRATION`."
-          },
-          "calendar_expiration": {
-            "$ref": "#/components/schemas/CardDefinitionPointsExpirationCalendarExpiration",
-            "description": "Calendar expiration configuration. Only present when `type` is `CALENDAR_EXPIRATION`."
-          },
-          "sliding_expiration": {
-            "$ref": "#/components/schemas/CardDefinitionPointsExpirationSlidingExpiration",
-            "description": "Sliding expiration configuration. Only present when `type` is `SLIDING_EXPIRATION`."
-          }
-        },
-        "required": [
-          "type"
-        ]
-      },
-      "CardDefinitionPendingPoints": {
-        "type": "object",
-        "description": "Pending points activation policy. Always present; defaults to `IMMEDIATE`.",
-        "properties": {
-          "type": {
-            "type": "string",
-            "enum": [
-              "IMMEDIATE",
-              "PERIOD_BASED",
-              "FIXED_DATES",
-              "EVENT_BASED"
-            ],
-            "description": "Pending points activation type."
-          },
-          "period_based": {
-            "$ref": "#/components/schemas/CardDefinitionPendingPointsPeriodBased",
-            "description": "Period-based activation. Only present when `type` is `PERIOD_BASED`."
-          },
-          "fixed_dates": {
-            "$ref": "#/components/schemas/CardDefinitionPendingPointsFixedDates",
-            "description": "Fixed-dates activation. Only present when `type` is `FIXED_DATES`."
-          },
-          "event_based": {
-            "$ref": "#/components/schemas/CardDefinitionPendingPointsEventBased",
-            "description": "Event-based activation. Only present when `type` is `EVENT_BASED`."
-          }
-        },
-        "required": [
-          "type"
-        ]
-      },
-      "CardDefinitionEarningLimits": {
-        "type": "object",
-        "description": "Points earning limits. Always present; defaults to `NO_LIMIT` for both scopes.",
-        "properties": {
-          "global": {
-            "$ref": "#/components/schemas/CardDefinitionEarningLimitsGlobal"
-          },
-          "transactions": {
-            "$ref": "#/components/schemas/CardDefinitionEarningLimitsTransactions"
-          }
-        }
-      },
-      "CardDefinitionSpendingLimits": {
-        "type": "object",
-        "description": "Points spending limits. Always present; defaults to `NO_LIMIT` for both scopes.",
-        "properties": {
-          "global": {
-            "$ref": "#/components/schemas/CardDefinitionSpendingLimitsGlobal"
-          },
-          "transactions": {
-            "$ref": "#/components/schemas/CardDefinitionSpendingLimitsTransactions"
-          }
-        }
-      },
-      "CardDefinitionRefunds": {
-        "type": "object",
-        "description": "Refund handling configuration. Always present; defaults to `NONE` for both scopes.",
-        "properties": {
-          "spent_points": {
-            "$ref": "#/components/schemas/CardDefinitionRefundsSpentPoints"
-          },
-          "earned_points": {
-            "$ref": "#/components/schemas/CardDefinitionRefundsEarnedPoints"
-          }
-        },
-        "required": [
-          "spent_points",
-          "earned_points"
-        ]
-      },
-      "LoyaltyV2ActivityCardDefinitionBalanceSettings": {
-        "type": "object",
-        "description": "Card balance settings. Always present; defaults to `allow_negative: false`.",
-        "properties": {
-          "allow_negative": {
-            "type": "boolean",
-            "description": "Whether the card balance is allowed to go below zero."
-          }
-        },
-        "required": [
-          "allow_negative"
-        ]
-      },
-      "LoyaltyV2ActivityCardDefinitionPayWithPoints": {
-        "type": "object",
-        "description": "Pay-with-points configuration. Always present; defaults to `NO_PAYMENTS`.",
-        "properties": {
-          "type": {
-            "type": "string",
-            "enum": [
-              "NO_PAYMENTS",
-              "EXCHANGE_RATIO"
-            ],
-            "description": "Pay-with-points type."
-          },
-          "exchange_ratio": {
-            "type": "object",
-            "description": "Exchange ratio. Only present when `type` is `EXCHANGE_RATIO`.",
-            "properties": {
-              "formula": {
-                "type": "string",
-                "description": "Exchange ratio formula (always returned as a string)."
-              }
-            },
-            "required": [
-              "formula"
-            ]
-          }
-        },
-        "required": [
-          "type"
-        ]
       },
       "LoyaltiesCardDefinitionsActivitiesListRequestQueryId": {
         "type": "object",
@@ -34745,90 +34351,38 @@
         ],
         "additionalProperties": false
       },
-      "CardDefinitionActivity": {
+      "CardDefinitionActivityListResponse": {
         "type": "object",
-        "description": "A card definition activity entry.",
+        "description": "Cursor-paginated list of card definition activities.",
         "properties": {
-          "id": {
-            "type": "string",
-            "pattern": "^lacd_[a-f0-9]+$",
-            "description": "Unique activity ID."
-          },
-          "type": {
-            "type": "string",
-            "enum": [
-              "vl.card_definition.created",
-              "vl.card_definition.updated",
-              "vl.card_definition.deleted",
-              "vl.card_definition.activated",
-              "vl.card_definition.deactivated",
-              "vl.card_definition.drafted",
-              "vl.card_definition.assigned",
-              "vl.card_definition.unassigned"
-            ],
-            "description": "Activity type."
-          },
           "data": {
-            "type": "object",
-            "description": "Activity payload. For created/updated/deleted/activated/deactivated/drafted\nactivities it contains a `card_definition` snapshot (the state of the card\ndefinition at the time of the activity). For assigned/unassigned activities\nit additionally contains `program` and `program_card_definition` snapshots.",
-            "properties": {
-              "card_definition": {
-                "oneOf": [
-                  {
-                    "$ref": "#/components/schemas/CardDefinition"
-                  },
-                  {
-                    "type": "null"
-                  }
-                ],
-                "description": "Snapshot of the card definition at the time of the activity."
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CardDefinitionActivity"
+            },
+            "description": "The activities in the current page."
+          },
+          "cursor": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/CardDefinitionActivityListCursor"
+              },
+              {
+                "type": "null"
               }
-            }
+            ],
+            "description": "Pagination cursor. `null` when there are no more results."
           },
-          "created_at": {
+          "object": {
             "type": "string",
-            "format": "date-time",
-            "description": "Activity timestamp (ISO 8601)."
-          },
-          "group_id": {
-            "type": "string",
-            "description": "Groups related activities triggered by the same operation."
-          },
-          "card_definition_id": {
-            "type": "string",
-            "pattern": "^lcdef_[a-f0-9]+$",
-            "description": "ID of the card definition this activity belongs to."
-          },
-          "source": {
-            "$ref": "#/components/schemas/CardDefinitionActivitySource",
-            "description": "Source of the activity. Omitted when unknown."
+            "const": "list",
+            "description": "Object type marker. Always `list`."
           }
         },
         "required": [
-          "id",
-          "type",
           "data",
-          "created_at",
-          "card_definition_id"
-        ]
-      },
-      "CardDefinitionActivityListCursor": {
-        "type": "object",
-        "description": "Pagination cursor for the activities list.",
-        "properties": {
-          "next": {
-            "type": "string",
-            "pattern": "^lcrsacd_[a-f0-9]+$",
-            "description": "Cursor ID to pass as the `cursor` query parameter to fetch the next page."
-          },
-          "expires_at": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Timestamp after which the cursor expires."
-          }
-        },
-        "required": [
-          "next"
+          "cursor",
+          "object"
         ]
       },
       "EarningRuleTrigger": {
@@ -42389,654 +41943,543 @@
           "object"
         ]
       },
-      "CardDefinitionPointsExpirationRollingExpirationInput": {
+      "CardDefinitionListCursor": {
         "type": "object",
-        "description": "Rolling expiration configuration - points expire after a fixed period from earning.",
+        "description": "Pagination cursor.",
         "properties": {
-          "period": {
-            "$ref": "#/components/schemas/CardDefinitionPointsExpirationRollingExpirationPeriodInput"
+          "next": {
+            "type": "string",
+            "pattern": "^lcrscdef_[a-f0-9]+$",
+            "description": "Cursor ID to pass as the `cursor` query parameter to fetch the next page."
           },
-          "rounding": {
+          "expires_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp after which the cursor expires."
+          }
+        },
+        "required": [
+          "next"
+        ]
+      },
+      "CardDefinitionCodeConfigInput": {
+        "type": "object",
+        "description": "Card code generation configuration.\nWhen `pattern` is provided, the effective code length is the number of `#`\nplaceholders in the pattern; otherwise `length` (default 10) `#` placeholders are used.",
+        "properties": {
+          "length": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "Number of generated characters in the code (ignored when `pattern` is provided).\nA positive integer. Defaults to 10."
+          },
+          "charset": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Characters used for code generation. Defaults to alphanumeric: `0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ`."
+          },
+          "prefix": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Fixed prefix prepended to every generated code. Defaults to an empty string."
+          },
+          "postfix": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Fixed postfix appended to every generated code. Defaults to an empty string."
+          },
+          "pattern": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Code pattern where each `#` is replaced with a random character from the charset, e.g. `###-###`. Defaults to `#` repeated `length` times."
+          }
+        },
+        "additionalProperties": false
+      },
+      "CardDefinitionPointsExpirationInput": {
+        "type": "object",
+        "description": "Points expiration policy.\nConditional requirements based on `type`:\n- `NO_EXPIRATION`: `rolling_expiration`, `calendar_expiration` and `sliding_expiration` must be null/absent.\n- `ROLLING_EXPIRATION`: `rolling_expiration` is required; the other two must be null/absent.\n- `CALENDAR_EXPIRATION`: `calendar_expiration` is required; the other two must be null/absent.\n- `SLIDING_EXPIRATION`: `sliding_expiration` is required; the other two must be null/absent.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "NO_EXPIRATION",
+              "ROLLING_EXPIRATION",
+              "CALENDAR_EXPIRATION",
+              "SLIDING_EXPIRATION"
+            ],
+            "description": "Points expiration type."
+          },
+          "rolling_expiration": {
             "oneOf": [
               {
-                "$ref": "#/components/schemas/CardDefinitionPointsExpirationRollingExpirationRoundingInput"
+                "$ref": "#/components/schemas/CardDefinitionPointsExpirationRollingExpirationInput"
               },
               {
                 "type": "null"
               }
             ],
-            "description": "Optional rounding applied to the calculated expiration date."
-          }
-        },
-        "required": [
-          "period"
-        ],
-        "additionalProperties": false
-      },
-      "CardDefinitionPointsExpirationCalendarExpirationInput": {
-        "type": "object",
-        "description": "Calendar expiration configuration - points expire on fixed calendar dates.",
-        "properties": {
-          "expiration_dates": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/CardDefinitionPointsExpirationCalendarExpirationDateInput"
-            },
-            "minItems": 1,
-            "maxItems": 20,
-            "description": "List of calendar dates on which points expire (1-20 dates)."
-          }
-        },
-        "required": [
-          "expiration_dates"
-        ],
-        "additionalProperties": false
-      },
-      "CardDefinitionPointsExpirationSlidingExpirationInput": {
-        "type": "object",
-        "description": "Sliding expiration configuration - points expiration slides on member activity.\nAt least one of `earning_activity`, `spending_activity` or `custom_activity` must be `true`.\nWhen `custom_activity` is `true`, `custom_activity_types` is required with 1-10 unique\ncustom event schema IDs.",
-        "properties": {
-          "earning_activity": {
-            "type": "boolean",
-            "description": "Whether earning points resets the expiration window."
+            "description": "Rolling expiration configuration. Required when `type` is `ROLLING_EXPIRATION`, must be null otherwise."
           },
-          "spending_activity": {
-            "type": "boolean",
-            "description": "Whether spending points resets the expiration window."
-          },
-          "custom_activity": {
-            "type": "boolean",
-            "description": "Whether the configured custom events reset the expiration window."
-          },
-          "custom_activity_types": {
-            "type": [
-              "array",
-              "null"
-            ],
-            "items": {
-              "type": "string",
-              "pattern": "^ms_[a-zA-Z0-9]+"
-            },
-            "maxItems": 10,
-            "description": "Custom event schema IDs (pattern `^ms_[a-zA-Z0-9]+`) that reset the expiration window.\nRequired with 1-10 unique items when `custom_activity` is `true`."
-          },
-          "period": {
-            "$ref": "#/components/schemas/CardDefinitionPointsExpirationSlidingExpirationPeriodInput"
-          }
-        },
-        "required": [
-          "period"
-        ],
-        "additionalProperties": false
-      },
-      "CardDefinitionPendingPointsPeriodBasedInput": {
-        "type": "object",
-        "description": "Period-based pending points activation - points activate after a fixed period.",
-        "properties": {
-          "period": {
-            "$ref": "#/components/schemas/CardDefinitionPendingPointsPeriodBasedPeriodInput"
-          }
-        },
-        "required": [
-          "period"
-        ],
-        "additionalProperties": false
-      },
-      "CardDefinitionPendingPointsFixedDatesInput": {
-        "type": "object",
-        "description": "Fixed-dates pending points activation - points activate on fixed calendar dates.",
-        "properties": {
-          "dates": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/CardDefinitionPendingPointsFixedDatesDateInput"
-            },
-            "minItems": 1,
-            "maxItems": 20,
-            "description": "List of calendar dates on which pending points activate (1-20 dates)."
-          }
-        },
-        "required": [
-          "dates"
-        ],
-        "additionalProperties": false
-      },
-      "CardDefinitionPendingPointsEventBasedInput": {
-        "type": "object",
-        "description": "Event-based pending points activation - points activate when one of the configured custom events occurs, or are cancelled after the cancel period.",
-        "properties": {
-          "event_types": {
-            "type": "array",
-            "items": {
-              "type": "string",
-              "pattern": "^ms_[a-zA-Z0-9]+"
-            },
-            "minItems": 1,
-            "maxItems": 10,
-            "description": "Custom event schema IDs (pattern `^ms_[a-zA-Z0-9]+`) that activate pending points. 1-10 unique items."
-          },
-          "cancel_period": {
-            "$ref": "#/components/schemas/CardDefinitionPendingPointsEventBasedCancelPeriodInput"
-          }
-        },
-        "required": [
-          "event_types",
-          "cancel_period"
-        ],
-        "additionalProperties": false
-      },
-      "CardDefinitionEarningLimitsGlobalInput": {
-        "type": "object",
-        "description": "Global (per card) earning limits. When `type` is `NO_LIMIT`, `limits` must be\nempty or `null`; when `type` is `LIMITED`, `limits` must contain exactly 1 limit.",
-        "properties": {
-          "type": {
-            "type": "string",
-            "enum": [
-              "NO_LIMIT",
-              "LIMITED"
-            ],
-            "description": "Whether global earning limits apply."
-          },
-          "limits": {
-            "type": [
-              "array",
-              "null"
-            ],
-            "items": {
-              "$ref": "#/components/schemas/CardDefinitionEarningLimitsGlobalLimitInput"
-            },
-            "maxItems": 1,
-            "description": "Limit definitions. Empty/null when `type` is `NO_LIMIT`; exactly 1 item required when `type` is `LIMITED`."
-          }
-        },
-        "required": [
-          "type"
-        ],
-        "additionalProperties": false
-      },
-      "CardDefinitionEarningLimitsTransactionsInput": {
-        "type": "object",
-        "description": "Per-transaction earning limits. When `type` is `NO_LIMIT`, `limits` must be\nempty or `null`; when `type` is `LIMITED`, `limits` must contain at least 1 limit.\nEach limit `type` may appear at most once in the array.",
-        "properties": {
-          "type": {
-            "type": "string",
-            "enum": [
-              "NO_LIMIT",
-              "LIMITED"
-            ],
-            "description": "Whether per-transaction earning limits apply."
-          },
-          "limits": {
-            "type": [
-              "array",
-              "null"
-            ],
-            "items": {
-              "$ref": "#/components/schemas/CardDefinitionEarningLimitsTransactionsLimitInput"
-            },
-            "description": "Limit definitions with unique types. Empty/null when `type` is `NO_LIMIT`; at least 1 item required when `type` is `LIMITED`."
-          }
-        },
-        "required": [
-          "type"
-        ],
-        "additionalProperties": false
-      },
-      "CardDefinitionSpendingLimitsGlobalInput": {
-        "type": "object",
-        "description": "Global (per card) spending limits. When `type` is `NO_LIMIT`, `limits` must be\nempty or `null`; when `type` is `LIMITED`, `limits` must contain exactly 1 limit.",
-        "properties": {
-          "type": {
-            "type": "string",
-            "enum": [
-              "NO_LIMIT",
-              "LIMITED"
-            ],
-            "description": "Whether global spending limits apply."
-          },
-          "limits": {
-            "type": [
-              "array",
-              "null"
-            ],
-            "items": {
-              "$ref": "#/components/schemas/CardDefinitionSpendingLimitsGlobalLimitInput"
-            },
-            "maxItems": 1,
-            "description": "Limit definitions. Empty/null when `type` is `NO_LIMIT`; exactly 1 item required when `type` is `LIMITED`."
-          }
-        },
-        "required": [
-          "type"
-        ],
-        "additionalProperties": false
-      },
-      "CardDefinitionSpendingLimitsTransactionsInput": {
-        "type": "object",
-        "description": "Per-transaction spending limits. When `type` is `NO_LIMIT`, `limits` must be\nempty or `null`; when `type` is `LIMITED`, `limits` must contain exactly 1 limit.",
-        "properties": {
-          "type": {
-            "type": "string",
-            "enum": [
-              "NO_LIMIT",
-              "LIMITED"
-            ],
-            "description": "Whether per-transaction spending limits apply."
-          },
-          "limits": {
-            "type": [
-              "array",
-              "null"
-            ],
-            "items": {
-              "$ref": "#/components/schemas/CardDefinitionSpendingLimitsTransactionsLimitInput"
-            },
-            "maxItems": 1,
-            "description": "Limit definitions. Empty/null when `type` is `NO_LIMIT`; exactly 1 item required when `type` is `LIMITED`."
-          }
-        },
-        "required": [
-          "type"
-        ],
-        "additionalProperties": false
-      },
-      "CardDefinitionRefundsSpentPointsInput": {
-        "type": "object",
-        "description": "How points spent on a refunded order are handled. When `type` is `NONE`,\n`methods` must be empty or `null`; when `type` is `REFUNDABLE`, `methods`\nmust contain exactly 1 method.",
-        "properties": {
-          "type": {
-            "type": "string",
-            "enum": [
-              "NONE",
-              "REFUNDABLE"
-            ],
-            "description": "Whether spent points are refundable."
-          },
-          "methods": {
-            "type": [
-              "array",
-              "null"
-            ],
-            "items": {
-              "$ref": "#/components/schemas/CardDefinitionRefundsSpentPointsMethodInput"
-            },
-            "maxItems": 1,
-            "description": "Refund methods. Empty/null when `type` is `NONE`; exactly 1 item required when `type` is `REFUNDABLE`. Currently only one method is allowed."
-          }
-        },
-        "required": [
-          "type"
-        ],
-        "additionalProperties": false
-      },
-      "CardDefinitionRefundsEarnedPointsInput": {
-        "type": "object",
-        "description": "How points earned on a refunded order are handled. When `type` is `NONE`,\n`methods` must be empty or `null`; when `type` is `REFUNDABLE`, `methods`\nmust contain exactly 1 method.",
-        "properties": {
-          "type": {
-            "type": "string",
-            "enum": [
-              "NONE",
-              "REFUNDABLE"
-            ],
-            "description": "Whether earned points are revocable on refund."
-          },
-          "methods": {
-            "type": [
-              "array",
-              "null"
-            ],
-            "items": {
-              "$ref": "#/components/schemas/CardDefinitionRefundsEarnedPointsMethodInput"
-            },
-            "maxItems": 1,
-            "description": "Revoke methods. Empty/null when `type` is `NONE`; exactly 1 item required when `type` is `REFUNDABLE`."
-          }
-        },
-        "required": [
-          "type"
-        ],
-        "additionalProperties": false
-      },
-      "CardDefinitionPayWithPointsExchangeRatioInput": {
-        "type": "object",
-        "description": "Exchange ratio used to convert points into money.",
-        "properties": {
-          "formula": {
+          "calendar_expiration": {
             "oneOf": [
               {
-                "type": "string",
-                "minLength": 1,
-                "maxLength": 2000
-              },
-              {
-                "type": "number"
-              }
-            ],
-            "description": "Exchange ratio formula. A string expression (1-2000 characters) or a number.\nNumbers are converted to strings server-side."
-          }
-        },
-        "required": [
-          "formula"
-        ],
-        "additionalProperties": false
-      },
-      "CardDefinitionPointsExpirationRollingExpiration": {
-        "type": "object",
-        "description": "Rolling expiration configuration.",
-        "properties": {
-          "period": {
-            "$ref": "#/components/schemas/LoyaltyV2ActivityCardDefinitionPeriod",
-            "description": "Rolling expiration period. Unit is one of `DAY`, `MONTH`, `YEAR`."
-          },
-          "rounding": {
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/LoyaltyV2ActivityCardDefinitionPointsExpirationRollingExpirationRounding"
+                "$ref": "#/components/schemas/CardDefinitionPointsExpirationCalendarExpirationInput"
               },
               {
                 "type": "null"
               }
             ],
-            "description": "Rounding applied to the calculated expiration date. `null` when not configured."
-          }
-        },
-        "required": [
-          "period"
-        ]
-      },
-      "CardDefinitionPointsExpirationCalendarExpiration": {
-        "type": "object",
-        "description": "Calendar expiration configuration.",
-        "properties": {
-          "expiration_dates": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/LoyaltyV2ActivityCardDefinitionCalendarDate"
-            },
-            "description": "Calendar dates on which points expire."
-          }
-        },
-        "required": [
-          "expiration_dates"
-        ]
-      },
-      "CardDefinitionPointsExpirationSlidingExpiration": {
-        "type": "object",
-        "description": "Sliding expiration configuration.",
-        "properties": {
-          "earning_activity": {
-            "type": "boolean",
-            "description": "Whether earning points resets the expiration window."
+            "description": "Calendar expiration configuration. Required when `type` is `CALENDAR_EXPIRATION`, must be null otherwise."
           },
-          "spending_activity": {
-            "type": "boolean",
-            "description": "Whether spending points resets the expiration window."
-          },
-          "custom_activity": {
-            "type": "boolean",
-            "description": "Whether the configured custom events reset the expiration window."
-          },
-          "custom_activity_types": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "Custom event schema IDs that reset the expiration window. Empty array when `custom_activity` is false."
-          },
-          "period": {
-            "$ref": "#/components/schemas/LoyaltyV2ActivityCardDefinitionPeriod",
-            "description": "Sliding expiration period. Unit is one of `DAY`, `MONTH`, `YEAR`."
-          }
-        },
-        "required": [
-          "custom_activity_types",
-          "period"
-        ]
-      },
-      "CardDefinitionPendingPointsPeriodBased": {
-        "type": "object",
-        "description": "Period-based pending points activation.",
-        "properties": {
-          "period": {
-            "$ref": "#/components/schemas/LoyaltyV2ActivityCardDefinitionPeriod",
-            "description": "Pending period. Unit is one of `DAY`, `MONTH`, `YEAR`."
-          }
-        },
-        "required": [
-          "period"
-        ]
-      },
-      "CardDefinitionPendingPointsFixedDates": {
-        "type": "object",
-        "description": "Fixed-dates pending points activation.",
-        "properties": {
-          "dates": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/LoyaltyV2ActivityCardDefinitionCalendarDate"
-            },
-            "description": "Calendar dates on which pending points activate."
-          }
-        },
-        "required": [
-          "dates"
-        ]
-      },
-      "CardDefinitionPendingPointsEventBased": {
-        "type": "object",
-        "description": "Event-based pending points activation.",
-        "properties": {
-          "event_types": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "Custom event schema IDs that activate pending points."
-          },
-          "cancel_period": {
-            "$ref": "#/components/schemas/LoyaltyV2ActivityCardDefinitionPeriod",
-            "description": "Period after which non-activated pending points are cancelled. Unit is one of `DAY`, `MONTH`, `YEAR`."
-          }
-        },
-        "required": [
-          "event_types",
-          "cancel_period"
-        ]
-      },
-      "CardDefinitionEarningLimitsGlobal": {
-        "type": "object",
-        "description": "Global (per card) earning limits.",
-        "properties": {
-          "type": {
-            "type": "string",
-            "enum": [
-              "NO_LIMIT",
-              "LIMITED"
-            ],
-            "description": "Whether global earning limits apply."
-          },
-          "limits": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/CardDefinitionEarningLimitsGlobalLimit"
-            },
-            "description": "Limit definitions. Empty array when `type` is `NO_LIMIT`."
-          }
-        },
-        "required": [
-          "type",
-          "limits"
-        ]
-      },
-      "CardDefinitionEarningLimitsTransactions": {
-        "type": "object",
-        "description": "Per-transaction earning limits.",
-        "properties": {
-          "type": {
-            "type": "string",
-            "enum": [
-              "NO_LIMIT",
-              "LIMITED"
-            ],
-            "description": "Whether per-transaction earning limits apply."
-          },
-          "limits": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/LoyaltyV2ActivityCardDefinitionEarningLimitsTransactionsLimit"
-            },
-            "description": "Limit definitions. Empty array when `type` is `NO_LIMIT`."
-          }
-        },
-        "required": [
-          "type",
-          "limits"
-        ]
-      },
-      "CardDefinitionSpendingLimitsGlobal": {
-        "type": "object",
-        "description": "Global (per card) spending limits.",
-        "properties": {
-          "type": {
-            "type": "string",
-            "enum": [
-              "NO_LIMIT",
-              "LIMITED"
-            ],
-            "description": "Whether global spending limits apply."
-          },
-          "limits": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/CardDefinitionSpendingLimitsGlobalLimit"
-            },
-            "description": "Limit definitions. Empty array when `type` is `NO_LIMIT`."
-          }
-        },
-        "required": [
-          "type",
-          "limits"
-        ]
-      },
-      "CardDefinitionSpendingLimitsTransactions": {
-        "type": "object",
-        "description": "Per-transaction spending limits.",
-        "properties": {
-          "type": {
-            "type": "string",
-            "enum": [
-              "NO_LIMIT",
-              "LIMITED"
-            ],
-            "description": "Whether per-transaction spending limits apply."
-          },
-          "limits": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/LoyaltyV2ActivityCardDefinitionSpendingLimitsTransactionsLimit"
-            },
-            "description": "Limit definitions. Empty array when `type` is `NO_LIMIT`."
-          }
-        },
-        "required": [
-          "type",
-          "limits"
-        ]
-      },
-      "CardDefinitionRefundsSpentPoints": {
-        "type": "object",
-        "description": "How points spent on a refunded order are handled.",
-        "properties": {
-          "type": {
-            "type": "string",
-            "enum": [
-              "NONE",
-              "REFUNDABLE"
-            ],
-            "description": "Whether spent points are refundable."
-          },
-          "methods": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/LoyaltyV2ActivityCardDefinitionRefundsSpentPointsMethod"
-            },
-            "description": "Refund methods. Empty array when `type` is `NONE`."
-          }
-        },
-        "required": [
-          "type",
-          "methods"
-        ]
-      },
-      "CardDefinitionRefundsEarnedPoints": {
-        "type": "object",
-        "description": "How points earned on a refunded order are handled.",
-        "properties": {
-          "type": {
-            "type": "string",
-            "enum": [
-              "NONE",
-              "REFUNDABLE"
-            ],
-            "description": "Whether earned points are revocable on refund."
-          },
-          "methods": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/LoyaltyV2ActivityCardDefinitionRefundsEarnedPointsMethod"
-            },
-            "description": "Revoke methods. Empty array when `type` is `NONE`."
-          }
-        },
-        "required": [
-          "type",
-          "methods"
-        ]
-      },
-      "CardDefinitionActivitySource": {
-        "type": "object",
-        "description": "Source that triggered the activity.",
-        "properties": {
-          "channel": {
-            "type": "string",
-            "enum": [
-              "USER_PORTAL",
-              "API",
-              "CLIENT_API",
-              "INTERNAL"
-            ],
-            "description": "Channel through which the activity was triggered."
-          },
-          "user": {
-            "type": "object",
-            "description": "User that triggered the activity. Omitted when not applicable.",
-            "properties": {
-              "id": {
-                "type": "string",
-                "description": "User ID."
-              }
-            }
-          },
-          "api_key": {
-            "type": "object",
-            "description": "API key used to trigger the activity. Omitted when not applicable.",
-            "properties": {
-              "name": {
-                "type": "string",
-                "description": "API key name."
+          "sliding_expiration": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/CardDefinitionPointsExpirationSlidingExpirationInput"
               },
-              "app_id": {
-                "type": "string",
-                "description": "Application ID of the API key."
-              },
-              "client_app_id": {
-                "type": "string",
-                "description": "Client application ID of the API key."
+              {
+                "type": "null"
               }
-            }
+            ],
+            "description": "Sliding expiration configuration. Required when `type` is `SLIDING_EXPIRATION`, must be null otherwise."
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "additionalProperties": false
+      },
+      "CardDefinitionPendingPointsInput": {
+        "type": "object",
+        "description": "Pending points activation policy.\nConditional requirements based on `type`:\n- `IMMEDIATE`: `period_based`, `fixed_dates` and `event_based` must be null/absent.\n- `PERIOD_BASED`: `period_based` is required; the other two must be null/absent.\n- `FIXED_DATES`: `fixed_dates` is required; the other two must be null/absent.\n- `EVENT_BASED`: `event_based` is required; the other two must be null/absent.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "IMMEDIATE",
+              "PERIOD_BASED",
+              "FIXED_DATES",
+              "EVENT_BASED"
+            ],
+            "description": "Pending points activation type. `IMMEDIATE` means no pending period."
+          },
+          "period_based": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/CardDefinitionPendingPointsPeriodBasedInput"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Period-based activation. Required when `type` is `PERIOD_BASED`, must be null otherwise."
+          },
+          "fixed_dates": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/CardDefinitionPendingPointsFixedDatesInput"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Fixed-dates activation. Required when `type` is `FIXED_DATES`, must be null otherwise."
+          },
+          "event_based": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/CardDefinitionPendingPointsEventBasedInput"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Event-based activation. Required when `type` is `EVENT_BASED`, must be null otherwise."
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "additionalProperties": false
+      },
+      "CardDefinitionEarningLimitsInput": {
+        "type": "object",
+        "description": "Points earning limits.",
+        "properties": {
+          "global": {
+            "$ref": "#/components/schemas/CardDefinitionEarningLimitsGlobalInput"
+          },
+          "transactions": {
+            "$ref": "#/components/schemas/CardDefinitionEarningLimitsTransactionsInput"
+          }
+        },
+        "required": [
+          "global",
+          "transactions"
+        ],
+        "additionalProperties": false
+      },
+      "CardDefinitionSpendingLimitsInput": {
+        "type": "object",
+        "description": "Points spending limits.",
+        "properties": {
+          "global": {
+            "$ref": "#/components/schemas/CardDefinitionSpendingLimitsGlobalInput"
+          },
+          "transactions": {
+            "$ref": "#/components/schemas/CardDefinitionSpendingLimitsTransactionsInput"
+          }
+        },
+        "required": [
+          "global",
+          "transactions"
+        ],
+        "additionalProperties": false
+      },
+      "CardDefinitionRefundsInput": {
+        "type": "object",
+        "description": "Refund handling configuration.",
+        "properties": {
+          "spent_points": {
+            "$ref": "#/components/schemas/CardDefinitionRefundsSpentPointsInput"
+          },
+          "earned_points": {
+            "$ref": "#/components/schemas/CardDefinitionRefundsEarnedPointsInput"
+          }
+        },
+        "required": [
+          "spent_points",
+          "earned_points"
+        ],
+        "additionalProperties": false
+      },
+      "CardDefinitionBalanceSettingsInput": {
+        "type": "object",
+        "description": "Card balance settings. `allow_negative` can only be `true` when\n`points_expiration.type` is `NO_EXPIRATION`.",
+        "properties": {
+          "allow_negative": {
+            "type": "boolean",
+            "description": "Whether the card balance is allowed to go below zero."
+          }
+        },
+        "required": [
+          "allow_negative"
+        ],
+        "additionalProperties": false
+      },
+      "CardDefinitionPayWithPointsInput": {
+        "description": "Pay-with-points configuration, discriminated by `type`:\n`NO_PAYMENTS` (paying with points disabled) or `EXCHANGE_RATIO`\n(points can be exchanged for money using a formula).",
+        "oneOf": [
+          {
+            "type": "object",
+            "description": "Paying with points is disabled.",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "NO_PAYMENTS",
+                "description": "Pay-with-points type."
+              }
+            },
+            "required": [
+              "type"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "description": "Points can be exchanged for money at the configured ratio.",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "EXCHANGE_RATIO",
+                "description": "Pay-with-points type."
+              },
+              "exchange_ratio": {
+                "$ref": "#/components/schemas/CardDefinitionPayWithPointsExchangeRatioInput"
+              }
+            },
+            "required": [
+              "type",
+              "exchange_ratio"
+            ],
+            "additionalProperties": false
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type"
+        }
+      },
+      "LoyaltyV2ActivityCardDefinitionCodeConfig": {
+        "type": "object",
+        "description": "Card code generation configuration. Always present with server-side defaults applied.",
+        "properties": {
+          "pattern": {
+            "type": "string",
+            "description": "Code pattern where each `#` is replaced with a random character from the charset."
+          },
+          "length": {
+            "type": "integer",
+            "description": "Number of `#` placeholders in the pattern."
+          },
+          "charset": {
+            "type": "string",
+            "description": "Characters used for code generation."
+          },
+          "prefix": {
+            "type": "string",
+            "description": "Fixed prefix prepended to every generated code. Empty string when not set."
+          },
+          "postfix": {
+            "type": "string",
+            "description": "Fixed postfix appended to every generated code. Empty string when not set."
+          }
+        },
+        "required": [
+          "pattern",
+          "length",
+          "charset",
+          "prefix",
+          "postfix"
+        ]
+      },
+      "CardDefinitionPointsExpiration": {
+        "type": "object",
+        "description": "Points expiration policy. Always present; defaults to `NO_EXPIRATION`.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "NO_EXPIRATION",
+              "ROLLING_EXPIRATION",
+              "CALENDAR_EXPIRATION",
+              "SLIDING_EXPIRATION"
+            ],
+            "description": "Points expiration type."
+          },
+          "rolling_expiration": {
+            "$ref": "#/components/schemas/CardDefinitionPointsExpirationRollingExpiration",
+            "description": "Rolling expiration configuration. Only present when `type` is `ROLLING_EXPIRATION`."
+          },
+          "calendar_expiration": {
+            "$ref": "#/components/schemas/CardDefinitionPointsExpirationCalendarExpiration",
+            "description": "Calendar expiration configuration. Only present when `type` is `CALENDAR_EXPIRATION`."
+          },
+          "sliding_expiration": {
+            "$ref": "#/components/schemas/CardDefinitionPointsExpirationSlidingExpiration",
+            "description": "Sliding expiration configuration. Only present when `type` is `SLIDING_EXPIRATION`."
+          }
+        },
+        "required": [
+          "type"
+        ]
+      },
+      "CardDefinitionPendingPoints": {
+        "type": "object",
+        "description": "Pending points activation policy. Always present; defaults to `IMMEDIATE`.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "IMMEDIATE",
+              "PERIOD_BASED",
+              "FIXED_DATES",
+              "EVENT_BASED"
+            ],
+            "description": "Pending points activation type."
+          },
+          "period_based": {
+            "$ref": "#/components/schemas/CardDefinitionPendingPointsPeriodBased",
+            "description": "Period-based activation. Only present when `type` is `PERIOD_BASED`."
+          },
+          "fixed_dates": {
+            "$ref": "#/components/schemas/CardDefinitionPendingPointsFixedDates",
+            "description": "Fixed-dates activation. Only present when `type` is `FIXED_DATES`."
+          },
+          "event_based": {
+            "$ref": "#/components/schemas/CardDefinitionPendingPointsEventBased",
+            "description": "Event-based activation. Only present when `type` is `EVENT_BASED`."
+          }
+        },
+        "required": [
+          "type"
+        ]
+      },
+      "CardDefinitionEarningLimits": {
+        "type": "object",
+        "description": "Points earning limits. Always present; defaults to `NO_LIMIT` for both scopes.",
+        "properties": {
+          "global": {
+            "$ref": "#/components/schemas/CardDefinitionEarningLimitsGlobal"
+          },
+          "transactions": {
+            "$ref": "#/components/schemas/CardDefinitionEarningLimitsTransactions"
           }
         }
+      },
+      "CardDefinitionSpendingLimits": {
+        "type": "object",
+        "description": "Points spending limits. Always present; defaults to `NO_LIMIT` for both scopes.",
+        "properties": {
+          "global": {
+            "$ref": "#/components/schemas/CardDefinitionSpendingLimitsGlobal"
+          },
+          "transactions": {
+            "$ref": "#/components/schemas/CardDefinitionSpendingLimitsTransactions"
+          }
+        }
+      },
+      "CardDefinitionRefunds": {
+        "type": "object",
+        "description": "Refund handling configuration. Always present; defaults to `NONE` for both scopes.",
+        "properties": {
+          "spent_points": {
+            "$ref": "#/components/schemas/CardDefinitionRefundsSpentPoints"
+          },
+          "earned_points": {
+            "$ref": "#/components/schemas/CardDefinitionRefundsEarnedPoints"
+          }
+        },
+        "required": [
+          "spent_points",
+          "earned_points"
+        ]
+      },
+      "LoyaltyV2ActivityCardDefinitionBalanceSettings": {
+        "type": "object",
+        "description": "Card balance settings. Always present; defaults to `allow_negative: false`.",
+        "properties": {
+          "allow_negative": {
+            "type": "boolean",
+            "description": "Whether the card balance is allowed to go below zero."
+          }
+        },
+        "required": [
+          "allow_negative"
+        ]
+      },
+      "LoyaltyV2ActivityCardDefinitionPayWithPoints": {
+        "type": "object",
+        "description": "Pay-with-points configuration. Always present; defaults to `NO_PAYMENTS`.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "NO_PAYMENTS",
+              "EXCHANGE_RATIO"
+            ],
+            "description": "Pay-with-points type."
+          },
+          "exchange_ratio": {
+            "type": "object",
+            "description": "Exchange ratio. Only present when `type` is `EXCHANGE_RATIO`.",
+            "properties": {
+              "formula": {
+                "type": "string",
+                "description": "Exchange ratio formula (always returned as a string)."
+              }
+            },
+            "required": [
+              "formula"
+            ]
+          }
+        },
+        "required": [
+          "type"
+        ]
+      },
+      "CardDefinitionActivity": {
+        "type": "object",
+        "description": "A card definition activity entry.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^lacd_[a-f0-9]+$",
+            "description": "Unique activity ID."
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "vl.card_definition.created",
+              "vl.card_definition.updated",
+              "vl.card_definition.deleted",
+              "vl.card_definition.activated",
+              "vl.card_definition.deactivated",
+              "vl.card_definition.drafted",
+              "vl.card_definition.assigned",
+              "vl.card_definition.unassigned"
+            ],
+            "description": "Activity type."
+          },
+          "data": {
+            "type": "object",
+            "description": "Activity payload. For created/updated/deleted/activated/deactivated/drafted\nactivities it contains a `card_definition` snapshot (the state of the card\ndefinition at the time of the activity). For assigned/unassigned activities\nit additionally contains `program` and `program_card_definition` snapshots.",
+            "properties": {
+              "card_definition": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/CardDefinition"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "description": "Snapshot of the card definition at the time of the activity."
+              }
+            }
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Activity timestamp (ISO 8601)."
+          },
+          "group_id": {
+            "type": "string",
+            "description": "Groups related activities triggered by the same operation."
+          },
+          "card_definition_id": {
+            "type": "string",
+            "pattern": "^lcdef_[a-f0-9]+$",
+            "description": "ID of the card definition this activity belongs to."
+          },
+          "source": {
+            "$ref": "#/components/schemas/CardDefinitionActivitySource",
+            "description": "Source of the activity. Omitted when unknown."
+          }
+        },
+        "required": [
+          "id",
+          "type",
+          "data",
+          "created_at",
+          "card_definition_id"
+        ]
+      },
+      "CardDefinitionActivityListCursor": {
+        "type": "object",
+        "description": "Pagination cursor for the activities list.",
+        "properties": {
+          "next": {
+            "type": "string",
+            "pattern": "^lcrsacd_[a-f0-9]+$",
+            "description": "Cursor ID to pass as the `cursor` query parameter to fetch the next page."
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp after which the cursor expires."
+          }
+        },
+        "required": [
+          "next"
+        ]
       },
       "LoyaltyV2ActivityEarningRuleTriggerCustomEvent": {
         "type": "object",
@@ -45690,55 +45133,164 @@
           }
         }
       },
-      "CardDefinitionPointsExpirationRollingExpirationPeriodInput": {
+      "CardDefinitionPointsExpirationRollingExpirationInput": {
         "type": "object",
-        "description": "Rolling expiration period. The maximum `value` depends on `unit`:\n1-90 for `DAY`, 1-12 for `MONTH`, 1-5 for `YEAR` (enforced via if/then conditions).",
+        "description": "Rolling expiration configuration - points expire after a fixed period from earning.",
         "properties": {
-          "unit": {
-            "type": "string",
-            "enum": [
-              "DAY",
-              "MONTH",
-              "YEAR"
-            ],
-            "description": "Period unit."
+          "period": {
+            "$ref": "#/components/schemas/CardDefinitionPointsExpirationRollingExpirationPeriodInput"
           },
-          "value": {
-            "type": "integer",
-            "minimum": 1,
-            "maximum": 90,
-            "description": "Period length. Maximum: 90 for `DAY`, 12 for `MONTH`, 5 for `YEAR`."
+          "rounding": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/CardDefinitionPointsExpirationRollingExpirationRoundingInput"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Optional rounding applied to the calculated expiration date."
           }
         },
         "required": [
-          "unit",
-          "value"
+          "period"
         ],
         "additionalProperties": false
       },
-      "CardDefinitionPointsExpirationRollingExpirationRoundingInput": {
+      "CardDefinitionPointsExpirationCalendarExpirationInput": {
         "type": "object",
-        "description": "Rounding of the rolling expiration date. When `type` is `END_OF_PARTICULAR_MONTH`,\n`value` (month number 1-12) is required; for all other types `value` must be null/absent.",
+        "description": "Calendar expiration configuration - points expire on fixed calendar dates.",
         "properties": {
-          "type": {
-            "type": "string",
-            "enum": [
-              "END_OF_MONTH",
-              "END_OF_QUARTER",
-              "END_OF_HALF_YEAR",
-              "END_OF_YEAR",
-              "END_OF_PARTICULAR_MONTH"
-            ],
-            "description": "Rounding type."
+          "expiration_dates": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CardDefinitionPointsExpirationCalendarExpirationDateInput"
+            },
+            "minItems": 1,
+            "maxItems": 20,
+            "description": "List of calendar dates on which points expire (1-20 dates)."
+          }
+        },
+        "required": [
+          "expiration_dates"
+        ],
+        "additionalProperties": false
+      },
+      "CardDefinitionPointsExpirationSlidingExpirationInput": {
+        "type": "object",
+        "description": "Sliding expiration configuration - points expiration slides on member activity.\nAt least one of `earning_activity`, `spending_activity` or `custom_activity` must be `true`.\nWhen `custom_activity` is `true`, `custom_activity_types` is required with 1-10 unique\ncustom event schema IDs.",
+        "properties": {
+          "earning_activity": {
+            "type": "boolean",
+            "description": "Whether earning points resets the expiration window."
           },
-          "value": {
+          "spending_activity": {
+            "type": "boolean",
+            "description": "Whether spending points resets the expiration window."
+          },
+          "custom_activity": {
+            "type": "boolean",
+            "description": "Whether the configured custom events reset the expiration window."
+          },
+          "custom_activity_types": {
             "type": [
-              "integer",
+              "array",
               "null"
             ],
-            "minimum": 1,
-            "maximum": 12,
-            "description": "Month number (1-12). Required when `type` is `END_OF_PARTICULAR_MONTH`, must be null otherwise."
+            "items": {
+              "type": "string",
+              "pattern": "^ms_[a-zA-Z0-9]+"
+            },
+            "maxItems": 10,
+            "description": "Custom event schema IDs (pattern `^ms_[a-zA-Z0-9]+`) that reset the expiration window.\nRequired with 1-10 unique items when `custom_activity` is `true`."
+          },
+          "period": {
+            "$ref": "#/components/schemas/CardDefinitionPointsExpirationSlidingExpirationPeriodInput"
+          }
+        },
+        "required": [
+          "period"
+        ],
+        "additionalProperties": false
+      },
+      "CardDefinitionPendingPointsPeriodBasedInput": {
+        "type": "object",
+        "description": "Period-based pending points activation - points activate after a fixed period.",
+        "properties": {
+          "period": {
+            "$ref": "#/components/schemas/CardDefinitionPendingPointsPeriodBasedPeriodInput"
+          }
+        },
+        "required": [
+          "period"
+        ],
+        "additionalProperties": false
+      },
+      "CardDefinitionPendingPointsFixedDatesInput": {
+        "type": "object",
+        "description": "Fixed-dates pending points activation - points activate on fixed calendar dates.",
+        "properties": {
+          "dates": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CardDefinitionPendingPointsFixedDatesDateInput"
+            },
+            "minItems": 1,
+            "maxItems": 20,
+            "description": "List of calendar dates on which pending points activate (1-20 dates)."
+          }
+        },
+        "required": [
+          "dates"
+        ],
+        "additionalProperties": false
+      },
+      "CardDefinitionPendingPointsEventBasedInput": {
+        "type": "object",
+        "description": "Event-based pending points activation - points activate when one of the configured custom events occurs, or are cancelled after the cancel period.",
+        "properties": {
+          "event_types": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^ms_[a-zA-Z0-9]+"
+            },
+            "minItems": 1,
+            "maxItems": 10,
+            "description": "Custom event schema IDs (pattern `^ms_[a-zA-Z0-9]+`) that activate pending points. 1-10 unique items."
+          },
+          "cancel_period": {
+            "$ref": "#/components/schemas/CardDefinitionPendingPointsEventBasedCancelPeriodInput"
+          }
+        },
+        "required": [
+          "event_types",
+          "cancel_period"
+        ],
+        "additionalProperties": false
+      },
+      "CardDefinitionEarningLimitsGlobalInput": {
+        "type": "object",
+        "description": "Global (per card) earning limits. When `type` is `NO_LIMIT`, `limits` must be\nempty or `null`; when `type` is `LIMITED`, `limits` must contain exactly 1 limit.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "NO_LIMIT",
+              "LIMITED"
+            ],
+            "description": "Whether global earning limits apply."
+          },
+          "limits": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/CardDefinitionEarningLimitsGlobalLimitInput"
+            },
+            "maxItems": 1,
+            "description": "Limit definitions. Empty/null when `type` is `NO_LIMIT`; exactly 1 item required when `type` is `LIMITED`."
           }
         },
         "required": [
@@ -45746,690 +45298,488 @@
         ],
         "additionalProperties": false
       },
-      "CardDefinitionPointsExpirationCalendarExpirationDateInput": {
+      "CardDefinitionEarningLimitsTransactionsInput": {
         "type": "object",
-        "description": "A calendar date (day + month). The maximum `day` depends on `month`\n(enforced via if/then conditions): 29 for February, 30 for April/June/September/November,\n31 for the remaining months.",
-        "properties": {
-          "day": {
-            "type": "integer",
-            "minimum": 1,
-            "maximum": 31,
-            "description": "Day of the month. Maximum depends on the month: 29 for February, 30 for April, June, September, November, 31 otherwise."
-          },
-          "month": {
-            "type": "integer",
-            "minimum": 1,
-            "maximum": 12,
-            "description": "Month number (1-12)."
-          }
-        },
-        "required": [
-          "day",
-          "month"
-        ],
-        "additionalProperties": false
-      },
-      "CardDefinitionPointsExpirationSlidingExpirationPeriodInput": {
-        "type": "object",
-        "description": "Sliding expiration period. The maximum `value` depends on `unit`:\n1-90 for `DAY`, 1-12 for `MONTH`, 1-1 for `YEAR` (enforced via if/then conditions).",
-        "properties": {
-          "value": {
-            "type": "integer",
-            "minimum": 1,
-            "maximum": 90,
-            "description": "Period length. Maximum: 90 for `DAY`, 12 for `MONTH`, 1 for `YEAR`."
-          },
-          "unit": {
-            "type": "string",
-            "enum": [
-              "DAY",
-              "MONTH",
-              "YEAR"
-            ],
-            "description": "Period unit."
-          }
-        },
-        "required": [
-          "value",
-          "unit"
-        ],
-        "additionalProperties": false
-      },
-      "CardDefinitionPendingPointsPeriodBasedPeriodInput": {
-        "type": "object",
-        "description": "Pending period. The maximum `value` depends on `unit`:\n1-90 for `DAY`, 1-12 for `MONTH`, 1-1 for `YEAR` (enforced via if/then conditions).",
-        "properties": {
-          "unit": {
-            "type": "string",
-            "enum": [
-              "DAY",
-              "MONTH",
-              "YEAR"
-            ],
-            "description": "Period unit."
-          },
-          "value": {
-            "type": "integer",
-            "minimum": 1,
-            "maximum": 90,
-            "description": "Period length. Maximum: 90 for `DAY`, 12 for `MONTH`, 1 for `YEAR`."
-          }
-        },
-        "required": [
-          "unit",
-          "value"
-        ],
-        "additionalProperties": false
-      },
-      "CardDefinitionPendingPointsFixedDatesDateInput": {
-        "type": "object",
-        "description": "A calendar date (day + month). The maximum `day` depends on `month`\n(enforced via if/then conditions): 29 for February, 30 for April/June/September/November,\n31 for the remaining months.",
-        "properties": {
-          "day": {
-            "type": "integer",
-            "minimum": 1,
-            "maximum": 31,
-            "description": "Day of the month. Maximum depends on the month: 29 for February, 30 for April, June, September, November, 31 otherwise."
-          },
-          "month": {
-            "type": "integer",
-            "minimum": 1,
-            "maximum": 12,
-            "description": "Month number (1-12)."
-          }
-        },
-        "required": [
-          "day",
-          "month"
-        ],
-        "additionalProperties": false
-      },
-      "CardDefinitionPendingPointsEventBasedCancelPeriodInput": {
-        "type": "object",
-        "description": "Period after which non-activated pending points are cancelled. The maximum `value`\ndepends on `unit`: 1-90 for `DAY`, 1-12 for `MONTH`, 1-1 for `YEAR`\n(enforced via if/then conditions).",
-        "properties": {
-          "value": {
-            "type": "integer",
-            "minimum": 1,
-            "maximum": 90,
-            "description": "Period length. Maximum: 90 for `DAY`, 12 for `MONTH`, 1 for `YEAR`."
-          },
-          "unit": {
-            "type": "string",
-            "enum": [
-              "DAY",
-              "MONTH",
-              "YEAR"
-            ],
-            "description": "Period unit."
-          }
-        },
-        "required": [
-          "value",
-          "unit"
-        ],
-        "additionalProperties": false
-      },
-      "CardDefinitionEarningLimitsGlobalLimitInput": {
-        "description": "A global earning limit, discriminated by `type`:\n`BALANCE_BASED` (maximum card balance) or `TIME_BASED` (maximum points earned per period).",
-        "oneOf": [
-          {
-            "type": "object",
-            "description": "Balance-based limit - the card balance cannot exceed `max` points.",
-            "properties": {
-              "type": {
-                "type": "string",
-                "const": "BALANCE_BASED",
-                "description": "Limit type."
-              },
-              "max": {
-                "type": "integer",
-                "minimum": 1,
-                "description": "Maximum card balance in points."
-              }
-            },
-            "required": [
-              "type",
-              "max"
-            ],
-            "additionalProperties": false
-          },
-          {
-            "type": "object",
-            "description": "Time-based limit - at most `points.max` points can be earned per period.",
-            "properties": {
-              "type": {
-                "type": "string",
-                "const": "TIME_BASED",
-                "description": "Limit type."
-              },
-              "period": {
-                "$ref": "#/components/schemas/CardDefinitionEarningLimitsGlobalTimeBasedPeriodInput"
-              },
-              "points": {
-                "$ref": "#/components/schemas/CardDefinitionEarningLimitsGlobalTimeBasedPointsInput"
-              }
-            },
-            "required": [
-              "type",
-              "period",
-              "points"
-            ],
-            "additionalProperties": false
-          }
-        ],
-        "discriminator": {
-          "propertyName": "type"
-        }
-      },
-      "CardDefinitionEarningLimitsTransactionsLimitInput": {
-        "description": "A per-transaction earning limit, discriminated by `type`:\n`POINTS` (maximum points earned per transaction) or `SPENDING`\n(minimum order amount required to earn points).",
-        "oneOf": [
-          {
-            "type": "object",
-            "description": "Points limit - at most `max` points can be earned in a single transaction.",
-            "properties": {
-              "type": {
-                "type": "string",
-                "const": "POINTS",
-                "description": "Limit type."
-              },
-              "max": {
-                "type": "integer",
-                "minimum": 1,
-                "description": "Maximum points earned per transaction."
-              }
-            },
-            "required": [
-              "type",
-              "max"
-            ],
-            "additionalProperties": false
-          },
-          {
-            "type": "object",
-            "description": "Spending threshold - points are only earned when the transaction amount is at least `min_amount`.",
-            "properties": {
-              "type": {
-                "type": "string",
-                "const": "SPENDING",
-                "description": "Limit type."
-              },
-              "min_amount": {
-                "type": "integer",
-                "minimum": 1,
-                "description": "Minimum transaction amount required to earn points."
-              }
-            },
-            "required": [
-              "type",
-              "min_amount"
-            ],
-            "additionalProperties": false
-          }
-        ],
-        "discriminator": {
-          "propertyName": "type"
-        }
-      },
-      "CardDefinitionSpendingLimitsGlobalLimitInput": {
-        "description": "A global spending limit, discriminated by `type`:\n`SPENDING_BASED` (total points spent) or `TIME_BASED` (points spent per period).",
-        "oneOf": [
-          {
-            "type": "object",
-            "description": "Spending-based limit - at most `max` points can be spent in total.",
-            "properties": {
-              "type": {
-                "type": "string",
-                "const": "SPENDING_BASED",
-                "description": "Limit type."
-              },
-              "max": {
-                "type": "integer",
-                "minimum": 1,
-                "description": "Maximum total points spent."
-              }
-            },
-            "required": [
-              "type",
-              "max"
-            ],
-            "additionalProperties": false
-          },
-          {
-            "type": "object",
-            "description": "Time-based limit - at most `points.max` points can be spent per period.",
-            "properties": {
-              "type": {
-                "type": "string",
-                "const": "TIME_BASED",
-                "description": "Limit type."
-              },
-              "period": {
-                "$ref": "#/components/schemas/CardDefinitionSpendingLimitsGlobalTimeBasedPeriodInput"
-              },
-              "points": {
-                "$ref": "#/components/schemas/CardDefinitionSpendingLimitsGlobalTimeBasedPointsInput"
-              }
-            },
-            "required": [
-              "type",
-              "period",
-              "points"
-            ],
-            "additionalProperties": false
-          }
-        ],
-        "discriminator": {
-          "propertyName": "type"
-        }
-      },
-      "CardDefinitionSpendingLimitsTransactionsLimitInput": {
-        "description": "A per-transaction spending limit. Currently only the `POINTS` type is supported.",
-        "oneOf": [
-          {
-            "type": "object",
-            "description": "Points limit - at most `max` points can be spent in a single transaction.",
-            "properties": {
-              "type": {
-                "type": "string",
-                "const": "POINTS",
-                "description": "Limit type."
-              },
-              "max": {
-                "type": "integer",
-                "minimum": 1,
-                "description": "Maximum points spent per transaction."
-              }
-            },
-            "required": [
-              "type",
-              "max"
-            ],
-            "additionalProperties": false
-          }
-        ],
-        "discriminator": {
-          "propertyName": "type"
-        }
-      },
-      "CardDefinitionRefundsSpentPointsMethodInput": {
-        "description": "A spent points refund method. Currently only the `RETURN_POINTS` type is supported.",
-        "oneOf": [
-          {
-            "type": "object",
-            "description": "Return spent points back to the card.",
-            "properties": {
-              "type": {
-                "type": "string",
-                "const": "RETURN_POINTS",
-                "description": "Refund method type."
-              },
-              "mode": {
-                "type": "string",
-                "enum": [
-                  "REFUND_ALL",
-                  "REFUND_ITEM",
-                  "REFUND_AMOUNT"
-                ],
-                "description": "Refund mode: on full-order refund (`REFUND_ALL`), per-item refund (`REFUND_ITEM`) or amount-based refund (`REFUND_AMOUNT`)."
-              }
-            },
-            "required": [
-              "type",
-              "mode"
-            ],
-            "additionalProperties": false
-          }
-        ],
-        "discriminator": {
-          "propertyName": "type"
-        }
-      },
-      "CardDefinitionRefundsEarnedPointsMethodInput": {
-        "description": "An earned points revoke method, discriminated by `type`:\n`REVOKE_FROM_PENDING` (only valid when `pending_points.type` is `PERIOD_BASED`,\n`FIXED_DATES` or `EVENT_BASED`) or `REVOKE_FROM_BALANCE`.",
-        "oneOf": [
-          {
-            "type": "object",
-            "description": "Revoke earned points from pending points.",
-            "properties": {
-              "type": {
-                "type": "string",
-                "const": "REVOKE_FROM_PENDING",
-                "description": "Revoke method type."
-              }
-            },
-            "required": [
-              "type"
-            ],
-            "additionalProperties": false
-          },
-          {
-            "type": "object",
-            "description": "Revoke earned points from the card balance.",
-            "properties": {
-              "type": {
-                "type": "string",
-                "const": "REVOKE_FROM_BALANCE",
-                "description": "Revoke method type."
-              },
-              "mode": {
-                "type": "string",
-                "enum": [
-                  "REVOKE_TO_ZERO",
-                  "REVOKE_BELOW_ZERO"
-                ],
-                "description": "Revoke mode. `REVOKE_BELOW_ZERO` requires `balance_settings.allow_negative` to be `true`."
-              }
-            },
-            "required": [
-              "type",
-              "mode"
-            ],
-            "additionalProperties": false
-          }
-        ],
-        "discriminator": {
-          "propertyName": "type"
-        }
-      },
-      "LoyaltyV2ActivityCardDefinitionPeriod": {
-        "type": "object",
-        "description": "A period expressed as a value and unit.",
-        "properties": {
-          "value": {
-            "type": "integer",
-            "description": "Period length."
-          },
-          "unit": {
-            "type": "string",
-            "enum": [
-              "DAY",
-              "MONTH",
-              "YEAR"
-            ],
-            "description": "Period unit."
-          }
-        },
-        "required": [
-          "value",
-          "unit"
-        ]
-      },
-      "LoyaltyV2ActivityCardDefinitionPointsExpirationRollingExpirationRounding": {
-        "type": "object",
-        "description": "Rounding of the rolling expiration date.",
+        "description": "Per-transaction earning limits. When `type` is `NO_LIMIT`, `limits` must be\nempty or `null`; when `type` is `LIMITED`, `limits` must contain at least 1 limit.\nEach limit `type` may appear at most once in the array.",
         "properties": {
           "type": {
             "type": "string",
             "enum": [
-              "END_OF_MONTH",
-              "END_OF_QUARTER",
-              "END_OF_HALF_YEAR",
-              "END_OF_YEAR",
-              "END_OF_PARTICULAR_MONTH"
+              "NO_LIMIT",
+              "LIMITED"
             ],
-            "description": "Rounding type."
+            "description": "Whether per-transaction earning limits apply."
           },
-          "value": {
-            "type": "integer",
-            "minimum": 1,
-            "maximum": 12,
-            "description": "Month number (1-12). Only present when `type` is `END_OF_PARTICULAR_MONTH`."
+          "limits": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/CardDefinitionEarningLimitsTransactionsLimitInput"
+            },
+            "description": "Limit definitions with unique types. Empty/null when `type` is `NO_LIMIT`; at least 1 item required when `type` is `LIMITED`."
           }
         },
         "required": [
           "type"
-        ]
+        ],
+        "additionalProperties": false
       },
-      "LoyaltyV2ActivityCardDefinitionCalendarDate": {
+      "CardDefinitionSpendingLimitsGlobalInput": {
         "type": "object",
-        "description": "A calendar date (day + month).",
-        "properties": {
-          "day": {
-            "type": "integer",
-            "minimum": 1,
-            "maximum": 31,
-            "description": "Day of the month."
-          },
-          "month": {
-            "type": "integer",
-            "minimum": 1,
-            "maximum": 12,
-            "description": "Month number (1-12)."
-          }
-        },
-        "required": [
-          "day",
-          "month"
-        ]
-      },
-      "CardDefinitionEarningLimitsGlobalLimit": {
-        "description": "A global earning limit: `BALANCE_BASED` or `TIME_BASED`.",
-        "oneOf": [
-          {
-            "type": "object",
-            "description": "Balance-based limit.",
-            "properties": {
-              "type": {
-                "type": "string",
-                "const": "BALANCE_BASED",
-                "description": "Limit type."
-              },
-              "max": {
-                "type": "integer",
-                "description": "Maximum card balance in points."
-              }
-            },
-            "required": [
-              "type",
-              "max"
-            ]
-          },
-          {
-            "type": "object",
-            "description": "Time-based limit.",
-            "properties": {
-              "type": {
-                "type": "string",
-                "const": "TIME_BASED",
-                "description": "Limit type."
-              },
-              "period": {
-                "$ref": "#/components/schemas/LoyaltyV2ActivityCardDefinitionLimitTimeBasedPeriod"
-              },
-              "points": {
-                "$ref": "#/components/schemas/LoyaltyV2ActivityCardDefinitionLimitTimeBasedPoints"
-              }
-            },
-            "required": [
-              "type"
-            ]
-          }
-        ],
-        "discriminator": {
-          "propertyName": "type"
-        }
-      },
-      "LoyaltyV2ActivityCardDefinitionEarningLimitsTransactionsLimit": {
-        "description": "A per-transaction earning limit: `POINTS` or `SPENDING`.",
-        "oneOf": [
-          {
-            "type": "object",
-            "description": "Points limit.",
-            "properties": {
-              "type": {
-                "type": "string",
-                "const": "POINTS",
-                "description": "Limit type."
-              },
-              "max": {
-                "type": "integer",
-                "description": "Maximum points earned per transaction."
-              }
-            },
-            "required": [
-              "type",
-              "max"
-            ]
-          },
-          {
-            "type": "object",
-            "description": "Spending threshold.",
-            "properties": {
-              "type": {
-                "type": "string",
-                "const": "SPENDING",
-                "description": "Limit type."
-              },
-              "min_amount": {
-                "type": "integer",
-                "description": "Minimum transaction amount required to earn points."
-              }
-            },
-            "required": [
-              "type",
-              "min_amount"
-            ]
-          }
-        ],
-        "discriminator": {
-          "propertyName": "type"
-        }
-      },
-      "CardDefinitionSpendingLimitsGlobalLimit": {
-        "description": "A global spending limit: `SPENDING_BASED` or `TIME_BASED`.",
-        "oneOf": [
-          {
-            "type": "object",
-            "description": "Spending-based limit.",
-            "properties": {
-              "type": {
-                "type": "string",
-                "const": "SPENDING_BASED",
-                "description": "Limit type."
-              },
-              "max": {
-                "type": "integer",
-                "description": "Maximum total points spent."
-              }
-            },
-            "required": [
-              "type",
-              "max"
-            ]
-          },
-          {
-            "type": "object",
-            "description": "Time-based limit.",
-            "properties": {
-              "type": {
-                "type": "string",
-                "const": "TIME_BASED",
-                "description": "Limit type."
-              },
-              "period": {
-                "$ref": "#/components/schemas/LoyaltyV2ActivityCardDefinitionLimitTimeBasedPeriod"
-              },
-              "points": {
-                "$ref": "#/components/schemas/LoyaltyV2ActivityCardDefinitionLimitTimeBasedPoints"
-              }
-            },
-            "required": [
-              "type"
-            ]
-          }
-        ],
-        "discriminator": {
-          "propertyName": "type"
-        }
-      },
-      "LoyaltyV2ActivityCardDefinitionSpendingLimitsTransactionsLimit": {
-        "type": "object",
-        "description": "A per-transaction spending limit. Currently only the `POINTS` type exists.",
+        "description": "Global (per card) spending limits. When `type` is `NO_LIMIT`, `limits` must be\nempty or `null`; when `type` is `LIMITED`, `limits` must contain exactly 1 limit.",
         "properties": {
           "type": {
-            "type": "string",
-            "const": "POINTS",
-            "description": "Limit type."
-          },
-          "max": {
-            "type": "integer",
-            "description": "Maximum points spent per transaction."
-          }
-        },
-        "required": [
-          "type",
-          "max"
-        ]
-      },
-      "LoyaltyV2ActivityCardDefinitionRefundsSpentPointsMethod": {
-        "type": "object",
-        "description": "A spent points refund method.",
-        "properties": {
-          "type": {
-            "type": "string",
-            "const": "RETURN_POINTS",
-            "description": "Refund method type."
-          },
-          "mode": {
             "type": "string",
             "enum": [
-              "REFUND_ALL",
-              "REFUND_ITEM",
-              "REFUND_AMOUNT"
+              "NO_LIMIT",
+              "LIMITED"
             ],
-            "description": "Refund mode."
+            "description": "Whether global spending limits apply."
+          },
+          "limits": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/CardDefinitionSpendingLimitsGlobalLimitInput"
+            },
+            "maxItems": 1,
+            "description": "Limit definitions. Empty/null when `type` is `NO_LIMIT`; exactly 1 item required when `type` is `LIMITED`."
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "additionalProperties": false
+      },
+      "CardDefinitionSpendingLimitsTransactionsInput": {
+        "type": "object",
+        "description": "Per-transaction spending limits. When `type` is `NO_LIMIT`, `limits` must be\nempty or `null`; when `type` is `LIMITED`, `limits` must contain exactly 1 limit.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "NO_LIMIT",
+              "LIMITED"
+            ],
+            "description": "Whether per-transaction spending limits apply."
+          },
+          "limits": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/CardDefinitionSpendingLimitsTransactionsLimitInput"
+            },
+            "maxItems": 1,
+            "description": "Limit definitions. Empty/null when `type` is `NO_LIMIT`; exactly 1 item required when `type` is `LIMITED`."
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "additionalProperties": false
+      },
+      "CardDefinitionRefundsSpentPointsInput": {
+        "type": "object",
+        "description": "How points spent on a refunded order are handled. When `type` is `NONE`,\n`methods` must be empty or `null`; when `type` is `REFUNDABLE`, `methods`\nmust contain exactly 1 method.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "NONE",
+              "REFUNDABLE"
+            ],
+            "description": "Whether spent points are refundable."
+          },
+          "methods": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/CardDefinitionRefundsSpentPointsMethodInput"
+            },
+            "maxItems": 1,
+            "description": "Refund methods. Empty/null when `type` is `NONE`; exactly 1 item required when `type` is `REFUNDABLE`. Currently only one method is allowed."
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "additionalProperties": false
+      },
+      "CardDefinitionRefundsEarnedPointsInput": {
+        "type": "object",
+        "description": "How points earned on a refunded order are handled. When `type` is `NONE`,\n`methods` must be empty or `null`; when `type` is `REFUNDABLE`, `methods`\nmust contain exactly 1 method.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "NONE",
+              "REFUNDABLE"
+            ],
+            "description": "Whether earned points are revocable on refund."
+          },
+          "methods": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/CardDefinitionRefundsEarnedPointsMethodInput"
+            },
+            "maxItems": 1,
+            "description": "Revoke methods. Empty/null when `type` is `NONE`; exactly 1 item required when `type` is `REFUNDABLE`."
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "additionalProperties": false
+      },
+      "CardDefinitionPayWithPointsExchangeRatioInput": {
+        "type": "object",
+        "description": "Exchange ratio used to convert points into money.",
+        "properties": {
+          "formula": {
+            "oneOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 2000
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "description": "Exchange ratio formula. A string expression (1-2000 characters) or a number.\nNumbers are converted to strings server-side."
+          }
+        },
+        "required": [
+          "formula"
+        ],
+        "additionalProperties": false
+      },
+      "CardDefinitionPointsExpirationRollingExpiration": {
+        "type": "object",
+        "description": "Rolling expiration configuration.",
+        "properties": {
+          "period": {
+            "$ref": "#/components/schemas/LoyaltyV2ActivityCardDefinitionPeriod",
+            "description": "Rolling expiration period. Unit is one of `DAY`, `MONTH`, `YEAR`."
+          },
+          "rounding": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LoyaltyV2ActivityCardDefinitionPointsExpirationRollingExpirationRounding"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Rounding applied to the calculated expiration date. `null` when not configured."
+          }
+        },
+        "required": [
+          "period"
+        ]
+      },
+      "CardDefinitionPointsExpirationCalendarExpiration": {
+        "type": "object",
+        "description": "Calendar expiration configuration.",
+        "properties": {
+          "expiration_dates": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LoyaltyV2ActivityCardDefinitionCalendarDate"
+            },
+            "description": "Calendar dates on which points expire."
+          }
+        },
+        "required": [
+          "expiration_dates"
+        ]
+      },
+      "CardDefinitionPointsExpirationSlidingExpiration": {
+        "type": "object",
+        "description": "Sliding expiration configuration.",
+        "properties": {
+          "earning_activity": {
+            "type": "boolean",
+            "description": "Whether earning points resets the expiration window."
+          },
+          "spending_activity": {
+            "type": "boolean",
+            "description": "Whether spending points resets the expiration window."
+          },
+          "custom_activity": {
+            "type": "boolean",
+            "description": "Whether the configured custom events reset the expiration window."
+          },
+          "custom_activity_types": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Custom event schema IDs that reset the expiration window. Empty array when `custom_activity` is false."
+          },
+          "period": {
+            "$ref": "#/components/schemas/LoyaltyV2ActivityCardDefinitionPeriod",
+            "description": "Sliding expiration period. Unit is one of `DAY`, `MONTH`, `YEAR`."
+          }
+        },
+        "required": [
+          "custom_activity_types",
+          "period"
+        ]
+      },
+      "CardDefinitionPendingPointsPeriodBased": {
+        "type": "object",
+        "description": "Period-based pending points activation.",
+        "properties": {
+          "period": {
+            "$ref": "#/components/schemas/LoyaltyV2ActivityCardDefinitionPeriod",
+            "description": "Pending period. Unit is one of `DAY`, `MONTH`, `YEAR`."
+          }
+        },
+        "required": [
+          "period"
+        ]
+      },
+      "CardDefinitionPendingPointsFixedDates": {
+        "type": "object",
+        "description": "Fixed-dates pending points activation.",
+        "properties": {
+          "dates": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LoyaltyV2ActivityCardDefinitionCalendarDate"
+            },
+            "description": "Calendar dates on which pending points activate."
+          }
+        },
+        "required": [
+          "dates"
+        ]
+      },
+      "CardDefinitionPendingPointsEventBased": {
+        "type": "object",
+        "description": "Event-based pending points activation.",
+        "properties": {
+          "event_types": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Custom event schema IDs that activate pending points."
+          },
+          "cancel_period": {
+            "$ref": "#/components/schemas/LoyaltyV2ActivityCardDefinitionPeriod",
+            "description": "Period after which non-activated pending points are cancelled. Unit is one of `DAY`, `MONTH`, `YEAR`."
+          }
+        },
+        "required": [
+          "event_types",
+          "cancel_period"
+        ]
+      },
+      "CardDefinitionEarningLimitsGlobal": {
+        "type": "object",
+        "description": "Global (per card) earning limits.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "NO_LIMIT",
+              "LIMITED"
+            ],
+            "description": "Whether global earning limits apply."
+          },
+          "limits": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CardDefinitionEarningLimitsGlobalLimit"
+            },
+            "description": "Limit definitions. Empty array when `type` is `NO_LIMIT`."
           }
         },
         "required": [
           "type",
-          "mode"
+          "limits"
         ]
       },
-      "LoyaltyV2ActivityCardDefinitionRefundsEarnedPointsMethod": {
-        "description": "An earned points revoke method: `REVOKE_FROM_PENDING` or `REVOKE_FROM_BALANCE`.",
-        "oneOf": [
-          {
-            "type": "object",
-            "description": "Revoke earned points from pending points.",
-            "properties": {
-              "type": {
-                "type": "string",
-                "const": "REVOKE_FROM_PENDING",
-                "description": "Revoke method type."
-              }
-            },
-            "required": [
-              "type"
-            ]
+      "CardDefinitionEarningLimitsTransactions": {
+        "type": "object",
+        "description": "Per-transaction earning limits.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "NO_LIMIT",
+              "LIMITED"
+            ],
+            "description": "Whether per-transaction earning limits apply."
           },
-          {
-            "type": "object",
-            "description": "Revoke earned points from the card balance.",
-            "properties": {
-              "type": {
-                "type": "string",
-                "const": "REVOKE_FROM_BALANCE",
-                "description": "Revoke method type."
-              },
-              "mode": {
-                "type": "string",
-                "enum": [
-                  "REVOKE_TO_ZERO",
-                  "REVOKE_BELOW_ZERO"
-                ],
-                "description": "Revoke mode."
-              }
+          "limits": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LoyaltyV2ActivityCardDefinitionEarningLimitsTransactionsLimit"
             },
-            "required": [
-              "type",
-              "mode"
-            ]
+            "description": "Limit definitions. Empty array when `type` is `NO_LIMIT`."
           }
-        ],
-        "discriminator": {
-          "propertyName": "type"
+        },
+        "required": [
+          "type",
+          "limits"
+        ]
+      },
+      "CardDefinitionSpendingLimitsGlobal": {
+        "type": "object",
+        "description": "Global (per card) spending limits.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "NO_LIMIT",
+              "LIMITED"
+            ],
+            "description": "Whether global spending limits apply."
+          },
+          "limits": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CardDefinitionSpendingLimitsGlobalLimit"
+            },
+            "description": "Limit definitions. Empty array when `type` is `NO_LIMIT`."
+          }
+        },
+        "required": [
+          "type",
+          "limits"
+        ]
+      },
+      "CardDefinitionSpendingLimitsTransactions": {
+        "type": "object",
+        "description": "Per-transaction spending limits.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "NO_LIMIT",
+              "LIMITED"
+            ],
+            "description": "Whether per-transaction spending limits apply."
+          },
+          "limits": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LoyaltyV2ActivityCardDefinitionSpendingLimitsTransactionsLimit"
+            },
+            "description": "Limit definitions. Empty array when `type` is `NO_LIMIT`."
+          }
+        },
+        "required": [
+          "type",
+          "limits"
+        ]
+      },
+      "CardDefinitionRefundsSpentPoints": {
+        "type": "object",
+        "description": "How points spent on a refunded order are handled.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "NONE",
+              "REFUNDABLE"
+            ],
+            "description": "Whether spent points are refundable."
+          },
+          "methods": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LoyaltyV2ActivityCardDefinitionRefundsSpentPointsMethod"
+            },
+            "description": "Refund methods. Empty array when `type` is `NONE`."
+          }
+        },
+        "required": [
+          "type",
+          "methods"
+        ]
+      },
+      "CardDefinitionRefundsEarnedPoints": {
+        "type": "object",
+        "description": "How points earned on a refunded order are handled.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "NONE",
+              "REFUNDABLE"
+            ],
+            "description": "Whether earned points are revocable on refund."
+          },
+          "methods": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LoyaltyV2ActivityCardDefinitionRefundsEarnedPointsMethod"
+            },
+            "description": "Revoke methods. Empty array when `type` is `NONE`."
+          }
+        },
+        "required": [
+          "type",
+          "methods"
+        ]
+      },
+      "CardDefinitionActivitySource": {
+        "type": "object",
+        "description": "Source that triggered the activity.",
+        "properties": {
+          "channel": {
+            "type": "string",
+            "enum": [
+              "USER_PORTAL",
+              "API",
+              "CLIENT_API",
+              "INTERNAL"
+            ],
+            "description": "Channel through which the activity was triggered."
+          },
+          "user": {
+            "type": "object",
+            "description": "User that triggered the activity. Omitted when not applicable.",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "User ID."
+              }
+            }
+          },
+          "api_key": {
+            "type": "object",
+            "description": "API key used to trigger the activity. Omitted when not applicable.",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "API key name."
+              },
+              "app_id": {
+                "type": "string",
+                "description": "Application ID of the API key."
+              },
+              "client_app_id": {
+                "type": "string",
+                "description": "Client application ID of the API key."
+              }
+            }
+          }
         }
       },
       "EarningRuleDefinition": {
@@ -48278,27 +47628,55 @@
           }
         }
       },
-      "CardDefinitionEarningLimitsGlobalTimeBasedPeriodInput": {
+      "CardDefinitionPointsExpirationRollingExpirationPeriodInput": {
         "type": "object",
-        "description": "Time-based earning limit period. When `type` is `CURRENT_PERIOD` (the only\nallowed value), `current_period` is required.",
+        "description": "Rolling expiration period. The maximum `value` depends on `unit`:\n1-90 for `DAY`, 1-12 for `MONTH`, 1-5 for `YEAR` (enforced via if/then conditions).",
+        "properties": {
+          "unit": {
+            "type": "string",
+            "enum": [
+              "DAY",
+              "MONTH",
+              "YEAR"
+            ],
+            "description": "Period unit."
+          },
+          "value": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 90,
+            "description": "Period length. Maximum: 90 for `DAY`, 12 for `MONTH`, 5 for `YEAR`."
+          }
+        },
+        "required": [
+          "unit",
+          "value"
+        ],
+        "additionalProperties": false
+      },
+      "CardDefinitionPointsExpirationRollingExpirationRoundingInput": {
+        "type": "object",
+        "description": "Rounding of the rolling expiration date. When `type` is `END_OF_PARTICULAR_MONTH`,\n`value` (month number 1-12) is required; for all other types `value` must be null/absent.",
         "properties": {
           "type": {
             "type": "string",
             "enum": [
-              "CURRENT_PERIOD"
+              "END_OF_MONTH",
+              "END_OF_QUARTER",
+              "END_OF_HALF_YEAR",
+              "END_OF_YEAR",
+              "END_OF_PARTICULAR_MONTH"
             ],
-            "description": "Period type. Currently only `CURRENT_PERIOD` (current calendar period) is supported."
+            "description": "Rounding type."
           },
-          "current_period": {
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/CardDefinitionEarningLimitsGlobalTimeBasedCurrentPeriodInput"
-              },
-              {
-                "type": "null"
-              }
+          "value": {
+            "type": [
+              "integer",
+              "null"
             ],
-            "description": "Current-period configuration. Required when `type` is `CURRENT_PERIOD`."
+            "minimum": 1,
+            "maximum": 12,
+            "description": "Month number (1-12). Required when `type` is `END_OF_PARTICULAR_MONTH`, must be null otherwise."
           }
         },
         "required": [
@@ -48306,114 +47684,691 @@
         ],
         "additionalProperties": false
       },
-      "CardDefinitionEarningLimitsGlobalTimeBasedPointsInput": {
+      "CardDefinitionPointsExpirationCalendarExpirationDateInput": {
         "type": "object",
-        "description": "Points cap for the time-based earning limit.",
+        "description": "A calendar date (day + month). The maximum `day` depends on `month`\n(enforced via if/then conditions): 29 for February, 30 for April/June/September/November,\n31 for the remaining months.",
         "properties": {
-          "max": {
+          "day": {
             "type": "integer",
             "minimum": 1,
-            "maximum": 9007199254740991,
-            "description": "Maximum points that can be earned within the period (1 to 9007199254740991)."
-          }
-        },
-        "required": [
-          "max"
-        ],
-        "additionalProperties": false
-      },
-      "CardDefinitionSpendingLimitsGlobalTimeBasedPeriodInput": {
-        "type": "object",
-        "description": "Time-based spending limit period. When `type` is `CURRENT_PERIOD` (the only\nallowed value), `current_period` is required.",
-        "properties": {
-          "type": {
-            "type": "string",
-            "enum": [
-              "CURRENT_PERIOD"
-            ],
-            "description": "Period type. Currently only `CURRENT_PERIOD` (current calendar period) is supported."
+            "maximum": 31,
+            "description": "Day of the month. Maximum depends on the month: 29 for February, 30 for April, June, September, November, 31 otherwise."
           },
-          "current_period": {
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/CardDefinitionSpendingLimitsGlobalTimeBasedCurrentPeriodInput"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "Current-period configuration. Required when `type` is `CURRENT_PERIOD`."
-          }
-        },
-        "required": [
-          "type"
-        ],
-        "additionalProperties": false
-      },
-      "CardDefinitionSpendingLimitsGlobalTimeBasedPointsInput": {
-        "type": "object",
-        "description": "Points cap for the time-based spending limit.",
-        "properties": {
-          "max": {
+          "month": {
             "type": "integer",
             "minimum": 1,
-            "maximum": 9007199254740991,
-            "description": "Maximum points that can be spent within the period (1 to 9007199254740991)."
+            "maximum": 12,
+            "description": "Month number (1-12)."
           }
         },
         "required": [
-          "max"
+          "day",
+          "month"
         ],
         "additionalProperties": false
       },
-      "LoyaltyV2ActivityCardDefinitionLimitTimeBasedPeriod": {
+      "CardDefinitionPointsExpirationSlidingExpirationPeriodInput": {
         "type": "object",
-        "description": "Time-based limit period.",
+        "description": "Sliding expiration period. The maximum `value` depends on `unit`:\n1-90 for `DAY`, 1-12 for `MONTH`, 1-1 for `YEAR` (enforced via if/then conditions).",
         "properties": {
-          "type": {
+          "value": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 90,
+            "description": "Period length. Maximum: 90 for `DAY`, 12 for `MONTH`, 1 for `YEAR`."
+          },
+          "unit": {
             "type": "string",
             "enum": [
-              "CURRENT_PERIOD"
+              "DAY",
+              "MONTH",
+              "YEAR"
             ],
-            "description": "Period type."
+            "description": "Period unit."
+          }
+        },
+        "required": [
+          "value",
+          "unit"
+        ],
+        "additionalProperties": false
+      },
+      "CardDefinitionPendingPointsPeriodBasedPeriodInput": {
+        "type": "object",
+        "description": "Pending period. The maximum `value` depends on `unit`:\n1-90 for `DAY`, 1-12 for `MONTH`, 1-1 for `YEAR` (enforced via if/then conditions).",
+        "properties": {
+          "unit": {
+            "type": "string",
+            "enum": [
+              "DAY",
+              "MONTH",
+              "YEAR"
+            ],
+            "description": "Period unit."
           },
-          "current_period": {
+          "value": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 90,
+            "description": "Period length. Maximum: 90 for `DAY`, 12 for `MONTH`, 1 for `YEAR`."
+          }
+        },
+        "required": [
+          "unit",
+          "value"
+        ],
+        "additionalProperties": false
+      },
+      "CardDefinitionPendingPointsFixedDatesDateInput": {
+        "type": "object",
+        "description": "A calendar date (day + month). The maximum `day` depends on `month`\n(enforced via if/then conditions): 29 for February, 30 for April/June/September/November,\n31 for the remaining months.",
+        "properties": {
+          "day": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 31,
+            "description": "Day of the month. Maximum depends on the month: 29 for February, 30 for April, June, September, November, 31 otherwise."
+          },
+          "month": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 12,
+            "description": "Month number (1-12)."
+          }
+        },
+        "required": [
+          "day",
+          "month"
+        ],
+        "additionalProperties": false
+      },
+      "CardDefinitionPendingPointsEventBasedCancelPeriodInput": {
+        "type": "object",
+        "description": "Period after which non-activated pending points are cancelled. The maximum `value`\ndepends on `unit`: 1-90 for `DAY`, 1-12 for `MONTH`, 1-1 for `YEAR`\n(enforced via if/then conditions).",
+        "properties": {
+          "value": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 90,
+            "description": "Period length. Maximum: 90 for `DAY`, 12 for `MONTH`, 1 for `YEAR`."
+          },
+          "unit": {
+            "type": "string",
+            "enum": [
+              "DAY",
+              "MONTH",
+              "YEAR"
+            ],
+            "description": "Period unit."
+          }
+        },
+        "required": [
+          "value",
+          "unit"
+        ],
+        "additionalProperties": false
+      },
+      "CardDefinitionEarningLimitsGlobalLimitInput": {
+        "description": "A global earning limit, discriminated by `type`:\n`BALANCE_BASED` (maximum card balance) or `TIME_BASED` (maximum points earned per period).",
+        "oneOf": [
+          {
             "type": "object",
-            "description": "Current-period configuration. Present when `type` is `CURRENT_PERIOD`.",
+            "description": "Balance-based limit - the card balance cannot exceed `max` points.",
             "properties": {
-              "unit": {
+              "type": {
                 "type": "string",
-                "enum": [
-                  "DAY",
-                  "WEEK",
-                  "MONTH",
-                  "QUARTER",
-                  "YEAR"
-                ],
-                "description": "Calendar period unit."
+                "const": "BALANCE_BASED",
+                "description": "Limit type."
+              },
+              "max": {
+                "type": "integer",
+                "minimum": 1,
+                "description": "Maximum card balance in points."
               }
             },
             "required": [
-              "unit"
-            ]
+              "type",
+              "max"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "description": "Time-based limit - at most `points.max` points can be earned per period.",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "TIME_BASED",
+                "description": "Limit type."
+              },
+              "period": {
+                "$ref": "#/components/schemas/CardDefinitionEarningLimitsGlobalTimeBasedPeriodInput"
+              },
+              "points": {
+                "$ref": "#/components/schemas/CardDefinitionEarningLimitsGlobalTimeBasedPointsInput"
+              }
+            },
+            "required": [
+              "type",
+              "period",
+              "points"
+            ],
+            "additionalProperties": false
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type"
+        }
+      },
+      "CardDefinitionEarningLimitsTransactionsLimitInput": {
+        "description": "A per-transaction earning limit, discriminated by `type`:\n`POINTS` (maximum points earned per transaction) or `SPENDING`\n(minimum order amount required to earn points).",
+        "oneOf": [
+          {
+            "type": "object",
+            "description": "Points limit - at most `max` points can be earned in a single transaction.",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "POINTS",
+                "description": "Limit type."
+              },
+              "max": {
+                "type": "integer",
+                "minimum": 1,
+                "description": "Maximum points earned per transaction."
+              }
+            },
+            "required": [
+              "type",
+              "max"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "description": "Spending threshold - points are only earned when the transaction amount is at least `min_amount`.",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "SPENDING",
+                "description": "Limit type."
+              },
+              "min_amount": {
+                "type": "integer",
+                "minimum": 1,
+                "description": "Minimum transaction amount required to earn points."
+              }
+            },
+            "required": [
+              "type",
+              "min_amount"
+            ],
+            "additionalProperties": false
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type"
+        }
+      },
+      "CardDefinitionSpendingLimitsGlobalLimitInput": {
+        "description": "A global spending limit, discriminated by `type`:\n`SPENDING_BASED` (total points spent) or `TIME_BASED` (points spent per period).",
+        "oneOf": [
+          {
+            "type": "object",
+            "description": "Spending-based limit - at most `max` points can be spent in total.",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "SPENDING_BASED",
+                "description": "Limit type."
+              },
+              "max": {
+                "type": "integer",
+                "minimum": 1,
+                "description": "Maximum total points spent."
+              }
+            },
+            "required": [
+              "type",
+              "max"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "description": "Time-based limit - at most `points.max` points can be spent per period.",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "TIME_BASED",
+                "description": "Limit type."
+              },
+              "period": {
+                "$ref": "#/components/schemas/CardDefinitionSpendingLimitsGlobalTimeBasedPeriodInput"
+              },
+              "points": {
+                "$ref": "#/components/schemas/CardDefinitionSpendingLimitsGlobalTimeBasedPointsInput"
+              }
+            },
+            "required": [
+              "type",
+              "period",
+              "points"
+            ],
+            "additionalProperties": false
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type"
+        }
+      },
+      "CardDefinitionSpendingLimitsTransactionsLimitInput": {
+        "description": "A per-transaction spending limit. Currently only the `POINTS` type is supported.",
+        "oneOf": [
+          {
+            "type": "object",
+            "description": "Points limit - at most `max` points can be spent in a single transaction.",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "POINTS",
+                "description": "Limit type."
+              },
+              "max": {
+                "type": "integer",
+                "minimum": 1,
+                "description": "Maximum points spent per transaction."
+              }
+            },
+            "required": [
+              "type",
+              "max"
+            ],
+            "additionalProperties": false
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type"
+        }
+      },
+      "CardDefinitionRefundsSpentPointsMethodInput": {
+        "description": "A spent points refund method. Currently only the `RETURN_POINTS` type is supported.",
+        "oneOf": [
+          {
+            "type": "object",
+            "description": "Return spent points back to the card.",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "RETURN_POINTS",
+                "description": "Refund method type."
+              },
+              "mode": {
+                "type": "string",
+                "enum": [
+                  "REFUND_ALL",
+                  "REFUND_ITEM",
+                  "REFUND_AMOUNT"
+                ],
+                "description": "Refund mode: on full-order refund (`REFUND_ALL`), per-item refund (`REFUND_ITEM`) or amount-based refund (`REFUND_AMOUNT`)."
+              }
+            },
+            "required": [
+              "type",
+              "mode"
+            ],
+            "additionalProperties": false
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type"
+        }
+      },
+      "CardDefinitionRefundsEarnedPointsMethodInput": {
+        "description": "An earned points revoke method, discriminated by `type`:\n`REVOKE_FROM_PENDING` (only valid when `pending_points.type` is `PERIOD_BASED`,\n`FIXED_DATES` or `EVENT_BASED`) or `REVOKE_FROM_BALANCE`.",
+        "oneOf": [
+          {
+            "type": "object",
+            "description": "Revoke earned points from pending points.",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "REVOKE_FROM_PENDING",
+                "description": "Revoke method type."
+              }
+            },
+            "required": [
+              "type"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "description": "Revoke earned points from the card balance.",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "REVOKE_FROM_BALANCE",
+                "description": "Revoke method type."
+              },
+              "mode": {
+                "type": "string",
+                "enum": [
+                  "REVOKE_TO_ZERO",
+                  "REVOKE_BELOW_ZERO"
+                ],
+                "description": "Revoke mode. `REVOKE_BELOW_ZERO` requires `balance_settings.allow_negative` to be `true`."
+              }
+            },
+            "required": [
+              "type",
+              "mode"
+            ],
+            "additionalProperties": false
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type"
+        }
+      },
+      "LoyaltyV2ActivityCardDefinitionPeriod": {
+        "type": "object",
+        "description": "A period expressed as a value and unit.",
+        "properties": {
+          "value": {
+            "type": "integer",
+            "description": "Period length."
+          },
+          "unit": {
+            "type": "string",
+            "enum": [
+              "DAY",
+              "MONTH",
+              "YEAR"
+            ],
+            "description": "Period unit."
+          }
+        },
+        "required": [
+          "value",
+          "unit"
+        ]
+      },
+      "LoyaltyV2ActivityCardDefinitionPointsExpirationRollingExpirationRounding": {
+        "type": "object",
+        "description": "Rounding of the rolling expiration date.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "END_OF_MONTH",
+              "END_OF_QUARTER",
+              "END_OF_HALF_YEAR",
+              "END_OF_YEAR",
+              "END_OF_PARTICULAR_MONTH"
+            ],
+            "description": "Rounding type."
+          },
+          "value": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 12,
+            "description": "Month number (1-12). Only present when `type` is `END_OF_PARTICULAR_MONTH`."
           }
         },
         "required": [
           "type"
         ]
       },
-      "LoyaltyV2ActivityCardDefinitionLimitTimeBasedPoints": {
+      "LoyaltyV2ActivityCardDefinitionCalendarDate": {
         "type": "object",
-        "description": "Points cap for a time-based limit.",
+        "description": "A calendar date (day + month).",
         "properties": {
-          "max": {
+          "day": {
             "type": "integer",
-            "description": "Maximum points within the period."
+            "minimum": 1,
+            "maximum": 31,
+            "description": "Day of the month."
+          },
+          "month": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 12,
+            "description": "Month number (1-12)."
           }
         },
         "required": [
+          "day",
+          "month"
+        ]
+      },
+      "CardDefinitionEarningLimitsGlobalLimit": {
+        "description": "A global earning limit: `BALANCE_BASED` or `TIME_BASED`.",
+        "oneOf": [
+          {
+            "type": "object",
+            "description": "Balance-based limit.",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "BALANCE_BASED",
+                "description": "Limit type."
+              },
+              "max": {
+                "type": "integer",
+                "description": "Maximum card balance in points."
+              }
+            },
+            "required": [
+              "type",
+              "max"
+            ]
+          },
+          {
+            "type": "object",
+            "description": "Time-based limit.",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "TIME_BASED",
+                "description": "Limit type."
+              },
+              "period": {
+                "$ref": "#/components/schemas/LoyaltyV2ActivityCardDefinitionLimitTimeBasedPeriod"
+              },
+              "points": {
+                "$ref": "#/components/schemas/LoyaltyV2ActivityCardDefinitionLimitTimeBasedPoints"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type"
+        }
+      },
+      "LoyaltyV2ActivityCardDefinitionEarningLimitsTransactionsLimit": {
+        "description": "A per-transaction earning limit: `POINTS` or `SPENDING`.",
+        "oneOf": [
+          {
+            "type": "object",
+            "description": "Points limit.",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "POINTS",
+                "description": "Limit type."
+              },
+              "max": {
+                "type": "integer",
+                "description": "Maximum points earned per transaction."
+              }
+            },
+            "required": [
+              "type",
+              "max"
+            ]
+          },
+          {
+            "type": "object",
+            "description": "Spending threshold.",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "SPENDING",
+                "description": "Limit type."
+              },
+              "min_amount": {
+                "type": "integer",
+                "description": "Minimum transaction amount required to earn points."
+              }
+            },
+            "required": [
+              "type",
+              "min_amount"
+            ]
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type"
+        }
+      },
+      "CardDefinitionSpendingLimitsGlobalLimit": {
+        "description": "A global spending limit: `SPENDING_BASED` or `TIME_BASED`.",
+        "oneOf": [
+          {
+            "type": "object",
+            "description": "Spending-based limit.",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "SPENDING_BASED",
+                "description": "Limit type."
+              },
+              "max": {
+                "type": "integer",
+                "description": "Maximum total points spent."
+              }
+            },
+            "required": [
+              "type",
+              "max"
+            ]
+          },
+          {
+            "type": "object",
+            "description": "Time-based limit.",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "TIME_BASED",
+                "description": "Limit type."
+              },
+              "period": {
+                "$ref": "#/components/schemas/LoyaltyV2ActivityCardDefinitionLimitTimeBasedPeriod"
+              },
+              "points": {
+                "$ref": "#/components/schemas/LoyaltyV2ActivityCardDefinitionLimitTimeBasedPoints"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type"
+        }
+      },
+      "LoyaltyV2ActivityCardDefinitionSpendingLimitsTransactionsLimit": {
+        "type": "object",
+        "description": "A per-transaction spending limit. Currently only the `POINTS` type exists.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "POINTS",
+            "description": "Limit type."
+          },
+          "max": {
+            "type": "integer",
+            "description": "Maximum points spent per transaction."
+          }
+        },
+        "required": [
+          "type",
           "max"
         ]
+      },
+      "LoyaltyV2ActivityCardDefinitionRefundsSpentPointsMethod": {
+        "type": "object",
+        "description": "A spent points refund method.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "RETURN_POINTS",
+            "description": "Refund method type."
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "REFUND_ALL",
+              "REFUND_ITEM",
+              "REFUND_AMOUNT"
+            ],
+            "description": "Refund mode."
+          }
+        },
+        "required": [
+          "type",
+          "mode"
+        ]
+      },
+      "LoyaltyV2ActivityCardDefinitionRefundsEarnedPointsMethod": {
+        "description": "An earned points revoke method: `REVOKE_FROM_PENDING` or `REVOKE_FROM_BALANCE`.",
+        "oneOf": [
+          {
+            "type": "object",
+            "description": "Revoke earned points from pending points.",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "REVOKE_FROM_PENDING",
+                "description": "Revoke method type."
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "description": "Revoke earned points from the card balance.",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "REVOKE_FROM_BALANCE",
+                "description": "Revoke method type."
+              },
+              "mode": {
+                "type": "string",
+                "enum": [
+                  "REVOKE_TO_ZERO",
+                  "REVOKE_BELOW_ZERO"
+                ],
+                "description": "Revoke mode."
+              }
+            },
+            "required": [
+              "type",
+              "mode"
+            ]
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type"
+        }
       },
       "EarningRuleConditions": {
         "type": "object",
@@ -48958,6 +48913,34 @@
         ],
         "additionalProperties": false
       },
+      "CardDefinitionSpendingLimitsGlobalTimeBasedPeriodInput": {
+        "type": "object",
+        "description": "Time-based spending limit period. When `type` is `CURRENT_PERIOD` (the only\nallowed value), `current_period` is required.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "CURRENT_PERIOD"
+            ],
+            "description": "Period type. Currently only `CURRENT_PERIOD` (current calendar period) is supported."
+          },
+          "current_period": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/CardDefinitionSpendingLimitsGlobalTimeBasedCurrentPeriodInput"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Current-period configuration. Required when `type` is `CURRENT_PERIOD`."
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "additionalProperties": false
+      },
       "RewardPurchaseLimitsFrequencyLimitTriggersInput": {
         "type": "object",
         "description": "Maximum number of purchases allowed in the period.",
@@ -48997,6 +48980,42 @@
         "required": [
           "value",
           "unit"
+        ]
+      },
+      "LoyaltyV2ActivityCardDefinitionLimitTimeBasedPeriod": {
+        "type": "object",
+        "description": "Time-based limit period.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "CURRENT_PERIOD"
+            ],
+            "description": "Period type."
+          },
+          "current_period": {
+            "type": "object",
+            "description": "Current-period configuration. Present when `type` is `CURRENT_PERIOD`.",
+            "properties": {
+              "unit": {
+                "type": "string",
+                "enum": [
+                  "DAY",
+                  "WEEK",
+                  "MONTH",
+                  "QUARTER",
+                  "YEAR"
+                ],
+                "description": "Calendar period unit."
+              }
+            },
+            "required": [
+              "unit"
+            ]
+          }
+        },
+        "required": [
+          "type"
         ]
       },
       "LoyaltyV2ActivityRewardPurchaseLimitsFrequencyLimitTriggers": {
@@ -49250,47 +49269,78 @@
           "min"
         ]
       },
-      "CardDefinitionEarningLimitsGlobalTimeBasedCurrentPeriodInput": {
+      "CardDefinitionEarningLimitsGlobalTimeBasedPeriodInput": {
         "type": "object",
-        "description": "Calendar period unit used to reset the time-based earning limit.",
+        "description": "Time-based earning limit period. When `type` is `CURRENT_PERIOD` (the only\nallowed value), `current_period` is required.",
         "properties": {
-          "unit": {
+          "type": {
             "type": "string",
             "enum": [
-              "DAY",
-              "WEEK",
-              "MONTH",
-              "QUARTER",
-              "YEAR"
+              "CURRENT_PERIOD"
             ],
-            "description": "Calendar period unit."
+            "description": "Period type. Currently only `CURRENT_PERIOD` (current calendar period) is supported."
+          },
+          "current_period": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/CardDefinitionEarningLimitsGlobalTimeBasedCurrentPeriodInput"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Current-period configuration. Required when `type` is `CURRENT_PERIOD`."
           }
         },
         "required": [
-          "unit"
+          "type"
         ],
         "additionalProperties": false
       },
-      "CardDefinitionSpendingLimitsGlobalTimeBasedCurrentPeriodInput": {
+      "CardDefinitionEarningLimitsGlobalTimeBasedPointsInput": {
         "type": "object",
-        "description": "Calendar period unit used to reset the time-based spending limit.",
+        "description": "Points cap for the time-based earning limit.",
         "properties": {
-          "unit": {
-            "type": "string",
-            "enum": [
-              "DAY",
-              "WEEK",
-              "MONTH",
-              "QUARTER",
-              "YEAR"
-            ],
-            "description": "Calendar period unit."
+          "max": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991,
+            "description": "Maximum points that can be earned within the period (1 to 9007199254740991)."
           }
         },
         "required": [
-          "unit"
+          "max"
         ],
         "additionalProperties": false
+      },
+      "CardDefinitionSpendingLimitsGlobalTimeBasedPointsInput": {
+        "type": "object",
+        "description": "Points cap for the time-based spending limit.",
+        "properties": {
+          "max": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991,
+            "description": "Maximum points that can be spent within the period (1 to 9007199254740991)."
+          }
+        },
+        "required": [
+          "max"
+        ],
+        "additionalProperties": false
+      },
+      "LoyaltyV2ActivityCardDefinitionLimitTimeBasedPoints": {
+        "type": "object",
+        "description": "Points cap for a time-based limit.",
+        "properties": {
+          "max": {
+            "type": "integer",
+            "description": "Maximum points within the period."
+          }
+        },
+        "required": [
+          "max"
+        ]
       },
       "LoyaltyV2ActivityEarningRuleConditionObject": {
         "type": "object",
@@ -49562,6 +49612,48 @@
             "description": "Subtype of the referenced resource."
           }
         },
+        "additionalProperties": false
+      },
+      "CardDefinitionSpendingLimitsGlobalTimeBasedCurrentPeriodInput": {
+        "type": "object",
+        "description": "Calendar period unit used to reset the time-based spending limit.",
+        "properties": {
+          "unit": {
+            "type": "string",
+            "enum": [
+              "DAY",
+              "WEEK",
+              "MONTH",
+              "QUARTER",
+              "YEAR"
+            ],
+            "description": "Calendar period unit."
+          }
+        },
+        "required": [
+          "unit"
+        ],
+        "additionalProperties": false
+      },
+      "CardDefinitionEarningLimitsGlobalTimeBasedCurrentPeriodInput": {
+        "type": "object",
+        "description": "Calendar period unit used to reset the time-based earning limit.",
+        "properties": {
+          "unit": {
+            "type": "string",
+            "enum": [
+              "DAY",
+              "WEEK",
+              "MONTH",
+              "QUARTER",
+              "YEAR"
+            ],
+            "description": "Calendar period unit."
+          }
+        },
+        "required": [
+          "unit"
+        ],
         "additionalProperties": false
       },
       "LoyaltyV2ActivityEarningRuleEffectPointsExpirationRollingExpirationPeriod": {
