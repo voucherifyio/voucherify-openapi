@@ -427,16 +427,16 @@
 | /v2/loyalties/programs/{programId}/members/{memberId}/earning-rules/{earningRuleId}/reports/daily       | get    | List member earning-rule daily reports         |              |               |
 | /v2/loyalties/programs/{programId}/reports/spending/daily                                               | get    | List program spending daily reports            |              |               |
 | /v2/loyalties/programs/{programId}/reports/spending/summary                                             | get    | List program spending summary reports          |              |               |
-| /v2/loyalties/programs/{programId}/reports/tiers/daily                                                  | get    | Get program tiers daily report                 |              |               |
-| /v2/loyalties/programs/{programId}/reports/tiers/summary                                                | get    | Get program tiers summary report               |              |               |
+| /v2/loyalties/programs/{programId}/reports/tiers/daily                                                  | get    | List program tiers daily reports               |              |               |
+| /v2/loyalties/programs/{programId}/reports/tiers/summary                                                | get    | List program tiers summary reports             |              |               |
 | /v2/loyalties/programs/{programId}/reports/rewards/daily                                                | get    | List program rewards daily reports             |              |               |
 | /v2/loyalties/programs/{programId}/reports/rewards/summary                                              | get    | List program rewards summary reports           |              |               |
 | /v2/loyalties/programs/{programId}/reports/rewards/spendings/daily                                      | get    | List program rewards spendings daily reports   |              |               |
 | /v2/loyalties/programs/{programId}/reports/rewards/spendings/summary                                    | get    | List program rewards spendings summary reports |              |               |
 | /v2/loyalties/programs/{programId}/reports/points-earnings/daily                                        | get    | List program points-earnings daily reports     |              |               |
 | /v2/loyalties/programs/{programId}/reports/points-earnings/summary                                      | get    | List program points-earnings summary reports   |              |               |
-| /v2/loyalties/programs/{programId}/reports/earning-rules/daily                                          | get    | Get program earning-rules daily report         |              |               |
-| /v2/loyalties/programs/{programId}/reports/earning-rules/summary                                        | get    | Get program earning-rules summary report       |              |               |
+| /v2/loyalties/programs/{programId}/reports/earning-rules/daily                                          | get    | List program earning-rules daily reports       |              |               |
+| /v2/loyalties/programs/{programId}/reports/earning-rules/summary                                        | get    | List program earning-rules summary reports     |              |               |
 ## LV2-Card Definitions
 | endpoint                                                     | method | summary                         | is supported | is deprecated |
 | ------------------------------------------------------------ | ------ | ------------------------------- | ------------ | ------------- |

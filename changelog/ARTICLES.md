@@ -5,6 +5,16 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-10-13
+
+Updated `loyalty-v2-reports-overview.mdx` so the tiers summary report no longer accepts `limit` and `order`. The report always returns at most 100 rows, ordered by `id` descending.
+
+Updated Workflows articles with role permissions for opening, editing, publishing, and activating workflows (DOC-1452 / DEV-4490 / DEV-4491).
+
+- Updated `workflows.mdx` with who can use Workflows.
+- Updated `build-workflows.mdx` so the guide requires **Read Workflows**, **Create and modify Workflows**, **Publish Workflows**, and **Activate and deactivate Workflows**.
+- Updated `workflow-options-limits.mdx` with **Workflow access**, a required permission on save, publish, and status changes, and the **Create and modify Workflows** requirement for **Restore as draft**.
+
 ## 2026-10-12
 
 Updated `loyalty-v2-reports-overview.mdx` so the earning-rule daily report link points at the list page.
