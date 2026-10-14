@@ -6,6 +6,20 @@ Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
 ## 2026-10-13
 
+- Documented GET `/v2/loyalties/programs/{programId}/reports/members/daily`. Summary: "List program members daily reports".
+  - Required `date`, `members_joined`, `members_deactivated`, `members_deleted`, `cards`, and `object` on each row. Required `data` and `object` on the response.
+  - `members_deactivated` decreases by 1 when a member is activated again. `cards` decreases by 1 when a card is unassigned.
+  - `date` is the start of the truncated period (`week` starts on Monday). Periods without recorded activity are omitted.
+  - Documented `start_date` and `end_date` as inclusive, with `start_date` before `end_date`. The range limit is 90 days, 12 weeks, 12 months, or 4 quarters.
+  - Pointed the 200 body at `LoyaltiesProgramsReportsMembersDailyListResponseBody`.
+  - Added `400` examples for invalid query parameters, a date range past the resolution limit, and `start_date` not before `end_date`.
+  - Added `404` examples for a missing program, including an id that does not match the pattern.
+- Documented GET `/v2/loyalties/programs/{programId}/reports/members/summary`. Summary: "List program members summary reports".
+  - Required `id`, `members_joined`, `members_deactivated`, `members_deleted`, `cards`, and `object` on each row. `id` uses the `lpmrs_` prefix. One row when activity was recorded.
+  - The counters follow the same rules as the members daily report.
+  - `limit` and `order` are not query parameters.
+  - Pointed the 200 body at `LoyaltiesProgramsReportsMembersSummaryListResponseBody`.
+  - Added a `400` example for `limit`, which is not a query parameter, and `404` examples for a missing program, including an id that does not match the pattern.
 - Documented GET `/v2/loyalties/programs/{programId}/reports/rewards/daily`. Summary: "List program rewards daily reports".
   - Required `date`, `reward_id`, `success_count`, `failures_count`, `failures_breakdown`, and `object` on each row. Required `data` and `object` on the response.
   - `failures_breakdown` is always an empty object. `success_count` counts approved purchases. `failures_count` counts failed attempts.
