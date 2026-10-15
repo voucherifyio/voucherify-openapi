@@ -1,5 +1,8 @@
 import * as OpenAPI from "../../../../reference/OpenAPI.json";
-import { restoreValidationRuleErrorObjects } from "./utils";
+import {
+  keepCustomerLoyaltyMembershipMemberStatuses,
+  restoreValidationRuleErrorObjects,
+} from "./utils";
 
 const INT32_MAX = 2147483647;
 const INT32_MIN = -2147483648;
@@ -40,6 +43,7 @@ const promoteOutOfInt32BoundsToInt64 = (value: unknown): void => {
 const removeDotnetBreakingChanges = {
   before: (_openApi: unknown): typeof OpenAPI => {
     const openApi = _openApi as typeof OpenAPI;
+    keepCustomerLoyaltyMembershipMemberStatuses(openApi.components.schemas);
 
     // Gemini recommended so
     const schemas = openApi.components.schemas as any;

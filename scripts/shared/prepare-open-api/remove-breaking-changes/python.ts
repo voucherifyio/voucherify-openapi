@@ -3,11 +3,15 @@ import {
   OpenAPISpec,
   removeRequiredFromRequestsAndResponses,
 } from "../remove-required-from-request-and-responses";
-import { restoreValidationRuleErrorObjects } from "./utils";
+import {
+  keepCustomerLoyaltyMembershipMemberStatuses,
+  restoreValidationRuleErrorObjects,
+} from "./utils";
 
 const removePythonBreakingChanges = {
   before: (_openApi: unknown): typeof OpenAPI => {
     const openApi = _openApi as typeof OpenAPI;
+    keepCustomerLoyaltyMembershipMemberStatuses(openApi.components.schemas);
 
     //Remove required on requestBody:
     for (const [path, methods] of Object.entries(openApi.paths)) {

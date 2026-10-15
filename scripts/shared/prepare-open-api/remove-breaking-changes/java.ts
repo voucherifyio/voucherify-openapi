@@ -3,11 +3,15 @@ import {
   OpenAPISpec,
   removeRequiredFromRequestsAndResponses,
 } from "../remove-required-from-request-and-responses";
-import { restoreValidationRuleErrorObjects } from "./utils";
+import {
+  keepCustomerLoyaltyMembershipMemberStatuses,
+  restoreValidationRuleErrorObjects,
+} from "./utils";
 
 const removeJavaBreakingChanges = {
   before: (_openApi: unknown): typeof OpenAPI => {
     let openApi = _openApi as typeof OpenAPI;
+    keepCustomerLoyaltyMembershipMemberStatuses(openApi.components.schemas);
 
     //Replace SKUs with skus
     openApi = JSON.parse(JSON.stringify(openApi).replaceAll("-SKUs", "-skus"));

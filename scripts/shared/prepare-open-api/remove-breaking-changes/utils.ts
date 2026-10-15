@@ -17,6 +17,17 @@ export const restoreLoyaltyExpirationRulesPeriodTypeDefault = (schema: {
   };
 };
 
+/** Keep INACTIVE and DELETED on customer loyalty membership status so callers that reference those enum constants still compile. The API lists only ACTIVE memberships. */
+export const keepCustomerLoyaltyMembershipMemberStatuses = (schemas: any) => {
+  const status = schemas?.CustomerLoyaltyMembershipMember?.properties?.status;
+  if (!status) {
+    return;
+  }
+  status.enum = ["ACTIVE", "INACTIVE", "DELETED"];
+  status.description =
+    "Member status. List responses include only ACTIVE memberships. INACTIVE and DELETED remain so existing SDK callers keep compiling.";
+};
+
 /** SDKs: keep the inline `error` object with a single `message`; the shared `ValidationRuleError` $ref renames the generated models. */
 export const restoreValidationRuleErrorObjects = (schemas: any) => {
   const inlineError = (description: string, messageDescription: string) => ({

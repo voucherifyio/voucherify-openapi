@@ -4660,28 +4660,11 @@
           {
             "type": "object",
             "properties": {
-              "id": {
-                "type": "string",
-                "pattern": "^lcrd_[a-f0-9]+$",
-                "description": "Identifies the card.",
-                "nullable": true
-              },
               "program_id": {
                 "type": "string",
                 "pattern": "^lprg_[a-f0-9]+$",
                 "description": "Identifies the loyalty program.",
                 "nullable": true
-              },
-              "card_definition_id": {
-                "type": "string",
-                "pattern": "^lcdef_[a-f0-9]+$",
-                "description": "Identifies the card definition.",
-                "nullable": true
-              },
-              "code": {
-                "type": "string",
-                "nullable": true,
-                "description": "Human-readable card code. `null` until asynchronous code generation finishes."
               },
               "customer_id": {
                 "type": "string",
@@ -4706,15 +4689,6 @@
                 "nullable": true,
                 "format": "date-time",
                 "description": "Records the last update (ISO 8601). `null` if the card has never been updated."
-              },
-              "object": {
-                "type": "string",
-                "enum": [
-                  "card"
-                ],
-                "description": "Object type. Always `card`.",
-                "x-openapi-31-const": true,
-                "nullable": true
               }
             },
             "required": []
@@ -4855,6 +4829,18 @@
       "CardBase": {
         "type": "object",
         "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^lcrd_[a-f0-9]+$",
+            "description": "Identifies the card.",
+            "nullable": true
+          },
+          "card_definition_id": {
+            "type": "string",
+            "pattern": "^lcdef_[a-f0-9]+$",
+            "description": "Identifies the card definition.",
+            "nullable": true
+          },
           "card_type": {
             "type": "string",
             "enum": [
@@ -4863,6 +4849,11 @@
             "description": "Card type. Currently only `INDIVIDUAL` is supported.",
             "nullable": true
           },
+          "code": {
+            "type": "string",
+            "nullable": true,
+            "description": "Human-readable card code. Card code generation is asynchronous - this field is `null` right after member creation and is populated shortly after, once the background code generation completes."
+          },
           "lifetime_bucket": {
             "$ref": "#/components/schemas/CardLifetimeBucket",
             "description": "Lifetime point counters of the card."
@@ -4870,6 +4861,15 @@
           "balance": {
             "$ref": "#/components/schemas/CardBalance",
             "description": "Current available balance calculated from the lifetime bucket."
+          },
+          "object": {
+            "type": "string",
+            "enum": [
+              "card"
+            ],
+            "description": "Object type. Always `card`.",
+            "x-openapi-31-const": true,
+            "nullable": true
           }
         },
         "required": [
@@ -4902,6 +4902,14 @@
             "type": "string",
             "pattern": "^lmbr_[a-f0-9]+$",
             "description": "ID of the member owning the card.",
+            "nullable": true
+          },
+          "card_type": {
+            "type": "string",
+            "enum": [
+              "INDIVIDUAL"
+            ],
+            "description": "Card type. Currently, only `INDIVIDUAL` is supported.",
             "nullable": true
           },
           "created_at": {
@@ -5031,14 +5039,14 @@
       },
       "CardDefinitionIdFilterConditions": {
         "type": "object",
-        "description": "ID filter conditions for card definition IDs. At least one condition is required.",
+        "description": "ID conditions. Format `lcdef_[a-f0-9]+`. At least one condition is required.",
         "properties": {
           "conditions": {
             "type": "object",
             "minProperties": 1,
             "properties": {
               "$is": {
-                "description": "Value equals. Single value or an array with exactly one value.",
+                "description": "Matches one value. A string or a one-element array. Format `lcdef_[a-f0-9]+`.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -5059,7 +5067,7 @@
                 ]
               },
               "$is_not": {
-                "description": "Value does not equal. Single value or an array with exactly one value.",
+                "description": "Excludes one value. A string or a one-element array. Format `lcdef_[a-f0-9]+`.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -5080,7 +5088,7 @@
                 ]
               },
               "$in": {
-                "description": "Value is one of. Single value or an array of 1-100 values.",
+                "description": "Matches any of the values. A string or an array of 1 to 100 values. Format `lcdef_[a-f0-9]+`.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -5101,7 +5109,7 @@
                 ]
               },
               "$not_in": {
-                "description": "Value is not one of. Single value or an array of 1-100 values.",
+                "description": "Excludes any of the values. A string or an array of 1 to 100 values. Format `lcdef_[a-f0-9]+`.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -5387,14 +5395,6 @@
                 "description": "Unique pending point bucket ID.",
                 "nullable": true
               },
-              "card_type": {
-                "type": "string",
-                "enum": [
-                  "INDIVIDUAL"
-                ],
-                "description": "Card type.",
-                "nullable": true
-              },
               "points": {
                 "type": "object",
                 "description": "Points held in the bucket.",
@@ -5445,7 +5445,9 @@
                 "nullable": true
               }
             },
-            "required": []
+            "required": [
+              "card_type"
+            ]
           }
         ]
       },
@@ -5596,14 +5598,6 @@
                 "description": "Voucherify ID of the customer owning the card.",
                 "nullable": true
               },
-              "card_type": {
-                "type": "string",
-                "enum": [
-                  "INDIVIDUAL"
-                ],
-                "description": "Card type. Currently, only `INDIVIDUAL` is supported.",
-                "nullable": true
-              },
               "points": {
                 "type": "object",
                 "description": "Points held in the bucket. The bucket may include points from multiple transactions.",
@@ -5654,7 +5648,9 @@
                 "nullable": true
               }
             },
-            "required": []
+            "required": [
+              "card_type"
+            ]
           }
         ]
       },
@@ -5691,7 +5687,7 @@
         "type": "object",
         "properties": {
           "junction": {
-            "description": "How multiple field filters are combined. Defaults to `AND`.",
+            "description": "Joins the field filters. Allowed values are `AND` and `OR`. Defaults to `AND`.",
             "oneOf": [
               {
                 "type": "string",
@@ -5706,7 +5702,7 @@
             ]
           },
           "card_definition_id": {
-            "description": "Filters by card definition ID (ID conditions, values matching `^lcdef_[a-f0-9]+$`).",
+            "description": "Filters by card definition ID. Format `lcdef_[a-f0-9]+`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/CardDefinitionIdFilterConditions"
@@ -5727,23 +5723,6 @@
           {
             "type": "object",
             "properties": {
-              "id": {
-                "type": "string",
-                "pattern": "^lcrd_[a-f0-9]+$",
-                "description": "Unique Voucherify ID of the card.",
-                "nullable": true
-              },
-              "card_definition_id": {
-                "type": "string",
-                "pattern": "^lcdef_[a-f0-9]+$",
-                "description": "Unique Voucherify ID of the card definition the card was created from.",
-                "nullable": true
-              },
-              "code": {
-                "type": "string",
-                "nullable": true,
-                "description": "Human-readable card code. Card code generation is asynchronous - this field is `null` right after member creation and is populated shortly after, once the background code generation completes."
-              },
               "next_expiration": {
                 "description": "The nearest upcoming point expiration, or `null` when none is scheduled.",
                 "oneOf": [
@@ -5765,15 +5744,6 @@
                     "type": "null"
                   }
                 ]
-              },
-              "object": {
-                "type": "string",
-                "enum": [
-                  "card"
-                ],
-                "description": "Object type marker, always `card`.",
-                "x-openapi-31-const": true,
-                "nullable": true
               }
             },
             "required": [
@@ -7572,11 +7542,9 @@
           "status": {
             "type": "string",
             "enum": [
-              "ACTIVE",
-              "INACTIVE",
-              "DELETED"
+              "ACTIVE"
             ],
-            "description": "Member status.",
+            "description": "Member status. The value is `ACTIVE`.",
             "nullable": true
           },
           "created_at": {
@@ -8361,7 +8329,7 @@
                 ]
               },
               "loyalty_memberships": {
-                "description": "List of Loyalty v2 program memberships for the customer. `null` when no memberships are stored.",
+                "description": "List of Loyalty v2 program memberships for the customer. Lists only existing `ACTIVE` memberships. `null` when no memberships are stored. Absent or `null` for `v1/orders` and `v1/publications` endpoints and events.",
                 "anyOf": [
                   {
                     "type": "array",
@@ -8529,7 +8497,7 @@
             "minProperties": 1,
             "properties": {
               "$before": {
-                "description": "Date is before the given date.",
+                "description": "Matches dates before the given value. An ISO 8601 date-time, as a string or a one-element array.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -8550,7 +8518,7 @@
                 ]
               },
               "$after": {
-                "description": "Date is after the given date.",
+                "description": "Matches dates after the given value. An ISO 8601 date-time, as a string or a one-element array.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -8571,7 +8539,7 @@
                 ]
               },
               "$is": {
-                "description": "Date matches the given non-negative integer value.",
+                "description": "Matches a date exactly the given number of days ago. A non-negative integer, as a string or a one-element array.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -8592,7 +8560,7 @@
                 ]
               },
               "$more_than": {
-                "description": "More than the given non-negative integer value.",
+                "description": "Matches dates more than the given number of days ago. A non-negative integer, as a string or a one-element array.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -8613,7 +8581,7 @@
                 ]
               },
               "$less_than": {
-                "description": "Less than the given non-negative integer value.",
+                "description": "Matches dates less than the given number of days ago. A non-negative integer, as a string or a one-element array.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -8634,7 +8602,7 @@
                 ]
               },
               "$has_value": {
-                "description": "Field has a value (presence check).",
+                "description": "Matches when the field is set. The condition value is ignored.",
                 "oneOf": [
                   {
                     "type": "string"
@@ -8649,7 +8617,7 @@
                 ]
               },
               "$is_unknown": {
-                "description": "Field has no value (absence check).",
+                "description": "Matches when the field is not set. The condition value is ignored.",
                 "oneOf": [
                   {
                     "type": "string"
@@ -9647,7 +9615,7 @@
             "additionalProperties": false,
             "properties": {
               "$is": {
-                "description": "Matches rows whose earning rule ID equals the given value.",
+                "description": "Matches one value. A string or a one-element array. Format `lern_[a-f0-9]+`.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -9668,7 +9636,7 @@
                 ]
               },
               "$is_not": {
-                "description": "Matches rows whose earning rule ID does not equal the given value.",
+                "description": "Excludes one value. A string or a one-element array. Format `lern_[a-f0-9]+`.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -9689,7 +9657,7 @@
                 ]
               },
               "$in": {
-                "description": "Matches rows whose earning rule ID is one of the given values.",
+                "description": "Matches any of the values. A string or an array of 1 to 100 values. Format `lern_[a-f0-9]+`.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -9710,7 +9678,7 @@
                 ]
               },
               "$not_in": {
-                "description": "Matches rows whose earning rule ID is not one of the given values.",
+                "description": "Excludes any of the values. A string or an array of 1 to 100 values. Format `lern_[a-f0-9]+`.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -10686,7 +10654,7 @@
         "description": "Filters for program earning-rules reports.",
         "properties": {
           "junction": {
-            "description": "Logical junction between the field filters. Defaults to AND behavior.",
+            "description": "Joins the field filters. Allowed values are `AND` and `OR`. Defaults to `AND`.",
             "oneOf": [
               {
                 "type": "string",
@@ -10701,7 +10669,7 @@
             ]
           },
           "earning_rule_id": {
-            "description": "Filter by earning rule ID.",
+            "description": "Filters by earning rule ID. Format `lern_[a-f0-9]+`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/EarningRuleIdFilterConditions"
@@ -19197,14 +19165,14 @@
       },
       "LoyaltiesProgramsMembersActivitiesListRequestQueryFiltersId": {
         "type": "object",
-        "description": "ID filter conditions for member activity IDs. At least one condition is required.",
+        "description": "ID conditions. Format `lambr_[a-f0-9]+`. At least one condition is required.",
         "properties": {
           "conditions": {
             "type": "object",
             "minProperties": 1,
             "properties": {
               "$is": {
-                "description": "Value equals. Single value or an array with exactly one value.",
+                "description": "Matches one value. A string or a one-element array. Format `lambr_[a-f0-9]+`.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -19225,7 +19193,7 @@
                 ]
               },
               "$is_not": {
-                "description": "Value does not equal. Single value or an array with exactly one value.",
+                "description": "Excludes one value. A string or a one-element array. Format `lambr_[a-f0-9]+`.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -19246,7 +19214,7 @@
                 ]
               },
               "$in": {
-                "description": "Value is one of. Single value or an array of 1-100 values.",
+                "description": "Matches any of the values. A string or an array of 1 to 100 values. Format `lambr_[a-f0-9]+`.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -19267,7 +19235,7 @@
                 ]
               },
               "$not_in": {
-                "description": "Value is not one of. Single value or an array of 1-100 values.",
+                "description": "Excludes any of the values. A string or an array of 1 to 100 values. Format `lambr_[a-f0-9]+`.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -19297,14 +19265,14 @@
       },
       "LoyaltiesProgramsMembersActivitiesListRequestQueryFiltersType": {
         "type": "object",
-        "description": "Enum filter conditions for member activity types. At least one condition is\nrequired.",
+        "description": "Enum conditions. At least one condition is required.",
         "properties": {
           "conditions": {
             "type": "object",
             "minProperties": 1,
             "properties": {
               "$is": {
-                "description": "Value equals. Single value or an array with exactly one value.",
+                "description": "Matches one value. A string or a one-element array.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -19341,7 +19309,7 @@
                 ]
               },
               "$is_not": {
-                "description": "Value does not equal. Single value or an array with exactly one value.",
+                "description": "Excludes one value. A string or a one-element array.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -19378,7 +19346,7 @@
                 ]
               },
               "$in": {
-                "description": "Value is one of. Single value or an array of 1-10 values.",
+                "description": "Matches any of the values. A string or an array of 1 to 10 values.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -19415,7 +19383,7 @@
                 ]
               },
               "$not_in": {
-                "description": "Value is not one of. Single value or an array of 1-10 values.",
+                "description": "Excludes any of the values. A string or an array of 1 to 10 values.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -19469,7 +19437,7 @@
             "additionalProperties": false,
             "properties": {
               "$is": {
-                "description": "Matches transactions whose benefit id equals the given value.",
+                "description": "Matches one value. A string or a one-element array. Format `lben_[a-f0-9]+`.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -19490,7 +19458,7 @@
                 ]
               },
               "$is_not": {
-                "description": "Matches transactions whose benefit id does not equal the given value.",
+                "description": "Excludes one value. A string or a one-element array. Format `lben_[a-f0-9]+`.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -19511,7 +19479,7 @@
                 ]
               },
               "$in": {
-                "description": "Matches transactions whose benefit id is one of the given values.",
+                "description": "Matches any of the values. A string or an array of 1 to 100 values. Format `lben_[a-f0-9]+`.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -19532,7 +19500,7 @@
                 ]
               },
               "$not_in": {
-                "description": "Matches transactions whose benefit id is not one of the given values.",
+                "description": "Excludes any of the values. A string or an array of 1 to 100 values. Format `lben_[a-f0-9]+`.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -19561,14 +19529,14 @@
       },
       "LoyaltiesProgramsMembersCardsActivitiesListRequestQueryFiltersId": {
         "type": "object",
-        "description": "ID filter conditions for card activity IDs. At least one condition is required.",
+        "description": "ID conditions. Format `lacrd_[a-f0-9]+`. At least one condition is required.",
         "properties": {
           "conditions": {
             "type": "object",
             "minProperties": 1,
             "properties": {
               "$is": {
-                "description": "Value equals. Single value or an array with exactly one value.",
+                "description": "Matches one value. A string or a one-element array. Format `lacrd_[a-f0-9]+`.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -19589,7 +19557,7 @@
                 ]
               },
               "$is_not": {
-                "description": "Value does not equal. Single value or an array with exactly one value.",
+                "description": "Excludes one value. A string or a one-element array. Format `lacrd_[a-f0-9]+`.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -19610,7 +19578,7 @@
                 ]
               },
               "$in": {
-                "description": "Value is one of. Single value or an array of 1-100 values.",
+                "description": "Matches any of the values. A string or an array of 1 to 100 values. Format `lacrd_[a-f0-9]+`.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -19631,7 +19599,7 @@
                 ]
               },
               "$not_in": {
-                "description": "Value is not one of. Single value or an array of 1-100 values.",
+                "description": "Excludes any of the values. A string or an array of 1 to 100 values. Format `lacrd_[a-f0-9]+`.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -19661,14 +19629,14 @@
       },
       "LoyaltiesProgramsMembersCardsActivitiesListRequestQueryFiltersType": {
         "type": "object",
-        "description": "Enum filter conditions for card activity types. At least one condition is\nrequired.",
+        "description": "Enum conditions. At least one condition is required.",
         "properties": {
           "conditions": {
             "type": "object",
             "minProperties": 1,
             "properties": {
               "$is": {
-                "description": "Value equals. Single value or an array with exactly one value.",
+                "description": "Matches one value. A string or a one-element array.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -19701,7 +19669,7 @@
                 ]
               },
               "$is_not": {
-                "description": "Value does not equal. Single value or an array with exactly one value.",
+                "description": "Excludes one value. A string or a one-element array.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -19734,7 +19702,7 @@
                 ]
               },
               "$in": {
-                "description": "Value is one of. Single value or an array of 1-10 values.",
+                "description": "Matches any of the values. A string or an array of 1 to 10 values.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -19767,7 +19735,7 @@
                 ]
               },
               "$not_in": {
-                "description": "Value is not one of. Single value or an array of 1-10 values.",
+                "description": "Excludes any of the values. A string or an array of 1 to 10 values.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -19834,14 +19802,14 @@
       },
       "LoyaltiesProgramsMembersCardsTransactionsListRequestQueryId": {
         "type": "object",
-        "description": "ID filter conditions for card transaction IDs. At least one condition is required.",
+        "description": "ID conditions. Format `lctx_[a-f0-9]+`. At least one condition is required.",
         "properties": {
           "conditions": {
             "type": "object",
             "minProperties": 1,
             "properties": {
               "$is": {
-                "description": "Value equals. Single value or an array with exactly one value.",
+                "description": "Matches one value. A string or a one-element array. Format `lctx_[a-f0-9]+`.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -19862,7 +19830,7 @@
                 ]
               },
               "$is_not": {
-                "description": "Value does not equal. Single value or an array with exactly one value.",
+                "description": "Excludes one value. A string or a one-element array. Format `lctx_[a-f0-9]+`.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -19883,7 +19851,7 @@
                 ]
               },
               "$in": {
-                "description": "Value is one of. Single value or an array of 1-100 values.",
+                "description": "Matches any of the values. A string or an array of 1 to 100 values. Format `lctx_[a-f0-9]+`.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -19904,7 +19872,7 @@
                 ]
               },
               "$not_in": {
-                "description": "Value is not one of. Single value or an array of 1-100 values.",
+                "description": "Excludes any of the values. A string or an array of 1 to 100 values. Format `lctx_[a-f0-9]+`.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -19935,14 +19903,14 @@
       },
       "LoyaltiesProgramsMembersListRequestQueryCustomerId": {
         "type": "object",
-        "description": "ID filter conditions for customer IDs. At least one condition is required.",
+        "description": "ID conditions. Format `cust_[a-zA-Z0-9]+`. At least one condition is required.",
         "properties": {
           "conditions": {
             "type": "object",
             "minProperties": 1,
             "properties": {
               "$is": {
-                "description": "Value equals. Single value or an array with exactly one value.",
+                "description": "Matches one value. A string or a one-element array. Format `cust_[a-zA-Z0-9]+`.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -19963,7 +19931,7 @@
                 ]
               },
               "$is_not": {
-                "description": "Value does not equal. Single value or an array with exactly one value.",
+                "description": "Excludes one value. A string or a one-element array. Format `cust_[a-zA-Z0-9]+`.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -19984,7 +19952,7 @@
                 ]
               },
               "$in": {
-                "description": "Value is one of. Single value or an array of 1-100 values.",
+                "description": "Matches any of the values. A string or an array of 1 to 100 values. Format `cust_[a-zA-Z0-9]+`.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -20005,7 +19973,7 @@
                 ]
               },
               "$not_in": {
-                "description": "Value is not one of. Single value or an array of 1-100 values.",
+                "description": "Excludes any of the values. A string or an array of 1 to 100 values. Format `cust_[a-zA-Z0-9]+`.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -20035,14 +20003,14 @@
       },
       "LoyaltiesProgramsMembersListRequestQueryId": {
         "type": "object",
-        "description": "ID filter conditions for member IDs. At least one condition is required.",
+        "description": "ID conditions. Format `lmbr_[a-f0-9]+`. At least one condition is required.",
         "properties": {
           "conditions": {
             "type": "object",
             "minProperties": 1,
             "properties": {
               "$is": {
-                "description": "Value equals. Single value or an array with exactly one value.",
+                "description": "Matches one value. A string or a one-element array. Format `lmbr_[a-f0-9]+`.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -20063,7 +20031,7 @@
                 ]
               },
               "$is_not": {
-                "description": "Value does not equal. Single value or an array with exactly one value.",
+                "description": "Excludes one value. A string or a one-element array. Format `lmbr_[a-f0-9]+`.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -20084,7 +20052,7 @@
                 ]
               },
               "$in": {
-                "description": "Value is one of. Single value or an array of 1-100 values.",
+                "description": "Matches any of the values. A string or an array of 1 to 100 values. Format `lmbr_[a-f0-9]+`.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -20105,7 +20073,7 @@
                 ]
               },
               "$not_in": {
-                "description": "Value is not one of. Single value or an array of 1-100 values.",
+                "description": "Excludes any of the values. A string or an array of 1 to 100 values. Format `lmbr_[a-f0-9]+`.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -20142,7 +20110,7 @@
             "minProperties": 1,
             "properties": {
               "$is": {
-                "description": "Value equals. Single value or an array with exactly one value.",
+                "description": "Matches one value. A string or a one-element array.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -20169,7 +20137,7 @@
                 ]
               },
               "$is_not": {
-                "description": "Value does not equal. Single value or an array with exactly one value.",
+                "description": "Excludes one value. A string or a one-element array.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -20196,7 +20164,7 @@
                 ]
               },
               "$in": {
-                "description": "Value is one of. Single value or an array of 1-10 values.",
+                "description": "Matches any of the values. A string or an array of 1 to 10 values.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -20223,7 +20191,7 @@
                 ]
               },
               "$not_in": {
-                "description": "Value is not one of. Single value or an array of 1-10 values.",
+                "description": "Excludes any of the values. A string or an array of 1 to 10 values.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -20348,7 +20316,7 @@
             "additionalProperties": false,
             "properties": {
               "$is": {
-                "description": "Matches transactions whose id equals the given value.",
+                "description": "Matches one value. A string or a one-element array. Format `lotx_[a-f0-9]+`.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -20369,7 +20337,7 @@
                 ]
               },
               "$is_not": {
-                "description": "Matches transactions whose id does not equal the given value.",
+                "description": "Excludes one value. A string or a one-element array. Format `lotx_[a-f0-9]+`.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -20390,7 +20358,7 @@
                 ]
               },
               "$in": {
-                "description": "Matches transactions whose id is one of the given values.",
+                "description": "Matches any of the values. A string or an array of 1 to 100 values. Format `lotx_[a-f0-9]+`.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -20411,7 +20379,7 @@
                 ]
               },
               "$not_in": {
-                "description": "Matches transactions whose id is not one of the given values.",
+                "description": "Excludes any of the values. A string or an array of 1 to 100 values. Format `lotx_[a-f0-9]+`.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -20449,7 +20417,7 @@
             "additionalProperties": false,
             "properties": {
               "$is": {
-                "description": "Matches transactions whose card definition ID equals the given value.",
+                "description": "Matches one value. A string or a one-element array. Format `lcdef_[a-f0-9]+`.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -20470,7 +20438,7 @@
                 ]
               },
               "$is_not": {
-                "description": "Matches transactions whose card definition ID does not equal the given value.",
+                "description": "Excludes one value. A string or a one-element array. Format `lcdef_[a-f0-9]+`.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -20491,7 +20459,7 @@
                 ]
               },
               "$in": {
-                "description": "Matches transactions whose card definition ID is one of the given values.",
+                "description": "Matches any of the values. A string or an array of 1 to 100 values. Format `lcdef_[a-f0-9]+`.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -20512,7 +20480,7 @@
                 ]
               },
               "$not_in": {
-                "description": "Matches transactions whose card definition ID is not one of the given values.",
+                "description": "Excludes any of the values. A string or an array of 1 to 100 values. Format `lcdef_[a-f0-9]+`.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -20550,7 +20518,7 @@
             "additionalProperties": false,
             "properties": {
               "$is": {
-                "description": "Matches transactions whose id equals the given value.",
+                "description": "Matches one value. A string or a one-element array. Format `lrtx_[a-f0-9]+`.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -20571,7 +20539,7 @@
                 ]
               },
               "$is_not": {
-                "description": "Matches transactions whose id does not equal the given value.",
+                "description": "Excludes one value. A string or a one-element array. Format `lrtx_[a-f0-9]+`.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -20592,7 +20560,7 @@
                 ]
               },
               "$in": {
-                "description": "Matches transactions whose id is one of the given values.",
+                "description": "Matches any of the values. A string or an array of 1 to 100 values. Format `lrtx_[a-f0-9]+`.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -20613,7 +20581,7 @@
                 ]
               },
               "$not_in": {
-                "description": "Matches transactions whose id is not one of the given values.",
+                "description": "Excludes any of the values. A string or an array of 1 to 100 values. Format `lrtx_[a-f0-9]+`.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -20651,7 +20619,7 @@
             "additionalProperties": false,
             "properties": {
               "$is": {
-                "description": "Matches transactions whose reward ID equals the given value.",
+                "description": "Matches one value. A string or a one-element array. Format `lrew_[a-f0-9]+`.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -20672,7 +20640,7 @@
                 ]
               },
               "$is_not": {
-                "description": "Matches transactions whose reward ID does not equal the given value.",
+                "description": "Excludes one value. A string or a one-element array. Format `lrew_[a-f0-9]+`.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -20693,7 +20661,7 @@
                 ]
               },
               "$in": {
-                "description": "Matches transactions whose reward ID is one of the given values.",
+                "description": "Matches any of the values. A string or an array of 1 to 100 values. Format `lrew_[a-f0-9]+`.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -20714,7 +20682,7 @@
                 ]
               },
               "$not_in": {
-                "description": "Matches transactions whose reward ID is not one of the given values.",
+                "description": "Excludes any of the values. A string or an array of 1 to 100 values. Format `lrew_[a-f0-9]+`.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -20744,7 +20712,7 @@
       },
       "LoyaltiesProgramsMembersTiersTransactionsListRequestQueryCardDefinitionId": {
         "type": "object",
-        "description": "ID filter conditions for card definition ids. Values must match pattern `^lcdef_[a-f0-9]+$`. `$is`/`$is_not` accept a single value (string or 1-element array); `$in`/`$not_in` accept a string or an array of 1-100 values.",
+        "description": "ID filter conditions for card definition IDs. Values must match pattern `^lcdef_[a-f0-9]+$`. `$is`/`$is_not` accept a single value (string or 1-element array); `$in`/`$not_in` accept a string or an array of 1-100 values.",
         "properties": {
           "conditions": {
             "type": "object",
@@ -20752,7 +20720,7 @@
             "additionalProperties": false,
             "properties": {
               "$is": {
-                "description": "Matches transactions whose card definition ID equals the given value.",
+                "description": "Matches one value. A string or a one-element array. Format `lcdef_[a-f0-9]+`.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -20773,7 +20741,7 @@
                 ]
               },
               "$is_not": {
-                "description": "Matches transactions whose card definition ID does not equal the given value.",
+                "description": "Excludes one value. A string or a one-element array. Format `lcdef_[a-f0-9]+`.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -20794,7 +20762,7 @@
                 ]
               },
               "$in": {
-                "description": "Matches transactions whose card definition ID is one of the given values.",
+                "description": "Matches any of the values. A string or an array of 1 to 100 values. Format `lcdef_[a-f0-9]+`.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -20815,7 +20783,7 @@
                 ]
               },
               "$not_in": {
-                "description": "Matches transactions whose card definition ID is not one of the given values.",
+                "description": "Excludes any of the values. A string or an array of 1 to 100 values. Format `lcdef_[a-f0-9]+`.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -20852,7 +20820,7 @@
             "additionalProperties": false,
             "properties": {
               "$is": {
-                "description": "Matches transactions whose card id equals the given value.",
+                "description": "Matches one value. A string or a one-element array. Format `lcrd_[a-f0-9]+`.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -20873,7 +20841,7 @@
                 ]
               },
               "$is_not": {
-                "description": "Matches transactions whose card id does not equal the given value.",
+                "description": "Excludes one value. A string or a one-element array. Format `lcrd_[a-f0-9]+`.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -20894,7 +20862,7 @@
                 ]
               },
               "$in": {
-                "description": "Matches transactions whose card id is one of the given values.",
+                "description": "Matches any of the values. A string or an array of 1 to 100 values. Format `lcrd_[a-f0-9]+`.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -20915,7 +20883,7 @@
                 ]
               },
               "$not_in": {
-                "description": "Matches transactions whose card id is not one of the given values.",
+                "description": "Excludes any of the values. A string or an array of 1 to 100 values. Format `lcrd_[a-f0-9]+`.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -31334,21 +31302,12 @@
         },
         "required": []
       },
-      "PointsEarningsReportFilterCardDefinitionIdConditions": {
-        "description": "ID filter conditions for card definition ID. Values must match pattern `^lcdef_[a-f0-9]+$`. `$is`/`$is_not` accept a single value (string or 1-element array); `$in`/`$not_in` accept a string or an array of 1-100 values.",
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/ReportCardDefinitionIdFilterConditions"
-          }
-        ],
-        "additionalProperties": false
-      },
       "PointsEarningsReportListFilters": {
         "type": "object",
         "description": "Filters for program points-earnings reports.",
         "properties": {
           "junction": {
-            "description": "Combines the field filters. Allowed values are `AND` and `OR`. Defaults to `AND`.",
+            "description": "Joins the field filters. Allowed values are `AND` and `OR`. Defaults to `AND`.",
             "oneOf": [
               {
                 "type": "string",
@@ -31363,7 +31322,7 @@
             ]
           },
           "earning_rule_id": {
-            "description": "Filters rows by earning rule ID.",
+            "description": "Filters by earning rule ID. Format `lern_[a-f0-9]+`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/EarningRuleIdFilterConditions"
@@ -31374,10 +31333,10 @@
             ]
           },
           "card_definition_id": {
-            "description": "Filters rows by card definition ID.",
+            "description": "Filters by card definition ID. Format `lcdef_[a-f0-9]+`.",
             "oneOf": [
               {
-                "$ref": "#/components/schemas/PointsEarningsReportFilterCardDefinitionIdConditions"
+                "$ref": "#/components/schemas/ReportCardDefinitionIdFilterConditions"
               },
               {
                 "type": "null"
@@ -36551,6 +36510,7 @@
       },
       "ReportCardDefinitionIdFilterConditions": {
         "type": "object",
+        "description": "ID filter conditions for card definition IDs. Values must match pattern `^lcdef_[a-f0-9]+$`. `$is`/`$is_not` accept a single value (string or 1-element array); `$in`/`$not_in` accept a string or an array of 1-100 values.",
         "properties": {
           "conditions": {
             "type": "object",
@@ -36558,7 +36518,7 @@
             "additionalProperties": false,
             "properties": {
               "$is": {
-                "description": "Matches rows whose card definition ID equals the given value.",
+                "description": "Matches one value. A string or a one-element array. Format `lcdef_[a-f0-9]+`.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -36579,7 +36539,7 @@
                 ]
               },
               "$is_not": {
-                "description": "Matches rows whose card definition ID does not equal the given value.",
+                "description": "Excludes one value. A string or a one-element array. Format `lcdef_[a-f0-9]+`.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -36600,7 +36560,7 @@
                 ]
               },
               "$in": {
-                "description": "Matches rows whose card definition ID is one of the given values.",
+                "description": "Matches any of the values. A string or an array of 1 to 100 values. Format `lcdef_[a-f0-9]+`.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -36621,7 +36581,7 @@
                 ]
               },
               "$not_in": {
-                "description": "Matches rows whose card definition ID is not one of the given values.",
+                "description": "Excludes any of the values. A string or an array of 1 to 100 values. Format `lcdef_[a-f0-9]+`.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -36645,7 +36605,8 @@
             "nullable": true
           }
         },
-        "required": []
+        "required": [],
+        "additionalProperties": false
       },
       "ReportLimitFailureCountBase": {
         "type": "object",
@@ -38347,7 +38308,7 @@
             "additionalProperties": false,
             "properties": {
               "$is": {
-                "description": "Matches rows whose reward ID equals the given value.",
+                "description": "Matches one value. A string or a one-element array. Format `lrew_[a-f0-9]+`.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -38368,7 +38329,7 @@
                 ]
               },
               "$is_not": {
-                "description": "Matches rows whose reward ID does not equal the given value.",
+                "description": "Excludes one value. A string or a one-element array. Format `lrew_[a-f0-9]+`.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -38389,7 +38350,7 @@
                 ]
               },
               "$in": {
-                "description": "Matches rows whose reward ID is one of the given values.",
+                "description": "Matches any of the values. A string or an array of 1 to 100 values. Format `lrew_[a-f0-9]+`.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -38410,7 +38371,7 @@
                 ]
               },
               "$not_in": {
-                "description": "Matches rows whose reward ID is not one of the given values.",
+                "description": "Excludes any of the values. A string or an array of 1 to 100 values. Format `lrew_[a-f0-9]+`.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -38441,7 +38402,7 @@
         "type": "object",
         "properties": {
           "junction": {
-            "description": "Sets the logical junction between the field filters. Defaults to `AND`.",
+            "description": "Joins the field filters. Allowed values are `AND` and `OR`. Defaults to `AND`.",
             "oneOf": [
               {
                 "type": "string",
@@ -38456,7 +38417,7 @@
             ]
           },
           "reward_id": {
-            "description": "Filters by reward ID.",
+            "description": "Filters by reward ID. Format `lrew_[a-f0-9]+`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/RewardsReportFilterRewardIdConditions"
@@ -38600,7 +38561,7 @@
             "additionalProperties": false,
             "properties": {
               "$is": {
-                "description": "Matches rows whose reward cost ID equals the given value.",
+                "description": "Matches one value. A string or a one-element array. Format `lrcst_[a-f0-9]+`.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -38621,7 +38582,7 @@
                 ]
               },
               "$is_not": {
-                "description": "Matches rows whose reward cost ID does not equal the given value.",
+                "description": "Excludes one value. A string or a one-element array. Format `lrcst_[a-f0-9]+`.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -38642,7 +38603,7 @@
                 ]
               },
               "$in": {
-                "description": "Matches rows whose reward cost ID is one of the given values.",
+                "description": "Matches any of the values. A string or an array of 1 to 100 values. Format `lrcst_[a-f0-9]+`.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -38663,7 +38624,7 @@
                 ]
               },
               "$not_in": {
-                "description": "Matches rows whose reward cost ID is not one of the given values.",
+                "description": "Excludes any of the values. A string or an array of 1 to 100 values. Format `lrcst_[a-f0-9]+`.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -38700,7 +38661,7 @@
             "additionalProperties": false,
             "properties": {
               "$is": {
-                "description": "Matches rows whose reward spending ID equals the given value.",
+                "description": "Matches one value. A string or a one-element array. Format `lrspn_[a-f0-9]+`.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -38721,7 +38682,7 @@
                 ]
               },
               "$is_not": {
-                "description": "Matches rows whose reward spending ID does not equal the given value.",
+                "description": "Excludes one value. A string or a one-element array. Format `lrspn_[a-f0-9]+`.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -38742,7 +38703,7 @@
                 ]
               },
               "$in": {
-                "description": "Matches rows whose reward spending ID is one of the given values.",
+                "description": "Matches any of the values. A string or an array of 1 to 100 values. Format `lrspn_[a-f0-9]+`.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -38763,7 +38724,7 @@
                 ]
               },
               "$not_in": {
-                "description": "Matches rows whose reward spending ID is not one of the given values.",
+                "description": "Excludes any of the values. A string or an array of 1 to 100 values. Format `lrspn_[a-f0-9]+`.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -38803,7 +38764,7 @@
                 "description": "Filters by card definition ID.",
                 "oneOf": [
                   {
-                    "$ref": "#/components/schemas/SpendingReportFilterCardDefinitionIdConditions"
+                    "$ref": "#/components/schemas/ReportCardDefinitionIdFilterConditions"
                   },
                   {
                     "type": "null"
@@ -41017,21 +40978,12 @@
         },
         "required": []
       },
-      "SpendingReportFilterCardDefinitionIdConditions": {
-        "description": "ID filter conditions for card definition ids. Values must match pattern `^lcdef_[a-f0-9]+$`. `$is`/`$is_not` accept a single value (string or 1-element array); `$in`/`$not_in` accept a string or an array of 1-100 values.",
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/ReportCardDefinitionIdFilterConditions"
-          }
-        ],
-        "additionalProperties": false
-      },
       "SpendingReportListFilters": {
         "type": "object",
         "description": "Filters for spending reports.",
         "properties": {
           "junction": {
-            "description": "Sets the logical junction between field filters. Allowed values: `AND`, `OR`. Defaults to `AND`.",
+            "description": "Joins the field filters. Allowed values are `AND` and `OR`. Defaults to `AND`.",
             "oneOf": [
               {
                 "type": "string",
@@ -41046,10 +40998,10 @@
             ]
           },
           "card_definition_id": {
-            "description": "Filters rows by card definition ID (`lcdef_...`).",
+            "description": "Filters by card definition ID. Format `lcdef_[a-f0-9]+`.",
             "oneOf": [
               {
-                "$ref": "#/components/schemas/SpendingReportFilterCardDefinitionIdConditions"
+                "$ref": "#/components/schemas/ReportCardDefinitionIdFilterConditions"
               },
               {
                 "type": "null"
@@ -41728,7 +41680,7 @@
             "additionalProperties": false,
             "properties": {
               "$is": {
-                "description": "Matches rows whose tier ID equals the given value.",
+                "description": "Matches one value. A string or a one-element array. Format `lt_[a-f0-9]+`.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -41749,7 +41701,7 @@
                 ]
               },
               "$is_not": {
-                "description": "Matches rows whose tier ID does not equal the given value.",
+                "description": "Excludes one value. A string or a one-element array. Format `lt_[a-f0-9]+`.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -41770,7 +41722,7 @@
                 ]
               },
               "$in": {
-                "description": "Matches rows whose tier ID is one of the given values.",
+                "description": "Matches any of the values. A string or an array of 1 to 100 values. Format `lt_[a-f0-9]+`.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -41791,7 +41743,7 @@
                 ]
               },
               "$not_in": {
-                "description": "Matches rows whose tier ID is not one of the given values.",
+                "description": "Excludes any of the values. A string or an array of 1 to 100 values. Format `lt_[a-f0-9]+`.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -41828,7 +41780,7 @@
             "additionalProperties": false,
             "properties": {
               "$is": {
-                "description": "Matches rows whose tier structure id equals the given value.",
+                "description": "Matches one value. A string or a one-element array. Format `lts_[a-f0-9]+`.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -41849,7 +41801,7 @@
                 ]
               },
               "$is_not": {
-                "description": "Matches rows whose tier structure id does not equal the given value.",
+                "description": "Excludes one value. A string or a one-element array. Format `lts_[a-f0-9]+`.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -41870,7 +41822,7 @@
                 ]
               },
               "$in": {
-                "description": "Matches rows whose tier structure id is one of the given values.",
+                "description": "Matches any of the values. A string or an array of 1 to 100 values. Format `lts_[a-f0-9]+`.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -41891,7 +41843,7 @@
                 ]
               },
               "$not_in": {
-                "description": "Matches rows whose tier structure id is not one of the given values.",
+                "description": "Excludes any of the values. A string or an array of 1 to 100 values. Format `lts_[a-f0-9]+`.",
                 "oneOf": [
                   {
                     "type": "string",
@@ -41923,7 +41875,7 @@
         "description": "Filters for program tiers reports.",
         "properties": {
           "junction": {
-            "description": "Joins the field filters. Allowed values: `AND`, `OR`. Defaults to `AND`.",
+            "description": "Joins the field filters. Allowed values are `AND` and `OR`. Defaults to `AND`.",
             "oneOf": [
               {
                 "type": "string",
@@ -41938,7 +41890,7 @@
             ]
           },
           "tier_structure_id": {
-            "description": "Filter by tier structure ID.",
+            "description": "Filters by tier structure ID. Format `lts_[a-f0-9]+`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/TiersReportFilterTierStructureIdConditions"
@@ -41949,7 +41901,7 @@
             ]
           },
           "tier_id": {
-            "description": "Filter by tier ID.",
+            "description": "Filters by tier ID. Format `lt_[a-f0-9]+`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/TiersReportFilterTierIdConditions"
@@ -42257,7 +42209,7 @@
             "additionalProperties": false,
             "properties": {
               "$before": {
-                "description": "Matches rows with the date before the given date-time.",
+                "description": "Matches dates before the given value. An ISO 8601 date-time, as a string or a one-element array.",
                 "oneOf": [
                   {
                     "type": "string"
@@ -42276,7 +42228,7 @@
                 ]
               },
               "$after": {
-                "description": "Matches rows with the date after the given date-time.",
+                "description": "Matches dates after the given value. An ISO 8601 date-time, as a string or a one-element array.",
                 "oneOf": [
                   {
                     "type": "string"
@@ -42295,7 +42247,7 @@
                 ]
               },
               "$is": {
-                "description": "Matches rows with the date exactly the given number of days ago.",
+                "description": "Matches a date exactly the given number of days ago. A non-negative integer, as a string or a one-element array.",
                 "oneOf": [
                   {
                     "type": "string"
@@ -42314,7 +42266,7 @@
                 ]
               },
               "$more_than": {
-                "description": "Matches rows with the date more than the given number of days ago.",
+                "description": "Matches dates more than the given number of days ago. A non-negative integer, as a string or a one-element array.",
                 "oneOf": [
                   {
                     "type": "string"
@@ -42333,7 +42285,7 @@
                 ]
               },
               "$less_than": {
-                "description": "Matches rows with the date less than the given number of days ago.",
+                "description": "Matches dates less than the given number of days ago. A non-negative integer, as a string or a one-element array.",
                 "oneOf": [
                   {
                     "type": "string"
@@ -42352,7 +42304,7 @@
                 ]
               },
               "$has_value": {
-                "description": "Matches rows where the date field is set.",
+                "description": "Matches when the field is set. The condition value is ignored.",
                 "oneOf": [
                   {
                     "type": "string"
@@ -42367,7 +42319,7 @@
                 ]
               },
               "$is_unknown": {
-                "description": "Matches rows where the date field is not set.",
+                "description": "Matches when the field is not set. The condition value is ignored.",
                 "oneOf": [
                   {
                     "type": "string"
@@ -42668,7 +42620,7 @@
         "description": "Field-specific filters for **GET** `/v2/loyalties/programs/{programId}/members/{memberId}/activities`.",
         "properties": {
           "junction": {
-            "description": "How multiple field filters are combined. Defaults to `AND`.",
+            "description": "Joins the field filters. Allowed values are `AND` and `OR`. Defaults to `AND`.",
             "oneOf": [
               {
                 "type": "string",
@@ -42683,7 +42635,7 @@
             ]
           },
           "id": {
-            "description": "Filter by activity ID (ID conditions, values matching `^lambr_[a-f0-9]+$`).",
+            "description": "Filters by activity ID. Format `lambr_[a-f0-9]+`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/LoyaltiesProgramsMembersActivitiesListRequestQueryFiltersId"
@@ -42694,7 +42646,7 @@
             ]
           },
           "type": {
-            "description": "Filter by activity type (enum conditions over the member activity types).",
+            "description": "Filters by activity type. Allowed values: `vl.member.created`, `vl.member.updated`, `vl.member.deleted`, `vl.member.activated`, `vl.member.deactivated`, `vl.member.card.assigned`, `vl.member.card.unassigned`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/LoyaltiesProgramsMembersActivitiesListRequestQueryFiltersType"
@@ -42705,7 +42657,7 @@
             ]
           },
           "created_at": {
-            "description": "Filter by activity creation date (date conditions).",
+            "description": "Filters by activity creation date.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/DateFilter"
@@ -42734,7 +42686,7 @@
         "description": "Request query schema for **GET** `/v2/loyalties/programs/{programId}/members/{memberId}/benefits/transactions`.",
         "properties": {
           "junction": {
-            "description": "Defines the logical junction between field filters. Allowed values: `AND`, `OR`. Defaults to `AND`.",
+            "description": "Joins the field filters. Allowed values are `AND` and `OR`. Defaults to `AND`.",
             "oneOf": [
               {
                 "type": "string",
@@ -42749,7 +42701,7 @@
             ]
           },
           "benefit_id": {
-            "description": "Filter by benefit ID.",
+            "description": "Filters by benefit ID. Format `lben_[a-f0-9]+`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/LoyaltiesProgramsMembersBenefitsTransactionsListRequestQueryBenefitId"
@@ -42760,7 +42712,7 @@
             ]
           },
           "created_at": {
-            "description": "Filter by creation date.",
+            "description": "Filters by creation date.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/TransactionFilterDateConditions"
@@ -42789,7 +42741,7 @@
         "description": "Field-specific filters for **GET** `/v2/loyalties/programs/{programId}/members/{memberId}/cards/{cardId}/activities`.",
         "properties": {
           "junction": {
-            "description": "How multiple field filters are combined. Defaults to `AND`.",
+            "description": "Joins the field filters. Allowed values are `AND` and `OR`. Defaults to `AND`.",
             "oneOf": [
               {
                 "type": "string",
@@ -42804,7 +42756,7 @@
             ]
           },
           "id": {
-            "description": "Filter by activity ID (ID conditions, values matching `^lacrd_[a-f0-9]+$`).",
+            "description": "Filters by activity ID. Format `lacrd_[a-f0-9]+`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/LoyaltiesProgramsMembersCardsActivitiesListRequestQueryFiltersId"
@@ -42815,7 +42767,7 @@
             ]
           },
           "type": {
-            "description": "Filter by activity type (enum conditions over the card activity types).",
+            "description": "Filters by activity type. Allowed values: `vl.card.created`, `vl.card.assigned`, `vl.card.unassigned`, `vl.card.code_generation.succeeded`, `vl.card.code_generation.failed`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/LoyaltiesProgramsMembersCardsActivitiesListRequestQueryFiltersType"
@@ -42826,7 +42778,7 @@
             ]
           },
           "created_at": {
-            "description": "Filter by activity creation date (date conditions).",
+            "description": "Filters by activity creation date.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/DateFilter"
@@ -42961,7 +42913,7 @@
         "description": "Request query schema for **GET** `/v2/loyalties/programs/{programId}/members/{memberId}/cards/{cardId}/transactions`.",
         "properties": {
           "junction": {
-            "description": "How multiple field filters are combined. Defaults to `AND`.",
+            "description": "Joins the field filters. Allowed values are `AND` and `OR`. Defaults to `AND`.",
             "oneOf": [
               {
                 "type": "string",
@@ -42976,7 +42928,7 @@
             ]
           },
           "id": {
-            "description": "Filter by transaction ID (ID conditions, values matching `^lctx_[a-f0-9]+$`).",
+            "description": "Filters by transaction ID. Format `lctx_[a-f0-9]+`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/LoyaltiesProgramsMembersCardsTransactionsListRequestQueryId"
@@ -42987,7 +42939,7 @@
             ]
           },
           "created_at": {
-            "description": "Filter by transaction creation date (date conditions).",
+            "description": "Filters by transaction creation date.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/DateFilter"
@@ -42998,7 +42950,7 @@
             ]
           },
           "card_definition_id": {
-            "description": "Filter by card definition ID (ID conditions, values matching `^lcdef_[a-f0-9]+$`).",
+            "description": "Filters by card definition ID. Format `lcdef_[a-f0-9]+`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/CardDefinitionIdFilterConditions"
@@ -43116,7 +43068,7 @@
         "description": "Request query schema for **GET** `/v2/loyalties/programs/{programId}/members`.",
         "properties": {
           "junction": {
-            "description": "How multiple field filters are combined. Defaults to `AND`.",
+            "description": "Joins the field filters. Allowed values are `AND` and `OR`. Defaults to `AND`.",
             "oneOf": [
               {
                 "type": "string",
@@ -43131,7 +43083,7 @@
             ]
           },
           "id": {
-            "description": "Filter by member ID (ID conditions, values matching `^lmbr_[a-f0-9]+$`).",
+            "description": "Filters by member ID. Format `lmbr_[a-f0-9]+`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/LoyaltiesProgramsMembersListRequestQueryId"
@@ -43142,7 +43094,7 @@
             ]
           },
           "status": {
-            "description": "Filter by member status (enum conditions, values `ACTIVE` or `INACTIVE`).",
+            "description": "Filters by member status. Allowed values: `ACTIVE`, `INACTIVE`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/LoyaltiesProgramsMembersListRequestQueryStatus"
@@ -43153,7 +43105,7 @@
             ]
           },
           "customer_id": {
-            "description": "Filter by customer ID (ID conditions, values matching `^cust_[a-zA-Z0-9]+`).",
+            "description": "Filters by customer ID. Format `cust_[a-zA-Z0-9]+`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/LoyaltiesProgramsMembersListRequestQueryCustomerId"
@@ -43164,7 +43116,7 @@
             ]
           },
           "created_at": {
-            "description": "Filter by creation date (date conditions).",
+            "description": "Filters by creation date.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/DateFilter"
@@ -43223,7 +43175,7 @@
         "description": "Request query schema for **GET** `/v2/loyalties/programs/{programId}/members/{memberId}/orders/payments`.",
         "properties": {
           "junction": {
-            "description": "Joins field filters with `AND` or `OR`. Defaults to `AND`.",
+            "description": "Joins the field filters. Allowed values are `AND` and `OR`. Defaults to `AND`.",
             "oneOf": [
               {
                 "type": "string",
@@ -43238,7 +43190,7 @@
             ]
           },
           "id": {
-            "description": "Filter by order transaction ID.",
+            "description": "Filters by order transaction ID. Format `lotx_[a-f0-9]+`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/LoyaltiesProgramsMembersOrdersPaymentsListRequestQueryId"
@@ -43249,7 +43201,7 @@
             ]
           },
           "card_definition_id": {
-            "description": "Filter by card definition ID (ID conditions, values matching `^lcdef_[a-f0-9]+$`).",
+            "description": "Filters by card definition ID. Format `lcdef_[a-f0-9]+`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/LoyaltiesProgramsMembersRewardsPurchasesListRequestQueryCardDefinitionId"
@@ -43260,7 +43212,7 @@
             ]
           },
           "created_at": {
-            "description": "Filter by creation date.",
+            "description": "Filters by creation date.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/TransactionFilterDateConditions"
@@ -43319,7 +43271,7 @@
         "description": "Request query schema for **GET** `/v2/loyalties/programs/{programId}/members/{memberId}/rewards/purchases`.",
         "properties": {
           "junction": {
-            "description": "Logical junction between the field filters. Defaults to AND behavior.",
+            "description": "Joins the field filters. Allowed values are `AND` and `OR`. Defaults to `AND`.",
             "oneOf": [
               {
                 "type": "string",
@@ -43334,7 +43286,7 @@
             ]
           },
           "id": {
-            "description": "Filter by reward transaction ID.",
+            "description": "Filters by reward transaction ID. Format `lrtx_[a-f0-9]+`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/LoyaltiesProgramsMembersRewardsPurchasesListRequestQueryId"
@@ -43345,7 +43297,7 @@
             ]
           },
           "reward_id": {
-            "description": "Filter by reward ID.",
+            "description": "Filters by reward ID. Format `lrew_[a-f0-9]+`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/LoyaltiesProgramsMembersRewardsPurchasesListRequestQueryRewardId"
@@ -43356,7 +43308,7 @@
             ]
           },
           "card_definition_id": {
-            "description": "Filter by card definition ID (ID conditions, values matching `^lcdef_[a-f0-9]+$`).",
+            "description": "Filters by card definition ID. Format `lcdef_[a-f0-9]+`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/LoyaltiesProgramsMembersRewardsPurchasesListRequestQueryCardDefinitionId"
@@ -43367,7 +43319,7 @@
             ]
           },
           "created_at": {
-            "description": "Filter by creation date.",
+            "description": "Filters by creation date.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/TransactionFilterDateConditions"
@@ -43396,7 +43348,7 @@
         "description": "Request query schema for **GET** `/v2/loyalties/programs/{programId}/members/{memberId}/tiers/transactions`.",
         "properties": {
           "junction": {
-            "description": "Logical junction between the field filters. Defaults to AND behavior.",
+            "description": "Joins the field filters. Allowed values are `AND` and `OR`. Defaults to `AND`.",
             "oneOf": [
               {
                 "type": "string",
@@ -43411,7 +43363,7 @@
             ]
           },
           "card_id": {
-            "description": "Filter by loyalty card ID.",
+            "description": "Filters by loyalty card ID. Format `lcrd_[a-f0-9]+`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/LoyaltiesProgramsMembersTiersTransactionsListRequestQueryCardId"
@@ -43422,7 +43374,7 @@
             ]
           },
           "card_definition_id": {
-            "description": "Filter by card definition ID.",
+            "description": "Filters by card definition ID. Format `lcdef_[a-f0-9]+`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/LoyaltiesProgramsMembersTiersTransactionsListRequestQueryCardDefinitionId"
@@ -43433,7 +43385,7 @@
             ]
           },
           "created_at": {
-            "description": "Filter by creation date.",
+            "description": "Filters by creation date.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/TransactionFilterDateConditions"
@@ -71014,6 +70966,16 @@
             "in": "query",
             "name": "starting_after",
             "description": "A cursor for pagination. This is a date-time value that defines your place in the list based on `created_at` property from the customer object. For instance, if you make a list request and receive 100 objects, ending with an object created at `2020-05-24T13:43:09.024Z`, your subsequent call can include `starting_after=2020-05-24T13:43:09.024Z` in order to fetch the next page of the list. \n\n| **Option** | **Format** | **Sorting** |\n|:---|:---|:---|\n| Return customers **before** a specific creation date  | - set `starting_after` parameter to the breakpoint date | Sorting order is **descending**; the most recent dates first and least recent dates last. |\n| Return customers **after** a specific create or update date | - include the `order` parameter set to `created_at` or `updated_at`<br />- set `starting_after` to the breakpoint date | Sorting order is **ascending**; the least recent dates first and the most recent dates last. |\n"
+          },
+          {
+            "schema": {
+              "type": "object"
+            },
+            "in": "query",
+            "name": "filters",
+            "description": "Filters customers by field conditions. Read [Advanced filters for fetching resources](/api-reference/listing#advanced-filters-for-fetching-resources) for examples.",
+            "style": "deepObject",
+            "explode": true
           }
         ],
         "security": [
@@ -84783,7 +84745,7 @@
           "name": "programId",
           "in": "path",
           "required": true,
-          "description": "Unique program identifier.",
+          "description": "Identifies the loyalty program. Format `lprg_[a-f0-9]+`.",
           "schema": {
             "type": "string",
             "pattern": "^lprg_[a-f0-9]+$"
@@ -84802,7 +84764,7 @@
             "name": "limit",
             "in": "query",
             "required": false,
-            "description": "Maximum number of items to return. Between 1 and 100. Defaults to 10.",
+            "description": "Limits the page size to an integer from 1 to 100. Defaults to 10. A numeric string is accepted and rounded to the nearest integer.",
             "schema": {
               "type": "string",
               "nullable": true,
@@ -84815,7 +84777,7 @@
             "name": "order",
             "in": "query",
             "required": false,
-            "description": "Sorting order. A single value or an array of values. Prefix with `-` for descending. Defaults to `-created_at`. The same field cannot be used in both ascending and descending order at once.",
+            "description": "Orders the results. Accepts one value or an array. Prefix a field with `-` for descending order. Defaults to `-created_at`. The same field cannot be used in both directions. Rows with the same sort value are then ordered by `id` ascending.",
             "schema": {
               "oneOf": [
                 {
@@ -84845,7 +84807,7 @@
             "name": "cursor",
             "in": "query",
             "required": false,
-            "description": "Pagination cursor returned by a previous call (`cursor.next`).",
+            "description": "Continues pagination. Pass the `cursor.next` value from a previous response. Format `lcrserna_[a-f0-9]+`. The cursor matches the filters and order of that response.",
             "schema": {
               "type": "string",
               "nullable": true,
@@ -84910,7 +84872,7 @@
           "name": "programId",
           "in": "path",
           "required": true,
-          "description": "Unique program identifier.",
+          "description": "Identifies the loyalty program. Format `lprg_[a-f0-9]+`.",
           "schema": {
             "type": "string",
             "pattern": "^lprg_[a-f0-9]+$"
@@ -84929,7 +84891,7 @@
             "name": "limit",
             "in": "query",
             "required": false,
-            "description": "Maximum number of items to return. Between 1 and 100. Defaults to 10. Non-integer values are rounded.",
+            "description": "Limits the page size to an integer from 1 to 100. Defaults to 10. A numeric string is accepted and rounded to the nearest integer.",
             "schema": {
               "type": "string",
               "nullable": true,
@@ -84942,7 +84904,7 @@
             "name": "order",
             "in": "query",
             "required": false,
-            "description": "Sorting order. A single value or an array of values. Prefix with `-` for descending. Defaults to `-created_at`. The same field cannot be used in both ascending and descending order at once.",
+            "description": "Orders the results. Accepts one value or an array. Prefix a field with `-` for descending order. Defaults to `-created_at`. The same field cannot be used in both directions. Rows with the same sort value are then ordered by `id` ascending.",
             "schema": {
               "oneOf": [
                 {
@@ -84972,7 +84934,7 @@
             "name": "cursor",
             "in": "query",
             "required": false,
-            "description": "Pagination cursor returned by a previous call (`cursor.next`).",
+            "description": "Continues pagination. Pass the `cursor.next` value from a previous response. Format `lcrstsa_[a-f0-9]+`. The cursor matches the filters and order of that response.",
             "schema": {
               "type": "string",
               "nullable": true,
@@ -85024,7 +84986,7 @@
           "name": "programId",
           "in": "path",
           "required": true,
-          "description": "Unique program identifier.",
+          "description": "Identifies the loyalty program. Format `lprg_[a-f0-9]+`.",
           "schema": {
             "type": "string",
             "pattern": "^lprg_[a-f0-9]+$"
@@ -85043,7 +85005,7 @@
             "name": "limit",
             "in": "query",
             "required": false,
-            "description": "Maximum number of items to return. Between 1 and 100. Defaults to 10. Non-integer values are rounded.",
+            "description": "Limits the page size to an integer from 1 to 100. Defaults to 10. A numeric string is accepted and rounded to the nearest integer.",
             "schema": {
               "type": "string",
               "nullable": true,
@@ -85056,7 +85018,7 @@
             "name": "order",
             "in": "query",
             "required": false,
-            "description": "Sorting order. A single value or an array of values. Prefix with `-` for descending. Defaults to `-created_at`. The same field cannot be used in both ascending and descending order at once.",
+            "description": "Orders the results. Accepts one value or an array. Prefix a field with `-` for descending order. Defaults to `-created_at`. The same field cannot be used in both directions. Rows with the same sort value are then ordered by `id` ascending.",
             "schema": {
               "oneOf": [
                 {
@@ -85086,7 +85048,7 @@
             "name": "cursor",
             "in": "query",
             "required": false,
-            "description": "Pagination cursor returned by a previous call (`cursor.next`).",
+            "description": "Continues pagination. Pass the `cursor.next` value from a previous response. Format `lcrsrewa_[a-f0-9]+`. The cursor matches the filters and order of that response.",
             "schema": {
               "type": "string",
               "nullable": true,
@@ -85172,7 +85134,7 @@
           "name": "programId",
           "in": "path",
           "required": true,
-          "description": "Unique loyalty program ID (format `lprg_[a-f0-9]+`).",
+          "description": "Identifies the loyalty program. Format `lprg_[a-f0-9]+`.",
           "schema": {
             "type": "string",
             "pattern": "^lprg_[a-f0-9]+$"
@@ -85386,7 +85348,7 @@
             "name": "limit",
             "in": "query",
             "required": false,
-            "description": "Maximum number of members to return. Must be between 1 and 100. Defaults to 10 when not provided.",
+            "description": "Limits the page size to an integer from 1 to 100. Defaults to 10. A numeric string is accepted and rounded to the nearest integer.",
             "schema": {
               "type": "integer",
               "nullable": true,
@@ -85399,7 +85361,7 @@
             "name": "order",
             "in": "query",
             "required": false,
-            "description": "Field(s) to order results by. Prefix with `-` for descending order. Accepts a single value or an array of values. Defaults to `-created_at`. Ordering by the same field in both directions simultaneously is rejected.",
+            "description": "Orders the results. Accepts one value or an array. Prefix a field with `-` for descending order. Defaults to `-created_at`. The same field cannot be used in both directions. Rows with the same sort value are then ordered by `id` ascending.",
             "schema": {
               "oneOf": [
                 {
@@ -85437,7 +85399,7 @@
             "name": "cursor",
             "in": "query",
             "required": false,
-            "description": "Pagination cursor returned in the `cursor.next` field of a previous response. Must match the pattern `^lcrsmbr_[a-f0-9]+$`.",
+            "description": "Continues pagination. Pass the `cursor.next` value from a previous response. Format `lcrsmbr_[a-f0-9]+`. The cursor matches the filters and order of that response.",
             "schema": {
               "type": "string",
               "nullable": true,
@@ -85450,7 +85412,7 @@
             "required": false,
             "style": "deepObject",
             "explode": true,
-            "description": "Field-specific filter conditions, passed as a deep object, e.g. `filters[status][conditions][$is]=ACTIVE`.",
+            "description": "Filters the results. Pass a deep object, for example `filters[status][conditions][$is]=ACTIVE`. Fields combine through `junction`, which defaults to `AND`. Omit `filters` to apply no field filter.",
             "schema": {
               "oneOf": [
                 {
@@ -85525,7 +85487,7 @@
           "name": "programId",
           "in": "path",
           "required": true,
-          "description": "Unique loyalty program ID (format `lprg_[a-f0-9]+`).",
+          "description": "Identifies the loyalty program. Format `lprg_[a-f0-9]+`.",
           "schema": {
             "type": "string",
             "pattern": "^lprg_[a-f0-9]+$"
@@ -85605,7 +85567,7 @@
           "name": "programId",
           "in": "path",
           "required": true,
-          "description": "Unique loyalty program ID (format `lprg_[a-f0-9]+`).",
+          "description": "Identifies the loyalty program. Format `lprg_[a-f0-9]+`.",
           "schema": {
             "type": "string",
             "pattern": "^lprg_[a-f0-9]+$"
@@ -85615,7 +85577,7 @@
           "name": "memberId",
           "in": "path",
           "required": true,
-          "description": "Program member ID (format `lmbr_[a-f0-9]+`).",
+          "description": "Identifies the member. Format `lmbr_[a-f0-9]+`.",
           "schema": {
             "type": "string",
             "pattern": "^lmbr_[a-f0-9]+$"
@@ -85911,7 +85873,7 @@
           "name": "programId",
           "in": "path",
           "required": true,
-          "description": "Unique loyalty program ID (format `lprg_[a-f0-9]+`).",
+          "description": "Identifies the loyalty program. Format `lprg_[a-f0-9]+`.",
           "schema": {
             "type": "string",
             "pattern": "^lprg_[a-f0-9]+$"
@@ -85921,7 +85883,7 @@
           "name": "customerId",
           "in": "path",
           "required": true,
-          "description": "Unique identifier of the customer or member, interpreted according to `identification_type`: a Voucherify customer ID (`cust_...`), a customer `source_id`, or a loyalty member ID (`lmbr_...`).",
+          "description": "Identifies the customer or member. `identification_type` selects the value: a Voucherify customer ID (`cust_...`), a customer `source_id`, or a loyalty member ID (`lmbr_...`).",
           "schema": {
             "type": "string"
           }
@@ -85939,7 +85901,7 @@
             "name": "identification_type",
             "in": "query",
             "required": false,
-            "description": "Chooses how `customerId` is read. `customer_id` is the Voucherify customer ID and the default. `customer_source_id` is the customer's `source_id`. `member_id` is the loyalty member ID.",
+            "description": "Selects how `customerId` is read. `customer_id` is the Voucherify customer ID and the default. `customer_source_id` is the customer's `source_id`. `member_id` is the loyalty member ID.",
             "schema": {
               "type": "string",
               "enum": [
@@ -86130,7 +86092,7 @@
           "name": "programId",
           "in": "path",
           "required": true,
-          "description": "Identifies the loyalty program. Format `lprg_[a-f0-9]+`. Required.",
+          "description": "Identifies the loyalty program. Format `lprg_[a-f0-9]+`.",
           "schema": {
             "type": "string",
             "pattern": "^lprg_[a-f0-9]+$"
@@ -86140,7 +86102,7 @@
           "name": "memberId",
           "in": "path",
           "required": true,
-          "description": "Identifies the member. Format `lmbr_[a-f0-9]+`. Required.",
+          "description": "Identifies the member. Format `lmbr_[a-f0-9]+`.",
           "schema": {
             "type": "string",
             "pattern": "^lmbr_[a-f0-9]+$"
@@ -86198,7 +86160,7 @@
           "name": "programId",
           "in": "path",
           "required": true,
-          "description": "Identifies the loyalty program. Unique identifier in `lprg_[a-f0-9]+` format.",
+          "description": "Identifies the loyalty program. Format `lprg_[a-f0-9]+`.",
           "schema": {
             "type": "string",
             "pattern": "^lprg_[a-f0-9]+$"
@@ -86208,7 +86170,7 @@
           "name": "memberId",
           "in": "path",
           "required": true,
-          "description": "Identifies the member. Unique identifier in `lmbr_[a-f0-9]+` format.",
+          "description": "Identifies the member. Format `lmbr_[a-f0-9]+`.",
           "schema": {
             "type": "string",
             "pattern": "^lmbr_[a-f0-9]+$"
@@ -86266,7 +86228,7 @@
           "name": "programId",
           "in": "path",
           "required": true,
-          "description": "Unique loyalty program ID (format `lprg_[a-f0-9]+`).",
+          "description": "Identifies the loyalty program. Format `lprg_[a-f0-9]+`.",
           "schema": {
             "type": "string",
             "pattern": "^lprg_[a-f0-9]+$"
@@ -86276,7 +86238,7 @@
           "name": "memberId",
           "in": "path",
           "required": true,
-          "description": "Program member ID (format `lmbr_[a-f0-9]+`).",
+          "description": "Identifies the member. Format `lmbr_[a-f0-9]+`.",
           "schema": {
             "type": "string",
             "pattern": "^lmbr_[a-f0-9]+$"
@@ -86295,7 +86257,7 @@
             "name": "limit",
             "in": "query",
             "required": false,
-            "description": "Maximum number of activities to return. An integer from 1 to 100. Numeric strings are accepted and rounded to the nearest integer. Defaults to 10 when omitted.",
+            "description": "Limits the page size to an integer from 1 to 100. Defaults to 10. A numeric string is accepted and rounded to the nearest integer.",
             "schema": {
               "type": "integer",
               "nullable": true,
@@ -86308,7 +86270,7 @@
             "name": "order",
             "in": "query",
             "required": false,
-            "description": "Sort field. Allowed values are `created_at` and `-created_at`. Defaults to `-created_at` when omitted, null, or an empty array. Accepts one value or an array of those values. Any other value is rejected. An array that contains both directions is rejected. Rows that share a `created_at` millisecond are then ordered by `id` ascending.",
+            "description": "Orders the results. Accepts one value or an array. Prefix a field with `-` for descending order. Defaults to `-created_at`. The same field cannot be used in both directions. Rows with the same sort value are then ordered by `id` ascending.",
             "schema": {
               "oneOf": [
                 {
@@ -86338,7 +86300,7 @@
             "name": "cursor",
             "in": "query",
             "required": false,
-            "description": "Pagination cursor returned in the `cursor.next` field of a previous response. Must match the pattern `^lcrsambr_[a-f0-9]+$`.",
+            "description": "Continues pagination. Pass the `cursor.next` value from a previous response. Format `lcrsambr_[a-f0-9]+`. The cursor matches the filters and order of that response.",
             "schema": {
               "type": "string",
               "nullable": true,
@@ -86351,7 +86313,7 @@
             "required": false,
             "style": "deepObject",
             "explode": true,
-            "description": "Field-specific filter conditions, passed as a deep object, e.g. `filters[type][conditions][$is]=vl.member.created`.",
+            "description": "Filters the results. Pass a deep object, for example `filters[type][conditions][$is]=vl.member.created`. Fields combine through `junction`, which defaults to `AND`. Omit `filters` to apply no field filter.",
             "schema": {
               "oneOf": [
                 {
@@ -86641,7 +86603,7 @@
           "name": "programId",
           "in": "path",
           "required": true,
-          "description": "Unique loyalty program ID (format `lprg_[a-f0-9]+`).",
+          "description": "Identifies the loyalty program. Format `lprg_[a-f0-9]+`.",
           "schema": {
             "type": "string",
             "pattern": "^lprg_[a-f0-9]+$"
@@ -86651,7 +86613,7 @@
           "name": "memberId",
           "in": "path",
           "required": true,
-          "description": "Program member ID (format `lmbr_[a-f0-9]+`).",
+          "description": "Identifies the member. Format `lmbr_[a-f0-9]+`.",
           "schema": {
             "type": "string",
             "pattern": "^lmbr_[a-f0-9]+$"
@@ -86661,7 +86623,7 @@
           "name": "cardId",
           "in": "path",
           "required": true,
-          "description": "Loyalty card ID (format `lcrd_[a-f0-9]+`).",
+          "description": "Identifies the loyalty card. Format `lcrd_[a-f0-9]+`.",
           "schema": {
             "type": "string",
             "pattern": "^lcrd_[a-f0-9]+$"
@@ -86802,7 +86764,7 @@
           "name": "programId",
           "in": "path",
           "required": true,
-          "description": "Unique loyalty program ID (format `lprg_[a-f0-9]+`).",
+          "description": "Identifies the loyalty program. Format `lprg_[a-f0-9]+`.",
           "schema": {
             "type": "string",
             "pattern": "^lprg_[a-f0-9]+$"
@@ -86812,7 +86774,7 @@
           "name": "memberId",
           "in": "path",
           "required": true,
-          "description": "Program member ID (format `lmbr_[a-f0-9]+`).",
+          "description": "Identifies the member. Format `lmbr_[a-f0-9]+`.",
           "schema": {
             "type": "string",
             "pattern": "^lmbr_[a-f0-9]+$"
@@ -86822,7 +86784,7 @@
           "name": "cardId",
           "in": "path",
           "required": true,
-          "description": "Loyalty card ID (format `lcrd_[a-f0-9]+`).",
+          "description": "Identifies the loyalty card. Format `lcrd_[a-f0-9]+`.",
           "schema": {
             "type": "string",
             "pattern": "^lcrd_[a-f0-9]+$"
@@ -86841,7 +86803,7 @@
             "name": "limit",
             "in": "query",
             "required": false,
-            "description": "Maximum number of activities to return. An integer from 1 to 100. Numeric strings are accepted and rounded to the nearest integer. Defaults to 10 when omitted.",
+            "description": "Limits the page size to an integer from 1 to 100. Defaults to 10. A numeric string is accepted and rounded to the nearest integer.",
             "schema": {
               "type": "integer",
               "nullable": true,
@@ -86854,7 +86816,7 @@
             "name": "order",
             "in": "query",
             "required": false,
-            "description": "Sort field. Allowed values are `created_at` and `-created_at`. Defaults to `-created_at` when omitted, null, or an empty array. Accepts one value or an array of those values. Any other value is rejected. An array that contains both directions is rejected. Rows that share a `created_at` millisecond are then ordered by `id` ascending.",
+            "description": "Orders the results. Accepts one value or an array. Prefix a field with `-` for descending order. Defaults to `-created_at`. The same field cannot be used in both directions. Rows with the same sort value are then ordered by `id` ascending.",
             "schema": {
               "oneOf": [
                 {
@@ -86884,7 +86846,7 @@
             "name": "cursor",
             "in": "query",
             "required": false,
-            "description": "Pagination cursor returned in the `cursor.next` field of a previous response. Must match the pattern `^lcrsacrd_[a-f0-9]+$`.",
+            "description": "Continues pagination. Pass the `cursor.next` value from a previous response. Format `lcrsacrd_[a-f0-9]+`. The cursor matches the filters and order of that response.",
             "schema": {
               "type": "string",
               "nullable": true,
@@ -86897,7 +86859,7 @@
             "required": false,
             "style": "deepObject",
             "explode": true,
-            "description": "Field-specific filter conditions, passed as a deep object, e.g. `filters[type][conditions][$is]=vl.card.created`.",
+            "description": "Filters the results. Pass a deep object, for example `filters[type][conditions][$is]=vl.card.created`. Fields combine through `junction`, which defaults to `AND`. Omit `filters` to apply no field filter.",
             "schema": {
               "oneOf": [
                 {
@@ -87185,7 +87147,7 @@
           "name": "programId",
           "in": "path",
           "required": true,
-          "description": "Unique loyalty program ID (format `lprg_[a-f0-9]+`).",
+          "description": "Identifies the loyalty program. Format `lprg_[a-f0-9]+`.",
           "schema": {
             "type": "string",
             "pattern": "^lprg_[a-f0-9]+$"
@@ -87195,7 +87157,7 @@
           "name": "memberId",
           "in": "path",
           "required": true,
-          "description": "Program member ID (format `lmbr_[a-f0-9]+`).",
+          "description": "Identifies the member. Format `lmbr_[a-f0-9]+`.",
           "schema": {
             "type": "string",
             "pattern": "^lmbr_[a-f0-9]+$"
@@ -87205,7 +87167,7 @@
           "name": "cardId",
           "in": "path",
           "required": true,
-          "description": "Loyalty card ID (format `lcrd_[a-f0-9]+`).",
+          "description": "Identifies the loyalty card. Format `lcrd_[a-f0-9]+`.",
           "schema": {
             "type": "string",
             "pattern": "^lcrd_[a-f0-9]+$"
@@ -87224,7 +87186,7 @@
             "name": "limit",
             "in": "query",
             "required": false,
-            "description": "Maximum number of buckets to return. Must be between 1 and 100. Defaults to 10 when not provided.",
+            "description": "Limits the page size to an integer from 1 to 100. Defaults to 10. A numeric string is accepted and rounded to the nearest integer.",
             "schema": {
               "type": "integer",
               "nullable": true,
@@ -87237,7 +87199,7 @@
             "name": "order",
             "in": "query",
             "required": false,
-            "description": "Field(s) to order results by. Valid orders are `date` and `-date`; defaults to `date` (soonest activation first). Ordering by the same field in both directions simultaneously is rejected.",
+            "description": "Orders the results. Accepts one value or an array. Prefix a field with `-` for descending order. Defaults to `date`. Soonest activation first. The same field cannot be used in both directions. Rows with the same sort value are then ordered by `id` ascending.",
             "schema": {
               "oneOf": [
                 {
@@ -87267,7 +87229,7 @@
             "name": "cursor",
             "in": "query",
             "required": false,
-            "description": "Pagination cursor returned in the `cursor.next` field of a previous response.\nMust match the pattern `^lcrscppb_[a-f0-9]+$`.",
+            "description": "Continues pagination. Pass the `cursor.next` value from a previous response. Format `lcrscppb_[a-f0-9]+`. The cursor matches the filters and order of that response.",
             "schema": {
               "type": "string",
               "nullable": true,
@@ -87280,7 +87242,7 @@
             "required": false,
             "style": "deepObject",
             "explode": true,
-            "description": "Field-specific filter conditions, passed as a deep object, for example `filters[card_definition_id][conditions][$is]=lcdef_128f495f720c4bec8c`.",
+            "description": "Filters the results. Pass a deep object, for example `filters[card_definition_id][conditions][$is]=lcdef_128f495f720c4bec8c`. Fields combine through `junction`, which defaults to `AND`. Omit `filters` to apply no field filter.",
             "schema": {
               "oneOf": [
                 {
@@ -87352,7 +87314,7 @@
           "name": "programId",
           "in": "path",
           "required": true,
-          "description": "Unique loyalty program ID (format `lprg_[a-f0-9]+`).",
+          "description": "Identifies the loyalty program. Format `lprg_[a-f0-9]+`.",
           "schema": {
             "type": "string",
             "pattern": "^lprg_[a-f0-9]+$"
@@ -87362,7 +87324,7 @@
           "name": "memberId",
           "in": "path",
           "required": true,
-          "description": "Program member ID (format `lmbr_[a-f0-9]+`).",
+          "description": "Identifies the member. Format `lmbr_[a-f0-9]+`.",
           "schema": {
             "type": "string",
             "pattern": "^lmbr_[a-f0-9]+$"
@@ -87372,7 +87334,7 @@
           "name": "cardId",
           "in": "path",
           "required": true,
-          "description": "Loyalty card ID (format `lcrd_[a-f0-9]+`).",
+          "description": "Identifies the loyalty card. Format `lcrd_[a-f0-9]+`.",
           "schema": {
             "type": "string",
             "pattern": "^lcrd_[a-f0-9]+$"
@@ -87382,7 +87344,7 @@
           "name": "bucketId",
           "in": "path",
           "required": true,
-          "description": "Pending points bucket ID (format `lcppb_[a-f0-9]+`).",
+          "description": "Identifies the pending points bucket. Format `lcppb_[a-f0-9]+`.",
           "schema": {
             "type": "string",
             "pattern": "^lcppb_[a-f0-9]+$"
@@ -87457,7 +87419,7 @@
           "name": "programId",
           "in": "path",
           "required": true,
-          "description": "Unique loyalty program ID (format `lprg_[a-f0-9]+`).",
+          "description": "Identifies the loyalty program. Format `lprg_[a-f0-9]+`.",
           "schema": {
             "type": "string",
             "pattern": "^lprg_[a-f0-9]+$"
@@ -87467,7 +87429,7 @@
           "name": "memberId",
           "in": "path",
           "required": true,
-          "description": "Program member ID (format `lmbr_[a-f0-9]+`).",
+          "description": "Identifies the member. Format `lmbr_[a-f0-9]+`.",
           "schema": {
             "type": "string",
             "pattern": "^lmbr_[a-f0-9]+$"
@@ -87477,7 +87439,7 @@
           "name": "cardId",
           "in": "path",
           "required": true,
-          "description": "Loyalty card ID (format `lcrd_[a-f0-9]+`).",
+          "description": "Identifies the loyalty card. Format `lcrd_[a-f0-9]+`.",
           "schema": {
             "type": "string",
             "pattern": "^lcrd_[a-f0-9]+$"
@@ -87487,7 +87449,7 @@
           "name": "bucketId",
           "in": "path",
           "required": true,
-          "description": "Pending points bucket ID (format `lcppb_[a-f0-9]+`).",
+          "description": "Identifies the pending points bucket. Format `lcppb_[a-f0-9]+`.",
           "schema": {
             "type": "string",
             "pattern": "^lcppb_[a-f0-9]+$"
@@ -87562,7 +87524,7 @@
           "name": "programId",
           "in": "path",
           "required": true,
-          "description": "Unique loyalty program ID (format `lprg_[a-f0-9]+`).",
+          "description": "Identifies the loyalty program. Format `lprg_[a-f0-9]+`.",
           "schema": {
             "type": "string",
             "pattern": "^lprg_[a-f0-9]+$"
@@ -87572,7 +87534,7 @@
           "name": "memberId",
           "in": "path",
           "required": true,
-          "description": "Program member ID (format `lmbr_[a-f0-9]+`).",
+          "description": "Identifies the member. Format `lmbr_[a-f0-9]+`.",
           "schema": {
             "type": "string",
             "pattern": "^lmbr_[a-f0-9]+$"
@@ -87582,7 +87544,7 @@
           "name": "cardId",
           "in": "path",
           "required": true,
-          "description": "Loyalty card ID (format `lcrd_[a-f0-9]+`).",
+          "description": "Identifies the loyalty card. Format `lcrd_[a-f0-9]+`.",
           "schema": {
             "type": "string",
             "pattern": "^lcrd_[a-f0-9]+$"
@@ -87601,7 +87563,7 @@
             "name": "limit",
             "in": "query",
             "required": false,
-            "description": "Maximum number of buckets to return. Must be between 1 and 100. Defaults to 10 when not provided.",
+            "description": "Limits the page size to an integer from 1 to 100. Defaults to 10. A numeric string is accepted and rounded to the nearest integer.",
             "schema": {
               "type": "integer",
               "nullable": true,
@@ -87614,7 +87576,7 @@
             "name": "order",
             "in": "query",
             "required": false,
-            "description": "Field(s) to order results by. Valid orders are `expiration_date` and `-expiration_date`; defaults to `expiration_date` (soonest expiration first). Ordering by the same field in both directions simultaneously is rejected.",
+            "description": "Orders the results. Accepts one value or an array. Prefix a field with `-` for descending order. Defaults to `expiration_date`. Soonest expiration first. The same field cannot be used in both directions. Rows with the same sort value are then ordered by `id` ascending.",
             "schema": {
               "oneOf": [
                 {
@@ -87644,7 +87606,7 @@
             "name": "cursor",
             "in": "query",
             "required": false,
-            "description": "Pagination cursor returned in the `cursor.next` field of a previous response. Must match the pattern `^lcrspeb_[a-f0-9]+$`.",
+            "description": "Continues pagination. Pass the `cursor.next` value from a previous response. Format `lcrspeb_[a-f0-9]+`. The cursor matches the filters and order of that response.",
             "schema": {
               "type": "string",
               "nullable": true,
@@ -87657,7 +87619,7 @@
             "required": false,
             "style": "deepObject",
             "explode": true,
-            "description": "Field-specific filter conditions, passed as a deep object, for example `filters[card_definition_id][conditions][$is]=lcdef_1297339938ae248cea`.",
+            "description": "Filters the results. Pass a deep object, for example `filters[card_definition_id][conditions][$is]=lcdef_1297339938ae248cea`. Fields combine through `junction`, which defaults to `AND`. Omit `filters` to apply no field filter.",
             "schema": {
               "oneOf": [
                 {
@@ -87730,7 +87692,7 @@
           "name": "programId",
           "in": "path",
           "required": true,
-          "description": "Unique loyalty program ID (format `lprg_[a-f0-9]+`).",
+          "description": "Identifies the loyalty program. Format `lprg_[a-f0-9]+`.",
           "schema": {
             "type": "string",
             "pattern": "^lprg_[a-f0-9]+$"
@@ -87740,7 +87702,7 @@
           "name": "memberId",
           "in": "path",
           "required": true,
-          "description": "Program member ID (format `lmbr_[a-f0-9]+`).",
+          "description": "Identifies the member. Format `lmbr_[a-f0-9]+`.",
           "schema": {
             "type": "string",
             "pattern": "^lmbr_[a-f0-9]+$"
@@ -87750,7 +87712,7 @@
           "name": "cardId",
           "in": "path",
           "required": true,
-          "description": "Loyalty card ID (format `lcrd_[a-f0-9]+`).",
+          "description": "Identifies the loyalty card. Format `lcrd_[a-f0-9]+`.",
           "schema": {
             "type": "string",
             "pattern": "^lcrd_[a-f0-9]+$"
@@ -87760,7 +87722,7 @@
           "name": "bucketId",
           "in": "path",
           "required": true,
-          "description": "Points expiration bucket ID (format `lcpeb_[a-f0-9]+`).",
+          "description": "Identifies the points expiration bucket. Format `lcpeb_[a-f0-9]+`.",
           "schema": {
             "type": "string",
             "pattern": "^lcpeb_[a-f0-9]+$"
@@ -87838,7 +87800,7 @@
           "name": "programId",
           "in": "path",
           "required": true,
-          "description": "Unique loyalty program ID (format `lprg_[a-f0-9]+`).",
+          "description": "Identifies the loyalty program. Format `lprg_[a-f0-9]+`.",
           "schema": {
             "type": "string",
             "pattern": "^lprg_[a-f0-9]+$"
@@ -87848,7 +87810,7 @@
           "name": "memberId",
           "in": "path",
           "required": true,
-          "description": "Program member ID (format `lmbr_[a-f0-9]+`).",
+          "description": "Identifies the member. Format `lmbr_[a-f0-9]+`.",
           "schema": {
             "type": "string",
             "pattern": "^lmbr_[a-f0-9]+$"
@@ -87858,7 +87820,7 @@
           "name": "cardId",
           "in": "path",
           "required": true,
-          "description": "Loyalty card ID (format `lcrd_[a-f0-9]+`).",
+          "description": "Identifies the loyalty card. Format `lcrd_[a-f0-9]+`.",
           "schema": {
             "type": "string",
             "pattern": "^lcrd_[a-f0-9]+$"
@@ -87877,7 +87839,7 @@
             "name": "limit",
             "in": "query",
             "required": false,
-            "description": "Maximum number of transactions to return. Must be between 1 and 100. Defaults to 10 when not provided.",
+            "description": "Limits the page size to an integer from 1 to 100. Defaults to 10. A numeric string is accepted and rounded to the nearest integer.",
             "schema": {
               "type": "integer",
               "nullable": true,
@@ -87890,7 +87852,7 @@
             "name": "order",
             "in": "query",
             "required": false,
-            "description": "Orders results by transaction `id`. `-id` is newest first and the default. `id` is oldest first. An array that orders by `id` and `-id` together is rejected.",
+            "description": "Orders the results. Accepts one value or an array. Prefix a field with `-` for descending order. Defaults to `-id`. Newest first. The same field cannot be used in both directions.",
             "schema": {
               "oneOf": [
                 {
@@ -87920,7 +87882,7 @@
             "name": "cursor",
             "in": "query",
             "required": false,
-            "description": "Pagination cursor returned in the `cursor.next` field of a previous response. Must match the pattern `^lcrsctx_[a-f0-9]+$`.",
+            "description": "Continues pagination. Pass the `cursor.next` value from a previous response. Format `lcrsctx_[a-f0-9]+`. The cursor matches the filters and order of that response.",
             "schema": {
               "type": "string",
               "nullable": true,
@@ -87933,7 +87895,7 @@
             "required": false,
             "style": "deepObject",
             "explode": true,
-            "description": "Field-specific filter conditions, passed as a deep object, e.g. `filters[id][conditions][$is]=lctx_0f5d0a8878caa3ee5c`.",
+            "description": "Filters the results. Pass a deep object, for example `filters[id][conditions][$is]=lctx_0f5d0a8878caa3ee5c`. Fields combine through `junction`, which defaults to `AND`. Omit `filters` to apply no field filter.",
             "schema": {
               "oneOf": [
                 {
@@ -88123,7 +88085,7 @@
           "name": "programId",
           "in": "path",
           "required": true,
-          "description": "Unique loyalty program identifier (format: `lprg_` followed by hexadecimal characters).",
+          "description": "Identifies the loyalty program. Format `lprg_[a-f0-9]+`.",
           "schema": {
             "type": "string",
             "pattern": "^lprg_[a-f0-9]+$"
@@ -88133,7 +88095,7 @@
           "name": "rewardTransactionId",
           "in": "path",
           "required": true,
-          "description": "Unique reward transaction identifier of the purchase to refund (format: `lrtx_` followed by hexadecimal characters).",
+          "description": "Identifies the reward transaction of the purchase to refund. Format `lrtx_[a-f0-9]+`.",
           "schema": {
             "type": "string",
             "pattern": "^lrtx_[a-f0-9]+$"
@@ -88239,16 +88201,17 @@
           "name": "programId",
           "in": "path",
           "required": true,
-          "description": "Unique loyalty program identifier (format: `lprg_` followed by hexadecimal characters).",
+          "description": "Identifies the loyalty program. Format `lprg_[a-f0-9]+`.",
           "schema": {
-            "type": "string"
+            "type": "string",
+            "pattern": "^lprg_[a-f0-9]+$"
           }
         },
         {
           "name": "memberId",
           "in": "path",
           "required": true,
-          "description": "Program member ID (format `lmbr_[a-f0-9]+`).",
+          "description": "Identifies the member. Format `lmbr_[a-f0-9]+`.",
           "schema": {
             "type": "string",
             "pattern": "^lmbr_[a-f0-9]+$"
@@ -88267,7 +88230,7 @@
             "name": "limit",
             "in": "query",
             "required": false,
-            "description": "Maximum number of items to return. An integer between 1 and 100; numeric strings are also accepted. Defaults to 10.",
+            "description": "Limits the page size to an integer from 1 to 100. Defaults to 10. A numeric string is accepted and rounded to the nearest integer.",
             "schema": {
               "type": "integer",
               "nullable": true,
@@ -88280,7 +88243,7 @@
             "name": "order",
             "in": "query",
             "required": false,
-            "description": "Orders results by transaction `id`. `-id` is newest first and the default. `id` is oldest first. An array that orders by `id` and `-id` together is rejected.",
+            "description": "Orders the results. Accepts one value or an array. Prefix a field with `-` for descending order. Defaults to `-id`. Newest first. The same field cannot be used in both directions.",
             "schema": {
               "oneOf": [
                 {
@@ -88310,7 +88273,7 @@
             "name": "cursor",
             "in": "query",
             "required": false,
-            "description": "Pagination cursor returned in the `cursor.next` field of a previous response (format: `lcrstrx_` followed by hexadecimal characters).",
+            "description": "Continues pagination. Pass the `cursor.next` value from a previous response. Format `lcrstrx_[a-f0-9]+`. The cursor matches the filters and order of that response.",
             "schema": {
               "type": "string",
               "nullable": true,
@@ -88323,7 +88286,7 @@
             "required": false,
             "style": "deepObject",
             "explode": true,
-            "description": "Field filters, e.g. `filters[reward_id][conditions][$is]=lrew_...`. Each field accepts a `conditions` object with condition operators.",
+            "description": "Filters the results. Pass a deep object, for example `filters[reward_id][conditions][$is]=lrew_...`. Fields combine through `junction`, which defaults to `AND`. Omit `filters` to apply no field filter.",
             "schema": {
               "oneOf": [
                 {
@@ -88596,7 +88559,7 @@
           "name": "programId",
           "in": "path",
           "required": true,
-          "description": "Identifies the loyalty program (`lprg_` followed by hexadecimal characters).",
+          "description": "Identifies the loyalty program. Format `lprg_[a-f0-9]+`.",
           "schema": {
             "type": "string",
             "pattern": "^lprg_[a-f0-9]+$"
@@ -88606,7 +88569,7 @@
           "name": "memberId",
           "in": "path",
           "required": true,
-          "description": "Identifies the program member (`lmbr_[a-f0-9]+`).",
+          "description": "Identifies the member. Format `lmbr_[a-f0-9]+`.",
           "schema": {
             "type": "string",
             "pattern": "^lmbr_[a-f0-9]+$"
@@ -88625,7 +88588,7 @@
             "name": "limit",
             "in": "query",
             "required": false,
-            "description": "Maximum number of items to return. An integer between 1 and 100; numeric strings are also accepted. Defaults to 10.",
+            "description": "Limits the page size to an integer from 1 to 100. Defaults to 10. A numeric string is accepted and rounded to the nearest integer.",
             "schema": {
               "type": "integer",
               "nullable": true,
@@ -88638,7 +88601,7 @@
             "name": "order",
             "in": "query",
             "required": false,
-            "description": "Orders results by transaction `id`. `-id` is newest first and the default. `id` is oldest first. An array that orders by `id` and `-id` together is rejected.",
+            "description": "Orders the results. Accepts one value or an array. Prefix a field with `-` for descending order. Defaults to `-id`. Newest first. The same field cannot be used in both directions.",
             "schema": {
               "oneOf": [
                 {
@@ -88668,7 +88631,7 @@
             "name": "cursor",
             "in": "query",
             "required": false,
-            "description": "Pagination cursor returned in the `cursor.next` field of a previous response (format: `lcrsotx_` followed by hexadecimal characters).",
+            "description": "Continues pagination. Pass the `cursor.next` value from a previous response. Format `lcrsotx_[a-f0-9]+`. The cursor matches the filters and order of that response.",
             "schema": {
               "type": "string",
               "nullable": true,
@@ -88681,7 +88644,7 @@
             "required": false,
             "style": "deepObject",
             "explode": true,
-            "description": "Filters results by field, e.g. `filters[id][conditions][$is]=lotx_...`. Each field accepts a `conditions` object with condition operators.",
+            "description": "Filters the results. Pass a deep object, for example `filters[id][conditions][$is]=lotx_...`. Fields combine through `junction`, which defaults to `AND`. Omit `filters` to apply no field filter.",
             "schema": {
               "oneOf": [
                 {
@@ -89128,7 +89091,7 @@
           "name": "programId",
           "in": "path",
           "required": true,
-          "description": "Unique loyalty program ID (format `lprg_[a-f0-9]+`).",
+          "description": "Identifies the loyalty program. Format `lprg_[a-f0-9]+`.",
           "schema": {
             "type": "string",
             "pattern": "^lprg_[a-f0-9]+$"
@@ -89138,7 +89101,7 @@
           "name": "memberId",
           "in": "path",
           "required": true,
-          "description": "Program member ID (format `lmbr_[a-f0-9]+`).",
+          "description": "Identifies the member. Format `lmbr_[a-f0-9]+`.",
           "schema": {
             "type": "string",
             "pattern": "^lmbr_[a-f0-9]+$"
@@ -89157,7 +89120,7 @@
             "name": "limit",
             "in": "query",
             "required": false,
-            "description": "Maximum number of items to return. An integer between 1 and 100; numeric strings are also accepted. Defaults to 10.",
+            "description": "Limits the page size to an integer from 1 to 100. Defaults to 10. A numeric string is accepted and rounded to the nearest integer.",
             "schema": {
               "type": "integer",
               "nullable": true,
@@ -89170,7 +89133,7 @@
             "name": "order",
             "in": "query",
             "required": false,
-            "description": "Field(s) to order results by. Valid orders are `id` and `-id`; defaults to `-id` (newest first). Ordering by the same field in both directions simultaneously is rejected.",
+            "description": "Orders the results. Accepts one value or an array. Prefix a field with `-` for descending order. Defaults to `-id`. Newest first. The same field cannot be used in both directions.",
             "schema": {
               "oneOf": [
                 {
@@ -89200,7 +89163,7 @@
             "name": "cursor",
             "in": "query",
             "required": false,
-            "description": "Pagination cursor returned in the `cursor.next` field of a previous response (format: `lcrsbtx_` followed by hexadecimal characters).",
+            "description": "Continues pagination. Pass the `cursor.next` value from a previous response. Format `lcrsbtx_[a-f0-9]+`. The cursor matches the filters and order of that response.",
             "schema": {
               "type": "string",
               "nullable": true,
@@ -89213,7 +89176,7 @@
             "required": false,
             "style": "deepObject",
             "explode": true,
-            "description": "Field filters, e.g. `filters[benefit_id][conditions][$is]=lben_...`. Each field accepts a `conditions` object with condition operators.",
+            "description": "Filters the results. Pass a deep object, for example `filters[benefit_id][conditions][$is]=lben_...`. Fields combine through `junction`, which defaults to `AND`. Omit `filters` to apply no field filter.",
             "schema": {
               "oneOf": [
                 {
@@ -89298,7 +89261,7 @@
           "name": "programId",
           "in": "path",
           "required": true,
-          "description": "Unique loyalty program ID (format `lprg_[a-f0-9]+`).",
+          "description": "Identifies the loyalty program. Format `lprg_[a-f0-9]+`.",
           "schema": {
             "type": "string",
             "pattern": "^lprg_[a-f0-9]+$"
@@ -89308,7 +89271,7 @@
           "name": "memberId",
           "in": "path",
           "required": true,
-          "description": "Program member ID (format `lmbr_[a-f0-9]+`).",
+          "description": "Identifies the member. Format `lmbr_[a-f0-9]+`.",
           "schema": {
             "type": "string",
             "pattern": "^lmbr_[a-f0-9]+$"
@@ -89327,7 +89290,7 @@
             "name": "limit",
             "in": "query",
             "required": false,
-            "description": "Maximum number of items to return. An integer between 1 and 100; numeric strings are also accepted. Defaults to 10.",
+            "description": "Limits the page size to an integer from 1 to 100. Defaults to 10. A numeric string is accepted and rounded to the nearest integer.",
             "schema": {
               "type": "integer",
               "nullable": true,
@@ -89340,7 +89303,7 @@
             "name": "order",
             "in": "query",
             "required": false,
-            "description": "Sort field. Allowed values are `id` and `-id`. Defaults to `-id`, newest first, when omitted, null, or an empty array. Accepts one value or an array of those values. An array that contains both directions is rejected.",
+            "description": "Orders the results. Accepts one value or an array. Prefix a field with `-` for descending order. Defaults to `-id`. Newest first. The same field cannot be used in both directions.",
             "schema": {
               "oneOf": [
                 {
@@ -89370,7 +89333,7 @@
             "name": "cursor",
             "in": "query",
             "required": false,
-            "description": "Pagination cursor returned in the `cursor.next` field of a previous response (format: `lcrsttx_` followed by hexadecimal characters).",
+            "description": "Continues pagination. Pass the `cursor.next` value from a previous response. Format `lcrsttx_[a-f0-9]+`. The cursor matches the filters and order of that response.",
             "schema": {
               "type": "string",
               "nullable": true,
@@ -89383,7 +89346,7 @@
             "required": false,
             "style": "deepObject",
             "explode": true,
-            "description": "Field filters. `card_id`, `card_definition_id`, and `created_at`. Example: `filters[card_id][conditions][$is]=lcrd_...`.",
+            "description": "Filters the results. Pass a deep object, for example `filters[card_id][conditions][$is]=lcrd_...`. Fields combine through `junction`, which defaults to `AND`. Omit `filters` to apply no field filter.",
             "schema": {
               "oneOf": [
                 {
@@ -89572,7 +89535,7 @@
           "name": "programId",
           "in": "path",
           "required": true,
-          "description": "Unique loyalty program identifier (format: `lprg_` followed by hexadecimal characters).",
+          "description": "Identifies the loyalty program. Format `lprg_[a-f0-9]+`.",
           "schema": {
             "type": "string",
             "pattern": "^lprg_[a-f0-9]+$"
@@ -89582,7 +89545,7 @@
           "name": "memberId",
           "in": "path",
           "required": true,
-          "description": "Unique loyalty member identifier (format: `lmbr_` followed by hexadecimal characters).",
+          "description": "Identifies the member. Format `lmbr_[a-f0-9]+`.",
           "schema": {
             "type": "string",
             "pattern": "^lmbr_[a-f0-9]+$"
@@ -89592,7 +89555,7 @@
           "name": "cardId",
           "in": "path",
           "required": true,
-          "description": "Unique loyalty card identifier (format: `lcrd_` followed by hexadecimal characters).",
+          "description": "Identifies the loyalty card. Format `lcrd_[a-f0-9]+`.",
           "schema": {
             "type": "string",
             "pattern": "^lcrd_[a-f0-9]+$"
@@ -89611,7 +89574,7 @@
             "name": "start_date",
             "in": "query",
             "required": true,
-            "description": "Start of the report date range (inclusive), in `YYYY-MM-DD` format.",
+            "description": "Sets the inclusive start of the report date range. Format `YYYY-MM-DD`.",
             "schema": {
               "type": "string",
               "format": "date",
@@ -89622,7 +89585,7 @@
             "name": "end_date",
             "in": "query",
             "required": true,
-            "description": "End of the report date range (inclusive), in `YYYY-MM-DD` format. Must be after `start_date`.",
+            "description": "Sets the inclusive end of the report date range. Format `YYYY-MM-DD`. Must be after `start_date`.",
             "schema": {
               "type": "string",
               "format": "date",
@@ -89633,7 +89596,7 @@
             "name": "resolution",
             "in": "query",
             "required": true,
-            "description": "Aggregation resolution of the report. The allowed date range depends on the resolution: `day` – max 90 days; `week` – max 12 weeks; `month` – max 12 months; `quarter` – max 4 quarters.",
+            "description": "Sets the aggregation resolution. `day` allows at most 90 days, `week` at most 12 weeks, `month` at most 12 months, and `quarter` at most 4 quarters.",
             "schema": {
               "type": "string",
               "enum": [
@@ -89900,7 +89863,7 @@
           "name": "programId",
           "in": "path",
           "required": true,
-          "description": "Unique loyalty program identifier (format: `lprg_` followed by hexadecimal characters).",
+          "description": "Identifies the loyalty program. Format `lprg_[a-f0-9]+`.",
           "schema": {
             "type": "string",
             "pattern": "^lprg_[a-f0-9]+$"
@@ -89910,7 +89873,7 @@
           "name": "memberId",
           "in": "path",
           "required": true,
-          "description": "Unique loyalty member identifier (format: `lmbr_` followed by hexadecimal characters).",
+          "description": "Identifies the member. Format `lmbr_[a-f0-9]+`.",
           "schema": {
             "type": "string",
             "pattern": "^lmbr_[a-f0-9]+$"
@@ -89920,7 +89883,7 @@
           "name": "earningRuleId",
           "in": "path",
           "required": true,
-          "description": "Unique earning rule identifier (format: `lern_` followed by hexadecimal characters).",
+          "description": "Identifies the earning rule. Format `lern_[a-f0-9]+`.",
           "schema": {
             "type": "string",
             "pattern": "^lern_[a-f0-9]+$"
@@ -89939,7 +89902,7 @@
             "name": "start_date",
             "in": "query",
             "required": true,
-            "description": "Start of the report date range (inclusive), in `YYYY-MM-DD` format.",
+            "description": "Sets the inclusive start of the report date range. Format `YYYY-MM-DD`.",
             "schema": {
               "type": "string",
               "format": "date",
@@ -89950,7 +89913,7 @@
             "name": "end_date",
             "in": "query",
             "required": true,
-            "description": "End of the report date range (inclusive), in `YYYY-MM-DD` format. Must be after `start_date`.",
+            "description": "Sets the inclusive end of the report date range. Format `YYYY-MM-DD`. Must be after `start_date`.",
             "schema": {
               "type": "string",
               "format": "date",
@@ -89961,7 +89924,7 @@
             "name": "resolution",
             "in": "query",
             "required": true,
-            "description": "Aggregation resolution of the report. The allowed date range depends on the resolution: `day` – max 90 days; `week` – max 12 weeks; `month` – max 12 months; `quarter` – max 4 quarters.",
+            "description": "Sets the aggregation resolution. `day` allows at most 90 days, `week` at most 12 weeks, `month` at most 12 months, and `quarter` at most 4 quarters.",
             "schema": {
               "type": "string",
               "enum": [
@@ -90059,9 +90022,10 @@
           "name": "programId",
           "in": "path",
           "required": true,
-          "description": "Unique loyalty program identifier (format: `lprg_` followed by hexadecimal characters).",
+          "description": "Identifies the loyalty program. Format `lprg_[a-f0-9]+`.",
           "schema": {
-            "type": "string"
+            "type": "string",
+            "pattern": "^lprg_[a-f0-9]+$"
           }
         }
       ],
@@ -90077,7 +90041,7 @@
             "name": "start_date",
             "in": "query",
             "required": true,
-            "description": "Sets the inclusive start of the report date range (`YYYY-MM-DD`). Must be before `end_date`.",
+            "description": "Sets the inclusive start of the report date range. Format `YYYY-MM-DD`.",
             "schema": {
               "type": "string",
               "format": "date",
@@ -90088,7 +90052,7 @@
             "name": "end_date",
             "in": "query",
             "required": true,
-            "description": "Sets the inclusive end of the report date range (`YYYY-MM-DD`). Must be after `start_date`.",
+            "description": "Sets the inclusive end of the report date range. Format `YYYY-MM-DD`. Must be after `start_date`.",
             "schema": {
               "type": "string",
               "format": "date",
@@ -90099,7 +90063,7 @@
             "name": "resolution",
             "in": "query",
             "required": true,
-            "description": "Sets the aggregation resolution. Allowed date range: `day` max 90 days, `week` max 12 weeks, `month` max 12 months, `quarter` max 4 quarters.",
+            "description": "Sets the aggregation resolution. `day` allows at most 90 days, `week` at most 12 weeks, `month` at most 12 months, and `quarter` at most 4 quarters.",
             "schema": {
               "type": "string",
               "enum": [
@@ -90116,7 +90080,7 @@
             "required": false,
             "style": "deepObject",
             "explode": true,
-            "description": "Filters rows by field conditions, e.g. `filters[card_definition_id][conditions][$is]=lcdef_...`.",
+            "description": "Filters the results. Pass a deep object, for example `filters[card_definition_id][conditions][$is]=lcdef_...`. Fields combine through `junction`, which defaults to `AND`. Omit `filters` to apply no field filter.",
             "schema": {
               "$ref": "#/components/schemas/SpendingReportListFilters"
             }
@@ -90427,9 +90391,10 @@
           "name": "programId",
           "in": "path",
           "required": true,
-          "description": "Unique loyalty program identifier (format: `lprg_` followed by hexadecimal characters).",
+          "description": "Identifies the loyalty program. Format `lprg_[a-f0-9]+`.",
           "schema": {
-            "type": "string"
+            "type": "string",
+            "pattern": "^lprg_[a-f0-9]+$"
           }
         }
       ],
@@ -90447,7 +90412,7 @@
             "required": false,
             "style": "deepObject",
             "explode": true,
-            "description": "Filters rows by field conditions, e.g. `filters[card_definition_id][conditions][$is]=lcdef_...`.",
+            "description": "Filters the results. Pass a deep object, for example `filters[card_definition_id][conditions][$is]=lcdef_...`. Fields combine through `junction`, which defaults to `AND`. Omit `filters` to apply no field filter.",
             "schema": {
               "$ref": "#/components/schemas/SpendingReportListFilters"
             }
@@ -90521,9 +90486,10 @@
           "name": "programId",
           "in": "path",
           "required": true,
-          "description": "Identifies the loyalty program. Format: `lprg_` followed by hexadecimal characters.",
+          "description": "Identifies the loyalty program. Format `lprg_[a-f0-9]+`.",
           "schema": {
-            "type": "string"
+            "type": "string",
+            "pattern": "^lprg_[a-f0-9]+$"
           }
         }
       ],
@@ -90539,7 +90505,7 @@
             "name": "start_date",
             "in": "query",
             "required": true,
-            "description": "Sets the inclusive start of the range, in `YYYY-MM-DD` format.",
+            "description": "Sets the inclusive start of the report date range. Format `YYYY-MM-DD`.",
             "schema": {
               "type": "string",
               "format": "date",
@@ -90550,7 +90516,7 @@
             "name": "end_date",
             "in": "query",
             "required": true,
-            "description": "Sets the inclusive end of the range, in `YYYY-MM-DD` format. Must be after `start_date`.",
+            "description": "Sets the inclusive end of the report date range. Format `YYYY-MM-DD`. Must be after `start_date`.",
             "schema": {
               "type": "string",
               "format": "date",
@@ -90561,7 +90527,7 @@
             "name": "resolution",
             "in": "query",
             "required": true,
-            "description": "Sets the aggregation resolution. Allowed range: `day` up to 90 days, `week` up to 12 weeks, `month` up to 12 months, `quarter` up to 4 quarters.",
+            "description": "Sets the aggregation resolution. `day` allows at most 90 days, `week` at most 12 weeks, `month` at most 12 months, and `quarter` at most 4 quarters.",
             "schema": {
               "type": "string",
               "enum": [
@@ -90578,7 +90544,7 @@
             "required": false,
             "style": "deepObject",
             "explode": true,
-            "description": "Filters rows by `tier_structure_id` and `tier_id`. Example: `filters[tier_structure_id][conditions][$is]=lts_...`.",
+            "description": "Filters the results. Pass a deep object, for example `filters[tier_structure_id][conditions][$is]=lts_...`. Fields combine through `junction`, which defaults to `AND`. Omit `filters` to apply no field filter.",
             "schema": {
               "$ref": "#/components/schemas/TiersReportListFilters"
             }
@@ -90745,9 +90711,10 @@
           "name": "programId",
           "in": "path",
           "required": true,
-          "description": "Identifies the loyalty program. Format: `lprg_` followed by hexadecimal characters.",
+          "description": "Identifies the loyalty program. Format `lprg_[a-f0-9]+`.",
           "schema": {
-            "type": "string"
+            "type": "string",
+            "pattern": "^lprg_[a-f0-9]+$"
           }
         }
       ],
@@ -90765,7 +90732,7 @@
             "required": false,
             "style": "deepObject",
             "explode": true,
-            "description": "Filters rows by `tier_structure_id` and `tier_id`. Omitting `filters` or setting it to `null` applies no field filter. Example: `filters[tier_id][conditions][$is]=lt_...`.",
+            "description": "Filters the results. Pass a deep object, for example `filters[tier_id][conditions][$is]=lt_...`. Fields combine through `junction`, which defaults to `AND`. Omit `filters` to apply no field filter.",
             "schema": {
               "$ref": "#/components/schemas/TiersReportListFilters"
             }
@@ -90859,9 +90826,10 @@
           "name": "programId",
           "in": "path",
           "required": true,
-          "description": "Identifies the loyalty program (`lprg_` followed by hexadecimal characters).",
+          "description": "Identifies the loyalty program. Format `lprg_[a-f0-9]+`.",
           "schema": {
-            "type": "string"
+            "type": "string",
+            "pattern": "^lprg_[a-f0-9]+$"
           }
         }
       ],
@@ -90877,7 +90845,7 @@
             "name": "start_date",
             "in": "query",
             "required": true,
-            "description": "Sets the inclusive start of the report date range, in `YYYY-MM-DD` format.",
+            "description": "Sets the inclusive start of the report date range. Format `YYYY-MM-DD`.",
             "schema": {
               "type": "string",
               "format": "date",
@@ -90888,7 +90856,7 @@
             "name": "end_date",
             "in": "query",
             "required": true,
-            "description": "Sets the inclusive end of the report date range, in `YYYY-MM-DD` format. Requires `start_date` to be before `end_date`.",
+            "description": "Sets the inclusive end of the report date range. Format `YYYY-MM-DD`. Must be after `start_date`.",
             "schema": {
               "type": "string",
               "format": "date",
@@ -90899,7 +90867,7 @@
             "name": "resolution",
             "in": "query",
             "required": true,
-            "description": "Sets the aggregation resolution. Allows at most 90 days for `day`, 12 weeks for `week`, 12 months for `month`, and 4 quarters for `quarter`.",
+            "description": "Sets the aggregation resolution. `day` allows at most 90 days, `week` at most 12 weeks, `month` at most 12 months, and `quarter` at most 4 quarters.",
             "schema": {
               "type": "string",
               "enum": [
@@ -90916,7 +90884,7 @@
             "required": false,
             "style": "deepObject",
             "explode": true,
-            "description": "Filters rows by field conditions, e.g. `filters[reward_id][conditions][$is]=lrew_...`.",
+            "description": "Filters the results. Pass a deep object, for example `filters[reward_id][conditions][$is]=lrew_...`. Fields combine through `junction`, which defaults to `AND`. Omit `filters` to apply no field filter.",
             "schema": {
               "$ref": "#/components/schemas/RewardsReportListFilters"
             }
@@ -90974,9 +90942,10 @@
           "name": "programId",
           "in": "path",
           "required": true,
-          "description": "Identifies the loyalty program (`lprg_` followed by hexadecimal characters).",
+          "description": "Identifies the loyalty program. Format `lprg_[a-f0-9]+`.",
           "schema": {
-            "type": "string"
+            "type": "string",
+            "pattern": "^lprg_[a-f0-9]+$"
           }
         }
       ],
@@ -90994,7 +90963,7 @@
             "required": false,
             "style": "deepObject",
             "explode": true,
-            "description": "Filters rows by field conditions, e.g. `filters[reward_id][conditions][$is]=lrew_...`.",
+            "description": "Filters the results. Pass a deep object, for example `filters[reward_id][conditions][$is]=lrew_...`. Fields combine through `junction`, which defaults to `AND`. Omit `filters` to apply no field filter.",
             "schema": {
               "$ref": "#/components/schemas/RewardsReportListFilters"
             }
@@ -91054,9 +91023,10 @@
           "name": "programId",
           "in": "path",
           "required": true,
-          "description": "Identifies the loyalty program (`lprg_` followed by hexadecimal characters).",
+          "description": "Identifies the loyalty program. Format `lprg_[a-f0-9]+`.",
           "schema": {
-            "type": "string"
+            "type": "string",
+            "pattern": "^lprg_[a-f0-9]+$"
           }
         }
       ],
@@ -91072,7 +91042,7 @@
             "name": "start_date",
             "in": "query",
             "required": true,
-            "description": "Sets the inclusive start of the report date range, in `YYYY-MM-DD` format.",
+            "description": "Sets the inclusive start of the report date range. Format `YYYY-MM-DD`.",
             "schema": {
               "type": "string",
               "format": "date",
@@ -91083,7 +91053,7 @@
             "name": "end_date",
             "in": "query",
             "required": true,
-            "description": "Sets the inclusive end of the report date range, in `YYYY-MM-DD` format. Requires `start_date` to be before `end_date`.",
+            "description": "Sets the inclusive end of the report date range. Format `YYYY-MM-DD`. Must be after `start_date`.",
             "schema": {
               "type": "string",
               "format": "date",
@@ -91094,7 +91064,7 @@
             "name": "resolution",
             "in": "query",
             "required": true,
-            "description": "Sets the aggregation resolution. Allows at most 90 days for `day`, 12 weeks for `week`, 12 months for `month`, and 4 quarters for `quarter`.",
+            "description": "Sets the aggregation resolution. `day` allows at most 90 days, `week` at most 12 weeks, `month` at most 12 months, and `quarter` at most 4 quarters.",
             "schema": {
               "type": "string",
               "enum": [
@@ -91111,7 +91081,7 @@
             "required": false,
             "style": "deepObject",
             "explode": true,
-            "description": "Filters rows by field conditions, e.g. `filters[reward_id][conditions][$is]=lrew_...`.",
+            "description": "Filters the results. Pass a deep object, for example `filters[reward_id][conditions][$is]=lrew_...`. Fields combine through `junction`, which defaults to `AND`. Omit `filters` to apply no field filter.",
             "schema": {
               "$ref": "#/components/schemas/RewardsSpendingsReportListFilters"
             }
@@ -91191,9 +91161,10 @@
           "name": "programId",
           "in": "path",
           "required": true,
-          "description": "Identifies the loyalty program (`lprg_` followed by hexadecimal characters).",
+          "description": "Identifies the loyalty program. Format `lprg_[a-f0-9]+`.",
           "schema": {
-            "type": "string"
+            "type": "string",
+            "pattern": "^lprg_[a-f0-9]+$"
           }
         }
       ],
@@ -91211,7 +91182,7 @@
             "required": false,
             "style": "deepObject",
             "explode": true,
-            "description": "Filters rows by field conditions, e.g. `filters[reward_id][conditions][$is]=lrew_...`.",
+            "description": "Filters the results. Pass a deep object, for example `filters[reward_id][conditions][$is]=lrew_...`. Fields combine through `junction`, which defaults to `AND`. Omit `filters` to apply no field filter.",
             "schema": {
               "$ref": "#/components/schemas/RewardsSpendingsReportListFilters"
             }
@@ -91291,9 +91262,10 @@
           "name": "programId",
           "in": "path",
           "required": true,
-          "description": "Identifies the loyalty program (`lprg_` followed by hexadecimal characters).",
+          "description": "Identifies the loyalty program. Format `lprg_[a-f0-9]+`.",
           "schema": {
-            "type": "string"
+            "type": "string",
+            "pattern": "^lprg_[a-f0-9]+$"
           }
         }
       ],
@@ -91309,7 +91281,7 @@
             "name": "start_date",
             "in": "query",
             "required": true,
-            "description": "Sets the inclusive start of the report date range, in `YYYY-MM-DD` format.",
+            "description": "Sets the inclusive start of the report date range. Format `YYYY-MM-DD`.",
             "schema": {
               "type": "string",
               "format": "date",
@@ -91320,7 +91292,7 @@
             "name": "end_date",
             "in": "query",
             "required": true,
-            "description": "Sets the inclusive end of the report date range, in `YYYY-MM-DD` format. Requires `start_date` to be before `end_date`.",
+            "description": "Sets the inclusive end of the report date range. Format `YYYY-MM-DD`. Must be after `start_date`.",
             "schema": {
               "type": "string",
               "format": "date",
@@ -91331,7 +91303,7 @@
             "name": "resolution",
             "in": "query",
             "required": true,
-            "description": "Sets the aggregation resolution. Allows at most 90 days for `day`, 12 weeks for `week`, 12 months for `month`, and 4 quarters for `quarter`.",
+            "description": "Sets the aggregation resolution. `day` allows at most 90 days, `week` at most 12 weeks, `month` at most 12 months, and `quarter` at most 4 quarters.",
             "schema": {
               "type": "string",
               "enum": [
@@ -91411,9 +91383,10 @@
           "name": "programId",
           "in": "path",
           "required": true,
-          "description": "Identifies the loyalty program (`lprg_` followed by hexadecimal characters).",
+          "description": "Identifies the loyalty program. Format `lprg_[a-f0-9]+`.",
           "schema": {
-            "type": "string"
+            "type": "string",
+            "pattern": "^lprg_[a-f0-9]+$"
           }
         }
       ],
@@ -91476,7 +91449,7 @@
           "name": "programId",
           "in": "path",
           "required": true,
-          "description": "Identifies the loyalty program. Format: `lprg_` followed by hexadecimal characters.",
+          "description": "Identifies the loyalty program. Format `lprg_[a-f0-9]+`.",
           "schema": {
             "type": "string",
             "pattern": "^lprg_[a-f0-9]+$"
@@ -91495,7 +91468,7 @@
             "name": "start_date",
             "in": "query",
             "required": true,
-            "description": "Start of the report date range (inclusive), in `YYYY-MM-DD` format.",
+            "description": "Sets the inclusive start of the report date range. Format `YYYY-MM-DD`.",
             "schema": {
               "type": "string",
               "format": "date",
@@ -91506,7 +91479,7 @@
             "name": "end_date",
             "in": "query",
             "required": true,
-            "description": "End of the report date range (inclusive), in `YYYY-MM-DD` format. Must be after `start_date`.",
+            "description": "Sets the inclusive end of the report date range. Format `YYYY-MM-DD`. Must be after `start_date`.",
             "schema": {
               "type": "string",
               "format": "date",
@@ -91517,7 +91490,7 @@
             "name": "resolution",
             "in": "query",
             "required": true,
-            "description": "Aggregation resolution of the report. The allowed date range depends on the resolution: `day` – max 90 days; `week` – max 12 weeks; `month` – max 12 months; `quarter` – max 4 quarters.",
+            "description": "Sets the aggregation resolution. `day` allows at most 90 days, `week` at most 12 weeks, `month` at most 12 months, and `quarter` at most 4 quarters.",
             "schema": {
               "type": "string",
               "enum": [
@@ -91534,7 +91507,7 @@
             "required": false,
             "style": "deepObject",
             "explode": true,
-            "description": "Filters rows by earning rule ID and card definition ID. Each field takes a `conditions` object. Omitting `filters` or setting it to `null` applies no field filters.",
+            "description": "Filters the results. Pass a deep object, for example `filters[earning_rule_id][conditions][$is]=lern_...`. Fields combine through `junction`, which defaults to `AND`. Omit `filters` to apply no field filter.",
             "schema": {
               "oneOf": [
                 {
@@ -91788,7 +91761,7 @@
           "name": "programId",
           "in": "path",
           "required": true,
-          "description": "Identifies the loyalty program. Format: `lprg_` followed by hexadecimal characters.",
+          "description": "Identifies the loyalty program. Format `lprg_[a-f0-9]+`.",
           "schema": {
             "type": "string",
             "pattern": "^lprg_[a-f0-9]+$"
@@ -91809,7 +91782,7 @@
             "required": false,
             "style": "deepObject",
             "explode": true,
-            "description": "Filters rows by earning rule ID and card definition ID. Each field takes a `conditions` object. Omitting `filters` or setting it to `null` applies no field filters.",
+            "description": "Filters the results. Pass a deep object, for example `filters[earning_rule_id][conditions][$is]=lern_...`. Fields combine through `junction`, which defaults to `AND`. Omit `filters` to apply no field filter.",
             "schema": {
               "oneOf": [
                 {
@@ -91906,7 +91879,7 @@
           "name": "programId",
           "in": "path",
           "required": true,
-          "description": "Unique loyalty program identifier (format: `lprg_` followed by hexadecimal characters).",
+          "description": "Identifies the loyalty program. Format `lprg_[a-f0-9]+`.",
           "schema": {
             "type": "string",
             "pattern": "^lprg_[a-f0-9]+$"
@@ -91925,7 +91898,7 @@
             "name": "start_date",
             "in": "query",
             "required": true,
-            "description": "Start of the report date range (inclusive), in `YYYY-MM-DD` format.",
+            "description": "Sets the inclusive start of the report date range. Format `YYYY-MM-DD`.",
             "schema": {
               "type": "string",
               "format": "date",
@@ -91936,7 +91909,7 @@
             "name": "end_date",
             "in": "query",
             "required": true,
-            "description": "End of the report date range (inclusive), in `YYYY-MM-DD` format. Must be after `start_date`.",
+            "description": "Sets the inclusive end of the report date range. Format `YYYY-MM-DD`. Must be after `start_date`.",
             "schema": {
               "type": "string",
               "format": "date",
@@ -91947,7 +91920,7 @@
             "name": "resolution",
             "in": "query",
             "required": true,
-            "description": "Aggregation resolution of the report. The allowed date range depends on the resolution: `day` – max 90 days; `week` – max 12 weeks; `month` – max 12 months; `quarter` – max 4 quarters.",
+            "description": "Sets the aggregation resolution. `day` allows at most 90 days, `week` at most 12 weeks, `month` at most 12 months, and `quarter` at most 4 quarters.",
             "schema": {
               "type": "string",
               "enum": [
@@ -91964,7 +91937,7 @@
             "required": false,
             "style": "deepObject",
             "explode": true,
-            "description": "Field filters. Each field accepts a `conditions` object with condition operators.",
+            "description": "Filters the results. Pass a deep object, for example `filters[earning_rule_id][conditions][$is]=lern_...`. Fields combine through `junction`, which defaults to `AND`. Omit `filters` to apply no field filter.",
             "schema": {
               "$ref": "#/components/schemas/EarningRulesReportListFilters"
             }
@@ -92245,7 +92218,7 @@
           "name": "programId",
           "in": "path",
           "required": true,
-          "description": "Identifies the loyalty program. Format: `lprg_` followed by hexadecimal characters.",
+          "description": "Identifies the loyalty program. Format `lprg_[a-f0-9]+`.",
           "schema": {
             "type": "string",
             "pattern": "^lprg_[a-f0-9]+$"
@@ -92266,7 +92239,7 @@
             "required": false,
             "style": "deepObject",
             "explode": true,
-            "description": "Filters rows by field. Each field accepts a `conditions` object with condition operators.",
+            "description": "Filters the results. Pass a deep object, for example `filters[earning_rule_id][conditions][$is]=lern_...`. Fields combine through `junction`, which defaults to `AND`. Omit `filters` to apply no field filter.",
             "schema": {
               "$ref": "#/components/schemas/EarningRulesReportListFilters"
             }
@@ -92377,7 +92350,7 @@
           "name": "earningRuleId",
           "in": "path",
           "required": true,
-          "description": "Earning rule ID.",
+          "description": "Identifies the earning rule. Format `lern_[a-f0-9]+`.",
           "schema": {
             "type": "string",
             "pattern": "^lern_[a-f0-9]+$"
@@ -92563,7 +92536,7 @@
           "name": "benefitId",
           "in": "path",
           "required": true,
-          "description": "Unique benefit ID, prefixed with `lben_`.",
+          "description": "Identifies the benefit. Format `lben_[a-f0-9]+`.",
           "schema": {
             "type": "string",
             "pattern": "^lben_[a-f0-9]+$"
@@ -92631,7 +92604,7 @@
           "name": "rewardId",
           "in": "path",
           "required": true,
-          "description": "Unique reward identifier, prefixed with `lrew_`.",
+          "description": "Identifies the reward. Format `lrew_[a-f0-9]+`.",
           "schema": {
             "type": "string",
             "pattern": "^lrew_[a-f0-9]+$"
