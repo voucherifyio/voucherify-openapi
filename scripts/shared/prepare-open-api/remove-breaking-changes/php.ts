@@ -2,14 +2,12 @@ import * as OpenAPI from "../../../../reference/OpenAPI.json";
 import { removeRequiredFromRequestsAndResponses } from "../remove-required-from-request-and-responses";
 import {
   fixOrderCalculated,
-  keepCustomerLoyaltyMembershipMemberStatuses,
   restoreValidationRuleErrorObjects,
 } from "./utils";
 
 const removePhpBreakingChanges = {
   before: (_openApi: unknown): typeof OpenAPI => {
     let openApi = _openApi as typeof OpenAPI;
-    keepCustomerLoyaltyMembershipMemberStatuses(openApi.components.schemas);
 
     //Replace SKUs with skus
     openApi = JSON.parse(JSON.stringify(openApi).replace(/-SKUs/g, "-skus"));

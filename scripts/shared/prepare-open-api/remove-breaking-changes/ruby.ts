@@ -2,7 +2,6 @@ import * as OpenAPI from "../../../../reference/OpenAPI.json";
 import { removeRequiredFromRequestsAndResponses } from "../remove-required-from-request-and-responses";
 import {
   fixOrderCalculated,
-  keepCustomerLoyaltyMembershipMemberStatuses,
   restoreLoyaltyExpirationRulesPeriodTypeDefault,
   restoreValidationRuleErrorObjects,
 } from "./utils";
@@ -10,7 +9,6 @@ import {
 const removeRubyBreakingChanges = {
   before: (_openApi: unknown): typeof OpenAPI => {
     const openApi = _openApi as typeof OpenAPI;
-    keepCustomerLoyaltyMembershipMemberStatuses(openApi.components.schemas);
 
     //Remove required on requestBody:
     for (const [path, methods] of Object.entries(openApi.paths)) {

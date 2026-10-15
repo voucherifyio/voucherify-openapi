@@ -1,13 +1,9 @@
 import * as OpenAPI from "../../../../reference/OpenAPI.json";
-import {
-  keepCustomerLoyaltyMembershipMemberStatuses,
-  restoreValidationRuleErrorObjects,
-} from "./utils";
+import { restoreValidationRuleErrorObjects } from "./utils";
 
 const removeJsBreakingChanges = {
   before: (_openApi: unknown): typeof OpenAPI => {
     const openApi = _openApi as typeof OpenAPI;
-    keepCustomerLoyaltyMembershipMemberStatuses(openApi.components.schemas);
 
     openApi.components.schemas.ReferralProgram.properties.referee_reward.properties.amount.type =
       "number";
