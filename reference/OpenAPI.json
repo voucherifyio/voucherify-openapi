@@ -3593,6 +3593,20 @@
                   }
                 ]
               },
+              "loyalty_memberships": {
+                "description": "List of Loyalty v2 program memberships for the customer. Lists only existing `ACTIVE` memberships. `null` when no memberships are stored. Absent or `null` for `v1/orders` and `v1/publications` endpoints and events.",
+                "anyOf": [
+                  {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/CustomerLoyaltyMembership"
+                    }
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
               "referrals": {
                 "anyOf": [
                   {
@@ -3645,6 +3659,7 @@
             "required": [
               "summary",
               "loyalty",
+              "loyalty_memberships",
               "referrals",
               "object"
             ]
@@ -3752,6 +3767,178 @@
           "points",
           "referred_customers",
           "campaigns"
+        ]
+      },
+      "CustomerLoyaltyMembership": {
+        "title": "Customer Loyalty Membership",
+        "type": "object",
+        "description": "Loyalty v2 program membership stored on the customer.",
+        "properties": {
+          "program_id": {
+            "type": "string",
+            "pattern": "^lprg_[a-f0-9]+$",
+            "description": "Identifies the Loyalty v2 program."
+          },
+          "member": {
+            "description": "Program member. `null` when the membership has no member record.",
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CustomerLoyaltyMembershipMember"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "cards": {
+            "type": "array",
+            "description": "List of loyalty cards in this program.",
+            "items": {
+              "$ref": "#/components/schemas/CustomerLoyaltyMembershipCard"
+            }
+          },
+          "tiers": {
+            "type": "array",
+            "description": "List of tiers held in this program.",
+            "items": {
+              "$ref": "#/components/schemas/CustomerLoyaltyMembershipTier"
+            }
+          }
+        },
+        "required": [
+          "program_id",
+          "member",
+          "cards",
+          "tiers"
+        ]
+      },
+      "CustomerLoyaltyMembershipMember": {
+        "title": "Customer Loyalty Membership Member",
+        "type": "object",
+        "description": "Loyalty v2 member recorded on the customer membership.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^lmbr_[a-f0-9]+$",
+            "description": "Identifies the Loyalty v2 program member."
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ACTIVE"
+            ],
+            "description": "Member status. The value is `ACTIVE`."
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp representing when the member was created. The value is shown in the ISO 8601 format."
+          },
+          "updated_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time",
+            "description": "Timestamp representing when the member was updated. The value is shown in the ISO 8601 format. `null` when not set."
+          }
+        },
+        "required": [
+          "id",
+          "status",
+          "created_at",
+          "updated_at"
+        ]
+      },
+      "CustomerLoyaltyMembershipCard": {
+        "title": "Customer Loyalty Membership Card",
+        "type": "object",
+        "description": "Loyalty card balance recorded on the customer membership.",
+        "properties": {
+          "card_definition_id": {
+            "type": "string",
+            "pattern": "^lcdef_[a-f0-9]+$",
+            "description": "Identifies the card definition."
+          },
+          "card_id": {
+            "type": "string",
+            "pattern": "^lcrd_[a-f0-9]+$",
+            "description": "Identifies the loyalty card."
+          },
+          "points": {
+            "type": "number",
+            "description": "Points balance on the card."
+          },
+          "pending_points": {
+            "type": "number",
+            "description": "Pending points on the card."
+          },
+          "next_activation_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date",
+            "description": "Date when the next points become active, in `YYYY-MM-DD` format. `null` when no activation is scheduled."
+          },
+          "next_expiration_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date",
+            "description": "Date when the next points expire, in `YYYY-MM-DD` format. `null` when no expiration is scheduled."
+          }
+        },
+        "required": [
+          "card_definition_id",
+          "card_id",
+          "points",
+          "pending_points",
+          "next_activation_at",
+          "next_expiration_at"
+        ]
+      },
+      "CustomerLoyaltyMembershipTier": {
+        "title": "Customer Loyalty Membership Tier",
+        "type": "object",
+        "description": "Tier recorded on the customer membership.",
+        "properties": {
+          "tier_id": {
+            "type": "string",
+            "pattern": "^lt_[a-f0-9]+$",
+            "description": "Identifies the tier."
+          },
+          "tier_structure_id": {
+            "type": "string",
+            "pattern": "^lts_[a-f0-9]+$",
+            "description": "Identifies the tier structure."
+          },
+          "card_id": {
+            "type": "string",
+            "pattern": "^lcrd_[a-f0-9]+$",
+            "description": "Identifies the loyalty card that holds this tier."
+          },
+          "card_definition_id": {
+            "type": "string",
+            "pattern": "^lcdef_[a-f0-9]+$",
+            "description": "Identifies the card definition for this tier."
+          },
+          "expires_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time",
+            "description": "Timestamp representing when the tier expires. The value is shown in the ISO 8601 format. `null` when the tier does not expire."
+          }
+        },
+        "required": [
+          "tier_id",
+          "tier_structure_id",
+          "card_id",
+          "card_definition_id",
+          "expires_at"
         ]
       },
       "CustomerSummary": {
