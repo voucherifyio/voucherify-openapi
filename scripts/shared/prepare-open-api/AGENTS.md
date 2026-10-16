@@ -23,11 +23,11 @@ Do not edit files under `sdks/`. A commit here only stores a submodule SHA, and 
 ## Order inside `main`
 
 1. Drop Loyalty v2 paths that are not on the allowlist, and the schemas only those paths reach (`documentWithoutLoyaltyV2` with `keepSdkPublishedPaths`). Schemas that a non-loyalty path or an allowlisted Loyalty v2 path also reaches stay. Markdown tables call the same function without that flag and omit every Loyalty v2 path.
-2. Downgrade 3.1.0 to 3.0.1 when `downgradeTo301` is set (`applySdkOpenApiVersion` in `scripts/shared/openapi-version/migrate.ts`).
+2. Downgrade 3.1.0 to 3.0.1 when `downgradeTo301` is set (`applySdkOpenApiVersion` in `scripts/shared/openapi-version/migrate.ts`). That entry also folds `if` / `then` / `else` / `not` and strips `patternProperties` / `unevaluatedProperties` so OpenAPI Generator's 3.0 validator accepts the file.
 3. Reject a document that still contains `readOnly` or `writeOnly`.
 4. Run the in-file cleanups, then `fixBreakingChanges.before` for that language.
 5. Fill missing defaults, drop deprecated operations, and drop parameters and schemas nothing reachable still references.
-6. PHP wraps non-object schemas. Every language then flattens `oneOf` (`removeOneOfs.ts`).
+6. PHP wraps non-object schemas. Every language then flattens `oneOf` (`removeOneOfs.ts`), including `X | null` property unions, sibling `properties` on schemas that also have a required-only `allOf`, and path-parameter schemas (for example string | string[] | null `order` queries). Prepared SDK specs must not keep `oneOf`.
 7. Keep only successful responses, copy `allOf` into a single object where the generators require that, turn `type: "null"` into a 3.0 nullable object, and fix titles.
 8. Drop unused schemas again. .NET also drops `default`. Languages without OAuth support drop the OAuth security scheme.
 9. Drop `webhooks` and the Loyalty v2 envelope, clean descriptions, run `fixBreakingChanges.after`, shorten Ruby titles, and write the file.
