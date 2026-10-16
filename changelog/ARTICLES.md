@@ -5,6 +5,10 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-10-15
+
+Add `hightouch.mdx` page with the Hightouch integration documentation.
+
 ## 2026-10-13
 
 Updated `loyalty-v2-reports-overview.mdx` so the tiers summary report no longer accepts `limit` and `order`. The report always returns at most 100 rows, ordered by `id` descending.
