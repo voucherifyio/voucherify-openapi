@@ -29,3 +29,13 @@ In general the API consists of 3 sets:
 <Note>
   Find out more about how to [authenticate your application](/guides/authentication) to access the API.
 </Note>
+
+## Idempotency and retries
+
+The Voucherify API does not offer idempotency keys. There is no request header that lets you safely replay a write request.
+
+To avoid duplicate redemptions when a request times out or is retried:
+
+* Lock the code during checkout with a [validation session](/guides/locking-validation-session). The validation call returns a `session.key` that reserves the code usage. Pass the same key in the redemption request. Voucherify releases the session when the redemption is registered.
+* Check the redemption result before retrying. [Redeem Stackable Discounts](/api-reference/redemptions/redeem-stackable-discounts) returns HTTP `200` even when a redeemable fails. Inspect the `result` (`SUCCESS` or `FAILURE`) and the `failure_code` of each redemption entry. For example, a voucher that has reached its redemption limit returns `failure_code: quantity_exceeded`. See [Error messages](/api-reference/errors) for the full list.
+* Undo an unwanted redemption with [Rollback Redemption](/api-reference/redemptions/rollback-redemption) or [Rollback Stackable Redemptions](/api-reference/redemptions/rollback-stackable-redemptions). A redemption can be rolled back up to 3 months after it was created.
