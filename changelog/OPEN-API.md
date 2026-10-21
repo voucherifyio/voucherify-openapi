@@ -4,9 +4,29 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-10-21
+
+Updated DELETE `/v1/vouchers/{code}/sessions/{sessionKey}`.
+
+- Clarified that the call unlocks only the voucher in the path when several redeemables share the same session key.
+- Documented that a session-released event is created only for that voucher and only when a lock was removed.
+- Clarified that a repeat call still returns `204` without a new session-released event when no lock remains for that voucher.
+- Updated the Dashboard note: redeemable **Validations** → **Release session** matches this endpoint; **Redemptions** → **Sessions** unlocks every redeemable still holding the key.
+
+## 2026-10-15
+
+- Added a `filters` query parameter to GET `/v1/customers`. Filters use advanced field conditions (`deepObject`).
+- Documented `loyalty_memberships` on customer responses (`CustomerLoyaltyMembership` and related member, card, and tier schemas).
+  - Lists only existing `ACTIVE` memberships. `null` when none are stored.
+  - Absent or `null` for `v1/orders`, `v1/publications`, and related events.
+  - Member `status` on that nested shape is always `ACTIVE`.
+
 ## 2026-10-14
 
 Shared copied Loyalty v2 schemas. Repeated fields now live on one schema, and each operation keeps its own description. Documented request and response fields stay in place.
+
+- Kept distinct activity id patterns on card and member schemas instead of forcing a shared activity id shape.
+- Unified Loyalty v2 operation descriptions after the schema share.
 
 - Pointed duplicate objects at a shared body with `allOf`. `Card` and `CardSimple` use `CardBase`. Pending and expiring point buckets use `CardBucketBase`. `Membership` and `MembershipWithoutTierProgress` use `MembershipBase`. Reward-purchase and order-payment transactions use `MemberCardTransactionBase`. `BenefitTransaction` uses `MemberTransactionBase`. Earning-rule create and update requests use `EarningRuleRequestBase`. `Tier` and `TierStructure` use `TierMetadataBase`.
 - Pointed spending, rewards-spendings, and points-earnings report `card_definition_id` filters at `ReportCardDefinitionIdFilterConditions`. Removed `SpendingReportFilterCardDefinitionIdConditions` and `PointsEarningsReportFilterCardDefinitionIdConditions`. The shared description says "card definition IDs".
