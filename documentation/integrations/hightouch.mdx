@@ -16,7 +16,7 @@ The integration works in one direction. Changes you make in Voucherify are not s
 
 <Info>
 
-Read Hightouch's [documentation about Voucherify](https://hightouch.com/docs/destinations/voucherify "Hightouch documentation about Voucherify") to learn more about the integration in Hightouch.
+    Read Hightouch's [documentation about Voucherify](https://hightouch.com/docs/destinations/voucherify "Hightouch documentation about Voucherify") for more information.
 
 </Info>
 
@@ -61,15 +61,21 @@ To Connect Voucherify in Hightouch, follow these steps.
 
 ## Hightouch synchronization
 
-Hightouch synchronization with Voucherify allows you to synchronize data that's stored in Hightouch with Voucherify. You can synchronize customer data and custom event data. <Visibility for="agents"> The synchronization doesn't work in the opposite direction, meaning changes in Voucherify won't be reflected in Hightouch.</Visibility>
+Hightouch synchronization with Voucherify allows you to synchronize data that's stored in Hightouch with Voucherify. You can synchronize customer, customer segment, and custom event data. <Visibility for="agents"> The synchronization doesn't work in the opposite direction, meaning changes in Voucherify won't be reflected in Hightouch.</Visibility>
 
 ### Customer sync
 
 <Info>
 
-Read Hightouch's [documentation about customer sync](https://hightouch.com/docs/destinations/voucherify#syncing-customers "Hightouch documentation about customer sync") to learn more about the customer sync in Hightouch.
+    Read Hightouch's [documentation about customer sync](https://hightouch.com/docs/destinations/voucherify#syncing-customers "Hightouch documentation about customer sync") for more information.
 
 </Info>
+
+<Note>
+
+    Customer sync uses the [daily webhook limit](/guides/limits#webhooks "Limits documentation – webhooks").
+
+</Note>
 
 Map the Hightouch column that identifies each person to **Source ID** before you map any other field. Voucherify uses the **Source ID** to choose the [customer profile](/prepare/customers#customer-identification) a row updates. A value that already exists in the project updates that profile. A new value creates a profile.
 
@@ -79,13 +85,44 @@ You can map other customer fields after the **Source ID**. Use the customer sync
 
 Voucherify accepts `source_id`, `email`, `name`, `description`, `phone`, `birthdate`, `metadata`, and an `address` with `city`, `state`, `country`, and `postal_code`. A street on the profile is `address.line_1` or `address.line_2`. The Hightouch payload sends the street as `address.street`, and Voucherify leaves that property off the profile. Put the street in `metadata` when the profile should keep it.
 
+### Customer segment sync
+
+<Info>
+
+    Read Hightouch's [documentation about customer segment sync](https://hightouch.com/docs/destinations/voucherify#syncing-segments "Hightouch documentation about customer segment sync") for more information.
+
+</Info>
+
+<Note>
+
+    Customer segment sync uses the [API limits](/guides/limits#api "Limits documentation – API").
+
+</Note>
+
+Through customer sync, you can also define criteria for a segment in Voucherify. Hightouch will create the segment along the customer upsert.
+
+When you have a defined audience in Hightouch, Hightouch compares the audience to the last run on each sync:
+- New segment members: Hightouch adds a value to the customer's metadata field in their Voucherify profile (for example, `"vip_status": true`).
+- Segment members who left: Hightouch changes or removes the value to that metadata field (for example, `"vip_status": false`).
+- Segment members who are still in: Nothing is sent.
+
+You can sync Hightouch data for segments in two ways:
+- Object sync: The metadata field is set when the customer enters the segment. However, the metadata field never changes when the customer leaves the audience. Customers stay in the Voucherify segment indefinitely.
+- Segment sync: The metadata field is updated on each sync. Hightouch removes the metadata field value when a customer leaves the Hightouch audience, so segment members exits are handled automatically.
+
 ### Event sync
 
 <Info>
 
-Read Hightouch's [documentation about event sync](https://hightouch.com/docs/destinations/voucherify#syncing-events "Hightouch documentation about event sync") to learn more about the event sync in Hightouch.
+    Read Hightouch's [documentation about event sync](https://hightouch.com/docs/destinations/voucherify#syncing-events "Hightouch documentation about event sync") for more information.
 
 </Info>
+
+<Note>
+
+    Event sync uses the [daily webhook limit](/guides/limits#webhooks "Limits documentation – webhooks").
+
+</Note>
 
 Hightouch can synchronize custom event data to [custom events in Voucherify](/prepare/custom-events "Voucherify custom events"). Map columns to the fields Voucherify accepts. An event requires `event` (the custom event name) and `customer.source_id`. You can also send the customer fields from the customer sync, event properties in `metadata`, `referral.code`, `referral.referrer_id`, and `loyalty.code`.
 
