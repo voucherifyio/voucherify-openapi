@@ -6,6 +6,9 @@ Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
 ## 2026-10-21
 
+Verified GET `/v2/loyalties/memberships/{customerId}`.
+- Clarified the difference for different `identification_type`.
+
 Updated DELETE `/v1/vouchers/{code}/sessions/{sessionKey}`.
 
 - Clarified that the call unlocks only the voucher in the path when several redeemables share the same session key.

@@ -7,6 +7,8 @@ Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
 ## 2026-10-21
 
+- Updated `loyalty-v2-members-overview.mdx` regarding Get customer memberships and differences for `identification_type`.
+
 Clarified stackable validation session unlock behavior in the Dashboard and developer guide.
 
 - Updated `locking-validation-session.mdx` for per-voucher API release, stackable session keys, idempotent `204` with no extra session-released activity, and Dashboard unlock paths.
