@@ -4,6 +4,18 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-10-22
+
+- Verified and updated POST `/v2/loyalties/earning-rules`. Removed the documentation-in-progress badge.
+  - Added optional `earning_limits`. Omit the field or set it to `null` to store no global limit. The response always returns `earning_limits`.
+  - Clarified that omitted or `null` `validity_hours` and `trigger_limits` use the any-time and no-limit defaults. Responses always return those objects.
+  - Documented that an `ACTIVE` rule with trigger `customer.segment.entered` activates a passive segment.
+  - Replaced `409` with `423` when `status` is `ACTIVE` and an effect or tier rule points at a non-active benefit (`non_active_benefit`), card definition (`non_active_card_definition`), or tier structure (`non_active_tier_structure`).
+  - Added `200`, `400`, `404`, and `423` examples. `400` is request-body validation. `404` is a missing custom event schema, segment, card definition, benefit, tier, or tier structure.
+  - Limited each earning to 1–10 effects on `EarningRuleEarningBase`, also used by PUT `/v2/loyalties/earning-rules/{earningRuleId}`.
+  - Clarified on shared request fields that `start_date` must be earlier than `end_date` when both are set, `metadata` `null` is stored as an empty object, and omitted or `null` `tier_rules` use `{ "type": "NO_REQUIREMENTS" }`.
+  - Clarified that effect `points_expiration.type` must be `NO_EXPIRATION` or match the card definition.
+
 ## 2026-10-21
 
 Verified GET `/v2/loyalties/memberships/{customerId}`.
