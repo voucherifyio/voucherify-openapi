@@ -5,6 +5,10 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-10-23
+
+Add `hightouch.mdx` page with the Hightouch integration documentation.
+
 ## 2026-10-21
 
 - Updated `loyalty-v2-members-overview.mdx` regarding Get customer memberships and differences for `identification_type`.
