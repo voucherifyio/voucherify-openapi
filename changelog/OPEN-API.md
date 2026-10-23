@@ -4,9 +4,44 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-10-22
+
+- Verified and updated POST `/v2/loyalties/earning-rules`. Removed the documentation-in-progress badge.
+  - Added optional `earning_limits`. Omit the field or set it to `null` to store no global limit. The response always returns `earning_limits`.
+  - Clarified that omitted or `null` `validity_hours` and `trigger_limits` use the any-time and no-limit defaults. Responses always return those objects.
+  - Documented that an `ACTIVE` rule with trigger `customer.segment.entered` activates a passive segment.
+  - Replaced `409` with `423` when `status` is `ACTIVE` and an effect or tier rule points at a non-active benefit (`non_active_benefit`), card definition (`non_active_card_definition`), or tier structure (`non_active_tier_structure`).
+  - Added `200`, `400`, `404`, and `423` examples. `400` is request-body validation. `404` is a missing custom event schema, segment, card definition, benefit, tier, or tier structure.
+  - Limited each earning to 1–10 effects on `EarningRuleEarningBase`, also used by PUT `/v2/loyalties/earning-rules/{earningRuleId}`.
+  - Clarified on shared request fields that `start_date` must be earlier than `end_date` when both are set, `metadata` `null` is stored as an empty object, and omitted or `null` `tier_rules` use `{ "type": "NO_REQUIREMENTS" }`.
+  - Clarified that effect `points_expiration.type` must be `NO_EXPIRATION` or match the card definition.
+
+## 2026-10-21
+
+Verified GET `/v2/loyalties/memberships/{customerId}`.
+- Clarified the difference for different `identification_type`.
+
+Updated DELETE `/v1/vouchers/{code}/sessions/{sessionKey}`.
+
+- Clarified that the call unlocks only the voucher in the path when several redeemables share the same session key.
+- Documented that a session-released event is created only for that voucher and only when a lock was removed.
+- Clarified that a repeat call still returns `204` without a new session-released event when no lock remains for that voucher.
+- Updated the Dashboard note: redeemable **Validations** → **Release session** matches this endpoint; **Redemptions** → **Sessions** unlocks every redeemable still holding the key.
+
+## 2026-10-15
+
+- Added a `filters` query parameter to GET `/v1/customers`. Filters use advanced field conditions (`deepObject`).
+- Documented `loyalty_memberships` on customer responses (`CustomerLoyaltyMembership` and related member, card, and tier schemas).
+  - Lists only existing `ACTIVE` memberships. `null` when none are stored.
+  - Absent or `null` for `v1/orders`, `v1/publications`, and related events.
+  - Member `status` on that nested shape is always `ACTIVE`.
+
 ## 2026-10-14
 
 Shared copied Loyalty v2 schemas. Repeated fields now live on one schema, and each operation keeps its own description. Documented request and response fields stay in place.
+
+- Kept distinct activity id patterns on card and member schemas instead of forcing a shared activity id shape.
+- Unified Loyalty v2 operation descriptions after the schema share.
 
 - Pointed duplicate objects at a shared body with `allOf`. `Card` and `CardSimple` use `CardBase`. Pending and expiring point buckets use `CardBucketBase`. `Membership` and `MembershipWithoutTierProgress` use `MembershipBase`. Reward-purchase and order-payment transactions use `MemberCardTransactionBase`. `BenefitTransaction` uses `MemberTransactionBase`. Earning-rule create and update requests use `EarningRuleRequestBase`. `Tier` and `TierStructure` use `TierMetadataBase`.
 - Pointed spending, rewards-spendings, and points-earnings report `card_definition_id` filters at `ReportCardDefinitionIdFilterConditions`. Removed `SpendingReportFilterCardDefinitionIdConditions` and `PointsEarningsReportFilterCardDefinitionIdConditions`. The shared description says "card definition IDs".

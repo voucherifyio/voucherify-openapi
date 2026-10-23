@@ -5,15 +5,36 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
-## 2026-10-15
+## 2026-10-23
 
 Add `hightouch.mdx` page with the Hightouch integration documentation.
+
+## 2026-10-21
+
+- Updated `loyalty-v2-members-overview.mdx` regarding Get customer memberships and differences for `identification_type`.
+
+Clarified stackable validation session unlock behavior in the Dashboard and developer guide.
+
+- Updated `locking-validation-session.mdx` for per-voucher API release, stackable session keys, idempotent `204` with no extra session-released activity, and Dashboard unlock paths.
+- Updated `validations-and-redemptions.mdx` so **Redemptions** → **Sessions** unlocks every redeemable on the key, while a redeemable’s **Validations** → **Release session** unlocks only that code.
+
+## 2026-10-19
+
+Documented Sandbox visual cues, API Log Details Application ID, and production secret-key visibility.
+
+- Updated `dashboard-quickstart.mdx` and `voucherify-account.mdx` with the Sandbox sidebar style, notification banner, and API call limit callout.
+- Updated `audit-logs.mdx` and `api-quickstart.mdx` so log details show **Application ID** or **Client-side Application ID** for API-authenticated calls.
+- Updated `api-quickstart.mdx` so production secret keys are visible only when generated or regenerated.
+
+## 2026-10-15
+
+Updated `customer-segments.mdx` so activity filters can use loyalty v2 points.
 
 ## 2026-10-13
 
 Updated `loyalty-v2-reports-overview.mdx` so the tiers summary report no longer accepts `limit` and `order`. The report always returns at most 100 rows, ordered by `id` descending.
 
-Updated Workflows articles with role permissions for opening, editing, publishing, and activating workflows (DOC-1452 / DEV-4490 / DEV-4491).
+Updated Workflows articles with role permissions for opening, editing, publishing, and activating workflows.
 
 - Updated `workflows.mdx` with who can use Workflows.
 - Updated `build-workflows.mdx` so the guide requires **Read Workflows**, **Create and modify Workflows**, **Publish Workflows**, and **Activate and deactivate Workflows**.
@@ -81,7 +102,7 @@ Updated `customers.mdx` to distinguish Dashboard/API customer deletion from GDPR
 
 ## 2026-09-09
 
-Updated `distribution-webhooks.mdx` with the **Send raw payload** behavior for default, custom, and legacy webhook configurations (DOC-1340 / DEV-3883 / DEV-4305).
+Updated `distribution-webhooks.mdx` with the **Send raw payload** behavior for default, custom, and legacy webhook configurations.
 
 ## 2026-09-07
 
@@ -89,7 +110,7 @@ Update `documentation/manage/security-and-data-protection.mdx` with a link to an
 
 ## 2026-09-03
 
-Removed leftover “standalone” campaign wording from dashboard articles and aligned it with **generic** (DOC-1180 / DEV-4102). API `STANDALONE` type is unchanged.
+Removed leftover “standalone” campaign wording from dashboard articles and aligned it with **generic**. API `STANDALONE` type is unchanged.
 
 - Updated `dashboard-quickstart.mdx`
 - Updated `approval-requests.mdx`
