@@ -9,6 +9,7 @@ import {
   upgradeOpenApi301To310,
 } from "./migrate";
 import { mergeJsonSchemaConditionals } from "./merge-json-schema-conditionals";
+import { stripJsonSchema2020Keywords } from "./strip-json-schema-2020-keywords";
 
 const stringify = (value: unknown) => JSON.stringify(value, null, 2);
 
@@ -681,12 +682,15 @@ describe("OpenAPI 3.0.1 ↔ 3.1.0", () => {
     // This comparison drops every Loyalty v2 path. The generator fold then
     // deletes if/then/not, which upgrade does not restore. A null-only type
     // array is rewritten only on the generator entry, so it is not part of
-    // this round trip.
+    // this round trip. patternProperties / unevaluatedProperties are also
+    // stripped for the generator and are not restored by upgrade.
     const api = documentWithoutLoyaltyV2(document);
     const as301 = applySdkOpenApiVersion(api, true);
     expect(as301.openapi).toBe("3.0.1");
     expect(stringify(upgradeOpenApi301To310(as301))).toBe(
-      stringify(mergeJsonSchemaConditionals(api)),
+      stringify(
+        stripJsonSchema2020Keywords(mergeJsonSchemaConditionals(api)),
+      ),
     );
   });
 

@@ -1,6 +1,42 @@
 import * as OpenAPI from "../../../../reference/OpenAPI.json";
 import { restoreValidationRuleErrorObjects } from "./utils";
 
+const INT32_MAX = 2147483647;
+const INT32_MIN = -2147483648;
+
+/** Number.MAX_SAFE_INTEGER bounds do not fit in C# int; emit long instead. */
+const promoteOutOfInt32BoundsToInt64 = (value: unknown): void => {
+  if (Array.isArray(value)) {
+    for (const item of value) {
+      promoteOutOfInt32BoundsToInt64(item);
+    }
+    return;
+  }
+  if (!value || typeof value !== "object") {
+    return;
+  }
+  const schema = value as {
+    type?: string;
+    format?: string;
+    maximum?: number;
+    minimum?: number;
+    [key: string]: unknown;
+  };
+  if (schema.type === "integer") {
+    const max = schema.maximum;
+    const min = schema.minimum;
+    const outOfInt32 =
+      (typeof max === "number" && (max > INT32_MAX || max < INT32_MIN)) ||
+      (typeof min === "number" && (min > INT32_MAX || min < INT32_MIN));
+    if (outOfInt32) {
+      schema.format = "int64";
+    }
+  }
+  for (const child of Object.values(schema)) {
+    promoteOutOfInt32BoundsToInt64(child);
+  }
+};
+
 const removeDotnetBreakingChanges = {
   before: (_openApi: unknown): typeof OpenAPI => {
     const openApi = _openApi as typeof OpenAPI;
@@ -232,6 +268,10 @@ const removeDotnetBreakingChanges = {
     };
 
     restoreValidationRuleErrorObjects(schemas);
+
+    // Order query oneOfs are flattened in removeOneOfs. Safe-integer bounds still
+    // need int64 so the C# generator does not emit invalid int constants.
+    promoteOutOfInt32BoundsToInt64(openApi);
 
     return openApi;
   },

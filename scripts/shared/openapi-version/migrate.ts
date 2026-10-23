@@ -1,4 +1,5 @@
 import { mergeJsonSchemaConditionals } from "./merge-json-schema-conditionals";
+import { stripJsonSchema2020Keywords } from "./strip-json-schema-2020-keywords";
 
 /**
  * Converts this repository's OpenAPI 3.0.1 dialect to 3.1.0 and back.
@@ -118,6 +119,8 @@ export function ensureOpenApi301<T extends { openapi: string }>(
  * The clone goes through JSON so a TypeScript JSON import can be copied.
  * After the reversible downgrade, `if` / `then` / `else` / `not` are folded
  * into the parent object. Upgrade does not restore those keywords.
+ * Generator-facing cleanup then drops `patternProperties` and
+ * `unevaluatedProperties`, which OpenAPI 3.0 validators reject.
  */
 export function applySdkOpenApiVersion<T extends { openapi: string }>(
   document: T,
@@ -127,8 +130,10 @@ export function applySdkOpenApiVersion<T extends { openapi: string }>(
     return document;
   }
   const cloned = JSON.parse(JSON.stringify(document)) as T;
-  return mergeJsonSchemaConditionals(
-    ensureOpenApi301(collapseGeneratorNullUnions(cloned) as T),
+  return stripJsonSchema2020Keywords(
+    mergeJsonSchemaConditionals(
+      ensureOpenApi301(collapseGeneratorNullUnions(cloned) as T),
+    ),
   );
 }
 
