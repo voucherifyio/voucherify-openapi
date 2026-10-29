@@ -308,6 +308,13 @@ const removePhpBreakingChanges = {
       "/v1/vouchers"
     ].get.parameters.filter((e) => e.name !== "filters");
 
+    // Do not add the filters query param to GET List customers.
+    // PHP inserts it before string $contentType and rebinds positional calls.
+    openApi.paths["/v1/customers"].get.parameters = openApi.paths[
+      "/v1/customers"
+    ].get.parameters.filter((e) => e.name !== "filters");
+
+
     // Gemini recommended so
     const schemas = openApi.components.schemas as any;
 
@@ -439,6 +446,23 @@ const removePhpBreakingChanges = {
   },
   after: (_openApi: unknown): any => {
     let openApi: any = _openApi;
+
+    // Flattened request bodies copy minItems/maxItems from StackableValidateRedeemBase.
+    // Keep setRedeemables storing any array, as in 5.1.1.
+    for (const schemaName of [
+      "StackableValidateRedeemBase",
+      "RedemptionsRedeemRequestBody",
+      "ValidationsValidateRequestBody",
+      "ClientRedemptionsRedeemRequestBody",
+      "ClientValidationsValidateRequestBody",
+    ]) {
+      const redeemables =
+        openApi.components.schemas[schemaName]?.properties?.redeemables;
+      if (redeemables) {
+        delete redeemables.minItems;
+        delete redeemables.maxItems;
+      }
+    }
 
     [
       "ClientQualificationsCheckEligibilityResponseBody",
