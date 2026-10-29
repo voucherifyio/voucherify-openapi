@@ -1,0 +1,177 @@
+---
+title: "Hightouch integration"
+sidebarTitle: "Hightouch"
+description: "Send customer and custom-event data from Hightouch to Voucherify, and confirm it landed on the right profiles."
+keywords: ['hightouch', 'integration', 'sync', 'data', 'customer data', 'custom event data', 'sync customer data', 'sync custom event data']
+tag: "NEW"
+---
+
+import WarningIntegrationCredentials from '../snippets/callouts/warning-integration-credentials.mdx';
+
+[Hightouch](https://hightouch.com/ "Hightouch main page") is an agentic composable CDP for marketing and personalization.
+
+Send customer and custom-event data from Hightouch into the Voucherify project that should act on it. A customer sync creates or updates the matching customer profile. An event sync records the custom event on that customer and creates or updates the same profile.
+
+The integration works in one direction. Changes you make in Voucherify are not sent to Hightouch.
+
+<Info>
+
+    Read Hightouch's [documentation about Voucherify](https://hightouch.com/docs/destinations/voucherify "Hightouch documentation about Voucherify") for more information.
+
+</Info>
+
+## Connect Voucherify in Hightouch
+
+To Connect Voucherify in Hightouch, follow these steps.
+
+<Steps>
+
+    <Step title="Generate Hightouch integration keys">
+
+        To connect Hightouch with Voucherify, you need to generate new integration keys in Voucherify:
+        1.  Go to **Project Settings** and in the **General** tab, scroll down to **Integration Keys**.
+        2.  Click the plus button on the right.
+        3.  Fill in the **Name** for your key.
+        4.  Choose a role from the **Role** drop-down list.
+        5.  Choose **Hightouch** from the **Integration** drop-down list.
+        6.  Click **Create Integration API Key** button.
+
+        <Note>
+
+        A customer sync needs a role that can modify customers (`customers.modify`). An event sync needs a role that can read customers (`customers.read`). See the [User roles](/manage/members-and-roles#user-roles) page to learn more about default and custom roles.
+
+        A role that can only view customers still results in a received request. Voucherify rejects each customer sync for that key, and those profiles stay unchanged.
+        
+        </Note>
+
+        <WarningIntegrationCredentials />
+
+    </Step>
+
+    <Step title="Add Voucherify as a destination in Hightouch">
+
+        To connect Voucherify in Hightouch, you need to add Voucherify as a destination in Hightouch:
+        1. Go to the **Destinations** overview page and click the **Add destination** button.
+        2. Select **Voucherify** and click **Continue**.
+        3. Authenticate Hightouch to Voucherify by providing region, the application ID, and the app token (secret key).
+
+    </Step>
+
+</Steps>
+
+## Hightouch synchronization
+
+Hightouch synchronization with Voucherify allows you to synchronize data that's stored in Hightouch with Voucherify. You can synchronize customer, customer segment, and custom event data. <Visibility for="agents"> The synchronization doesn't work in the opposite direction, meaning changes in Voucherify won't be reflected in Hightouch.</Visibility>
+
+### Customer sync
+
+<Info>
+
+    Read Hightouch's [documentation about customer sync](https://hightouch.com/docs/destinations/voucherify#syncing-customers "Hightouch documentation about customer sync") for more information.
+
+</Info>
+
+<Note>
+
+    Customer sync uses the [daily webhook limit](/guides/limits#webhooks "Limits documentation – webhooks").
+
+</Note>
+
+Map the Hightouch column that identifies each person to **Source ID** before you map any other field. Voucherify uses the **Source ID** to choose the [customer profile](/prepare/customers#customer-identification) a row updates. A value that already exists in the project updates that profile. A new value creates a profile.
+
+The **Source ID** is set when the profile is created and cannot be changed later. If the column is not stable, or is not unique to one person, the sync can finish and still create a second profile or update the wrong one.
+
+You can map other customer fields after the **Source ID**. Use the customer sync to create or update a customer profile in Voucherify.
+
+Voucherify accepts `source_id`, `email`, `name`, `description`, `phone`, `birthdate`, `metadata`, and an `address` with `city`, `state`, `country`, and `postal_code`. A street on the profile is `address.line_1` or `address.line_2`. The Hightouch payload sends the street as `address.street`, and Voucherify leaves that property off the profile. Put the street in `metadata` when the profile should keep it.
+
+### Customer segment sync
+
+<Info>
+
+    Read Hightouch's [documentation about customer segment sync](https://hightouch.com/docs/destinations/voucherify#syncing-segments "Hightouch documentation about customer segment sync") for more information.
+
+</Info>
+
+<Note>
+
+    Customer segment sync uses the [API limits](/guides/limits#api "Limits documentation – API").
+
+</Note>
+
+Through customer sync, you can also define criteria for a segment in Voucherify. Hightouch will create the segment along the customer upsert.
+
+When you have a defined audience in Hightouch, Hightouch compares the audience to the last run on each sync:
+- New segment members: Hightouch adds a value to the customer's metadata field in their Voucherify profile (for example, `"vip_status": true`).
+- Segment members who left: Hightouch changes or removes the value to that metadata field (for example, `"vip_status": false`).
+- Segment members who are still in: Nothing is sent.
+
+You can sync Hightouch data for segments in two ways:
+- Object sync: The metadata field is set when the customer enters the segment. However, the metadata field never changes when the customer leaves the audience. Customers stay in the Voucherify segment indefinitely.
+- Segment sync: The metadata field is updated on each sync. Hightouch removes the metadata field value when a customer leaves the Hightouch audience, so segment members exits are handled automatically.
+
+### Event sync
+
+<Info>
+
+    Read Hightouch's [documentation about event sync](https://hightouch.com/docs/destinations/voucherify#syncing-events "Hightouch documentation about event sync") for more information.
+
+</Info>
+
+<Note>
+
+    Event sync uses the [daily webhook limit](/guides/limits#webhooks "Limits documentation – webhooks").
+
+</Note>
+
+Hightouch can synchronize custom event data to [custom events in Voucherify](/prepare/custom-events "Voucherify custom events"). Map columns to the fields Voucherify accepts. An event requires `event` (the custom event name) and `customer.source_id`. You can also send the customer fields from the customer sync, event properties in `metadata`, `referral.code`, `referral.referrer_id`, and `loyalty.code`.
+
+The event sync creates or updates the customer in the event, then records the custom event on that profile. Use it to trigger a Voucherify custom event for many customers at once.
+
+## Check the sync
+
+Verify in Voucherify if a Hightouch run is successfully received. The result is the customer profile for the mapped **Source ID**, in the project for the integration key used in the sync. An event sync also records the custom event on that profile.
+
+Confirm a successful sync in two places:
+- The [Audit log](/analyze/audit-logs) shows each API call.
+- The **Activity** tab in a customer profile shows what that call changed.
+
+### Audit log
+
+Voucherify stores one API call per customer and one API call per custom event:
+- Each customer is `POST /v1/customers`.
+- Each custom event is `POST /v1/events`.
+
+For example, a sync of 100 customers can produce 100 `POST /v1/customers` rows.
+
+The channel on each call is `hightouch-webhook-handler`. The **Audit log** labels that channel **Hightouch**.
+
+A row is stored when the customer or event call reaches its handler, including when that handler returns an error.
+
+These calls leave no audit row. Check the Hightouch sync result for them:
+- A payload rejected on the bulk endpoint, before Voucherify queues the customers or events. Each bulk request holds at most 100 customers or 100 events.
+- A call the gateway rejects before the handler runs. That includes a missing permission, a rate limit, and a blocked key.
+
+### Customer activity
+
+The same calls write the usual activity events. They appear on the customer **Activity** tab and in [List customer activity](/api-reference/customers/list-customer-activity) (`GET /v1/customers/{customerId}/activity`):
+- A new customer is `customer.created`.
+- A later change is `customer.updated`. When the update changes nothing, there is no `customer.updated` event. The Audit log row for `POST /v1/customers` is still there.
+- A tracked custom event is `customer.custom_event`. The event name is `data.event.type`.
+
+Customer activity records the channel as **API**. `event_source.channel` is `API`, and the row shows the integration key the sync used.
+
+To tie an activity row back to Hightouch:
+- Match it to the **Audit log** row for that request. The audit channel is **Hightouch**.
+- On a custom event, `event.metadata.source` is `hightouch-webhook-handler`. An event property mapped to `source` replaces that value.
+- On the customer, `system_metadata.source` is `hightouch`. `customer.created` and `customer.updated` include that customer payload.
+
+### What to compare
+
+Sync one customer you can recognize. If you use event sync, include one custom event for that customer.
+
+1. In **Audit log** > **Logs**, filter for **Channel** > **Hightouch** and for **Endpoint** > `POST /v1/customers`. Check if the request and response bodies match the Hightouch data, including the **Source ID**.
+2. Open that customer in Voucherify. Confirm the profile **Source ID** and the mapped fields match the Hightouch data.
+3. On the **Activity** tab, confirm `customer.created` for a new profile, or `customer.updated` when a field changed. When nothing changed, use the **Audit log** for further troubleshooting.
+4. For a custom event, filter for **Channel** > **Hightouch** and for **Endpoint** > `POST /v1/events`. Check if the request and response bodies match the Hightouch data. On the same customer, confirm `customer.custom_event` and that `data.event.type` is the event you sent. A new **Source ID** on that event also creates the profile (`customer.created`). Customer fields on the event update the same profile (`customer.updated` when a field changed).
+5. Run the same customer again with one changed field. The same profile changes. A second profile means the **Source ID** column does not match the first profile.

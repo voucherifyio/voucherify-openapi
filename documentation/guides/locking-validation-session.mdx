@@ -6,12 +6,14 @@ keywords: ['session', 'mechanism', 'transaction', 'lock', 'redemption', 'validat
 
 The validation and redemption mechanisms always work in a transactional way. As a result, the voucher's usage is registered permanently once redemption is successful. By using the session feature, you can temporarily record (lock) the voucher usage after the voucher has been validated.
 
-The established session is released when one of the following events happens:
+A lock for a redeemable is released when one of the following happens:
 
 * Expiration time passes
-* Redemption is being registered for the session
-* Manual release using a dedicated API endpoint (for vouchers only: [Release Validation Session](/api-reference/vouchers/release-validation-session))
-* Manual release using the [Validations Manager in the Dashboard](/optimize/validations-and-redemptions#sessions) to unlock sessions.
+* Redemption is registered for the session
+* Manual release for a **voucher** with [Release Validation Session](/api-reference/vouchers/release-validation-session). This unlocks only the voucher in the path, even if other redeemables share the same session key
+* Manual release in the Dashboard:
+  * On a redeemable’s details **Validations** tab, **Release session** unlocks only that redeemable
+  * In **Redemptions** > **Sessions**, you can unlock the session for every redeemable that still holds that session key
 
 Once the session is established, the API returns a unique session key. The key must be used with each of the following validation or redemption requests to clearly identify the session. Multiple requests with the same key will always override existing session values.
 
@@ -38,7 +40,7 @@ To link a request with the given session, always use the same session key for se
 #### Example validation request
 
 <CodeGroup>
-  ```json Validation request
+  ```json Validation request lines wrap expandable
   {
     "customer": {
       "source_id": "[email protected]"
@@ -73,7 +75,7 @@ To link a request with the given session, always use the same session key for se
   }
   ```
 
-  ```json Response
+  ```json Response lines wrap expandable
   {
       "valid": true,
       "redeemables": [
@@ -146,7 +148,7 @@ Usage of the code is locked and allowed only with the returned session key that 
 When redeeming the code, the session object needs to define `session.type` and `session.key`.
 
 <CodeGroup>
-  ```json Redemption request
+  ```json Redemption request lines wrap expandable
   {
       "customer": {
           "source_id": "[email protected]"
@@ -171,7 +173,7 @@ When redeeming the code, the session object needs to define `session.type` and `
   }
   ```
 
-  ```json Response
+  ```json Response lines wrap expandable
   {
       "redemptions": [
           {
@@ -253,7 +255,9 @@ When redeeming the code, the session object needs to define `session.type` and `
 
 If the redemption request includes a proper `session.key` value, the request is validated and the redemption is executed. When Voucherify registers a new redemption for the locked resource, the session is automatically released.
 
-If you need to remove an established session manually, use the [Release Validation Session](/api-reference/vouchers/release-validation-session) endpoint.
+If you need to unlock a voucher manually, use [Release Validation Session](/api-reference/vouchers/release-validation-session).
+
+In a [stackable validation](/api-reference/validations/validate-stackable-discounts), several vouchers can share one session key. Releasing the session for one voucher unlocks only that voucher. Other vouchers that still hold the same key stay locked, and only that voucher gets a session-released event in the **Activity** tab. Calling the endpoint again for a voucher that is no longer locked still returns `204` and does not create another session-released event.
 
 <Check>
   Registering a session will record a temporary usage for the specified time frame. This means it will influence other incoming validation and redemption requests until the session is released.
@@ -269,7 +273,7 @@ The following table presents the type of sessions that can be established.
 | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | LOCK             | Locks the following parameters within the session: - redemption quantity by 1 - redemption gift credits specified with the requests - redemption loyalty points specified with the request |
 
-You can always release established sessions by calling [Release Validation Session](/api-reference/vouchers/release-validation-session) endpoint.
+You can unlock a voucher’s session lock with [Release Validation Session](/api-reference/vouchers/release-validation-session). To unlock every redeemable still tied to the same session key, use **Redemptions** > **Sessions** in the Dashboard.
 
 <Note>
   Go to [Voucherify Postman Collection](https://www.postman.com/voucherify/workspace/voucherify-s-public-workspace/folder/31663208-fae2e349-67d4-4d5f-a5aa-1414871197b5), where you can test the Locking Validation Session mechanism.
