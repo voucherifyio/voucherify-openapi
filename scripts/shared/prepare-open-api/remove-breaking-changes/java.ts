@@ -43,6 +43,13 @@ const removeJavaBreakingChanges = {
       "/v1/vouchers"
     ].get.parameters.filter((e) => e.name !== "filters");
 
+    // Do not add the filters query param to GET List customers.
+    // Java has no optional trailing arguments, so this parameter
+    // changes listCustomers from 12 arguments to 13 and breaks callers.
+    openApi.paths["/v1/customers"].get.parameters = openApi.paths[
+      "/v1/customers"
+    ].get.parameters.filter((e) => e.name !== "filters");
+
     // Gemini recommended so
     const schemas = openApi.components.schemas as any;
 
