@@ -453,7 +453,9 @@ const returnRefSchemaIfAllOfContainsOnly1Reference = (schema) => {
   if (
     schema?.allOf?.length === 1 &&
     schema.allOf[0]?.$ref &&
-    !schema.required?.length
+    !schema.required?.length &&
+    // Keep allOf + nullable: OpenAPI 3.0 ignores keywords next to a bare $ref.
+    !schema?.nullable
   ) {
     return schema.allOf[0];
   }

@@ -40,6 +40,13 @@ const removePythonBreakingChanges = {
       "/v1/vouchers"
     ].get.parameters.filter((e) => e.name !== "filters");
 
+    // Do not add the filters query param to GET List customers.
+    // Python inserts it before _request_timeout and rebinds positional calls.
+    openApi.paths["/v1/customers"].get.parameters = openApi.paths[
+      "/v1/customers"
+    ].get.parameters.filter((e) => e.name !== "filters");
+
+
     // Gemini recommended so
     const schemas = openApi.components.schemas as any;
 
@@ -153,6 +160,23 @@ const removePythonBreakingChanges = {
   },
   after: (_openApi: unknown): any => {
     let openApi: any = _openApi;
+
+    // Flattened request bodies copy minItems/maxItems from StackableValidateRedeemBase.
+    // Keep redeemables unconstrained, as in 6.1.1.
+    for (const schemaName of [
+      "StackableValidateRedeemBase",
+      "RedemptionsRedeemRequestBody",
+      "ValidationsValidateRequestBody",
+      "ClientRedemptionsRedeemRequestBody",
+      "ClientValidationsValidateRequestBody",
+    ]) {
+      const redeemables =
+        openApi.components.schemas[schemaName]?.properties?.redeemables;
+      if (redeemables) {
+        delete redeemables.minItems;
+        delete redeemables.maxItems;
+      }
+    }
 
     openApi = removeRequiredFromRequestsAndResponses(
       openApi as OpenAPISpec,

@@ -17,50 +17,127 @@ const addSpacesInTitle = (title: string) =>
     .replaceAll(" ", "")
     .replace(/([A-Z])/g, " $1")
     .trim();
+
+const isNullSchema = (schema: any) =>
+  schema?.type === "null" ||
+  (Array.isArray(schema?.type) &&
+    schema.type.length === 1 &&
+    schema.type[0] === "null");
+
+const sameStringEnums = (a: string[] | undefined, b: string[] | undefined) =>
+  Array.isArray(a) &&
+  Array.isArray(b) &&
+  a.length === b.length &&
+  a.every((value, index) => value === b[index]);
+
+/** Prefer a single nullable string enum over string | string[] | null. */
+const collapseStringOrStringArrayOrder = (schema: any) => {
+  const branches = schema?.oneOf;
+  if (!Array.isArray(branches) || branches.length !== 3) {
+    return undefined;
+  }
+  const arrayBranch = branches.find((branch) => branch?.type === "array");
+  const stringBranch = branches.find((branch) => branch?.type === "string");
+  const nullBranch = branches.find((branch) => isNullSchema(branch));
+  if (
+    !arrayBranch ||
+    !stringBranch ||
+    !nullBranch ||
+    !sameStringEnums(arrayBranch.items?.enum, stringBranch.enum)
+  ) {
+    return undefined;
+  }
+  return omit(
+    {
+      type: "string",
+      nullable: true,
+      enum: stringBranch.enum,
+      description: schema.description || stringBranch.description,
+    },
+    compact([
+      schema.description || stringBranch.description
+        ? undefined
+        : "description",
+    ]),
+  );
+};
+
+const asNullableSchema = (nonNull: any, parent: any) => {
+  if (nonNull?.$ref) {
+    return omit(
+      {
+        allOf: [{ $ref: nonNull.$ref }],
+        nullable: true,
+        description: parent.description || nonNull.description,
+      },
+      compact([
+        parent.description || nonNull.description ? undefined : "description",
+      ]),
+    );
+  }
+  return omit(
+    {
+      ...nonNull,
+      nullable: true,
+      description: parent.description || nonNull.description,
+    },
+    compact([
+      parent.description || nonNull.description ? undefined : "description",
+    ]),
+  );
+};
+
 const checkProperties = (schema, title, schemas) => {
+  let removed = false;
   const properties = Object.fromEntries(
     Object.entries(schema.properties).map((propertyNameAndEntry) => {
       const [propertyName, entry] = propertyNameAndEntry as any;
-      if (entry?.oneOf) {
-        return [
-          propertyName,
-          removeOneOf(
-            entry,
-            schemas,
-            addSpacesInTitle(title + upperFirst(camelCase(propertyName))),
-          ).schema,
-        ];
+      if (entry?.oneOf || entry?.anyOf) {
+        const result = removeOneOf(
+          entry,
+          schemas,
+          addSpacesInTitle(title + upperFirst(camelCase(propertyName))),
+        );
+        if (result.removed) {
+          removed = true;
+        }
+        return [propertyName, result.schema];
       }
       if (entry?.properties) {
-        return [
-          propertyName,
-          checkProperties(
-            entry,
-            title + upperFirst(camelCase(propertyName)),
-            schemas,
-          ),
-        ];
+        const nested = checkProperties(
+          entry,
+          title + upperFirst(camelCase(propertyName)),
+          schemas,
+        );
+        if (nested.removed) {
+          removed = true;
+        }
+        return [propertyName, nested.schema];
       }
-      if (entry.items?.oneOf) {
+      if (entry.items?.oneOf || entry.items?.anyOf) {
+        const result = removeOneOf(
+          entry.items,
+          schemas,
+          addSpacesInTitle(
+            title + upperFirst(camelCase(propertyName)) + "Item",
+          ),
+        );
+        if (result.removed) {
+          removed = true;
+        }
         return [
           propertyName,
           {
-            ...omit(entry.items, "oneOf"),
+            ...omit(entry, "items"),
             type: "array",
-            items: removeOneOf(
-              entry.items,
-              schemas,
-              addSpacesInTitle(
-                title + upperFirst(camelCase(propertyName)) + "Item",
-              ),
-            ).schema,
+            items: result.schema,
           },
         ];
       }
       return [propertyName, entry];
     }),
   );
-  return { ...schema, properties };
+  return { removed, schema: { ...schema, properties } };
 };
 
 const removeOneOf = (schema, schemas, title) => {
@@ -101,37 +178,78 @@ const removeOneOf = (schema, schemas, title) => {
   }
   if (schema.allOf) {
     let removed = false;
+    let nextSchema: any = {
+      ...schema,
+      title: addSpacesInTitle(title),
+      allOf: schema.allOf.map((schemaItem) => {
+        if (removed) {
+          return schemaItem;
+        }
+        const { removed: _removed, schema: nestedSchema } = removeOneOf(
+          schemaItem,
+          schemas,
+          title,
+        );
+        if (_removed) {
+          removed = true;
+        }
+        return nestedSchema;
+      }),
+    };
+    // Required-only allOf items used to skip sibling properties that still
+    // hold nullable oneOf unions. Walk properties too.
+    if (nextSchema.properties) {
+      const nested = checkProperties(nextSchema, title, schemas);
+      if (nested.removed) {
+        removed = true;
+      }
+      nextSchema = nested.schema;
+    }
+    return { removed, schema: nextSchema };
+  }
+  if (!(schema instanceof Object)) {
+    return { removed: false, schema };
+  }
+
+  for (const key of ["anyOf", "oneOf"] as const) {
+    const branches = schema[key];
+    if (!Array.isArray(branches) || branches.length !== 2) {
+      continue;
+    }
+    const nullBranch = branches.find((branch) => isNullSchema(branch));
+    const nonNullBranch = branches.find((branch) => !isNullSchema(branch));
+    if (!nullBranch || !nonNullBranch) {
+      continue;
+    }
+    // Flatten X | null before the generic oneOf merger. Recurse only into the
+    // non-null branch so we do not stamp a title onto the nullable wrapper.
+    const nested = removeOneOf(
+      nonNullBranch,
+      schemas,
+      addSpacesInTitle(title),
+    );
     return {
-      removed,
-      schema: {
-        ...schema,
-        title: addSpacesInTitle(title),
-        allOf: schema.allOf.map((schemaItem) => {
-          if (removed) {
-            return schemaItem;
-          }
-          const { removed: _removed, schema } = removeOneOf(
-            schemaItem,
-            schemas,
-            title,
-          );
-          if (_removed) {
-            removed = true;
-          }
-          return schema;
-        }),
-      },
+      removed: true,
+      schema: asNullableSchema(nested.schema, schema),
     };
   }
-  if (!(schema instanceof Object) || !("oneOf" in schema)) {
+
+  if (!("oneOf" in schema)) {
     if (schema.properties) {
+      const nested = checkProperties(schema, title, schemas);
       return {
-        removed: false,
-        schema: checkProperties(schema, title, schemas),
+        removed: nested.removed,
+        schema: nested.schema,
       };
     }
     return { removed: false, schema };
   }
+
+  const collapsedOrder = collapseStringOrStringArrayOrder(schema);
+  if (collapsedOrder) {
+    return { removed: true, schema: collapsedOrder };
+  }
+
   const oneOf = schema["oneOf"].map((data) =>
     data.$ref ? schemas[data.$ref?.split("/")?.at(-1)] : "any",
   );
@@ -509,6 +627,57 @@ const mergeAllOfObjects = (allOfs, schemas, title) => {
     );
 };
 
+const removeOneOfsInPaths = (paths, schemas) => {
+  if (!paths || typeof paths !== "object") {
+    return { removed: false, paths };
+  }
+  let removed = false;
+  const nextPaths = Object.fromEntries(
+    Object.entries(paths).map(([path, pathItem]) => {
+      if (!pathItem || typeof pathItem !== "object") {
+        return [path, pathItem];
+      }
+      const nextPathItem = Object.fromEntries(
+        Object.entries(pathItem as object).map(([method, operation]) => {
+          if (
+            !operation ||
+            typeof operation !== "object" ||
+            !("parameters" in (operation as object))
+          ) {
+            return [method, operation];
+          }
+          const parameters = (operation as { parameters?: any[] }).parameters;
+          if (!Array.isArray(parameters)) {
+            return [method, operation];
+          }
+          const nextParameters = parameters.map((parameter, index) => {
+            if (!parameter?.schema?.oneOf && !parameter?.schema?.anyOf) {
+              return parameter;
+            }
+            const result = removeOneOf(
+              parameter.schema,
+              schemas,
+              addSpacesInTitle(
+                `${path} ${method} ${parameter.name || `Parameter${index}`}`,
+              ),
+            );
+            if (result.removed) {
+              removed = true;
+            }
+            return { ...parameter, schema: result.schema };
+          });
+          return [
+            method,
+            { ...(operation as object), parameters: nextParameters },
+          ];
+        }),
+      );
+      return [path, nextPathItem];
+    }),
+  );
+  return { removed, paths: nextPaths };
+};
+
 export const removeAllOneOfs = (
   schemas,
   paths,
@@ -523,6 +692,15 @@ export const removeAllOneOfs = (
     }
     localSchemas = result.schemas;
   } while (true);
+
+  const pathsResult = removeOneOfsInPaths(paths, localSchemas);
+  if (pathsResult.removed && paths && typeof paths === "object") {
+    for (const key of Object.keys(paths)) {
+      delete paths[key];
+    }
+    Object.assign(paths, pathsResult.paths);
+  }
+
   return cleanUpDescriptionsInEntireObject(
     removeNotUsedSchemas(
       { schemas: localSchemas, parameters },
