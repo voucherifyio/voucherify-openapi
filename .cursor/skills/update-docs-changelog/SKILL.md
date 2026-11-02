@@ -65,7 +65,9 @@ python3 .cursor/skills/update-docs-changelog/scripts/list_doc_changes.py [--pr N
 
 ## Collect the story
 
-Read PR title/body, commit subjects on the range, and ticket keys (`DOC-…`, `DEV-…`) from those texts or the branch name. Include ticket keys in the entry when they are known.
+Read PR title/body and commit subjects on the range. Use them to understand the change.
+
+Jira ticket references MUST NOT be added. Do not write `DOC-…`, `DEV-…`, or any other Jira key in `changelog/OPEN-API.md` or `changelog/ARTICLES.md`, even when the PR title, commit message, or branch name contains one.
 
 ### OpenAPI
 
@@ -105,7 +107,7 @@ Keep the existing file shape:
 - Endpoints as `METHOD `/path`` (METHOD outside the path backticks).
 - Schema names, properties, filenames, and error keys in backticks.
 - Nested bullets for several points on one endpoint.
-- Tickets at the end of the lead sentence: `(DOC-1340 / DEV-3883)`.
+- Jira ticket references MUST NOT be added. No `DOC-…`, `DEV-…`, or parenthetical ticket lists.
 - One short paragraph is fine for a single change; use a list for several files or endpoints.
 - No raw diffs, no “this PR”, no commit hashes unless the existing style already links a PR (`[PR 915](https://github.com/voucherifyio/voucherify-openapi/pull/915)`).
 
