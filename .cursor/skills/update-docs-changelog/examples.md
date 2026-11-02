@@ -31,12 +31,12 @@ Add warning to DELETE `/v1/product-collections/{productCollectionId}`.
 Changed type `integer` to `number` in `exchange_ratio` in the `RedemptionRewardResult` schema.
 ```
 
-## ARTICLES.md — one article + tickets
+## ARTICLES.md — one article
 
 ```markdown
 ## 2026-09-09
 
-Updated `distribution-webhooks.mdx` with the **Send raw payload** behavior for default, custom, and legacy webhook configurations (DOC-1340 / DEV-3883 / DEV-4305).
+Updated `distribution-webhooks.mdx` with the **Send raw payload** behavior for default, custom, and legacy webhook configurations.
 ```
 
 ## ARTICLES.md — theme plus file list
@@ -44,7 +44,7 @@ Updated `distribution-webhooks.mdx` with the **Send raw payload** behavior for d
 ```markdown
 ## 2026-09-03
 
-Removed leftover “standalone” campaign wording from dashboard articles and aligned it with **generic** (DOC-1180 / DEV-4102). API `STANDALONE` type is unchanged.
+Removed leftover “standalone” campaign wording from dashboard articles and aligned it with **generic**. API `STANDALONE` type is unchanged.
 
 - Updated `dashboard-quickstart.mdx`
 - Updated `approval-requests.mdx`
