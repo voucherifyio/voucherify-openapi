@@ -5,6 +5,17 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-11-02
+
+Documented Loyalty v2 performance pointers, list filters, custom-event metadata on earning rules, and the pending-points limit on **Override expiration**.
+
+- Updated `create-loyalty-program.mdx` with designer member totals, the program **Performance** tab, member-card **Point Performance**, tier progress on the card, and a **Creation date** filter on card transactions.
+- Updated `create-loyalty-rewards.mdx` with reward-card redemption counts, the reward **Performance** tab, and reward purchase filters.
+- Updated `create-earning-rules.mdx` so proportional points can use a custom event metadata number, and **+** saves that property on the event schema. Clarified that effect expiration applies to the effect. **Override expiration** stays unavailable while the wallet has pending points.
+- Updated `create-tier-structures.mdx` and `create-point-wallets.mdx` with the same pending-points limit. **Adjust points** can go below zero only when the wallet allows it.
+- Updated `customer-segments.mdx` so Loyalty 2.0 filters are their own section.
+- Added the v20261005_l release note to `changelog.mdx`.
+
 ## 2026-10-23
 
 Add `hightouch.mdx` page with the Hightouch integration documentation.
