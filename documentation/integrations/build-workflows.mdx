@@ -1,10 +1,10 @@
 ---
 title: "Build workflows"
-description: "Create, connect, publish, and activate a workflow for Loyalty v2 events"
-keywords: ["workflows", "loyalty v2", "webhook callout", "loyalty transaction", "loyalty activity", "automation"]
+description: "Create, connect, publish, and activate a workflow for Loyalty v2 events, with optional conditional logic"
+keywords: ['workflows', 'loyalty v2', 'webhook callout', 'if operator', 'conditional logic', 'loyalty transaction', 'loyalty activity', 'automation']
 ---
 
-Use this guide to send Loyalty v2 events to an external application with a workflow.
+Use this guide to send Loyalty v2 events to an external application. Connect a trigger directly to a webhook callout when every matching event should be sent. Add an IF operator when only some of those events should be sent.
 
 <Info>
 
@@ -56,6 +56,8 @@ Drag a line from the trigger's right output. Connect it to the left input of an 
 
 A trigger can connect to several webhook callouts. A webhook callout can also accept several triggers.
 
+A direct connection sends every event that matches the trigger. To send only some of them, add an IF operator before you publish. Follow [Send an event only when it matches](#send-an-event-only-when-it-matches).
+
 </Step>
 
 <Step title="Save and publish">
@@ -86,6 +88,58 @@ Click **Publish** when the graph is complete. Confirm **Publish**. The first pub
 
 </Check>
 
+
+## Send an event only when it matches
+
+Use this when a matching trigger is too broad. This path sends a webhook only when a trigger's **Rule** meets one or more conditions (for example, loyalty card transaction's **Points total** is greater than 100).
+
+You still need a trigger and a webhook callout on the canvas. Save and publish the same way as in [Create and publish a workflow](#create-and-publish-a-workflow).
+
+<Steps>
+
+    <Step title="Add an IF operator">
+
+    From **Operators**, drag **IF** onto the canvas.
+
+    An IF uses one of the five action and operator slots in the workflow. Read [Limits](/integrations/workflow-options-limits#limits).
+
+    </Step>
+
+    <Step title="Connect the trigger to the IF">
+
+    Drag a line from the trigger to the IF. The condition panel can take rules only after a trigger is connected.
+
+    </Step>
+
+    <Step title="Add a rule">
+
+    Click the IF. The panel title is **Condition**. Open **Rule 1**.
+
+    Select:
+    - **Default**: Choose a field from the trigger event. Set the operator and value.
+    - **Custom**: Type the path to a field in the trigger event. A custom path starts with `trigger.` or with the ID of an earlier block, and you choose the field type. Set the operator and value.
+
+    To add another rule, click **Add rule**. A new junction starts as **AND**. Click the junction to switch it to **OR**. One IF accepts up to 5 rules. Brackets and the full operator list are in [IF operator](/integrations/workflow-options-limits#if-operator).
+
+    </Step>
+
+    <Step title="Connect True">
+
+    Drag a line from **True** to the webhook callout that should run when the rules match.
+
+    Connect **False** only when those events should go to a different callout. Each of **True** and **False** connects to one next block. Leave **False** unconnected when those events should not be sent.
+
+    A missing value or a value that does not match the operator makes the rule false, so the run follows **False**. If **False** is unconnected, the event is not sent.
+
+    </Step>
+
+</Steps>
+
+<Check>
+
+    Publish the workflow and keep it **Active**. A matching event reaches the endpoint on **True**. A non-matching event follows **False** and is not delivered when that output is empty.
+
+</Check>
 
 ## Verify webhook signatures
 

@@ -5,6 +5,17 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-11-03
+
+Documented the Workflows **IF** operator, including true and false paths, rules, and limits.
+
+- Updated `workflows.mdx` so a workflow can branch on an **IF** block. **IF** is no longer listed as future work.
+- Updated `build-workflows.mdx` with **Send an event only when it matches**, using **Points total** greater than 100.
+- Updated `workflow-options-limits.mdx` with the **IF** operator, operators by field type, missing fields, brackets, the shared `exwfnod_` prefix, 5 rules per IF, 10 values per rule, and a shared cap of 5 actions and operators.
+- Updated `workflows-webhooks.mdx` so an **IF** can keep a run from reaching the callout. The payload shape is unchanged.
+- Updated `loyalty-v2-api-overview.mdx` with a link to Workflows for conditional logic.
+- Added the v20261014_k release note to `changelog.mdx`.
+
 ## 2026-11-02
 
 Documented Loyalty v2 performance pointers, list filters, custom-event metadata on earning rules, and the pending-points limit on **Override expiration**.

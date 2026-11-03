@@ -1,8 +1,8 @@
 ---
 title: "Workflow options and limits"
 sidebarTitle: "Workflow options"
-description: "Review workflow triggers, webhook callouts, statuses, behavior, and limits"
-keywords: ["workflows", "loyalty v2", "webhook callout", "loyalty transaction", "loyalty activity", "limits"]
+description: "Review workflow triggers, conditional logic, webhook callouts, statuses, behavior, and limits"
+keywords: ['workflows', 'loyalty v2', 'webhook callout', 'if operator', 'conditional logic', 'loyalty transaction', 'loyalty activity', 'limits']
 ---
 
 Learn about the configuration and behavior of Workflows.
@@ -58,18 +58,42 @@ Voucherify generates the webhook payload automatically. Read [Workflows webhooks
 
 To verify signatures, generate a secret in **Project settings** > **Webhooks** and validate the `x-voucherify-signature` header. Read [Webhook authentication](/api-reference/introduction-to-webhooks#authentication) for details.
 
+## IF operator
+
+An IF operator chooses one path for a run. **True** is taken when the rules match. **False** is taken when they do not.
+
+Connect at least one of **True** or **False**. Each output connects to one next block. The other output can stay empty. An empty output does not send a webhook. Read [Send an event only when it matches](/integrations/build-workflows#send-an-event-only-when-it-matches) for the canvas steps.
+
+A rule reads a field on the triggering event, or on a block earlier in the same path. In the **Condition** panel, **Default** lists fields from the connected trigger. **Custom** takes a path and a field type. A custom path starts with `trigger.` or with the ID of an earlier block.
+
+A missing field makes that rule false. The other rules in the same IF are still combined, so an **OR** can still take **True**. The run follows **False** when the combined rules do not match. A missing field does not fail the workflow.
+
+A value that is not a number, not a boolean, or not a valid date does not match a rule of that type. Date operators compare the calendar day in the project time zone. The time of day on the event does not change the day. **is day of week** uses Sunday through Saturday.
+
+Rules in one IF combine with **AND** or **OR**. A new junction starts as **AND**. Click it to switch to **OR**. **Surround with brackets** groups the selected rule so that group is decided before the rules outside it. **Remove brackets** keeps those rules and drops the group. **Remove brackets & rules inside** deletes the group and the rules in it.
+
+| Field type | Operators |
+| --- | --- |
+| String | is, is not, is any of, is none of, contains, starts with, ends with |
+| Number | is, is not, is any of, is none of, greater than, greater than or equal, less than, less than or equal |
+| Boolean | is, is not |
+| Date | is, is not, is any of, is none of, after, before, is day of week |
+
+One IF accepts up to 5 rules and up to 10 values in one rule. The IF block itself counts as one of the five actions and operators in the workflow.
+
 ## Identifiers
 
-Each trigger and webhook callout has an ID. You see it on the canvas and in the settings panel.
+Each trigger, operator, and webhook callout has an ID. You see it on the canvas and in the settings panel.
 
 The prefix can't be changed.
 
 | Block | Prefix |
 | --- | --- |
 | Trigger | `exwftrg_` |
+| Operator | `exwfnod_` |
 | Webhook callout | `exwfnod_` |
 
-You can edit the suffix. Use 1 to 40 characters: lowercase letters, digits, and underscores. The ID must be unique in that workflow. A new block gets the next number.
+An operator and a webhook callout share the `exwfnod_` prefix. You can edit the suffix. Use 1 to 40 characters: lowercase letters, digits, and underscores. The ID must be unique in that workflow. A new block gets the next number.
 
 ## Save, publish, and activate
 
@@ -105,13 +129,15 @@ Existing runs keep the version they started with when you publish a new version.
 
 ## Limits
 
-Trigger and action limits are separate. A workflow can contain five triggers and five actions.
+Triggers are counted separately from the other blocks. A workflow can contain five triggers. Actions and operators share a separate limit of five. An IF operator uses one of those five slots.
 
 | Limit | Value |
 | --- | --- |
 | Workflows per project | 5 |
 | Triggers per workflow | 5 |
-| Actions per workflow | 5 |
+| Actions and operators per workflow | 5 |
+| Rules per IF | 5 |
+| Values per rule | 10 |
 | Connections per workflow | 10 |
 | Custom headers per webhook callout | 10 |
 | Published versions kept per workflow | 100 |
