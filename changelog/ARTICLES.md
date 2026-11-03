@@ -7,6 +7,8 @@ Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
 ## 2026-11-03
 
+Added a `diataxis` frontmatter field (`tutorial`, `how-to`, `reference`, or `explanation`) on documentation MDX pages so writers and agents can pick the page type without re-reading the body.
+
 Documented the Workflows **IF** operator, including true and false paths, rules, and limits.
 
 - Updated `workflows.mdx` so a workflow can branch on an **IF** block. **IF** is no longer listed as future work.
