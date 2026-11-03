@@ -66,7 +66,7 @@ Files under `sdks/` stay untouched during an OpenAPI or documentation change. A 
 ### Add or edit a guide page
 
 1. Choose the folder for the audience. Developer pages go in `get-started/`, `guides/`, or `integrations/`. User-interface pages go in `discover/`, `prepare/`, `build/`, `optimize/`, `orchestrate/`, `analyze/`, or `manage/`.
-2. Add an `.mdx` file. Start it with `title` and `description` frontmatter.
+2. Add an `.mdx` file. Start it with `title`, `description`, and `diataxis` frontmatter. `diataxis` is the page's one type: `tutorial`, `how-to`, `reference`, or `explanation`.
 3. Add the page path, without `.mdx`, to the matching group in `documentation/docs.json`.
 4. Put text that several pages share in `documentation/snippets/` and import it:
 
