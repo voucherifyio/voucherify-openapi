@@ -74,6 +74,22 @@ Do not edit files under `sdks/` as part of an OpenAPI or docs change. Do not com
 - `documentation/**/*.mdx` is prose. Event pages point at a file with frontmatter like `openapi: "/openapi-events/events-customer.json webhook EVENTS.CUSTOMER.CREATED"`.
 - `documentation/.mintlify/AGENTS.md` is Mintlify's own writing guide for MDX components. It is not this repository map.
 
+### Diátaxis type
+
+Each page declares one Diátaxis type in its frontmatter, after `keywords`:
+
+```yaml
+diataxis: "how-to"
+```
+
+The values are `tutorial`, `how-to`, `reference`, and `explanation`. Snippets under `documentation/snippets/` have no `diataxis` key. Neither do the schema object pages that `scripts/mintlify/utils/md-tables.ts` generates.
+
+- Take a page's type from `diataxis`. Do not classify a page again when it has the key.
+- When the key is missing, classify the page from its content. Add the key when you edit that page.
+- A new page gets the key.
+- Content you add follows the page's type. Content of another type goes to a page of that type in the same `docs.json` group. When there is no such page, suggest a new page and name its type. Do not add that content to the current page.
+- Many older pages mix types. Their `diataxis` value is the type the page is meant to have. Do not restructure such a page, or change its value, unless that is the task.
+
 Mintlify builds a preview only for a pull request whose base is the deployment branch (`master`). A pull request into another branch does not get that preview.
 
 ## Other directories
