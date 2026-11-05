@@ -16281,13 +16281,116 @@
         ],
         "operationId": "updateEarningRule",
         "summary": "Update earning rule",
-        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nUpdates an earning rule. All properties are optional; `status` cannot be changed\nthrough this endpoint (use the activate/deactivate/draft endpoints). For rules that\nare not in `DRAFT` status, only the following properties may effectively change:\nname, earnings, error, validity_hours, start_date, end_date, trigger_limits, earning_limits, metadata.\nEarnings items may carry an `id` (`lernei_...`) to update an existing earning item;\nitems without an `id` are created.",
+        "description": "Updates an earning rule. Each field is optional, and the body must include at least one field. `status` cannot be changed here. Use [Activate earning rule](/api-reference/earning-rules/activate-earning-rule), [Deactivate earning rule](/api-reference/earning-rules/deactivate-earning-rule), or [Move earning rule to draft](/api-reference/earning-rules/move-earning-rule-to-draft). Sending `status` returns `400`.\n\nWhen the earning rule is `ACTIVE` or `INACTIVE`, only `name`, `earnings`, `error`, `validity_hours`, `start_date`, `end_date`, `trigger_limits`, `earning_limits`, and `metadata` can change. A `DRAFT` rule can also change `trigger`.\n\n`earnings` replaces the earning list. An item whose `id` matches a stored `lernei_` id replaces that item. An omitted `id`, or an `id` that is not on this rule, creates an item and the server assigns the ID. Items left out of the array are removed. On an `ACTIVE` rule, the earnings that will be stored are checked for inactive or unassigned related resources and can return `423`.",
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/V2LoyaltiesEarningRulesUpdateRequestBody"
+              },
+              "examples": {
+                "Update earning rule": {
+                  "value": {
+                    "name": "Updated earning rule",
+                    "earnings": [
+                      {
+                        "id": "lernei_133a941c42006594cd",
+                        "name": "Existing earning 01",
+                        "rules": {
+                          "1": {
+                            "name": "customer.segment",
+                            "conditions": {
+                              "$is": [
+                                "seg_AOmoT5hwNqBl7tJsHh26CBUH"
+                              ]
+                            }
+                          },
+                          "logic": "1"
+                        },
+                        "effects": [
+                          {
+                            "type": "POINTS",
+                            "points": {
+                              "value": 30,
+                              "card_definition_id": "lcdef_1329efb2af8ba6486f"
+                            }
+                          }
+                        ],
+                        "tier_rules": {
+                          "type": "NO_REQUIREMENTS"
+                        }
+                      },
+                      {
+                        "name": "New earning 01",
+                        "rules": {
+                          "1": {
+                            "name": "order.items.any",
+                            "conditions": {
+                              "$is": [
+                                {
+                                  "id": "prod_12b4cecb4fd5a6402f",
+                                  "type": "products_or_skus",
+                                  "object": "product",
+                                  "source_id": "refreshing_soda"
+                                }
+                              ]
+                            }
+                          },
+                          "logic": "1"
+                        },
+                        "effects": [
+                          {
+                            "type": "POINTS",
+                            "points": {
+                              "value": 300,
+                              "card_definition_id": "lcdef_1331564fab0b1ce713"
+                            }
+                          }
+                        ],
+                        "tier_rules": {
+                          "type": "ANY_OF",
+                          "any_of": [
+                            {
+                              "tier_ids": [
+                                "lt_12afe9efd24e603ac0"
+                              ],
+                              "tier_structure_id": "lts_12afe9ef956906b3b7"
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "name": "New earning 02",
+                        "effects": [
+                          {
+                            "type": "POINTS",
+                            "points": {
+                              "value": 100,
+                              "card_definition_id": "lcdef_1331564fab0b1ce713"
+                            }
+                          }
+                        ]
+                      }
+                    ],
+                    "trigger": {
+                      "event": "customer.order.paid"
+                    },
+                    "validity_hours": {
+                      "type": "ANY_TIME"
+                    },
+                    "end_date": "2026-12-31T00:00:00.000Z",
+                    "earning_limits": {
+                      "global": {
+                        "type": "NO_LIMIT",
+                        "limits": []
+                      }
+                    },
+                    "metadata": {
+                      "temporary_earning_rule": true
+                    }
+                  }
+                }
               }
             }
           }
@@ -16299,36 +16402,349 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/V2LoyaltiesEarningRulesUpdateResponseBody"
+                },
+                "examples": {
+                  "Updated earning rule": {
+                    "value": {
+                      "id": "lern_133a941c44c06594cf",
+                      "name": "Updated earning rule",
+                      "status": "DRAFT",
+                      "earnings": [
+                        {
+                          "id": "lernei_133a941c42006594cd",
+                          "name": "Existing earning 01",
+                          "rules": {
+                            "1": {
+                              "name": "customer.segment",
+                              "conditions": {
+                                "$is": [
+                                  "seg_AOmoT5hwNqBl7tJsHh26CBUH"
+                                ]
+                              }
+                            },
+                            "logic": "1"
+                          },
+                          "tier_rules": {
+                            "type": "NO_REQUIREMENTS"
+                          },
+                          "effects": [
+                            {
+                              "type": "POINTS",
+                              "points": {
+                                "value": 30,
+                                "card_definition_id": "lcdef_1329efb2af8ba6486f"
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "id": "lernei_134cd9949f093ff081",
+                          "name": "New earning 01",
+                          "rules": {
+                            "1": {
+                              "name": "order.items.any",
+                              "conditions": {
+                                "$is": [
+                                  {
+                                    "id": "prod_12b4cecb4fd5a6402f",
+                                    "type": "products_or_skus",
+                                    "object": "product",
+                                    "source_id": "refreshing_soda"
+                                  }
+                                ]
+                              }
+                            },
+                            "logic": "1"
+                          },
+                          "tier_rules": {
+                            "type": "ANY_OF",
+                            "any_of": [
+                              {
+                                "tier_structure_id": "lts_12afe9ef956906b3b7",
+                                "tier_ids": [
+                                  "lt_12afe9efd24e603ac0"
+                                ]
+                              }
+                            ]
+                          },
+                          "effects": [
+                            {
+                              "type": "POINTS",
+                              "points": {
+                                "value": 300,
+                                "card_definition_id": "lcdef_1331564fab0b1ce713"
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "id": "lernei_134cd9949f093ff082",
+                          "name": "New earning 02",
+                          "tier_rules": {
+                            "type": "NO_REQUIREMENTS"
+                          },
+                          "effects": [
+                            {
+                              "type": "POINTS",
+                              "points": {
+                                "value": 100,
+                                "card_definition_id": "lcdef_1331564fab0b1ce713"
+                              }
+                            }
+                          ]
+                        }
+                      ],
+                      "trigger": {
+                        "event": "customer.order.paid"
+                      },
+                      "validity_hours": {
+                        "type": "ANY_TIME"
+                      },
+                      "start_date": null,
+                      "end_date": "2026-12-31T00:00:00.000Z",
+                      "trigger_limits": {
+                        "cooldown": {
+                          "type": "NO_COOLDOWN"
+                        },
+                        "frequency": {
+                          "type": "NO_LIMIT",
+                          "limits": []
+                        }
+                      },
+                      "earning_limits": {
+                        "global": {
+                          "type": "NO_LIMIT",
+                          "limits": []
+                        }
+                      },
+                      "metadata": {
+                        "temporary_earning_rule": true
+                      },
+                      "created_at": "2026-10-22T11:30:54.857Z",
+                      "updated_at": "2026-11-05T16:07:05.583Z",
+                      "object": "earning_rule"
+                    }
+                  }
                 }
               }
             }
           },
           "400": {
-            "description": "Validation error - request body or query parameters failed validation, or the operation is not allowed in the current resource state.",
+            "description": "The body is invalid, or the earning rule status does not allow the sent fields.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "At least one property is required": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_payload",
+                      "message": "Invalid payload",
+                      "details": "At least one property is required",
+                      "request_id": "v-0c52e7b0650ae58601"
+                    }
+                  },
+                  "Property not allowed for this status": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_payload",
+                      "message": "Invalid payload",
+                      "details": "Only [name, earnings, error, validity_hours, start_date, end_date, trigger_limits, earning_limits, metadata] properties are allowed to be updated when earning rule is in ACTIVE status",
+                      "request_id": "v-0c52e7b1650ae58602"
+                    }
+                  },
+                  "Start date is not before end date": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_payload",
+                      "message": "Invalid payload",
+                      "details": "Property 'start_date' is not before 'end_date'",
+                      "request_id": "v-0c52e7b2650ae58603"
+                    }
+                  },
+                  "Invalid validity hours": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_hours",
+                      "message": "Invalid ValidityHours",
+                      "details": "Property 'start_time' is invalid",
+                      "request_id": "v-0c52e7b3650ae58604"
+                    }
+                  },
+                  "Invalid rules definition": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_rules_definition",
+                      "message": "Invalid Rules Definition",
+                      "details": "Rule 'order.amount' is not supported for trigger 'customer.segment.entered'",
+                      "request_id": "v-0c52e7b4650ae58605"
+                    }
+                  },
+                  "Invalid tier structure relation": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_tier_structure_relation",
+                      "message": "Invalid payload",
+                      "details": "Tier 'lt_12afe9efd24e603ac0' does not belong to tier structure 'lts_12afe9ef956906b3b7'",
+                      "request_id": "v-0c52e7b5650ae58606"
+                    }
+                  },
+                  "Invalid benefit calculation type": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_benefit_calculation_type",
+                      "message": "Invalid payload",
+                      "details": "Benefit 'lben_128f4bba81947c8542' has calculation type 'PRE_DISCOUNT_ORDER_AMOUNT' which is not allowed for trigger 'customer.segment.entered'",
+                      "request_id": "v-0c52e7b6650ae58607"
+                    }
+                  },
+                  "Invalid points expiration override": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_points_expiration_override",
+                      "message": "Invalid payload",
+                      "details": "Effect-level expiration override is not supported when card definition has non-immediate pending points enabled",
+                      "request_id": "v-0c52e7b7650ae58608"
+                    }
+                  },
+                  "Metadata validation failed": {
+                    "value": {
+                      "code": 400,
+                      "key": "metadata_validation_failed",
+                      "message": "Metadata validation failed",
+                      "details": "campaign_type: must be a string, property is required (actual value is 'undefined')",
+                      "request_id": "v-0c52e7b8650ae58609"
+                    }
+                  }
                 }
               }
             }
           },
           "404": {
-            "description": "Resource not found.",
+            "description": "The earning rule does not exist. A deleted earning rule is not found. `key` is `not_found` and `resource_type` is `earning_rule`. A path value that does not match `lern_[a-f0-9]+` returns the same body. A missing benefit, card definition, tier, or tier structure referenced by the stored or sent earnings is also `not_found`, without `resource_id` or `resource_type`.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Earning rule not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find earning_rule with id lern_1329f334d5cba64cfb",
+                      "request_id": "v-0c52e7b9650ae5860a",
+                      "resource_id": "lern_1329f334d5cba64cfb",
+                      "resource_type": "earning_rule"
+                    }
+                  },
+                  "Earning rule ID does not match the pattern": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find earning_rule with id missing",
+                      "request_id": "v-0c52e7ba650ae5860b",
+                      "resource_id": "missing",
+                      "resource_type": "earning_rule"
+                    }
+                  },
+                  "Card definition not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find card_definitions with ids [ lcdef_1329efb2af8ba6486f ]",
+                      "request_id": "v-0c52e7bb650ae5860c"
+                    }
+                  },
+                  "Benefit not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find benefits with ids [ lben_128f4bba81947c8542 ]",
+                      "request_id": "v-0c52e7bc650ae5860d"
+                    }
+                  },
+                  "Tier not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find tiers with ids [ lt_12afe9efd24e603ac0 ]",
+                      "request_id": "v-0c52e7bd650ae5860e"
+                    }
+                  },
+                  "Tier structure not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find tier_structures with ids [ lts_12afe9ef956906b3b7 ]",
+                      "request_id": "v-0c52e7be650ae5860f"
+                    }
+                  }
                 }
               }
             }
           },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
+          "423": {
+            "description": "Returned when the earning rule is `ACTIVE`. The check uses the earnings that will be stored, including stored earnings when the request omits `earnings`. `DRAFT` and `INACTIVE` do not return these errors.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Card definition not assigned": {
+                    "value": {
+                      "code": 423,
+                      "key": "resource_locked",
+                      "message": "Resource locked",
+                      "details": "Cannot find assigned card_definitions with ids [ lcdef_1329efb2af8ba6486f ]",
+                      "request_id": "v-0c52e7bf650ae58610"
+                    }
+                  },
+                  "Tier structure not assigned": {
+                    "value": {
+                      "code": 423,
+                      "key": "resource_locked",
+                      "message": "Resource locked",
+                      "details": "Cannot find assigned tier_structures with ids [ lts_12afe9ef956906b3b7 ]",
+                      "request_id": "v-0c52e7c0650ae58611"
+                    }
+                  },
+                  "Non-active card definition": {
+                    "value": {
+                      "code": 423,
+                      "key": "non_active_card_definition",
+                      "message": "Cannot create earning rule when card definition inside effect is not ACTIVE",
+                      "details": "Invalid card_definition status with id lcdef_1329efb2af8ba6486f",
+                      "request_id": "v-0c52e7c1650ae58612"
+                    }
+                  },
+                  "Non-active benefit": {
+                    "value": {
+                      "code": 423,
+                      "key": "non_active_benefit",
+                      "message": "Cannot create earning rule when benefit inside effect is not ACTIVE",
+                      "details": "Invalid benefit status with id lben_128f4bba81947c8542",
+                      "request_id": "v-0c52e7c2650ae58613"
+                    }
+                  },
+                  "Non-active tier structure": {
+                    "value": {
+                      "code": 423,
+                      "key": "non_active_tier_structure",
+                      "message": "Cannot use non-active tier structure in earning rule tier rules",
+                      "details": "Invalid tier_structure status with id lts_12afe9ef956906b3b7",
+                      "request_id": "v-0c52e7c3650ae58614"
+                    }
+                  }
                 }
               }
             }
@@ -33288,7 +33704,7 @@
         }
       },
       "EarningRuleUpdateRequest": {
-        "description": "Request body for updating an earning rule. All properties are optional; `status` is not updatable here.",
+        "description": "Request body for updating an earning rule. Each field is optional, but the body must include at least one field. `status` is rejected. When the earning rule is `ACTIVE` or `INACTIVE`, only `name`, `earnings`, `error`, `validity_hours`, `start_date`, `end_date`, `trigger_limits`, `earning_limits`, and `metadata` can change. A `DRAFT` rule can also change `trigger`.",
         "allOf": [
           {
             "$ref": "#/components/schemas/EarningRuleRequestBase"
@@ -33300,7 +33716,7 @@
                 "type": "string",
                 "minLength": 1,
                 "maxLength": 200,
-                "description": "Earning rule name."
+                "description": "Sets the earning rule name."
               },
               "trigger": {
                 "$ref": "#/components/schemas/EarningRuleTrigger"
@@ -33308,13 +33724,13 @@
               "earnings": {
                 "type": "array",
                 "minItems": 1,
-                "description": "Earning definitions. Items with an `id` update existing earning items; items without an `id` are created. Omitted existing items are removed.",
+                "description": "Replaces the earning list. An item whose `id` matches a stored `lernei_` id replaces that item. An omitted `id`, or an `id` that is not on this rule, creates an item and the server assigns the id. Items left out of the array are removed. At least one item.",
                 "items": {
                   "$ref": "#/components/schemas/EarningRuleEarningUpdate"
                 }
               },
               "validity_hours": {
-                "description": "Hours during which the rule is active. Can be `null`.",
+                "description": "Sets the hours during which the rule is active. Omit the field or set it to `null` to keep the stored value. The response always returns `validity_hours`.",
                 "oneOf": [
                   {
                     "$ref": "#/components/schemas/EarningRuleValidityHours"
@@ -33325,10 +33741,21 @@
                 ]
               },
               "trigger_limits": {
-                "description": "Cooldown and frequency limits for the trigger. Can be `null`.",
+                "description": "Sets the cooldown and frequency limits for the trigger. Omit the field or set it to `null` to keep the stored value. The response always returns `trigger_limits`.",
                 "oneOf": [
                   {
                     "$ref": "#/components/schemas/EarningRuleTriggerLimits"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "earning_limits": {
+                "description": "Sets how many points this rule can award. Omit the field or set it to `null` to keep the stored value. The response always returns `earning_limits`.",
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/LoyaltyV2ActivityEarningRuleEarningLimits"
                   },
                   {
                     "type": "null"
@@ -40705,7 +41132,7 @@
         "type": "object",
         "properties": {
           "error": {
-            "description": "Default error returned when rule validation fails. Can be `null`.",
+            "description": "Default error returned when rule validation fails. On create, omit the field or set it to `null` to store no error. On update, omit the field or set it to `null` to keep the stored error. The response omits `error` when none is stored.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/LoyaltyV2ActivityEarningRuleError"
@@ -40721,7 +41148,7 @@
               "null"
             ],
             "format": "date-time",
-            "description": "Date-time from which the rule is active. Can be `null`. When both `start_date` and `end_date` are set, `start_date` must be earlier than `end_date`."
+            "description": "Sets the date-time from which the rule is active. A calendar date (`YYYY-MM-DD`) is accepted and stored as midnight UTC. Set to `null` to clear the start. `start_date` must be earlier than `end_date`. On update, an omitted date keeps the stored value and is included in that comparison."
           },
           "end_date": {
             "type": [
@@ -40729,10 +41156,10 @@
               "null"
             ],
             "format": "date-time",
-            "description": "Date-time until which the rule is active. Can be `null`."
+            "description": "Sets the date-time until which the rule is active. A calendar date (`YYYY-MM-DD`) is accepted and stored as midnight UTC. Set to `null` to clear the end. On update, an omitted date keeps the stored value."
           },
           "metadata": {
-            "description": "Arbitrary key-value metadata. A request may omit this field or set it to `null`. `null` is stored as an empty object. The response always returns an object.",
+            "description": "Arbitrary key-value metadata. The response always returns an object. On create, omit the field or set it to `null` to store `{}`. On update, omit the field to keep stored keys, set `null` to clear them, or send an object to merge those keys into the stored object.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/LoyaltyV2ActivityMetadata"
@@ -41214,7 +41641,7 @@
         }
       },
       "EarningRuleEarningUpdate": {
-        "description": "A single earning definition for updates. Same as the create variant plus an optional `id` referencing an existing earning item.",
+        "description": "Replaces one earning item on update. `effects` is required. Omitted `name` and `rules` are not kept. Omitted or `null` `tier_rules` uses `{ \"type\": \"NO_REQUIREMENTS\" }`. Include `id` only to replace a stored item.",
         "allOf": [
           {
             "$ref": "#/components/schemas/EarningRuleEarningBase"
@@ -41225,7 +41652,7 @@
               "id": {
                 "type": "string",
                 "pattern": "^lernei_[a-f0-9]+$",
-                "description": "Existing earning item ID (`lernei_...`). Omit to create a new item."
+                "description": "Identifies a stored earning item (`lernei_...`). Omit it, or send an id that is not on this rule, to create an item. The server assigns the new id."
               }
             }
           }
