@@ -7,6 +7,14 @@ Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
 ## 2026-11-05
 
+Documented the v20261019_o dashboard release and its SAML login hotfix in `changelog.mdx`.
+
+Updated release guides for that version:
+
+- Updated `discount-types-and-effects.mdx` and `create-validation-rules.mdx` for the discount **Conditions** step (**Add validation rule**, search, **Create new**, **Edit**, **Duplicate**) and for rules marked **Deprecated Rules**.
+- Updated `campaign-maintenance.mdx` for the add vouchers wizard on discount, gift, loyalty, and referral campaigns.
+- Updated `account-security.mdx` so signup and password reset require reCAPTCHA before submit.
+
 Clarified loyalty v1 vs Loyalty Hub (v2) wording across guides, integrations, and top-level API reference pages so mentions of loyalty campaigns, cards, tiers, and related events name which system they apply to.
 
 ## 2026-11-03
