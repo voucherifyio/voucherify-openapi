@@ -1,4 +1,6 @@
 ## Earning Rule
+<p>Earning rule for a <strong>legacy loyalty</strong> campaign. For Loyalty hub earning rules, see <code>/v2/loyalties/earning-rules</code>.</p>
+
 All of:
 
 <ol><li><a href="#earningrulebase">EarningRuleBase</a></li><li><table><thead><tr><th>Attributes</th><th>Description</th></tr></thead><tbody><tr><td><p>validation_rule_id<br/><code>string</code>, <code>null</code></p></td><td><p>A unique validation rule identifier assigned by the Voucherify API. The validation rule is verified before points are added to the balance.</p></td></tr><tr><td><p>updated_at<br/><code>string</code>, <code>null</code></p></td><td><p>Timestamp representing the date and time when the earning rule was last updated in ISO 8601 format.</p></td></tr><tr><td><p>active<br/><code>boolean</code></p></td><td><p>A flag to toggle the earning rule on or off. You can disable an earning rule even though it's within the active period defined by the start_date and expiration_date of the campaign or the earning rule's own start_date and expiration_date.</p><ul><li><code>true</code> indicates an active earning rule</li><li><code>false</code> indicates an inactive earning rule</li></ul></td></tr></tbody></table></li></ol>
