@@ -5,6 +5,10 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-11-05
+
+Clarified loyalty v1 vs Loyalty Hub (v2) wording across guides, integrations, and top-level API reference pages so mentions of loyalty campaigns, cards, tiers, and related events name which system they apply to.
+
 ## 2026-11-03
 
 Added a `diataxis` frontmatter field (`tutorial`, `how-to`, `reference`, or `explanation`) on documentation MDX pages so writers and agents can pick the page type without re-reading the body.
