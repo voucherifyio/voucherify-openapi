@@ -16879,7 +16879,7 @@
         ],
         "operationId": "activateEarningRule",
         "summary": "Activate earning rule",
-        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nMoves the earning rule to `ACTIVE` from `DRAFT` or `INACTIVE`. No request body. Any other status returns `400` (`invalid_state_transition`). Returns `423` when an effect or tier rule still points at a non-active benefit (`non_active_benefit`), card definition (`non_active_card_definition`), or tier structure (`non_active_tier_structure`).",
+        "description": "Moves the earning rule to `ACTIVE` from `DRAFT` or `INACTIVE`. No request body. Effect and tier rule checks run before the status check, so a rule that is already `ACTIVE` can return `423`, `404`, or `400` (`invalid_points_expiration_override`, `invalid_benefit_calculation_type`, `invalid_tier_structure_relation`) before `invalid_state_transition`.",
         "responses": {
           "200": {
             "description": "Activated earning rule",
@@ -16887,36 +16887,259 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/V2LoyaltiesEarningRulesActivateResponseBody"
+                },
+                "examples": {
+                  "Activated earning rule": {
+                    "value": {
+                      "id": "lern_133a941c44c06594cf",
+                      "name": "Updated earning rule",
+                      "status": "ACTIVE",
+                      "earnings": [
+                        {
+                          "id": "lernei_133a941c42006594cd",
+                          "name": "Existing earning 01",
+                          "rules": {
+                            "1": {
+                              "name": "customer.segment",
+                              "conditions": {
+                                "$is": [
+                                  "seg_AOmoT5hwNqBl7tJsHh26CBUH"
+                                ]
+                              }
+                            },
+                            "logic": " 1"
+                          },
+                          "tier_rules": {
+                            "type": "NO_REQUIREMENTS"
+                          },
+                          "effects": [
+                            {
+                              "type": "POINTS",
+                              "points": {
+                                "value": 30,
+                                "card_definition_id": "lcdef_1331564fab0b1ce713"
+                              }
+                            }
+                          ]
+                        }
+                      ],
+                      "trigger": {
+                        "event": "customer.order.paid"
+                      },
+                      "validity_hours": {
+                        "type": "ANY_TIME"
+                      },
+                      "start_date": null,
+                      "end_date": "2026-12-31T00:00:00.000Z",
+                      "trigger_limits": {
+                        "cooldown": {
+                          "type": "NO_COOLDOWN"
+                        },
+                        "frequency": {
+                          "type": "NO_LIMIT",
+                          "limits": []
+                        }
+                      },
+                      "earning_limits": {
+                        "global": {
+                          "type": "NO_LIMIT",
+                          "limits": []
+                        }
+                      },
+                      "metadata": {
+                        "temporary_earning_rule": true
+                      },
+                      "created_at": "2026-10-22T11:30:54.857Z",
+                      "updated_at": "2026-11-05T17:04:08.742Z",
+                      "object": "earning_rule"
+                    }
+                  }
                 }
               }
             }
           },
           "400": {
-            "description": "Validation error - request body or query parameters failed validation, or the operation is not allowed in the current resource state.",
+            "description": "The earning rule is already `ACTIVE` (`invalid_state_transition`), or a stored effect or tier rule fails an activation check (`invalid_points_expiration_override`, `invalid_benefit_calculation_type`, `invalid_tier_structure_relation`). Effect and tier rule checks run before the status check.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Activate active earning rule": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_state_transition",
+                      "message": "Invalid state transition",
+                      "details": "Cannot activate earning-rule from current state: 'ACTIVE'",
+                      "request_id": "v-134ce6416c2981df43"
+                    }
+                  },
+                  "Invalid points expiration override": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_points_expiration_override",
+                      "message": "Invalid payload",
+                      "details": "Effect-level expiration override is not supported when card definition has non-immediate pending points enabled",
+                      "request_id": "v-134ce6426c2981df44"
+                    }
+                  },
+                  "Invalid benefit calculation type": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_benefit_calculation_type",
+                      "message": "Invalid payload",
+                      "details": "Benefit 'lben_128f4bba81947c8542' has calculation type 'PRE_DISCOUNT_ORDER_AMOUNT' which is not allowed for trigger 'customer.segment.entered'",
+                      "request_id": "v-134ce6436c2981df45"
+                    }
+                  },
+                  "Invalid tier structure relation": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_tier_structure_relation",
+                      "message": "Invalid payload",
+                      "details": "Tier 'lt_12afe9efd24e603ac0' does not belong to tier structure 'lts_12afe9ef956906b3b7'",
+                      "request_id": "v-134ce6446c2981df46"
+                    }
+                  }
                 }
               }
             }
           },
           "404": {
-            "description": "Resource not found.",
+            "description": "The earning rule does not exist, or it is deleted. `key` is `not_found` and `resource_type` is `earning_rule`. A path value that does not match `lern_[a-f0-9]+` returns the same body. A missing benefit, card definition, tier, or tier structure referenced by the stored earnings is also `not_found`, without `resource_id` or `resource_type`. A missing segment on a `customer.segment.entered` rule returns `not_found` with `resource_type` `segment`.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Earning rule not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find earning_rule with id lern_1329f334d5cba64cfb",
+                      "request_id": "v-134ce6456c2981df47",
+                      "resource_id": "lern_1329f334d5cba64cfb",
+                      "resource_type": "earning_rule"
+                    }
+                  },
+                  "Earning rule ID does not match the pattern": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find earning_rule with id missing",
+                      "request_id": "v-134ce6466c2981df48",
+                      "resource_id": "missing",
+                      "resource_type": "earning_rule"
+                    }
+                  },
+                  "Card definition not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find card_definitions with ids [ lcdef_1329efb2af8ba6486f ]",
+                      "request_id": "v-134ce6476c2981df49"
+                    }
+                  },
+                  "Benefit not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find benefits with ids [ lben_128f4bba81947c8542 ]",
+                      "request_id": "v-134ce6486c2981df4a"
+                    }
+                  },
+                  "Tier not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find tiers with ids [ lt_12afe9efd24e603ac0 ]",
+                      "request_id": "v-134ce6496c2981df4b"
+                    }
+                  },
+                  "Tier structure not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find tier_structures with ids [ lts_12afe9ef956906b3b7 ]",
+                      "request_id": "v-134ce64a6c2981df4c"
+                    }
+                  },
+                  "Segment not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find segment with id seg_BPnpU6ixOrCm8uKtIi37DCVI",
+                      "request_id": "v-134ce64b6c2981df4d",
+                      "resource_id": "seg_BPnpU6ixOrCm8uKtIi37DCVI",
+                      "resource_type": "segment"
+                    }
+                  }
                 }
               }
             }
           },
           "423": {
-            "description": "A benefit, card definition, or tier structure used by the earning rule is not active.",
+            "description": "An effect or tier rule uses a benefit, card definition, or tier structure that is not `ACTIVE`, or an effect card definition or tier structure that is not assigned to the earning rule's program.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Card definition not assigned": {
+                    "value": {
+                      "code": 423,
+                      "key": "resource_locked",
+                      "message": "Resource locked",
+                      "details": "Cannot find assigned card_definitions with ids [ lcdef_1329efb2af8ba6486f ]",
+                      "request_id": "v-134ce64c6c2981df4e"
+                    }
+                  },
+                  "Tier structure not assigned": {
+                    "value": {
+                      "code": 423,
+                      "key": "resource_locked",
+                      "message": "Resource locked",
+                      "details": "Cannot find assigned tier_structures with ids [ lts_12afe9ef956906b3b7 ]",
+                      "request_id": "v-134ce64d6c2981df4f"
+                    }
+                  },
+                  "Non-active card definition": {
+                    "value": {
+                      "code": 423,
+                      "key": "non_active_card_definition",
+                      "message": "Cannot create earning rule when card definition inside effect is not ACTIVE",
+                      "details": "Invalid card_definition status with id lcdef_1329efb2af8ba6486f",
+                      "request_id": "v-134ce6406c2981df42"
+                    }
+                  },
+                  "Non-active benefit": {
+                    "value": {
+                      "code": 423,
+                      "key": "non_active_benefit",
+                      "message": "Cannot create earning rule when benefit inside effect is not ACTIVE",
+                      "details": "Invalid benefit status with id lben_128f4bba81947c8542",
+                      "request_id": "v-134ce64e6c2981df50"
+                    }
+                  },
+                  "Non-active tier structure": {
+                    "value": {
+                      "code": 423,
+                      "key": "non_active_tier_structure",
+                      "message": "Cannot use non-active tier structure in earning rule tier rules",
+                      "details": "Invalid tier_structure status with id lts_12afe9ef956906b3b7",
+                      "request_id": "v-134ce64f6c2981df51"
+                    }
+                  }
                 }
               }
             }
