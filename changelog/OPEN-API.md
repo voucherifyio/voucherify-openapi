@@ -4,6 +4,21 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-11-05
+
+- Verified and updated POST `/v2/loyalties/earning-rules/{earningRuleId}/activate`.
+  - Clarified that effect and tier rule checks run before the status check. A rule that is already `ACTIVE` can return `423`, `404`, or `400` before `invalid_state_transition`.
+  - Corrected the `400` description. It is an invalid state transition (`invalid_state_transition`) or a stored effect or tier rule check (`invalid_points_expiration_override`, `invalid_benefit_calculation_type`, `invalid_tier_structure_relation`), not request-body or query validation.
+  - Documented `423` `resource_locked` when an effect card definition or tier structure is not assigned to the earning rule's program, alongside `non_active_benefit`, `non_active_card_definition`, and `non_active_tier_structure`.
+  - Added `400`, `404`, and `423` examples. `404` covers a missing or deleted earning rule, an id that does not match `lern_[a-f0-9]+`, a missing benefit, card definition, tier, or tier structure, and a missing segment on a `customer.segment.entered` rule.
+- Verified and updated PUT `/v2/loyalties/earning-rules/{earningRuleId}`. Removed the documentation-in-progress badge.
+  - Replaced `409` with `423`. On an `ACTIVE` rule, the earnings that will be stored are checked for a non-active benefit (`non_active_benefit`), card definition (`non_active_card_definition`), or tier structure (`non_active_tier_structure`), and for an effect card definition or tier structure that is not assigned to the earning rule's program (`resource_locked`). `DRAFT` and `INACTIVE` do not return these errors. The check includes stored earnings when the request omits `earnings`.
+  - Clarified that each field is optional and the body must include at least one field. `status` is rejected with `400`. `ACTIVE` and `INACTIVE` rules can change `name`, `earnings`, `error`, `validity_hours`, `start_date`, `end_date`, `trigger_limits`, `earning_limits`, and `metadata`. A `DRAFT` rule can also change `trigger`.
+  - Clarified that `earnings` replaces the list. An item `id` that matches a stored `lernei_` id replaces that item. An omitted `id`, or an `id` that is not on this rule, creates an item. Items left out of the array are removed.
+  - Clarified `EarningRuleEarningUpdate`. `effects` is required. Omitted `name` and `rules` are not kept. Omitted or `null` `tier_rules` uses `{ "type": "NO_REQUIREMENTS" }`.
+  - Clarified shared request fields on update. An omitted `start_date` or `end_date` keeps the stored value. A calendar date is stored as midnight UTC. Omit `error` or set it to `null` to keep the stored error. Omit `metadata` to keep stored keys, set `null` to clear them, or send an object to merge those keys.
+  - Added `200`, `400`, `404`, and `423` examples. `400` covers an empty body, a field the status does not allow, `start_date` not before `end_date`, invalid validity hours, rules, tier relation, benefit calculation type, points expiration override, and metadata. `404` covers a missing or deleted earning rule, an id that does not match `lern_[a-f0-9]+`, and a missing benefit, card definition, tier, or tier structure.
+
 ## 2026-10-22
 
 - Verified and updated POST `/v2/loyalties/earning-rules`. Removed the documentation-in-progress badge.
