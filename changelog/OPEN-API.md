@@ -6,6 +6,9 @@ Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
 ## 2026-11-05
 
+- Verified and updated POST `/v2/loyalties/earning-rules/{earningRuleId}/deactivate`. Removed the documentation-in-progress badge.
+  - Corrected the `400` description. It is an invalid state transition (`invalid_state_transition`) when the earning rule is not `ACTIVE`, not request-body or query validation.
+  - Added `200`, `400`, and `404` examples. `400` covers `DRAFT` and `INACTIVE`. `404` covers a missing or deleted earning rule and an id that does not match `lern_[a-f0-9]+`.
 - Verified and updated POST `/v2/loyalties/earning-rules/{earningRuleId}/activate`.
   - Clarified that effect and tier rule checks run before the status check. A rule that is already `ACTIVE` can return `423`, `404`, or `400` before `invalid_state_transition`.
   - Corrected the `400` description. It is an invalid state transition (`invalid_state_transition`) or a stored effect or tier rule check (`invalid_points_expiration_override`, `invalid_benefit_calculation_type`, `invalid_tier_structure_relation`), not request-body or query validation.
