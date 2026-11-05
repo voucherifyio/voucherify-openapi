@@ -18,6 +18,7 @@ Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
   - Clarified `EarningRuleEarningUpdate`. `effects` is required. Omitted `name` and `rules` are not kept. Omitted or `null` `tier_rules` uses `{ "type": "NO_REQUIREMENTS" }`.
   - Clarified shared request fields on update. An omitted `start_date` or `end_date` keeps the stored value. A calendar date is stored as midnight UTC. Omit `error` or set it to `null` to keep the stored error. Omit `metadata` to keep stored keys, set `null` to clear them, or send an object to merge those keys.
   - Added `200`, `400`, `404`, and `423` examples. `400` covers an empty body, a field the status does not allow, `start_date` not before `end_date`, invalid validity hours, rules, tier relation, benefit calculation type, points expiration override, and metadata. `404` covers a missing or deleted earning rule, an id that does not match `lern_[a-f0-9]+`, and a missing benefit, card definition, tier, or tier structure.
+- Documented the Loyalty activity recorded by each `/v2/loyalties` operation. A successful write names the `vl.*` activity and links its page. Reads, lists, reports, and point and purchase calls record no activity.
 
 ## 2026-10-22
 
