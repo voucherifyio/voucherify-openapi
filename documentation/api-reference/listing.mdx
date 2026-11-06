@@ -5,14 +5,16 @@ keywords: ['resource', 'listing', 'data', 'response']
 diataxis: "reference"
 ---
 
-All top-level API resources have support for fetches via **list** API methods. For instance, you can list redemptions, list publications, list customers, list products, and more.
+Many API resources support fetches via **list** API methods. For example, you can list redemptions, publications, customers, products, and more.
 
-These list API methods share a common structure, using at least these *query parameters*: `limit` and `created_at`.
+These list API methods often share query parameters such as `limit`, `created_at`, `updated_at`, and `order`. Availability and allowed values depend on the endpoint. Check the endpoint page for the full parameter list.
 
-| **Parameter name** | **Description**                                                                                                                                                                                                                                                                                                                   |
-| ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `limit`            | A limit on the number of objects to be returned; between 1 and 100.                                                                                                                                                                                                                                                               |
-| `created_at`       | A filter on the list based on the object `created_at` field. The value is a dictionary with the following options: `before`, `after`. A date value must be presented in ISO 8601 format (`2016-11-16T14:14:31Z` or `2016-11-16`). *Examples:* - `[created_at][before]=2017-09-08T13:52:18.227Z`- `[created_at][after]=2017-09-08` |
+| **Parameter name** | **Description** |
+| ------------------ | --------------- |
+| `limit` | Optional. A limit on the number of objects to be returned; between 1 and 100. |
+| `created_at` | Optional on many lists. A filter based on the object `created_at` field. The value is a dictionary with `before` and `after`. Use ISO 8601 (`2016-11-16T14:14:31Z` or `2016-11-16`). *Examples:* `[created_at][before]=2017-09-08T13:52:18.227Z`, `[created_at][after]=2017-09-08` |
+| `updated_at` | Optional on some lists. Same `before` / `after` shape as `created_at`, applied to `updated_at`. |
+| `order` | Optional on many lists. Sorts results. A leading dash (`-`) means descending order. Allowed values are resource-specific. |
 
 ## Paging the results
 
@@ -21,6 +23,7 @@ Some of the list API methods use the `page` query parameter to display another p
 However, the following list API methods use the `starting_after_id` query parameter:
 
 * [List customer activity](/api-reference/customers/list-customer-activity)
+* [List customer activities](/api-reference/customers/list-customer-activities)
 * [List member activity](/api-reference/loyalties/list-member-activity)
 * [List member activity (with campaign ID)](/api-reference/loyalties/list-member-activity-with-campaign-id)
 * [List campaign transactions](/api-reference/campaigns/list-campaign-transactions)
@@ -28,6 +31,9 @@ However, the following list API methods use the `starting_after_id` query parame
 * [List loyalty campaign transactions](/api-reference/loyalties/list-loyalty-campaign-transactions)
 * [List loyalty card transactions](/api-reference/loyalties/list-loyalty-card-transactions)
 * [List loyalty card transactions (with campaign ID)](/api-reference/loyalties/list-loyalty-card-transactions-with-campaign-id)
+* [List campaign pending points](/api-reference/loyalties/list-campaign-pending-points)
+* [List member pending points](/api-reference/loyalties/list-member-pending-points)
+* [List member pending points (with campaign ID)](/api-reference/loyalties/list-member-pending-points-with-campaign-id)
 * [List customer redeemables](/api-reference/customers/list-customers-redeemables)
 * [List referral code holders](/api-reference/referrals/list-referral-code-holders)
 * [List referral code holders (with campaign ID)](/api-reference/referrals/list-referral-code-holders-with-campaign-id)
@@ -177,23 +183,27 @@ The listing method returns a dictionary with a data property that contains an ar
 
 ## Shortcuts
 
-List API methods offer a list of query parameters. These parameters allow you to filter the results. Each API resource enables a specific set of options which can be used for simplifying a query. If you need advanced options, read the [next section](#advanced-filters-for-fetching-resources).
+List API methods offer query parameter shortcuts that map to internal filters. Each resource enables a specific set. If you need advanced options, read the [next section](#advanced-filters-for-fetching-resources).
 
-| Resource                        | **Shortcuts**                                                                                                           | **Example**                                                                             |
-| ------------------------------- | ----------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
-| **Vouchers**                    | `customer` `campaign` `category`                                                                                          | `{api-url}/vouchers?customer=source_id`                                                 |
-| **Redemptions**                 | `campaign_name` `customer` `voucher_code` `related_object_id` `related_object_parent_id`                                    | `{api-url}/redemptions?customer=customer_id` `{api-url}/redemptions?customer=source_id` |
-| **Customers**                   | `email` `name`                                                                                                           | `{api-url}/[email protected]`                                                           |
-| **Publications**                | `campaign_name` `customer_id` `voucher_code` `result` `voucher_type` `is_referral_code` `parent_object_id` `related_object_id` | `{api-url}/publications?campaign_name=TEST`                                             |
-| **Validation Rule Assignments** | `related_object_id` `rule`                                                                                               | `{api-url}/validation-rules-assignments?related_object_id=promo_id`                     |
+| Resource | **Shortcuts** | **Example** |
+| -------- | ------------- | ----------- |
+| **Vouchers** | `customer` `campaign` `category` | `{api-url}/vouchers?customer=source_id` |
+| **Redemptions** | `campaign` `customer` `voucher` `related_object` `related_object_parent_id` `result` `object` | `{api-url}/redemptions?customer=customer_id` `{api-url}/redemptions?customer=source_id` |
+| **Customers** | `email` `name` `city` `segment_id` | `{api-url}/customers?email=john@example.com` |
+| **Publications** | `campaign` `customer` `voucher` `result` `voucher_type` `is_referral_code` `parent_object_id` `related_object_id` `source_id` | `{api-url}/publications?campaign=TEST` |
+| **Validation Rule Assignments** | `related_object_id` `rule` | `{api-url}/validation-rules-assignments?related_object_id=promo_id` |
+
+For publications, `voucher_type` matches with a starts-with condition, not an exact match.
 
 ## Advanced filters for fetching resources
 
-Moreover, API methods for fetching resources offer extended capabilities for filtering data. A user​ can build advanced queries by passing parameters that define search criteria.
+API methods for fetching resources also accept nested `filters` query parameters for more precise criteria.
 
-| **Resource**                  | **Examples**                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| ----------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Vouchers**                  | `[filters][active][conditions][$active]=true` `[filters][active][conditions][$expired]=true` `[filters][active][conditions][$enabled]=true` `[filters][active][conditions][$disabled]=true` `[filters][redemption.redeemed_quantity][conditions][$is]=0` `[filters][is_referral_code][conditions][$is]=true` `[filters][expiration_date][conditions][$before]=2024-04-29T00:00:00.000Z` `[filters][metadata.seq_number][conditions][$is]=1`                                                    |
-| **Campaigns**                 | `[filters][metadata.seq_number][conditions][$is]=1` `[filters][metadata.test][conditions][$is]=true`                                                                                                                                                                                                                                                                                                                                                                                      |
-| **Products and Skus**         | `[filters][updated_at][conditions][$after][0]=2020-08-20T14:17:09Z` `[filters][updated_at][conditions][$before][0]=2020-08-20T14:17:09Z` `[filters][created_at][conditions][$after][0]=2020-08-20T14:17:09Z` `[filters][created_at][conditions][$before][0]=2020-08-20T14:17:09Z`                                                                                                                                                                                                           |
+| **Resource** | **Examples** |
+| ------------ | ------------ |
+| **Vouchers** | `[filters][active][conditions][$active]=true` `[filters][active][conditions][$expired]=true` `[filters][active][conditions][$enabled]=true` `[filters][active][conditions][$disabled]=true` `[filters][redemption_status][conditions][$redeemed]=true` `[filters][redemption_status][conditions][$redeemable]=true` `[filters][redemption.redeemed_quantity][conditions][$is]=0` `[filters][is_referral_code][conditions][$is]=true` `[filters][expiration_date][conditions][$before]=2024-04-29T00:00:00.000Z` `[filters][metadata.seq_number][conditions][$is]=1` |
+| **Campaigns** | `[filters][metadata.seq_number][conditions][$is]=1` `[filters][metadata.test][conditions][$is]=true` |
+| **Products and Skus** | `[filters][updated_at][conditions][$after][0]=2020-08-20T14:17:09Z` `[filters][updated_at][conditions][$before][0]=2020-08-20T14:17:09Z` `[filters][created_at][conditions][$after][0]=2020-08-20T14:17:09Z` `[filters][created_at][conditions][$before][0]=2020-08-20T14:17:09Z` |
 | **List all promotion stacks** | `[created_at][before]=2021-12-30T13:52:18.227Z` `[created_at][after]=2021-12-30T13:52:18.227Z` `[filters][created_at][conditions][$before][0]=2021-12-30T13:52:18.227Z` `[filters][created_at][conditions][$after][0]=2021-12-30T13:52:18.227Z` `[updated_at][before]=2021-12-30T13:52:18.227Z` `[updated_at][after]=2021-12-30T13:52:18.227Z` `[filters][updated_at][conditions][$before][0]=2021-12-30T13:52:18.227Z` `[filters][updated_at][conditions][$after][0]=2021-12-30T13:52:18.227Z` |
+
+For voucher `filters[active]` and `filters[redemption_status]`, send one condition key per request. Only the first condition key is applied.
