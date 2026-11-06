@@ -5,6 +5,21 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-11-06
+
+Clarified Loyalty v2 point-wallet **Return policy** versus reward purchase refunds: return policy settings can be saved but are not applied on order cancel or refund yet; reward refunds use the reward **Refundable** setting and a separate API path.
+
+- Updated `create-point-wallets.mdx`
+- Updated `loyalty-key-concepts.mdx`
+- Updated `create-loyalty-rewards.mdx`
+- Updated `loyalty-v2-take-to-production.mdx`
+- Updated `loyalty-v2-card-definitions-overview.mdx`
+
+Documented default transactional data retention and linked it from related guides.
+
+- Added `transactional-data-retention.mdx` (redemptions and rollback records indefinitely; validations 30 days; order line items, order discounts, and voucher transactions 2 years; redemption rollback 3-month action window)
+- Updated `orders.mdx`, `voucher-tracking.mdx`, `validations-and-redemptions.mdx`, `security-overview.mdx`, and `security-and-data-protection.mdx`
+
 ## 2026-11-05
 
 Documented the v20261019_o dashboard release and its SAML login hotfix in `changelog.mdx`.
