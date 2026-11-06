@@ -20,6 +20,8 @@ Documented default transactional data retention and linked it from related guide
 - Added `transactional-data-retention.mdx` (redemptions and rollback records indefinitely; validations 30 days; order line items, order discounts, and voucher transactions 2 years; redemption rollback 3-month action window)
 - Updated `orders.mdx`, `voucher-tracking.mdx`, `validations-and-redemptions.mdx`, `security-overview.mdx`, and `security-and-data-protection.mdx`
 
+Verified and updated `listing.mdx` against list helpers: corrected redemption and publication shortcut query params, customer shortcuts and the email example, voucher `active` / `redemption_status` filter notes, common `order` / `updated_at` parameters, and the `starting_after_id` endpoint list.
+
 ## 2026-11-05
 
 Documented the v20261019_o dashboard release and its SAML login hotfix in `changelog.mdx`.
