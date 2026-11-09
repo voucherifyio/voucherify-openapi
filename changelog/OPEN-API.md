@@ -13,6 +13,7 @@ Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
   - Renamed the list response schema to `LoyaltiesEarningRulesActivitiesListResponseBody`.
 - Clarified `EarningRuleDateFilterConditions`. `$is`, `$more_than`, and `$less_than` count whole days before the current day. Used by GET `/v2/loyalties/earning-rules` and GET `/v2/loyalties/earning-rules/{earningRuleId}/activities`.
 - Added a `200` example to POST `/v2/loyalties/earning-rules/{earningRuleId}/draft`.
+- Removed the POST `/v2/loyalties/earning-rules/{earningRuleId}/draft` from `docs.json`.
 
 ## 2026-11-05
 
