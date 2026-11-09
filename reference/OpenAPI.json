@@ -82799,7 +82799,7 @@
       },
       "EarningRuleDateFilterConditions": {
         "type": "object",
-        "description": "Date field filter conditions. `$before` and `$after` take a date string; `$is`, `$more_than` and `$less_than` take a non-negative integer number of days (relative comparison); `$has_value` and `$is_unknown` are presence checks.",
+        "description": "Date field filter conditions. `$before` and `$after` take a date string; `$is`, `$more_than` and `$less_than` take a non-negative integer number of whole days before the current day (relative comparison); `$has_value` and `$is_unknown` are presence checks.",
         "required": [
           "conditions"
         ],
@@ -83194,6 +83194,28 @@
           }
         }
       },
+      "EarningRuleActivityData": {
+        "type": "object",
+        "description": "Activity payload. Always includes an `earning_rule` snapshot. `vl.earning_rule.assigned` and `vl.earning_rule.unassigned` also include `program` and `program_earning_rule`. Other activity types omit those two fields.",
+        "properties": {
+          "earning_rule": {
+            "$ref": "#/components/schemas/LoyaltyV2ActivityEarningRule",
+            "description": "Returns the earning rule at the time of the activity. `status` is `DELETED` on `vl.earning_rule.deleted`."
+          },
+          "program": {
+            "$ref": "#/components/schemas/Program",
+            "description": "Returns the program at the time of the activity. Present for `vl.earning_rule.assigned` and `vl.earning_rule.unassigned`."
+          },
+          "program_earning_rule": {
+            "$ref": "#/components/schemas/ProgramEarningRuleAssignment",
+            "description": "Returns the program assignment at the time of the activity. Present for `vl.earning_rule.assigned` and `vl.earning_rule.unassigned`."
+          }
+        },
+        "required": [
+          "earning_rule"
+        ],
+        "additionalProperties": false
+      },
       "EarningRuleActivityResponse": {
         "type": "object",
         "description": "A single earning rule activity.",
@@ -83212,9 +83234,8 @@
             "$ref": "#/components/schemas/EarningRuleActivityType"
           },
           "data": {
-            "type": "object",
-            "description": "Activity payload. For created/updated/deleted/activated/deactivated/drafted activities it contains an `earning_rule` snapshot (the full earning rule object at the time of the change).",
-            "additionalProperties": true
+            "$ref": "#/components/schemas/EarningRuleActivityData",
+            "description": "Activity payload. Always includes an `earning_rule` snapshot. `vl.earning_rule.assigned` and `vl.earning_rule.unassigned` also include `program` and `program_earning_rule`. Other activity types omit those two fields."
           },
           "created_at": {
             "type": "string",
@@ -83229,10 +83250,38 @@
             "$ref": "#/components/schemas/EarningRuleActivitySource",
             "description": "Origin of the activity. Absent when not recorded."
           }
-        }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "enum": [
+                    "vl.earning_rule.assigned",
+                    "vl.earning_rule.unassigned"
+                  ]
+                }
+              },
+              "required": [
+                "type"
+              ]
+            },
+            "then": {
+              "properties": {
+                "data": {
+                  "required": [
+                    "earning_rule",
+                    "program",
+                    "program_earning_rule"
+                  ]
+                }
+              }
+            }
+          }
+        ]
       },
-      "V2LoyaltiesEarningRulesActivitiesListResponseBody": {
-        "title": "V2 Loyalties Earning Rules Activities List Response Body",
+      "LoyaltiesEarningRulesActivitiesListResponseBody": {
+        "title": "Loyalties Earning Rules Activities List Response Body",
         "type": "object",
         "description": "Response body schema for **GET** `/v2/loyalties/earning-rules/{earningRuleId}/activities`.",
         "allOf": [
@@ -164623,6 +164672,73 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/V2LoyaltiesEarningRulesDraftResponseBody"
+                },
+                "examples": {
+                  "Move active earning rule to draft": {
+                    "value": {
+                      "id": "lern_133a941c44c06594cf",
+                      "name": "Updated earning rule",
+                      "status": "DRAFT",
+                      "earnings": [
+                        {
+                          "id": "lernei_133a941c42006594cd",
+                          "name": "Existing earning 01",
+                          "rules": {
+                            "1": {
+                              "name": "customer.segment",
+                              "conditions": {
+                                "$is": [
+                                  "seg_AOmoT5hwNqBl7tJsHh26CBUH"
+                                ]
+                              }
+                            },
+                            "logic": " 1"
+                          },
+                          "tier_rules": {
+                            "type": "NO_REQUIREMENTS"
+                          },
+                          "effects": [
+                            {
+                              "type": "POINTS",
+                              "points": {
+                                "value": 30,
+                                "card_definition_id": "lcdef_1331564fab0b1ce713"
+                              }
+                            }
+                          ]
+                        }
+                      ],
+                      "trigger": {
+                        "event": "customer.order.paid"
+                      },
+                      "validity_hours": {
+                        "type": "ANY_TIME"
+                      },
+                      "start_date": null,
+                      "end_date": "2026-12-31T00:00:00.000Z",
+                      "trigger_limits": {
+                        "cooldown": {
+                          "type": "NO_COOLDOWN"
+                        },
+                        "frequency": {
+                          "type": "NO_LIMIT",
+                          "limits": []
+                        }
+                      },
+                      "earning_limits": {
+                        "global": {
+                          "type": "NO_LIMIT",
+                          "limits": []
+                        }
+                      },
+                      "metadata": {
+                        "temporary_earning_rule": true
+                      },
+                      "created_at": "2026-10-22T11:30:54.857Z",
+                      "updated_at": "2026-11-09T11:38:42.560Z",
+                      "object": "earning_rule"
+                    }
+                  }
                 }
               }
             }
@@ -164707,7 +164823,7 @@
         ],
         "operationId": "listEarningRuleActivities",
         "summary": "List earning rule activities",
-        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nReturns a cursor-paginated list of activities (audit trail) for a single earning rule.\nThe same field cannot be used in both ascending and descending order at once.\nDefault order is `-created_at`.\n\nA successful call records no activity.",
+        "description": "Returns a cursor-paginated list of activities (audit trail) for a single earning rule.\n\nA deleted earning rule returns `404`, so its activities are not listed.\n\nThe same field cannot be used in both ascending and descending order at once.\n\nDefault order is `-created_at`.\n\nA successful call records no activity.",
         "parameters": [
           {
             "name": "limit",
@@ -164790,11 +164906,441 @@
         ],
         "responses": {
           "200": {
-            "description": "Paginated list of earning rule activities",
+            "description": "Paginated list of earning rule activities. Each entry is a snapshot of the earning rule when the activity occurred.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2LoyaltiesEarningRulesActivitiesListResponseBody"
+                  "$ref": "#/components/schemas/LoyaltiesEarningRulesActivitiesListResponseBody"
+                },
+                "examples": {
+                  "Earning rule activities: Activated and updated earning rule": {
+                    "value": {
+                      "data": [
+                        {
+                          "id": "laer_1351c41a656179f2f7",
+                          "type": "vl.earning_rule.activated",
+                          "data": {
+                            "earning_rule": {
+                              "id": "lern_133a941c44c06594cf",
+                              "name": "Updated earning rule",
+                              "object": "earning_rule",
+                              "status": "ACTIVE",
+                              "trigger": {
+                                "event": "customer.order.paid"
+                              },
+                              "earnings": [
+                                {
+                                  "id": "lernei_1351c417a0e179f2f0",
+                                  "name": "New earning 02",
+                                  "effects": [
+                                    {
+                                      "type": "POINTS",
+                                      "points": {
+                                        "value": 100,
+                                        "card_definition_id": "lcdef_1331564fab0b1ce713"
+                                      }
+                                    }
+                                  ],
+                                  "tier_rules": {
+                                    "type": "NO_REQUIREMENTS"
+                                  }
+                                }
+                              ],
+                              "end_date": "2026-12-31T00:00:00.000Z",
+                              "metadata": {
+                                "some-value": null,
+                                "temporary_earning_rule": true
+                              },
+                              "created_at": "2026-10-22T11:30:54.857Z",
+                              "start_date": null,
+                              "updated_at": "2026-11-09T11:45:39.728Z",
+                              "earning_limits": {
+                                "global": {
+                                  "type": "NO_LIMIT",
+                                  "limits": []
+                                }
+                              },
+                              "trigger_limits": {
+                                "cooldown": {
+                                  "type": "NO_COOLDOWN"
+                                },
+                                "frequency": {
+                                  "type": "NO_LIMIT",
+                                  "limits": []
+                                }
+                              },
+                              "validity_hours": {
+                                "type": "ANY_TIME"
+                              }
+                            }
+                          },
+                          "created_at": "2026-11-09T11:45:39.728Z",
+                          "group_id": "v-1351c41a60c415430a",
+                          "source": {
+                            "channel": "API",
+                            "api_key": {
+                              "name": "Primary",
+                              "app_id": "5168a5a0-c93d-4428-b93c-fdbee8700680"
+                            }
+                          },
+                          "earning_rule_id": "lern_133a941c44c06594cf"
+                        },
+                        {
+                          "id": "laer_1351c417a1a179f2f1",
+                          "type": "vl.earning_rule.updated",
+                          "data": {
+                            "earning_rule": {
+                              "id": "lern_133a941c44c06594cf",
+                              "name": "Updated earning rule",
+                              "object": "earning_rule",
+                              "status": "DRAFT",
+                              "trigger": {
+                                "event": "customer.order.paid"
+                              },
+                              "earnings": [
+                                {
+                                  "id": "lernei_1351c417a0e179f2f0",
+                                  "name": "New earning 02",
+                                  "effects": [
+                                    {
+                                      "type": "POINTS",
+                                      "points": {
+                                        "value": 100,
+                                        "card_definition_id": "lcdef_1331564fab0b1ce713"
+                                      }
+                                    }
+                                  ],
+                                  "tier_rules": {
+                                    "type": "NO_REQUIREMENTS"
+                                  }
+                                }
+                              ],
+                              "end_date": "2026-12-31T00:00:00.000Z",
+                              "metadata": {
+                                "some-value": null,
+                                "temporary_earning_rule": true
+                              },
+                              "created_at": "2026-10-22T11:30:54.857Z",
+                              "start_date": null,
+                              "updated_at": "2026-11-09T11:45:36.889Z",
+                              "earning_limits": {
+                                "global": {
+                                  "type": "NO_LIMIT",
+                                  "limits": []
+                                }
+                              },
+                              "trigger_limits": {
+                                "cooldown": {
+                                  "type": "NO_COOLDOWN"
+                                },
+                                "frequency": {
+                                  "type": "NO_LIMIT",
+                                  "limits": []
+                                }
+                              },
+                              "validity_hours": {
+                                "type": "ANY_TIME"
+                              }
+                            }
+                          },
+                          "created_at": "2026-11-09T11:45:36.889Z",
+                          "group_id": "v-1351c4179944154304",
+                          "source": {
+                            "channel": "API",
+                            "api_key": {
+                              "name": "Primary",
+                              "app_id": "5168a5a0-c93d-4428-b93c-fdbee8700680"
+                            }
+                          },
+                          "earning_rule_id": "lern_133a941c44c06594cf"
+                        }
+                      ],
+                      "cursor": {
+                        "next": "lcrsaer_1351cc0d0c18a44cb6",
+                        "expires_at": "2026-11-09T12:30:23.217Z"
+                      },
+                      "object": "list"
+                    }
+                  },
+                  "Earning rule activities: Assigned earning rule": {
+                    "value": {
+                      "data": [
+                        {
+                          "id": "laer_132df28ca89f245b90",
+                          "type": "vl.earning_rule.updated",
+                          "data": {
+                            "earning_rule": {
+                              "id": "lern_128f48ee44cc4bec34",
+                              "name": "EarningRule-OrderPaid",
+                              "error": {
+                                "message": "There's something wrong with your order. Try again later"
+                              },
+                              "object": "earning_rule",
+                              "status": "ACTIVE",
+                              "trigger": {
+                                "event": "customer.order.paid"
+                              },
+                              "earnings": [
+                                {
+                                  "id": "lernei_132df28ca59f245b8f",
+                                  "name": "EarningRule-OrderPaid-VIP",
+                                  "rules": {
+                                    "1": {
+                                      "name": "customer.segment",
+                                      "conditions": {
+                                        "$is": [
+                                          "seg_HFJezEkKnc0iHK50NWl6c6da"
+                                        ]
+                                      }
+                                    },
+                                    "logic": " 1"
+                                  },
+                                  "effects": [
+                                    {
+                                      "type": "POINTS",
+                                      "points": {
+                                        "value": 150,
+                                        "card_definition_id": "lcdef_128f4a88414c4bed69"
+                                      }
+                                    }
+                                  ],
+                                  "tier_rules": {
+                                    "type": "NO_REQUIREMENTS"
+                                  }
+                                },
+                                {
+                                  "id": "lernei_128f48ee3fcc4bec33",
+                                  "name": "EarningRule-OrderPaid-01",
+                                  "effects": [
+                                    {
+                                      "type": "POINTS_PROPORTIONAL",
+                                      "points_proportional": {
+                                        "order": {
+                                          "amount": {
+                                            "every": 1,
+                                            "value": 1
+                                          }
+                                        },
+                                        "calculation_type": "PRE_DISCOUNT_ORDER_AMOUNT",
+                                        "card_definition_id": "lcdef_128f4a88414c4bed69"
+                                      }
+                                    }
+                                  ],
+                                  "tier_rules": {
+                                    "type": "NO_REQUIREMENTS"
+                                  }
+                                }
+                              ],
+                              "end_date": null,
+                              "metadata": {},
+                              "created_at": "2026-06-11T10:22:11.200Z",
+                              "start_date": null,
+                              "updated_at": "2026-10-12T16:03:16.244Z",
+                              "earning_limits": {
+                                "global": {
+                                  "type": "NO_LIMIT",
+                                  "limits": []
+                                }
+                              },
+                              "trigger_limits": {
+                                "cooldown": {
+                                  "type": "NO_COOLDOWN"
+                                },
+                                "frequency": {
+                                  "type": "NO_LIMIT",
+                                  "limits": []
+                                }
+                              },
+                              "validity_hours": {
+                                "type": "ANY_TIME"
+                              }
+                            }
+                          },
+                          "created_at": "2026-10-12T16:03:16.244Z",
+                          "group_id": "v-132df28c9fd5d64da3",
+                          "source": {
+                            "channel": "USER_PORTAL",
+                            "user": {
+                              "id": "user_ypzfEcSAphSONMGJRlj6trzXKsh7FGX7"
+                            }
+                          },
+                          "earning_rule_id": "lern_128f48ee44cc4bec34"
+                        },
+                        {
+                          "id": "laer_128f95af440c4ba50d",
+                          "type": "vl.earning_rule.assigned",
+                          "data": {
+                            "program": {
+                              "id": "lprg_128f58429f4c4bf7b2",
+                              "name": "AnnualProgram",
+                              "object": "program",
+                              "status": "DRAFT",
+                              "end_date": null,
+                              "metadata": {},
+                              "created_at": "2026-06-11T11:29:09.756Z",
+                              "start_date": null,
+                              "updated_at": null,
+                              "validity_hours": {
+                                "type": "ANY_TIME"
+                              }
+                            },
+                            "earning_rule": {
+                              "id": "lern_128f48ee44cc4bec34",
+                              "name": "EarningRule-OrderPaid",
+                              "error": {
+                                "message": "There's something wrong with your order. Try again later"
+                              },
+                              "object": "earning_rule",
+                              "status": "ACTIVE",
+                              "trigger": {
+                                "event": "customer.order.paid"
+                              },
+                              "earnings": [
+                                {
+                                  "id": "lernei_128f48ee3fcc4bec33",
+                                  "name": "EarningRule-OrderPaid-01",
+                                  "effects": [
+                                    {
+                                      "type": "POINTS_PROPORTIONAL",
+                                      "points_proportional": {
+                                        "order": {
+                                          "amount": {
+                                            "every": 1,
+                                            "value": 1
+                                          }
+                                        },
+                                        "calculation_type": "PRE_DISCOUNT_ORDER_AMOUNT",
+                                        "card_definition_id": "lcdef_128f4a88414c4bed69"
+                                      }
+                                    }
+                                  ],
+                                  "tier_rules": {
+                                    "type": "NO_REQUIREMENTS"
+                                  }
+                                }
+                              ],
+                              "end_date": null,
+                              "metadata": {},
+                              "created_at": "2026-06-11T10:22:11.200Z",
+                              "start_date": null,
+                              "updated_at": "2026-06-11T11:26:50.540Z",
+                              "earning_limits": {
+                                "global": {
+                                  "type": "NO_LIMIT",
+                                  "limits": []
+                                }
+                              },
+                              "trigger_limits": {
+                                "cooldown": {
+                                  "type": "NO_COOLDOWN"
+                                },
+                                "frequency": {
+                                  "type": "NO_LIMIT",
+                                  "limits": []
+                                }
+                              },
+                              "validity_hours": {
+                                "type": "ANY_TIME"
+                              }
+                            },
+                            "program_earning_rule": {
+                              "object": "program_earning_rule",
+                              "created_at": "2026-06-11T15:57:31.791Z",
+                              "earning_rule_id": "lern_128f48ee44cc4bec34"
+                            }
+                          },
+                          "created_at": "2026-06-11T15:57:31.791Z",
+                          "group_id": "v-128f95af40ae32a9fc",
+                          "source": {
+                            "channel": "USER_PORTAL",
+                            "user": {
+                              "id": "user_ypzfEcSAphSONMGJRlj6trzXKsh7FGX7"
+                            }
+                          },
+                          "earning_rule_id": "lern_128f48ee44cc4bec34"
+                        },
+                        {
+                          "id": "laer_128f57baad0c4bf73b",
+                          "type": "vl.earning_rule.activated",
+                          "data": {
+                            "earning_rule": {
+                              "id": "lern_128f48ee44cc4bec34",
+                              "name": "EarningRule-OrderPaid",
+                              "error": {
+                                "message": "There's something wrong with your order. Try again later"
+                              },
+                              "object": "earning_rule",
+                              "status": "ACTIVE",
+                              "trigger": {
+                                "event": "customer.order.paid"
+                              },
+                              "earnings": [
+                                {
+                                  "id": "lernei_128f48ee3fcc4bec33",
+                                  "name": "EarningRule-OrderPaid-01",
+                                  "effects": [
+                                    {
+                                      "type": "POINTS_PROPORTIONAL",
+                                      "points_proportional": {
+                                        "order": {
+                                          "amount": {
+                                            "every": 1,
+                                            "value": 1
+                                          }
+                                        },
+                                        "calculation_type": "PRE_DISCOUNT_ORDER_AMOUNT",
+                                        "card_definition_id": "lcdef_128f4a88414c4bed69"
+                                      }
+                                    }
+                                  ],
+                                  "tier_rules": {
+                                    "type": "NO_REQUIREMENTS"
+                                  }
+                                }
+                              ],
+                              "end_date": null,
+                              "metadata": {},
+                              "created_at": "2026-06-11T10:22:11.200Z",
+                              "start_date": null,
+                              "updated_at": "2026-06-11T11:26:50.540Z",
+                              "earning_limits": {
+                                "global": {
+                                  "type": "NO_LIMIT",
+                                  "limits": []
+                                }
+                              },
+                              "trigger_limits": {
+                                "cooldown": {
+                                  "type": "NO_COOLDOWN"
+                                },
+                                "frequency": {
+                                  "type": "NO_LIMIT",
+                                  "limits": []
+                                }
+                              },
+                              "validity_hours": {
+                                "type": "ANY_TIME"
+                              }
+                            }
+                          },
+                          "created_at": "2026-06-11T11:26:50.540Z",
+                          "group_id": "v-128f57baa91cae0124",
+                          "source": {
+                            "channel": "USER_PORTAL",
+                            "user": {
+                              "id": "user_ypzfEcSAphSONMGJRlj6trzXKsh7FGX7"
+                            }
+                          },
+                          "earning_rule_id": "lern_128f48ee44cc4bec34"
+                        }
+                      ],
+                      "cursor": {
+                        "next": "lcrsaer_1351d778ce58a45ac2",
+                        "expires_at": "2026-11-09T13:20:17.145Z"
+                      },
+                      "object": "list"
+                    }
+                  }
                 }
               }
             }
@@ -164805,16 +165351,114 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Limit too high": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Property .limit cannot be greater than 100",
+                      "request_id": "v-12f9006245061134a3"
+                    }
+                  },
+                  "Limit too low": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Property .limit cannot be lower than 1",
+                      "request_id": "v-12f9006245061134a4"
+                    }
+                  },
+                  "Unsupported order value": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Property .order must be equal to one of the allowed values [ -created_at, created_at ]",
+                      "request_id": "v-12f9006245061134a5"
+                    }
+                  },
+                  "Conflicting order values": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Query cannot be ordered by 'created_at' and '-created_at' at the same time",
+                      "request_id": "v-12f9006245061134a6"
+                    }
+                  },
+                  "Invalid cursor format": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Property .cursor must match pattern \"^lcrsaer_[a-f0-9]+$\"",
+                      "request_id": "v-12f9006245061134a7"
+                    }
+                  },
+                  "Cursor invalid or expired": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_or_expired_cursor",
+                      "message": "Invalid or expired cursor",
+                      "details": "The provided cursor is invalid or has expired",
+                      "request_id": "v-12f9006245061134a8"
+                    }
+                  },
+                  "Cursor does not match query": {
+                    "value": {
+                      "code": 400,
+                      "key": "cursor_and_query_mismatch",
+                      "message": "Cursor and query mismatch",
+                      "details": "The provided cursor does not match the query, either the cursor is invalid or the query has changed",
+                      "request_id": "v-12f9006245061134a9"
+                    }
+                  },
+                  "Cursor from another list": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_cursor",
+                      "message": "Invalid cursor",
+                      "details": "The provided cursor is invalid",
+                      "request_id": "v-12f9006245061134aa"
+                    }
+                  }
                 }
               }
             }
           },
           "404": {
-            "description": "Resource not found.",
+            "description": "Earning rule not found. Returned for any unknown earning rule id, including a value that does not match `lern_[a-f0-9]+`, and for a deleted earning rule.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Unknown earning rule": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find earning_rule with id lern_0a1b2c3d4e5f60718a",
+                      "request_id": "v-12f9006245061134ab",
+                      "resource_id": "lern_0a1b2c3d4e5f60718a",
+                      "resource_type": "earning_rule"
+                    }
+                  },
+                  "Malformed earning rule id": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find earning_rule with id earning-rule-1",
+                      "request_id": "v-12f9006245061134ac",
+                      "resource_id": "earning-rule-1",
+                      "resource_type": "earning_rule"
+                    }
+                  }
                 }
               }
             }

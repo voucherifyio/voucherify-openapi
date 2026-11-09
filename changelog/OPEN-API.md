@@ -4,6 +4,17 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-11-09
+
+- Verified and updated GET `/v2/loyalties/earning-rules/{earningRuleId}/activities`. Removed the documentation-in-progress badge.
+  - Replaced the open `data` object with `EarningRuleActivityData`. Every activity includes an `earning_rule` snapshot. `vl.earning_rule.assigned` and `vl.earning_rule.unassigned` also include `program` and `program_earning_rule`. Other activity types omit those two fields. `status` is `DELETED` on `vl.earning_rule.deleted`.
+  - Clarified that a deleted earning rule returns `404`, so its activities are not listed. `404` also covers an unknown id and an id that does not match `lern_[a-f0-9]+`.
+  - Added `200`, `400`, and `404` examples. `200` covers an activated and updated rule, and an assigned rule. `400` covers limit, order, and cursor errors (`invalid_query_params`, `invalid_or_expired_cursor`, `cursor_and_query_mismatch`, `invalid_cursor`).
+  - Renamed the list response schema to `LoyaltiesEarningRulesActivitiesListResponseBody`.
+- Clarified `EarningRuleDateFilterConditions`. `$is`, `$more_than`, and `$less_than` count whole days before the current day. Used by GET `/v2/loyalties/earning-rules` and GET `/v2/loyalties/earning-rules/{earningRuleId}/activities`.
+- Added a `200` example to POST `/v2/loyalties/earning-rules/{earningRuleId}/draft`.
+- Removed the POST `/v2/loyalties/earning-rules/{earningRuleId}/draft` from `docs.json`.
+
 ## 2026-11-05
 
 - Verified and updated POST `/v2/loyalties/earning-rules/{earningRuleId}/deactivate`. Removed the documentation-in-progress badge.
