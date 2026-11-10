@@ -5,6 +5,15 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-11-10
+
+Added the v20261101_l release note to `changelog.mdx`.
+
+Documented Loyalty hub analytics and the daily tasks report.
+
+- Updated `performance-analytics.mdx` with **Loyalty hub analytics and performance**. The program **Analytics** page lists card transactions, pending points, expiring points, and reward purchases, and those lists can be exported to CSV (DOC-1499 / DEV-4231). **Performance** is a separate tab on the program, on each earning rule, and on each reward.
+- Updated `loyalty-v2-reports-overview.mdx` so program reports include **Daily tasks**: a daily breakdown of finished nightly tasks, with no all-time summary (DOC-1497 / DEV-3326).
+
 ## 2026-11-05
 
 Documented the v20261019_o dashboard release and its SAML login hotfix in `changelog.mdx`.

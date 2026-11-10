@@ -4,6 +4,16 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-11-10
+
+Added GET `/v2/loyalties/programs/{programId}/reports/daily-tasks/daily` (DOC-1497 / DEV-3326).
+
+- Returns counts of nightly tasks the job has already finished: `points_expirations`, `points_activations`, `points_cancellations`, and `tier_recalculations`.
+- Omits periods with no finished tasks. Pending points and scheduled activation or expiration dates are not included, and tasks finished before the report existed are not backfilled.
+- `tier_recalculations` counts cards the nightly job recalculated that produced at least one tier transaction.
+- Requires `start_date`, `end_date`, and `resolution` (`day`, `week`, `month`, `quarter`), with the same range caps as the other daily reports.
+- Added `ProgramDailyTasksDailyReport` and `LoyaltiesProgramsReportsDailyTasksDailyListResponseBody`.
+
 ## 2026-11-05
 
 - Verified and updated POST `/v2/loyalties/earning-rules/{earningRuleId}/deactivate`. Removed the documentation-in-progress badge.
