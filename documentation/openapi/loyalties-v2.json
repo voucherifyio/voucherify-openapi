@@ -12799,6 +12799,255 @@
         ]
       }
     },
+    "/v2/loyalties/programs/{programId}/reports/daily-tasks/daily": {
+      "parameters": [
+        {
+          "name": "programId",
+          "in": "path",
+          "required": true,
+          "description": "Identifies the loyalty program. Format `lprg_[a-f0-9]+`.",
+          "schema": {
+            "type": "string",
+            "pattern": "^lprg_[a-f0-9]+$"
+          }
+        }
+      ],
+      "get": {
+        "operationId": "listProgramDailyTasksDailyReports",
+        "tags": [
+          "Programs"
+        ],
+        "summary": "List program daily task reports",
+        "description": "Returns counts of nightly tasks the job has already finished for the program, over the given date range and resolution. Each row covers one period with finished tasks. Periods with no finished tasks are omitted.\n\nDoes not list what is scheduled. Pending points, activation dates, and expiration dates that are still waiting do not appear. A count is stored on the date the job finishes the task. Tasks finished before this report existed are not included.\n\nThe date range is limited per resolution:\n- 90 days for `day`,\n- 12 weeks for `week`,\n- 12 months for `month`,\n- 4 quarters for `quarter`,\n- `start_date` must be before `end_date`,\n- `start_date` and `end_date` are inclusive.\n\nReturns `400` when query validation fails. Returns `404` when the program does not exist.\n\nA successful call records no activity.",
+        "parameters": [
+          {
+            "name": "start_date",
+            "in": "query",
+            "required": true,
+            "description": "Sets the inclusive start of the report date range. Format `YYYY-MM-DD`.",
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+            }
+          },
+          {
+            "name": "end_date",
+            "in": "query",
+            "required": true,
+            "description": "Sets the inclusive end of the report date range. Format `YYYY-MM-DD`. Must be after `start_date`.",
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+            }
+          },
+          {
+            "name": "resolution",
+            "in": "query",
+            "required": true,
+            "description": "Sets the aggregation resolution. `day` allows at most 90 days, `week` at most 12 weeks, `month` at most 12 months, and `quarter` at most 4 quarters.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "day",
+                "week",
+                "month",
+                "quarter"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Program daily tasks report.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoyaltiesProgramsReportsDailyTasksDailyListResponseBody"
+                },
+                "examples": {
+                  "Daily tasks report: Day resolution": {
+                    "value": {
+                      "data": [
+                        {
+                          "date": "2026-07-13",
+                          "points_expirations": 2,
+                          "points_activations": 1,
+                          "points_cancellations": 1,
+                          "tier_recalculations": 0,
+                          "object": "program_daily_tasks_daily_report"
+                        },
+                        {
+                          "date": "2026-07-14",
+                          "points_expirations": 3,
+                          "points_activations": 0,
+                          "points_cancellations": 0,
+                          "tier_recalculations": 1,
+                          "object": "program_daily_tasks_daily_report"
+                        },
+                        {
+                          "date": "2026-07-15",
+                          "points_expirations": 0,
+                          "points_activations": 4,
+                          "points_cancellations": 0,
+                          "tier_recalculations": 2,
+                          "object": "program_daily_tasks_daily_report"
+                        }
+                      ],
+                      "object": "report"
+                    }
+                  },
+                  "Empty daily tasks report": {
+                    "value": {
+                      "data": [],
+                      "object": "report"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Query parameters failed validation, or `start_date` is not before `end_date`.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Invalid query parameters: `start_date` is required": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Query must have required property 'start_date'",
+                      "request_id": "v-131e4b76ad2e099001"
+                    }
+                  },
+                  "Invalid query parameters: `end_date` is required": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Query must have required property 'end_date'",
+                      "request_id": "v-131e4b76ad2e099002"
+                    }
+                  },
+                  "Invalid query parameters: `resolution` is required": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Query must have required property 'resolution'",
+                      "request_id": "v-131e4b76ad2e099003"
+                    }
+                  },
+                  "Invalid query parameters: `resolution` is invalid": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Property .resolution must be equal to one of the allowed values [ day, week, month, quarter ]",
+                      "request_id": "v-131e4b76ad2e099004"
+                    }
+                  },
+                  "Invalid query parameters: `start_date` is invalid": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Property .start_date cannot be recognized as a ISO-8601 compliant date",
+                      "request_id": "v-131e4b76ad2e099005"
+                    }
+                  },
+                  "Invalid query parameters: date range exceeds limit": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Query date range exceeds maximum allowed 90 days for resolution 'day'",
+                      "request_id": "v-131e4b76ad2e099006"
+                    }
+                  },
+                  "Invalid payload: `start_date` is not before `end_date`": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_payload",
+                      "message": "Invalid payload",
+                      "details": "Property 'start_date' must be before 'end_date'",
+                      "request_id": "v-131e4b76ad2e099007"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Program not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Program not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find program with id lprg_128f58429fc4bf7b2",
+                      "request_id": "v-131e4b76ad2e099008",
+                      "resource_id": "lprg_128f58429fc4bf7b2",
+                      "resource_type": "program"
+                    }
+                  },
+                  "Program id does not match the pattern": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find program with id missing",
+                      "request_id": "v-131e4b76ad2e099009",
+                      "resource_id": "missing",
+                      "resource_type": "program"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Internal server error": {
+                    "value": {
+                      "code": 500,
+                      "key": "api_error",
+                      "message": "Something went wrong. Don't worry, your campaigns are still safe and the Voucherify Team has been notified. Check out our Help Center and forums for help, or head back to home."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": []
+          },
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
     "/v2/loyalties/programs/{programId}/reports/members/daily": {
       "parameters": [
         {
@@ -23863,6 +24112,29 @@
           "object"
         ]
       },
+      "LoyaltiesProgramsReportsDailyTasksDailyListResponseBody": {
+        "title": "Loyalties Programs Reports Daily Tasks Daily List Response Body",
+        "type": "object",
+        "description": "Response body schema for **GET** `/v2/loyalties/programs/{programId}/reports/daily-tasks/daily`.",
+        "properties": {
+          "data": {
+            "type": "array",
+            "description": "List of report entries, one per aggregation period in which the nightly job finished at least one task, ordered by `date` ascending. Empty when no task has finished in the range. Scheduled dates are not included.",
+            "items": {
+              "$ref": "#/components/schemas/ProgramDailyTasksDailyReport"
+            }
+          },
+          "object": {
+            "type": "string",
+            "const": "report",
+            "description": "Object type marker. Always `report`."
+          }
+        },
+        "required": [
+          "data",
+          "object"
+        ]
+      },
       "LoyaltiesProgramsReportsMembersDailyListResponseBody": {
         "type": "object",
         "title": "Loyalties Programs Reports Members Daily List Response Body",
@@ -32002,6 +32274,50 @@
               "object"
             ]
           }
+        ]
+      },
+      "ProgramDailyTasksDailyReport": {
+        "type": "object",
+        "description": "Counts of nightly tasks the job has already finished in one aggregation period. Counters with no finished tasks in the period are 0. Scheduled activations and expirations are not included.",
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date",
+            "description": "Identifies the start of the truncated aggregation period (`YYYY-MM-DD`). For `week` this is Monday. For `month` this is the first day. For `quarter` this is the quarter start."
+          },
+          "points_expirations": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Counts point expirations the nightly job has already finished in the period. A future expiration date is not included."
+          },
+          "points_activations": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Counts pending-point activations the nightly job has already finished in the period. Pending points that are still waiting are not included."
+          },
+          "points_cancellations": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Counts `EVENT_BASED` pending-point cancellations the nightly task completed in the period."
+          },
+          "tier_recalculations": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Counts cards the nightly job recalculated that produced at least one tier transaction in the period."
+          },
+          "object": {
+            "type": "string",
+            "const": "program_daily_tasks_daily_report",
+            "description": "Object type marker. Always `program_daily_tasks_daily_report`."
+          }
+        },
+        "required": [
+          "date",
+          "points_expirations",
+          "points_activations",
+          "points_cancellations",
+          "tier_recalculations",
+          "object"
         ]
       },
       "MembersReportDailyEntry": {
