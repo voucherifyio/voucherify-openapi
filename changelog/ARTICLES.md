@@ -13,6 +13,22 @@ Documented Loyalty hub analytics and the daily tasks report.
 
 - Updated `performance-analytics.mdx` with **Loyalty hub analytics and performance**. The program **Analytics** page lists card transactions, pending points, expiring points, and reward purchases, and those lists can be exported to CSV (DOC-1499 / DEV-4231). **Performance** is a separate tab on the program, on each earning rule, and on each reward.
 - Updated `loyalty-v2-reports-overview.mdx` so program reports include **Daily tasks**: a daily breakdown of finished nightly tasks, with no all-time summary (DOC-1497 / DEV-3326).
+## 2026-11-06
+
+Clarified Loyalty v2 point-wallet **Return policy** versus reward purchase refunds: return policy settings can be saved but are not applied on order cancel or refund yet; reward refunds use the reward **Refundable** setting and a separate API path.
+
+- Updated `create-point-wallets.mdx`
+- Updated `loyalty-key-concepts.mdx`
+- Updated `create-loyalty-rewards.mdx`
+- Updated `loyalty-v2-take-to-production.mdx`
+- Updated `loyalty-v2-card-definitions-overview.mdx`
+
+Documented default transactional data retention and linked it from related guides.
+
+- Added `transactional-data-retention.mdx` (redemptions and rollback records indefinitely; validations 30 days; order line items, order discounts, and voucher transactions 2 years; redemption rollback 3-month action window)
+- Updated `orders.mdx`, `voucher-tracking.mdx`, `validations-and-redemptions.mdx`, `security-overview.mdx`, and `security-and-data-protection.mdx`
+
+Verified and updated `listing.mdx` against list helpers: corrected redemption and publication shortcut query params, customer shortcuts and the email example, voucher `active` / `redemption_status` filter notes, common `order` / `updated_at` parameters, and the `starting_after_id` endpoint list.
 
 ## 2026-11-05
 
