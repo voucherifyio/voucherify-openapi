@@ -433,6 +433,7 @@
 | /v2/loyalties/programs/{programId}/reports/rewards/summary                                              | get    | List program rewards summary reports           | <font color='green'>supported</font> |               |
 | /v2/loyalties/programs/{programId}/reports/rewards/spendings/daily                                      | get    | List program rewards spendings daily reports   | <font color='green'>supported</font> |               |
 | /v2/loyalties/programs/{programId}/reports/rewards/spendings/summary                                    | get    | List program rewards spendings summary reports | <font color='green'>supported</font> |               |
+| /v2/loyalties/programs/{programId}/reports/daily-tasks/daily                                            | get    | List program daily task reports                |                                      |               |
 | /v2/loyalties/programs/{programId}/reports/members/daily                                                | get    | List program members daily reports             | <font color='green'>supported</font> |               |
 | /v2/loyalties/programs/{programId}/reports/members/summary                                              | get    | List program members summary reports           | <font color='green'>supported</font> |               |
 | /v2/loyalties/programs/{programId}/reports/points-earnings/daily                                        | get    | List program points-earnings daily reports     | <font color='green'>supported</font> |               |
