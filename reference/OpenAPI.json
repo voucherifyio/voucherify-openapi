@@ -12734,13 +12734,17 @@
           },
           "related_object_id": {
             "type": "string",
-            "description": "Related object ID to which the reward was assigned.",
+            "description": "Related object ID to which the reward was assigned. For `related_object_type` `campaign`, this is the campaign ID. For `referral_tier`, this is the referral tier ID.",
             "example": "camp_wciTvaOfYmAa3EmIIW3QpXXZ"
           },
           "related_object_type": {
             "type": "string",
-            "description": "Related object type to which the reward was assigned.",
-            "example": "campaign"
+            "description": "Related object type to which the reward was assigned. Use `campaign` for **legacy loyalty** campaign rewards. Use `referral_tier` for `LOYALTY_POINTS` rewards that credit a `v2/loyalties` (loyalty hub) card from a referral tier. A `LOYALTY_POINTS` reward can only be assigned to a referral tier.",
+            "example": "campaign",
+            "enum": [
+              "campaign",
+              "referral_tier"
+            ]
           },
           "parameters": {
             "description": "Defines the cost of the reward.",
@@ -12816,15 +12820,16 @@
           },
           "related_object_id": {
             "type": "string",
-            "description": "Related object ID to which the reward was assigned.",
+            "description": "Related object ID to which the reward was assigned. For `related_object_type` `campaign`, this is the campaign ID. For `referral_tier`, this is the referral tier ID.",
             "example": "camp_wciTvaOfYmAa3EmIIW3QpXXZ"
           },
           "related_object_type": {
             "type": "string",
-            "description": "Related object type to which the reward was assigned.",
+            "description": "Related object type to which the reward was assigned. Use `campaign` for **legacy loyalty** campaign rewards. Use `referral_tier` for `LOYALTY_POINTS` rewards that credit a `v2/loyalties` (loyalty hub) card from a referral tier. A `LOYALTY_POINTS` reward can only be assigned to a referral tier.",
             "default": "campaign",
             "enum": [
-              "campaign"
+              "campaign",
+              "referral_tier"
             ]
           }
         },
@@ -46219,6 +46224,9 @@
           },
           {
             "$ref": "#/components/schemas/RewardsAssignmentsCreateCoinRewardRequestBody"
+          },
+          {
+            "$ref": "#/components/schemas/RewardsAssignmentsCreateLoyaltyPointsRewardRequestBody"
           }
         ]
       },
@@ -95153,7 +95161,7 @@
       "RewardTypeLoyaltyPoints": {
         "title": "`v2/loyalties` (loyalty hub) points",
         "type": "object",
-        "description": "Parameters for a `LOYALTY_POINTS` reward. Credits points to a `v2/loyalties` (loyalty hub) card.",
+        "description": "Parameters for a `LOYALTY_POINTS` reward. Credits points to a `v2/loyalties` (loyalty hub) card. Assign this reward only to a referral tier.",
         "properties": {
           "loyalty_points": {
             "type": "object",
@@ -95199,7 +95207,7 @@
       "RewardsCreateRequestBodyLoyaltyPoints": {
         "title": "`v2/loyalties` (loyalty hub) points Reward",
         "type": "object",
-        "description": "Request body schema for creating a `v2/loyalties` (loyalty hub) points (`LOYALTY_POINTS`) reward using **POST** `v1/rewards`.",
+        "description": "Request body schema for creating a `v2/loyalties` (loyalty hub) points (`LOYALTY_POINTS`) reward using **POST** `v1/rewards`. After create, assign it only to a referral tier (`related_object_type` `referral_tier`). You cannot assign it to a campaign.",
         "properties": {
           "name": {
             "type": "string",
@@ -95241,6 +95249,27 @@
             "description": "The metadata object stores all custom attributes assigned to the reward. A set of key/value pairs that you can attach to a reward object. It can be useful for storing additional information about the reward in a structured format."
           }
         }
+      },
+      "RewardsAssignmentsCreateLoyaltyPointsRewardRequestBody": {
+        "title": "Loyalty Hub Points Reward",
+        "type": "object",
+        "description": "Request body schema for assigning a `LOYALTY_POINTS` reward using **POST** `v1/rewards/{rewardId}/assignments`. Assign only to a referral tier. Do not send `campaign`.",
+        "properties": {
+          "related_object_type": {
+            "type": "string",
+            "const": "referral_tier",
+            "description": "Related object type. Always `referral_tier` for a `LOYALTY_POINTS` reward."
+          },
+          "related_object_id": {
+            "type": "string",
+            "description": "Unique referral tier ID, assigned by Voucherify.",
+            "example": "reftier_0b1e6460adca4210b9"
+          }
+        },
+        "required": [
+          "related_object_type",
+          "related_object_id"
+        ]
       }
     },
     "examples": {
@@ -106479,7 +106508,7 @@
           "Rewards"
         ],
         "summary": "Create Reward Assignment",
-        "description": "Assigns a reward to a specified **legacy loyalty** campaign. Campaign-linked rewards also apply to referral campaigns. For Loyalty hub rewards, use `/v2/loyalties` reward endpoints.",
+        "description": "Assigns a reward to a related object.\n\nFor **legacy loyalty** and digital or material rewards, send `campaign` with a loyalty or referral campaign ID.\n\nFor a `LOYALTY_POINTS` reward (credits a `v2/loyalties` (loyalty hub) card), send `related_object_type` `referral_tier` and `related_object_id` set to the referral tier ID. A `LOYALTY_POINTS` reward cannot be assigned to a campaign. Assigning it with `campaign` (or any non-`referral_tier` related object) returns `400` with `invalid_related_to`.\n\n`POST /v1/loyalties/{campaignId}/rewards` also cannot assign a `LOYALTY_POINTS` reward to a campaign.\n\nFor Loyalty hub program rewards, use `/v2/loyalties` reward endpoints.",
         "parameters": [],
         "security": [
           {
@@ -106492,7 +106521,7 @@
           }
         ],
         "requestBody": {
-          "description": "Provide the campaign ID of the **legacy loyalty** or referral campaign to which the reward is to be assigned and define the cost of the reward in terms of loyalty points.",
+          "description": "For digital, material, and pay-with-points rewards, provide the campaign ID and, when required, the loyalty points cost. For a `LOYALTY_POINTS` reward, provide `related_object_type` `referral_tier` and the referral tier ID.",
           "content": {
             "application/json": {
               "schema": {
@@ -106544,7 +106573,7 @@
             }
           },
           "400": {
-            "description": "Returns an error if request body parameters are missing.",
+            "description": "Returns an error if request body parameters are missing or the related object is not allowed for the reward type.",
             "content": {
               "application/json": {
                 "schema": {
@@ -106557,6 +106586,15 @@
                       "key": "missing_param",
                       "message": "Missing required parameter",
                       "details": "Parameter 'parameters.loyalty' is required",
+                      "request_id": "v-0b95c7f3684ad5f06d"
+                    }
+                  },
+                  "Invalid Related To LOYALTY_POINTS": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_related_to",
+                      "message": "Invalid Related To",
+                      "details": "Reward type LOYALTY_POINTS can only be assigned to referral tier.",
                       "request_id": "v-0b95c7f3684ad5f06d"
                     }
                   }
@@ -123197,7 +123235,7 @@
           "Loyalties"
         ],
         "summary": "Create Loyalty Campaign Reward Assignment",
-        "description": "<Warning>\n\n<Badge color=\"yellow\">Legacy loyalty API</Badge>\n\nThis endpoint belongs to the legacy loyalty API (`/v1/loyalties`).\n\nVoucherify will not develop new features for this API. However, critical issues may still receive fixes.\n\nFor new integrations, use [Loyalty v2](/build/loyalty-overview).\n\nIf you have questions, contact [Voucherify support](https://www.voucherify.io/contact-support \"Contact Voucherify support\").\n\n</Warning>\n\nAdd rewards to a loyalty campaign.",
+        "description": "<Warning>\n\n<Badge color=\"yellow\">Legacy loyalty API</Badge>\n\nThis endpoint belongs to the legacy loyalty API (`/v1/loyalties`).\n\nVoucherify will not develop new features for this API. However, critical issues may still receive fixes.\n\nFor new integrations, use [Loyalty v2](/build/loyalty-overview).\n\nIf you have questions, contact [Voucherify support](https://www.voucherify.io/contact-support \"Contact Voucherify support\").\n\n</Warning>\n\nAdd rewards to a loyalty campaign.\n\nA `LOYALTY_POINTS` reward cannot be assigned to a campaign. Use **POST** `v1/rewards/{rewardId}/assignments` with `related_object_type` `referral_tier` instead.",
         "parameters": [],
         "security": [
           {
