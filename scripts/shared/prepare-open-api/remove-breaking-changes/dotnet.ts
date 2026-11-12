@@ -1,5 +1,8 @@
 import * as OpenAPI from "../../../../reference/OpenAPI.json";
-import { restoreValidationRuleErrorObjects } from "./utils";
+import {
+  restoreParameterOrderListValidationRulesUpdatedAt,
+  restoreValidationRuleErrorObjects,
+} from "./utils";
 
 const INT32_MAX = 2147483647;
 const INT32_MIN = -2147483648;
@@ -267,6 +270,7 @@ const removeDotnetBreakingChanges = {
       description: "Referral tier parameters",
     };
 
+    restoreParameterOrderListValidationRulesUpdatedAt(schemas);
     restoreValidationRuleErrorObjects(schemas);
 
     // Order query oneOfs are flattened in removeOneOfs. Safe-integer bounds still

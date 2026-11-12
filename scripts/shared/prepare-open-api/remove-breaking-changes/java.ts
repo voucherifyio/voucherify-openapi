@@ -3,7 +3,10 @@ import {
   OpenAPISpec,
   removeRequiredFromRequestsAndResponses,
 } from "../remove-required-from-request-and-responses";
-import { restoreValidationRuleErrorObjects } from "./utils";
+import {
+  restoreParameterOrderListValidationRulesUpdatedAt,
+  restoreValidationRuleErrorObjects,
+} from "./utils";
 
 const removeJavaBreakingChanges = {
   before: (_openApi: unknown): typeof OpenAPI => {
@@ -157,6 +160,7 @@ const removeJavaBreakingChanges = {
       description: "Referral tier parameters",
     };
 
+    restoreParameterOrderListValidationRulesUpdatedAt(schemas);
     restoreValidationRuleErrorObjects(schemas);
 
     return openApi;
