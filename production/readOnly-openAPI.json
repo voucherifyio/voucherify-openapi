@@ -35827,9 +35827,10 @@
             "enum": [
               "CAMPAIGN",
               "COIN",
-              "MATERIAL"
+              "MATERIAL",
+              "LOYALTY_POINTS"
             ],
-            "description": "Reward type.",
+            "description": "Reward type. `LOYALTY_POINTS` credits points on a `v2/loyalties` (loyalty hub) card (for example from a referral tier).",
             "nullable": true
           }
         },
@@ -36692,9 +36693,10 @@
             "enum": [
               "CAMPAIGN",
               "COIN",
-              "MATERIAL"
+              "MATERIAL",
+              "LOYALTY_POINTS"
             ],
-            "description": "Reward type.",
+            "description": "Reward type. `LOYALTY_POINTS` credits points on a `v2/loyalties` (loyalty hub) card (for example from a referral tier).",
             "nullable": true
           },
           "parameters": {
@@ -37928,6 +37930,9 @@
           },
           {
             "$ref": "#/components/schemas/RewardsCreateRequestBodyPayWithPoints"
+          },
+          {
+            "$ref": "#/components/schemas/RewardsCreateRequestBodyLoyaltyPoints"
           }
         ]
       },
@@ -38029,6 +38034,37 @@
           }
         },
         "required": []
+      },
+      "RewardsCreateRequestBodyLoyaltyPoints": {
+        "title": "`v2/loyalties` (loyalty hub) points Reward",
+        "type": "object",
+        "description": "Request body schema for creating a `v2/loyalties` (loyalty hub) points (`LOYALTY_POINTS`) reward using **POST** `v1/rewards`.",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Reward name.",
+            "nullable": true
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "LOYALTY_POINTS"
+            ],
+            "description": "Reward type. Optional when `parameters.loyalty_points` is present; Voucherify infers `LOYALTY_POINTS`.",
+            "nullable": true
+          },
+          "parameters": {
+            "$ref": "#/components/schemas/RewardTypeLoyaltyPoints"
+          },
+          "metadata": {
+            "type": "object",
+            "description": "The metadata object stores all custom attributes assigned to the reward. A set of key/value pairs that you can attach to a reward object. It can be useful for storing additional information about the reward in a structured format.",
+            "nullable": true
+          }
+        },
+        "required": [
+          "parameters"
+        ]
       },
       "RewardsCreateRequestBodyMaterial": {
         "title": "Material Reward",
@@ -38856,6 +38892,9 @@
           },
           {
             "$ref": "#/components/schemas/RewardsUpdateRequestBodyPayWithPoints"
+          },
+          {
+            "$ref": "#/components/schemas/RewardsUpdateRequestBodyLoyaltyPoints"
           }
         ]
       },
@@ -38954,6 +38993,26 @@
           }
         },
         "required": []
+      },
+      "RewardsUpdateRequestBodyLoyaltyPoints": {
+        "title": "`v2/loyalties` (loyalty hub) points Reward",
+        "type": "object",
+        "description": "Request body schema for updating a `v2/loyalties` (loyalty hub) points (`LOYALTY_POINTS`) reward using **PUT** `v1/rewards/{rewardId}`.",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Reward name.",
+            "nullable": true
+          },
+          "parameters": {
+            "$ref": "#/components/schemas/RewardTypeLoyaltyPoints"
+          },
+          "metadata": {
+            "type": "object",
+            "description": "The metadata object stores all custom attributes assigned to the reward. A set of key/value pairs that you can attach to a reward object. It can be useful for storing additional information about the reward in a structured format.",
+            "nullable": true
+          }
+        }
       },
       "RewardsUpdateRequestBodyMaterial": {
         "title": "Material Reward",
@@ -39091,6 +39150,9 @@
           },
           {
             "$ref": "#/components/schemas/RewardTypeMaterial"
+          },
+          {
+            "$ref": "#/components/schemas/RewardTypeLoyaltyPoints"
           }
         ]
       },
@@ -39146,6 +39208,50 @@
               "points_ratio": {
                 "type": "integer",
                 "description": "The number of loyalty points (**legacy loyalty**) that will map to the predefined cash amount defined by the `exchange_ratio` property.",
+                "nullable": true
+              }
+            },
+            "nullable": true
+          }
+        },
+        "required": []
+      },
+      "RewardTypeLoyaltyPoints": {
+        "title": "`v2/loyalties` (loyalty hub) points",
+        "type": "object",
+        "description": "Parameters for a `LOYALTY_POINTS` reward. Credits points to a `v2/loyalties` (loyalty hub) card.",
+        "properties": {
+          "loyalty_points": {
+            "type": "object",
+            "description": "Defines how many points to credit on a `v2/loyalties` (loyalty hub) card, which program and card definition receive them, and what happens when the customer is not a member yet.",
+            "required": [],
+            "properties": {
+              "points": {
+                "type": "integer",
+                "minimum": 1,
+                "description": "Number of points to credit. Must be greater than `0`.",
+                "nullable": true
+              },
+              "program_id": {
+                "type": "string",
+                "description": "Unique `v2/loyalties` (loyalty hub) program ID, assigned by Voucherify.",
+                "example": "prog_0b1e6460adca4210b7",
+                "nullable": true
+              },
+              "card_definition_id": {
+                "type": "string",
+                "description": "Unique card definition ID of the `v2/loyalties` (loyalty hub) card that receives the points.",
+                "example": "lcdef_0b1e6460adca4210b8",
+                "pattern": "^lcdef_[a-f0-9]+$",
+                "nullable": true
+              },
+              "on_missing_member": {
+                "type": "string",
+                "enum": [
+                  "ENROLL",
+                  "REJECT"
+                ],
+                "description": "Action when the customer is not a member of the program. `ENROLL` enrolls the customer and credits the points. `REJECT` rejects the award.",
                 "nullable": true
               }
             },
@@ -40425,9 +40531,10 @@
             "enum": [
               "CAMPAIGN",
               "COIN",
-              "MATERIAL"
+              "MATERIAL",
+              "LOYALTY_POINTS"
             ],
-            "description": "Reward type.",
+            "description": "Reward type. `LOYALTY_POINTS` credits points on a `v2/loyalties` (loyalty hub) card (for example from a referral tier).",
             "nullable": true
           }
         }
