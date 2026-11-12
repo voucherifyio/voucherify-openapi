@@ -4,6 +4,10 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-11-12
+
+Removed `updated_at` and `-updated_at` from the `order` enum on GET `/v1/validation-rules` (`ParameterOrderListValidationRules`). Sorting by `-updated_at` does not work as intended (lists validation rules without `updated_at` field first). This may be fixed in the future.
+
 ## 2026-11-10
 
 Added GET `/v2/loyalties/programs/{programId}/reports/daily-tasks/daily` (DOC-1497 / DEV-3326).
