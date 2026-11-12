@@ -1,5 +1,8 @@
 import * as OpenAPI from "../../../../reference/OpenAPI.json";
-import { restoreValidationRuleErrorObjects } from "./utils";
+import {
+  restoreParameterOrderListValidationRulesUpdatedAt,
+  restoreValidationRuleErrorObjects,
+} from "./utils";
 
 const removeJsBreakingChanges = {
   before: (_openApi: unknown): typeof OpenAPI => {
@@ -130,6 +133,7 @@ const removeJsBreakingChanges = {
       description: "Referral tier parameters",
     };
 
+    restoreParameterOrderListValidationRulesUpdatedAt(schemas);
     restoreValidationRuleErrorObjects(schemas);
 
     return openApi;

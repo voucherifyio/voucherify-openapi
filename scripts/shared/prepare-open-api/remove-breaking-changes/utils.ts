@@ -17,6 +17,28 @@ export const restoreLoyaltyExpirationRulesPeriodTypeDefault = (schema: {
   };
 };
 
+/**
+ * SDKs: keep `updated_at` / `-updated_at` on list validation-rules `order`.
+ * The public API no longer accepts those values; removing them from generated
+ * enums would break existing SDK callers.
+ */
+export const restoreParameterOrderListValidationRulesUpdatedAt = (
+  schemas: any,
+) => {
+  const schema = schemas?.ParameterOrderListValidationRules;
+  if (!schema || !Array.isArray(schema.enum)) {
+    return;
+  }
+  schema.enum = [
+    "created_at",
+    "-created_at",
+    "updated_at",
+    "-updated_at",
+    "name",
+    "-name",
+  ];
+};
+
 /** SDKs: keep the inline `error` object with a single `message`; the shared `ValidationRuleError` $ref renames the generated models. */
 export const restoreValidationRuleErrorObjects = (schemas: any) => {
   const inlineError = (description: string, messageDescription: string) => ({

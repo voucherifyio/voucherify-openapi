@@ -3,6 +3,7 @@ import { removeRequiredFromRequestsAndResponses } from "../remove-required-from-
 import {
   fixOrderCalculated,
   restoreLoyaltyExpirationRulesPeriodTypeDefault,
+  restoreParameterOrderListValidationRulesUpdatedAt,
   restoreValidationRuleErrorObjects,
 } from "./utils";
 
@@ -412,6 +413,7 @@ const removeRubyBreakingChanges = {
       description: "Referral tier parameters",
     };
 
+    restoreParameterOrderListValidationRulesUpdatedAt(openApi.components.schemas);
     restoreValidationRuleErrorObjects(openApi.components.schemas);
 
     return openApi;

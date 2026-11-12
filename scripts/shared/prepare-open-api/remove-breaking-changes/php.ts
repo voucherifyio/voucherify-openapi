@@ -2,6 +2,7 @@ import * as OpenAPI from "../../../../reference/OpenAPI.json";
 import { removeRequiredFromRequestsAndResponses } from "../remove-required-from-request-and-responses";
 import {
   fixOrderCalculated,
+  restoreParameterOrderListValidationRulesUpdatedAt,
   restoreValidationRuleErrorObjects,
 } from "./utils";
 
@@ -440,6 +441,7 @@ const removePhpBreakingChanges = {
       description: "Referral tier parameters",
     };
 
+    restoreParameterOrderListValidationRulesUpdatedAt(schemas);
     restoreValidationRuleErrorObjects(schemas);
 
     return openApi;
