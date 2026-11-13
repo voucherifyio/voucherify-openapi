@@ -1,0 +1,165 @@
+---
+title: "Connect the remote Core MCP"
+description: "Connect Cursor, Claude Code, or Codex to the hosted Voucherify Core MCP and select a project"
+keywords: ["Voucherify Core MCP", "remote MCP", "Cursor", "Claude Code", "Codex", "Model Context Protocol", "MCP client configuration"]
+diataxis: "how-to"
+---
+
+Connect Cursor, Claude Code, or Codex to the Voucherify Core MCP server that Voucherify hosts. After you sign in and select a project, the client can read that project's data.
+
+Read [Voucherify Core MCP](/guides/voucherify-core-mcp) for how the hosted server reaches a project on any cluster. API calls from the hosted server are included in your billing period. Read [API usage](/guides/voucherify-core-mcp-reference#api-usage).
+
+## Prerequisites
+
+- Cursor, Claude Code, or Codex.
+- A Voucherify login that can open the project you want the agent to read.
+
+## Choose a region
+
+Use the server closest to you. Responses are slightly faster from a nearby region. Each address can reach a project on any cluster.
+
+| Region | Server URL |
+| --- | --- |
+| Europe | `https://eu.mcp.voucherify.io/mcp` |
+| United States | `https://us.mcp.voucherify.io/mcp` |
+| Asia | `https://as.mcp.voucherify.io/mcp` |
+
+## Connect a client
+
+The steps below use the Europe URL. For the United States or Asia, use that region's host. In Cursor, use the same host in `url` and in `CLIENT_ID`.
+
+ laude Code and Codex connect with the server URL and their own sign-in.
+
+<Tabs>
+  <Tab title="Cursor">
+    Cursor reads `auth.CLIENT_ID` during sign-in. That URL is the server's client metadata.
+
+    <Steps>
+      <Step title="Open MCP settings">
+        Go to **Settings** > **Cursor Settings** > **MCP** > **Add new global MCP server**. Alternatively, go to **Customize** > **MCPs**.
+
+        Click **New MCP Server** and select the scope for the user or project.
+        
+        This opens `~/.cursor/mcp.json`.
+
+        To limit the server to one repository, create `.cursor/mcp.json` in that project.
+        
+      </Step>
+      <Step title="Add the server">
+        Paste this configuration. This example uses Europe.
+
+        ```json
+        {
+          "mcpServers": {
+            "voucherify-remote-mcp": {
+              "url": "https://eu.mcp.voucherify.io/mcp",
+              "auth": {
+                "CLIENT_ID": "https://eu.mcp.voucherify.io/oauth/client.json"
+              }
+            }
+          }
+        }
+        ```
+
+        This configuration uses your Voucherify login. An application ID and token are used when you [install the local package](/guides/install-voucherify-core-mcp).
+      </Step>
+      <Step title="Sign in">
+        Save the file. When Cursor opens the Voucherify sign-in, use your Voucherify login credentials.
+      </Step>
+      <Step title="Select a project">
+        Select a project from the list. The agent reads data from that project.
+      </Step>
+      <Step title="Start a chat">
+        Open a new chat and ask a question about the project, for example which campaigns are active.
+      </Step>
+    </Steps>
+
+    Cursor is connected when the chat answers from the project you selected.
+
+    For more on MCP settings in Cursor, read the [Cursor MCP docs](https://docs.cursor.com/context/model-context-protocol).
+  </Tab>
+  <Tab title="Claude Code">
+    Claude Code uses the server URL. It signs in with its own login flow.
+
+    <Steps>
+      <Step title="Add the server">
+        In a terminal, outside a Claude Code session, run:
+
+        ```bash
+        claude mcp add --transport http voucherify-remote-mcp https://eu.mcp.voucherify.io/mcp
+        ```
+
+        This example uses Europe. The command registers the server for you in the current project. To use it in every project, add `--scope user` before `--transport`.
+      </Step>
+      <Step title="Check the status">
+        Run:
+
+        ```bash
+        claude mcp list
+        ```
+
+        `! Needs authentication` means the server is saved and sign-in is still required.
+      </Step>
+      <Step title="Sign in">
+        Run:
+
+        ```bash
+        claude mcp login voucherify-remote-mcp
+        ```
+
+        Or start Claude Code, run `/mcp`, select `voucherify-remote-mcp`, and choose **Authenticate**.
+
+        Complete sign-in in the browser with your Voucherify login credentials.
+      </Step>
+      <Step title="Select a project">
+        Select a project from the list. The agent reads data from that project.
+      </Step>
+      <Step title="Ask a question">
+        Start a session with `claude` and ask a question about the project, for example which campaigns are active.
+      </Step>
+    </Steps>
+
+    Claude Code is connected when `claude mcp list` shows the server as connected and the session answers from the project you selected.
+
+    For more on MCP in Claude Code, read the [Claude Code MCP docs](https://code.claude.com/docs/en/mcp-quickstart "Claude Code MCP quickstart").
+  </Tab>
+  <Tab title="Codex">
+    Codex uses the server URL. It signs in with its own login flow. The ChatGPT desktop app, the Codex CLI, and the IDE extension share this configuration.
+
+    <Steps>
+      <Step title="Add the server">
+        Run:
+
+        ```bash
+        codex mcp add voucherify-remote-mcp --url https://eu.mcp.voucherify.io/mcp
+        ```
+
+        This example uses Europe. The command saves the server. The next step signs you in.
+      </Step>
+      <Step title="Sign in">
+        Run:
+
+        ```bash
+        codex mcp login voucherify-remote-mcp
+        ```
+
+        Complete sign-in in the browser with your Voucherify login credentials.
+
+        In the ChatGPT desktop app, you can open **Settings** > **MCP servers** and select **Authenticate** on this server.
+      </Step>
+      <Step title="Select a project">
+        Select a project from the list. The agent reads data from that project.
+      </Step>
+    </Steps>
+
+    <Warning>
+    Codex can send the OAuth callback to a path of `/callback/<id>`. The Voucherify server accepts `/callback`. Sign-in then stops with `invalid_redirect_uri`, and the server is saved without a project. Contact [Voucherify support](https://www.voucherify.io/contact-support) if you see that error.
+    </Warning>
+
+    Codex is connected when sign-in finishes and a session answers from the project you selected.
+  </Tab>
+</Tabs>
+
+To change the project, log out and sign in again.
+
+For the tools you can ask about, read [Core MCP tools and examples](/guides/voucherify-core-mcp-reference).
