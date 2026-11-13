@@ -4,6 +4,16 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-11-13
+
+Documented `LOYALTY_POINTS` rewards that credit a `v2/loyalties` (loyalty hub) card from a referral tier (DOC-1379 / DEV-4026).
+
+- Added `LOYALTY_POINTS` on POST `/v1/rewards` and PUT `/v1/rewards/{rewardId}` (`parameters.loyalty_points`: `points`, `program_id`, `card_definition_id`, `on_missing_member`).
+- Documented that a `LOYALTY_POINTS` reward can only be assigned to a referral tier: POST `/v1/rewards/{rewardId}/assignments` with `related_object_type` `referral_tier` (and `400` `invalid_related_to` when assigned to a campaign). Clarified the same restriction on POST `/v1/loyalties/{campaignId}/rewards`.
+- Added `referrer_points_earned` and `referee_points_earned` on `CardDailyReportEntry` (GET `/v2/loyalties/programs/{programId}/members/{memberId}/cards/{cardId}/reports/daily`).
+- Added `REFERRER_POINTS_EARNED` and `REFEREE_POINTS_EARNED` on `CardTransaction.type`.
+- Added `referrer_earned` and `referee_earned` on `CardLifetimeBucketPoints` (member and card responses).
+
 ## 2026-11-12
 
 Removed `updated_at` and `-updated_at` from the `order` enum on GET `/v1/validation-rules` (`ParameterOrderListValidationRules`). Sorting by `-updated_at` does not work as intended (lists validation rules without `updated_at` field first). This may be fixed in the future.

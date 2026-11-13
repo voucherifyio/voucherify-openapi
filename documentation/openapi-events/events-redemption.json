@@ -868,9 +868,10 @@
             "enum": [
               "CAMPAIGN",
               "COIN",
-              "MATERIAL"
+              "MATERIAL",
+              "LOYALTY_POINTS"
             ],
-            "description": "Reward type."
+            "description": "Reward type. `LOYALTY_POINTS` credits points on a `v2/loyalties` (loyalty hub) card (for example from a referral tier)."
           }
         }
       },
@@ -1287,6 +1288,9 @@
           },
           {
             "$ref": "#/components/schemas/RewardTypeMaterial"
+          },
+          {
+            "$ref": "#/components/schemas/RewardTypeLoyaltyPoints"
           }
         ]
       },
@@ -1685,6 +1689,53 @@
         },
         "required": [
           "product"
+        ]
+      },
+      "RewardTypeLoyaltyPoints": {
+        "title": "Loyalty hub points",
+        "type": "object",
+        "description": "Parameters for a `LOYALTY_POINTS` reward. Credits points to a `v2/loyalties` (loyalty hub) card. Assign this reward only to a referral tier.",
+        "properties": {
+          "loyalty_points": {
+            "type": "object",
+            "description": "Defines how many points to credit on a `v2/loyalties` (loyalty hub) card, which program and card definition receive them, and what happens when the customer is not a member yet.",
+            "required": [
+              "points",
+              "program_id",
+              "card_definition_id",
+              "on_missing_member"
+            ],
+            "properties": {
+              "points": {
+                "type": "integer",
+                "minimum": 1,
+                "description": "Number of points to credit. Must be greater than `0`."
+              },
+              "program_id": {
+                "type": "string",
+                "description": "Unique `v2/loyalties` (loyalty hub) program ID, assigned by Voucherify.",
+                "example": "lprg_18f58429f4c4bf7b2",
+                "pattern": "^lprg_[a-f0-9]+$"
+              },
+              "card_definition_id": {
+                "type": "string",
+                "description": "Unique card definition ID of the `v2/loyalties` (loyalty hub) card that receives the points.",
+                "example": "lcdef_0b1e6460adca4210b8",
+                "pattern": "^lcdef_[a-f0-9]+$"
+              },
+              "on_missing_member": {
+                "type": "string",
+                "enum": [
+                  "ENROLL",
+                  "REJECT"
+                ],
+                "description": "Action when the customer is not a member of the program. `ENROLL` enrolls the customer and credits the points. `REJECT` rejects the award and the customer is not enrolled."
+              }
+            }
+          }
+        },
+        "required": [
+          "loyalty_points"
         ]
       },
       "DiscountAmountVouchersEffectTypes": {

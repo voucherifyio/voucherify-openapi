@@ -4952,7 +4952,7 @@
           },
           "points_total": {
             "type": "number",
-            "description": "Points credited to the card in the period. Sums `points_earned`, `points_added`, and `points_purchased`. Points spent, expired, subtracted, refunded, returned, or reversed are not deducted.",
+            "description": "Points credited to the card in the period. Sums `points_earned`, `points_added`, `points_purchased`, `referrer_points_earned`, and `referee_points_earned`. Points spent, expired, subtracted, refunded, returned, or reversed are not deducted.",
             "nullable": true
           },
           "points_earned": {
@@ -5008,6 +5008,16 @@
           "points_unlocked": {
             "type": "number",
             "description": "Points unlocked in the period. Includes points released when a spending transaction is approved (also counted in `points_spent`) or rejected.",
+            "nullable": true
+          },
+          "referrer_points_earned": {
+            "type": "number",
+            "description": "Points credited from referral referrer awards in the period (`REFERRER_POINTS_EARNED` card transactions, for example a `LOYALTY_POINTS` reward assigned to a referrer tier). Also counted in `points_total`. Not counted in `points_earned`.",
+            "nullable": true
+          },
+          "referee_points_earned": {
+            "type": "number",
+            "description": "Points credited from referral referee awards in the period (`REFEREE_POINTS_EARNED` card transactions, for example a `LOYALTY_POINTS` reward assigned to a referee tier). Also counted in `points_total`. Not counted in `points_earned`.",
             "nullable": true
           },
           "pending_points_total": {
@@ -5290,6 +5300,18 @@
           "unlocked": {
             "type": "number",
             "description": "Total unlocked points (by unlocking a purchased reward).",
+            "default": 0,
+            "nullable": true
+          },
+          "referrer_earned": {
+            "type": "number",
+            "description": "Total points credited as a referrer from a `LOYALTY_POINTS` referral reward. Already included in `total`, not in `earned`.",
+            "default": 0,
+            "nullable": true
+          },
+          "referee_earned": {
+            "type": "number",
+            "description": "Total points credited as a referee from a `LOYALTY_POINTS` referral reward. Already included in `total`, not in `earned`.",
             "default": 0,
             "nullable": true
           }
@@ -5811,13 +5833,15 @@
               "POINTS_EXPIRED",
               "PENDING_POINTS_ADDED",
               "PENDING_POINTS_ACTIVATED",
-              "PENDING_POINTS_CANCELED"
+              "PENDING_POINTS_CANCELED",
+              "REFERRER_POINTS_EARNED",
+              "REFEREE_POINTS_EARNED"
             ],
             "description": "Transaction type. Options depend on the endpoint and the transaction variant.",
             "nullable": true
           },
           "details": {
-            "description": "Card transaction details. `reason`, `rejection` and `metadata` are present on all variants; the remaining fields depend on the transaction `type`:\n\n- `ADMIN_CREDIT`: `points` (`total`, `expiration_date`)\n- `ADMIN_DEBIT`: `points` (`total`)\n- `ADMIN_POINTS_EXPIRATION`: `bucket` (the point bucket expired manually by an admin)\n- `POINTS_EARNED`: `points` (`total`, `expiration_date`)\n- `POINTS_EXPIRED`: `points` (`total`), `date`, `buckets`\n- `POINTS_SPENT_ON_REWARD`: `points` (`total`), `reward`, `reward_transaction`,`target_card`, `purchase_transaction`\n- `POINTS_PURCHASED`: `points` (`total`, `expiration_date`, `expiration_type`), `reward`, `reward_transaction`, `card_transaction`\n- `POINTS_PURCHASE_REVERSED`: `points` (`total`, `expiration_date`,\n  `expiration_type`), `reward`, `purchase`, `reward_transaction`\n- `POINTS_SPENT_ON_ORDER`: `points` (`total`), `order`, `order_transaction`\n- `POINTS_REFUNDED`: `points` (`total`)\n- `POINTS_RETURNED`: `points` (`total`, `expiration_date`, `expiration_type`), `reward`, `purchase`, `reward_transaction`\n- `PENDING_POINTS_ADDED` / `PENDING_POINTS_ACTIVATED` / `PENDING_POINTS_CANCELED`: `points` (`total`, `date`, `type`)",
+            "description": "Card transaction details. `reason`, `rejection` and `metadata` are present on all variants; the remaining fields depend on the transaction `type`:\n\n- `ADMIN_CREDIT`: `points` (`total`, `expiration_date`)\n- `ADMIN_DEBIT`: `points` (`total`)\n- `ADMIN_POINTS_EXPIRATION`: `bucket` (the point bucket expired manually by an admin)\n- `POINTS_EARNED`: `points` (`total`, `expiration_date`)\n- `REFERRER_POINTS_EARNED`: `points` (`total`, `expiration_date`)\n- `REFEREE_POINTS_EARNED`: `points` (`total`, `expiration_date`)\n- `POINTS_EXPIRED`: `points` (`total`), `date`, `buckets`\n- `POINTS_SPENT_ON_REWARD`: `points` (`total`), `reward`, `reward_transaction`,`target_card`, `purchase_transaction`\n- `POINTS_PURCHASED`: `points` (`total`, `expiration_date`, `expiration_type`), `reward`, `reward_transaction`, `card_transaction`\n- `POINTS_PURCHASE_REVERSED`: `points` (`total`, `expiration_date`,\n  `expiration_type`), `reward`, `purchase`, `reward_transaction`\n- `POINTS_SPENT_ON_ORDER`: `points` (`total`), `order`, `order_transaction`\n- `POINTS_REFUNDED`: `points` (`total`)\n- `POINTS_RETURNED`: `points` (`total`, `expiration_date`, `expiration_type`), `reward`, `purchase`, `reward_transaction`\n- `PENDING_POINTS_ADDED` / `PENDING_POINTS_ACTIVATED` / `PENDING_POINTS_CANCELED`: `points` (`total`, `date`, `type`)",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/CardTransactionDetails"
@@ -35827,9 +35851,10 @@
             "enum": [
               "CAMPAIGN",
               "COIN",
-              "MATERIAL"
+              "MATERIAL",
+              "LOYALTY_POINTS"
             ],
-            "description": "Reward type.",
+            "description": "Reward type. `LOYALTY_POINTS` credits points on a `v2/loyalties` (loyalty hub) card (for example from a referral tier).",
             "nullable": true
           }
         },
@@ -36692,9 +36717,10 @@
             "enum": [
               "CAMPAIGN",
               "COIN",
-              "MATERIAL"
+              "MATERIAL",
+              "LOYALTY_POINTS"
             ],
-            "description": "Reward type.",
+            "description": "Reward type. `LOYALTY_POINTS` credits points on a `v2/loyalties` (loyalty hub) card (for example from a referral tier).",
             "nullable": true
           },
           "parameters": {
@@ -36784,16 +36810,17 @@
           },
           "related_object_id": {
             "type": "string",
-            "description": "Related object ID to which the reward was assigned.",
+            "description": "Related object ID to which the reward was assigned. For `related_object_type` `campaign`, this is the campaign ID. For `referral_tier`, this is the referral tier ID.",
             "example": "camp_wciTvaOfYmAa3EmIIW3QpXXZ",
             "nullable": true
           },
           "related_object_type": {
             "type": "string",
-            "description": "Related object type to which the reward was assigned.",
+            "description": "Related object type to which the reward was assigned. Use `campaign` for **legacy loyalty** campaign rewards. Use `referral_tier` for `LOYALTY_POINTS` rewards that credit a `v2/loyalties` (loyalty hub) card from a referral tier. A `LOYALTY_POINTS` reward can only be assigned to a referral tier.",
             "default": "campaign",
             "enum": [
-              "campaign"
+              "campaign",
+              "referral_tier"
             ],
             "nullable": true
           }
@@ -37811,6 +37838,29 @@
         },
         "required": []
       },
+      "RewardsAssignmentsCreateLoyaltyPointsRewardRequestBody": {
+        "title": "Loyalty Hub Points Reward",
+        "type": "object",
+        "description": "Request body schema for assigning a `LOYALTY_POINTS` reward using **POST** `v1/rewards/{rewardId}/assignments`. Assign only to a referral tier. Do not send `campaign`.",
+        "properties": {
+          "related_object_type": {
+            "type": "string",
+            "enum": [
+              "referral_tier"
+            ],
+            "description": "Related object type. Always `referral_tier` for a `LOYALTY_POINTS` reward.",
+            "x-openapi-31-const": true,
+            "nullable": true
+          },
+          "related_object_id": {
+            "type": "string",
+            "description": "Unique referral tier ID, assigned by Voucherify.",
+            "example": "reftier_0b1e6460adca4210b9",
+            "nullable": true
+          }
+        },
+        "required": []
+      },
       "RewardsAssignmentsCreateRequestBody": {
         "description": "Request body schema for **POST** `v1/rewards/{rewardID}/assignments`.",
         "title": "Rewards Assignments Create Request Body",
@@ -37820,6 +37870,9 @@
           },
           {
             "$ref": "#/components/schemas/RewardsAssignmentsCreateCoinRewardRequestBody"
+          },
+          {
+            "$ref": "#/components/schemas/RewardsAssignmentsCreateLoyaltyPointsRewardRequestBody"
           }
         ]
       },
@@ -37928,6 +37981,9 @@
           },
           {
             "$ref": "#/components/schemas/RewardsCreateRequestBodyPayWithPoints"
+          },
+          {
+            "$ref": "#/components/schemas/RewardsCreateRequestBodyLoyaltyPoints"
           }
         ]
       },
@@ -38029,6 +38085,37 @@
           }
         },
         "required": []
+      },
+      "RewardsCreateRequestBodyLoyaltyPoints": {
+        "title": "`Loyalty hub points reward",
+        "type": "object",
+        "description": "Request body schema for creating a `v2/loyalties` (loyalty hub) points (`LOYALTY_POINTS`) reward using **POST** `v1/rewards`. After create, assign it only to a referral tier (`related_object_type` `referral_tier`). You cannot assign it to a campaign.",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Reward name.",
+            "nullable": true
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "LOYALTY_POINTS"
+            ],
+            "description": "Reward type. Optional when `parameters.loyalty_points` is present; Voucherify infers `LOYALTY_POINTS`.",
+            "nullable": true
+          },
+          "parameters": {
+            "$ref": "#/components/schemas/RewardTypeLoyaltyPoints"
+          },
+          "metadata": {
+            "type": "object",
+            "description": "The metadata object stores all custom attributes assigned to the reward. A set of key/value pairs that you can attach to a reward object. It can be useful for storing additional information about the reward in a structured format.",
+            "nullable": true
+          }
+        },
+        "required": [
+          "parameters"
+        ]
       },
       "RewardsCreateRequestBodyMaterial": {
         "title": "Material Reward",
@@ -38856,6 +38943,9 @@
           },
           {
             "$ref": "#/components/schemas/RewardsUpdateRequestBodyPayWithPoints"
+          },
+          {
+            "$ref": "#/components/schemas/RewardsUpdateRequestBodyLoyaltyPoints"
           }
         ]
       },
@@ -38954,6 +39044,26 @@
           }
         },
         "required": []
+      },
+      "RewardsUpdateRequestBodyLoyaltyPoints": {
+        "title": "Loyalty hub points reward",
+        "type": "object",
+        "description": "Request body schema for updating a `v2/loyalties` (loyalty hub) points (`LOYALTY_POINTS`) reward using **PUT** `v1/rewards/{rewardId}`.",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Reward name.",
+            "nullable": true
+          },
+          "parameters": {
+            "$ref": "#/components/schemas/RewardTypeLoyaltyPoints"
+          },
+          "metadata": {
+            "type": "object",
+            "description": "The metadata object stores all custom attributes assigned to the reward. A set of key/value pairs that you can attach to a reward object. It can be useful for storing additional information about the reward in a structured format.",
+            "nullable": true
+          }
+        }
       },
       "RewardsUpdateRequestBodyMaterial": {
         "title": "Material Reward",
@@ -39091,6 +39201,9 @@
           },
           {
             "$ref": "#/components/schemas/RewardTypeMaterial"
+          },
+          {
+            "$ref": "#/components/schemas/RewardTypeLoyaltyPoints"
           }
         ]
       },
@@ -39146,6 +39259,51 @@
               "points_ratio": {
                 "type": "integer",
                 "description": "The number of loyalty points (**legacy loyalty**) that will map to the predefined cash amount defined by the `exchange_ratio` property.",
+                "nullable": true
+              }
+            },
+            "nullable": true
+          }
+        },
+        "required": []
+      },
+      "RewardTypeLoyaltyPoints": {
+        "title": "Loyalty hub points",
+        "type": "object",
+        "description": "Parameters for a `LOYALTY_POINTS` reward. Credits points to a `v2/loyalties` (loyalty hub) card. Assign this reward only to a referral tier.",
+        "properties": {
+          "loyalty_points": {
+            "type": "object",
+            "description": "Defines how many points to credit on a `v2/loyalties` (loyalty hub) card, which program and card definition receive them, and what happens when the customer is not a member yet.",
+            "required": [],
+            "properties": {
+              "points": {
+                "type": "integer",
+                "minimum": 1,
+                "description": "Number of points to credit. Must be greater than `0`.",
+                "nullable": true
+              },
+              "program_id": {
+                "type": "string",
+                "description": "Unique `v2/loyalties` (loyalty hub) program ID, assigned by Voucherify.",
+                "example": "lprg_18f58429f4c4bf7b2",
+                "pattern": "^lprg_[a-f0-9]+$",
+                "nullable": true
+              },
+              "card_definition_id": {
+                "type": "string",
+                "description": "Unique card definition ID of the `v2/loyalties` (loyalty hub) card that receives the points.",
+                "example": "lcdef_0b1e6460adca4210b8",
+                "pattern": "^lcdef_[a-f0-9]+$",
+                "nullable": true
+              },
+              "on_missing_member": {
+                "type": "string",
+                "enum": [
+                  "ENROLL",
+                  "REJECT"
+                ],
+                "description": "Action when the customer is not a member of the program. `ENROLL` enrolls the customer and credits the points. `REJECT` rejects the award and the customer is not enrolled.",
                 "nullable": true
               }
             },
@@ -40425,9 +40583,10 @@
             "enum": [
               "CAMPAIGN",
               "COIN",
-              "MATERIAL"
+              "MATERIAL",
+              "LOYALTY_POINTS"
             ],
-            "description": "Reward type.",
+            "description": "Reward type. `LOYALTY_POINTS` credits points on a `v2/loyalties` (loyalty hub) card (for example from a referral tier).",
             "nullable": true
           }
         }
@@ -56439,7 +56598,7 @@
           "Rewards"
         ],
         "summary": "Create Reward",
-        "description": "Create a new campaign-linked reward (referral campaigns and **legacy loyalty**). For Loyalty hub rewards, use `POST /v2/loyalties/rewards`.",
+        "description": "Create a new reward. Use this endpoint for campaign-linked rewards (referral campaigns and **legacy loyalty**) and for `LOYALTY_POINTS` rewards that credit a `v2/loyalties` (loyalty hub) card from a referral tier. For Loyalty hub program rewards (a different resource), use `POST /v2/loyalties/rewards`.",
         "parameters": [],
         "security": [
           {
@@ -56892,7 +57051,7 @@
           "Rewards"
         ],
         "summary": "Create Reward Assignment",
-        "description": "Assigns a reward to a specified **legacy loyalty** campaign. Campaign-linked rewards also apply to referral campaigns. For Loyalty hub rewards, use `/v2/loyalties` reward endpoints.",
+        "description": "Assigns a reward to a related object.\n\nFor **legacy loyalty** and digital or material rewards, send `campaign` with a loyalty or referral campaign ID.\n\nFor a `LOYALTY_POINTS` reward (credits a `v2/loyalties` (loyalty hub) card), send `related_object_type` `referral_tier` and `related_object_id` set to the referral tier ID. A `LOYALTY_POINTS` reward cannot be assigned to a campaign. Assigning it with `campaign` (or any non-`referral_tier` related object) returns `400` with `invalid_related_to`.\n\n`POST /v1/loyalties/{campaignId}/rewards` also cannot assign a `LOYALTY_POINTS` reward to a campaign.\n\nFor Loyalty hub program rewards, use `/v2/loyalties` reward endpoints.",
         "parameters": [],
         "security": [
           {
@@ -56905,7 +57064,7 @@
           }
         ],
         "requestBody": {
-          "description": "Provide the campaign ID of the **legacy loyalty** or referral campaign to which the reward is to be assigned and define the cost of the reward in terms of loyalty points.",
+          "description": "For digital, material, and pay-with-points rewards, provide the campaign ID and, when required, the loyalty points cost. For a `LOYALTY_POINTS` reward, provide `related_object_type` `referral_tier` and the referral tier ID.",
           "content": {
             "application/json": {
               "schema": {
@@ -67582,7 +67741,7 @@
           "Loyalties"
         ],
         "summary": "Create Loyalty Campaign Reward Assignment",
-        "description": "<Warning>\n\n<Badge color=\"yellow\">Legacy loyalty API</Badge>\n\nThis endpoint belongs to the legacy loyalty API (`/v1/loyalties`).\n\nVoucherify will not develop new features for this API. However, critical issues may still receive fixes.\n\nFor new integrations, use [Loyalty v2](/build/loyalty-overview).\n\nIf you have questions, contact [Voucherify support](https://www.voucherify.io/contact-support \"Contact Voucherify support\").\n\n</Warning>\n\nAdd rewards to a loyalty campaign.",
+        "description": "<Warning>\n\n<Badge color=\"yellow\">Legacy loyalty API</Badge>\n\nThis endpoint belongs to the legacy loyalty API (`/v1/loyalties`).\n\nVoucherify will not develop new features for this API. However, critical issues may still receive fixes.\n\nFor new integrations, use [Loyalty v2](/build/loyalty-overview).\n\nIf you have questions, contact [Voucherify support](https://www.voucherify.io/contact-support \"Contact Voucherify support\").\n\n</Warning>\n\nAdd rewards to a loyalty campaign.\n\nA `LOYALTY_POINTS` reward cannot be assigned to a campaign. Use **POST** `v1/rewards/{rewardId}/assignments` with `related_object_type` `referral_tier` instead.",
         "parameters": [],
         "security": [
           {
@@ -85229,7 +85388,9 @@
                                 "refunded": 0,
                                 "returned": 0,
                                 "locked": 0,
-                                "unlocked": 0
+                                "unlocked": 0,
+                                "referrer_earned": 0,
+                                "referee_earned": 0
                               },
                               "pending_points": {
                                 "total": 0,
@@ -85268,7 +85429,9 @@
                                 "refunded": 0,
                                 "returned": 0,
                                 "locked": 0,
-                                "unlocked": 0
+                                "unlocked": 0,
+                                "referrer_earned": 0,
+                                "referee_earned": 0
                               },
                               "pending_points": {
                                 "total": 0,
@@ -85307,7 +85470,9 @@
                                 "refunded": 0,
                                 "returned": 0,
                                 "locked": 0,
-                                "unlocked": 0
+                                "unlocked": 0,
+                                "referrer_earned": 0,
+                                "referee_earned": 0
                               },
                               "pending_points": {
                                 "total": 0,
@@ -85640,7 +85805,9 @@
                                 "refunded": 0,
                                 "returned": 0,
                                 "locked": 250,
-                                "unlocked": 250
+                                "unlocked": 250,
+                                "referrer_earned": 0,
+                                "referee_earned": 0
                               },
                               "pending_points": {
                                 "total": 160,
@@ -85686,7 +85853,9 @@
                                 "refunded": 0,
                                 "returned": 0,
                                 "locked": 0,
-                                "unlocked": 0
+                                "unlocked": 0,
+                                "referrer_earned": 0,
+                                "referee_earned": 0
                               },
                               "pending_points": {
                                 "total": 160,
@@ -85732,7 +85901,9 @@
                                 "refunded": 0,
                                 "returned": 0,
                                 "locked": 10,
-                                "unlocked": 10
+                                "unlocked": 10,
+                                "referrer_earned": 0,
+                                "referee_earned": 0
                               },
                               "pending_points": {
                                 "total": 300,
@@ -86002,7 +86173,9 @@
                                 "refunded": 0,
                                 "returned": 0,
                                 "locked": 250,
-                                "unlocked": 250
+                                "unlocked": 250,
+                                "referrer_earned": 0,
+                                "referee_earned": 0
                               },
                               "pending_points": {
                                 "total": 160,
@@ -86048,7 +86221,9 @@
                                 "refunded": 0,
                                 "returned": 0,
                                 "locked": 0,
-                                "unlocked": 0
+                                "unlocked": 0,
+                                "referrer_earned": 0,
+                                "referee_earned": 0
                               },
                               "pending_points": {
                                 "total": 160,
@@ -86455,6 +86630,8 @@
                                   "refunded": 0,
                                   "returned": 0,
                                   "unlocked": 0,
+                                  "referrer_earned": 0,
+                                  "referee_earned": 0,
                                   "subtracted": 0,
                                   "purchased": 0,
                                   "purchased_reversed": 0
@@ -86512,6 +86689,8 @@
                                     "refunded": 0,
                                     "returned": 0,
                                     "unlocked": 0,
+                                    "referrer_earned": 0,
+                                    "referee_earned": 0,
                                     "subtracted": 0,
                                     "purchased": 0,
                                     "purchased_reversed": 0
@@ -86920,6 +87099,8 @@
                                   "refunded": 0,
                                   "returned": 0,
                                   "unlocked": 0,
+                                  "referrer_earned": 0,
+                                  "referee_earned": 0,
                                   "subtracted": 0
                                 },
                                 "pending_points": {
@@ -86981,6 +87162,8 @@
                                   "refunded": 0,
                                   "returned": 0,
                                   "unlocked": 0,
+                                  "referrer_earned": 0,
+                                  "referee_earned": 0,
                                   "subtracted": 0
                                 },
                                 "pending_points": {
@@ -87036,6 +87219,8 @@
                                     "refunded": 0,
                                     "returned": 0,
                                     "unlocked": 0,
+                                    "referrer_earned": 0,
+                                    "referee_earned": 0,
                                     "subtracted": 0
                                   },
                                   "pending_points": {
@@ -87092,6 +87277,8 @@
                                   "refunded": 0,
                                   "returned": 0,
                                   "unlocked": 0,
+                                  "referrer_earned": 0,
+                                  "referee_earned": 0,
                                   "subtracted": 0
                                 },
                                 "pending_points": {
@@ -89641,6 +89828,8 @@
                           "points_returned": 0,
                           "points_locked": 0,
                           "points_unlocked": 0,
+                          "referrer_points_earned": 0,
+                          "referee_points_earned": 0,
                           "pending_points_total": 7497,
                           "pending_points_activated": 0,
                           "pending_points_canceled": 0,
@@ -89660,6 +89849,8 @@
                           "points_returned": 0,
                           "points_locked": 0,
                           "points_unlocked": 0,
+                          "referrer_points_earned": 0,
+                          "referee_points_earned": 0,
                           "pending_points_total": 0,
                           "pending_points_activated": 7497,
                           "pending_points_canceled": 0,
@@ -89679,6 +89870,8 @@
                           "points_returned": 0,
                           "points_locked": 0,
                           "points_unlocked": 0,
+                          "referrer_points_earned": 0,
+                          "referee_points_earned": 0,
                           "pending_points_total": 1400,
                           "pending_points_activated": 0,
                           "pending_points_canceled": 0,
@@ -89698,6 +89891,8 @@
                           "points_returned": 0,
                           "points_locked": 0,
                           "points_unlocked": 0,
+                          "referrer_points_earned": 0,
+                          "referee_points_earned": 0,
                           "pending_points_total": 0,
                           "pending_points_activated": 1400,
                           "pending_points_canceled": 0,
@@ -89724,6 +89919,8 @@
                           "points_returned": 0,
                           "points_locked": 0,
                           "points_unlocked": 0,
+                          "referrer_points_earned": 0,
+                          "referee_points_earned": 0,
                           "pending_points_total": 7497,
                           "pending_points_activated": 0,
                           "pending_points_canceled": 0,
@@ -89743,6 +89940,8 @@
                           "points_returned": 0,
                           "points_locked": 0,
                           "points_unlocked": 0,
+                          "referrer_points_earned": 0,
+                          "referee_points_earned": 0,
                           "pending_points_total": 0,
                           "pending_points_activated": 7497,
                           "pending_points_canceled": 0,
@@ -89762,6 +89961,8 @@
                           "points_returned": 0,
                           "points_locked": 0,
                           "points_unlocked": 0,
+                          "referrer_points_earned": 0,
+                          "referee_points_earned": 0,
                           "pending_points_total": 1400,
                           "pending_points_activated": 0,
                           "pending_points_canceled": 0,
@@ -89781,6 +89982,8 @@
                           "points_returned": 0,
                           "points_locked": 0,
                           "points_unlocked": 0,
+                          "referrer_points_earned": 0,
+                          "referee_points_earned": 0,
                           "pending_points_total": 0,
                           "pending_points_activated": 1400,
                           "pending_points_canceled": 0,
@@ -89807,6 +90010,8 @@
                           "points_returned": 0,
                           "points_locked": 0,
                           "points_unlocked": 0,
+                          "referrer_points_earned": 0,
+                          "referee_points_earned": 0,
                           "pending_points_total": 8897,
                           "pending_points_activated": 8897,
                           "pending_points_canceled": 0,
@@ -89833,6 +90038,8 @@
                           "points_returned": 0,
                           "points_locked": 0,
                           "points_unlocked": 0,
+                          "referrer_points_earned": 0,
+                          "referee_points_earned": 0,
                           "pending_points_total": 8897,
                           "pending_points_activated": 8897,
                           "pending_points_canceled": 0,
