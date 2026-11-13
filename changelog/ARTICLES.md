@@ -5,6 +5,14 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-11-13
+
+Split the Voucherify Core MCP guide into an explanation, connection how-tos, and a tool reference. Documented the hosted remote server for Europe, the United States, and Asia, including Cursor setup, Claude Code and Codex sign-in, and the Codex `invalid_redirect_uri` callback failure. API calls from the hosted server stay in the same billing period.
+
+- Updated `voucherify-core-mcp.mdx` as the explanation
+- Added `connect-voucherify-core-mcp.mdx` for the hosted server
+- Added `install-voucherify-core-mcp.mdx` for the local `uvx` package
+- Added `voucherify-core-mcp-reference.mdx` with the read tools, prompt examples, and API usage warning
 ## 2026-11-10
 
 Added the v20261101_l release note to `changelog.mdx`.
