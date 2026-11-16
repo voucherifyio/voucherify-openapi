@@ -82141,8 +82141,8 @@
           }
         ]
       },
-      "V2LoyaltiesEarningRulesDeleteResponseBody": {
-        "title": "V2 Loyalties Earning Rules Delete Response Body",
+      "LoyaltiesEarningRulesDeleteResponseBody": {
+        "title": "Loyalties Earning Rules Delete Response Body",
         "type": "object",
         "description": "Response body schema for **DELETE** `/v2/loyalties/earning-rules/{earningRuleId}`.",
         "allOf": [
@@ -82200,9 +82200,10 @@
             "enum": [
               "DRAFT",
               "ACTIVE",
-              "INACTIVE"
+              "INACTIVE",
+              "DELETED"
             ],
-            "description": "Current status."
+            "description": "Current status. `DELETED` is returned only by the delete operation."
           },
           "earnings": {
             "type": "array",
@@ -164796,24 +164797,95 @@
         ],
         "operationId": "deleteEarningRule",
         "summary": "Delete earning rule",
-        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nDeletes an earning rule by setting `status` to `DELETED` and returns the deleted earning rule. Returns `400` (`resource_in_use`) when a program still references the earning rule.\n\nA successful call records [`vl.earning_rule.deleted`](/api-reference/loyalty-activity/earning-rules/deleted).",
+        "description": "Deletes an earning rule by setting `status` to `DELETED` and returns the deleted earning rule. Returns `400` (`resource_in_use`) when a program still references the earning rule.\n\nA successful call records [`vl.earning_rule.deleted`](/api-reference/loyalty-activity/earning-rules/deleted).",
         "responses": {
           "200": {
             "description": "Deleted earning rule",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2LoyaltiesEarningRulesDeleteResponseBody"
+                  "$ref": "#/components/schemas/LoyaltiesEarningRulesDeleteResponseBody"
+                },
+                "examples": {
+                  "Deleted earning rule": {
+                    "value": {
+                      "id": "lern_133a8e898a959526c0",
+                      "name": "Earning rule 2026-10-22-01",
+                      "status": "DELETED",
+                      "earnings": [
+                        {
+                          "id": "lernei_133a8e8988959526bf",
+                          "tier_rules": {
+                            "type": "NO_REQUIREMENTS"
+                          },
+                          "effects": [
+                            {
+                              "type": "POINTS",
+                              "points": {
+                                "value": 150,
+                                "card_definition_id": "lcdef_1329efb2af8ba6486f"
+                              }
+                            }
+                          ]
+                        }
+                      ],
+                      "trigger": {
+                        "event": "customer.order.paid"
+                      },
+                      "error": {
+                        "message": "You don't know what's right!"
+                      },
+                      "validity_hours": {
+                        "type": "ANY_TIME"
+                      },
+                      "start_date": null,
+                      "end_date": null,
+                      "trigger_limits": {
+                        "cooldown": {
+                          "type": "NO_COOLDOWN"
+                        },
+                        "frequency": {
+                          "type": "NO_LIMIT",
+                          "limits": []
+                        }
+                      },
+                      "earning_limits": {
+                        "global": {
+                          "type": "NO_LIMIT",
+                          "limits": []
+                        }
+                      },
+                      "metadata": {},
+                      "created_at": "2026-10-22T11:06:33.894Z",
+                      "updated_at": null,
+                      "object": "earning_rule"
+                    }
+                  }
                 }
               }
             }
           },
           "400": {
-            "description": "Validation error - request body or query parameters failed validation, or the operation is not allowed in the current resource state.",
+            "description": "The earning rule is referenced by one or more programs (`resource_in_use`). When more programs reference it, `related_object_ids` ends with `\"…\"`.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Resource in use": {
+                    "value": {
+                      "code": 400,
+                      "key": "resource_in_use",
+                      "message": "Resource in use",
+                      "details": "Resource earning_rule with id lern_133a907d1aca5d2b76 is in use by programs with ids [lprg_128f58429f4c4bf7b2]",
+                      "request_id": "v-135b2cca60e4d56703",
+                      "related_object_ids": [
+                        "lprg_128f58429f4c4bf7b2"
+                      ],
+                      "related_object_type": "program"
+                    }
+                  }
                 }
               }
             }
@@ -164824,16 +164896,19 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Resource not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find earning_rule with id lern_133a907d1aca5d2b76",
+                      "request_id": "v-0c8b6b35294af6f192",
+                      "resource_id": "lern_133a907d1aca5d2b76",
+                      "resource_type": "earning_rule"
+                    }
+                  }
                 }
               }
             }

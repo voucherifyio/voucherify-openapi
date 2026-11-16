@@ -13,7 +13,14 @@ Verified and updated GET `/v2/loyalties/earning-rules`.
 - Named filterable fields on `filters`: `id`, `name`, `status`, and `created_at`. Tightened name and status filter descriptions on `LoyaltiesEarningRulesListRequestQuery`.
 - Corrected the `400` description for query and cursor validation. Removed `404` and `409` responses.
 - Added `400` examples for invalid cursor pattern (`^lcrsern_[a-f0-9]+$`), limit above 100 or below 1, unsupported or conflicting `order`, expired cursor, and cursor/query mismatch.
-- Simplified `EarningRuleResponse.status` to “Current status.” (shared with other earning-rule responses).
+- Added `DELETED` to the `EarningRuleResponse.status` enum. The description notes that only the delete operation returns it. The enum is shared with other earning-rule responses.
+
+Verified and updated DELETE `/v2/loyalties/earning-rules/{earningRuleId}`.
+
+- Added `DELETED` to `EarningRuleResponse.status` so the `200` example validates.
+- Added a `404` `not_found` example with `resource_id` and `resource_type`. Removed the `409` response, which the endpoint never returns.
+- Replaced the `400` boilerplate description with the `resource_in_use` cause. Documented that `related_object_ids` ends with `"…"` when more programs reference the rule.
+- Renamed the response schema to `LoyaltiesEarningRulesDeleteResponseBody`, because the formula name was free.
 
 ## 2026-11-13
 
