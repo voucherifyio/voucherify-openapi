@@ -4,6 +4,17 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-11-16
+
+Verified and updated GET `/v2/loyalties/earning-rules`.
+
+- Clarified that rules with status `DELETED` are excluded from the list.
+- Documented `order` allowed values (`-created_at`, `created_at`, `name`, `-name`), cursor expiry, and `400` errors `invalid_or_expired_cursor` and `cursor_and_query_mismatch` when filters or order change between pages.
+- Named filterable fields on `filters`: `id`, `name`, `status`, and `created_at`. Tightened name and status filter descriptions on `LoyaltiesEarningRulesListRequestQuery`.
+- Corrected the `400` description for query and cursor validation. Removed `404` and `409` responses.
+- Added `400` examples for invalid cursor pattern (`^lcrsern_[a-f0-9]+$`), limit above 100 or below 1, unsupported or conflicting `order`, expired cursor, and cursor/query mismatch.
+- Simplified `EarningRuleResponse.status` to “Current status.” (shared with other earning-rule responses).
+
 ## 2026-11-13
 
 Documented `LOYALTY_POINTS` rewards that credit a `v2/loyalties` (loyalty hub) card from a referral tier.
