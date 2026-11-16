@@ -7,7 +7,7 @@ Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
 ## 2026-11-16
 
-Documented Loyalty hub points as a referral reward, separate from legacy loyalty points and from rewards that members buy in the Loyalty hub (DOC-1381 / DEV-4472, DOC-1385 / DEV-4459, DOC-1537 / DEV-4738).
+Documented Loyalty hub points as a referral reward, separate from legacy loyalty points and from rewards that members buy in the Loyalty hub
 
 - Updated `create-referral-campaign.mdx` so referees can receive **Loyalty Hub - Points on loyalty card** (search an existing loyalty-points reward, create one, edit it, and change it after the campaign is saved) and referrers can receive **Points on loyalty card (loyalty hub)**. The validation rule step includes that referee reward.
 - Updated `referral-campaign-overview.mdx` so rewards can be legacy loyalty or Loyalty hub points. Referee Loyalty hub points are credited to the chosen point wallet and shown on the member card as **Referee earned**.
@@ -19,8 +19,8 @@ Added the v20261101_l release note to `changelog.mdx`.
 
 Documented Loyalty hub analytics and the daily tasks report.
 
-- Updated `performance-analytics.mdx` with **Loyalty hub analytics and performance**. The program **Analytics** page lists card transactions, pending points, expiring points, and reward purchases, and those lists can be exported to CSV (DOC-1499 / DEV-4231). **Performance** is a separate tab on the program, on each earning rule, and on each reward.
-- Updated `loyalty-v2-reports-overview.mdx` so program reports include **Daily tasks**: a daily breakdown of finished nightly tasks, with no all-time summary (DOC-1497 / DEV-3326).
+- Updated `performance-analytics.mdx` with **Loyalty hub analytics and performance**. The program **Analytics** page lists card transactions, pending points, expiring points, and reward purchases, and those lists can be exported to CSV. **Performance** is a separate tab on the program, on each earning rule, and on each reward.
+- Updated `loyalty-v2-reports-overview.mdx` so program reports include **Daily tasks**: a daily breakdown of finished nightly tasks, with no all-time summary.
 ## 2026-11-06
 
 Clarified Loyalty v2 point-wallet **Return policy** versus reward purchase refunds: return policy settings can be saved but are not applied on order cancel or refund yet; reward refunds use the reward **Refundable** setting and a separate API path.
@@ -115,7 +115,7 @@ Updated `loyalty-v2-reports-overview.mdx` so the earning-rule daily report link 
 
 ## 2026-10-08
 
-Updated Workflows articles for versions, unfinished drafts, publish confirmation, step IDs, overlapping triggers, and designer shortcuts (DEV-4328 / DEV-4329 / DEV-4334 / DEV-4341 / DEV-4348 / DEV-4465 / DEV-4467 / DEV-4512).
+Updated Workflows articles for versions, unfinished drafts, publish confirmation, step IDs, overlapping triggers, and designer shortcuts.
 
 - Updated `workflow-options-limits.mdx` with the **Versions** list, the limit of 100 published versions, save rules for an unfinished draft, confirmation before publish and status changes, and identifier prefixes and suffixes. Overlapping loyalty triggers are in an agent-only visibility block.
 - Updated `build-workflows.mdx` with the save and publish steps, a restore-version procedure, confirmation for **Activate** and **Deactivate**, and a shortcut tip.
