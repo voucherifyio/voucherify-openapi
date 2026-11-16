@@ -6,7 +6,7 @@ Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
 ## 2026-11-13
 
-Documented `LOYALTY_POINTS` rewards that credit a `v2/loyalties` (loyalty hub) card from a referral tier (DOC-1379 / DEV-4026).
+Documented `LOYALTY_POINTS` rewards that credit a `v2/loyalties` (loyalty hub) card from a referral tier.
 
 - Added `LOYALTY_POINTS` on POST `/v1/rewards` and PUT `/v1/rewards/{rewardId}` (`parameters.loyalty_points`: `points`, `program_id`, `card_definition_id`, `on_missing_member`).
 - Documented that a `LOYALTY_POINTS` reward can only be assigned to a referral tier: POST `/v1/rewards/{rewardId}/assignments` with `related_object_type` `referral_tier` (and `400` `invalid_related_to` when assigned to a campaign). Clarified the same restriction on POST `/v1/loyalties/{campaignId}/rewards`.
@@ -20,7 +20,7 @@ Removed `updated_at` and `-updated_at` from the `order` enum on GET `/v1/validat
 
 ## 2026-11-10
 
-Added GET `/v2/loyalties/programs/{programId}/reports/daily-tasks/daily` (DOC-1497 / DEV-3326).
+Added GET `/v2/loyalties/programs/{programId}/reports/daily-tasks/daily`.
 
 - Returns counts of nightly tasks the job has already finished: `points_expirations`, `points_activations`, `points_cancellations`, and `tier_recalculations`.
 - Omits periods with no finished tasks. Pending points and scheduled activation or expiration dates are not included, and tasks finished before the report existed are not backfilled.
@@ -249,8 +249,8 @@ Shared copied Loyalty v2 schemas. Repeated fields now live on one schema, and ea
 
 ## 2026-10-07
 
-- Published `reference/OpenAPI.json` as OpenAPI 3.1.0 (DEV-4255). Nullable fields use a `null` type (`type` array, or `anyOf` of a schema and `null`) instead of `nullable: true`.
-- Moved webhook operations from `reference/OpenAPIWebhooks.json` into `reference/OpenAPI.json` and removed the separate file (DEV-4256). Webhook payload schemas that match API objects now reference those shared schemas.
+- Published `reference/OpenAPI.json` as OpenAPI 3.1.0. Nullable fields use a `null` type (`type` array, or `anyOf` of a schema and `null`) instead of `nullable: true`.
+- Moved webhook operations from `reference/OpenAPIWebhooks.json` into `reference/OpenAPI.json` and removed the separate file. Webhook payload schemas that match API objects now reference those shared schemas.
 - Documented `parameters` on `SimpleReferralTier`: `event_type`, `segment.id`, `custom_event.id`, and `distribution.id`.
 
 ## 2026-09-28
