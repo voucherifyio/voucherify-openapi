@@ -65104,7 +65104,7 @@
             "type": "integer",
             "minimum": 0,
             "maximum": 9007199254740991,
-            "description": "Available Remaining stock quantity. For responses, updates with each benefit purchase."
+            "description": "Remaining stock quantity. On create, this is the starting quantity. Each benefit purchase decreases it by one."
           }
         },
         "required": [
@@ -65191,7 +65191,7 @@
           "card_definition_id": {
             "type": "string",
             "pattern": "^lcdef_[a-f0-9]+$",
-            "description": "ID of the card definition whose cards receive the points. The card definition must exist and be `ACTIVE`."
+            "description": "ID of the card definition whose cards receive the points. The card definition must exist. Creating with `status: ACTIVE`, or updating with this object, requires an `ACTIVE` card definition."
           }
         },
         "required": [
@@ -65202,7 +65202,7 @@
       },
       "LoyaltyV2ActivityBenefitPointsProportionalEvery": {
         "type": "object",
-        "description": "Ratio definition - `value` points for every `every` units.",
+        "description": "Ratio definition. `value` points for every `every` units.",
         "properties": {
           "every": {
             "type": "integer",
@@ -65225,7 +65225,7 @@
       },
       "LoyaltyV2ActivityBenefitPointsProportionalMetadata": {
         "type": "object",
-        "description": "Metadata-based ratio definition - `value` points for every `every` units of the metadata property.",
+        "description": "Metadata-based ratio definition. `value` points for every `every` units of the metadata property.",
         "properties": {
           "every": {
             "type": "integer",
@@ -65584,7 +65584,7 @@
           "card_definition_id": {
             "type": "string",
             "pattern": "^lcdef_[a-f0-9]+$",
-            "description": "ID of the card definition whose cards receive the points. The card definition must exist and be `ACTIVE`."
+            "description": "ID of the card definition whose cards receive the points. The card definition must exist. Creating with `status: ACTIVE`, or updating with this object, requires an `ACTIVE` card definition."
           },
           "order": {
             "description": "Order-based calculation configuration (for `PRE_DISCOUNT_ORDER_AMOUNT`, `POST_DISCOUNT_ORDER_AMOUNT`, `ORDER_METADATA_VALUE`).",
@@ -65921,7 +65921,7 @@
       },
       "LoyaltyV2ActivityBenefitMaterial": {
         "type": "object",
-        "description": "Material benefit – a physical product or SKU. Exactly one of `product` or `sku` is\nrequired, matching the `type`; the other must be omitted or `null`.",
+        "description": "Material benefit – a physical product or SKU. Exactly one of `product` or `sku` is required, matching the `type`; the other must be omitted or `null`.",
         "properties": {
           "type": {
             "type": "string",
@@ -66145,7 +66145,7 @@
           },
           "name": {
             "type": "string",
-            "description": "Benefit name, unique within the project."
+            "description": "Benefit name."
           },
           "type": {
             "type": "string",
@@ -86351,8 +86351,8 @@
         ],
         "additionalProperties": false
       },
-      "V2LoyaltiesBenefitsCreateRequestBody": {
-        "title": "V2 Loyalties Benefits Create Request Body",
+      "LoyaltiesBenefitsCreateRequestBody": {
+        "title": "Loyalties Benefits Create Request Body",
         "type": "object",
         "description": "Request body schema for **POST** `/v2/loyalties/benefits`.",
         "allOf": [
@@ -86363,13 +86363,13 @@
       },
       "BenefitCreateRequest": {
         "type": "object",
-        "description": "Request body for creating a benefit. Exactly one type-specific configuration object\nis required, matching the `type`; the remaining type-specific properties must be\nomitted or `null`.",
+        "description": "Request body for creating a benefit. Exactly one type-specific configuration object is required, matching the `type`; the remaining type-specific properties must be omitted or `null`.",
         "properties": {
           "name": {
             "type": "string",
             "minLength": 1,
             "maxLength": 200,
-            "description": "Benefit name. Must be unique within the project."
+            "description": "Sets the benefit name. Required. Maximum 200 characters."
           },
           "type": {
             "type": "string",
@@ -86379,7 +86379,7 @@
               "MATERIAL",
               "DIGITAL"
             ],
-            "description": "Benefit type. Determines which configuration object is required."
+            "description": "Sets the benefit type. Required. The matching configuration object (`points`, `points_proportional`, `material`, or `digital`) is required."
           },
           "status": {
             "type": "string",
@@ -86387,7 +86387,7 @@
               "DRAFT",
               "ACTIVE"
             ],
-            "description": "Initial status of the benefit. Defaults to `DRAFT` when omitted."
+            "description": "Sets the initial status. Optional. Accepts `DRAFT` or `ACTIVE`. Defaults to `DRAFT` when omitted."
           },
           "points": {
             "description": "Fixed points configuration. Required when `type` is `POINTS`, must be null otherwise.",
@@ -86423,7 +86423,7 @@
             ]
           },
           "digital": {
-            "description": "Digital (campaign-based) configuration. Required when `type` is `DIGITAL`, must be null otherwise.",
+            "description": "Digital (campaign-based) configuration. Required when `type` is `DIGITAL`, must be `null` otherwise.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/BenefitDigital"
@@ -86434,7 +86434,7 @@
             ]
           },
           "stock": {
-            "description": "Stock configuration. Defaults to `{ \"type\": \"UNLIMITED\" }` when omitted.",
+            "description": "Sets the stock configuration. Optional. Omit it, or set it to `null`, for unlimited stock.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/BenefitStock"
@@ -86657,7 +86657,7 @@
       },
       "BenefitPointsProportional": {
         "type": "object",
-        "description": "Proportional points effect - points are calculated from an order amount, order items, or a metadata property. Exactly one calculation source object (`order`, `customer`, `custom_event`, or `order_items`) is required, determined by `calculation_type`. In requests, the remaining source properties may be omitted or set to `null`. In responses, they are omitted.",
+        "description": "Proportional points effect. Points are calculated from an order amount, order items, or a metadata property. Exactly one calculation source object (`order`, `customer`, `custom_event`, or `order_items`) is required, determined by `calculation_type`. In requests, the remaining source properties may be omitted or set to `null`. In responses, they are omitted.",
         "properties": {
           "calculation_type": {
             "type": "string",
@@ -86671,12 +86671,12 @@
               "CUSTOMER_METADATA_VALUE",
               "CUSTOM_EVENT_METADATA_VALUE"
             ],
-            "description": "How the points are calculated:\n- `PRE_DISCOUNT_ORDER_AMOUNT` - points per every specified order amount before discounts (requires `order.amount`)\n- `POST_DISCOUNT_ORDER_AMOUNT` - points per every specified order amount after discounts (requires `order.total_amount`)\n- `PRE_DISCOUNT_ORDER_ITEMS_AMOUNT` - points per every specified amount spent on selected products before discounts (requires `order_items.amount`)\n- `POST_DISCOUNT_ORDER_ITEMS_AMOUNT` - points per every specified amount spent on selected products after discounts (requires `order_items.subtotal_amount`)\n- `ORDER_ITEMS_QUANTITY` - points per every specified quantity of selected products, excluding free items (requires `order_items.quantity`)\n- `ORDER_METADATA_VALUE` - points per every specified value in the order metadata (requires `order.metadata`)\n- `CUSTOMER_METADATA_VALUE` - points per every specified value in the customer metadata (requires `customer.metadata`)\n- `CUSTOM_EVENT_METADATA_VALUE` - points per every specified value in the custom event metadata (requires `custom_event.metadata`)"
+            "description": "How the points are calculated:\n- `PRE_DISCOUNT_ORDER_AMOUNT`: points per every specified order amount before discounts (requires `order.amount`)\n- `POST_DISCOUNT_ORDER_AMOUNT`: Points per every specified order amount after discounts (requires `order.total_amount`)\n- `PRE_DISCOUNT_ORDER_ITEMS_AMOUNT`: Points per every specified amount spent on selected products before discounts (requires `order_items.amount`)\n- `POST_DISCOUNT_ORDER_ITEMS_AMOUNT`: Points per every specified amount spent on selected products after discounts (requires `order_items.subtotal_amount`)\n- `ORDER_ITEMS_QUANTITY`: Points per every specified quantity of selected products, excluding free items (requires `order_items.quantity`)\n- `ORDER_METADATA_VALUE`: Points per every specified value in the order metadata (requires `order.metadata`)\n- `CUSTOMER_METADATA_VALUE`: Points per every specified value in the customer metadata (requires `customer.metadata`)\n- `CUSTOM_EVENT_METADATA_VALUE`: Points per every specified value in the custom event metadata (requires `custom_event.metadata`)"
           },
           "card_definition_id": {
             "type": "string",
             "pattern": "^lcdef_[a-f0-9]+$",
-            "description": "ID of the card definition whose cards receive the points. The card definition must exist and be ACTIVE."
+            "description": "ID of the card definition whose cards receive the points. The card definition must exist. Creating with `status: ACTIVE`, or updating with this object, requires an `ACTIVE` card definition."
           },
           "order": {
             "description": "Order-based calculation configuration. Required for `PRE_DISCOUNT_ORDER_AMOUNT`, `POST_DISCOUNT_ORDER_AMOUNT`, and `ORDER_METADATA_VALUE`. For other calculation types, requests may omit it or set it to `null`; responses omit it.",
@@ -87322,7 +87322,7 @@
       },
       "BenefitDigital": {
         "type": "object",
-        "description": "Digital benefit - a reward sourced from a Voucherify campaign. Exactly one of `gift_vouchers` or `discount_coupons` is required, matching the `type`. In requests, the other property may be omitted or set to `null`. In responses, it is omitted. The referenced campaign must exist and its campaign type must match the benefit's digital type.",
+        "description": "Digital benefit: Reward sourced from a Voucherify campaign. Exactly one of `gift_vouchers` or `discount_coupons` is required, matching the `type`. In requests, the other property may be omitted or set to `null`. In responses, it is omitted. The referenced campaign must exist and its campaign type must match the benefit's digital type.",
         "properties": {
           "type": {
             "type": "string",
@@ -87535,7 +87535,7 @@
           },
           "name": {
             "type": "string",
-            "description": "Benefit name, unique within the project."
+            "description": "Benefit name."
           },
           "type": {
             "type": "string",
@@ -167834,34 +167834,209 @@
           "LV2-Benefits"
         ],
         "summary": "Create benefit",
-        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nCreates a new benefit. Exactly one type-specific configuration object (`points`,\n`points_proportional`, `material`, or `digital`) is required, matching the `type`.\nWhen `status` is omitted the benefit is created in `DRAFT` status. When `stock` is\nomitted it defaults to `{ \"type\": \"UNLIMITED\" }`.\n\nReferenced resources are validated: the card definition (for points-based types) must\nexist and - when creating with `status: ACTIVE` - must be ACTIVE (423 `resource_locked`\notherwise); the product/SKU (for `MATERIAL`) and campaign (for `DIGITAL`) must exist,\nand the campaign type must match the digital benefit type (`DISCOUNT_COUPONS` or\n`GIFT_VOUCHERS`). The benefit name must be unique per project (409 `duplicate_found`).\n\nA successful call records [`vl.benefit.created`](/api-reference/loyalty-activity/benefits/created).",
+        "description": "Creates a new benefit. Exactly one type-specific configuration object (`points`, `points_proportional`, `material`, or `digital`) is required, matching the `type`.\n\nWhen `status` is omitted the benefit is created in `DRAFT` status. When `stock` is omitted, it defaults to `{ \"type\": \"UNLIMITED\" }`.\n\nReferenced resources are validated: the card definition (for points-based types) must exist and - when creating with `status: ACTIVE` - must be ACTIVE (423 `non_active_card_definition` otherwise); the product/SKU (for `MATERIAL`) and campaign (for `DIGITAL`) must exist; the campaign type must match the digital benefit type (`DISCOUNT_COUPONS` or `GIFT_VOUCHERS`, 400 `invalid_campaign_type` otherwise); and when creating with `status: ACTIVE`, the campaign must not be a draft (423 `non_active_campaign` otherwise).\n\nA successful call records [`vl.benefit.created`](/api-reference/loyalty-activity/benefits/created).",
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/V2LoyaltiesBenefitsCreateRequestBody"
+                "$ref": "#/components/schemas/LoyaltiesBenefitsCreateRequestBody"
+              },
+              "examples": {
+                "Material benefit: Request": {
+                  "value": {
+                    "name": "Benefit 2026-11-16-01",
+                    "type": "MATERIAL",
+                    "material": {
+                      "type": "PRODUCT",
+                      "product": {
+                        "id": "prod_128f4cd0a94c4bef25"
+                      }
+                    },
+                    "stock": {
+                      "type": "LIMITED",
+                      "limited": {
+                        "quantity": 313
+                      }
+                    },
+                    "status": "ACTIVE"
+                  }
+                },
+                "Point benefit: Request": {
+                  "value": {
+                    "name": "Benefit 2026-11-16-02",
+                    "type": "POINTS",
+                    "points": {
+                      "value": 50,
+                      "card_definition_id": "lcdef_1331564fab0b1ce713"
+                    },
+                    "status": "ACTIVE"
+                  }
+                },
+                "Point proportional – order items: Request": {
+                  "value": {
+                    "name": "Benefit 2026-11-16-03",
+                    "type": "POINTS_PROPORTIONAL",
+                    "points_proportional": {
+                      "card_definition_id": "lcdef_1331564fab0b1ce713",
+                      "calculation_type": "ORDER_ITEMS_QUANTITY",
+                      "order_items": {
+                        "quantity": {
+                          "every": 3,
+                          "value": 5,
+                          "applicable_to": [
+                            {
+                              "type": "product",
+                              "product": {
+                                "id": "prod_1294cee5910e4904c3"
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    "status": "ACTIVE"
+                  }
+                }
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "The created benefit",
+            "description": "The created benefit.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/V2LoyaltiesBenefitsCreateResponseBody"
+                },
+                "examples": {
+                  "Material benefit: Response": {
+                    "value": {
+                      "id": "lben_135b378c642d653862",
+                      "name": "Benefit 2026-11-16-01",
+                      "type": "MATERIAL",
+                      "status": "ACTIVE",
+                      "stock": {
+                        "type": "LIMITED",
+                        "limited": {
+                          "quantity": 313
+                        }
+                      },
+                      "material": {
+                        "type": "PRODUCT",
+                        "product": {
+                          "id": "prod_128f4cd0a94c4bef25"
+                        }
+                      },
+                      "created_at": "2026-11-16T19:56:22.800Z",
+                      "updated_at": null,
+                      "object": "benefit"
+                    }
+                  },
+                  "Point benefit: Response": {
+                    "value": {
+                      "id": "lben_135b3b2b7a2d653cdd",
+                      "name": "Benefit 2026-11-16-02",
+                      "type": "POINTS",
+                      "status": "ACTIVE",
+                      "stock": {
+                        "type": "UNLIMITED"
+                      },
+                      "points": {
+                        "value": 50,
+                        "card_definition_id": "lcdef_1331564fab0b1ce713"
+                      },
+                      "created_at": "2026-11-16T20:12:12.120Z",
+                      "updated_at": null,
+                      "object": "benefit"
+                    }
+                  },
+                  "Point proportional – order items: Response": {
+                    "value": {
+                      "id": "lben_135b3e244fc5c284c5",
+                      "name": "Benefit 2026-11-16-03",
+                      "type": "POINTS_PROPORTIONAL",
+                      "status": "ACTIVE",
+                      "stock": {
+                        "type": "UNLIMITED"
+                      },
+                      "points_proportional": {
+                        "calculation_type": "ORDER_ITEMS_QUANTITY",
+                        "card_definition_id": "lcdef_1331564fab0b1ce713",
+                        "order_items": {
+                          "quantity": {
+                            "every": 3,
+                            "value": 5,
+                            "applicable_to": [
+                              {
+                                "type": "product",
+                                "product": {
+                                  "id": "prod_1294cee5910e4904c3"
+                                }
+                              }
+                            ]
+                          }
+                        }
+                      },
+                      "created_at": "2026-11-16T20:25:11.230Z",
+                      "updated_at": null,
+                      "object": "benefit"
+                    }
+                  }
                 }
               }
             }
           },
           "400": {
-            "description": "Validation error - request body or query parameters failed validation, or the operation is not allowed in the current resource state.",
+            "description": "The request body failed validation.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Invalid payload": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_payload",
+                      "message": "Invalid payload",
+                      "details": "Property .points_proportional must have required property 'calculation_type'",
+                      "request_id": "v-135b365e94843616bc"
+                    }
+                  },
+                  "Invalid campaign type": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_campaign_type",
+                      "message": "Invalid payload",
+                      "details": "Campaign must be of type 'DISCOUNT_COUPONS' for DISCOUNT_COUPONS benefit",
+                      "request_id": "v-135b365e94843616bc"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - a referenced resource is not accessible in the current context.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Product not accessible": {
+                    "value": {
+                      "code": 403,
+                      "key": "forbidden",
+                      "message": "Forbidden",
+                      "details": "Resource product with id prod_128f4cd0a94c4bef25 is not accessible in given context",
+                      "request_id": "v-135b38030624d57b5b",
+                      "resource_id": "prod_128f4cd0a94c4bef25",
+                      "resource_type": "product"
+                    }
+                  }
                 }
               }
             }
@@ -167872,16 +168047,52 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Product not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find product with id prod_128f4cd0a94c3bef25",
+                      "request_id": "v-135b38030624d57b5b",
+                      "resource_id": "prod_128f4cd0a94c3bef25",
+                      "resource_type": "product"
+                    }
+                  },
+                  "Card definition not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find card_definition with id lcdef_1329efb2af8ba6483f",
+                      "request_id": "v-135b365e94843616bc",
+                      "resource_id": "lcdef_1329efb2af8ba6483f",
+                      "resource_type": "card_definition"
+                    }
+                  },
+                  "SKU not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find sku with id sku_128f4cd0a94c4bef25",
+                      "request_id": "v-135b38030624d57b5b",
+                      "resource_id": "sku_128f4cd0a94c4bef25",
+                      "resource_type": "sku"
+                    }
+                  },
+                  "Campaign not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find campaign with id camp_128f4cd0a94c4bef25",
+                      "request_id": "v-135b38030624d57b5b",
+                      "resource_id": "camp_128f4cd0a94c4bef25",
+                      "resource_type": "campaign"
+                    }
+                  }
                 }
               }
             }
@@ -167892,6 +168103,26 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Non-active card definition": {
+                    "value": {
+                      "code": 423,
+                      "key": "non_active_card_definition",
+                      "message": "Cannot create benefit when card definition is not ACTIVE",
+                      "details": "Invalid card_definition status with id lcdef_1329efb2af8ba6486f",
+                      "request_id": "v-135b35dbbc843615c8"
+                    }
+                  },
+                  "Non-active campaign": {
+                    "value": {
+                      "code": 423,
+                      "key": "non_active_campaign",
+                      "message": "Cannot use a draft campaign in a digital benefit",
+                      "details": "Invalid campaign status with id camp_128f4cd0a94c4bef25",
+                      "request_id": "v-135b35dbbc843615c8"
+                    }
+                  }
                 }
               }
             }

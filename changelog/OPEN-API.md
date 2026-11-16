@@ -22,6 +22,17 @@ Verified and updated DELETE `/v2/loyalties/earning-rules/{earningRuleId}`.
 - Replaced the `400` boilerplate description with the `resource_in_use` cause. Documented that `related_object_ids` ends with `"…"` when more programs reference the rule.
 - Renamed the response schema to `LoyaltiesEarningRulesDeleteResponseBody`, because the formula name was free.
 
+Verified and updated POST `/v2/loyalties/benefits`. Removed the documentation-in-progress badge.
+
+- Clarified that exactly one of `points`, `points_proportional`, `material`, or `digital` is required, matching `type`. Omitted `status` creates the benefit as `DRAFT`. Omitted `stock`, or `stock: null`, stores unlimited stock.
+- Clarified `card_definition_id`. The card definition must exist. It must be `ACTIVE` when creating with `status: ACTIVE`, or when an update sends the points object. A `DRAFT` create accepts a card definition that is not `ACTIVE`.
+- Documented `400` `invalid_campaign_type` when a digital benefit's campaign type does not match `DISCOUNT_COUPONS` or `GIFT_VOUCHERS`, and `423` `non_active_campaign` when an `ACTIVE` create references a draft campaign.
+- Corrected the inactive card definition error to `423` `non_active_card_definition`. Removed the `409` response. The name is not rejected as a duplicate.
+- Added `403` `forbidden` when the product on a `SKU` material benefit is not accessible in the caller's context.
+- Added request and `200` examples, plus `400`, `403`, `404`, and `423` examples. `404` covers a missing product, card definition, SKU, or campaign.
+- Renamed the request schema to `LoyaltiesBenefitsCreateRequestBody`.
+- Removed "unique within the project" from `Benefit.name`. Clarified `LoyaltyV2ActivityBenefitStockLimited.quantity`: on create it is the starting quantity, and each purchase decreases it by one.
+
 ## 2026-11-13
 
 Documented `LOYALTY_POINTS` rewards that credit a `v2/loyalties` (loyalty hub) card from a referral tier.
