@@ -82202,7 +82202,7 @@
               "ACTIVE",
               "INACTIVE"
             ],
-            "description": "Current status. `DELETED` also exists internally but deleted rules are excluded from API reads."
+            "description": "Current status."
           },
           "earnings": {
             "type": "array",
@@ -82521,7 +82521,7 @@
             ]
           },
           "name": {
-            "description": "Name filter (string type). Allowed conditions: `$is`, `$is_not`, `$contains`, `$not_contain`, `$starts_with`, `$ends_with` (single value), `$in`, `$not_in` (up to 10 values), `$has_value`, `$is_unknown`. Can be `null`.",
+            "description": "Name filter. Allowed conditions: `$is`, `$is_not`, `$contains`, `$not_contain`, `$starts_with`, `$ends_with` (single value), `$in`, `$not_in` (up to 10 values), `$has_value`, `$is_unknown`. Can be `null`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/LoyaltiesEarningRulesListRequestQueryName"
@@ -82532,7 +82532,7 @@
             ]
           },
           "status": {
-            "description": "Status filter (enum type). Allowed conditions: `$is`, `$is_not` (single value), `$in`, `$not_in` (up to 10 values). Allowed values: `ACTIVE`, `INACTIVE`, `DRAFT`. Can be `null`.",
+            "description": "Status filter. Allowed conditions: `$is`, `$is_not` (single value), `$in`, `$not_in` (up to 10 values). Allowed values: `ACTIVE`, `INACTIVE`, `DRAFT`. Can be `null`.",
             "oneOf": [
               {
                 "type": "object",
@@ -163721,7 +163721,7 @@
         ],
         "operationId": "listEarningRules",
         "summary": "List earning rules",
-        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nReturns a cursor-paginated list of earning rules. The same field cannot be used\nin both ascending and descending order at once\n(e.g. `order=name&order=-name` is rejected). Default order is `-created_at`;\n`id` is always appended as a tie-breaker.\n\nA successful call records no activity.",
+        "description": "Returns a cursor-paginated list of earning rules. Rules with status `DELETED` are excluded. The same field cannot be used\nin both ascending and descending order at once\n(e.g. `order=name&order=-name` is rejected). Default order is `-created_at`;\n`id` is always appended as a tie-breaker.\n\nA successful call records no activity.",
         "parameters": [
           {
             "name": "limit",
@@ -163743,7 +163743,7 @@
             "name": "order",
             "in": "query",
             "required": false,
-            "description": "Orders the results. Accepts one value or an array. Prefix a field with `-` for descending order. Defaults to `-created_at`. The same field cannot be used in both directions. Rows with the same sort value are then ordered by `id` ascending.",
+            "description": "Orders the results. Accepts one value or an array. Prefix a field with `-` for descending order. Allowed values: `-created_at`, `created_at`, `name`, `-name`. Defaults to `-created_at`. The same field cannot be used in both directions. Rows with the same sort value are then ordered by `id` ascending.",
             "explode": true,
             "schema": {
               "oneOf": [
@@ -163778,7 +163778,7 @@
             "name": "cursor",
             "in": "query",
             "required": false,
-            "description": "Continues pagination. Pass the `cursor.next` value from a previous response. Format `lcrsern_[a-f0-9]+`. The cursor matches the filters and order of that response.",
+            "description": "Continues pagination. Pass the `cursor.next` value from a previous response. Format `lcrsern_[a-f0-9]+`. The cursor matches the filters and order of that response. Cursors expire. An expired cursor returns `400` (`invalid_or_expired_cursor`). Changing `filters` or `order` between pages returns `400` (`cursor_and_query_mismatch`).",
             "schema": {
               "type": [
                 "string",
@@ -163793,7 +163793,7 @@
             "required": false,
             "style": "deepObject",
             "explode": true,
-            "description": "Filters the results. Pass a deep object, for example `filters[status][conditions][$is]=ACTIVE`. Fields combine through `junction`, which defaults to `AND`. Omit `filters` to apply no field filter.",
+            "description": "Filters the results by `id`, `name`, `status`, or `created_at`. Pass a deep object, for example `filters[status][conditions][$is]=ACTIVE`. Fields combine through `junction`, which defaults to `AND`. Omit `filters` to apply no field filter.",
             "schema": {
               "oneOf": [
                 {
@@ -163813,36 +163813,229 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/V2LoyaltiesEarningRulesListResponseBody"
+                },
+                "examples": {
+                  "List of earning rules": {
+                    "value": {
+                      "data": [
+                        {
+                          "id": "lern_133a941c44c06594cf",
+                          "name": "Updated earning rule",
+                          "status": "ACTIVE",
+                          "earnings": [
+                            {
+                              "id": "lernei_1351c417a0e179f2f0",
+                              "name": "New earning rule 02",
+                              "tier_rules": {
+                                "type": "NO_REQUIREMENTS"
+                              },
+                              "effects": [
+                                {
+                                  "type": "POINTS",
+                                  "points": {
+                                    "value": 100,
+                                    "card_definition_id": "lcdef_1331564fab0b1ce713"
+                                  }
+                                }
+                              ]
+                            }
+                          ],
+                          "trigger": {
+                            "event": "customer.order.paid"
+                          },
+                          "validity_hours": {
+                            "type": "ANY_TIME"
+                          },
+                          "start_date": null,
+                          "end_date": "2026-12-31T00:00:00.000Z",
+                          "trigger_limits": {
+                            "cooldown": {
+                              "type": "NO_COOLDOWN"
+                            },
+                            "frequency": {
+                              "type": "NO_LIMIT",
+                              "limits": []
+                            }
+                          },
+                          "earning_limits": {
+                            "global": {
+                              "type": "NO_LIMIT",
+                              "limits": []
+                            }
+                          },
+                          "metadata": {
+                            "some-value": null,
+                            "temporary_earning_rule": true
+                          },
+                          "created_at": "2026-10-22T11:30:54.857Z",
+                          "updated_at": "2026-11-09T11:45:39.728Z",
+                          "object": "earning_rule"
+                        },
+                        {
+                          "id": "lern_133a93007e0a5d2c4d",
+                          "name": "Earning rule 2026-10-22-04",
+                          "status": "DRAFT",
+                          "earnings": [
+                            {
+                              "id": "lernei_133a93007cca5d2c4c",
+                              "tier_rules": {
+                                "type": "NO_REQUIREMENTS"
+                              },
+                              "effects": [
+                                {
+                                  "type": "POINTS",
+                                  "points": {
+                                    "value": 150,
+                                    "card_definition_id": "lcdef_1329efb2af8ba6486f"
+                                  }
+                                }
+                              ]
+                            }
+                          ],
+                          "trigger": {
+                            "event": "customer.order.paid"
+                          },
+                          "error": {
+                            "message": "You don't know what's right!"
+                          },
+                          "validity_hours": {
+                            "type": "DAILY",
+                            "daily": [
+                              {
+                                "days_of_week": [
+                                  0,
+                                  5,
+                                  6
+                                ],
+                                "start_time": "15:00",
+                                "end_time": "17:30"
+                              }
+                            ]
+                          },
+                          "start_date": null,
+                          "end_date": null,
+                          "trigger_limits": {
+                            "cooldown": {
+                              "type": "FIXED_COOLDOWN",
+                              "fixed_cooldown": {
+                                "period": {
+                                  "value": 1,
+                                  "unit": "HOUR"
+                                }
+                              }
+                            },
+                            "frequency": {
+                              "type": "LIMITED",
+                              "limits": [
+                                {
+                                  "type": "TIME_BASED",
+                                  "period": {
+                                    "type": "CURRENT_PERIOD",
+                                    "current_period": {
+                                      "unit": "WEEK"
+                                    }
+                                  },
+                                  "triggers": {
+                                    "max": 2
+                                  }
+                                }
+                              ]
+                            }
+                          },
+                          "earning_limits": {
+                            "global": {
+                              "type": "NO_LIMIT",
+                              "limits": []
+                            }
+                          },
+                          "metadata": {},
+                          "created_at": "2026-10-22T11:26:04.277Z",
+                          "updated_at": null,
+                          "object": "earning_rule"
+                        }
+                      ],
+                      "cursor": {
+                        "next": "lcrsern_135ae8db62c5c29be2",
+                        "expires_at": "2026-11-16T14:22:34.315Z"
+                      },
+                      "object": "list"
+                    }
+                  }
                 }
               }
             }
           },
           "400": {
-            "description": "Validation error - request body or query parameters failed validation, or the operation is not allowed in the current resource state.",
+            "description": "Invalid query parameters, or an invalid, expired, or mismatched cursor.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Resource not found.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Invalid cursor format": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Property .cursor must match pattern \"^lcrsern_[a-f0-9]+$\"",
+                      "request_id": "v-12f9006245061134d0"
+                    }
+                  },
+                  "Cursor invalid or expired": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_or_expired_cursor",
+                      "message": "Invalid or expired cursor",
+                      "details": "The provided cursor is invalid or has expired",
+                      "request_id": "v-12f9006245061134d1"
+                    }
+                  },
+                  "Cursor does not match query": {
+                    "value": {
+                      "code": 400,
+                      "key": "cursor_and_query_mismatch",
+                      "message": "Cursor and query mismatch",
+                      "details": "The provided cursor does not match the query, either the cursor is invalid or the query has changed",
+                      "request_id": "v-12f9006245061134d2"
+                    }
+                  },
+                  "Limit too high": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Property .limit cannot be greater than 100",
+                      "request_id": "v-12f9006245061134d3"
+                    }
+                  },
+                  "Limit too low": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Property .limit cannot be lower than 1",
+                      "request_id": "v-12f9006245061134d4"
+                    }
+                  },
+                  "Unsupported order value": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Property .order must be equal to one of the allowed values [ -created_at, created_at, name, -name ]",
+                      "request_id": "v-12f9006245061134d5"
+                    }
+                  },
+                  "Conflicting order values": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Query cannot be ordered by 'created_at' and '-created_at' at the same time",
+                      "request_id": "v-12f9006245061134d6"
+                    }
+                  }
                 }
               }
             }
