@@ -5,6 +5,14 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-11-16
+
+Documented Loyalty hub points as a referral reward, separate from legacy loyalty points and from rewards that members buy in the Loyalty hub (DOC-1381 / DEV-4472, DOC-1385 / DEV-4459, DOC-1537 / DEV-4738).
+
+- Updated `create-referral-campaign.mdx` so referees can receive **Loyalty Hub - Points on loyalty card** (search an existing loyalty-points reward, create one, edit it, and change it after the campaign is saved) and referrers can receive **Points on loyalty card (loyalty hub)**. The validation rule step includes that referee reward.
+- Updated `referral-campaign-overview.mdx` so rewards can be legacy loyalty or Loyalty hub points. Referee Loyalty hub points are credited to the chosen point wallet and shown on the member card as **Referee earned**.
+- Updated `create-rewards.mdx` with **Points on loyalty card (loyalty hub)**: **Loyalty program**, **Point wallet**, **Points**, and **If the customer is not a program member** (**Create member** or **Don't create member**). This reward is not used in a legacy loyalty campaign.
+
 ## 2026-11-10
 
 Added the v20261101_l release note to `changelog.mdx`.
