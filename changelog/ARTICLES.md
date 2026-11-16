@@ -13,6 +13,14 @@ Documented Loyalty hub points as a referral reward, separate from legacy loyalty
 - Updated `referral-campaign-overview.mdx` so rewards can be legacy loyalty or Loyalty hub points. Referee Loyalty hub points are credited to the chosen point wallet and shown on the member card as **Referee earned**.
 - Updated `create-rewards.mdx` with **Points on loyalty card (loyalty hub)**: **Loyalty program**, **Point wallet**, **Points**, and **If the customer is not a program member** (**Create member** or **Don't create member**). This reward is not used in a legacy loyalty campaign.
 
+Updated `loyalty-v2-earning-rules-overview.mdx` so earnings inside one rule are alternatives, not a stack.
+
+- The first earning that passes is applied, and later earnings are skipped, including ones that would also pass. An earning with no tier requirement and no conditions passes immediately. The winning earning runs all of its effects. Other earning rules on the program are evaluated separately.
+- Documented earning limits, and that a points-effect expiration override must be `NO_EXPIRATION` or the same type as the card definition.
+- Create accepts `DRAFT` or `ACTIVE`. After the rule leaves `DRAFT`, the trigger is locked. Earnings, including conditions and tier requirements, can still be replaced.
+- Delete sets `status` to `DELETED` and returns that rule. List and activity calls do not return it.
+- Removed the move-to-draft transition.
+
 ## 2026-11-10
 
 Added the v20261101_l release note to `changelog.mdx`.
