@@ -20760,13 +20760,29 @@
           "Benefits"
         ],
         "summary": "Update benefit",
-        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nUpdates a benefit. When the benefit is in `DRAFT` status all properties can be updated.\nWhen the benefit is not in `DRAFT` status, only `name`, `stock`, `points`, `points_proportional`, and `digital` may be updated (400 `invalid_payload`\notherwise). Referenced resources (card definition, product/SKU, campaign) are validated\nthe same way as on create; a points-based benefit can only reference an ACTIVE card\ndefinition (423 `resource_locked` otherwise). The benefit name must remain unique per\nproject (409 `duplicate_found`).\n\nA successful call records [`vl.benefit.updated`](/api-reference/loyalty-activity/benefits/updated).",
+        "description": "Updates the benefit fields in the body. The body must contain at least one of `name`, `type`, `points`, `points_proportional`, `material`, `digital`, or `stock`. This operation does not change `status`.\n\nIn `DRAFT` status, any of these fields may be sent. In `ACTIVE` status, the body may contain only `name`, `stock`, `points`, `points_proportional`, and `digital`. On an `ACTIVE` benefit, `points.card_definition_id`, `points_proportional.calculation_type`, `points_proportional.card_definition_id`, `digital.type`, and `digital.gift_vouchers.campaign_id` cannot change. `digital` cannot be sent for an `ACTIVE` `DISCOUNT_COUPONS` benefit.\n\nA `POINTS` or `POINTS_PROPORTIONAL` benefit requires an `ACTIVE` card definition in `DRAFT` and `ACTIVE` status (`423` `non_active_card_definition`). An `ACTIVE` digital benefit cannot use a `DRAFT` campaign (`423` `non_active_campaign`).\n\nA successful call records [`vl.benefit.updated`](/api-reference/loyalty-activity/benefits/updated).",
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/V2LoyaltiesBenefitsUpdateRequestBody"
+                "$ref": "#/components/schemas/LoyaltiesBenefitsUpdateRequestBody"
+              },
+              "examples": {
+                "Update active benefit": {
+                  "value": {
+                    "stock": {
+                      "type": "LIMITED",
+                      "limited": {
+                        "quantity": 333
+                      }
+                    },
+                    "points": {
+                      "value": 1,
+                      "card_definition_id": "lcdef_1331564fab0b1ce713"
+                    }
+                  }
+                }
               }
             }
           }
@@ -20778,36 +20794,167 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/V2LoyaltiesBenefitsUpdateResponseBody"
+                },
+                "examples": {
+                  "Updated active benefit": {
+                    "value": {
+                      "id": "lben_135b36888c45c2fb5f",
+                      "name": "Benefit 2026-11-16-02",
+                      "type": "POINTS",
+                      "status": "ACTIVE",
+                      "stock": {
+                        "type": "LIMITED",
+                        "limited": {
+                          "quantity": 333
+                        }
+                      },
+                      "points": {
+                        "value": 1,
+                        "card_definition_id": "lcdef_1331564fab0b1ce713"
+                      },
+                      "created_at": "2026-11-16T19:51:56.714Z",
+                      "updated_at": "2026-11-17T11:09:40.926Z",
+                      "object": "benefit"
+                    }
+                  }
                 }
               }
             }
           },
           "400": {
-            "description": "Validation error - request body or query parameters failed validation, or the operation is not allowed in the current resource state.",
+            "description": "The body failed validation, or the change is not allowed for the benefit's current status.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Active benefit: Invalid payload": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_payload",
+                      "message": "Invalid payload",
+                      "details": "Only [name, stock, points, points_proportional, digital] properties are allowed to be updated when benefit is in ACTIVE status",
+                      "request_id": "v-135c0b1cb1841540a3"
+                    }
+                  },
+                  "Empty body": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_payload",
+                      "message": "Invalid payload",
+                      "details": "At least one property is required",
+                      "request_id": "v-135c0b1cb1841540a4"
+                    }
+                  },
+                  "Active benefit: Immutable property": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_payload",
+                      "message": "Invalid payload",
+                      "details": "Property 'points.card_definition_id' cannot be changed when benefit is in ACTIVE status",
+                      "request_id": "v-135c0b1cb1841540a5"
+                    }
+                  },
+                  "Campaign type mismatch": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_campaign_type",
+                      "message": "Invalid payload",
+                      "details": "Campaign must be of type 'DISCOUNT_COUPONS' for DISCOUNT_COUPONS benefit",
+                      "request_id": "v-135c0b1cb1841540a6"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden. The product or SKU is not accessible in the current context.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Product not accessible": {
+                    "value": {
+                      "code": 403,
+                      "key": "forbidden",
+                      "message": "Forbidden",
+                      "details": "Resource product with id prod_128f4cd0a94c4bef25 is not accessible in given context",
+                      "request_id": "v-135b38030624d57b5b",
+                      "resource_id": "prod_128f4cd0a94c4bef25",
+                      "resource_type": "product"
+                    }
+                  }
                 }
               }
             }
           },
           "404": {
-            "description": "Resource not found.",
+            "description": "Resource not found. The benefit, or a card definition, product, SKU, or campaign referenced in the body, does not exist. A deleted benefit is not found.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Benefit not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find benefit with id lben_135b36888c45c2fb7f",
+                      "request_id": "v-135c0d7cd05f3082f9",
+                      "resource_id": "lben_135b36888c45c2fb7f",
+                      "resource_type": "benefit"
+                    }
+                  },
+                  "Card definition not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find card_definition with id lcdef_1331564fab0b1ce813",
+                      "request_id": "v-135c0e1c0ddf30843a",
+                      "resource_id": "lcdef_1331564fab0b1ce813",
+                      "resource_type": "card_definition"
+                    }
+                  },
+                  "Product not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find product with id prod_128f4cd0a94c3bef25",
+                      "request_id": "v-135b38030624d57b5b",
+                      "resource_id": "prod_128f4cd0a94c3bef25",
+                      "resource_type": "product"
+                    }
+                  },
+                  "SKU not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find sku with id sku_128f4cd0a94c4bef25",
+                      "request_id": "v-135b38030624d57b5b",
+                      "resource_id": "sku_128f4cd0a94c4bef25",
+                      "resource_type": "sku"
+                    }
+                  },
+                  "Campaign not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find campaign with id camp_128f4cd0a94c4bef25",
+                      "request_id": "v-135b38030624d57b5b",
+                      "resource_id": "camp_128f4cd0a94c4bef25",
+                      "resource_type": "campaign"
+                    }
+                  }
                 }
               }
             }
@@ -20818,6 +20965,26 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Card definition not active": {
+                    "value": {
+                      "code": 423,
+                      "key": "non_active_card_definition",
+                      "message": "Cannot update benefit when card definition is not ACTIVE",
+                      "details": "Invalid card_definition status with id lcdef_12d4fe623d45660f3e",
+                      "request_id": "v-135c0deb31c4154697"
+                    }
+                  },
+                  "Non-active campaign": {
+                    "value": {
+                      "code": 423,
+                      "key": "non_active_campaign",
+                      "message": "Cannot use a draft campaign in a digital benefit",
+                      "details": "Invalid campaign status with id camp_128f4cd0a94c4bef25",
+                      "request_id": "v-135b35dbbc843615c8"
+                    }
+                  }
                 }
               }
             }
@@ -26705,8 +26872,8 @@
           }
         ]
       },
-      "V2LoyaltiesBenefitsUpdateRequestBody": {
-        "title": "V2 Loyalties Benefits Update Request Body",
+      "LoyaltiesBenefitsUpdateRequestBody": {
+        "title": "Loyalties Benefits Update Request Body",
         "type": "object",
         "description": "Request body schema for **PUT** `/v2/loyalties/benefits/{benefitId}`.",
         "allOf": [
@@ -38309,13 +38476,13 @@
       },
       "BenefitUpdateRequest": {
         "type": "object",
-        "description": "Request body for updating a benefit. All properties are optional; omitted properties keep\ntheir current values. When the benefit is `ACTIVE`, only `name` and `stock` may be updated.\nAfter the update, the type-specific configuration must stay consistent with the (possibly\nupdated) `type`.",
+        "description": "Request body for updating a benefit. Send at least one property. Omitted properties keep their current values. When the benefit is `ACTIVE`, the body may contain only `name`, `stock`, `points`, `points_proportional`, and `digital`.",
         "properties": {
           "name": {
             "type": "string",
             "minLength": 1,
             "maxLength": 200,
-            "description": "Benefit name. Must be unique within the project."
+            "description": "Benefit name."
           },
           "type": {
             "type": "string",
@@ -38325,7 +38492,7 @@
               "MATERIAL",
               "DIGITAL"
             ],
-            "description": "Benefit type. Determines which configuration object is required."
+            "description": "Benefit type. Determines which configuration object is required. Not accepted when the benefit is `ACTIVE`."
           },
           "points": {
             "description": "Fixed points configuration (for `type` `POINTS`).",
@@ -38350,7 +38517,7 @@
             ]
           },
           "material": {
-            "description": "Material (physical product/SKU) configuration (for `type` `MATERIAL`).",
+            "description": "Material (physical product/SKU) configuration (for `type` `MATERIAL`). Not accepted when the benefit is `ACTIVE`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/BenefitMaterial"
