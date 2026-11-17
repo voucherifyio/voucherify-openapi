@@ -4,6 +4,19 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-11-17
+
+Verified and updated PUT `/v2/loyalties/benefits/{benefitId}`.
+
+- Clarified that the body must include at least one of `name`, `type`, `points`, `points_proportional`, `material`, `digital`, or `stock`, and that this operation does not change `status`. In `DRAFT`, any of these fields may be sent. In `ACTIVE`, only `name`, `stock`, `points`, `points_proportional`, and `digital` are accepted.
+- Documented immutable fields on an `ACTIVE` benefit: `points.card_definition_id`, `points_proportional.calculation_type`, `points_proportional.card_definition_id`, `digital.type`, and `digital.gift_vouchers.campaign_id`. `digital` cannot be sent for an `ACTIVE` `DISCOUNT_COUPONS` benefit. `type` and `material` are not accepted when the benefit is `ACTIVE`.
+- Clarified that a `POINTS` or `POINTS_PROPORTIONAL` benefit requires an `ACTIVE` card definition on both `DRAFT` and `ACTIVE` updates (`423` `non_active_card_definition`), not only when the benefit is `ACTIVE`. An `ACTIVE` digital benefit cannot use a `DRAFT` campaign (`423` `non_active_campaign`).
+- Corrected the `400` description (body validation and status rules, not query parameters). Added `400` examples for an empty body, an immutable property on an `ACTIVE` benefit, the `ACTIVE` allow-list violation, and `invalid_campaign_type`.
+- Added `403` `forbidden` when a material product or SKU exists but is not accessible in the caller's context.
+- Fixed `404` examples so they sit under `application/json`. Added `not_found` examples for product, SKU, and campaign. Clarified that a deleted benefit is not found.
+- Removed the `409` response. Benefit names are not required to be unique within the project.
+- Added request and `200` examples for updating an `ACTIVE` points benefit. Renamed the request schema to `LoyaltiesBenefitsUpdateRequestBody`.
+
 ## 2026-11-16
 
 Verified and updated GET `/v2/loyalties/earning-rules`.
