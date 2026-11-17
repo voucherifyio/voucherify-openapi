@@ -1,40 +1,42 @@
 ---
 title: "Core MCP tools and examples"
-description: "Look up Voucherify Core MCP read tools, prompt examples, and API usage"
-keywords: ["Voucherify Core MCP", "MCP tools", "find customer", "campaigns", "best deals", "estimate loyalty points", "prompt examples"]
+description: "Look up Voucherify Core MCP read tools, use cases, and API usage"
+keywords: ["Voucherify Core MCP", "MCP tools", "find customer", "campaigns", "best deals", "estimate loyalty points", "use cases"]
 diataxis: "reference"
 ---
 
-These are the read tools exposed by the Voucherify Core MCP, with example prompts and two worked conversations.
+These are the read tools exposed by the Voucherify Core MCP, with use cases and two worked conversations. The tools are read-only. A prompt here does not redeem a code, publish a voucher, or change a campaign.
 
 Connect a client in [Connect the remote Core MCP](/guides/connect-voucherify-core-mcp) or [Install the local Core MCP](/guides/install-voucherify-core-mcp).
 
 ## Tools
 
-The tools are available under the permissions assigned to the account used to sign in or the APP ID and APP TOKEN used to connect the MCP.
+The tools are available under the permissions assigned to the account used to sign in or the application ID and application token used to connect with the MCP server.
 
 | Tool | What it returns |
 | --- | --- |
-| `find_customer` | A customer's current status and profile, including collected loyalty points and eligibility for rewards. Look up by email, source ID, or Voucherify ID. |
-| `get_campaign` | A campaign's details, including name, type, status, start and end dates, or other data. |
-| `list_campaigns` | Campaigns, so you can see which are active, scheduled, or completed. |
-| `get_campaign_summary` | A performance summary of ongoing campaigns, including a comparison with past activity, such as the previous week. |
-| `get_promotion_tier` | The configuration of a promotion tier, such as reward levels or thresholds that determine customer benefits. |
-| `qualifications` | A customer's eligibility for campaigns, promotions, or reward rules. |
-| `get_best_deals` | The top 5 incentives for a customer and cart. |
-| `list_products` | The product catalog, including pricing, availability, and categories. |
-| `get_voucher` | A voucher's code, status, balance, and expiration date. |
-| `estimate_loyalty_points` | An estimate of the points a customer earns in a legacy loyalty campaign for an order, through earning rules with the order-paid type. Identify the customer by ID, source ID, or email, and include the ordered items (name or ID, and quantity). |
+| `find_customer` | A customer profile retrieved by providing an email, source ID, or `cust_` ID, including loyalty points. |
+| `get_campaign` | A campaign's configuration, status, dates, and time windows. Rules assigned to the campaign are expanded. Rules on a promotion tier stay on `get_promotion_tier`. |
+| `list_campaigns` | Up to 1000 campaigns, each with ID, name, type, and creation date. Call `get_campaign` for more details like status, dates, and time windows. |
+| `get_campaign_summary` | Validation, redemption, and publication counts for one campaign, for its whole lifetime or for a date range. |
+| `get_promotion_tier` | A promotion tier and its rules. |
+| `qualifications` | Vouchers, promotions, and campaigns available to a customer identified by their source ID or Voucherify ID. |
+| `get_best_deals` | The top 5 item-level incentives for a customer and a cart. The customer is identified by their source ID or Voucherify ID. Prices are in cents. |
+| `list_products` | Products and prices. A product priced only on its SKUs has no product price and drops out of a price filter. |
+| `get_voucher` | A voucher's status, redemption count and limit, balance for a gift or loyalty card, expiration, and rules. |
+| `estimate_loyalty_points` | An estimate of points from order-paid earning rules. The customer is identified by their source ID or Voucherify ID. The order is an amount in cents, or the source ID of an existing order. |
 
 <Note>
 
 For the best results with `get_best_deals`, set the Application rule to **Partial** in the Voucherify dashboard: **Redemptions** > **Stacking rules**. Read [Stacking rules](/orchestrate/stacking-rules).
 
+`get_best_deals` returns item-level discounts. An order-level discount, such as 10% off the order, is left out even when the cart qualifies. Use `qualifications` for those discounts.
+
 </Note>
 
 <Info>
 
-`estimate_loyalty_points` returns an estimate. When a campaign includes tiers, mappings, and several earning rules, the final calculation can differ. A customer may change tiers and earn more or fewer points.
+`estimate_loyalty_points` returns an estimate for order-paid earning rules. It takes no item list. When a campaign includes tiers, mappings, and several earning rules, the final calculation can differ. A customer may change tiers and earn more or fewer points.
 
 </Info>
 
@@ -68,37 +70,177 @@ Follow these best practices to get the best results from the Voucherify Core MCP
   </Accordion>
 </AccordionGroup>
 
-## Prompt examples
+## Use cases
 
-Use these prompt examples to get started with the Voucherify Core MCP.
+Paste a prompt into the client. The notes under each prompt are what the tools return, and the limits found while testing them.
 
 <AccordionGroup>
-  <Accordion title="Customer lookup">
-    Find customer by email `tom@example.com` (or `source_id`, or `customer_id`). Return the ID, `loyalty_balance`, `active_vouchers`.
+  <Accordion title="Best deals for a cart">
+    A customer has a cart. Ask which incentives save the most, which ones they almost qualify for, and what would unlock a better deal.
+
+    ```text wrap
+    Get best deals for the customer with email alex.doe@example.com.
+
+    Their cart has:
+    - Voucherify T-shirt (SKU: VCH-TST-001), quantity 1, price 25 USD
+    - Voucherify Mug (SKU: VCH-MUG-002), quantity 2, price 15 USD each
+    Tell me which deals apply right now and what they could do to get a better deal.
+    ```
+
+    The agent calls `find_customer` when the prompt has an email. `get_best_deals` takes a customer id or source ID. Give a `cust_` ID or a source ID in the prompt to skip the lookup.
+
+    Prices in the tool call are cents. An item can be a product ID, a source ID with `related_object` set to `product` or `sku`, or a generic item matched on product metadata. Items without a price use the catalog price.
+
+    The result is up to 5 deals, best first.
+
+    ```json Best deal example with one deal wrap expandable
+    {
+      "id": "promo_4F00jdsydrmsOnPdVTXi5f73",
+      "object": "promotion_tier",
+      "result": {
+          "discount": {
+              "type": "FIXED",
+              "effect": "APPLY_TO_ITEMS"
+          },
+          "bundle": {
+              "quantity": 1,
+              "identified": [
+                  {
+                      "id": "sku_12d7847d77c4884518",
+                      "object": "sku",
+                      "item_quantity": 2
+                  }
+              ]
+          }
+      },
+      "is_applicable": true,
+      "redeemable_details": {
+          "alternative_description": "Buy 2 Coffees, Cheapest Free"
+      },
+      "validation_rules": [
+          {
+              "validation_status": "PARTIALLY_VALID",
+              "validation_omitted_sub_rules": [
+                  "1"
+              ]
+          }
+      ],
+      "resolved_order": {
+          "amount": 74900,
+          "total_discount_amount": 1750,
+          "total_amount": 73150
+      }
+    }
+    ```
+
+    | Field | Meaning |
+    | --- | --- |
+    | `is_applicable` | `true` means the deal was applied, and `resolved_order` is the cart with the discount. Quote `total_amount` and `total_discount_amount` from it. `false` means the deal was not applied, `resolved_order` is null, and `validation_omitted_sub_rules` lists the unmet rule keys. |
+    | `validation_status` | Comes from qualifications. A deal can be `PARTIALLY_VALID` and still be applicable. Decide from `is_applicable`. |
+    | `result.bundle` | Present for bundles. `identified` lists matched items. `missing` lists what the cart still needs. |
+
+    `order.items.count` and `order.items.aggregated_quantity` count the sum of item quantities. A run makes about 4 to 9 API calls: qualifications, validation, one call per rule assignment on the returned promotions, and the email lookup when you used an email
+    
+    Name the promotion you care about to keep the run short. Keep the cart to the lines that matter. A very large request body can be rejected by the hosted server.
   </Accordion>
-  <Accordion title="Segment analysis">
-    Count total of customers in segment "VIP". List their basic details: name, email address, `source_id`. Turn the data into a CSV-friendly format.
+  <Accordion title="Incentives a customer can use">
+    Ask for a customer's profile and the incentives available to them.
+
+    ```text wrap
+    Find customer tom@example.com. Show their loyalty points and tier.
+
+    Then list the vouchers assigned to their wallet and any other promotions they qualify for.
+    ```
+
+    The agent calls `find_customer`, then `qualifications`. The customer on `qualifications` is an id or source ID.
+
+    | Scenario | What it returns |
+    | --- | --- |
+    | `CUSTOMER_WALLET` | Vouchers assigned to the customer. |
+    | `AUDIENCE_ONLY` | Incentives after customer rules only. Product rules are skipped, so bundles come back with `result.bundle.missing`. |
+    | `ALL` | Everything available to the customer. This is the default. |
+    | `PRODUCTS_BY_CUSTOMER` | Product-based promotions for this customer. |
   </Accordion>
-  <Accordion title="List campaigns">
-    List active campaigns with fields: ID, name, type, `start_date`, `end_date`.
+  <Accordion title="Audit campaigns">
+    Ask which campaigns exist, whether they are active, and when they run, including a time window such as Fridays 15:00 to 17:00.
+
+    ```text wrap
+    List my campaigns. For each one, show type, status, start and expiration date,
+    and any time restrictions. Flag drafts and campaigns that have already expired.
+    ```
+
+    `list_campaigns` returns ID, name, type, and creation date for up to 1000 campaigns. `get_campaign` returns status, dates, and setup for one campaign, and expands rules assigned to that campaign. Call `get_promotion_tier` for rules on a promotion tier.
+
+    The number of calls grows with the number of campaigns: one list call, then one call per campaign. Name the campaigns you care about.
   </Accordion>
-  <Accordion title="Voucher details">
-    Get voucher by code "BK-4829" and show: status, `redemption.count`, `redemption.limit`, `balance` (for gift or loyalty cards).
+  <Accordion title="Campaign performance for a period">
+    Ask how a campaign did in one window and how that compares with another window.
+
+    ```text wrap
+    How did campaign "Summer Sale 2025" perform in July 2025?
+
+    Compare it with June 2025: redemptions, validations, and publications.
+    ```
+
+    The agent calls `list_campaigns` to resolve the name, unless you give a `camp_` ID. It then calls `get_campaign_summary` once per window. The tool does not compare periods. The agent compares the two results.
+
+    Dates are `YYYY-MM-DD`. Give both or neither. A call with only one date is still accepted. The dates select which days are counted. They are separate from the campaign's validity period, and the response does not echo them. Without dates, the summary covers the whole lifetime.
+
+    The counters are `redemptions`, `validations`, `publications` (each also `_succeeded` and `_failed`), `discounted_amount`, and `orders_amount`. The campaign object is nested under `campaign`.
   </Accordion>
-  <Accordion title="Campaign data">
-    Get campaign "BK-Sept-20OFF" data: total budget, spent budget, redemption counts, and per-customer caps.
+  <Accordion title="Check a voucher">
+    A customer says a code does not work. Ask for its state.
+
+    ```text wrap
+    Check voucher code "BK-4829": is it active, how many times was it used,
+    what is the limit, when does it expire, and what is the balance if it is a gift card?
+    ```
+
+    `get_voucher` returns the status, redemption count and limit, balance for a gift or loyalty card, expiration, and the expanded rules when the voucher has any. The agent can then name a likely cause, such as expired, inactive, limit reached, or an unmet rule.
   </Accordion>
-  <Accordion title="Top coupon campaign">
-    Show the campaign with the most coupons generated. Return redemption data for this campaign.
+  <Accordion title="Points at checkout">
+    
+    <Note>
+
+    This use case is available only for [legacy loyalty campaigns](/build/loyalty-campaign-overview).
+
+    </Note>
+
+    Ask how many loyalty points the order earns, next to the best discount.
+
+    ```text wrap
+    For customer source_id "customer123" with an order total of 50.00 USD,
+    estimate the points they earn with loyalty card "Loyalty-ZC4Vg".
+    Also show their best deal for this order.
+    ```
+
+    `estimate_loyalty_points` takes the loyalty card, a customer id or source ID, and an order. The order is an `amount` in cents, here `5000`, or the source ID of an existing order. The response includes the campaign and `points_estimation`.
+
+    The same prompt can also call `get_best_deals` for item-level deals. `estimate_loyalty_points` takes no item list.
   </Accordion>
-  <Accordion title="Best performing campaign">
-    Show me the best performing campaign in terms of number of successful redemptions. Return the budget - the total discount value that was applied.
+  <Accordion title="Find products and price a cart">
+    Ask for products from the catalog, then for the deals on a cart built from them.
+
+    ```text wrap
+    Find products in the category "Electronics" that cost more than 50.00 USD.
+    Put the two cheapest in a cart for customer cust_aB3dE5fG7hI9 and show the best deals.
+    ```
+
+    `list_products` filters with the same condition shape as the API, for example `metadata.category` with `$is` and `price` with `$more_than`. A price filter uses cents, so 50.00 USD is `5000`.
+
+    Pass `product_id` from that list into `get_best_deals` for the closest match. A product priced only on its SKUs has `price` null and drops out of a price filter. Filter on `metadata.category` or `name` instead, and read SKU prices from the unfiltered list.
   </Accordion>
-  <Accordion title="Redemption aggregation">
-    Get redemptions aggregated by day between 2025-09-01 and 2025-09-03 (timezone Europe/Warsaw).
-  </Accordion>
-  <Accordion title="Best deals with cart">
-    Get best deals for a customer with this email address. They have these items in their cart: Voucherify T-shirt (SKU: VCH-TST-001, quantity: 1, price: 25 USD), Voucherify Mug (SKU: VCH-MUG-002, quantity: 2, price: 15 USD each). Suggest if there's anything they can do to get even better deals.
+  <Accordion title="Why a promotion does not apply">
+    A promotion tier exists, but a customer does not get it. Ask which rule blocks them.
+
+    ```text wrap
+    Customer cust_aB3dE5fG7hI9 does not get promotion tier promo_xY12abCD34.
+    
+    Read the tier and its rules, check what the customer qualifies for,
+    and tell me which rule they fail.
+    ```
+
+    `get_promotion_tier` returns the tier with its rules expanded. `qualifications` with scenario `AUDIENCE_ONLY` shows what the customer's profile qualifies for. The agent compares the rules with the profile and names the failing one, such as a segment the customer is not in.
   </Accordion>
 </AccordionGroup>
 
