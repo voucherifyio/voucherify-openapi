@@ -87484,8 +87484,8 @@
           }
         ]
       },
-      "V2LoyaltiesBenefitsActivateResponseBody": {
-        "title": "V2 Loyalties Benefits Activate Response Body",
+      "LoyaltiesBenefitsActivateResponseBody": {
+        "title": "Loyalties Benefits Activate Response Body",
         "type": "object",
         "description": "Response body schema for **POST** `/v2/loyalties/benefits/{benefitId}/activate`.",
         "allOf": [
@@ -168620,34 +168620,103 @@
           "LV2-Benefits"
         ],
         "summary": "Activate benefit",
-        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nMoves a benefit from `DRAFT` to `ACTIVE` status. No request body. Only the\n`DRAFT` -> `ACTIVE` transition is allowed; activating from any other state returns\n400 `invalid_state_transition`. A points-based benefit cannot be activated when its\nconnected card definition does not exist (`non_existing_card_definition`) or is not ACTIVE (`non_active_card_definition`). A digital benefit cannot be activated when its campaign is in `DRAFT` (`non_active_campaign`). Those cases return 423 `resource_locked`.\n\nA successful call records [`vl.benefit.activated`](/api-reference/loyalty-activity/benefits/activated).",
+        "description": "Moves a benefit from `DRAFT` to `ACTIVE` status. The request has no body.\n\nRelated resources are checked before the status changes:\n- A `POINTS` benefit requires `points.card_definition_id` to be `ACTIVE`. Otherwise returns `423` `non_active_card_definition`.\n- A digital benefit cannot reference a `DRAFT` campaign. Otherwise returns `423` `non_active_campaign`.\n\nA benefit that is not `DRAFT` returns `400` `invalid_state_transition`, unless one of these checks fails first.\n\nA successful call records [`vl.benefit.activated`](/api-reference/loyalty-activity/benefits/activated).",
         "responses": {
           "200": {
             "description": "The activated benefit",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2LoyaltiesBenefitsActivateResponseBody"
+                  "$ref": "#/components/schemas/LoyaltiesBenefitsActivateResponseBody"
+                },
+                "examples": {
+                  "Activated draft benefit": {
+                    "value": {
+                      "id": "lben_135b3573186d6535ca",
+                      "name": "Benefit 2026-11-17-01",
+                      "type": "POINTS_PROPORTIONAL",
+                      "status": "ACTIVE",
+                      "stock": {
+                        "type": "UNLIMITED"
+                      },
+                      "points_proportional": {
+                        "calculation_type": "ORDER_ITEMS_QUANTITY",
+                        "card_definition_id": "lcdef_12b11d7f70809b397b",
+                        "order_items": {
+                          "quantity": {
+                            "every": 3,
+                            "value": 5,
+                            "applicable_to": [
+                              {
+                                "type": "product",
+                                "product": {
+                                  "id": "prod_1294cee5910e4904c3"
+                                }
+                              }
+                            ]
+                          }
+                        }
+                      },
+                      "created_at": "2026-11-16T19:47:12.609Z",
+                      "updated_at": "2026-11-17T19:28:02.285Z",
+                      "object": "benefit"
+                    }
+                  }
                 }
               }
             }
           },
           "400": {
-            "description": "Validation error - request body or query parameters failed validation, or the operation is not allowed in the current resource state.",
+            "description": "The benefit is not in `DRAFT` status.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Activating active benefit": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_state_transition",
+                      "message": "Invalid state transition",
+                      "details": "Cannot activate benefit from current state: 'ACTIVE'",
+                      "request_id": "v-135c7a124ae84dd68a"
+                    }
+                  }
                 }
               }
             }
           },
           "404": {
-            "description": "Resource not found.",
+            "description": "Resource not found. The benefit does not exist or is deleted. An id that does not match `lben_[a-f0-9]+` also returns `404`.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Benefit not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find benefit with id lben_135b3573186d6525ca",
+                      "request_id": "v-135c7aca80e6b190dd",
+                      "resource_id": "lben_135b3573186d6525ca",
+                      "resource_type": "benefit"
+                    }
+                  },
+                  "Benefit ID does not match pattern": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find benefit with id benefit_123",
+                      "request_id": "v-135c7aca80e6b190de",
+                      "resource_id": "benefit_123",
+                      "resource_type": "benefit"
+                    }
+                  }
                 }
               }
             }
@@ -168658,6 +168727,26 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Card definition not active": {
+                    "value": {
+                      "code": 423,
+                      "key": "non_active_card_definition",
+                      "message": "Cannot activate benefit when connected card definition is not ACTIVE",
+                      "details": "Invalid card_definition status with id lcdef_12b11d7f70809b397b",
+                      "request_id": "v-135c7a124ae84dd68b"
+                    }
+                  },
+                  "Campaign in draft": {
+                    "value": {
+                      "code": 423,
+                      "key": "non_active_campaign",
+                      "message": "Cannot use a draft campaign in a digital benefit",
+                      "details": "Invalid campaign status with id camp_128f4cd0a94c4bef25",
+                      "request_id": "v-135c7a124ae84dd68c"
+                    }
+                  }
                 }
               }
             }
