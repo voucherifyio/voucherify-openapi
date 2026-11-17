@@ -5,6 +5,16 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-11-17
+
+Updated `loyalty-v2-members-overview.mdx` against the member and membership operations.
+
+- The program must be `ACTIVE` and inside its validity window. A card is created for every assigned card definition. A batch returns before entries are checked, skips a failed entry, and skips entries past the loyalty members plan limit.
+- Create defaults to `ACTIVE`. Metadata merges, `null` clears it, and the payload is checked against the `vl_member` schema. Delete sets `status` to `DELETED`. The customer can join again under a new member ID.
+- Point adjustments, pending changes, and expirations are accepted as `PENDING`. A `0` adjustment creates no transaction. A pending bucket must still be pending and dated after the current project day.
+- Reward purchase and pay with points default to `202` with a `PENDING` transaction. A dry run returns `200` and stores nothing. Refunding an `APPROVED` purchase gives the returned points a new expiration date.
+- Tier history covers joins, leaves, upgrades, downgrades, expiration changes, and evaluation refreshes. `tier_progress` appears only on Get program membership when the card has a tier. `identification_type` is `customer_id` (default), `customer_source_id`, or `member_id`.
+
 ## 2026-11-16
 
 Documented Loyalty hub points as a referral reward, separate from legacy loyalty points and from rewards that members buy in the Loyalty hub
