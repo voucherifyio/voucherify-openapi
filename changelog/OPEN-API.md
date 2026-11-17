@@ -26,6 +26,14 @@ Verified and updated POST `/v2/loyalties/benefits/{benefitId}/activate`. Removed
 - Added a `200` example, a `400` `invalid_state_transition` example, `404` examples for an unknown id and a pattern mismatch, and `423` examples for `non_active_card_definition` and `non_active_campaign`.
 - Renamed the response schema to `LoyaltiesBenefitsActivateResponseBody`.
 
+Verified and updated GET `/v2/loyalties/benefits/{benefitId}/activities`. Removed the documentation-in-progress badge.
+
+- Clarified that the cursor matches the filters, the order, and the benefit of the previous response. A cursor from another benefit, or a page whose filters or order changed, returns `400` `cursor_and_query_mismatch`.
+- Corrected the `400` description. This operation has no body. The causes are query validation and cursor errors.
+- Added `400` examples for a limit above 100 or below 1, an unsupported `order`, `created_at` together with `-created_at`, a cursor that does not match `^lcrsaben_[a-f0-9]+$`, `invalid_or_expired_cursor`, and `cursor_and_query_mismatch`.
+- Clarified `404`: the benefit does not exist, is deleted, or the id does not match `lben_[a-f0-9]+`. Added examples for an unknown id and a pattern mismatch.
+- Added a `200` example. Renamed the response schema to `LoyaltiesBenefitsActivitiesListResponseBody`.
+
 ## 2026-11-16
 
 Verified and updated GET `/v2/loyalties/earning-rules`.
