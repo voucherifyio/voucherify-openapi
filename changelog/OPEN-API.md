@@ -17,6 +17,15 @@ Verified and updated PUT `/v2/loyalties/benefits/{benefitId}`.
 - Removed the `409` response. Benefit names are not required to be unique within the project.
 - Added request and `200` examples for updating an `ACTIVE` points benefit. Renamed the request schema to `LoyaltiesBenefitsUpdateRequestBody`.
 
+Verified and updated POST `/v2/loyalties/benefits/{benefitId}/activate`. Removed the documentation-in-progress badge.
+
+- Clarified that related-resource checks run before the status change. A `POINTS` benefit requires `points.card_definition_id` to be `ACTIVE` (`423` `non_active_card_definition`). A digital benefit cannot reference a `DRAFT` campaign (`423` `non_active_campaign`). A benefit that is not `DRAFT` returns `400` `invalid_state_transition` when those checks pass.
+- Removed `non_existing_card_definition` and `resource_locked` from the description. A missing card definition is not a response of this operation. The card-definition check applies to `POINTS` and `points.card_definition_id`.
+- Corrected the `400` description. This operation has no body and no query. The cause is a benefit that is not `DRAFT`.
+- Clarified `404`: the benefit does not exist, is deleted, or the id does not match `lben_[a-f0-9]+`.
+- Added a `200` example, a `400` `invalid_state_transition` example, `404` examples for an unknown id and a pattern mismatch, and `423` examples for `non_active_card_definition` and `non_active_campaign`.
+- Renamed the response schema to `LoyaltiesBenefitsActivateResponseBody`.
+
 ## 2026-11-16
 
 Verified and updated GET `/v2/loyalties/earning-rules`.
