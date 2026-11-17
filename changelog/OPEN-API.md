@@ -34,6 +34,11 @@ Verified and updated GET `/v2/loyalties/benefits/{benefitId}/activities`. Remove
 - Clarified `404`: the benefit does not exist, is deleted, or the id does not match `lben_[a-f0-9]+`. Added examples for an unknown id and a pattern mismatch.
 - Added a `200` example. Renamed the response schema to `LoyaltiesBenefitsActivitiesListResponseBody`.
 
+Verified and updated GET `/v2/loyalties/benefits`.
+
+- Corrected the `400` description. The list has no resource state, so the causes are query validation and cursor errors.
+- Added `400` examples for a limit above 100 or below 1, an unsupported `order`, `created_at` together with `-created_at`, a cursor that does not match `^lcrsben_[a-f0-9]+$`, `invalid_or_expired_cursor`, and `cursor_and_query_mismatch`.
+
 ## 2026-11-16
 
 Verified and updated GET `/v2/loyalties/earning-rules`.
