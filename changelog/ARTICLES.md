@@ -9,6 +9,27 @@ Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
 Updated `loyalty-v2-benefits-overview.mdx` against the Benefits endpoints. Major change: Removed the move-to-draft transition.
 
+Added explanation overview pages for each **Loyalty activity** group. Each page lists the events in that group and links to Workflows, Workflows webhooks, and the matching Loyalty v2 API overview.
+
+- Added `programs-activity-overview.mdx`
+- Added `card-definitions-activity-overview.mdx`
+- Added `earning-rules-activity-overview.mdx`
+- Added `rewards-activity-overview.mdx`
+- Added `benefits-activity-overview.mdx`
+- Added `tier-structures-activity-overview.mdx`
+- Added `members-activity-overview.mdx`
+- Added `cards-activity-overview.mdx`
+
+Updated Loyalty v2 API overviews so **Related resources** links to the matching activity overview. `loyalty-v2-members-overview.mdx` also links to `cards-activity-overview.mdx`.
+
+- Updated `loyalty-v2-programs-overview.mdx`
+- Updated `loyalty-v2-card-definitions-overview.mdx`
+- Updated `loyalty-v2-earning-rules-overview.mdx`
+- Updated `loyalty-v2-rewards-overview.mdx`
+- Updated `loyalty-v2-benefits-overview.mdx`
+- Updated `loyalty-v2-tier-structures-overview.mdx`
+- Updated `loyalty-v2-members-overview.mdx`
+
 ## 2026-11-17
 
 Updated `loyalty-v2-members-overview.mdx` against the member and membership operations.
