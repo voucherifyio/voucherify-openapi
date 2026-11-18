@@ -30,6 +30,8 @@ Updated Loyalty v2 API overviews so **Related resources** links to the matching 
 - Updated `loyalty-v2-tier-structures-overview.mdx`
 - Updated `loyalty-v2-members-overview.mdx`
 
+Clarified `loyalty-v2-examine-overview.mdx` for `POST /v2/loyalties/examine/rewards`. The response lists a reward only when it resolves to a points cost and the member holds the paying card. `UNAVAILABLE` reasons are only `insufficient_balance` (with `required`, `available`, `missing`) and `no_target_card`. Inactive, out-of-stock, no-matching-cost, and no-card rewards are omitted rather than returned as unavailable.
+
 ## 2026-11-17
 
 Updated `loyalty-v2-members-overview.mdx` against the member and membership operations.
