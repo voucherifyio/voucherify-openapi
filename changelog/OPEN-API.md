@@ -8,6 +8,13 @@ Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
 Removed POST `/v2/loyalties/benefits/{benefitId}/draft` from `docs.json`. It's not to be shown for the time being.
 
+Verified and updated DELETE `/v2/loyalties/benefits/{benefitId}`. Removed the documentation-in-progress badge.
+
+- Corrected the `400` description. This operation has no body or query. The cause is a benefit that an earning rule uses (`resource_in_use`). Documented that `related_object_ids` ends with `"…"` when more earning rules reference the benefit.
+- Clarified `404`: the benefit does not exist, is deleted, or the id does not match `lben_[a-f0-9]+`. Added a `Malformed benefit ID` example.
+- Added a `200` example and a `400` `resource_in_use` example.
+- Renamed the response schema to `LoyaltiesBenefitsDeleteResponseBody`.
+
 ## 2026-11-17
 
 Verified and updated PUT `/v2/loyalties/benefits/{benefitId}`.
