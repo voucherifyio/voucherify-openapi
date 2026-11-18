@@ -87494,8 +87494,8 @@
           }
         ]
       },
-      "V2LoyaltiesBenefitsDeleteResponseBody": {
-        "title": "V2 Loyalties Benefits Delete Response Body",
+      "LoyaltiesBenefitsDeleteResponseBody": {
+        "title": "Loyalties Benefits Delete Response Body",
         "type": "object",
         "description": "Response body schema for **DELETE** `/v2/loyalties/benefits/{benefitId}`.",
         "allOf": [
@@ -168673,34 +168673,96 @@
           "LV2-Benefits"
         ],
         "summary": "Delete benefit",
-        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nSoft-deletes a benefit by setting `status` to `DELETED` and returns the deleted benefit. A benefit that is used by any\nearning rule cannot be deleted (400 `resource_in_use`, with `related_object_ids` and\n`related_object_type: earning_rule` in the error body).\n\nA successful call records [`vl.benefit.deleted`](/api-reference/loyalty-activity/benefits/deleted).",
+        "description": "Deletes a benefit by setting `status` to `DELETED` and returns the deleted benefit. A benefit that is used by any earning rule cannot be deleted (400 `resource_in_use`, with `related_object_ids` and `related_object_type: earning_rule` in the error body).\n\nA successful call records [`vl.benefit.deleted`](/api-reference/loyalty-activity/benefits/deleted).",
         "responses": {
           "200": {
             "description": "The deleted benefit",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2LoyaltiesBenefitsDeleteResponseBody"
+                  "$ref": "#/components/schemas/LoyaltiesBenefitsDeleteResponseBody"
+                },
+                "examples": {
+                  "Deleted benefit": {
+                    "value": {
+                      "id": "lben_135b36888c45c2fb5f",
+                      "name": "Benefit 2026-11-17-01",
+                      "type": "POINTS",
+                      "status": "DELETED",
+                      "stock": {
+                        "type": "LIMITED",
+                        "limited": {
+                          "quantity": 333
+                        }
+                      },
+                      "points": {
+                        "value": 1,
+                        "card_definition_id": "lcdef_1331564fab0b1ce713"
+                      },
+                      "created_at": "2026-11-16T19:51:56.714Z",
+                      "updated_at": "2026-11-17T11:41:34.695Z",
+                      "object": "benefit"
+                    }
+                  }
                 }
               }
             }
           },
           "400": {
-            "description": "Validation error - request body or query parameters failed validation, or the operation is not allowed in the current resource state.",
+            "description": "The benefit is used by one or more earning rules (`resource_in_use`). When more earning rules reference it, `related_object_ids` ends with `\"…\"`.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Benefit in use": {
+                    "value": {
+                      "code": 400,
+                      "key": "resource_in_use",
+                      "message": "Resource in use",
+                      "details": "Resource benefit with id lben_135b3a536505c28011 is in use by earning_rules with ids [lern_133a93007e0a5d2c4d]",
+                      "request_id": "v-135d2f2998e6b18043",
+                      "related_object_ids": [
+                        "lern_133a93007e0a5d2c4d"
+                      ],
+                      "related_object_type": "earning_rule"
+                    }
+                  }
                 }
               }
             }
           },
           "404": {
-            "description": "Resource not found.",
+            "description": "Resource not found. The benefit does not exist or is deleted. An ID that does not match `lben_[a-f0-9]+` also returns `404`.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Benefit not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find benefit with id lben_235b3a536505c28011",
+                      "request_id": "v-135d2f5f0de84dc91b",
+                      "resource_id": "lben_235b3a536505c28011",
+                      "resource_type": "benefit"
+                    }
+                  },
+                  "Malformed benefit ID": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find benefit with id benefit_123",
+                      "request_id": "v-135d2f5f0de84dc92a",
+                      "resource_id": "benefit_123",
+                      "resource_type": "benefit"
+                    }
+                  }
                 }
               }
             }
