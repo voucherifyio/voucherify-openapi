@@ -4,6 +4,10 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-11-18
+
+Removed POST `/v2/loyalties/benefits/{benefitId}/draft` from `docs.json`. It's not to be shown for the time being.
+
 ## 2026-11-17
 
 Verified and updated PUT `/v2/loyalties/benefits/{benefitId}`.
