@@ -5,6 +5,10 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-11-18
+
+Updated `loyalty-v2-benefits-overview.mdx` against the Benefits endpoints. Major change: Removed the move-to-draft transition.
+
 ## 2026-11-17
 
 Updated `loyalty-v2-members-overview.mdx` against the member and membership operations.
