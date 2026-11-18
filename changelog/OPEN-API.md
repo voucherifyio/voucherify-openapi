@@ -6,6 +6,8 @@ Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
 ## 2026-11-18
 
+Removed POST `/v2/loyalties/tier-structures/{tierStructureId}/tiers` from `docs.json`. It's going to be superseded by POST `/v2/loyalties/tier-structures/{tierStructureId}/tiers/batch` (to be documented).
+
 Removed POST `/v2/loyalties/benefits/{benefitId}/draft` from `docs.json`. It's not to be shown for the time being.
 
 Verified and updated DELETE `/v2/loyalties/benefits/{benefitId}`. Removed the documentation-in-progress badge.
