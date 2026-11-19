@@ -4,6 +4,17 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-11-19
+
+Verified and updated POST `/v2/loyalties/tier-structures` (Create tier structure).
+
+- Corrected defaults in the description: omitted `expiration` is `NO_RETENTION`, omitted `downgrade` is `MULTI_LEVEL`, omitted `status` is `DRAFT`.
+- Renamed the request schema to `LoyaltiesTierStructuresCreateRequestBody`. Added request and `200` examples for a minimal `POINT_BALANCE` create.
+- Removed the `409` response; this operation does not return a conflict.
+- Corrected the `400` description to body validation (`invalid_payload`) and optional `metadata_validation_failed` for the `vl_tier_structure` metadata schema. Added examples.
+- Clarified `404`: missing `card_definition_id` or an unknown `custom_activity_types` custom event schema id. Added examples; the multi-schema case has no `resource_id`.
+- Documented create request rules on shared tier-structure schemas: period `value` caps of 90 for `DAY`, 12 for `MONTH`, and 5 for `YEAR` on fixed-duration, sliding, and downgrade grace periods; sliding `period` is required and cannot be `null`; at least one of `earning_activity`, `spending_activity`, and `custom_activity` must be `true` (omitted flags default to `false`); `custom_activity_types` are custom event schema ids (`ms_…`); calendar `calendar_dates` must be unique; recurring calendar expiry is at the start of that day in the project timezone (`TierStructureExpirationCalendarDateUpsert`).
+
 ## 2026-11-18
 
 Removed POST `/v2/loyalties/tier-structures/{tierStructureId}/tiers` from `docs.json`. It's going to be superseded by POST `/v2/loyalties/tier-structures/{tierStructureId}/tiers/batch` (to be documented).

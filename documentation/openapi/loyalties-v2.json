@@ -18797,13 +18797,24 @@
           "Tier Structures"
         ],
         "summary": "Create tier structure",
-        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nCreates a new tier structure. Depending on `type`, either\n`point_balance` (for `POINT_BALANCE`) or `point_earned` (for `POINT_EARNED`)\nis required and the other must be null/omitted. If `expiration` is omitted it\ndefaults to `{ \"type\": \"NO_RETENTION\" }`; if `downgrade` is omitted it defaults\nto `{ \"type\": \"NO_DOWNGRADE\" }`; if `status` is omitted it defaults to `DRAFT`.\n\nA successful call records [`vl.tier_structure.created`](/api-reference/loyalty-activity/tier-structures/created).",
+        "description": "Creates a new tier structure.\n\nDepending on `type`, either `point_balance` (for `POINT_BALANCE`) or `point_earned` (for `POINT_EARNED`) is required and the other must be `null`/omitted. If `expiration` is omitted, it defaults to `{ \"type\": \"NO_RETENTION\" }`. If `downgrade` is omitted it defaults to `{ \"type\": \"MULTI_LEVEL\" }`. If `status` is omitted, it defaults to `DRAFT`.\n\n<Note>Create tier structure endpoint sets only the general rules for loyalty tiers. Use the Batch create tiers endpoint to add tiers to the tier structure.</Note>\n\nA successful call records [`vl.tier_structure.created`](/api-reference/loyalty-activity/tier-structures/created).",
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/V2LoyaltiesTierStructuresCreateRequestBody"
+                "$ref": "#/components/schemas/LoyaltiesTierStructuresCreateRequestBody"
+              },
+              "examples": {
+                "Basic tier structure: Request": {
+                  "value": {
+                    "name": "Basic tier structure",
+                    "type": "POINT_BALANCE",
+                    "point_balance": {
+                      "card_definition_id": "lcdef_12d3ddae756b4364e9"
+                    }
+                  }
+                }
               }
             }
           }
@@ -18814,37 +18825,93 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2LoyaltiesTierStructuresCreateResponseBody"
+                  "$ref": "#/components/schemas/LoyaltiesTierStructuresCreateResponseBody"
+                },
+                "examples": {
+                  "Basic tier structure: Response": {
+                    "value": {
+                      "id": "lts_135dd7642fc630eb06",
+                      "name": "Tier structure 2026-11-18-04",
+                      "type": "POINT_BALANCE",
+                      "point_balance": {
+                        "card_definition_id": "lcdef_12d3ddae756b4364e9"
+                      },
+                      "point_earned": null,
+                      "expiration": {
+                        "type": "NO_RETENTION"
+                      },
+                      "downgrade": {
+                        "type": "MULTI_LEVEL"
+                      },
+                      "metadata": {},
+                      "status": "DRAFT",
+                      "created_at": "2026-11-18T20:51:42.399Z",
+                      "updated_at": null,
+                      "object": "tier_structure"
+                    }
+                  }
                 }
               }
             }
           },
           "400": {
-            "description": "Validation error - request body or query parameters failed validation, or the operation is not allowed in the current resource state.",
+            "description": "The request body failed validation (`invalid_payload`). `metadata` that does not match the `vl_tier_structure` metadata schema returns `metadata_validation_failed`.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Invalid payload": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_payload",
+                      "message": "Invalid payload",
+                      "details": "Payload must have required property 'name'",
+                      "request_id": "v-12c30587d84f93b9c1"
+                    }
+                  },
+                  "Metadata validation failed": {
+                    "value": {
+                      "code": 400,
+                      "key": "metadata_validation_failed",
+                      "message": "Metadata validation failed",
+                      "details": "Only defined properties are allowed",
+                      "request_id": "v-12c30587d84f93b9c2"
+                    }
+                  }
                 }
               }
             }
           },
           "404": {
-            "description": "Resource not found.",
+            "description": "Returns `not_found` when `card_definition_id` does not match a card definition, or when a `custom_activity_types` id does not match a custom event schema.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Card definition not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find card_definition with id lcdef_1234567890",
+                      "request_id": "v-12c30587d84f93b9c3",
+                      "resource_id": "lcdef_1234567890",
+                      "resource_type": "card_definition"
+                    }
+                  },
+                  "Custom event schema not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find custom_event_schemas with ids [ ms_0123456789abcdef01234567 ]",
+                      "request_id": "v-12c30587d84f93b9c4"
+                    }
+                  }
                 }
               }
             }
@@ -26930,8 +26997,8 @@
           }
         ]
       },
-      "V2LoyaltiesTierStructuresCreateRequestBody": {
-        "title": "V2 Loyalties Tier Structures Create Request Body",
+      "LoyaltiesTierStructuresCreateRequestBody": {
+        "title": "Loyalties Tier Structures Create Request Body",
         "type": "object",
         "description": "Request body schema for **POST** `/v2/loyalties/tier-structures`.",
         "allOf": [
@@ -26940,8 +27007,8 @@
           }
         ]
       },
-      "V2LoyaltiesTierStructuresCreateResponseBody": {
-        "title": "V2 Loyalties Tier Structures Create Response Body",
+      "LoyaltiesTierStructuresCreateResponseBody": {
+        "title": "Loyalties Tier Structures Create Response Body",
         "type": "object",
         "description": "Response body schema for **POST** `/v2/loyalties/tier-structures`.",
         "allOf": [
@@ -36283,7 +36350,7 @@
             "type": "string",
             "minLength": 1,
             "maxLength": 200,
-            "description": "Display name of the tier structure. Required."
+            "description": "Display name of the tier structure."
           },
           "type": {
             "type": "string",
@@ -36291,10 +36358,10 @@
               "POINT_BALANCE",
               "POINT_EARNED"
             ],
-            "description": "Tier qualification tracking model. `POINT_BALANCE` qualifies members by their\ncurrent point balance; `POINT_EARNED` qualifies members by points earned within\na tracking period. Required."
+            "description": "Tier qualification tracking model. `POINT_BALANCE` qualifies members by their current point balance. `POINT_EARNED` qualifies members by points earned within a tracking period."
           },
           "point_balance": {
-            "description": "Point balance tracking settings. Required (non-null) when `type` is\n`POINT_BALANCE`; must be null/omitted when `type` is `POINT_EARNED`.",
+            "description": "Point balance tracking settings. Required (non-null) when `type` is `POINT_BALANCE`. Must be `null`/omitted when `type` is `POINT_EARNED`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/TierStructurePointBalanceUpsert"
@@ -36305,7 +36372,7 @@
             ]
           },
           "point_earned": {
-            "description": "Points earned tracking settings. Required (non-null) when `type` is\n`POINT_EARNED`; must be null/omitted when `type` is `POINT_BALANCE`.",
+            "description": "Points earned tracking settings. Required (non-null) when `type` is `POINT_EARNED`. Must be `null`/omitted when `type` is `POINT_BALANCE`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/TierStructurePointEarnedUpsert"
@@ -36316,7 +36383,7 @@
             ]
           },
           "expiration": {
-            "description": "Tier membership expiration settings. If omitted, defaults to\n`{ \"type\": \"NO_RETENTION\" }`.",
+            "description": "Tier membership expiration settings. If omitted, defaults to `{ \"type\": \"NO_RETENTION\" }`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/TierStructureExpirationUpsert"
@@ -36327,7 +36394,7 @@
             ]
           },
           "downgrade": {
-            "description": "Downgrade behavior applied when tier membership expires. If omitted, defaults to\n`{ \"type\": \"NO_DOWNGRADE\" }`.",
+            "description": "Downgrade behavior applied when tier membership expires. If omitted, defaults to `{ \"type\": \"MULTI_LEVEL\" }`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/TierStructureDowngradeUpsert"
@@ -36350,6 +36417,7 @@
           },
           "status": {
             "type": "string",
+            "default": "DRAFT",
             "enum": [
               "DRAFT",
               "ACTIVE"
@@ -36415,9 +36483,6 @@
         "description": "Tier structure resource.",
         "allOf": [
           {
-            "$ref": "#/components/schemas/TierMetadataBase"
-          },
-          {
             "type": "object",
             "properties": {
               "id": {
@@ -36439,11 +36504,11 @@
               },
               "point_balance": {
                 "$ref": "#/components/schemas/LoyaltyV2ActivityTierStructurePointBalance",
-                "description": "Point balance tracking settings. Present only when `type` is `POINT_BALANCE`;\nomitted otherwise."
+                "description": "Point balance tracking settings. Present only when `type` is `POINT_BALANCE`; omitted otherwise."
               },
               "point_earned": {
                 "$ref": "#/components/schemas/TierStructurePointEarned",
-                "description": "Points earned tracking settings. Present only when `type` is `POINT_EARNED`;\nomitted otherwise."
+                "description": "Points earned tracking settings. Present only when `type` is `POINT_EARNED`; omitted otherwise."
               },
               "expiration": {
                 "$ref": "#/components/schemas/TierStructureExpiration",
@@ -36478,6 +36543,9 @@
               "status",
               "object"
             ]
+          },
+          {
+            "$ref": "#/components/schemas/TierMetadataBase"
           }
         ]
       },
@@ -41076,7 +41144,7 @@
             ]
           },
           "daily": {
-            "description": "Daily validity windows. Required when `type` is `DAILY`; must be null/omitted when `type` is `ANY_TIME`.",
+            "description": "Daily validity windows. Required when `type` is `DAILY`; must be `null`/omitted when `type` is `ANY_TIME`.",
             "oneOf": [
               {
                 "type": "array",
@@ -44185,7 +44253,7 @@
       },
       "TierStructurePointBalanceUpsert": {
         "type": "object",
-        "description": "Point balance tracking settings. Members qualify for tiers based on the current\nbalance of the referenced card definition.",
+        "description": "Point balance tracking settings. Members qualify for tiers based on the current balance of the referenced card definition.",
         "properties": {
           "card_definition_id": {
             "type": "string",
@@ -44200,7 +44268,7 @@
       },
       "TierStructurePointEarnedUpsert": {
         "type": "object",
-        "description": "Points earned tracking settings. Members qualify for tiers based on points earned\non the referenced card definition within a tracking period.",
+        "description": "Points earned tracking settings. Members qualify for tiers based on points earned on the referenced card definition within a tracking period.",
         "properties": {
           "card_definition_id": {
             "type": "string",
@@ -44217,7 +44285,7 @@
               "IMMEDIATELY",
               "NEXT_TRACKING_PERIOD"
             ],
-            "description": "When a tier change resulting from earned points takes effect: `IMMEDIATELY`\nor at the start of the `NEXT_TRACKING_PERIOD`."
+            "description": "When a tier change resulting from earned points takes effect: `IMMEDIATELY` or at the start of the `NEXT_TRACKING_PERIOD`."
           }
         },
         "required": [
@@ -44229,7 +44297,7 @@
       },
       "TierStructureExpirationUpsert": {
         "type": "object",
-        "description": "Tier membership expiration settings. Exactly the sub-object matching `type` is\nrequired; the remaining sub-objects must be null/omitted.",
+        "description": "Tier membership expiration settings. Exactly the sub-object matching `type` is required; the remaining sub-objects must be `null`/omitted.",
         "properties": {
           "type": {
             "type": "string",
@@ -44242,7 +44310,7 @@
             "description": "Expiration model for tier membership. Required."
           },
           "fixed_duration": {
-            "description": "Fixed duration expiration settings. Required (non-null) when `type` is\n`FIXED_DURATION`; must be null/omitted otherwise.",
+            "description": "Fixed duration expiration settings. Required (non-null) when `type` is `FIXED_DURATION`; must be `null`/omitted otherwise.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/TierStructureExpirationFixedDurationUpsert"
@@ -44253,7 +44321,7 @@
             ]
           },
           "calendar_expiration": {
-            "description": "Calendar expiration settings. Required (non-null) when `type` is\n`CALENDAR_EXPIRATION`; must be null/omitted otherwise.",
+            "description": "Calendar expiration settings. Required (non-null) when `type` is `CALENDAR_EXPIRATION`. Must be `null`/omitted otherwise.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/TierStructureExpirationCalendarExpirationUpsert"
@@ -44264,7 +44332,7 @@
             ]
           },
           "sliding_expiration": {
-            "description": "Sliding expiration settings. Required (non-null) when `type` is\n`SLIDING_EXPIRATION`; must be null/omitted otherwise.",
+            "description": "Sliding expiration settings. Required (non-null) when `type` is `SLIDING_EXPIRATION`; must be `null`/omitted otherwise.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/TierStructureExpirationSlidingExpirationUpsert"
@@ -44383,7 +44451,7 @@
       },
       "TierStructureDowngradeUpsert": {
         "type": "object",
-        "description": "Downgrade settings. Controls how members are moved to lower tiers on expiration.\nWhen `type` is `NO_DOWNGRADE`, `grace_period` must be null/omitted.",
+        "description": "Downgrade settings. Controls how members are moved to lower tiers on expiration. When `type` is `NO_DOWNGRADE`, `grace_period` must be `null`/omitted.",
         "properties": {
           "type": {
             "type": "string",
@@ -44392,10 +44460,10 @@
               "SINGLE_LEVEL",
               "NO_DOWNGRADE"
             ],
-            "description": "Downgrade model. `MULTI_LEVEL` allows dropping multiple tiers at once,\n`SINGLE_LEVEL` drops one tier at a time, `NO_DOWNGRADE` disables downgrades.\nRequired."
+            "description": "Downgrade model. `MULTI_LEVEL` allows dropping multiple tiers at once, `SINGLE_LEVEL` drops one tier at a time, `NO_DOWNGRADE` disables downgrades – members can reach only higher tiers."
           },
           "grace_period": {
-            "description": "Grace period before the downgrade takes effect. Must be null/omitted when\n`type` is `NO_DOWNGRADE`.",
+            "description": "Grace period before the downgrade takes effect. Must be `null`/omitted when `type` is `NO_DOWNGRADE`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/TierStructureDowngradeGracePeriodUpsert"
@@ -44429,33 +44497,6 @@
               }
             }
           }
-        ]
-      },
-      "TierMetadataBase": {
-        "type": "object",
-        "properties": {
-          "metadata": {
-            "type": "object",
-            "description": "Free-form key/value object holding custom attributes. Defaults to `{}`."
-          },
-          "created_at": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Creation timestamp (ISO 8601)."
-          },
-          "updated_at": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "format": "date-time",
-            "description": "Last update timestamp (ISO 8601), or `null` if never updated."
-          }
-        },
-        "required": [
-          "metadata",
-          "created_at",
-          "updated_at"
         ]
       },
       "LoyaltyV2ActivityTierStructurePointBalance": {
@@ -44494,7 +44535,7 @@
       },
       "TierStructureExpiration": {
         "type": "object",
-        "description": "Tier membership expiration settings. Only the sub-object matching `type` is\npresent; the others are omitted.",
+        "description": "Tier membership expiration settings. Only the sub-object matching `type` is present; the others are omitted.",
         "properties": {
           "type": {
             "type": "string",
@@ -44539,9 +44580,36 @@
           }
         }
       },
+      "TierMetadataBase": {
+        "type": "object",
+        "properties": {
+          "metadata": {
+            "type": "object",
+            "description": "Free-form key/value object holding custom attributes. Defaults to `{}`."
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Creation timestamp (ISO 8601)."
+          },
+          "updated_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time",
+            "description": "Last update timestamp (ISO 8601), or `null` if never updated."
+          }
+        },
+        "required": [
+          "metadata",
+          "created_at",
+          "updated_at"
+        ]
+      },
       "TierQualificationRulesUpsert": {
         "type": "object",
-        "description": "Tier qualification rules. When `type` is `POINTS`, `points` is required and\n`segment` must be null/omitted; when `type` is `POINTS_AND_SEGMENT`, both `points`\nand `segment` are required.",
+        "description": "Tier qualification rules. When `type` is `POINTS`, `points` is required and\n`segment` must be `null`/omitted; when `type` is `POINTS_AND_SEGMENT`, both `points`\nand `segment` are required.",
         "properties": {
           "type": {
             "type": "string",
@@ -44563,7 +44631,7 @@
             ]
           },
           "segment": {
-            "description": "Customer segment reference. Required (non-null) when `type` is\n`POINTS_AND_SEGMENT`; must be null/omitted when `type` is `POINTS`.",
+            "description": "Customer segment reference. Required (non-null) when `type` is\n`POINTS_AND_SEGMENT`; must be `null`/omitted when `type` is `POINTS`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/TierQualificationRulesSegmentUpsert"
@@ -48446,12 +48514,12 @@
       },
       "TierStructurePointEarnedPeriodUpsert": {
         "type": "object",
-        "description": "Points earned tracking period. The maximum `value` depends on `unit`: 90 for\n`DAY`, 52 for `WEEK`, 12 for `MONTH`, 5 for `YEAR`.",
+        "description": "Points earned tracking period.",
         "properties": {
           "value": {
             "type": "integer",
             "minimum": 1,
-            "description": "Length of the tracking period, expressed in `unit` units. Minimum 1. Maximum\ndepends on `unit` (DAY: 90, WEEK: 52, MONTH: 12, YEAR: 5)."
+            "description": "Length of the tracking period, expressed in `unit` units. Minimum 1. The maximum `value` depends on `unit`: 90 for `DAY`, 52 for `WEEK`, 12 for `MONTH`, 5 for `YEAR`."
           },
           "unit": {
             "type": "string",
@@ -48568,7 +48636,7 @@
             "type": "array",
             "minItems": 1,
             "maxItems": 20,
-            "description": "Calendar dates (day + month) on which tier membership expires. 1-20 items.",
+            "description": "Calendar dates (day and month) on which tier membership expires. 1 to 20 items. Each day and month pair must be unique.",
             "items": {
               "$ref": "#/components/schemas/TierStructureExpirationCalendarDateUpsert"
             }
@@ -48580,7 +48648,7 @@
         "additionalProperties": false
       },
       "TierStructureExpirationSlidingExpirationUpsert": {
-        "description": "Sliding expiration settings. Tier membership expiration slides forward on the\nconfigured member activities.",
+        "description": "Sliding expiration settings. Tier membership expiration slides forward on the configured member activities. At least one of `earning_activity`, `spending_activity`, and `custom_activity` must be `true`.",
         "allOf": [
           {
             "$ref": "#/components/schemas/TierStructureSlidingExpirationActivityBase"
@@ -48592,23 +48660,17 @@
                 "type": "array",
                 "maxItems": 10,
                 "uniqueItems": true,
-                "description": "Custom activity type names that extend the tier membership. Up to 10 unique\nitems. Defaults to an empty array when omitted.",
+                "description": "Custom event schema IDs (`ms_…`) that extend the tier membership when `custom_activity` is `true`. Send 1 to 10 unique ids. An unknown id returns `404`. When `custom_activity` is `false` or omitted, ids are ignored and the value is stored as an empty array.",
                 "items": {
                   "type": "string",
                   "minLength": 1,
-                  "description": "Custom activity type name."
+                  "pattern": "^ms_[a-zA-Z0-9]+",
+                  "description": "Custom event schema ID."
                 }
               },
               "period": {
-                "description": "Sliding period after the last qualifying activity. Required (may be null).",
-                "oneOf": [
-                  {
-                    "$ref": "#/components/schemas/TierStructureExpirationSlidingExpirationPeriodUpsert"
-                  },
-                  {
-                    "type": "null"
-                  }
-                ]
+                "$ref": "#/components/schemas/TierStructureExpirationSlidingExpirationPeriodUpsert",
+                "description": "Sliding period after the last qualifying activity."
               }
             },
             "required": [
@@ -48625,7 +48687,7 @@
           "value": {
             "type": "integer",
             "minimum": 1,
-            "description": "Length of the grace period, expressed in `unit` units. Minimum 1."
+            "description": "Length of the period, expressed in `unit` units. Minimum 1. The maximum `value` depends on `unit`: 90 for `DAY`, 12 for `MONTH`, 5 for `YEAR`."
           },
           "unit": {
             "type": "string",
@@ -48638,14 +48700,70 @@
           },
           "round_up": {
             "type": "boolean",
-            "description": "Whether the grace period end is rounded up to the end of the unit."
+            "description": "Whether the grace period end is rounded up to the end of the unit. Defaults to `false` when omitted."
           }
         },
         "required": [
           "value",
           "unit"
         ],
-        "additionalProperties": false
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "unit": {
+                  "const": "DAY"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "value": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 90
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "unit": {
+                  "const": "MONTH"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "value": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 12
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "unit": {
+                  "const": "YEAR"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "value": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 5
+                }
+              }
+            }
+          }
+        ]
       },
       "LoyaltyV2ActivityTierStructurePointEarnedPeriod": {
         "type": "object",
@@ -48701,10 +48819,10 @@
             "properties": {
               "custom_activity_types": {
                 "type": "array",
-                "description": "Custom activity type names that extend the tier membership.",
+                "description": "Custom event schema IDs that extend the tier membership.",
                 "items": {
                   "type": "string",
-                  "description": "Custom activity type name."
+                  "description": "Custom event schema ID."
                 }
               },
               "period": {
@@ -48721,7 +48839,7 @@
         "properties": {
           "value": {
             "type": "integer",
-            "description": "Length of the grace period, expressed in `unit` units."
+            "description": "Length of the period, expressed in `unit` units. Minimum 1. The maximum `value` depends on `unit`: 90 for `DAY`, 12 for `MONTH`, 5 for `YEAR`."
           },
           "unit": {
             "type": "string",
@@ -49296,7 +49414,7 @@
               "NO_COOLDOWN",
               "FIXED_COOLDOWN"
             ],
-            "description": "Cooldown type. `NO_COOLDOWN` requires `fixed_cooldown` to be null/omitted. `FIXED_COOLDOWN` requires `fixed_cooldown`."
+            "description": "Cooldown type. `NO_COOLDOWN` requires `fixed_cooldown` to be `null`/omitted. `FIXED_COOLDOWN` requires `fixed_cooldown`."
           },
           "fixed_cooldown": {
             "description": "Fixed cooldown details. Required when `type` is `FIXED_COOLDOWN`; must be null when `type` is `NO_COOLDOWN`.",
@@ -50647,7 +50765,7 @@
       },
       "CardDefinitionPointsExpirationRollingExpirationPeriodInput": {
         "type": "object",
-        "description": "Rolling expiration period. The maximum `value` depends on `unit`:\n1-90 for `DAY`, 1-12 for `MONTH`, 1-5 for `YEAR` (enforced via if/then conditions).",
+        "description": "Rolling expiration period. The maximum `value` depends on `unit`:\n1-90 for `DAY`, 1–12 for `MONTH`, 1-5 for `YEAR` (enforced via if/then conditions).",
         "properties": {
           "unit": {
             "type": "string",
@@ -50673,7 +50791,7 @@
       },
       "CardDefinitionPointsExpirationRollingExpirationRoundingInput": {
         "type": "object",
-        "description": "Rounding of the rolling expiration date. When `type` is `END_OF_PARTICULAR_MONTH`,\n`value` (month number 1-12) is required; for all other types `value` must be null/absent.",
+        "description": "Rounding of the rolling expiration date. When `type` is `END_OF_PARTICULAR_MONTH`,\n`value` (month number 1–12) is required; for all other types `value` must be null/absent.",
         "properties": {
           "type": {
             "type": "string",
@@ -50693,7 +50811,7 @@
             ],
             "minimum": 1,
             "maximum": 12,
-            "description": "Month number (1-12). Required when `type` is `END_OF_PARTICULAR_MONTH`, must be null otherwise."
+            "description": "Month number (1–12). Required when `type` is `END_OF_PARTICULAR_MONTH`, must be null otherwise."
           }
         },
         "required": [
@@ -50715,7 +50833,7 @@
             "type": "integer",
             "minimum": 1,
             "maximum": 12,
-            "description": "Month number (1-12)."
+            "description": "Month number (1–12)."
           }
         },
         "required": [
@@ -50742,7 +50860,7 @@
         }
       },
       "CardDefinitionPointsExpirationSlidingExpirationPeriodInput": {
-        "description": "Sliding expiration period. The maximum `value` depends on `unit`:\n1-90 for `DAY`, 1-12 for `MONTH`, 1-1 for `YEAR` (enforced via if/then conditions).",
+        "description": "Sliding expiration period. The maximum `value` depends on `unit`:\n1-90 for `DAY`, 1–12 for `MONTH`, 1-1 for `YEAR` (enforced via if/then conditions).",
         "allOf": [
           {
             "$ref": "#/components/schemas/CardDefinitionPeriodInput"
@@ -50751,7 +50869,7 @@
         "unevaluatedProperties": false
       },
       "CardDefinitionPendingPointsPeriodBasedPeriodInput": {
-        "description": "Pending period. The maximum `value` depends on `unit`:\n1-90 for `DAY`, 1-12 for `MONTH`, 1-1 for `YEAR` (enforced via if/then conditions).",
+        "description": "Pending period. The maximum `value` depends on `unit`:\n1-90 for `DAY`, 1–12 for `MONTH`, 1-1 for `YEAR` (enforced via if/then conditions).",
         "allOf": [
           {
             "$ref": "#/components/schemas/CardDefinitionPeriodInput"
@@ -50760,7 +50878,7 @@
         "unevaluatedProperties": false
       },
       "CardDefinitionPendingPointsEventBasedCancelPeriodInput": {
-        "description": "Period after which non-activated pending points are cancelled. The maximum `value`\ndepends on `unit`: 1-90 for `DAY`, 1-12 for `MONTH`, 1-1 for `YEAR`\n(enforced via if/then conditions).",
+        "description": "Period after which non-activated pending points are cancelled. The maximum `value`\ndepends on `unit`: 1-90 for `DAY`, 1–12 for `MONTH`, 1-1 for `YEAR`\n(enforced via if/then conditions).",
         "allOf": [
           {
             "$ref": "#/components/schemas/CardDefinitionPeriodInput"
@@ -51073,7 +51191,7 @@
             "type": "integer",
             "minimum": 1,
             "maximum": 12,
-            "description": "Month number (1-12). Only present when `type` is `END_OF_PARTICULAR_MONTH`."
+            "description": "Month number (1–12). Only present when `type` is `END_OF_PARTICULAR_MONTH`."
           }
         },
         "required": [
@@ -51094,7 +51212,7 @@
             "type": "integer",
             "minimum": 1,
             "maximum": 12,
-            "description": "Month number (1-12)."
+            "description": "Month number (1–12)."
           }
         },
         "required": [
@@ -52121,7 +52239,7 @@
           "value": {
             "type": "integer",
             "minimum": 1,
-            "description": "Length of the expiration period, expressed in `unit` units. Minimum 1."
+            "description": "Length of the period, expressed in `unit` units. Minimum 1. The maximum `value` depends on `unit`: 90 for `DAY`, 12 for `MONTH`, 5 for `YEAR`."
           },
           "unit": {
             "type": "string",
@@ -52137,23 +52255,79 @@
           "value",
           "unit"
         ],
-        "additionalProperties": false
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "unit": {
+                  "const": "DAY"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "value": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 90
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "unit": {
+                  "const": "MONTH"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "value": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 12
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "unit": {
+                  "const": "YEAR"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "value": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 5
+                }
+              }
+            }
+          }
+        ]
       },
       "TierStructureExpirationCalendarDateUpsert": {
         "type": "object",
-        "description": "A recurring calendar date. The maximum `day` depends on `month`: 29 for February\n(month 2), 30 for April/June/September/November (months 4, 6, 9, 11), and 31 for\nthe remaining months.",
+        "description": "Recurring calendar date on which tier membership expires, at the start of that day (00:00 in the project timezone). The maximum `day` depends on `month`: 29 for February (month 2), 30 for April/June/September/November (months 4, 6, 9, 11), and 31 for the remaining months",
         "properties": {
           "day": {
             "type": "integer",
             "minimum": 1,
             "maximum": 31,
-            "description": "Day of the month (1-31). Maximum depends on `month`: February allows up to 29;\nApril, June, September and November allow up to 30; other months allow up to 31."
+            "description": "Day of the month (1–31). Maximum depends on `month`: February allows up to 29; April, June, September and November allow up to 30; other months allow up to 31."
           },
           "month": {
             "type": "integer",
             "minimum": 1,
             "maximum": 12,
-            "description": "Month of the year (1-12)."
+            "description": "Month of the year (1–12)."
           }
         },
         "additionalProperties": false,
@@ -52238,15 +52412,15 @@
         "properties": {
           "earning_activity": {
             "type": "boolean",
-            "description": "Whether point earning activity extends the tier membership."
+            "description": "Whether point earning activity extends the tier membership. Defaults to `false` when omitted."
           },
           "spending_activity": {
             "type": "boolean",
-            "description": "Whether point spending activity extends the tier membership."
+            "description": "Whether point spending activity extends the tier membership. Defaults to `false` when omitted."
           },
           "custom_activity": {
             "type": "boolean",
-            "description": "Whether custom activities extend the tier membership."
+            "description": "Whether custom activities extend the tier membership. Defaults to `false` when omitted."
           }
         }
       },
@@ -52257,7 +52431,7 @@
           "value": {
             "type": "integer",
             "minimum": 1,
-            "description": "Length of the sliding period, expressed in `unit` units. Minimum 1."
+            "description": "Length of the period, expressed in `unit` units. Minimum 1. The maximum `value` depends on `unit`: 90 for `DAY`, 12 for `MONTH`, 5 for `YEAR`."
           },
           "unit": {
             "type": "string",
@@ -52273,15 +52447,71 @@
           "value",
           "unit"
         ],
-        "additionalProperties": false
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "unit": {
+                  "const": "DAY"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "value": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 90
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "unit": {
+                  "const": "MONTH"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "value": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 12
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "unit": {
+                  "const": "YEAR"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "value": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 5
+                }
+              }
+            }
+          }
+        ]
       },
       "LoyaltyV2ActivityTierStructureExpirationPeriod": {
         "type": "object",
-        "description": "Expiration period. The same shape is used for fixed duration and sliding\nexpiration periods.",
+        "description": "Expiration period. The same shape is used for fixed duration and sliding expiration periods.",
         "properties": {
           "value": {
             "type": "integer",
-            "description": "Length of the period, expressed in `unit` units."
+            "description": "Length of the period, expressed in `unit` units. Minimum 1. The maximum `value` depends on `unit`: 90 for `DAY`, 12 for `MONTH`, 5 for `YEAR`."
           },
           "unit": {
             "type": "string",
@@ -52302,13 +52532,13 @@
             "type": "integer",
             "minimum": 1,
             "maximum": 31,
-            "description": "Day of the month (1-31)."
+            "description": "Day of the month (1–31)."
           },
           "month": {
             "type": "integer",
             "minimum": 1,
             "maximum": 12,
-            "description": "Month of the year (1-12)."
+            "description": "Month of the year (1–12)."
           }
         }
       },
@@ -54933,7 +55163,7 @@
       },
       "LoyaltyV2ActivityEarningRuleEffectPointsExpirationRollingExpirationRounding": {
         "type": "object",
-        "description": "`value` is the month (1-12). Required when `type` is `END_OF_PARTICULAR_MONTH`. Absent for other rounding types.",
+        "description": "`value` is the month (1–12). Required when `type` is `END_OF_PARTICULAR_MONTH`. Absent for other rounding types.",
         "properties": {
           "type": {
             "type": "string",
@@ -54947,7 +55177,7 @@
             "description": "Rounding type."
           },
           "value": {
-            "description": "Month number (1-12). Present only when `type` is `END_OF_PARTICULAR_MONTH`.",
+            "description": "Month number (1–12). Present only when `type` is `END_OF_PARTICULAR_MONTH`.",
             "oneOf": [
               {
                 "type": "integer",
@@ -55020,13 +55250,13 @@
             "type": "integer",
             "minimum": 1,
             "maximum": 31,
-            "description": "Day of month (1-31; validated against the month length)."
+            "description": "Day of month (1–31; validated against the month length)."
           },
           "month": {
             "type": "integer",
             "minimum": 1,
             "maximum": 12,
-            "description": "Month number (1-12)."
+            "description": "Month number (1–12)."
           }
         },
         "additionalProperties": false,
