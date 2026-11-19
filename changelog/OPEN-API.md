@@ -15,6 +15,15 @@ Verified and updated POST `/v2/loyalties/tier-structures` (Create tier structure
 - Clarified `404`: missing `card_definition_id` or an unknown `custom_activity_types` custom event schema id. Added examples; the multi-schema case has no `resource_id`.
 - Documented create request rules on shared tier-structure schemas: period `value` caps of 90 for `DAY`, 12 for `MONTH`, and 5 for `YEAR` on fixed-duration, sliding, and downgrade grace periods; sliding `period` is required and cannot be `null`; at least one of `earning_activity`, `spending_activity`, and `custom_activity` must be `true` (omitted flags default to `false`); `custom_activity_types` are custom event schema ids (`ms_…`); calendar `calendar_dates` must be unique; recurring calendar expiry is at the start of that day in the project timezone (`TierStructureExpirationCalendarDateUpsert`).
 
+Documented POST `/v2/loyalties/tier-structures/{tierStructureId}/tiers/batch`.
+
+- Added request body `LoyaltiesTierStructuresTiersBatchRequestBody` (`TierBatchRequest`): optional `create`, `update`, and `remove` arrays, each up to 100 items, with at least one non-empty. `remove` is a unique list of tier ids. Create and update item schemas are `TierBatchCreateItem` and `TierBatchUpdateItem` (`id` required on update).
+- Documented processing order (remove, then update, then create), `204` with no body on success, and tier structure `DRAFT` rules: full batch in `DRAFT`; outside `DRAFT`, `create` and `remove` are rejected and `update` accepts only `name` and `metadata`.
+- Added tier-level `points_expiration` on batch create and update via `TierPointsExpirationUpsert` and nested upsert schemas. Overrides are allowed only while the tier structure is `DRAFT`; `INHERIT` follows the structure. Omit `points_expiration`, or send `null`, to store `INHERIT` on create or to keep the current value on update. Rolling period maxima are 90 for `DAY`, 12 for `MONTH`, and 5 for `YEAR`; sliding maxima are 90, 12, and 1; calendar `expiration_dates` allow 1–20 dates; sliding expiration requires at least one activity flag.
+- Clarified post-batch rules: tier names must be unique in the structure; qualification point ranges must not overlap; a tier referenced by an earning rule or a reward cannot be removed.
+- Added `400` examples for `invalid_payload`, `overlapping_tier`, and `resource_in_use` (`related_object_type` `earning_rule` or `reward`). Added `403` `tiers_per_tier_structure_limit_exceeded`. Added `404` examples for unknown `tier_structure`, a path id that does not match `lts_[a-f0-9]+`, unknown `tier`, and unknown `segment`.
+- Added request examples for tier create-only and combined create, update, and remove. Linked tier structure tier activities in the operation description. Listed the endpoint in `docs.json`.
+
 ## 2026-11-18
 
 Removed POST `/v2/loyalties/tier-structures/{tierStructureId}/tiers` from `docs.json`. It's going to be superseded by POST `/v2/loyalties/tier-structures/{tierStructureId}/tiers/batch` (to be documented).
