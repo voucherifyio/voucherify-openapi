@@ -18797,7 +18797,7 @@
           "Tier Structures"
         ],
         "summary": "Create tier structure",
-        "description": "Creates a new tier structure.\n\nDepending on `type`, either `point_balance` (for `POINT_BALANCE`) or `point_earned` (for `POINT_EARNED`) is required and the other must be `null`/omitted. If `expiration` is omitted, it defaults to `{ \"type\": \"NO_RETENTION\" }`. If `downgrade` is omitted it defaults to `{ \"type\": \"MULTI_LEVEL\" }`. If `status` is omitted, it defaults to `DRAFT`.\n\n<Note>Create tier structure endpoint sets only the general rules for loyalty tiers. Use the Batch create tiers endpoint to add tiers to the tier structure.</Note>\n\nA successful call records [`vl.tier_structure.created`](/api-reference/loyalty-activity/tier-structures/created).",
+        "description": "Creates a new tier structure.\n\nDepending on `type`, either `point_balance` (for `POINT_BALANCE`) or `point_earned` (for `POINT_EARNED`) is required and the other must be `null`/omitted. If `expiration` is omitted, it defaults to `{ \"type\": \"NO_RETENTION\" }`. If `downgrade` is omitted it defaults to `{ \"type\": \"MULTI_LEVEL\" }`. If `status` is omitted, it defaults to `DRAFT`.\n\n<Note>Create tier structure endpoint sets only the general rules for loyalty tiers. Use the [Batch create, update, and remove tiers](/api-reference/tier-structures/batch-create-update-and-remove-tiers) endpoint to add tiers to the tier structure.</Note>\n\nA successful call records [`vl.tier_structure.created`](/api-reference/loyalty-activity/tier-structures/created).",
         "requestBody": {
           "required": true,
           "content": {
@@ -20030,6 +20030,265 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Internal server error": {
+                    "value": {
+                      "code": 500,
+                      "key": "api_error",
+                      "message": "Something went wrong. Don't worry, your campaigns are still safe and the Voucherify Team has been notified. Check out our Help Center and forums for help, or head back to home."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": []
+          },
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/v2/loyalties/tier-structures/{tierStructureId}/tiers/batch": {
+      "parameters": [
+        {
+          "name": "tierStructureId",
+          "in": "path",
+          "required": true,
+          "description": "Identifies the tier structure. Format `lts_[a-f0-9]+`.",
+          "schema": {
+            "type": "string",
+            "pattern": "^lts_[a-f0-9]+$"
+          }
+        }
+      ],
+      "post": {
+        "operationId": "batchTiers",
+        "tags": [
+          "Tier Structures"
+        ],
+        "summary": "Batch create, update, and remove tiers",
+        "description": "Creates, updates, and removes tiers in a tier structure in one transaction. Each of `create`, `update`, and `remove` accepts up to 100 items, and at least one of them must contain an item.\n\nThe batch runs in this order: remove, update, then create. If any item fails, none of the changes are saved.\n\nWhen the tier structure is in `DRAFT` status, all three actions are allowed. In any other status, `create` and `remove` are rejected, and `update` can change only `name` and `metadata`.\n\nA tier follows the tier structure's points expiration when `points_expiration.type` is `INHERIT`. Any other type overrides those rules. You can set or change that override only while the tier structure is `DRAFT`. In any other status, omit `points_expiration`.\n\nAfter the batch, tier names must be unique within the tier structure, and points ranges of tiers must not overlap. A tier that an earning rule or a reward still uses cannot be removed.\n\nA successful call returns `204` with no body. It records [`vl.tier_structure.tier.created`](/api-reference/loyalty-activity/tier-structures/tier-created) for each created tier, [`vl.tier_structure.tier.updated`](/api-reference/loyalty-activity/tier-structures/tier-updated) for each updated tier, and [`vl.tier_structure.tier.deleted`](/api-reference/loyalty-activity/tier-structures/tier-deleted) for each removed tier.",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoyaltiesTierStructuresTiersBatchRequestBody"
+              },
+              "examples": {
+                "Basic tier schema": {
+                  "value": {
+                    "create": [
+                      {
+                        "name": "Bronze tier",
+                        "qualification_rules": {
+                          "type": "POINTS",
+                          "points": {
+                            "min_value": 1,
+                            "max_value": 99
+                          }
+                        }
+                      },
+                      {
+                        "name": "Silver tier",
+                        "qualification_rules": {
+                          "type": "POINTS",
+                          "points": {
+                            "min_value": 100,
+                            "max_value": 199
+                          }
+                        }
+                      },
+                      {
+                        "name": "Gold tier",
+                        "qualification_rules": {
+                          "type": "POINTS",
+                          "points": {
+                            "min_value": 200
+                          }
+                        }
+                      }
+                    ],
+                    "update": [],
+                    "remove": []
+                  }
+                },
+                "Batch create, update, and remove tiers": {
+                  "value": {
+                    "create": [
+                      {
+                        "name": "Platinum",
+                        "qualification_rules": {
+                          "type": "POINTS",
+                          "points": {
+                            "min_value": 400,
+                            "max_value": 499
+                          }
+                        }
+                      }
+                    ],
+                    "update": [
+                      {
+                        "id": "lt_135ef23cc84630c5eb",
+                        "name": "Silver",
+                        "points_expiration": {
+                          "type": "ROLLING_EXPIRATION",
+                          "rolling_expiration": {
+                            "period": {
+                              "unit": "DAY",
+                              "value": 24
+                            }
+                          }
+                        }
+                      }
+                    ],
+                    "remove": [
+                      "lt_135ef23cc84630c5ea"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "The batch was processed. The response has no body."
+          },
+          "400": {
+            "description": "Validation error - request body or query parameters failed validation, or the operation is not allowed in the current resource state.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Invalid payload": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_payload",
+                      "message": "Invalid payload",
+                      "details": "At least one of 'create', 'update', or 'remove' properties must be provided",
+                      "request_id": "v-1d4c8e2f7a9b0c3e51"
+                    }
+                  },
+                  "Overlapping tier": {
+                    "value": {
+                      "code": 400,
+                      "key": "overlapping_tier",
+                      "message": "Overlapping tier",
+                      "details": "Tier overlaps with existing tier lt_0b7e4c2a91d3f8e650",
+                      "request_id": "v-1d4c8e2f7a9b0c3e51"
+                    }
+                  },
+                  "Resource in use": {
+                    "value": {
+                      "code": 400,
+                      "key": "resource_in_use",
+                      "message": "Resource in use",
+                      "details": "Resource tier with id lt_0b7e4c2a91d3f8e650 is in use by earning_rules with ids [lern_133a907d1aca5d2b76]",
+                      "request_id": "v-1d4c8e2f7a9b0c3e51",
+                      "related_object_ids": [
+                        "lern_133a907d1aca5d2b76"
+                      ],
+                      "related_object_type": "earning_rule"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The batch would leave more than 100 tiers in the tier structure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Tier limit exceeded": {
+                    "value": {
+                      "code": 403,
+                      "key": "tiers_per_tier_structure_limit_exceeded",
+                      "message": "Cannot create more tiers per tier structure",
+                      "details": "Cannot create more than 100 tiers per tier structure",
+                      "request_id": "v-1d4c8e2f7a9b0c3e51"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found. The tier structure, a tier named in `update` or `remove`, or a customer segment used by a tier does not exist. A tier structure id that does not match `lts_[a-f0-9]+` also returns `404`.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Tier structure not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find tier_structure with id lts_0b7e4c2a91d3f8e650",
+                      "request_id": "v-1d4c8e2f7a9b0c3e51",
+                      "resource_id": "lts_0b7e4c2a91d3f8e650",
+                      "resource_type": "tier_structure"
+                    }
+                  },
+                  "Tier structure ID does not match pattern": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find tier_structure with id tier_structure_123",
+                      "request_id": "v-1d4c8e2f7a9b0c3e51",
+                      "resource_id": "tier_structure_123",
+                      "resource_type": "tier_structure"
+                    }
+                  },
+                  "Tier not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find tier with id lt_0b7e4c2a91d3f8e650",
+                      "request_id": "v-1d4c8e2f7a9b0c3e51",
+                      "resource_id": "lt_0b7e4c2a91d3f8e650",
+                      "resource_type": "tier"
+                    }
+                  },
+                  "Segment not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find segment with id seg_0b7e4c2a91d3f8e650",
+                      "request_id": "v-1d4c8e2f7a9b0c3e51",
+                      "resource_id": "seg_0b7e4c2a91d3f8e650",
+                      "resource_type": "segment"
+                    }
+                  }
                 }
               }
             }
@@ -27232,6 +27491,16 @@
         "allOf": [
           {
             "$ref": "#/components/schemas/Tier"
+          }
+        ]
+      },
+      "LoyaltiesTierStructuresTiersBatchRequestBody": {
+        "title": "Loyalties Tier Structures Tiers Batch Request Body",
+        "type": "object",
+        "description": "Request body schema for **POST** `/v2/loyalties/tier-structures/{tierStructureId}/tiers/batch`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/TierBatchRequest"
           }
         ]
       },
@@ -37444,10 +37713,10 @@
             "type": "string",
             "minLength": 1,
             "maxLength": 200,
-            "description": "Display name of the tier. Required."
+            "description": "Display name of the tier."
           },
           "qualification_rules": {
-            "description": "Rules determining which members qualify for this tier. Required.",
+            "description": "Rules determining which members qualify for this tier.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/TierQualificationRulesUpsert"
@@ -37618,6 +37887,47 @@
                 "type": "null"
               }
             ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "TierBatchRequest": {
+        "type": "object",
+        "description": "Request body for creating, updating, and removing tiers in one batch. At least one of `create`, `update`, or `remove` must contain an item. No additional properties are allowed.",
+        "properties": {
+          "create": {
+            "description": "Tiers to create. Up to 100 items.",
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/TierBatchCreateItem"
+            },
+            "maxItems": 100
+          },
+          "update": {
+            "description": "Tiers to update. Up to 100 items. `id` is required. Omitted fields keep their current value. No additional properties are allowed. When the tier structure is not in `DRAFT` status, only `name` and `metadata` can be updated.",
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/TierBatchUpdateItem"
+            },
+            "maxItems": 100
+          },
+          "remove": {
+            "description": "IDs of the tiers to remove. Up to 100 unique IDs.",
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 100,
+            "uniqueItems": true
           }
         },
         "additionalProperties": false
@@ -44307,7 +44617,7 @@
               "FIXED_DURATION",
               "CALENDAR_EXPIRATION"
             ],
-            "description": "Expiration model for tier membership. Required."
+            "description": "Expiration model for tier membership."
           },
           "fixed_duration": {
             "description": "Fixed duration expiration settings. Required (non-null) when `type` is `FIXED_DURATION`; must be `null`/omitted otherwise.",
@@ -44609,7 +44919,7 @@
       },
       "TierQualificationRulesUpsert": {
         "type": "object",
-        "description": "Tier qualification rules. When `type` is `POINTS`, `points` is required and\n`segment` must be `null`/omitted; when `type` is `POINTS_AND_SEGMENT`, both `points`\nand `segment` are required.",
+        "description": "Tier qualification rules. When `type` is `POINTS`, `points` is required and `segment` must be `null`/omitted; when `type` is `POINTS_AND_SEGMENT`, both `points`\nand `segment` are required.",
         "properties": {
           "type": {
             "type": "string",
@@ -44617,10 +44927,10 @@
               "POINTS",
               "POINTS_AND_SEGMENT"
             ],
-            "description": "Qualification model. `POINTS` qualifies by point thresholds only;\n`POINTS_AND_SEGMENT` additionally requires membership in a customer segment.\nRequired."
+            "description": "Qualification model. `POINTS` qualifies by point thresholds only;`POINTS_AND_SEGMENT` additionally requires membership in a customer segment."
           },
           "points": {
-            "description": "Point thresholds for the tier. Required (non-null) when `type` is `POINTS`\nor `POINTS_AND_SEGMENT`.",
+            "description": "Point thresholds for the tier. Required (non-null) when `type` is `POINTS` or `POINTS_AND_SEGMENT`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/TierQualificationRulesPointsUpsert"
@@ -44631,7 +44941,7 @@
             ]
           },
           "segment": {
-            "description": "Customer segment reference. Required (non-null) when `type` is\n`POINTS_AND_SEGMENT`; must be `null`/omitted when `type` is `POINTS`.",
+            "description": "Customer segment reference. Required (non-null) when `type` is `POINTS_AND_SEGMENT`; must be `null`/omitted when `type` is `POINTS`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/TierQualificationRulesSegmentUpsert"
@@ -44706,7 +45016,7 @@
               "INHERIT",
               "NO_DOWNGRADE"
             ],
-            "description": "`INHERIT` uses the parent tier structure downgrade settings; `NO_DOWNGRADE`\ndisables downgrades from this tier. Required."
+            "description": "`INHERIT` uses the parent tier structure downgrade settings. `NO_DOWNGRADE` disables downgrades from this tier."
           }
         },
         "required": [
@@ -44749,6 +45059,129 @@
             "description": "Downgrade model. Omitted when the tier has no downgrade configured."
           }
         }
+      },
+      "TierBatchCreateItem": {
+        "type": "object",
+        "description": "A tier to create in a batch.",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "description": "Sets the tier name. The name must be unique in the tier structure after the batch."
+          },
+          "qualification_rules": {
+            "description": "Rules determining which members qualify for this tier.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/TierQualificationRulesUpsert"
+              }
+            ]
+          },
+          "downgrade": {
+            "description": "Tier-level downgrade behavior. If omitted, defaults to `{ \"type\": \"INHERIT\" }` (inherits the tier structure downgrade settings).",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/TierDowngradeUpsert"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "points_expiration": {
+            "description": "Points expiration for the tier. Omit it, or send `null`, to store `{ \"type\": \"INHERIT\" }`, which follows the tier structure. Any other `type` overrides those rules.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/TierPointsExpirationUpsert"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "metadata": {
+            "description": "Free-form key/value object holding custom attributes.",
+            "oneOf": [
+              {
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "name",
+          "qualification_rules"
+        ],
+        "additionalProperties": false
+      },
+      "TierBatchUpdateItem": {
+        "type": "object",
+        "description": "A tier to update in a batch. `id` is required. Omitted fields keep their current value. No additional properties are allowed. When the tier structure is not in `DRAFT` status, only `name` and `metadata` can be updated.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Identifier of the tier to update."
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "description": "Display name of the tier."
+          },
+          "qualification_rules": {
+            "description": "Rules determining which members qualify for this tier.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/TierQualificationRulesUpsert"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "downgrade": {
+            "description": "Tier-level downgrade behavior.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/TierDowngradeUpsert"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "points_expiration": {
+            "description": "Points expiration for the tier. Omit it, or send `null`, to keep the current setting. You can change it only while the tier structure is `DRAFT`.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/TierPointsExpirationUpsert"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "metadata": {
+            "description": "Free-form key/value object holding custom attributes.",
+            "oneOf": [
+              {
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "additionalProperties": false
       },
       "TierStructureActivity": {
         "type": "object",
@@ -48858,13 +49291,13 @@
       },
       "TierQualificationRulesPointsUpsert": {
         "type": "object",
-        "description": "Point thresholds for tier qualification. Values must be non-negative numbers\nbetween 0 and 1,000,000,000.",
+        "description": "Point thresholds for tier qualification. Values must be non-negative numbers between 0 and 1,000,000,000.",
         "properties": {
           "min_value": {
             "type": "number",
             "minimum": 0,
             "maximum": 1000000000,
-            "description": "Minimum number of points required to qualify for the tier. Required."
+            "description": "Minimum number of points required to qualify for the tier."
           },
           "max_value": {
             "type": "number",
@@ -48916,6 +49349,181 @@
             "description": "Unique identifier of the customer segment."
           }
         }
+      },
+      "TierPointsExpirationUpsert": {
+        "type": "object",
+        "description": "Points expiration for a tier. `INHERIT` follows the tier structure's points expiration. Any other `type` overrides it, and you can set or change that override only while the tier structure is `DRAFT`. `type` decides which nested object is required. Nested objects that do not match `type` must be `null` or omitted.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "INHERIT",
+              "NO_EXPIRATION",
+              "ROLLING_EXPIRATION",
+              "CALENDAR_EXPIRATION",
+              "SLIDING_EXPIRATION"
+            ],
+            "description": "Points expiration type. `INHERIT` uses the parent tier structure settings."
+          },
+          "rolling_expiration": {
+            "description": "Required when `type` is `ROLLING_EXPIRATION`.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/TierPointsExpirationRollingExpirationUpsert"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "calendar_expiration": {
+            "description": "Required when `type` is `CALENDAR_EXPIRATION`.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/TierPointsExpirationCalendarExpirationUpsert"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "sliding_expiration": {
+            "description": "Required when `type` is `SLIDING_EXPIRATION`.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/TierPointsExpirationSlidingExpirationUpsert"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "INHERIT"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "rolling_expiration": {
+                  "type": "null"
+                },
+                "calendar_expiration": {
+                  "type": "null"
+                },
+                "sliding_expiration": {
+                  "type": "null"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "NO_EXPIRATION"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "rolling_expiration": {
+                  "type": "null"
+                },
+                "calendar_expiration": {
+                  "type": "null"
+                },
+                "sliding_expiration": {
+                  "type": "null"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "ROLLING_EXPIRATION"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "rolling_expiration"
+              ],
+              "properties": {
+                "rolling_expiration": {
+                  "$ref": "#/components/schemas/TierPointsExpirationRollingExpirationUpsert"
+                },
+                "calendar_expiration": {
+                  "type": "null"
+                },
+                "sliding_expiration": {
+                  "type": "null"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "CALENDAR_EXPIRATION"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "calendar_expiration"
+              ],
+              "properties": {
+                "rolling_expiration": {
+                  "type": "null"
+                },
+                "calendar_expiration": {
+                  "$ref": "#/components/schemas/TierPointsExpirationCalendarExpirationUpsert"
+                },
+                "sliding_expiration": {
+                  "type": "null"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "SLIDING_EXPIRATION"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "sliding_expiration"
+              ],
+              "properties": {
+                "rolling_expiration": {
+                  "type": "null"
+                },
+                "calendar_expiration": {
+                  "type": "null"
+                },
+                "sliding_expiration": {
+                  "$ref": "#/components/schemas/TierPointsExpirationSlidingExpirationUpsert"
+                }
+              }
+            }
+          }
+        ]
       },
       "TierStructureActivityData": {
         "type": "object",
@@ -52542,6 +53150,149 @@
           }
         }
       },
+      "TierPointsExpirationRollingExpirationUpsert": {
+        "type": "object",
+        "description": "Rolling points expiration. `period` is required.",
+        "properties": {
+          "period": {
+            "$ref": "#/components/schemas/TierPointsExpirationRollingPeriodUpsert"
+          },
+          "rounding": {
+            "description": "Rounding of the expiration date. Optional.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/TierPointsExpirationRollingRoundingUpsert"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "period"
+        ],
+        "additionalProperties": false
+      },
+      "TierPointsExpirationCalendarExpirationUpsert": {
+        "type": "object",
+        "description": "Calendar points expiration.",
+        "properties": {
+          "expiration_dates": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TierPointsExpirationCalendarDateUpsert"
+            },
+            "minItems": 1,
+            "maxItems": 20,
+            "description": "Dates on which points expire. 1 to 20 dates."
+          }
+        },
+        "required": [
+          "expiration_dates"
+        ],
+        "additionalProperties": false
+      },
+      "TierPointsExpirationSlidingExpirationUpsert": {
+        "type": "object",
+        "description": "Sliding points expiration. `period` is required. At least one of `earning_activity`, `spending_activity`, or `custom_activity` must be `true`.",
+        "properties": {
+          "earning_activity": {
+            "type": "boolean",
+            "description": "Whether earning activity extends the expiration."
+          },
+          "spending_activity": {
+            "type": "boolean",
+            "description": "Whether spending activity extends the expiration."
+          },
+          "custom_activity": {
+            "type": "boolean",
+            "description": "Whether the custom activity types extend the expiration."
+          },
+          "custom_activity_types": {
+            "description": "Custom activity types. Required when `custom_activity` is `true`. Up to 10 unique values.",
+            "oneOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "period": {
+            "$ref": "#/components/schemas/TierPointsExpirationSlidingPeriodUpsert"
+          }
+        },
+        "required": [
+          "period"
+        ],
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "anyOf": [
+              {
+                "required": [
+                  "earning_activity"
+                ],
+                "properties": {
+                  "earning_activity": {
+                    "const": true
+                  }
+                }
+              },
+              {
+                "required": [
+                  "spending_activity"
+                ],
+                "properties": {
+                  "spending_activity": {
+                    "const": true
+                  }
+                }
+              },
+              {
+                "required": [
+                  "custom_activity"
+                ],
+                "properties": {
+                  "custom_activity": {
+                    "const": true
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "if": {
+              "properties": {
+                "custom_activity": {
+                  "const": true
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "custom_activity_types"
+              ],
+              "properties": {
+                "custom_activity_types": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "minItems": 1,
+                  "maxItems": 10,
+                  "uniqueItems": true
+                }
+              }
+            }
+          }
+        ]
+      },
       "LoyaltyV2ActivityBenefitPointsProportionalEvery": {
         "type": "object",
         "description": "Ratio definition. `value` points for every `every` units.",
@@ -54005,6 +54756,293 @@
           }
         },
         "additionalProperties": false
+      },
+      "TierPointsExpirationRollingPeriodUpsert": {
+        "type": "object",
+        "description": "Rolling expiration period. The maximum `value` depends on `unit`: 90 for `DAY`, 12 for `MONTH`, 5 for `YEAR`.",
+        "properties": {
+          "unit": {
+            "type": "string",
+            "enum": [
+              "DAY",
+              "MONTH",
+              "YEAR"
+            ],
+            "description": "Period unit."
+          },
+          "value": {
+            "type": "integer",
+            "description": "Length of the period, expressed in `unit` units. Minimum 1. The maximum `value` depends on `unit`: 90 for `DAY`, 12 for `MONTH`, 5 for `YEAR`."
+          }
+        },
+        "required": [
+          "unit",
+          "value"
+        ],
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "unit": {
+                  "const": "DAY"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "value": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 90
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "unit": {
+                  "const": "MONTH"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "value": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 12
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "unit": {
+                  "const": "YEAR"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "value": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 5
+                }
+              }
+            }
+          }
+        ]
+      },
+      "TierPointsExpirationRollingRoundingUpsert": {
+        "type": "object",
+        "description": "Rounding of the rolling expiration date.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "END_OF_MONTH",
+              "END_OF_QUARTER",
+              "END_OF_HALF_YEAR",
+              "END_OF_YEAR",
+              "END_OF_PARTICULAR_MONTH"
+            ],
+            "description": "Rounding type."
+          },
+          "value": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 1,
+            "maximum": 12,
+            "description": "Month from 1 to 12. Required when `type` is `END_OF_PARTICULAR_MONTH`. Otherwise `null`."
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "END_OF_PARTICULAR_MONTH"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "value"
+              ],
+              "properties": {
+                "value": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 12
+                }
+              }
+            },
+            "else": {
+              "properties": {
+                "value": {
+                  "type": "null"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "TierPointsExpirationCalendarDateUpsert": {
+        "type": "object",
+        "description": "A calendar date on which points expire.",
+        "properties": {
+          "day": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 31,
+            "description": "Day of the month."
+          },
+          "month": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 12,
+            "description": "Month."
+          }
+        },
+        "required": [
+          "day",
+          "month"
+        ],
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "month": {
+                  "const": 2
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "day": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 29
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "month": {
+                  "enum": [
+                    4,
+                    6,
+                    9,
+                    11
+                  ]
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "day": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 30
+                }
+              }
+            }
+          }
+        ]
+      },
+      "TierPointsExpirationSlidingPeriodUpsert": {
+        "type": "object",
+        "description": "Sliding expiration period. The maximum `value` depends on `unit`.",
+        "properties": {
+          "value": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Number of units."
+          },
+          "unit": {
+            "type": "string",
+            "enum": [
+              "DAY",
+              "MONTH",
+              "YEAR"
+            ],
+            "description": "Period unit."
+          }
+        },
+        "required": [
+          "value",
+          "unit"
+        ],
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "unit": {
+                  "const": "DAY"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "value": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 90
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "unit": {
+                  "const": "MONTH"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "value": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 12
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "unit": {
+                  "const": "YEAR"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "value": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 1
+                }
+              }
+            }
+          }
+        ]
       },
       "BenefitPointsProportionalApplicableTo": {
         "type": "object",

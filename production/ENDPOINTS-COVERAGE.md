@@ -464,21 +464,22 @@
 | /v2/loyalties/earning-rules/{earningRuleId}/draft      | post   | Move earning rule to draft   |                                      |               |
 | /v2/loyalties/earning-rules/{earningRuleId}/activities | get    | List earning rule activities |                                      |               |
 ## LV2-Tier Structures
-| endpoint                                                       | method | summary                        | is supported | is deprecated |
-| -------------------------------------------------------------- | ------ | ------------------------------ | ------------ | ------------- |
-| /v2/loyalties/tier-structures                                  | post   | Create tier structure          |              |               |
-| /v2/loyalties/tier-structures                                  | get    | List tier structures           |              |               |
-| /v2/loyalties/tier-structures/{tierStructureId}                | get    | Get tier structure             |              |               |
-| /v2/loyalties/tier-structures/{tierStructureId}                | put    | Update tier structure          |              |               |
-| /v2/loyalties/tier-structures/{tierStructureId}                | delete | Delete tier structure          |              |               |
-| /v2/loyalties/tier-structures/{tierStructureId}/activate       | post   | Activate tier structure        |              |               |
-| /v2/loyalties/tier-structures/{tierStructureId}/deactivate     | post   | Deactivate tier structure      |              |               |
-| /v2/loyalties/tier-structures/{tierStructureId}/draft          | post   | Move tier structure to draft   |              |               |
-| /v2/loyalties/tier-structures/{tierStructureId}/tiers          | post   | Create tier                    |              |               |
-| /v2/loyalties/tier-structures/{tierStructureId}/tiers          | get    | List tiers                     |              |               |
-| /v2/loyalties/tier-structures/{tierStructureId}/tiers/{tierId} | put    | Update tier                    |              |               |
-| /v2/loyalties/tier-structures/{tierStructureId}/tiers/{tierId} | delete | Delete tier                    |              |               |
-| /v2/loyalties/tier-structures/{tierStructureId}/activities     | get    | List tier structure activities |              |               |
+| endpoint                                                       | method | summary                                | is supported | is deprecated |
+| -------------------------------------------------------------- | ------ | -------------------------------------- | ------------ | ------------- |
+| /v2/loyalties/tier-structures                                  | post   | Create tier structure                  |              |               |
+| /v2/loyalties/tier-structures                                  | get    | List tier structures                   |              |               |
+| /v2/loyalties/tier-structures/{tierStructureId}                | get    | Get tier structure                     |              |               |
+| /v2/loyalties/tier-structures/{tierStructureId}                | put    | Update tier structure                  |              |               |
+| /v2/loyalties/tier-structures/{tierStructureId}                | delete | Delete tier structure                  |              |               |
+| /v2/loyalties/tier-structures/{tierStructureId}/activate       | post   | Activate tier structure                |              |               |
+| /v2/loyalties/tier-structures/{tierStructureId}/deactivate     | post   | Deactivate tier structure              |              |               |
+| /v2/loyalties/tier-structures/{tierStructureId}/draft          | post   | Move tier structure to draft           |              |               |
+| /v2/loyalties/tier-structures/{tierStructureId}/tiers          | post   | Create tier                            |              |               |
+| /v2/loyalties/tier-structures/{tierStructureId}/tiers          | get    | List tiers                             |              |               |
+| /v2/loyalties/tier-structures/{tierStructureId}/tiers/{tierId} | put    | Update tier                            |              |               |
+| /v2/loyalties/tier-structures/{tierStructureId}/tiers/{tierId} | delete | Delete tier                            |              |               |
+| /v2/loyalties/tier-structures/{tierStructureId}/tiers/batch    | post   | Batch create, update, and remove tiers |              |               |
+| /v2/loyalties/tier-structures/{tierStructureId}/activities     | get    | List tier structure activities         |              |               |
 ## LV2-Benefits
 | endpoint                                      | method | summary                 | is supported                         | is deprecated |
 | --------------------------------------------- | ------ | ----------------------- | ------------------------------------ | ------------- |
