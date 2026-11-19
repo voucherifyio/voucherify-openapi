@@ -15,6 +15,14 @@ Verified and updated POST `/v2/loyalties/tier-structures` (Create tier structure
 - Clarified `404`: missing `card_definition_id` or an unknown `custom_activity_types` custom event schema id. Added examples; the multi-schema case has no `resource_id`.
 - Documented create request rules on shared tier-structure schemas: period `value` caps of 90 for `DAY`, 12 for `MONTH`, and 5 for `YEAR` on fixed-duration, sliding, and downgrade grace periods; sliding `period` is required and cannot be `null`; at least one of `earning_activity`, `spending_activity`, and `custom_activity` must be `true` (omitted flags default to `false`); `custom_activity_types` are custom event schema ids (`ms_…`); calendar `calendar_dates` must be unique; recurring calendar expiry is at the start of that day in the project timezone (`TierStructureExpirationCalendarDateUpsert`).
 
+Verified and updated GET `/v2/loyalties/tier-structures/{tierStructureId}`.
+
+- Renamed the response schema to `LoyaltiesTierStructuresGetResponseBody`.
+- Removed the `400` and `409` responses; this operation has no body or query and does not return a conflict.
+- Clarified `404`: the tier structure does not exist, is deleted, or the id does not match `lts_[a-f0-9]+`. Added examples for an unknown id and a pattern mismatch.
+- Added a `200` example for a `POINT_BALANCE` tier structure with `point_earned` set to `null`.
+- On shared schema `TierStructure`, documented that `point_balance` is `null` when `type` is `POINT_EARNED` and `point_earned` is `null` when `type` is `POINT_BALANCE` wherever `TierStructure` is returned.
+
 Documented POST `/v2/loyalties/tier-structures/{tierStructureId}/tiers/batch`.
 
 - Added request body `LoyaltiesTierStructuresTiersBatchRequestBody` (`TierBatchRequest`): optional `create`, `update`, and `remove` arrays, each up to 100 items, with at least one non-empty. `remove` is a unique list of tier ids. Create and update item schemas are `TierBatchCreateItem` and `TierBatchUpdateItem` (`id` required on update).
