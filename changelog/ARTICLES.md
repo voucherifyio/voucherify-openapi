@@ -7,6 +7,9 @@ Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
 ## 2026-11-20
 
+Updated `limits.mdx`. Removed the inline Business and Organization limit table and points readers to Voucherify Pricing for Business and Organization plans and to the Fair use policy for Business, Organization, and Enterprise plans. Clarified minute and hourly limits for webhooks and API blocking, including Enterprise accounts without plan auto-upgrade. Aligned rate-limit response header wording (`api_calls`, `bulk_api_calls`, `api_calls_cycle`, `webhook_calls`).
+
+Updated `management-api.mdx` so the Management API base URL is `https://{region}.api.voucherify.io/management/v1/`.
 Added `free-shipping.mdx`, a dashboard tutorial under **Discount campaigns**. It walks through one **Discount coupons** campaign that applies **Product discount** > **New price** to the built-in **Shipping** product and to a dynamic collection that excludes **Shipping** by name, including a 5% item price via `ORDER_ITEM_PRICE * 0.95`. The page covers Demo Shop validation and **Related topics** accordions for validation rules, dynamic formulas, cart promotions, and stacking rules. Listed the page in `docs.json`.
 
 ## 2026-11-18
