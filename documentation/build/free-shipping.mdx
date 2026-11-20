@@ -1,134 +1,156 @@
 ---
 title: "Combine free shipping with item discounts"
-description: "A step-by-step tutorial on using dynamic discounts to create a single voucher that provides both free shipping and a percentage discount on items"
-keywords: ['free', 'shipping', 'dynamic', 'discounts']
+description: "Create one discount coupon that makes shipping free and takes 5% off item prices."
+keywords: ['free shipping', 'new price', 'discount coupon', 'product collection']
+diataxis: "tutorial"
 ---
 
-One of the most powerful ways to use Voucherify is combining multiple discount effects into one campaign.
+In this tutorial, you create one discount coupon. The coupon sets shipping to 0 and sets every other item to 95% of its unit price.
 
-With **dynamic discounts**, you can influence prices for the whole cart or specific items based on conditions such as order value, currency, or metadata.
+The discount is a **Product discount** of type **New price**. One discount can set a different new price on the **Shipping** product and on a product collection. The **Free shipping** category is a separate discount, and its value cannot be a formula. Read [Discount types and effects](/build/discount-types-and-effects) for the other discount categories.
 
-In this tutorial, you will create a single discount that gives **free shipping** (100% off) and a **5% discount** on items.
+## What you will have
 
-This setup works for:
-- **Discount coupons**
-- **Cart promotions**
-- **Unique codes campaigns**
+A generic code, `SHIP5`. In the Demo Shop, **Shipping** in the order summary is 0, and each other unit costs 95% of its price. A unit priced at 20.00 costs 19.00.
 
-<Info>
-Before you start:
+## Before you start
 
-- Your store must send **products and shipping as separate cart items**.
-- Voucherify must be able to recognize your products (via the **Products catalog** or product IDs in API requests).
-- Products should belong to a collection (for example, **All Products**).
-- The **Shipping** item should not be part of the discounted product collection.
-- You do not need to import the full catalog — product IDs can be passed dynamically in API calls.
+Your checkout sends products and shipping as separate order items. The shipping item is the built-in **Shipping** product. The **Product discount** picker lists that product.
 
-See:
-- [Products](/prepare/products)
-- [Product collections](/prepare/product-collections)
-</Info>
-
-## Create the campaign
-
-Create a campaign using your preferred type, for example **Discount Coupons** or **Cart Promotion**.
-
-Configure the basic campaign settings such as code generation, timeframe, and limits as needed.
-
-If you need help with campaign setup, see:
-- [Create discount coupons](/build/create-discount-coupons)
-- [Create cart promotions](/build/create-discount-promotions)
-
-## Configure free shipping and item discount
-
-Define two price rules using **Products discounts → New price**.
+The 5% applies to a collection of every product whose name is not Shipping. **All Products** includes **Shipping**, so this tutorial uses a new collection.
 
 <Steps>
-  <Step title="Add discount definitions">
-    In the discount configuration step, select:
-
-    **Products discounts → New price**
-
-    Then click **Add another** to create a second rule.
+  <Step title="Open product collections">
+    Go to **Campaign hub** > **Product collections** > **Create collection**.
   </Step>
-
-  <Step title="Set free shipping">
-    - Select **Shipping** as the product.  
-    - Set **New price** to `0`.  
-
-    This makes shipping free.
+  <Step title="Name the collection">
+    Name the collection `Products except shipping`.
   </Step>
+  <Step title="Exclude Shipping">
+    Add a filter on **Name**. Set the condition to **is not**. Set the value to `Shipping`.
 
-  <Step title="Set a 5% item discount">
-    - Select **All Products** (or another product collection).  
-    - Set a safe **fallback value** (for example, original price).  
-
-    Then build the formula:
-
-    - **Order item → Price**
-    - Multiply (`*`)
-    - `0.95`
-
-    This sets the new price to 95% of the original value, which gives a 5% discount.
+    `Shipping` is the built-in product name.
   </Step>
+  <Step title="Save the collection">
+    Click **Save as collection** and choose **Dynamic collection**.
 
-  <Step title="Save the campaign">
-    Save the campaign and test it in your checkout flow.
+    The collection updates when products are added. An SKU is included only when the SKU itself matches the filter. See [SKUs and dynamic collections](/prepare/product-collections#skus-and-dynamic-collections).
   </Step>
 </Steps>
 
-## Notify customers
+## Create the discount coupon
 
-Use your preferred communication channel to promote the offer, such as:
+<Steps>
+  <Step title="Open the campaign builder">
+    Go to **Campaign hub** > **Campaigns** > **Create campaign** and select **Discount coupons**.
+  </Step>
+  <Step title="Set the code">
+    Name the campaign `Free shipping and 5% off`.
 
-- Voucherify distributions  
-- Email or push notifications  
-- On-site banners or checkout messages  
+    Select **Generic code** and enter `SHIP5`.
 
-When customers apply the discount, they receive **free shipping** and a **5% item discount** in a single campaign.
+    For bulk codes, time frame, and the other campaign settings, see [Create discount coupons](/build/create-discount-coupons).
+  </Step>
+  <Step title="Leave the time frame">
+    Open **Time frame** and leave the settings as they are.
+  </Step>
+  <Step title="Open the discount builder">
+    Go to **Discount value**. Click **Add discount** > **Product discount**.
+  </Step>
+</Steps>
 
-## Related features
+## Set the shipping price and the item price
+
+The discount builder opens on **Discount**.
+
+<Steps>
+  <Step title="Choose New price">
+    In **Discount type**, select **New price: Apply the discount to item subtotal**.
+
+    Under **Discounted products**, leave **Selected**. **Each** would include **Shipping** in the 5% price.
+  </Step>
+  <Step title="Set shipping to 0">
+    On the first row, open **Select product or collection**. Choose **Products** and select **Shipping**.
+
+    Set **New price** to `0`.
+  </Step>
+  <Step title="Set the 5% price">
+    Click **Add another**.
+
+    On the new row, open **Select product or collection**. Choose **Collections** and select `Products except shipping`.
+
+    On **New price**, click **Build formula** and enter:
+
+    ```text
+    ORDER_ITEM_PRICE * 0.95
+    ```
+
+    **order item price** is the unit price. The new price is applied to each unit. When the builder shows **Formula is valid**, save the formula.
+
+    Set the **Fallback for New price** to a desired value.
+
+  </Step>
+  <Step title="Save">
+    Leave **Conditions** empty and click **Save**.
+
+    To limit the coupon by order value, customer segment, or channel, add a validation rule on **Conditions**. See [Create validation rules](/optimize/create-validation-rules).
+
+    Leave **Metadata** as they are. On the campaign summary, click **Save**.
+  </Step>
+</Steps>
+
+## Check the discount
+
+Go to **Marketer hub** > **Demo shop**.
+
+<Steps>
+  <Step title="Add a product">
+    Add one unit of a product to the cart. The order summary includes a **Shipping** row.
+  </Step>
+  <Step title="Apply the code">
+    In **Discount code**, enter `SHIP5` and click **Validate**.
+  </Step>
+  <Step title="Read the summary">
+    **Shipping** is 0. The product unit costs 95% of its price. A unit priced at 20.00 costs 19.00. Two units cost 38.00.
+  </Step>
+</Steps>
+
+## Related topics
 
 <AccordionGroup>
 
 <Accordion title="Validation rules">
 
-Use validation rules to control when the discount can be applied.
+Validation rules decide whether `SHIP5` can be redeemed. The new prices decide what the customer pays.
 
-For example, you can restrict the campaign to:
-- minimum order value  
-- specific customer segments  
-- selected sales channels  
+This coupon is a product discount, so Voucherify creates a validation rule for **Shipping** and `Products except shipping`. You can edit that rule and add conditions. You cannot remove it.
 
-Validation rules work alongside dynamic discounts: validation rules define **when the campaign is valid**, while price rules define **how prices are changed**.
+You can limit the coupon with:
 
-See [Create validation rules](/optimize/create-validation-rules).
+- **Audience**, such as a customer segment or customer metadata
+- **Prices and quantities**, such as order value or the number of items
+- **Budget constraints**, such as redemptions per customer or per period
+- **Metadata** on the order or the redemption
 
-</Accordion>
-
-<Accordion title="Customer segments">
-
-Target the promotion to specific customer groups, such as new users or VIP customers.
-
-See [Customer segments](/prepare/customer-segments).
+See [Create validation rules](/optimize/create-validation-rules) and [Validation rule reference](/optimize/validation-rules-reference).
 
 </Accordion>
 
-<Accordion title="Campaign limits">
+<Accordion title="Dynamic formulas">
 
-Control how often the campaign can be redeemed, either per customer or globally.
-
-This is useful for limiting the impact of combined discounts.
-
-See [Campaign limits](/guides/campaign-limits).
+To make the 5% depend on the order, customer, or metadata, edit the formula. See [Create dynamic formulas](/optimize/create-dynamic-formulas).
 
 </Accordion>
 
-<Accordion title="Product bundles">
+<Accordion title="Cart promotions">
 
-If you need more advanced cart logic, for example conditional discounts based on product combinations, consider using bundles together with dynamic discounts.
+A cart promotion can apply a percent tier and a free-shipping tier together. See [Create cart promotions](/build/create-discount-promotions).
 
-See [Product bundles](/build/product-bundles).
+</Accordion>
+
+<Accordion title="Stacking rules">
+
+To allow this coupon and a separate free-shipping incentive on the same order, see [Stacking rules and categories overview](/orchestrate/stacking-rules-overview).
 
 </Accordion>
 
