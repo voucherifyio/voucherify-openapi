@@ -4,6 +4,10 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-11-20
+
+- Fixed `price_formula` `type` to `string` in the `ApplicableTo` schema.
+
 ## 2026-11-19
 
 Verified and updated POST `/v2/loyalties/tier-structures` (Create tier structure).
