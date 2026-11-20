@@ -5,6 +5,10 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-11-20
+
+Added `free-shipping.mdx`, a dashboard tutorial under **Discount campaigns**. It walks through one **Discount coupons** campaign that applies **Product discount** > **New price** to the built-in **Shipping** product and to a dynamic collection that excludes **Shipping** by name, including a 5% item price via `ORDER_ITEM_PRICE * 0.95`. The page covers Demo Shop validation and **Related topics** accordions for validation rules, dynamic formulas, cart promotions, and stacking rules. Listed the page in `docs.json`.
+
 ## 2026-11-18
 
 Updated `loyalty-v2-benefits-overview.mdx` against the Benefits endpoints. Major change: Removed the move-to-draft transition.
