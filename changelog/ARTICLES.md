@@ -7,7 +7,7 @@ Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
 ## 2026-11-20
 
-Updated `limits.mdx` with current Business and Organization API limits in a three-column table, clarified minute and hourly limits for webhooks and for API blocking, and aligned rate-limit response header wording (`api_calls`, `bulk_api_calls`, `api_calls_cycle`, `webhook_calls`).
+Updated `limits.mdx`. Removed the inline Business and Organization limit table and points readers to Voucherify Pricing for Business and Organization plans and to the Fair use policy for Business, Organization, and Enterprise plans. Clarified minute and hourly limits for webhooks and API blocking, including Enterprise accounts without plan auto-upgrade. Aligned rate-limit response header wording (`api_calls`, `bulk_api_calls`, `api_calls_cycle`, `webhook_calls`).
 
 Updated `management-api.mdx` so the Management API base URL is `https://{region}.api.voucherify.io/management/v1/`.
 
