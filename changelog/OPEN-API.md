@@ -4,10 +4,566 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-11-19
+
+Verified and updated POST `/v2/loyalties/tier-structures` (Create tier structure).
+
+- Corrected defaults in the description: omitted `expiration` is `NO_RETENTION`, omitted `downgrade` is `MULTI_LEVEL`, omitted `status` is `DRAFT`.
+- Renamed the request schema to `LoyaltiesTierStructuresCreateRequestBody`. Added request and `200` examples for a minimal `POINT_BALANCE` create.
+- Removed the `409` response; this operation does not return a conflict.
+- Corrected the `400` description to body validation (`invalid_payload`) and optional `metadata_validation_failed` for the `vl_tier_structure` metadata schema. Added examples.
+- Clarified `404`: missing `card_definition_id` or an unknown `custom_activity_types` custom event schema id. Added examples; the multi-schema case has no `resource_id`.
+- Documented create request rules on shared tier-structure schemas: period `value` caps of 90 for `DAY`, 12 for `MONTH`, and 5 for `YEAR` on fixed-duration, sliding, and downgrade grace periods; sliding `period` is required and cannot be `null`; at least one of `earning_activity`, `spending_activity`, and `custom_activity` must be `true` (omitted flags default to `false`); `custom_activity_types` are custom event schema ids (`ms_…`); calendar `calendar_dates` must be unique; recurring calendar expiry is at the start of that day in the project timezone (`TierStructureExpirationCalendarDateUpsert`).
+
+Verified and updated GET `/v2/loyalties/tier-structures/{tierStructureId}`.
+
+- Renamed the response schema to `LoyaltiesTierStructuresGetResponseBody`.
+- Removed the `400` and `409` responses; this operation has no body or query and does not return a conflict.
+- Clarified `404`: the tier structure does not exist, is deleted, or the id does not match `lts_[a-f0-9]+`. Added examples for an unknown id and a pattern mismatch.
+- Added a `200` example for a `POINT_BALANCE` tier structure with `point_earned` set to `null`.
+- On shared schema `TierStructure`, documented that `point_balance` is `null` when `type` is `POINT_EARNED` and `point_earned` is `null` when `type` is `POINT_BALANCE` wherever `TierStructure` is returned.
+
+Documented POST `/v2/loyalties/tier-structures/{tierStructureId}/tiers/batch`.
+
+- Added request body `LoyaltiesTierStructuresTiersBatchRequestBody` (`TierBatchRequest`): optional `create`, `update`, and `remove` arrays, each up to 100 items, with at least one non-empty. `remove` is a unique list of tier ids. Create and update item schemas are `TierBatchCreateItem` and `TierBatchUpdateItem` (`id` required on update).
+- Documented processing order (remove, then update, then create), `204` with no body on success, and tier structure `DRAFT` rules: full batch in `DRAFT`; outside `DRAFT`, `create` and `remove` are rejected and `update` accepts only `name` and `metadata`.
+- Added tier-level `points_expiration` on batch create and update via `TierPointsExpirationUpsert` and nested upsert schemas. Overrides are allowed only while the tier structure is `DRAFT`; `INHERIT` follows the structure. Omit `points_expiration`, or send `null`, to store `INHERIT` on create or to keep the current value on update. Rolling period maxima are 90 for `DAY`, 12 for `MONTH`, and 5 for `YEAR`; sliding maxima are 90, 12, and 1; calendar `expiration_dates` allow 1–20 dates; sliding expiration requires at least one activity flag.
+- Clarified post-batch rules: tier names must be unique in the structure; qualification point ranges must not overlap; a tier referenced by an earning rule or a reward cannot be removed.
+- Added `400` examples for `invalid_payload`, `overlapping_tier`, and `resource_in_use` (`related_object_type` `earning_rule` or `reward`). Added `403` `tiers_per_tier_structure_limit_exceeded`. Added `404` examples for unknown `tier_structure`, a path id that does not match `lts_[a-f0-9]+`, unknown `tier`, and unknown `segment`.
+- Added request examples for tier create-only and combined create, update, and remove. Linked tier structure tier activities in the operation description. Listed the endpoint in `docs.json`.
+
+## 2026-11-18
+
+Removed POST `/v2/loyalties/tier-structures/{tierStructureId}/tiers` from `docs.json`. It's going to be superseded by POST `/v2/loyalties/tier-structures/{tierStructureId}/tiers/batch` (to be documented).
+
+Removed POST `/v2/loyalties/benefits/{benefitId}/draft` from `docs.json`. It's not to be shown for the time being.
+
+Verified and updated DELETE `/v2/loyalties/benefits/{benefitId}`. Removed the documentation-in-progress badge.
+
+- Corrected the `400` description. This operation has no body or query. The cause is a benefit that an earning rule uses (`resource_in_use`). Documented that `related_object_ids` ends with `"…"` when more earning rules reference the benefit.
+- Clarified `404`: the benefit does not exist, is deleted, or the id does not match `lben_[a-f0-9]+`. Added a `Malformed benefit ID` example.
+- Added a `200` example and a `400` `resource_in_use` example.
+- Renamed the response schema to `LoyaltiesBenefitsDeleteResponseBody`.
+
+## 2026-11-17
+
+Verified and updated PUT `/v2/loyalties/benefits/{benefitId}`.
+
+- Clarified that the body must include at least one of `name`, `type`, `points`, `points_proportional`, `material`, `digital`, or `stock`, and that this operation does not change `status`. In `DRAFT`, any of these fields may be sent. In `ACTIVE`, only `name`, `stock`, `points`, `points_proportional`, and `digital` are accepted.
+- Documented immutable fields on an `ACTIVE` benefit: `points.card_definition_id`, `points_proportional.calculation_type`, `points_proportional.card_definition_id`, `digital.type`, and `digital.gift_vouchers.campaign_id`. `digital` cannot be sent for an `ACTIVE` `DISCOUNT_COUPONS` benefit. `type` and `material` are not accepted when the benefit is `ACTIVE`.
+- Clarified that a `POINTS` or `POINTS_PROPORTIONAL` benefit requires an `ACTIVE` card definition on both `DRAFT` and `ACTIVE` updates (`423` `non_active_card_definition`), not only when the benefit is `ACTIVE`. An `ACTIVE` digital benefit cannot use a `DRAFT` campaign (`423` `non_active_campaign`).
+- Corrected the `400` description (body validation and status rules, not query parameters). Added `400` examples for an empty body, an immutable property on an `ACTIVE` benefit, the `ACTIVE` allow-list violation, and `invalid_campaign_type`.
+- Added `403` `forbidden` when a material product or SKU exists but is not accessible in the caller's context.
+- Fixed `404` examples so they sit under `application/json`. Added `not_found` examples for product, SKU, and campaign. Clarified that a deleted benefit is not found.
+- Removed the `409` response. Benefit names are not required to be unique within the project.
+- Added request and `200` examples for updating an `ACTIVE` points benefit. Renamed the request schema to `LoyaltiesBenefitsUpdateRequestBody`.
+
+Verified and updated POST `/v2/loyalties/benefits/{benefitId}/activate`. Removed the documentation-in-progress badge.
+
+- Clarified that related-resource checks run before the status change. A `POINTS` benefit requires `points.card_definition_id` to be `ACTIVE` (`423` `non_active_card_definition`). A digital benefit cannot reference a `DRAFT` campaign (`423` `non_active_campaign`). A benefit that is not `DRAFT` returns `400` `invalid_state_transition` when those checks pass.
+- Removed `non_existing_card_definition` and `resource_locked` from the description. A missing card definition is not a response of this operation. The card-definition check applies to `POINTS` and `points.card_definition_id`.
+- Corrected the `400` description. This operation has no body and no query. The cause is a benefit that is not `DRAFT`.
+- Clarified `404`: the benefit does not exist, is deleted, or the id does not match `lben_[a-f0-9]+`.
+- Added a `200` example, a `400` `invalid_state_transition` example, `404` examples for an unknown id and a pattern mismatch, and `423` examples for `non_active_card_definition` and `non_active_campaign`.
+- Renamed the response schema to `LoyaltiesBenefitsActivateResponseBody`.
+
+Verified and updated GET `/v2/loyalties/benefits/{benefitId}/activities`. Removed the documentation-in-progress badge.
+
+- Clarified that the cursor matches the filters, the order, and the benefit of the previous response. A cursor from another benefit, or a page whose filters or order changed, returns `400` `cursor_and_query_mismatch`.
+- Corrected the `400` description. This operation has no body. The causes are query validation and cursor errors.
+- Added `400` examples for a limit above 100 or below 1, an unsupported `order`, `created_at` together with `-created_at`, a cursor that does not match `^lcrsaben_[a-f0-9]+$`, `invalid_or_expired_cursor`, and `cursor_and_query_mismatch`.
+- Clarified `404`: the benefit does not exist, is deleted, or the id does not match `lben_[a-f0-9]+`. Added examples for an unknown id and a pattern mismatch.
+- Added a `200` example. Renamed the response schema to `LoyaltiesBenefitsActivitiesListResponseBody`.
+
+Verified and updated GET `/v2/loyalties/benefits`.
+
+- Corrected the `400` description. The list has no resource state, so the causes are query validation and cursor errors.
+- Added `400` examples for a limit above 100 or below 1, an unsupported `order`, `created_at` together with `-created_at`, a cursor that does not match `^lcrsben_[a-f0-9]+$`, `invalid_or_expired_cursor`, and `cursor_and_query_mismatch`.
+
+## 2026-11-16
+
+Verified and updated GET `/v2/loyalties/earning-rules`.
+
+- Clarified that rules with status `DELETED` are excluded from the list.
+- Documented `order` allowed values (`-created_at`, `created_at`, `name`, `-name`), cursor expiry, and `400` errors `invalid_or_expired_cursor` and `cursor_and_query_mismatch` when filters or order change between pages.
+- Named filterable fields on `filters`: `id`, `name`, `status`, and `created_at`. Tightened name and status filter descriptions on `LoyaltiesEarningRulesListRequestQuery`.
+- Corrected the `400` description for query and cursor validation. Removed `404` and `409` responses.
+- Added `400` examples for invalid cursor pattern (`^lcrsern_[a-f0-9]+$`), limit above 100 or below 1, unsupported or conflicting `order`, expired cursor, and cursor/query mismatch.
+- Added `DELETED` to the `EarningRuleResponse.status` enum. The description notes that only the delete operation returns it. The enum is shared with other earning-rule responses.
+
+Verified and updated DELETE `/v2/loyalties/earning-rules/{earningRuleId}`.
+
+- Added `DELETED` to `EarningRuleResponse.status` so the `200` example validates.
+- Added a `404` `not_found` example with `resource_id` and `resource_type`. Removed the `409` response, which the endpoint never returns.
+- Replaced the `400` boilerplate description with the `resource_in_use` cause. Documented that `related_object_ids` ends with `"…"` when more programs reference the rule.
+- Renamed the response schema to `LoyaltiesEarningRulesDeleteResponseBody`, because the formula name was free.
+
+Verified and updated POST `/v2/loyalties/benefits`. Removed the documentation-in-progress badge.
+
+- Clarified that exactly one of `points`, `points_proportional`, `material`, or `digital` is required, matching `type`. Omitted `status` creates the benefit as `DRAFT`. Omitted `stock`, or `stock: null`, stores unlimited stock.
+- Clarified `card_definition_id`. The card definition must exist. It must be `ACTIVE` when creating with `status: ACTIVE`, or when an update sends the points object. A `DRAFT` create accepts a card definition that is not `ACTIVE`.
+- Documented `400` `invalid_campaign_type` when a digital benefit's campaign type does not match `DISCOUNT_COUPONS` or `GIFT_VOUCHERS`, and `423` `non_active_campaign` when an `ACTIVE` create references a draft campaign.
+- Corrected the inactive card definition error to `423` `non_active_card_definition`. Removed the `409` response. The name is not rejected as a duplicate.
+- Added `403` `forbidden` when the product on a `SKU` material benefit is not accessible in the caller's context.
+- Added request and `200` examples, plus `400`, `403`, `404`, and `423` examples. `404` covers a missing product, card definition, SKU, or campaign.
+- Renamed the request schema to `LoyaltiesBenefitsCreateRequestBody`.
+- Removed "unique within the project" from `Benefit.name`. Clarified `LoyaltyV2ActivityBenefitStockLimited.quantity`: on create it is the starting quantity, and each purchase decreases it by one.
+
+## 2026-11-13
+
+Documented `LOYALTY_POINTS` rewards that credit a `v2/loyalties` (loyalty hub) card from a referral tier.
+
+- Added `LOYALTY_POINTS` on POST `/v1/rewards` and PUT `/v1/rewards/{rewardId}` (`parameters.loyalty_points`: `points`, `program_id`, `card_definition_id`, `on_missing_member`).
+- Documented that a `LOYALTY_POINTS` reward can only be assigned to a referral tier: POST `/v1/rewards/{rewardId}/assignments` with `related_object_type` `referral_tier` (and `400` `invalid_related_to` when assigned to a campaign). Clarified the same restriction on POST `/v1/loyalties/{campaignId}/rewards`.
+- Added `referrer_points_earned` and `referee_points_earned` on `CardDailyReportEntry` (GET `/v2/loyalties/programs/{programId}/members/{memberId}/cards/{cardId}/reports/daily`).
+- Added `REFERRER_POINTS_EARNED` and `REFEREE_POINTS_EARNED` on `CardTransaction.type`.
+- Added `referrer_earned` and `referee_earned` on `CardLifetimeBucketPoints` (member and card responses).
+
+## 2026-11-12
+
+Removed `updated_at` and `-updated_at` from the `order` enum on GET `/v1/validation-rules` (`ParameterOrderListValidationRules`). Sorting by `-updated_at` does not work as intended (lists validation rules without `updated_at` field first). This may be fixed in the future.
+
+## 2026-11-10
+
+Added GET `/v2/loyalties/programs/{programId}/reports/daily-tasks/daily`.
+
+- Returns counts of nightly tasks the job has already finished: `points_expirations`, `points_activations`, `points_cancellations`, and `tier_recalculations`.
+- Omits periods with no finished tasks. Pending points and scheduled activation or expiration dates are not included, and tasks finished before the report existed are not backfilled.
+- `tier_recalculations` counts cards the nightly job recalculated that produced at least one tier transaction.
+- Requires `start_date`, `end_date`, and `resolution` (`day`, `week`, `month`, `quarter`), with the same range caps as the other daily reports.
+- Added `ProgramDailyTasksDailyReport` and `LoyaltiesProgramsReportsDailyTasksDailyListResponseBody`.
+## 2026-11-09
+
+- Verified and updated GET `/v2/loyalties/earning-rules/{earningRuleId}/activities`. Removed the documentation-in-progress badge.
+  - Replaced the open `data` object with `EarningRuleActivityData`. Every activity includes an `earning_rule` snapshot. `vl.earning_rule.assigned` and `vl.earning_rule.unassigned` also include `program` and `program_earning_rule`. Other activity types omit those two fields. `status` is `DELETED` on `vl.earning_rule.deleted`.
+  - Clarified that a deleted earning rule returns `404`, so its activities are not listed. `404` also covers an unknown id and an id that does not match `lern_[a-f0-9]+`.
+  - Added `200`, `400`, and `404` examples. `200` covers an activated and updated rule, and an assigned rule. `400` covers limit, order, and cursor errors (`invalid_query_params`, `invalid_or_expired_cursor`, `cursor_and_query_mismatch`, `invalid_cursor`).
+  - Renamed the list response schema to `LoyaltiesEarningRulesActivitiesListResponseBody`.
+- Clarified `EarningRuleDateFilterConditions`. `$is`, `$more_than`, and `$less_than` count whole days before the current day. Used by GET `/v2/loyalties/earning-rules` and GET `/v2/loyalties/earning-rules/{earningRuleId}/activities`.
+- Added a `200` example to POST `/v2/loyalties/earning-rules/{earningRuleId}/draft`.
+- Removed the POST `/v2/loyalties/earning-rules/{earningRuleId}/draft` from `docs.json`.
+
+## 2026-11-05
+
+- Verified and updated POST `/v2/loyalties/earning-rules/{earningRuleId}/deactivate`. Removed the documentation-in-progress badge.
+  - Corrected the `400` description. It is an invalid state transition (`invalid_state_transition`) when the earning rule is not `ACTIVE`, not request-body or query validation.
+  - Added `200`, `400`, and `404` examples. `400` covers `DRAFT` and `INACTIVE`. `404` covers a missing or deleted earning rule and an id that does not match `lern_[a-f0-9]+`.
+- Verified and updated POST `/v2/loyalties/earning-rules/{earningRuleId}/activate`.
+  - Clarified that effect and tier rule checks run before the status check. A rule that is already `ACTIVE` can return `423`, `404`, or `400` before `invalid_state_transition`.
+  - Corrected the `400` description. It is an invalid state transition (`invalid_state_transition`) or a stored effect or tier rule check (`invalid_points_expiration_override`, `invalid_benefit_calculation_type`, `invalid_tier_structure_relation`), not request-body or query validation.
+  - Documented `423` `resource_locked` when an effect card definition or tier structure is not assigned to the earning rule's program, alongside `non_active_benefit`, `non_active_card_definition`, and `non_active_tier_structure`.
+  - Added `400`, `404`, and `423` examples. `404` covers a missing or deleted earning rule, an id that does not match `lern_[a-f0-9]+`, a missing benefit, card definition, tier, or tier structure, and a missing segment on a `customer.segment.entered` rule.
+- Verified and updated PUT `/v2/loyalties/earning-rules/{earningRuleId}`. Removed the documentation-in-progress badge.
+  - Replaced `409` with `423`. On an `ACTIVE` rule, the earnings that will be stored are checked for a non-active benefit (`non_active_benefit`), card definition (`non_active_card_definition`), or tier structure (`non_active_tier_structure`), and for an effect card definition or tier structure that is not assigned to the earning rule's program (`resource_locked`). `DRAFT` and `INACTIVE` do not return these errors. The check includes stored earnings when the request omits `earnings`.
+  - Clarified that each field is optional and the body must include at least one field. `status` is rejected with `400`. `ACTIVE` and `INACTIVE` rules can change `name`, `earnings`, `error`, `validity_hours`, `start_date`, `end_date`, `trigger_limits`, `earning_limits`, and `metadata`. A `DRAFT` rule can also change `trigger`.
+  - Clarified that `earnings` replaces the list. An item `id` that matches a stored `lernei_` id replaces that item. An omitted `id`, or an `id` that is not on this rule, creates an item. Items left out of the array are removed.
+  - Clarified `EarningRuleEarningUpdate`. `effects` is required. Omitted `name` and `rules` are not kept. Omitted or `null` `tier_rules` uses `{ "type": "NO_REQUIREMENTS" }`.
+  - Clarified shared request fields on update. An omitted `start_date` or `end_date` keeps the stored value. A calendar date is stored as midnight UTC. Omit `error` or set it to `null` to keep the stored error. Omit `metadata` to keep stored keys, set `null` to clear them, or send an object to merge those keys.
+  - Added `200`, `400`, `404`, and `423` examples. `400` covers an empty body, a field the status does not allow, `start_date` not before `end_date`, invalid validity hours, rules, tier relation, benefit calculation type, points expiration override, and metadata. `404` covers a missing or deleted earning rule, an id that does not match `lern_[a-f0-9]+`, and a missing benefit, card definition, tier, or tier structure.
+- Documented the Loyalty activity recorded by each `/v2/loyalties` operation. A successful write names the `vl.*` activity and links its page. Reads, lists, reports, and point and purchase calls record no activity.
+
+## 2026-10-22
+
+- Verified and updated POST `/v2/loyalties/earning-rules`. Removed the documentation-in-progress badge.
+  - Added optional `earning_limits`. Omit the field or set it to `null` to store no global limit. The response always returns `earning_limits`.
+  - Clarified that omitted or `null` `validity_hours` and `trigger_limits` use the any-time and no-limit defaults. Responses always return those objects.
+  - Documented that an `ACTIVE` rule with trigger `customer.segment.entered` activates a passive segment.
+  - Replaced `409` with `423` when `status` is `ACTIVE` and an effect or tier rule points at a non-active benefit (`non_active_benefit`), card definition (`non_active_card_definition`), or tier structure (`non_active_tier_structure`).
+  - Added `200`, `400`, `404`, and `423` examples. `400` is request-body validation. `404` is a missing custom event schema, segment, card definition, benefit, tier, or tier structure.
+  - Limited each earning to 1–10 effects on `EarningRuleEarningBase`, also used by PUT `/v2/loyalties/earning-rules/{earningRuleId}`.
+  - Clarified on shared request fields that `start_date` must be earlier than `end_date` when both are set, `metadata` `null` is stored as an empty object, and omitted or `null` `tier_rules` use `{ "type": "NO_REQUIREMENTS" }`.
+  - Clarified that effect `points_expiration.type` must be `NO_EXPIRATION` or match the card definition.
+
+## 2026-10-21
+
+Verified GET `/v2/loyalties/memberships/{customerId}`.
+- Clarified the difference for different `identification_type`.
+
+Updated DELETE `/v1/vouchers/{code}/sessions/{sessionKey}`.
+
+- Clarified that the call unlocks only the voucher in the path when several redeemables share the same session key.
+- Documented that a session-released event is created only for that voucher and only when a lock was removed.
+- Clarified that a repeat call still returns `204` without a new session-released event when no lock remains for that voucher.
+- Updated the Dashboard note: redeemable **Validations** → **Release session** matches this endpoint; **Redemptions** → **Sessions** unlocks every redeemable still holding the key.
+
+## 2026-10-15
+
+- Added a `filters` query parameter to GET `/v1/customers`. Filters use advanced field conditions (`deepObject`).
+- Documented `loyalty_memberships` on customer responses (`CustomerLoyaltyMembership` and related member, card, and tier schemas).
+  - Lists only existing `ACTIVE` memberships. `null` when none are stored.
+  - Absent or `null` for `v1/orders`, `v1/publications`, and related events.
+  - Member `status` on that nested shape is always `ACTIVE`.
+
+## 2026-10-14
+
+Shared copied Loyalty v2 schemas. Repeated fields now live on one schema, and each operation keeps its own description. Documented request and response fields stay in place.
+
+- Kept distinct activity id patterns on card and member schemas instead of forcing a shared activity id shape.
+- Unified Loyalty v2 operation descriptions after the schema share.
+
+- Pointed duplicate objects at a shared body with `allOf`. `Card` and `CardSimple` use `CardBase`. Pending and expiring point buckets use `CardBucketBase`. `Membership` and `MembershipWithoutTierProgress` use `MembershipBase`. Reward-purchase and order-payment transactions use `MemberCardTransactionBase`. `BenefitTransaction` uses `MemberTransactionBase`. Earning-rule create and update requests use `EarningRuleRequestBase`. `Tier` and `TierStructure` use `TierMetadataBase`.
+- Pointed spending, rewards-spendings, and points-earnings report `card_definition_id` filters at `ReportCardDefinitionIdFilterConditions`. Removed `SpendingReportFilterCardDefinitionIdConditions` and `PointsEarningsReportFilterCardDefinitionIdConditions`. The shared description says "card definition IDs".
+- Pointed earning-rules and points-earnings report `earning_rule_id` filters at `EarningRuleIdFilterConditions`. Removed `EarningRulesReportFilterEarningRuleIdConditions` and `PointsEarningsReportFilterEarningRuleIdConditions`.
+- Pointed pending-points, expiring-points, and card-transactions list queries at `CardDefinitionIdFilterConditions`. Pending-points and expiring-points queries use it through `CardPointsListQuery`.
+- Pointed pending fixed-date and calendar expiration date inputs at `CardDefinitionCalendarDateInput`.
+- Fixed `LoyaltiesProgramsMembersTiersTransactionsListRequestQueryCardDefinitionId` so the description says "card definition IDs".
+
+## 2026-10-13
+
+- Documented GET `/v2/loyalties/programs/{programId}/reports/members/daily`. Summary: "List program members daily reports".
+  - Required `date`, `members_joined`, `members_deactivated`, `members_deleted`, `cards`, and `object` on each row. Required `data` and `object` on the response.
+  - `members_deactivated` decreases by 1 when a member is activated again. `cards` decreases by 1 when a card is unassigned.
+  - `date` is the start of the truncated period (`week` starts on Monday). Periods without recorded activity are omitted.
+  - Documented `start_date` and `end_date` as inclusive, with `start_date` before `end_date`. The range limit is 90 days, 12 weeks, 12 months, or 4 quarters.
+  - Pointed the 200 body at `LoyaltiesProgramsReportsMembersDailyListResponseBody`.
+  - Added `400` examples for invalid query parameters, a date range past the resolution limit, and `start_date` not before `end_date`.
+  - Added `404` examples for a missing program, including an id that does not match the pattern.
+- Documented GET `/v2/loyalties/programs/{programId}/reports/members/summary`. Summary: "List program members summary reports".
+  - Required `id`, `members_joined`, `members_deactivated`, `members_deleted`, `cards`, and `object` on each row. `id` uses the `lpmrs_` prefix. One row when activity was recorded.
+  - The counters follow the same rules as the members daily report.
+  - `limit` and `order` are not query parameters.
+  - Pointed the 200 body at `LoyaltiesProgramsReportsMembersSummaryListResponseBody`.
+  - Added a `400` example for `limit`, which is not a query parameter, and `404` examples for a missing program, including an id that does not match the pattern.
+- Documented GET `/v2/loyalties/programs/{programId}/reports/rewards/daily`. Summary: "List program rewards daily reports".
+  - Required `date`, `reward_id`, `success_count`, `failures_count`, `failures_breakdown`, and `object` on each row. Required `data` and `object` on the response.
+  - `failures_breakdown` is always an empty object. `success_count` counts approved purchases. `failures_count` counts failed attempts.
+  - `date` is the start of the truncated period (`week` starts on Monday). Periods without recorded purchases are omitted.
+  - Documented `start_date` and `end_date` as inclusive, with `start_date` before `end_date`. The range limit is 90 days, 12 weeks, 12 months, or 4 quarters.
+  - Pointed the 200 body at `LoyaltiesProgramsReportsRewardsDailyListResponseBody`.
+  - Added `400` examples for invalid query parameters, a date range past the resolution limit, and `start_date` not before `end_date`.
+  - Added `404` examples for a missing program, including an id that does not match the pattern.
+- Documented GET `/v2/loyalties/programs/{programId}/reports/rewards/summary`. Summary: "List program rewards summary reports".
+  - Required `id`, `reward_id`, `success_count`, `failures_count`, `failures_breakdown`, and `object` on each row. `id` uses the `lprrs_` prefix. One row per reward with a recorded purchase attempt.
+  - `failures_breakdown` counts failed attempts by reason, including `COOLDOWN`, `FREQUENCY`, and processor rejection reasons. Empty when no failures were recorded.
+  - Returns at most 100 rows, ordered by `id` descending. `limit` and `order` are not query parameters.
+  - Pointed the 200 body at `LoyaltiesProgramsReportsRewardsSummaryListResponseBody`.
+  - Added a `400` example for an invalid `reward_id`, and `404` examples for a missing program, including an id that does not match the pattern.
+- Documented GET `/v2/loyalties/programs/{programId}/reports/rewards/spendings/daily`. Summary: "List program rewards spendings daily reports".
+  - Required `date`, `reward_id`, `cost_id`, `spending_id`, `card_definition_id`, `success_count`, `points`, and `object` on each row.
+  - Counts only approved point spends. A row covers one reward, cost, spending, card definition, and period. Periods without an approved point spend are omitted.
+  - `success_count` counts those spends. `points` totals the points spent.
+  - Same inclusive date range and resolution limits as the rewards daily report.
+  - Pointed the 200 body at `LoyaltiesProgramsReportsRewardsSpendingsDailyListResponseBody`.
+  - Added the same `400` and `404` examples as the rewards daily report.
+- Documented GET `/v2/loyalties/programs/{programId}/reports/rewards/spendings/summary`. Summary: "List program rewards spendings summary reports".
+  - Required `id`, `reward_id`, `cost_id`, `spending_id`, `card_definition_id`, `success_count`, `points`, and `object` on each row. `id` uses the `lprss_` prefix.
+  - Counts only approved point spends. One row per reward, cost, spending, and card definition.
+  - Returns at most 100 rows, ordered by `id` descending. `limit` and `order` are not query parameters.
+  - Pointed the 200 body at `LoyaltiesProgramsReportsRewardsSpendingsSummaryListResponseBody`.
+  - Added a `400` example for an invalid `reward_id`, and `404` examples for a missing program, including an id that does not match the pattern.
+- Verified and updated GET `/v2/loyalties/programs/{programId}/reports/tiers/daily`.
+  - Removed the documentation-in-progress badge.
+  - Renamed the operation to `listProgramTiersDailyReports` (**List program tiers daily reports**).
+  - Pointed the 200 body at `V2LoyaltiesProgramsReportsTiersDailyListResponseBody`.
+  - Required `date`, `tier_structure_id`, `tier_id`, `joins`, `upgrades`, `downgrades`, `lefts`, `prolongs`, and `object` on each row. `data` and `object` are required on the result.
+  - `date` is the start of the period on the project-local calendar. For `week` it is Monday, for `month` the first day, and for `quarter` the quarter start. Periods without recorded movement are omitted.
+  - `start_date` must be before `end_date`. Both dates are inclusive.
+  - `prolongs` counts expiration-date changes for members who stayed on the tier.
+  - Corrected `400` to query validation or `start_date` not before `end_date`. Added examples for missing or invalid query parameters, range limits for `day`, `week`, `month`, and `quarter`, and `invalid_payload`.
+  - `404` is a missing program. Added examples for an unknown program and an id that does not match the pattern.
+- Verified and updated GET `/v2/loyalties/programs/{programId}/reports/tiers/summary`.
+  - Removed the documentation-in-progress badge.
+  - Renamed the operation to `listProgramTiersSummaryReports` (**List program tiers summary reports**).
+  - Pointed the 200 body at `V2LoyaltiesProgramsReportsTiersSummaryListResponseBody`.
+  - Required `id`, `tier_structure_id`, `tier_id`, `joins`, `upgrades`, `downgrades`, `lefts`, `prolongs`, and `object` on each row. `data` and `object` are required on the result.
+  - Returns at most 100 rows, ordered by `id` descending. `limit` and `order` are not query parameters.
+  - `prolongs` counts expiration-date changes for members who stayed on the tier.
+  - `filters.junction` is `AND` or `OR` and defaults to `AND`.
+  - Added `400` examples for an invalid `tier_structure_id` or `tier_id`, and `404` examples for a missing program and an id that does not match the pattern.
+- Verified and updated GET `/v2/loyalties/programs/{programId}/reports/earning-rules/daily`. Renamed the summary to "List program earning-rules daily reports".
+  - Removed the documentation-in-progress badge.
+  - Required `date`, `earning_rule_id`, `success_count`, `failures_count`, `failures_breakdown`, and `object` on each row. Required `data` and `object` on the response.
+  - `failures_breakdown` is always an empty object, even when `failures_count` is above zero. Periods without activity are omitted.
+  - `date` is the start of the truncated period (`week` starts on Monday). `start_date` and `end_date` are inclusive, with `start_date` before `end_date`. The range limit is 90 days, 12 weeks, 12 months, or 4 quarters.
+  - Pointed the 200 body at `V2LoyaltiesProgramsReportsEarningRulesDailyListResponseBody`.
+  - Added `400` examples for invalid query parameters, a date range past the resolution limit, and `start_date` not before `end_date` (`invalid_payload`).
+  - Added `404` examples for a missing program, including an id that does not match the pattern.
+- Verified and updated GET `/v2/loyalties/programs/{programId}/reports/earning-rules/summary`. Renamed the summary to "List program earning-rules summary reports".
+  - Removed the documentation-in-progress badge.
+  - Required `id`, `earning_rule_id`, `success_count`, `failures_count`, `failures_breakdown`, and `object` on each row. `id` uses the `lpers_` prefix. Required `data` and `object` on the response.
+  - `EarningRulesReportFailuresBreakdown` counts `COOLDOWN` and `FREQUENCY`. Either key may be absent. A present key is `0` when that reason has no failures. The object is empty when no failure counts are stored yet.
+  - Returns at most 100 rows, ordered by `id` descending. `limit` and `order` are not query parameters. A filter that matches no rows returns an empty `data` array.
+  - Pointed the 200 body at `V2LoyaltiesProgramsReportsEarningRulesSummaryListResponseBody`.
+  - Added a `400` example for an invalid `earning_rule_id`, and `404` examples for a missing program, including an id that does not match the pattern.
+
+## 2026-10-12
+
+- Verified and updated GET `/v2/loyalties/earning-rules/{earningRuleId}`.
+  - Added `earning_limits` on `EarningRuleResponse`. The response requires the stored fields, including `earning_limits`.
+  - Pointed the 200 body at `V2LoyaltiesEarningRulesGetResponseBody`.
+  - Removed `400` and `409`. A missing earning rule returns `404`.
+- Verified and updated GET `/v2/loyalties/programs/{programId}/tier-structures`.
+  - Required `tier_structure_id`, `created_at`, and `object` on each row.
+  - Pointed the 200 body at `V2LoyaltiesProgramsTierStructuresListResponseBody`.
+  - Removed `409`. Added `400` examples for cursor, limit, and order errors, and `404` examples for a missing program and an id that does not match the pattern.
+- Verified and updated GET `/v2/loyalties/programs/{programId}/rewards`.
+  - Required `reward_id`, `stock`, `redeemed`, `created_at`, `updated_at`, and `object` on each row.
+  - `stock.limited` is present for limited stock and omitted for unlimited stock.
+  - Pointed the 200 body at `LoyaltiesProgramsRewardsListResponseBody`.
+  - Removed `409`. Added the same `400` and `404` examples as the tier-structure list.
+- Verified and updated GET `/v2/loyalties/benefits/{benefitId}`.
+  - Required `stock` and `updated_at`.
+  - Clarified fields that requests may omit or set to `null` and that responses omit, including `BenefitStock.limited` when `type` is `UNLIMITED`.
+  - Pointed the 200 body at `V2LoyaltiesBenefitsGetResponseBody`.
+  - Removed `400` and `409`. Added a `404` example for a missing benefit.
+- Verified and updated GET `/v2/loyalties/rewards/{rewardId}`.
+  - Required `start_date`, `end_date`, and `updated_at` on `RewardResponse`.
+  - Added optional `name` on `RewardCostResponse` and required `tier_rules`.
+  - `fixed_cooldown` is present when `type` is `FIXED_COOLDOWN` and omitted when `type` is `NO_COOLDOWN`.
+  - Pointed the 200 body at `V2LoyaltiesRewardsGetResponseBody`.
+  - Removed `400` and `409`. Added `404` examples for a missing reward and an id that does not match the pattern.
+- Unified the request and response schemas for a material product, a material SKU, discount coupons, and refunds: `LoyaltyV2ActivityRewardMaterialProduct`, `LoyaltyV2ActivityRewardMaterialSKU`, `LoyaltyV2ActivityRewardDigitalDiscountCoupons`, and `LoyaltyV2ActivityRewardRefunds`.
+- Removed `custom_activity`, `custom_activity_types`, and `spending_activity` from `EarningRuleEffectPointsExpirationSlidingExpiration`.
+- Updated GET `/v2/loyalties/programs/{programId}/members/{memberId}/cards/{cardId}/reports/daily`.
+  - Added a `400` example for an invalid `end_date`.
+  - Added `404` examples when the program, member, or card id does not match the id pattern.
+- Verified and updated GET `/v2/loyalties/programs/{programId}/members/{memberId}/earning-rules/{earningRuleId}/reports/daily`.
+  - Removed the documentation-in-progress badge.
+  - Required `date`, `count`, and `object` on each row. `count` is the number of successful earning-rule triggers. A trigger rejected by its limit check is not included.
+  - Documented `start_date` and `end_date` as inclusive.
+  - Pointed the 200 body at `V2LoyaltiesProgramsMembersEarningRulesReportsDailyListResponseBody`.
+  - Added `400` examples for invalid query parameters and for `start_date` not before `end_date`.
+  - Added `404` examples for a missing program, member, or earning rule, including ids that do not match the pattern. A missing or unassigned earning rule uses `resource_type` `earning_rule`.
+  - Renamed the summary to "List member earning-rule daily reports".
+- Verified and updated GET `/v2/loyalties/programs/{programId}/reports/points-earnings/daily`. Renamed the summary to "List program points-earnings daily reports".
+  - Removed the documentation-in-progress badge.
+  - Required `date`, `earning_rule_id`, `earning_item_id`, `card_definition_id`, `success_count`, `points`, `pending_points`, and `object` on each row. Required `data` and `object` on the response.
+  - `points` sums points credited immediately. `pending_points` sums pending points added. Activating or canceling pending points does not change these totals. `success_count` counts operations that credited points or added pending points.
+  - `date` is the start of the truncated period (`week` starts on Monday). Periods without activity are omitted. `earning_item_id` uses the `lernei_` prefix.
+  - Documented `start_date` and `end_date` as inclusive, with `start_date` before `end_date`. The range limit is 90 days, 12 weeks, 12 months, or 4 quarters.
+  - `filters` may be omitted or set to `null`. `junction` is `AND` or `OR` and defaults to `AND`.
+  - Pointed the 200 body at `V2LoyaltiesProgramsReportsPointsEarningsDailyListResponseBody`.
+  - Added `400` examples for invalid query parameters, a date range past the resolution limit, and `start_date` not before `end_date`.
+  - Added `404` examples for a missing program, including an id that does not match the pattern.
+- Verified and updated GET `/v2/loyalties/programs/{programId}/reports/points-earnings/summary`. Renamed the summary to "List program points-earnings summary reports".
+  - Removed the documentation-in-progress badge.
+  - Required `id`, `earning_rule_id`, `earning_item_id`, `card_definition_id`, `success_count`, `points`, `pending_points`, and `object` on each row. `id` uses the `lppes_` prefix. Required `data` and `object` on the response.
+  - `points` and `pending_points` follow the same rules as the daily report.
+  - Returns at most 100 rows, ordered by `id` descending. `limit` and `order` are not query parameters. A filter that matches no rows returns an empty `data` array.
+  - `filters` may be omitted or set to `null`.
+  - Pointed the 200 body at `V2LoyaltiesProgramsReportsPointsEarningsSummaryListResponseBody`.
+  - Added a `400` example for an invalid `earning_rule_id`, and `404` examples for a missing program, including an id that does not match the pattern.
+
+## 2026-10-08
+
+- Marked unused validation rule names as deprecated in the `name` list on `ValidationRuleRules`, `ValidationRuleRules01`, `ValidationRuleRules02`, `ValidationRuleRules03`, `WebhookValidationRuleRules`, `WebhookValidationRuleRules01`, `WebhookValidationRuleRules02`, and `WebhookValidationRuleRules03`.
+  - `order.items.metadata_any` and `order.items.metadata_each`.
+  - `product.id`, `product.price`, `product.quantity`, `product.discount_applicable`, `product.metadata`, `product.metadata.aggregated_quantity`, `product.metadata.aggregated_amount`, `product.metadata.discount_applicable`, and `product.metadata.match_all`.
+  - `sku.id`, `sku.price`, `sku.quantity`, and `sku.discount_applicable`.
+- Clarified `total` on `CustomerRedeemablesList` and `RedeemableHoldersList` as the number of results returned on this page.
+
+## 2026-10-07
+
+- Published `reference/OpenAPI.json` as OpenAPI 3.1.0. Nullable fields use a `null` type (`type` array, or `anyOf` of a schema and `null`) instead of `nullable: true`.
+- Moved webhook operations from `reference/OpenAPIWebhooks.json` into `reference/OpenAPI.json` and removed the separate file. Webhook payload schemas that match API objects now reference those shared schemas.
+- Documented `parameters` on `SimpleReferralTier`: `event_type`, `segment.id`, `custom_event.id`, and `distribution.id`.
+
+## 2026-09-28
+
+- Corrected the Loyalty tier transaction webhook examples for events that keep the member in the same tier. The current tier stays on the member's tier record and is not copied onto the transaction.
+  - `EXPIRATION_CHANGED`: `transaction.tier_id`, `details.tier_to`, and `details.start_at` are `null`.
+  - `EVALUATION_REFRESHED`: `transaction.tier_id` and `details.tier_to` are `null`. `details.start_at` was already `null`.
+
+## 2026-09-23
+
+- Documented Workflows webhook callouts. `data.trigger` is always the Loyalty transaction or Loyalty activity that started the workflow. `source.id` is the workflow definition ID, and `source.workflow` identifies the run.
+
+## 2026-09-18
+
+Removed PUT `/v2/loyalties/tier-structures/{tierStructureId}/tiers/{tierId}` from `docs.json`. This endpoint may be removed, so it has to be hidden from the public documentation.
+
+## 2026-09-17
+
+Documented product and SKU CSV exports.
+
+- Updated POST `/v1/exports`.
+  - Added `product` and `sku` as `exported_object` types, with `ExportProductBase` / `ExportSkuBase` request schemas, field and filter enums, and create examples.
+  - Added `ExportProductScheduled` / `ExportSkuScheduled` to the 200 body.
+  - Updated the default-fields table, Products and SKUs field tables, and the `400` `invalid_payload` example to include `voucher_transactions`, `product`, and `sku`.
+- Updated GET `/v1/exports` to list `product` and `sku` among exported object types and include them in the list example.
+- Updated GET `/v1/exports/{exportId}` with `ExportProduct` / `ExportSku` on the 200 body and get examples.
+
+## 2026-09-14
+
+- Documented the Error Message Library on validation-rule `error`.
+  - Added `ValidationRuleError` with `mode` (`MESSAGES`, `LIBRARY`), per-language `messages`, `library.key`, and the legacy `message` field.
+  - Added `ValidationRuleErrorLibrary`.
+  - Pointed `error` on `ValidationRuleBase`, rule maps, and unsupported bundle rules at `ValidationRuleError`. The API resolves the object to `{ message }` at validation or redemption time using `options.language`.
+- Added `options.language` to POST `/v1/validations` (`ValidationsValidateRequestBody`) and POST `/v1/redemptions` (`RedemptionsRedeemRequestBody`). Falls back to the library default language; omits the custom error when no message can be resolved.
+- Clarified resolved `error.message` on `Error`, `e_error`, and `e_error_expanded`.
+- Updated DELETE `/v1/customers/{customerId}`.
+  - Clarified that the customer is permanently deleted and that a new customer with the same `source_id` can be created.
+  - Documented that this method does not remove all related data, including personal data, from Voucherify databases.
+  - Pointed GDPR right-to-be-forgotten to POST `/v1/customers/{customerId}/permanent-deletion` and [Delete people data](/manage/team-settings#delete-people-data) in Team settings.
+- Updated POST `/v1/customers/{customerId}/permanent-deletion`.
+  - Replaced “consumer data” with “customer data”.
+  - Clarified that the method makes the customer profile forgotten by Voucherify as per the GDPR.
+
+
+## 2026-09-09
+
+- Documented the remaining Loyalty v2 transaction events available to Workflows webhook callouts:
+  - Order: `PAY_WITH_POINTS`.
+  - Tier: `UPGRADED`, `DOWNGRADED`, `JOINED`, `LEFT`, `EXPIRATION_CHANGED`, and `EVALUATION_REFRESHED`.
+  - Reward: `PURCHASE` and `REFUND`.
+  - Benefit: `FULFILLMENT`.
+- Documented Loyalty v2 program activity events available to Workflows webhook callouts:
+  - `vl.program.created`, `vl.program.updated`, `vl.program.deleted`, `vl.program.activated`, and `vl.program.deactivated`.
+  - `vl.program.card_definition.assigned` and `vl.program.card_definition.unassigned`.
+  - `vl.program.earning_rule.assigned` and `vl.program.earning_rule.unassigned`.
+  - `vl.program.reward.assigned`, `vl.program.reward.unassigned`, and `vl.program.reward.updated`.
+  - `vl.program.tier_structure.assigned` and `vl.program.tier_structure.unassigned`.
+- Documented Loyalty v2 card definition activity events available to Workflows webhook callouts:
+  - `vl.card_definition.created`, `vl.card_definition.updated`, `vl.card_definition.deleted`, `vl.card_definition.activated`, and `vl.card_definition.drafted`.
+  - `vl.card_definition.assigned` and `vl.card_definition.unassigned`.
+- Documented Loyalty v2 earning rule activity events available to Workflows webhook callouts:
+  - `vl.earning_rule.created`, `vl.earning_rule.updated`, `vl.earning_rule.deleted`, `vl.earning_rule.activated`, `vl.earning_rule.deactivated`, and `vl.earning_rule.drafted`.
+  - `vl.earning_rule.assigned` and `vl.earning_rule.unassigned`.
+- Documented Loyalty v2 benefit activity events available to Workflows webhook callouts:
+  - `vl.benefit.created`, `vl.benefit.updated`, `vl.benefit.deleted`, `vl.benefit.activated`, and `vl.benefit.drafted`.
+- Documented Loyalty v2 tier structure activity events available to Workflows webhook callouts:
+  - `vl.tier_structure.created`, `vl.tier_structure.updated`, `vl.tier_structure.deleted`, `vl.tier_structure.activated`, `vl.tier_structure.deactivated`, and `vl.tier_structure.drafted`.
+  - `vl.tier_structure.assigned` and `vl.tier_structure.unassigned`.
+  - `vl.tier_structure.tier.created`, `vl.tier_structure.tier.updated`, and `vl.tier_structure.tier.deleted`.
+- Documented Loyalty v2 card activity events available to Workflows webhook callouts:
+  - `vl.card.created`, `vl.card.assigned`, and `vl.card.unassigned`.
+  - `vl.card.code_generation.succeeded` and `vl.card.code_generation.failed`.
+- Removed POST `/v2/loyalties/tier-structures/{tierStructureId}/deactivate` from `docs.json`. This endpoint may be removed, so it has to be hidden from the public documentation.
+
+## 2026-09-08
+
+- Documented the remaining Loyalty v2 card transaction events available to Workflows webhook callouts.
+
+## 2026-09-07
+
+- Documented the remaining Loyalty v2 member activity events available to Workflows webhook callouts:
+  - `vl.member.updated`, `vl.member.deleted`, `vl.member.activated`, and `vl.member.deactivated`.
+  - `vl.member.card.assigned` and `vl.member.card.unassigned`.
+
+## 2026-09-03
+
+Add warning to DELETE `/v1/product-collections/{productCollectionId}`.
+
+## 2026-09-02
+
+- Verified and updated POST `/v2/loyalties/programs/{programId}/members/{memberId}/activate`.
+  - Clarified that the 200 body is the member without cards and that `status` is always `ACTIVE`.
+  - Corrected the `400` description to invalid state transition (`invalid_state_transition`) instead of a validation error.
+  - Rewrote `programId` / `memberId` parameter descriptions and shared `Member` field descriptions (verb-first, required vs format, status enum).
+- Verified and updated POST `/v2/loyalties/programs/{programId}/members/{memberId}/deactivate`.
+  - Pointed the 200 body at `LoyaltiesProgramsMembersDeactivateResponseBody` and constrained success `status` to `INACTIVE`.
+  - Clarified that the 200 body is the member without cards.
+  - Documented `400` (`invalid_state_transition`) when the member cannot be deactivated from its current status.
+  - Rewrote `programId` / `memberId` parameter descriptions (identifier format, not implied required-validation).
+- Verified and updated DELETE `/v2/loyalties/programs/{programId}/members/{memberId}`.
+  - Added `LoyaltiesProgramsMembersDeleteResponseBody` schema (`Member` via `allOf`).
+  - Clarified soft-delete: sets `status` to `DELETED`, unassigns the member's loyalty cards in the program, and returns the member without a `cards` array.
+  - Documented the `vl.member.deleted` activity and `404` when the program or member does not exist, including when the member is already deleted.
+  - Added a 200 example. Removed unused `400` and `409` responses.
+- Verified and updated POST `/v2/loyalties/programs/{programId}/rewards/purchases/{rewardTransactionId}/refund`.
+  - Renamed `RewardPurchaseRefundRequest` / `RewardPurchaseRefundResponse` to `LoyaltiesProgramsRewardsPurchasesRefundRequestBody` / `LoyaltiesProgramsRewardsPurchasesRefundResponseBody`.
+  - Documented `202` (refund accepted before card balance changes), `POINTS_RETURNED` on the source card, new expiration for returned points, and `POINTS_PURCHASE_REVERSED` for `LOYALTY_CARD_POINTS` rewards.
+  - Documented optional `policies.refund` (`DEFAULT`, `ALLOW`) and `policies.stock` (`DEFAULT`, `WRITE_OFF`), including `400` validation examples.
+  - Replaced `409` with `423` lock cases (`non_active_program`, `program_outside_validity_window`, `non_purchase_reward_transaction`, `non_approved_reward_transaction`, `reward_refund_policy_does_not_allow_refunds`). Clarified `404` for a missing program or reward transaction.
+
+## 2026-09-01
+
+- Verified and updated GET `/v2/loyalties/programs/{programId}/members`.
+  - Corrected `DateFilter` `$is`, `$more_than`, and `$less_than` to non-negative integer strings (`pattern: ^[0-9]+$`) instead of date-time or unconstrained strings.
+  - Marked `expires_at` as required on `ListCursor`.
+- Verified and updated POST `/v2/loyalties/programs/{programId}/members/{memberId}/cards/{cardId}/expiring-points/{bucketId}/expire`.
+  - Added `LoyaltiesProgramsMembersCardsExpiringPointsExpireResponseBody` schema.
+  - Documented `423` lock cases (inactive program or member, program outside its validity window, points expiration not enabled, bucket not `ACTIVE`, or bucket expiration date in the past).
+  - Clarified `CardTransaction` `type` and `details` for `ADMIN_POINTS_EXPIRATION` (manually expired point bucket).
+- Verified and updated GET `/v2/loyalties/programs/{programId}/members/{memberId}/benefits/transactions`.
+  - Added `LoyaltiesProgramsMembersBenefitsTransactionsListResponseBody`, `LoyaltiesProgramsMembersBenefitsTransactionsListRequestQuery`, `LoyaltiesProgramsMembersBenefitsTransactionsListRequestQueryBenefitId`, and `BenefitTransactionDetailsMetadata` schemas.
+  - Expanded `BenefitTransactionDetails` (fulfillment `result` for `MATERIAL` and `DIGITAL`) and `BenefitTransactionRejection` (trigger-limit cooldown and frequency details).
+- Renamed Loyalty v2 list query-parameter schemas from `*Filters` / `*Filter*` to `*RequestQuery*` (path + action + request query).
+
+## 2026-08-28
+
+Verified and updated GET `/v2/loyalties/programs/{programId}/members/{memberId}/cards/{cardId}/expiring-points`.
+
+## 2026-08-26
+
+Typed `exchange_ratio` as `number` (was `integer` on redemption/reward nested `coin` objects, and `string` on create/update Pay with Points reward request bodies). The API returns fractional values such as `0.01`.
+
+## 2026-08-10
+
+Published Loyalty v2 API reference overview pages:
+
+- `loyalty-v2-api-overview.mdx`
+- `loyalty-v2-members-overview.mdx`
+- `loyalty-v2-examine-overview.mdx`
+- `loyalty-v2-reports-overview.mdx`
+- `loyalty-v2-card-definitions-overview.mdx`
+- `loyalty-v2-programs-overview.mdx`
+- `loyalty-v2-earning-rules-overview.mdx`
+- `loyalty-v2-tier-structures-overview.mdx`
+- `loyalty-v2-benefits-overview.mdx`
+- `loyalty-v2-rewards-overview.mdx`
+- `introduction-to-legacy-loyalty.mdx`
+
+## 2026-07-21
+
+Deprecated all `v1/loyalties` methods
+
+## 2026-07-17
+
+Changed ReadMe callouts to Mintlify ones in the `OpenAPI.json` file.
+
+## 2026-07-16
+
+Add info about caching to `v1/qualifications` and `/client/v1/qualifications`.
+
+## 2026-06-03
+
+Deleted `cockpits` object from the `ManagementProjectsBrandingCreateRequestBody`, `ManagementProjectsBranding`, `ManagementProjectsBrandingUpdateRequestBody`
+
+## 2026-05-28
+
+- Add `STANDALONE` to `type` in the `CampaignsCreateBase` schema.
+- Removed remaining links to `support.voucherify.io`.
+- Fixed missing `conditions` in `ParameterFiltersListMemberTransactions` `ExportCampaignTransactionsFilters`, and `ExportCampaignTransactionsFilters` schemas.
+
+## 2026-04-30
+
+- Added GET `/v1/segments` endpoint documentation with the `SegmentsListResponseBody` schema
+- Updated the `Segment` schema to include the `updated_at` field.
+
+## 2026-04-13
+
+- Update the `DiscountUnitVouchersEffectTypes` schema with `ADD_SAME_ITEMS` effect.
+- Updated `EventPublicationSucceededData` schema in `OpenAPIWebhooks.json` regarding the `user` field.
+
+## 2026-04-02
+
+Update the `ApplicableTo` schema with settings for campaign budget limits.
+
+## 2026-04-01
+
+Update the `LoyaltiesQualificationsCheckEligibilityRequestBody` schema with missing data.
+
+## 2026-03-25
+
+Change descriptions of `assets`, `assets.cockpit_url`, and added `assets.cockpit_preference_center_url` in the `CustomerWithSummaryLoyaltyReferrals` schema.
+
+## 2026-03-09
+
+Update descriptions of validation rule schemas for new weekly redemption limits.
+
+## 2026-02-23
+
+- Add **PUT** `v1/product-collections/{productCollectionId}` endpoint
+
 ## 2026-02-10
 
 - Removed the info about basic/advanced validation rules from the descriptions
 - Fixed cURL examples in the POST Create validation rule assignment endpoint
+
+## 2026-02-09
+
+Add `expand=json_template` query param to GET `/v1/templates/campaigns/{campaignTemplateId}`. Removed the param from SDK preparation script.
 
 ## 2026-01-23
 

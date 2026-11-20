@@ -1,0 +1,189 @@
+---
+title: "Build workflows"
+description: "Create, connect, publish, and activate a workflow for Loyalty v2 events, with optional conditional logic"
+keywords: ['workflows', 'loyalty v2', 'webhook callout', 'if operator', 'conditional logic', 'loyalty transaction', 'loyalty activity', 'automation']
+diataxis: "how-to"
+---
+
+Use this guide to send Loyalty v2 events to an external application. Connect a trigger directly to a webhook callout when every matching event should be sent. Add an IF operator when only some of those events should be sent.
+
+<Info>
+
+<Badge color="gray">Prerequisites</Badge>
+
+Prepare:
+- An active Loyalty v2 program.
+- An endpoint that accepts HTTP `POST` requests.
+- A webhook secret key if you want to verify signatures.
+- A role with the following permissions: **Read Workflows**, **Create and modify Workflows**, **Publish Workflows**, and **Activate and deactivate Workflows**. **Admin** and **User** already include them. See [Workflow access](/integrations/workflow-options-limits#workflow-access).
+
+</Info>
+
+## Create and publish a workflow
+
+Go to the **Workflows** section in the Dashboard.
+
+<Steps>
+
+<Step title="Create the workflow">
+
+In **Workflows**, click **Create workflow**.
+
+Enter a **Name** and an optional **Description**. Click **Save draft** to open the canvas.
+
+</Step>
+
+<Step title="Add a trigger">
+
+From **Building blocks**, drag a trigger, like **Loyalty transaction** or **Loyalty activity**, onto the canvas.
+
+Click on the trigger. Use the right panel to choose its group and event. Loyalty transaction triggers also include a status filter.
+
+The panel shows the trigger ID. Read [Identifiers](/integrations/workflow-options-limits#identifiers) for the rules.
+
+</Step>
+
+<Step title="Add an action">
+
+From **Actions**, drag an action, like **Webhook callout**, onto the canvas. Click on the action and enter its **Endpoint URL**.
+
+The URL must use `http` or `https`. You can also add up to 10 custom headers.
+
+</Step>
+
+<Step title="Connect the building blocks">
+
+Drag a line from the trigger's right output. Connect it to the left input of an action.
+
+A trigger can connect to several webhook callouts. A webhook callout can also accept several triggers.
+
+A direct connection sends every event that matches the trigger. To send only some of them, add an IF operator before you publish. Follow [Send an event only when it matches](#send-an-event-only-when-it-matches).
+
+</Step>
+
+<Step title="Save and publish">
+
+Click **Save** to store your changes. You can save an unfinished draft. Saving does not start the workflow. **Save** still needs a name and a valid, unique ID.
+
+Click **Publish** when the graph is complete. Confirm **Publish**. The first publish of a draft makes the workflow **Active**.
+
+</Step>
+
+</Steps>
+
+<Tip>
+
+    On the draft canvas, you can use the usual keyboard shortcuts to delete, copy, paste a block, or to undo and redo an operation. The shortcuts stay off while you type in a field.
+
+</Tip>
+
+<Note>
+    
+    Publishing an **Inactive** workflow stores a new version. It does not start runs until you activate the workflow.
+
+</Note>
+
+<Check>
+
+    The workflow status is **Active**. Matching Loyalty v2 events can now start a workflow run.
+
+</Check>
+
+
+## Send an event only when it matches
+
+Use this when a matching trigger is too broad. This path sends a webhook only when a trigger's **Rule** meets one or more conditions (for example, loyalty card transaction's **Points total** is greater than 100).
+
+You still need a trigger and a webhook callout on the canvas. Save and publish the same way as in [Create and publish a workflow](#create-and-publish-a-workflow).
+
+<Steps>
+
+    <Step title="Add an IF operator">
+
+    From **Operators**, drag **IF** onto the canvas.
+
+    An IF uses one of the five action and operator slots in the workflow. Read [Limits](/integrations/workflow-options-limits#limits).
+
+    </Step>
+
+    <Step title="Connect the trigger to the IF">
+
+    Drag a line from the trigger to the IF. The condition panel can take rules only after a trigger is connected.
+
+    </Step>
+
+    <Step title="Add a rule">
+
+    Click the IF. The panel title is **Condition**. Open **Rule 1**.
+
+    Select:
+    - **Default**: Choose a field from the trigger event. Set the operator and value.
+    - **Custom**: Type the path to a field in the trigger event. A custom path starts with `trigger.` or with the ID of an earlier block, and you choose the field type. Set the operator and value.
+
+    To add another rule, click **Add rule**. A new junction starts as **AND**. Click the junction to switch it to **OR**. One IF accepts up to 5 rules. Brackets and the full operator list are in [IF operator](/integrations/workflow-options-limits#if-operator).
+
+    </Step>
+
+    <Step title="Connect True">
+
+    Drag a line from **True** to the webhook callout that should run when the rules match.
+
+    Connect **False** only when those events should go to a different callout. Each of **True** and **False** connects to one next block. Leave **False** unconnected when those events should not be sent.
+
+    A missing value or a value that does not match the operator makes the rule false, so the run follows **False**. If **False** is unconnected, the event is not sent.
+
+    </Step>
+
+</Steps>
+
+<Check>
+
+    Publish the workflow and keep it **Active**. A matching event reaches the endpoint on **True**. A non-matching event follows **False** and is not delivered when that output is empty.
+
+</Check>
+
+## Verify webhook signatures
+
+Generate a secret in **Project settings** > **Webhooks**. Validate the `x-voucherify-signature` header when your endpoint receives a callout.
+
+Read [Webhook authentication](/api-reference/introduction-to-webhooks#authentication) for signature verification examples.
+
+## Deactivate a workflow
+
+Set a published workflow to **Inactive** to stop new runs. **Activate** and **Deactivate** ask you to confirm.
+
+Deactivation does not cancel runs that have already started. Read [Deactivation and version behavior](/integrations/workflow-options-limits#deactivation-and-version-behavior) for details.
+
+## Restore an earlier version
+
+In a workflow canvas, you can restore an earlier version to get back to a previous state.
+
+<Steps>
+
+    <Step title="Open Versions">
+
+        In the designer sidebar, open **Versions**. The list shows **Current draft** and published versions.
+
+    </Step>
+
+    <Step title="Review a version">
+
+        Select a published version. The canvas is read-only.
+
+    </Step>
+
+    <Step title="Restore as draft">
+
+        Open the version menu and click **Restore as draft**. That version becomes your working copy. Click **Save** and **Publish** to make it live.
+
+    </Step>
+
+</Steps>
+
+## Next steps
+
+Go to the following pages for more information:
+- Review [workflow options and limits](/integrations/workflow-options-limits) for configuration options, statuses, and limits.
+- Review [Workflows webhooks](/api-reference/workflows-webhooks) for payload structures.
+- Use [Webhook sendouts](/analyze/audit-logs#webhook-sendouts) to inspect deliveries and retry failed sendouts.
+- Review [webhook response and retry behavior](/api-reference/introduction-to-webhooks#responding-to-webhooks).

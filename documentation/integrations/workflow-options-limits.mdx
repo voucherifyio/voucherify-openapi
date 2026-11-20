@@ -1,0 +1,144 @@
+---
+title: "Workflow options and limits"
+sidebarTitle: "Workflow options"
+description: "Review workflow triggers, conditional logic, webhook callouts, statuses, behavior, and limits"
+keywords: ['workflows', 'loyalty v2', 'webhook callout', 'if operator', 'conditional logic', 'loyalty transaction', 'loyalty activity', 'limits']
+diataxis: "reference"
+---
+
+Learn about the configuration and behavior of Workflows.
+
+<Info>
+
+Read [Build workflows](/integrations/build-workflows) to create and publish a workflow.
+
+</Info>
+
+## Workflow access
+
+You can access **Workflows** in the menu when you have the **Read Workflows** permission. Without it, the menu item is hidden. <Visibility for="agents">A direct URL returns you to the home page.</Visibility>
+
+These permissions also require **Read Workflows**:
+- **Create and modify Workflows**
+- **Publish Workflows**
+- **Delete Workflows**
+- **Activate and deactivate Workflows**
+
+Without **Create and modify Workflows**, the designer shows **You have view-only access to this workflow**. Blocks stay inactive. <Visibility for="agents">**Save**, **Undo**, **Redo**, and **Restore as draft** are unavailable. An empty project says **There are currently no workflows defined.** **Create workflow** is hidden.</Visibility>
+
+<Visibility for="agents">The **⋮** menu is shown when you have **Create and modify Workflows** or **Delete Workflows**. **Edit** requires **Create and modify Workflows**. **Delete** requires **Delete Workflows**.</Visibility>
+
+<Visibility for="agents">The status control requires **Activate and deactivate Workflows**. It is shown only when the workflow is **Active** or **Inactive**. The list uses the same permissions for **Activate**, **Deactivate**, and **Delete**.</Visibility>
+
+Built-in role access is listed in [Members and roles](/manage/members-and-roles#built-in-roles).
+
+## Triggers
+
+A trigger defines when a workflow starts.
+
+| Trigger | What it matches | What you configure |
+| --- | --- | --- |
+| **Loyalty transaction** | Point movements, orders paid with points, tier changes, reward purchases, and benefit fulfillment. | Group, event type, and transaction status. |
+| **Loyalty activity** | Lifecycle events for programs, members, cards, earning rules, rewards, benefits, and tier structures. | Group and event type. |
+
+<Note>
+
+    Transaction statuses such as `APPROVED`, `PENDING`, and `REJECTED` are trigger filters. They are not separate event types. They determine which transactions start a workflow.
+
+</Note>
+
+<Visibility for="agents">You can use more than one loyalty trigger in the same workflow. Triggers can share a group. A broad trigger can sit next to a narrower one.</Visibility>
+
+## Webhook callouts
+
+A webhook callout sends a signed HTTP `POST` request.
+
+The target URL must use `http` or `https`. A webhook callout can include up to 10 custom headers for authentication or routing data.
+
+Voucherify generates the webhook payload automatically. Read [Workflows webhooks](/api-reference/workflows-webhooks) for the payload structure.
+
+To verify signatures, generate a secret in **Project settings** > **Webhooks** and validate the `x-voucherify-signature` header. Read [Webhook authentication](/api-reference/introduction-to-webhooks#authentication) for details.
+
+## IF operator
+
+An IF operator chooses one path for a run. **True** is taken when the rules match. **False** is taken when they do not.
+
+Connect at least one of **True** or **False**. Each output connects to one next block. The other output can stay empty. An empty output does not send a webhook. Read [Send an event only when it matches](/integrations/build-workflows#send-an-event-only-when-it-matches) for the canvas steps.
+
+A rule reads a field on the triggering event, or on a block earlier in the same path. In the **Condition** panel, **Default** lists fields from the connected trigger. **Custom** takes a path and a field type. A custom path starts with `trigger.` or with the ID of an earlier block.
+
+A missing field makes that rule false. The other rules in the same IF are still combined, so an **OR** can still take **True**. The run follows **False** when the combined rules do not match. A missing field does not fail the workflow.
+
+A value that is not a number, not a boolean, or not a valid date does not match a rule of that type. Date operators compare the calendar day in the project time zone. The time of day on the event does not change the day. **is day of week** uses Sunday through Saturday.
+
+Rules in one IF combine with **AND** or **OR**. A new junction starts as **AND**. Click it to switch to **OR**. **Surround with brackets** groups the selected rule so that group is decided before the rules outside it. **Remove brackets** keeps those rules and drops the group. **Remove brackets & rules inside** deletes the group and the rules in it.
+
+| Field type | Operators |
+| --- | --- |
+| String | is, is not, is any of, is none of, contains, starts with, ends with |
+| Number | is, is not, is any of, is none of, greater than, greater than or equal, less than, less than or equal |
+| Boolean | is, is not |
+| Date | is, is not, is any of, is none of, after, before, is day of week |
+
+One IF accepts up to 5 rules and up to 10 values in one rule. The IF block itself counts as one of the five actions and operators in the workflow.
+
+## Identifiers
+
+Each trigger, operator, and webhook callout has an ID. You see it on the canvas and in the settings panel.
+
+The prefix can't be changed.
+
+| Block | Prefix |
+| --- | --- |
+| Trigger | `exwftrg_` |
+| Operator | `exwfnod_` |
+| Webhook callout | `exwfnod_` |
+
+An operator and a webhook callout share the `exwfnod_` prefix. You can edit the suffix. Use 1 to 40 characters: lowercase letters, digits, and underscores. The ID must be unique in that workflow. A new block gets the next number.
+
+## Save, publish, and activate
+
+Saving, publishing, and activation are separate operations.
+
+| Operation | What it does | When to use it | Required permission |
+| --- | --- | --- | --- |
+| **Save** | Stores the working copy, including an unfinished draft. Nothing goes live. | When the workflow has a name and every ID is unique and valid. | **Create and modify Workflows** |
+| **Publish** | Asks you to confirm, then creates a published version from the saved canvas. A draft or an active workflow starts using that version immediately. An inactive workflow does not start runs until you activate it. | When the canvas is complete and saved. | **Publish Workflows** |
+| **Active** or **Inactive** | Asks you to confirm, then turns the published workflow on or off. The canvas does not change. | After the first publication. | **Activate and deactivate Workflows** |
+
+## Statuses
+
+A workflow has three statuses: **Draft**, **Active**, and **Inactive**.
+
+| Status | Meaning |
+| --- | --- |
+| **Draft** | The workflow has never been published. It does not react to events. |
+| **Active** | The workflow is published. Matching events start new runs. |
+| **Inactive** | The workflow is published but paused. Matching events do not start new runs. |
+
+## Deactivation and version behavior
+
+The **Versions** list in the designer shows **Current draft** and the latest 100 published versions. Select a published version to view it. The canvas is read-only. **Restore as draft** requires **Create and modify Workflows**. It copies that version into the working copy. Save and publish the copy to make it live.
+
+Voucherify keeps the newest 100 published versions. Older versions are dropped.
+
+Events that occur while a workflow is inactive do not start a run.
+
+Deactivation does not cancel a run that has already started. The run completes every pending action in the published canvas it started with.
+
+Existing runs keep the version they started with when you publish a new version. New runs use the latest published version.
+
+## Limits
+
+Triggers are counted separately from the other blocks. A workflow can contain five triggers. Actions and operators share a separate limit of five. An IF operator uses one of those five slots.
+
+| Limit | Value |
+| --- | --- |
+| Workflows per project | 5 |
+| Triggers per workflow | 5 |
+| Actions and operators per workflow | 5 |
+| Rules per IF | 5 |
+| Values per rule | 10 |
+| Connections per workflow | 10 |
+| Custom headers per webhook callout | 10 |
+| Published versions kept per workflow | 100 |

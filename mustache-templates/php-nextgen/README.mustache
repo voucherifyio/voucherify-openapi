@@ -89,25 +89,37 @@ Once installed, run:
 <?php
 require_once(__DIR__ . '/vendor/autoload.php');
 
-{{#apiInfo}}{{#apis}}{{#-first}}{{#operations}}{{#operation}}{{#-first}}
-{{> php_doc_auth_partial}}
-$apiInstance = new {{invokerPackage}}\Api\{{classname}}(
+$host = getenv('VOUCHERIFY_HOST') ?: 'https://api.voucherify.io';
+$xAppId = getenv('X_APP_ID');
+$xAppToken = getenv('X_APP_TOKEN');
+
+if (!$xAppId || !$xAppToken) {
+    throw new RuntimeException('X_APP_ID and X_APP_TOKEN must be set in the environment.');
+}
+
+$config = {{invokerPackage}}\Configuration::getDefaultConfiguration()
+    ->setHost($host)
+    ->setApiKey('X-App-Id', $xAppId)
+    ->setApiKey('X-App-Token', $xAppToken);
+
+$apiInstance = new {{invokerPackage}}\Api\CampaignsApi(
     // If you want use custom http client, pass your client which implements `GuzzleHttp\ClientInterface`.
     // This is optional, `GuzzleHttp\Client` will be used as default.
-    new GuzzleHttp\Client(){{#hasAuthMethods}},
-    $config{{/hasAuthMethods}}
+    new GuzzleHttp\Client(),
+    $config
 );
-{{#allParams}}${{paramName}} = {{{example}}}; // {{{dataType}}}{{#description}} | {{{.}}}{{/description}}
-{{/allParams}}
 
 try {
-    {{#returnType}}$result = {{/returnType}}$apiInstance->{{{operationId}}}({{#allParams}}${{paramName}}{{^-last}}, {{/-last}}{{/allParams}});{{#returnType}}
-    print_r($result);{{/returnType}}
+    $result = $apiInstance->listCampaigns();
+    print_r($result);
 } catch (Exception $e) {
-    echo 'Exception when calling {{classname}}->{{operationId}}: ', $e->getMessage(), PHP_EOL;
+    echo 'Exception when calling CampaignsApi->listCampaigns: ', $e->getMessage(), PHP_EOL;
 }
-{{/-first}}{{/operation}}{{/operations}}{{/-first}}{{/apis}}{{/apiInfo}}
 ```
+
+> [!NOTE]
+>
+> This code just lists campaigns, so it won't affect your Voucherify data.
 
 > [!TIP]
 >
@@ -122,11 +134,11 @@ To run tests locally with docker:
 
 ## 🛠️ Contribute
 
-Do you want to contribute?
+This SDK is generated automatically from our [OpenAPI specification](https://github.com/voucherifyio/voucherify-openapi). To contribute, submit an issue rather than creating a pull request. Voucherify developers will review your issue and reply as soon as possible.
 
-Read more about how to contribute to this SDK in the [Contributing guide](https://github.com/voucherifyio/voucherify-openapi/blob/master/GENERATING-SDKS.md) in the main repo.
+## 🏷️ Link tags
 
-This SDK is auto-generated (except for tests), so changes made here will be overwritten by the generator.
+[OpenAPI generated from tag](https://github.com/voucherifyio/voucherify-openapi/tree/sdk-php-{{artifactVersion}}).
 
 ## 🔐 Authorization
 
@@ -168,7 +180,43 @@ All endpoints do not require authorization.
 
 ## 📅 Changelog
 
-- **2024-01-29** - `5.0.3`
+- **2026-10-14** - `5.2.0`
+  - Added Loyalty v2 API methods under `/v2/loyalties` for member create, update, delete, activate, and deactivate, point adjustments, order payments, reward purchase, and refund, plus memberships, cards, examine, reports, list endpoints, and reads for a benefit, an earning rule, and a reward.
+  - Added `loyalty_memberships` on customer summary models.
+  - Customer loyalty membership responses list only `ACTIVE` memberships.
+  - Replaced deprecated `GuzzleHttp\Utils::jsonEncode()` with PHP `json_encode(..., JSON_THROW_ON_ERROR)` in generated API request bodies (Guzzle 7.15+).
+  - Added e2e coverage for Loyalty v2 member and runtime flows, with HTTP setup for admin endpoints that are not in the SDK.
+- **2026-08-26** - `5.1.1`
+  - Fixed: `exchangeRatio` is `float` on COIN reward models (`RewardsCreateRequestBodyParametersCoin` and `RewardsUpdateRequestBodyParametersCoin` were `string`, `RedemptionRewardResultParametersCoin` was `int`). The API returns fractional values such as `0.01`.
+  - Added: `language` on `RedemptionsRedeemRequestBodyOptions` and `ValidationsValidateRequestBodyOptions`.
+  - Added: product/sku export order and field constants (`product_id`, `sku`, `price`, `image_url`, `attributes`, `currency`) on `ExportParameters`, `ExportsCreateRequestBodyParameters`, `ExportsCreateResponseBodyParameters`, and `ExportsGetResponseBodyParameters`.
+  - Note: `ErrorError.message` is the resolved custom validation-rule error for `options.language`, falling back to the Error Message Library default language.
+- **2026-08-10** - `5.1.0`
+  - Fixed: `ValidationsRedeemableSkippedResultDetails` was missing `no_effect` (`ValidationsRedeemableSkippedResultDetails::KEY_NO_EFFECT`), so deserializing a skipped redeemable with `"key": "no_effect"` threw `\InvalidArgumentException` (entire validations/redemptions response failed to parse).
+  - This affects `POST /v1/validations` and stackable `POST /v1/redemptions` when `redeemables_no_effect_rule` is `SKIP` (globally or via `no_effect_skip_categories`).
+  - New allowable value: `no_effect` (`KEY_NO_EFFECT`) - Redeemable cannot be applied due to no effect.
+  - Fixed: `FilterConditionsDateTime` now serializes `moreThan` / `lessThan` as `$more_than` / `$less_than`, matching the documented filter contract and the already-correct `FiltersCondition`; previously these were sent as `more_than` / `less_than` and ignored by the API. Getters and setters are unchanged.
+  - Added support for **GET** /v1/campaigns/{campaignId}/summary
+  - Added support for **GET** /v1/campaigns/{campaignId}/transactions
+  - Added support for **POST** /v1/campaigns/{campaignId}/transactions/export
+  - Added support for **GET** /v1/loyalties/{campaignId}/transactions
+  - Added support for **POST** /v1/loyalties/{campaignId}/transactions/export
+  - Added support for **POST** /v1/loyalties/members/{memberId}/pending-points/{pendingPointsId}/balance (`LoyaltiesApi::adjustMemberPendingPoints()`)
+  - Added 55 new models (campaign/loyalty transaction listing & export, campaign summary, bundle discounts, earning-rule expiration/applicable-to/pending-points types, redemption/qualification session objects, and related filters).
+  - Updated bundle discounts: `bundle` on validation/redeemable results, `bundleRules` on validation rules, and new `Bundle` types.
+  - Updated discount applicability with campaign/promotion-tier quantity limits (and formulas) and `units_limit_exceeded` on unit-level results; new discount effect `ADD_SAME_ITEMS`.
+  - Updated loyalty earning rules with `expirationRules`, `applicableTo`, `pointsFormula`, and pending-points configuration; new `FIXED_DAY_OF_YEAR` expiration period type.
+  - Updated redemptions and qualifications with optional `session` objects.
+  - Updated gift/loyalty voucher responses with `subtractedAmount` / `subtractedPoints` and loyalty `expiredPoints`.
+  - Updated customer assets with `cockpitPreferenceCenterUrl`.
+  - Updated segments with `passive` type and `updatedAt`; async action listings with `hasMore`.
+  - Updated `CampaignsCreateRequestBody` `type` enum with `STANDALONE` (`TYPE_STANDALONE`; alongside `AUTO_UPDATE` and `STATIC`).
+  - Added many new management webhook event constants (campaign tiers/stacks/rewards, voucher transactions, pending-points lifecycle, customer confirmed, and more). Existing `EVENTS_*_ADDED` constants keep their names and values, and the `importVouchersUsingCsv($file, $contentType)` signature is unchanged. The upstream `aded` spelling typo in the source specification is compensated for during generation and will be corrected across all SDKs in a future alignment.
+  - Not exposed yet: the `webhooks_enable` form field on CSV voucher import. It is omitted on purpose, because adding it would insert a parameter before `$contentType` and silently shift existing positional calls. It will arrive with a future cross-SDK alignment or the next major version.
+- **2026-05-07** - `5.0.4`
+  - Fixed PHP 8.4 deprecation warnings: added explicit nullable type declarations (`?Type $param = null`) across all API and Model constructors
+  - Fixed tests: publish loyalty card before updating balance (required by API change)
+- **2025-01-29** - `5.0.3`
   - Added support for **GET** /v1/loyalties/{campaignId}/pending-points
   - Added support for **GET** /v1/loyalties/members/{memberId}/pending-points
   - Added support for **GET** /v1/loyalties/{campaignId}/members/{memberId}/pending-points

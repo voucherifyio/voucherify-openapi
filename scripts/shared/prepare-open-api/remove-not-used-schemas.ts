@@ -19,26 +19,29 @@ export const removeNotUsedSchemas = (
   languageOptions: LanguageOptions,
   schemas: Record<string, any>,
 ) => {
-  const schemasNamesFoundInPaths = JSON.stringify(paths)
-    .match(/"#\/components\/schemas\/.*?"/g)
+  const schemasNamesFoundInPaths = (
+    JSON.stringify(paths).match(/"#\/components\/schemas\/.*?"/g) || []
+  )
     .map((match) => match.replace('"#/components/schemas/', "").slice(0, -1))
     .sort();
 
-  const usedParameters = JSON.stringify(paths)
-    .match(/"#\/components\/parameters\/.*?"/g)
-    .map((match) =>
-      match.replace('"#/components/parameters/', "").slice(0, -1),
-    );
+  const usedParameters = (
+    JSON.stringify(paths).match(/"#\/components\/parameters\/.*?"/g) || []
+  ).map((match) =>
+    match.replace('"#/components/parameters/', "").slice(0, -1),
+  );
   const schemasNamesFoundInPathsParameters: string[] = [];
   for (const parameter of usedParameters) {
     if (!components.parameters?.[parameter]) {
       continue;
     }
-    const schemasNamesFoundInParameter = JSON.stringify(
-      components.parameters[parameter],
-    )
-      .match(/"#\/components\/schemas\/.*?"/g)
-      .map((match) => match.replace('"#/components/schemas/', "").slice(0, -1));
+    const schemasNamesFoundInParameter = (
+      JSON.stringify(components.parameters[parameter]).match(
+        /"#\/components\/schemas\/.*?"/g,
+      ) || []
+    ).map((match) =>
+      match.replace('"#/components/schemas/', "").slice(0, -1),
+    );
     schemasNamesFoundInPathsParameters.push(...schemasNamesFoundInParameter);
   }
 
@@ -66,8 +69,9 @@ export const removeNotUsedSchemas = (
       break;
     }
     lastSchemaStringify = schemaStringify;
-    const schemasNames = schemaStringify
-      .match(/"#\/components\/schemas\/.*?"/g)
+    const schemasNames = (
+      schemaStringify.match(/"#\/components\/schemas\/.*?"/g) || []
+    )
       .map((match) => match.replace('"#/components/schemas/', "").slice(0, -1))
       .sort();
     for (const schemaName of schemasNames) {

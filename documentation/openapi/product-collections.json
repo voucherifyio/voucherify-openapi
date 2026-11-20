@@ -1,5 +1,5 @@
 {
-  "openapi": "3.0.1",
+  "openapi": "3.1.0",
   "info": {
     "title": "Voucherify API - Product Collections",
     "version": "v2018-08-01",
@@ -432,13 +432,202 @@
           }
         }
       },
+      "put": {
+        "operationId": "put-product-collection",
+        "tags": [
+          "Product Collections"
+        ],
+        "summary": "Update Product Collection",
+        "description": "Updates the product collection.\n\nFor `STATIC` collections, you can update only the `name`.\n\nFor `AUTO_UPDATE` collections, you can update its `name` and `filters`.",
+        "parameters": [],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": []
+          },
+          {
+            "X-Voucherify-OAuth": [
+              "api",
+              "product-collections"
+            ]
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "description": "Specify the parameters to be updated.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProductCollectionsUpdateRequestBody"
+              },
+              "examples": {
+                "Update static collection": {
+                  "value": {
+                    "name": "New static collection name"
+                  }
+                },
+                "Update auto-update collection": {
+                  "value": {
+                    "name": "New auto-update collection name",
+                    "filter": {
+                      "junction": "AND",
+                      "metadata.brand": {
+                        "conditions": {
+                          "$is": [
+                            "Voucherify"
+                          ]
+                        }
+                      },
+                      "metadata.vendor": {
+                        "conditions": {
+                          "$in": [
+                            "Bull&Pear",
+                            "D&B",
+                            "FloppCity",
+                            "Home",
+                            "I&N",
+                            "Reversed"
+                          ]
+                        }
+                      },
+                      "price": {
+                        "conditions": {
+                          "$more_than_equal": [
+                            10000
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Returns a product collection object if a valid identifier was provided in the path.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductCollectionsUpdateResponseBody"
+                },
+                "examples": {
+                  "Static": {
+                    "value": {
+                      "id": "pc_bQ2p9TycbEhd3YzwFCR3JQYA",
+                      "name": "Shirts",
+                      "type": "STATIC",
+                      "products": [
+                        {
+                          "id": "prod_0a9f9aeddb019a42db",
+                          "object": "product"
+                        },
+                        {
+                          "id": "prod_0a9f9ab4ab019a42d5",
+                          "object": "product"
+                        }
+                      ],
+                      "created_at": "2022-02-28T11:42:12.484Z",
+                      "updated_at": "2026-02-23T17:43:22.384Z",
+                      "object": "products_collection"
+                    }
+                  },
+                  "Dynamic": {
+                    "value": {
+                      "id": "pc_Dj1qSH7bho4SVh7aSDKjU174",
+                      "name": "Products in Poland",
+                      "type": "AUTO_UPDATE",
+                      "filter": {
+                        "junction": "and",
+                        "metadata.product_location": {
+                          "conditions": {
+                            "$in_location": [
+                              "loc_RcYz537sV07e1t5aG5tIH9FD"
+                            ]
+                          }
+                        }
+                      },
+                      "created_at": "2022-07-14T16:12:26.377Z",
+                      "updated_at": "2026-02-23T17:43:22.384Z",
+                      "object": "products_collection"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Returns an error if the data is invalid.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Name is not `string`": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_payload",
+                      "message": "Invalid payload",
+                      "details": "Property .name must be string",
+                      "request_id": "v-1204a5e6cb9054fc8a"
+                    }
+                  },
+                  "Incorrect `junction` property": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_payload",
+                      "message": "Invalid payload",
+                      "details": "Property .filter has wrong `junction` property. It must be one of: and, or",
+                      "request_id": "v-1204a62a891054fd04"
+                    }
+                  },
+                  "Empty `filter` object": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_payload",
+                      "message": "Invalid payload",
+                      "details": "'AUTO_UPDATE' collection must contain valid filter with 'junction' property",
+                      "request_id": "v-1204a662d6c65738b0"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Returns an error when requesting a product collection that has been deleted or does not exist.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Not Found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find products_collection with id pc_wIv11jDp2n7YuX6Tkyue2Lv",
+                      "request_id": "v-1204a6862d1054fdb6",
+                      "resource_id": "pc_wIv11jDp2n7YuX6Tkyue2Lv",
+                      "resource_type": "products_collection"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
       "delete": {
         "operationId": "delete-product-collection",
         "tags": [
           "Product Collections"
         ],
         "summary": "Delete Product Collection",
-        "description": "This method deletes a product collection.",
+        "description": "Deletes a product collection.\n\n<Warning>This endpoint performs database-heavy operations. It is not designed for highly frequent use.</Warning>",
         "parameters": [],
         "security": [
           {
@@ -791,7 +980,7 @@
       },
       "ProductCollectionsCreateRequestBody": {
         "title": "Product Collections Create Request Body",
-        "description": "Response body schema for **POST** `v1/product-collections`.",
+        "description": "Request body schema for **POST** `v1/product-collections`.",
         "oneOf": [
           {
             "$ref": "#/components/schemas/ProductCollectionsCreateStaticRequestBody"
@@ -849,11 +1038,11 @@
           },
           "error": {
             "type": "object",
-            "description": "Includes additional information about the error.",
+            "description": "Includes the resolved custom validation-rule error message when one is configured.",
             "properties": {
               "message": {
                 "type": "string",
-                "description": "The message configured by the user in a validation rule."
+                "description": "Resolved custom validation-rule error message for `options.language`, falling back to the Error Message Library default language. Present only when a custom message can be resolved."
               }
             }
           }
@@ -866,6 +1055,39 @@
       "ParameterProductCollectionId": {
         "type": "string",
         "example": "pc_41V4DiQQO8YGqj0J2oZD57j4"
+      },
+      "ProductCollectionsUpdateRequestBody": {
+        "title": "Product Collections Update Request Body",
+        "description": "Response body schema for **PUT** `v1/product-collections/{productCollectionId}`.",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/ProductCollectionsUpdateStaticRequestBody"
+          },
+          {
+            "$ref": "#/components/schemas/ProductCollectionsUpdateDynamicRequestBody"
+          }
+        ]
+      },
+      "ProductCollectionsUpdateResponseBody": {
+        "type": "object",
+        "title": "Product Collections Update Response Body",
+        "description": "Response body schema for **PUT** `v1/product-collections/{productCollectionId}`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ProductCollectionsItem"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "updated_at": {
+                "type": "string",
+                "example": "2022-04-26T08:35:54.960Z",
+                "description": "Timestamp representing the date and time when the product collection was last updated. The value is shown in the ISO 8601 format.",
+                "format": "date-time"
+              }
+            }
+          }
+        ]
       },
       "ResourceInUseError": {
         "title": "Resource in Use Error Object",
@@ -1018,7 +1240,7 @@
                   "$ref": "#/components/schemas/FieldConditions"
                 }
               ],
-              "description": "Valid keys: `id`, `product_id`, `source_id`, `name`, `price`, `object`, `attributes`, `image_url`, `SKUs`, `created_at`, `updated_at` and `metadata.*`"
+              "description": "Valid keys: `id`, `product_id`, `source_id`, `name`, `price`, `object`, `attributes`, `image_url`, `skus`, `created_at`, `updated_at` and `metadata.*`"
             }
           },
           "products": {
@@ -1054,7 +1276,7 @@
           },
           "created_at": {
             "type": "string",
-            "example": "2021-12-09T12:51:29.898Z",
+            "example": "2021–12-09T12:51:29.898Z",
             "description": "Timestamp representing the date and time when the product collection was created. The value is shown in the ISO 8601 format.",
             "format": "date-time"
           },
@@ -1077,7 +1299,7 @@
       },
       "ProductCollectionsCreateStaticRequestBody": {
         "title": "Product Collections Create Static Request Body",
-        "description": "Response body schema for **POST** `v1/product-collections`.",
+        "description": "Request body schema for **POST** `v1/product-collections`.",
         "type": "object",
         "properties": {
           "type": {
@@ -1129,7 +1351,7 @@
       },
       "ProductCollectionsCreateDynamicRequestBody": {
         "title": "Product Collections Create Dynamic (Auto Update) Request Body",
-        "description": "Response body schema for **POST** `v1/product-collections`.",
+        "description": "Request body schema for **POST** `v1/product-collections`.",
         "type": "object",
         "properties": {
           "type": {
@@ -1161,7 +1383,7 @@
                   "$ref": "#/components/schemas/FieldConditions"
                 }
               ],
-              "description": "Valid keys: `id`, `product_id`, `source_id`, `name`, `price`, `object`, `attributes`, `image_url`, `SKUs`, `created_at`, `updated_at` and `metadata.*`"
+              "description": "Valid keys: `id`, `product_id`, `source_id`, `name`, `price`, `object`, `attributes`, `image_url`, `skus`, `created_at`, `updated_at` and `metadata.*`"
             }
           }
         },
@@ -1170,6 +1392,48 @@
           "name",
           "filter"
         ]
+      },
+      "ProductCollectionsUpdateStaticRequestBody": {
+        "title": "Product Collections Create Static Request Body",
+        "description": "Request body schema for **PUT** `v1/product-collections/{productCollectionId}`.",
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Unique user-defined product collection name."
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "ProductCollectionsUpdateDynamicRequestBody": {
+        "title": "Product Collections Update Dynamic (Auto Update) Request Body",
+        "description": "Request body schema for **PUT** `v1/product-collections/{productCollectionId}`.",
+        "type": "object",
+        "properties": {
+          "name": {
+            "description": "Unique user-defined product collection name.",
+            "type": "string"
+          },
+          "filter": {
+            "type": "object",
+            "description": "Defines a set of criteria and boundary conditions for an `AUTO_UPDATE` product collection type.\n\nSending the `filter` object overwrites the existing values.",
+            "properties": {
+              "junction": {
+                "$ref": "#/components/schemas/Junction"
+              }
+            },
+            "additionalProperties": {
+              "description": "Valid keys: `id`, `product_id`, `source_id`, `name`, `price`, `object`, `attributes`, `image_url`, `skus`, `created_at`, `updated_at` and `metadata.*`",
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/FieldConditions"
+                }
+              ]
+            }
+          }
+        }
       },
       "ParameterDate": {
         "type": "string",
@@ -1250,20 +1514,26 @@
             "example": "prod_0b1da8105693710357"
           },
           "source_id": {
-            "type": "string",
-            "nullable": true,
+            "type": [
+              "string",
+              "null"
+            ],
             "example": "productSourceID16",
             "description": "Unique product source ID."
           },
           "name": {
-            "type": "string",
-            "nullable": true,
+            "type": [
+              "string",
+              "null"
+            ],
             "description": "Unique user-defined product name.",
             "example": "T-shirt"
           },
           "price": {
-            "type": "integer",
-            "nullable": true,
+            "type": [
+              "integer",
+              "null"
+            ],
             "description": "Unit price. It is represented by a value multiplied by 100 to accurately reflect 2 decimal places, such as `$100.00` being expressed as `10000`."
           },
           "attributes": {
@@ -1278,8 +1548,10 @@
             "description": "The metadata object stores all custom attributes assigned to the product. A set of key/value pairs that you can attach to a product object. It can be useful for storing additional information about the product in a structured format. It can be used to create product collections."
           },
           "image_url": {
-            "type": "string",
-            "nullable": true,
+            "type": [
+              "string",
+              "null"
+            ],
             "description": "The HTTPS URL pointing to the .png or .jpg file that will be used to render the product image.",
             "example": "https://images.com/original.jpg"
           },
@@ -1290,8 +1562,10 @@
             "format": "date-time"
           },
           "updated_at": {
-            "type": "string",
-            "nullable": true,
+            "type": [
+              "string",
+              "null"
+            ],
             "description": "Timestamp representing the date and time when the product was updated. The value is shown in the ISO 8601 format.",
             "example": "2022-05-23T09:24:07.405Z",
             "format": "date-time"
@@ -1423,8 +1697,10 @@
             "description": "A unique identifier that represents the SKU and is assigned by Voucherify."
           },
           "source_id": {
-            "type": "string",
-            "nullable": true,
+            "type": [
+              "string",
+              "null"
+            ],
             "example": "sku_source_id_4",
             "description": "A unique SKU identifier from your inventory system."
           },
@@ -1434,19 +1710,25 @@
             "description": "The parent product's unique ID."
           },
           "sku": {
-            "type": "string",
-            "nullable": true,
+            "type": [
+              "string",
+              "null"
+            ],
             "example": "Large Pink Shirt",
             "description": "Unique user-defined SKU name."
           },
           "price": {
-            "type": "integer",
-            "nullable": true,
+            "type": [
+              "integer",
+              "null"
+            ],
             "description": "Unit price. It is represented by a value multiplied by 100 to accurately reflect 2 decimal places, such as `$100.00` being expressed as `10000`."
           },
           "currency": {
-            "type": "string",
-            "nullable": true,
+            "type": [
+              "string",
+              "null"
+            ],
             "description": "SKU price currency.",
             "example": "USD"
           },
@@ -1455,8 +1737,10 @@
             "description": "The attributes object stores values for all custom attributes inherited by the SKU from the parent product. A set of key/value pairs that are attached to a SKU object and are unique to each SKU within a product family."
           },
           "image_url": {
-            "type": "string",
-            "nullable": true,
+            "type": [
+              "string",
+              "null"
+            ],
             "description": "The HTTPS URL pointing to the .png or .jpg file that will be used to render the SKU image."
           },
           "metadata": {
@@ -1470,8 +1754,10 @@
             "format": "date-time"
           },
           "updated_at": {
-            "type": "string",
-            "nullable": true,
+            "type": [
+              "string",
+              "null"
+            ],
             "example": "2022-05-17T10:55:09.137Z",
             "description": "Timestamp representing the date and time when the SKU was updated. The value is shown in the ISO 8601 format.",
             "format": "date-time"

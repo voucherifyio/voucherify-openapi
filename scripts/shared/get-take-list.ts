@@ -557,6 +557,143 @@ export const rawTakeList = {
   "/v1/referrals/members/{memberId}/holders/{holderId}": {
     delete: true,
   },
+  "/v2/loyalties/benefits/{benefitId}": {
+    get: true,
+  },
+  "/v2/loyalties/earning-rules/{earningRuleId}": {
+    get: true,
+  },
+  "/v2/loyalties/examine/earning-rules": {
+    post: true,
+  },
+  "/v2/loyalties/examine/rewards": {
+    post: true,
+  },
+  "/v2/loyalties/programs/{programId}/earning-rules": {
+    get: true,
+  },
+  "/v2/loyalties/programs/{programId}/members": {
+    get: true,
+    post: true,
+  },
+  "/v2/loyalties/programs/{programId}/members/batch": {
+    post: true,
+  },
+  "/v2/loyalties/programs/{programId}/members/{memberId}": {
+    delete: true,
+    get: true,
+    put: true,
+  },
+  "/v2/loyalties/programs/{programId}/members/{memberId}/activate": {
+    post: true,
+  },
+  "/v2/loyalties/programs/{programId}/members/{memberId}/activities": {
+    get: true,
+  },
+  "/v2/loyalties/programs/{programId}/members/{memberId}/benefits/transactions": {
+    get: true,
+  },
+  "/v2/loyalties/programs/{programId}/members/{memberId}/cards/{cardId}/activities": {
+    get: true,
+  },
+  "/v2/loyalties/programs/{programId}/members/{memberId}/cards/{cardId}/expiring-points": {
+    get: true,
+  },
+  "/v2/loyalties/programs/{programId}/members/{memberId}/cards/{cardId}/expiring-points/{bucketId}/expire": {
+    post: true,
+  },
+  "/v2/loyalties/programs/{programId}/members/{memberId}/cards/{cardId}/pending-points": {
+    get: true,
+  },
+  "/v2/loyalties/programs/{programId}/members/{memberId}/cards/{cardId}/pending-points/{bucketId}/activate": {
+    post: true,
+  },
+  "/v2/loyalties/programs/{programId}/members/{memberId}/cards/{cardId}/pending-points/{bucketId}/cancel": {
+    post: true,
+  },
+  "/v2/loyalties/programs/{programId}/members/{memberId}/cards/{cardId}/points": {
+    post: true,
+  },
+  "/v2/loyalties/programs/{programId}/members/{memberId}/cards/{cardId}/reports/daily": {
+    get: true,
+  },
+  "/v2/loyalties/programs/{programId}/members/{memberId}/cards/{cardId}/transactions": {
+    get: true,
+  },
+  "/v2/loyalties/programs/{programId}/members/{memberId}/deactivate": {
+    post: true,
+  },
+  "/v2/loyalties/programs/{programId}/members/{memberId}/earning-rules/{earningRuleId}/reports/daily": {
+    get: true,
+  },
+  "/v2/loyalties/programs/{programId}/members/{memberId}/orders/payments": {
+    get: true,
+    post: true,
+  },
+  "/v2/loyalties/programs/{programId}/members/{memberId}/rewards/purchases": {
+    get: true,
+    post: true,
+  },
+  "/v2/loyalties/programs/{programId}/members/{memberId}/tiers/transactions": {
+    get: true,
+  },
+  "/v2/loyalties/programs/{programId}/memberships/{customerId}": {
+    get: true,
+  },
+  "/v2/loyalties/programs/{programId}/reports/earning-rules/daily": {
+    get: true,
+  },
+  "/v2/loyalties/programs/{programId}/reports/earning-rules/summary": {
+    get: true,
+  },
+  "/v2/loyalties/programs/{programId}/reports/members/daily": {
+    get: true,
+  },
+  "/v2/loyalties/programs/{programId}/reports/members/summary": {
+    get: true,
+  },
+  "/v2/loyalties/programs/{programId}/reports/points-earnings/daily": {
+    get: true,
+  },
+  "/v2/loyalties/programs/{programId}/reports/points-earnings/summary": {
+    get: true,
+  },
+  "/v2/loyalties/programs/{programId}/reports/rewards/daily": {
+    get: true,
+  },
+  "/v2/loyalties/programs/{programId}/reports/rewards/spendings/daily": {
+    get: true,
+  },
+  "/v2/loyalties/programs/{programId}/reports/rewards/spendings/summary": {
+    get: true,
+  },
+  "/v2/loyalties/programs/{programId}/reports/rewards/summary": {
+    get: true,
+  },
+  "/v2/loyalties/programs/{programId}/reports/spending/daily": {
+    get: true,
+  },
+  "/v2/loyalties/programs/{programId}/reports/spending/summary": {
+    get: true,
+  },
+  "/v2/loyalties/programs/{programId}/reports/tiers/daily": {
+    get: true,
+  },
+  "/v2/loyalties/programs/{programId}/reports/tiers/summary": {
+    get: true,
+  },
+  "/v2/loyalties/programs/{programId}/rewards": {
+    get: true,
+  },
+  "/v2/loyalties/programs/{programId}/rewards/purchases/{rewardTransactionId}/refund": {
+    post: true,
+  },
+  "/v2/loyalties/programs/{programId}/tier-structures": {
+    get: true,
+  },
+  "/v2/loyalties/rewards/{rewardId}": {
+    get: true,
+  },
 };
 
 export const getTakeList = (

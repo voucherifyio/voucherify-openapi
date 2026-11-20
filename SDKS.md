@@ -87,7 +87,7 @@ Checks if the OpenAPI schemas haven't changed after scripts refactoring.
 1. Init all submodules `git submodule update --init --recursive`.
 2. Create a new branch: `git checkout -b MY_BRANCH_NAME`
 3. Add changes in accordance with [CONTRIBUTING.md](./CONTRIBUTING.md).
-4. [Generate SDKs](#how-to-generate-sdk).
+4. [Generate SDKs](#how-to-generate-an-sdk).
 5. Create new ones for your changes and [ensure everything runs without errors](#running-tests).
 6. Commit all changes to the main repo and submodules.
 7. Push your branch and create a [pull request](https://docs.github.com/en/free-pro-team@latest/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request-from-a-fork) against the `main` branch.
@@ -159,3 +159,13 @@ To avoid breaking changes, fix them in the [`index.ts` file](./scripts/shared/pr
 #### Releasing a major version
 
 Before releasing new major version please go to [`index.ts` file](./scripts/shared/prepare-open-api/index.ts) and update `fixBreakingChanges` parameter to make sure that all breaking changes will be applied at the same time.
+
+## v2/loyalties SDK
+
+Various notes regarding generating SDKs with v2/loyalties:
+- Preconditions:
+  - `OpenAPI.json` is upgraded to `"openapi": "3.1.0"`,
+  - Loyalty v2 lives in `OpenAPI.json` on `/v2/loyalties` paths. SDK generation omits those paths and schemas only those paths reach.
+- Exceptions (DO NOT GENERATE THE FOLLOWING ENDPOINTS/METHODS):
+  - POST `/v2/loyalties/tier-structures/{tierStructureId}/deactivate`
+  - PUT `/v2/loyalties/tier-structures/{tierStructureId}/tiers/{tierId}`

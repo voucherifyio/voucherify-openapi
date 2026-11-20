@@ -1,5 +1,5 @@
 {
-  "openapi": "3.0.1",
+  "openapi": "3.1.0",
   "info": {
     "title": "Voucherify API - Campaigns",
     "version": "v2018-08-01",
@@ -42,7 +42,7 @@
           "Campaigns"
         ],
         "summary": "Create Campaign",
-        "description": "Method to create a batch of vouchers aggregated in one campaign. You can choose a variety of voucher types and define a unique pattern for generating codes.  \n\n\n> 📘 Global uniqueness\n>\n> All campaign codes are unique across the whole project. Voucherify will not allow you to generate 2 campaigns with the same coupon code.  \n\n> 🚧 Code generation status\n>\n> This is an asynchronous action; you can't read or modify a newly created campaign until the code generation is completed. See the `creation_status` field in the [campaign object](/api-reference/campaigns/campaign-object) description.\n\n>🚧 Standalone Vouchers and Campaigns\n>\n>In version [v20241004](https://support.voucherify.io/article/23-whats-new-in-voucherify#v20241004), generic (standalone) vouchers created through the Voucherify dashboard create a campaign for that voucher. However, you cannot create a standalone discount or gift voucher campaign with the `\"type\": \"STANDALONE\"` through the API. Voucherify developers work on adding that feature.\n>\n>Follow the [Voucherify Release Notes](https://support.voucherify.io/article/23-whats-new-in-voucherify) for more details about released features.",
+        "description": "Method to create a batch of vouchers aggregated in one campaign. You can choose a variety of voucher types and define a unique pattern for generating codes.  \n\n\n<Note>\n\n<Badge color=\"blue\">Global uniqueness</Badge>\n\nAll campaign codes are unique across the whole project. Voucherify will not allow you to generate 2 campaigns with the same coupon code.\n\n</Note>\n\n<Warning>\n\n<Badge color=\"yellow\">Code generation status</Badge>\n\nThis is an asynchronous action; you can't read or modify a newly created campaign until the code generation is completed. See the `creation_status` field in the [campaign object](/api-reference/campaigns/campaign-object) description.\n\n</Warning>",
         "parameters": [],
         "security": [
           {
@@ -57,7 +57,7 @@
           }
         ],
         "requestBody": {
-          "description": "Specify the details of the campaign that you would like to create.",
+          "description": "Specify the details of the campaign that you would like to create. For loyalty campaigns, this creates a **legacy loyalty** campaign (campaign type `LOYALTY_PROGRAM`). For loyalty programs in the Loyalty hub, use `/v2/loyalties/programs`.",
           "content": {
             "application/json": {
               "schema": {
@@ -921,7 +921,7 @@
             },
             "in": "query",
             "name": "expand",
-            "description": "Includes an expanded `categories` object in the response. If the [Areas and Stores](https://support.voucherify.io/article/623-areas-and-stores) Enterprise feature is enabled, add `access_settings_assignments` to return assigned areas and stores."
+            "description": "Includes an expanded `categories` object in the response. If the [Areas and Stores](/orchestrate/areas-and-stores) Enterprise feature is enabled, add `access_settings_assignments` to return assigned areas and stores."
           },
           {
             "schema": {
@@ -1395,7 +1395,7 @@
           "Campaigns"
         ],
         "summary": "Update Campaign",
-        "description": "Updates the specified campaign by setting the values of the parameters passed in the request body. Any parameters not provided in the payload will be left unchanged. \n\nFields other than the ones listed in the request body won't be modified. Even if provided, they will be silently skipped.   \n\n> 🚧 Vouchers will be affected\n>\n> This method will update vouchers aggregated in the campaign. It will affect all vouchers that are not published or redeemed yet.",
+        "description": "Updates the specified campaign by setting the values of the parameters passed in the request body. Any parameters not provided in the payload will be left unchanged. \n\nFields other than the ones listed in the request body won't be modified. Even if provided, they will be silently skipped.   \n\n<Warning>\n\n<Badge color=\"yellow\">Vouchers will be affected</Badge>\n\nThis method will update vouchers aggregated in the campaign. It will affect all vouchers that are not published or redeemed yet.\n\n</Warning>",
         "parameters": [],
         "security": [
           {
@@ -2156,7 +2156,7 @@
           "Campaigns"
         ],
         "summary": "Import Vouchers to Campaign by CSV",
-        "description": "Imports vouchers to an **existing** campaign.  \n\n\nThe CSV file has to include headers in the first line. \n\nCurl Example\n\n```cURL\ncurl -X **POST** \\\n  https://api.voucherify.io/v1/campaigns/TEST-CAMPAIGN/importCSV \\\n  -F file=@/path/to/campaigns.csv \\\n  -H \"X-App-Id: c70a6f00-cf91-4756-9df5-47628850002b\" \\\n  -H \"X-App-Token: 3266b9f8-e246-4f79-bdf0-833929b1380c\"\n```\n\nYou can import values for the following fields: `Code` (**required**), `Category`, `Active`. In a gift cards import, you can also include the current card balance using the `Gift Amount` header and the amount that was redeemed using the `Redeemed Amount` header. In a loyalty cards import, you can also include the current loyalty card score in points using the `Loyalty Points` header. Remaining CSV columns will be mapped to metadata properties. \n\nDiscount type, time limits, and validation rules will be taken from the [campaign object](/api-reference/campaigns/campaign-object) settings. \n\n\n| **Active** | **Code** | **Loyalty Points** | **Gift Amount** | **Redeemed Amount** | **Redeemed Quantity** | **Category** | **Custom_metadata_property** |\n|---|---|---|---|---|---|---|---|\n| Use `true` or `false` to enable or disable the voucher; this flag can be used to turn off the ability to redeem a voucher even though it is within the campaign's start/end validity timeframe. | The unique voucher code. | The number of points to be added to the loyalty card. If you leave this undefined, then the initial number of points will be set according to the campaign settings.<br />Context: `LOYALTY_PROGRAM` | The initial gift card balance.<br />Context: `GIFT_VOUCHERS` | The amount that was redeemed from the available balance on a gift card. | The number of times the voucher has been redeemed. | A custom tag for the voucher to help you filter codes; you can either import the category name or a unique Voucherify-assigned category ID. | Any additional data that you would like to store for the given loyalty card as a Custom attribute. Remember to define the metadata schema in the Dashboard prior to importing codes. |\n|\n\n> 📘 Active\n>\n> The CSV file is allowed in two versions; either with or without a column titled `Active`. It indicates whether the voucher is enabled after the import event.  \n\nThis API request starts a process that affects Voucherify data in bulk. \n\nIn case of small jobs (like bulk update) the request is put into a queue and processed once every other bulk request placed in the queue prior to this request is finished. However, when the job takes a longer time (like vouchers generation) then it is processed in small portions in a round-robin fashion. When there is a list of vouchers generation scheduled, then they will all have the `IN_PROGRESS` status shortly. This way, small jobs added just after scheduling big jobs of the same type will be processed in a short time window. \n\nThe result will return the async ID. You can verify the status of your request via this [API request](/api-reference/async-actions/get-async-action).",
+        "description": "Imports vouchers to an **existing** campaign.  \n\n\nThe CSV file has to include headers in the first line. \n\nCurl Example\n\n```cURL\ncurl -X **POST** \\\n  https://api.voucherify.io/v1/campaigns/TEST-CAMPAIGN/importCSV \\\n  -F file=@/path/to/campaigns.csv \\\n  -H \"X-App-Id: c70a6f00-cf91-4756-9df5-47628850002b\" \\\n  -H \"X-App-Token: 3266b9f8-e246-4f79-bdf0-833929b1380c\"\n```\n\nYou can import values for the following fields: `Code` (**required**), `Category`, `Active`. In a gift cards import, you can also include the current card balance using the `Gift Amount` header and the amount that was redeemed using the `Redeemed Amount` header. In a loyalty cards import, you can also include the current loyalty card score in points using the `Loyalty Points` header. Remaining CSV columns will be mapped to metadata properties. \n\nDiscount type, time limits, and validation rules will be taken from the [campaign object](/api-reference/campaigns/campaign-object) settings. \n\n\n| **Active** | **Code** | **Loyalty Points** | **Gift Amount** | **Redeemed Amount** | **Redeemed Quantity** | **Category** | **Custom_metadata_property** |\n|---|---|---|---|---|---|---|---|\n| Use `true` or `false` to enable or disable the voucher; this flag can be used to turn off the ability to redeem a voucher even though it is within the campaign's start/end validity timeframe. | The unique voucher code. | The number of points to be added to the loyalty card. If you leave this undefined, then the initial number of points will be set according to the campaign settings.<br />Context: `LOYALTY_PROGRAM` | The initial gift card balance.<br />Context: `GIFT_VOUCHERS` | The amount that was redeemed from the available balance on a gift card. | The number of times the voucher has been redeemed. | A custom tag for the voucher to help you filter codes; you can either import the category name or a unique Voucherify-assigned category ID. | Any additional data that you would like to store for the given loyalty card as a Custom attribute. Remember to define the metadata schema in the Dashboard prior to importing codes. |\n|\n\n<Note>\n\n<Badge color=\"blue\">Active</Badge>\n\nThe CSV file is allowed in two versions; either with or without a column titled `Active`. It indicates whether the voucher is enabled after the import event.\n\n</Note>\n\nThis API request starts a process that affects Voucherify data in bulk. \n\nIn case of small jobs (like bulk update) the request is put into a queue and processed once every other bulk request placed in the queue prior to this request is finished. However, when the job takes a longer time (like vouchers generation) then it is processed in small portions in a round-robin fashion. When there is a list of vouchers generation scheduled, then they will all have the `IN_PROGRESS` status shortly. This way, small jobs added just after scheduling big jobs of the same type will be processed in a short time window. \n\nThe result will return the async ID. You can verify the status of your request via this [API request](/api-reference/async-actions/get-async-action).",
         "parameters": [],
         "security": [
           {
@@ -2231,7 +2231,7 @@
           "Campaigns"
         ],
         "summary": "Examine Campaign Qualification",
-        "description": "\n> ❗️ Deprecated  \n>\n> This endpoint represents the deprecated version of the API responsible for qualification, and we do not recommend using it. The new [Qualifications API](/api-reference/qualifications/check-eligibility) introduces additional features and improvements while maintaining backward compatibility. Developers are encouraged to migrate to the latest version to take advantage of the latest enhancements and bug fixes. No updates will be provided to the deprecated endpoint. \n\nThe method can be used for sending a request to display all campaigns qualified to the given customer and context (e.g., order). \n\nThe maximum number of **returned campaigns is 50**.\n\n## What campaign types are included in the response?\n\n- `DISCOUNT_COUPONS`\n- `GIFT_VOUCHERS`\n- `REFERRAL_PROGRAM`\n\n## What's excluded?\n\nA checking logic will be run only among campaigns and will ignore _generic (standalone) vouchers_. For generic (standalone) vouchers, you should run a [dedicated endpoint](/api-reference/vouchers/examine-voucher-qualification) for searching and identifing vouchers. \n\n## Subsequent Steps\n\nAs a recommended subsequent step after selecting a qualified campaign is to publish a voucher code from that campaign. The [API method for publishing](/api-reference/publications/create-publication) will return a unique code which will belong to a given customer.\n\n## Sample use case\n\nAs a sample use case, you can imagine a requirement of displaying coupons (grouped in campaigns) that a customer is eligible to use. The customer should get assigned to the particular voucher from the campaign and then may redeem that particular code when he/she places an order.\n\n[Read](/guides/checking-eligibility) about Qualification API limits before you start.",
+        "description": "\n<Danger>\n\n<Badge color=\"red\">Deprecated</Badge>\n\nThis endpoint represents the deprecated version of the API responsible for qualification, and we do not recommend using it. The new [Qualifications API](/api-reference/qualifications/check-eligibility) introduces additional features and improvements while maintaining backward compatibility. Developers are encouraged to migrate to the latest version to take advantage of the latest enhancements and bug fixes. No updates will be provided to the deprecated endpoint.\n\n</Danger>\n\nThe method can be used for sending a request to display all campaigns qualified to the given customer and context (e.g., order). \n\nThe maximum number of **returned campaigns is 50**.\n\n## What campaign types are included in the response?\n\n- `DISCOUNT_COUPONS`\n- `GIFT_VOUCHERS`\n- `REFERRAL_PROGRAM`\n\n## What's excluded?\n\nA checking logic will be run only among campaigns and will ignore _generic (standalone) vouchers_. For generic (standalone) vouchers, you should run a [dedicated endpoint](/api-reference/vouchers/examine-voucher-qualification) for searching and identifing vouchers. \n\n## Subsequent Steps\n\nAs a recommended subsequent step after selecting a qualified campaign is to publish a voucher code from that campaign. The [API method for publishing](/api-reference/publications/create-publication) will return a unique code which will belong to a given customer.\n\n## Sample use case\n\nAs a sample use case, you can imagine a requirement of displaying coupons (grouped in campaigns) that a customer is eligible to use. The customer should get assigned to the particular voucher from the campaign and then may redeem that particular code when he/she places an order.\n\n[Read](/guides/checking-eligibility) about Qualification API limits before you start.",
         "parameters": [
           {
             "schema": {
@@ -2343,7 +2343,7 @@
           "Campaigns"
         ],
         "summary": "Enable Campaign",
-        "description": "There are various times when you'll want to manage a campaign's accessibility. This can be done by two API methods for managing the campaign state - *enable* and *disable*.  \n\nSets campaign state to **active**. The vouchers in this campaign can be redeemed - only if the redemption occurs after the start date of the campaign and voucher and the voucher and campaign are not expired.",
+        "description": "Sets campaign state to **active**. The vouchers in this campaign can be redeemed - only if the redemption occurs after the start date of the campaign and voucher and the voucher and campaign are not expired.",
         "parameters": [],
         "security": [
           {
@@ -2417,7 +2417,7 @@
           "Campaigns"
         ],
         "summary": "Disable Campaign",
-        "description": "There are various times when you'll want to manage a campaign's accessibility. This can be done by two API methods for managing the campaign state - *enable* and *disable*.  \n\nSets campaign state to **inactive**. The vouchers in this campaign can no longer be redeemed.",
+        "description": "Sets campaign state to **inactive**. The vouchers in this campaign can no longer be redeemed.",
         "parameters": [],
         "security": [
           {
@@ -2491,7 +2491,7 @@
           "Campaigns"
         ],
         "summary": "List Campaign Transactions",
-        "description": "Retrieves all transactions for the campaign with the given campaign ID or campaign name. The `id` filter denotes the unique transaction identifier.\n\n> 🚧\n> The endpoint works only for gift card and loyalty campaigns.",
+        "description": "Retrieves all transactions for the campaign with the given campaign ID or campaign name. The `id` filter denotes the unique transaction identifier.\n\n<Warning>\n\nThe endpoint works only for gift card and **legacy loyalty** campaigns.\n\n</Warning>",
         "parameters": [
           {
             "$ref": "#/components/parameters/limit"
@@ -2657,7 +2657,7 @@
           }
         ],
         "summary": "Export Campaign Transactions",
-        "description": "Export transactions is an asynchronous process that generates a CSV file with the data about credit movements on all gift cards or point movements on all loyalty cards in a given campaign.\n\nTo export transactions:\n1. In the export request, use parameters to select which fields will be exported, in what order, and which data will be filtered.\n2. Use the returned `id` to track the export status with the [GET Export](/api-reference/exports/get-export) method.\n3. In the GET Export method, when the returned `status` field has the `DONE` value, the export file has been generated.\n4. Use the URL in the `result` property to download the file. You must be logged to your Voucherify account on a given cluster in the browser to be able to download the file.\n\nAn export request will almost always result in a single file being generated by the system. However, when the data volume is large, the system may split the results into multiple files.\n\nAn example export file can look as follows:\n\n| **Field** | **Definition** | **Example Export** |\n|:---|:---|:---|\n| `id` | Unique transaction ID. | `vtx_0cb7811f1c07765800` |\n| `type` | Transaction type. |**Gift cards**:<br />- `CREDITS_REMOVAL`<br />- `CREDITS_ADDITION`<br />- `CREDITS_REFUND`<br />- `CREDITS_REDEMPTION`<br />**Loyalty cards**:<br />- `POINTS_ACCRUAL`<br />- `POINTS_REDEMPTION`<br />- `POINTS_REFUND`<br />- `POINTS_ADDITION`<br />- `POINTS_REMOVAL`<br />- `POINTS_EXPIRATION`<br />- `POINTS_TRANSFER_IN`<br />- `POINTS_TRANSFER_OUT` |\n| `source_id` | Unique transaction source ID. Optional and only in manual operations: `CREDITS_ADDITION`, `CREDITS_REMOVAL`, `POINTS_ADDITION`, `POINTS_REMOVAL`, `POINTS_TRANSFER_OUT`. | 8638 |\n| `reason` | Contains the reason for the transaction if one was included originally. Optional and only in the following manual operations: `CREDITS_ADDITION`, `CREDITS_REMOVAL`, `POINTS_ADDITION`, `POINTS_REMOVAL`, `POINTS_TRANSFER_OUT`, `POINTS_TRANSFER_IN`. | `Apology for sending a broken item` |\n| `balance` | The gift card or loyalty card balance after the transaction. |  |\n| `amount` | The amount of gift card or loyalty card credits being allocated during the transaction. This value can either be negative or positive depending on the nature of the transaction. |  |\n| `created_at` | Timestamp in ISO 8601 format representing the date and time when the transaction was created. | `2024-10-09T09:16:32.521Z`  |\n| `voucher_id` | Unique voucher ID. | `v_dky7ksKfPX50Wb2Bxvcoeb1xT20b6tcp` |\n| `source`|  Channel through which the transaction was initiated. | `API` |\n| `details` | More detailed information stored in the form of JSON. | Provides more details related to the transaction in the form of an object. |\n| `related_transaction_id` | Unique transaction ID related to a receiver/donor card in the case of a points transfer from/to another card. | `vtx_0c9afe802593b34b80` |\n\n> 👍 Export Loyalty Campaign Transactions\n>\n> For loyalty campaigns, this method works in the same way the [POST Export Loyalty Campaign Transactions](/api-reference/loyalties/export-loyalty-campaign-transactions) does.",
+        "description": "Export transactions is an asynchronous process that generates a CSV file with the data about credit movements on all gift cards or point movements on all loyalty cards (**legacy loyalty**) in a given campaign.\n\nTo export transactions:\n1. In the export request, use parameters to select which fields will be exported, in what order, and which data will be filtered.\n2. Use the returned `id` to track the export status with the [GET Export](/api-reference/exports/get-export) method.\n3. In the GET Export method, when the returned `status` field has the `DONE` value, the export file has been generated.\n4. Use the URL in the `result` property to download the file. You must be logged to your Voucherify account on a given cluster in the browser to be able to download the file.\n\nAn export request will almost always result in a single file being generated by the system. However, when the data volume is large, the system may split the results into multiple files.\n\nAn example export file can look as follows:\n\n| **Field** | **Definition** | **Example Export** |\n|:---|:---|:---|\n| `id` | Unique transaction ID. | `vtx_0cb7811f1c07765800` |\n| `type` | Transaction type. |**Gift cards**:<br />- `CREDITS_REMOVAL`<br />- `CREDITS_ADDITION`<br />- `CREDITS_REFUND`<br />- `CREDITS_REDEMPTION`<br />**Loyalty cards**:<br />- `POINTS_ACCRUAL`<br />- `POINTS_REDEMPTION`<br />- `POINTS_REFUND`<br />- `POINTS_ADDITION`<br />- `POINTS_REMOVAL`<br />- `POINTS_EXPIRATION`<br />- `POINTS_TRANSFER_IN`<br />- `POINTS_TRANSFER_OUT` |\n| `source_id` | Unique transaction source ID. Optional and only in manual operations: `CREDITS_ADDITION`, `CREDITS_REMOVAL`, `POINTS_ADDITION`, `POINTS_REMOVAL`, `POINTS_TRANSFER_OUT`. | 8638 |\n| `reason` | Contains the reason for the transaction if one was included originally. Optional and only in the following manual operations: `CREDITS_ADDITION`, `CREDITS_REMOVAL`, `POINTS_ADDITION`, `POINTS_REMOVAL`, `POINTS_TRANSFER_OUT`, `POINTS_TRANSFER_IN`. | `Apology for sending a broken item` |\n| `balance` | The gift card or loyalty card balance after the transaction. |  |\n| `amount` | The amount of gift card or loyalty card credits being allocated during the transaction. This value can either be negative or positive depending on the nature of the transaction. |  |\n| `created_at` | Timestamp in ISO 8601 format representing the date and time when the transaction was created. | `2024-10-09T09:16:32.521Z`  |\n| `voucher_id` | Unique voucher ID. | `v_dky7ksKfPX50Wb2Bxvcoeb1xT20b6tcp` |\n| `source`|  Channel through which the transaction was initiated. | `API` |\n| `details` | More detailed information stored in the form of JSON. | Provides more details related to the transaction in the form of an object. |\n| `related_transaction_id` | Unique transaction ID related to a receiver/donor card in the case of a points transfer from/to another card. | `vtx_0c9afe802593b34b80` |\n\n<Tip>\n\n<Badge color=\"green\">Export Loyalty Campaign Transactions</Badge>\n\nFor **legacy loyalty** campaigns, this method works in the same way the [POST Export Loyalty Campaign Transactions](/api-reference/loyalties/export-loyalty-campaign-transactions) does.\n\n</Tip>",
         "requestBody": {
           "description": "Specify the parameters for the transaction export.",
           "content": {
@@ -2831,7 +2831,7 @@
           "Campaigns"
         ],
         "summary": "Get Campaign Summary",
-        "description": "Returns data for campaign analytics, covering validations, redemptions, publications, and other details specific to a given campaign type.\n\nUse `start_date` and `end_date` to narrow down the data to specific periods.\n\n>🚧 Campaigns created before v20250602 version\n>\n>This endpoint returns analytics data for campaigns that were created after the [v20250602 version](https://support.voucherify.io/article/23-whats-new-in-voucherify#v20250602) was released on 17 June 2025. Older campaigns return empty data.",
+        "description": "Returns data for campaign analytics, covering validations, redemptions, publications, and other details specific to a given campaign type.\n\nUse `start_date` and `end_date` to narrow down the data to specific periods.\n\n<Warning>\n\n<Badge color=\"yellow\">Campaigns created before 17 June 2025</Badge>\n\nThis endpoint returns analytics data for campaigns that were created after 17 June 2025. Older campaigns return empty data.\n\n</Warning>",
         "parameters": [
           {
             "name": "start_date",
@@ -3028,11 +3028,11 @@
           },
           "error": {
             "type": "object",
-            "description": "Includes additional information about the error.",
+            "description": "Includes the resolved custom validation-rule error message when one is configured.",
             "properties": {
               "message": {
                 "type": "string",
-                "description": "The message configured by the user in a validation rule."
+                "description": "Resolved custom validation-rule error message for `options.language`, falling back to the Error Message Library default language. Present only when a custom message can be resolved."
               }
             }
           }
@@ -3883,10 +3883,20 @@
             "$ref": "#/components/schemas/Junction"
           },
           "id": {
-            "$ref": "#/components/schemas/FilterConditionsString"
+            "type": "object",
+            "properties": {
+              "conditions": {
+                "$ref": "#/components/schemas/FilterConditionsString"
+              }
+            }
           },
           "voucher_id": {
-            "$ref": "#/components/schemas/FilterConditionsString"
+            "type": "object",
+            "properties": {
+              "conditions": {
+                "$ref": "#/components/schemas/FilterConditionsString"
+              }
+            }
           }
         }
       },
@@ -4124,8 +4134,10 @@
                 "type": "object",
                 "properties": {
                   "tiers": {
-                    "type": "array",
-                    "nullable": true,
+                    "type": [
+                      "array",
+                      "null"
+                    ],
                     "items": {
                       "$ref": "#/components/schemas/PromotionTierCreateParams"
                     }
@@ -4316,11 +4328,11 @@
           },
           "auto_join": {
             "type": "boolean",
-            "description": "Indicates whether customers will be able to auto-join a loyalty campaign if any earning rule is fulfilled."
+            "description": "Indicates whether customers will be able to auto-join a **legacy loyalty** campaign if any earning rule is fulfilled."
           },
           "join_once": {
             "type": "boolean",
-            "description": "If this value is set to `true`, customers will be able to join the campaign only once. It is always `false` for generic (standalone) vouchers campaigns and it cannot be changed in them. It is always `true` for loyalty campaigns and it cannot be changed in them."
+            "description": "If this value is set to `true`, customers will be able to join the campaign only once. It is always `false` for generic (standalone) vouchers campaigns and it cannot be changed in them. It is always `true` for **legacy loyalty** campaigns and it cannot be changed in them."
           },
           "use_voucher_metadata_schema": {
             "type": "boolean",
@@ -4366,7 +4378,7 @@
           "created_at": {
             "type": "string",
             "format": "date-time",
-            "example": "2021-12-01T08:00:50.038Z",
+            "example": "2021–12-01T08:00:50.038Z",
             "description": "Timestamp representing the date and time when the campaign was created. The value is shown in the ISO 8601 format."
           },
           "updated_at": {
@@ -4410,8 +4422,10 @@
             "description": "Indicates whether the resource can be deleted."
           },
           "category_id": {
-            "type": "string",
-            "nullable": true,
+            "type": [
+              "string",
+              "null"
+            ],
             "description": "Unique category ID that this campaign belongs to.",
             "example": "cat_0b688929a2476386a7"
           },
@@ -4837,13 +4851,15 @@
             "properties": {
               "created_at": {
                 "type": "string",
-                "example": "2021-12-22T10:13:06.487Z",
+                "example": "2021–12-22T10:13:06.487Z",
                 "description": "Timestamp representing the date and time when the order was created. The value is shown in the ISO 8601 format.",
                 "format": "date-time"
               },
               "referrer_id": {
-                "type": "string",
-                "nullable": true,
+                "type": [
+                  "string",
+                  "null"
+                ],
                 "description": "Unique referrer ID.",
                 "example": "cust_nM4jqPiaXUvQdVSA6vTRUnix"
               },
@@ -4915,7 +4931,7 @@
           },
           "auto_join": {
             "type": "boolean",
-            "description": "Indicates whether customers will be able to auto-join a loyalty campaign if any earning rule is fulfilled."
+            "description": "Indicates whether customers will be able to auto-join a **legacy loyalty** campaign if any earning rule is fulfilled."
           },
           "join_once": {
             "type": "boolean",
@@ -4965,7 +4981,7 @@
           "created_at": {
             "type": "string",
             "format": "date-time",
-            "example": "2021-12-01T08:00:50.038Z",
+            "example": "2021–12-01T08:00:50.038Z",
             "description": "Timestamp representing the date and time when the campaign was created. The value is shown in the ISO 8601 format."
           },
           "updated_at": {
@@ -5251,7 +5267,7 @@
                   },
                   "loyalty_tier": {
                     "type": "object",
-                    "description": "Contains information about the loyalty tier that is mapped for the earning rule and used in the transaction.",
+                    "description": "Contains information about the legacy loyalty tier that is mapped for the earning rule and used in the transaction.",
                     "properties": {
                       "id": {
                         "type": "string",
@@ -5331,7 +5347,7 @@
                   },
                   "holder_loyalty_tier": {
                     "type": "object",
-                    "description": "Loyalty tier of the loyalty card holder at the moment when the transaction occurred. The loyalty tier is the tier in which the holder was before the loyalty point balance changed.",
+                    "description": "Legacy loyalty tier of the loyalty card holder at the moment when the transaction occurred. The loyalty tier is the tier in which the holder was before the loyalty point balance changed.",
                     "properties": {
                       "id": {
                         "type": "string",
@@ -5369,7 +5385,7 @@
                     ]
                   },
                   "source_voucher": {
-                    "description": "Contains information on how the balance on the donor loyalty card was affected by the transaction.",
+                    "description": "Contains information on how the balance on the donor legacy loyalty card was affected by the transaction.",
                     "allOf": [
                       {
                         "$ref": "#/components/schemas/SimpleVoucher"
@@ -5377,7 +5393,7 @@
                     ]
                   },
                   "destination_voucher": {
-                    "description": "Contains information on how the balance on the receiving loyalty card was affected by the transaction.",
+                    "description": "Contains information on how the balance on the receiving legacy loyalty card was affected by the transaction.",
                     "allOf": [
                       {
                         "$ref": "#/components/schemas/SimpleVoucher"
@@ -5443,10 +5459,20 @@
             "$ref": "#/components/schemas/Junction"
           },
           "created_at": {
-            "$ref": "#/components/schemas/FilterConditionsDateTime"
+            "type": "object",
+            "properties": {
+              "conditions": {
+                "$ref": "#/components/schemas/FilterConditionsDateTime"
+              }
+            }
           },
           "voucher_id": {
-            "$ref": "#/components/schemas/FilterConditionsString"
+            "type": "object",
+            "properties": {
+              "conditions": {
+                "$ref": "#/components/schemas/FilterConditionsString"
+              }
+            }
           }
         }
       },
@@ -5521,8 +5547,10 @@
             ]
           },
           "result": {
-            "type": "object",
-            "nullable": true,
+            "type": [
+              "object",
+              "null"
+            ],
             "description": "Contains the URL of the CSV file.",
             "required": [
               "url"
@@ -5535,8 +5563,10 @@
             }
           },
           "user_id": {
-            "type": "string",
-            "nullable": true,
+            "type": [
+              "string",
+              "null"
+            ],
             "description": "Identifies the specific user who initiated the export through the Voucherify Dashboard; returned when the `channel` value is `WEBSITE`.",
             "example": "user_g24UoRO3Caxu7FCT4n5tpYEa3zUG0FrH"
           }
@@ -5601,7 +5631,7 @@
       "CampaignsSummaryLoyaltyCampaign": {
         "type": "object",
         "title": "Campaigns Summary - Loyalty Campaign details",
-        "description": "Campaign summary data for loyalty campaigns.",
+        "description": "Campaign summary data for **legacy loyalty** campaigns.",
         "allOf": [
           {
             "$ref": "#/components/schemas/CampaignsSummaryCampaignBase"
@@ -5684,8 +5714,10 @@
             "description": "Defines the redemption limits on vouchers.",
             "properties": {
               "quantity": {
-                "type": "integer",
-                "nullable": true,
+                "type": [
+                  "integer",
+                  "null"
+                ],
                 "description": "How many times a voucher can be redeemed. A `null` value means unlimited."
               }
             }
@@ -5789,8 +5821,10 @@
             "description": "Defines the redemption limits on vouchers.",
             "properties": {
               "quantity": {
-                "type": "integer",
-                "nullable": true,
+                "type": [
+                  "integer",
+                  "null"
+                ],
                 "description": "How many times a voucher can be redeemed. A `null` value means unlimited."
               }
             }
@@ -5827,8 +5861,10 @@
             "description": "Defines the redemption limits on vouchers.",
             "properties": {
               "quantity": {
-                "type": "integer",
-                "nullable": true,
+                "type": [
+                  "integer",
+                  "null"
+                ],
                 "description": "How many times a voucher can be redeemed. A `null` value means unlimited."
               }
             }
@@ -5857,19 +5893,20 @@
           },
           "type": {
             "type": "string",
-            "description": "Defines whether the campaign can be updated with new vouchers after campaign creation or if the campaign consists of generic (standalone) vouchers.\n\n- `AUTO_UPDATE`: the campaign is dynamic, i.e. vouchers will generate based on set criteria\n-  `STATIC`: vouchers need to be manually published",
+            "description": "Defines whether the campaign can be updated with new vouchers after campaign creation or if the campaign consists of generic (standalone) vouchers.\n\n- `AUTO_UPDATE`: the campaign is dynamic, i.e. vouchers will generate based on set criteria\n-  `STATIC`: vouchers need to be manually published\n- `STANDALONE`: the campaign is a generic (standalone) one with a single voucher for public use (only for discount and gift card campaigns)",
             "enum": [
               "AUTO_UPDATE",
-              "STATIC"
+              "STATIC",
+              "STANDALONE"
             ]
           },
           "join_once": {
             "type": "boolean",
-            "description": "If this value is set to `true`, customers will be able to join the campaign only once. For loyalty campaigns, it's forced to `true`, even if `join_once: false` is passed in the request."
+            "description": "If this value is set to `true`, customers will be able to join the campaign only once. For **legacy loyalty** campaigns, it's forced to `true`, even if `join_once: false` is passed in the request."
           },
           "auto_join": {
             "type": "boolean",
-            "description": "Indicates whether customers will be able to auto-join a loyalty campaign if any earning rule is fulfilled."
+            "description": "Indicates whether customers will be able to auto-join a **legacy loyalty** campaign if any earning rule is fulfilled."
           },
           "use_voucher_metadata_schema": {
             "type": "boolean",
@@ -5943,8 +5980,10 @@
             "description": "Defines the redemption limits on vouchers.",
             "properties": {
               "quantity": {
-                "type": "integer",
-                "nullable": true,
+                "type": [
+                  "integer",
+                  "null"
+                ],
                 "description": "How many times a voucher can be redeemed. A `null` value means unlimited."
               }
             }
@@ -6133,7 +6172,7 @@
             ]
           },
           "loyalty_card": {
-            "description": "Defines the voucher loyalty card details.",
+            "description": "Defines the voucher legacy loyalty card details.",
             "allOf": [
               {
                 "$ref": "#/components/schemas/CampaignLoyaltyCard"
@@ -6145,8 +6184,10 @@
             "description": "Defines the redemption limits on vouchers.",
             "properties": {
               "quantity": {
-                "type": "integer",
-                "nullable": true,
+                "type": [
+                  "integer",
+                  "null"
+                ],
                 "description": "How many times a voucher can be redeemed. A `null` value means unlimited."
               }
             },
@@ -6328,7 +6369,7 @@
       "LoyaltyTiersExpirationAll": {
         "title": "Loyalty Tiers Expiration",
         "type": "object",
-        "description": "Defines the Loyalty Tiers Expiration.",
+        "description": "**Legacy loyalty.** Defines the Loyalty Tiers Expiration.",
         "properties": {
           "qualification_type": {
             "type": "string",
@@ -6490,11 +6531,11 @@
               },
               "join_once": {
                 "type": "boolean",
-                "description": "If this value is set to `true`, customers will be able to join the campaign only once. It is always `false` for generic (standalone) vouchers campaigns and it cannot be changed in them. It is always `true` for loyalty campaigns and it cannot be changed in them."
+                "description": "If this value is set to `true`, customers will be able to join the campaign only once. It is always `false` for generic (standalone) vouchers campaigns and it cannot be changed in them. It is always `true` for **legacy loyalty** campaigns and it cannot be changed in them."
               },
               "auto_join": {
                 "type": "boolean",
-                "description": "Indicates whether customers will be able to auto-join a loyalty campaign if any earning rule is fulfilled."
+                "description": "Indicates whether customers will be able to auto-join a **legacy loyalty** campaign if any earning rule is fulfilled."
               },
               "type": {
                 "type": "string",
@@ -6600,8 +6641,10 @@
             "description": "The metadata object stores all custom attributes assigned to the campaign. A set of key/value pairs that you can attach to a campaign object. It can be useful for storing additional information about the campaign in a structured format."
           },
           "unset_metadata_fields": {
-            "type": "array",
-            "nullable": true,
+            "type": [
+              "array",
+              "null"
+            ],
             "description": "Determine which metadata should be removed from campaign.",
             "items": {
               "type": "string"
@@ -6693,7 +6736,7 @@
           },
           "loyalty_card": {
             "type": "object",
-            "description": "Object representing loyalty card parameters. Child attributes are present only if `type` is `LOYALTY_CARD`. Defaults to `null`.",
+            "description": "Object representing legacy loyalty card parameters. Child attributes are present only if `type` is `LOYALTY_CARD`. Defaults to `null`.",
             "properties": {
               "points": {
                 "type": "integer",
@@ -6731,13 +6774,13 @@
           },
           "start_date": {
             "type": "string",
-            "example": "2021-12-01T00:00:00.000Z",
+            "example": "2021–12-01T00:00:00.000Z",
             "format": "date-time",
             "description": "Activation timestamp defines when the code starts to be active in ISO 8601 format. Voucher is *inactive before* this date. "
           },
           "expiration_date": {
             "type": "string",
-            "example": "2021-12-31T00:00:00.000Z",
+            "example": "2021–12-31T00:00:00.000Z",
             "format": "date-time",
             "description": "Expiration timestamp defines when the code expires in ISO 8601 format.  Voucher is *inactive after* this date."
           },
@@ -6751,8 +6794,10 @@
             "$ref": "#/components/schemas/ValidityHours"
           },
           "active": {
-            "type": "boolean",
-            "nullable": true,
+            "type": [
+              "boolean",
+              "null"
+            ],
             "description": "A flag to toggle the voucher on or off. You can disable a voucher even though it's within the active period defined by the `start_date` and `expiration_date`.  \n\n- `true` indicates an *active* voucher\n- `false` indicates an *inactive* voucher"
           },
           "additional_info": {
@@ -6767,19 +6812,21 @@
             "$ref": "#/components/schemas/VoucherAssets"
           },
           "is_referral_code": {
-            "type": "boolean",
-            "nullable": true,
+            "type": [
+              "boolean",
+              "null"
+            ],
             "description": "Flag indicating whether this voucher is a referral code; `true` for campaign type `REFERRAL_PROGRAM`."
           },
           "created_at": {
             "type": "string",
-            "example": "2021-12-22T10:13:06.487Z",
+            "example": "2021–12-22T10:13:06.487Z",
             "description": "Timestamp representing the date and time when the voucher was created. The value is shown in the ISO 8601 format.",
             "format": "date-time"
           },
           "updated_at": {
             "type": "string",
-            "example": "2021-12-22T10:14:45.316Z",
+            "example": "2021–12-22T10:14:45.316Z",
             "format": "date-time",
             "description": "Timestamp representing the date and time when the voucher was last updated in ISO 8601 format."
           },
@@ -7131,7 +7178,7 @@
       },
       "2_obj_campaign_object_voucher_object_LOYALTY_CARD": {
         "type": "object",
-        "description": "Schema model for a loyalty card.",
+        "description": "Schema model for a loyalty card (**legacy loyalty**).",
         "title": "Loyalty Card",
         "properties": {
           "type": {
@@ -7140,7 +7187,7 @@
             "description": "Type of voucher."
           },
           "loyalty_card": {
-            "description": "Defines the loyalty card details.",
+            "description": "Defines the legacy loyalty card details.",
             "type": "object",
             "properties": {
               "points": {
@@ -7229,8 +7276,10 @@
             "description": "Unique transaction ID."
           },
           "source_id": {
-            "type": "string",
-            "nullable": true,
+            "type": [
+              "string",
+              "null"
+            ],
             "description": "The merchant's transaction ID if it is different from the Voucherify transaction ID. It is really useful in case of an integration between multiple systems. It can be a transaction ID from a CRM system, database or 3rd-party service. In case of a redemption, this value is null."
           },
           "voucher_id": {
@@ -7242,18 +7291,24 @@
             "description": "Unqiue campaign ID of the voucher's parent campaign if it is part of campaign that generates bulk codes."
           },
           "source": {
-            "type": "string",
-            "nullable": true,
+            "type": [
+              "string",
+              "null"
+            ],
             "description": "The channel through which the transaction took place, whether through the API or the Dashboard. In case of a redemption, this value is null."
           },
           "reason": {
-            "type": "string",
-            "nullable": true,
+            "type": [
+              "string",
+              "null"
+            ],
             "description": "Reason why the transaction occurred. In case of a redemption, this value is null."
           },
           "related_transaction_id": {
-            "type": "string",
-            "nullable": true,
+            "type": [
+              "string",
+              "null"
+            ],
             "description": "The related transaction ID on the receiving card."
           },
           "created_at": {
@@ -7438,7 +7493,7 @@
             "$ref": "#/components/schemas/Discount"
           },
           "loyalty_card": {
-            "description": "Defines the loyalty card details.",
+            "description": "Defines the legacy loyalty card details.",
             "type": "object",
             "allOf": [
               {
@@ -7478,8 +7533,10 @@
             "example": "cust_nM4jqPiaXUvQdVSA6vTRUnix"
           },
           "category_id": {
-            "type": "string",
-            "nullable": true,
+            "type": [
+              "string",
+              "null"
+            ],
             "description": "Unique identifier of the category that this voucher belongs to.",
             "example": "cat_0b6152ce12414820dc"
           },
@@ -7496,7 +7553,7 @@
           },
           "created_at": {
             "type": "string",
-            "example": "2021-12-22T10:13:06.487Z",
+            "example": "2021–12-22T10:13:06.487Z",
             "description": "Timestamp representing the date and time when the order was created in the ISO 8601 format.",
             "format": "date-time"
           },
@@ -7511,8 +7568,10 @@
             "description": "Defines the redemption limits on vouchers.",
             "properties": {
               "quantity": {
-                "type": "integer",
-                "nullable": true,
+                "type": [
+                  "integer",
+                  "null"
+                ],
                 "description": "How many times a voucher can be redeemed. A `null` value means unlimited."
               },
               "redeemed_quantity": {
@@ -7532,13 +7591,13 @@
           },
           "start_date": {
             "type": "string",
-            "example": "2021-12-01T00:00:00.000Z",
+            "example": "2021–12-01T00:00:00.000Z",
             "format": "date-time",
             "description": "Activation timestamp defines when the code starts to be active in ISO 8601 format. Voucher is *inactive before* this date."
           },
           "expiration_date": {
             "type": "string",
-            "example": "2021-12-31T00:00:00.000Z",
+            "example": "2021–12-31T00:00:00.000Z",
             "format": "date-time",
             "description": "Expiration timestamp defines when the code expires in ISO 8601 format.  Voucher is *inactive after* this date."
           },
@@ -7932,7 +7991,7 @@
       },
       "CampaignLoyaltyCard": {
         "type": "object",
-        "description": "Schema model for a campaign loyalty card.",
+        "description": "Schema model for a campaign loyalty card (**legacy loyalty**).",
         "title": "Campaign Loyalty Card",
         "properties": {
           "points": {
@@ -7941,7 +8000,7 @@
           },
           "expiration_rules": {
             "type": "object",
-            "description": "Defines the loyalty point expiration rule. This expiration rule applies when there are no `expiration_rules` defined for an earning rule.",
+            "description": "Defines the loyalty point expiration rule (**legacy loyalty**). This expiration rule applies when there are no `expiration_rules` defined for an earning rule.",
             "properties": {
               "period_type": {
                 "type": "string",
@@ -8004,7 +8063,7 @@
           },
           "created_at": {
             "type": "string",
-            "example": "2021-12-15T11:34:01.333Z",
+            "example": "2021–12-15T11:34:01.333Z",
             "format": "date-time",
             "description": "Timestamp representing the date and time when the promotion tier was created. The value is shown in the ISO 8601 format."
           },
@@ -8074,7 +8133,7 @@
               },
               "active": {
                 "type": "boolean",
-                "description": "A flag indicating whether the campaign is active or not active. A campaign can be disabled even though it's within the active period defined by the `start_date` and `expiration_date` using the [Disable Campaign](/api-reference/disable-campaign) endpoint.  \n\n- `true` indicates an *active* campaign\n- `false` indicates an *inactive* campaign"
+                "description": "A flag indicating whether the campaign is active or not active. A campaign can be disabled even though it's within the active period defined by the `start_date` and `expiration_date` using the [Disable Campaign](/api-reference/campaigns/disable-campaign) endpoint.  \n\n- `true` indicates an *active* campaign\n- `false` indicates an *inactive* campaign"
               },
               "category_id": {
                 "type": "string",
@@ -8602,7 +8661,7 @@
       "SimpleLoyaltyCard": {
         "title": "Simple Loyalty Card",
         "type": "object",
-        "description": "Simplified loyalty card data.",
+        "description": "Simplified legacy loyalty card data.",
         "required": [
           "points"
         ],
@@ -8643,9 +8702,11 @@
         "description": "Order information.",
         "properties": {
           "source_id": {
-            "type": "string",
-            "nullable": true,
-            "description": "Unique source ID of an existing order that will be linked to the redemption of this request."
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Unique source ID of an existing order that will be linked to the redemption of this request.\n\nFor validation and redemption, if `source_id` is used with an existing order, the original order data will be used, like `items`, `amount`, and so on, not the one sent in the new request."
           },
           "status": {
             "type": "string",
@@ -8713,8 +8774,10 @@
             "format": "date"
           },
           "address": {
-            "type": "object",
-            "nullable": true,
+            "type": [
+              "object",
+              "null"
+            ],
             "description": "Customer's address.",
             "properties": {
               "city": {
@@ -8990,7 +9053,7 @@
           },
           "holder_loyalty_tier": {
             "type": "object",
-            "description": "Loyalty tier of the loyalty card holder at the moment when the transaction occurred. The loyalty tier is the tier in which the holder was at the moment pending points were created.",
+            "description": "Legacy loyalty tier of the loyalty card holder at the moment when the transaction occurred. The loyalty tier is the tier in which the holder was at the moment pending points were created.",
             "properties": {
               "id": {
                 "type": "string",
@@ -9083,8 +9146,10 @@
                 "description": "Unique order identifier, assigned by Voucherify."
               },
               "source_id": {
-                "nullable": true,
-                "type": "string",
+                "type": [
+                  "null",
+                  "string"
+                ],
                 "description": "User-defined order identifier."
               }
             },
@@ -9150,7 +9215,8 @@
         "enum": [
           "ADD_MISSING_ITEMS",
           "ADD_NEW_ITEMS",
-          "ADD_MANY_ITEMS"
+          "ADD_MANY_ITEMS",
+          "ADD_SAME_ITEMS"
         ],
         "type": "string"
       },

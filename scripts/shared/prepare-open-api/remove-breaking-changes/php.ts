@@ -1,6 +1,10 @@
 import * as OpenAPI from "../../../../reference/OpenAPI.json";
 import { removeRequiredFromRequestsAndResponses } from "../remove-required-from-request-and-responses";
-import { fixOrderCalculated } from "./utils";
+import {
+  fixOrderCalculated,
+  restoreParameterOrderListValidationRulesUpdatedAt,
+  restoreValidationRuleErrorObjects,
+} from "./utils";
 
 const removePhpBreakingChanges = {
   before: (_openApi: unknown): typeof OpenAPI => {
@@ -247,31 +251,31 @@ const removePhpBreakingChanges = {
     );
     // Restore previous voucher_type filter
     openApi.components.schemas.ParameterFiltersListCampaigns.properties.voucher_type =
-      {
-        type: "object",
-        description: "Filter by voucher type",
-        properties: {
-          conditions: {
-            // @ts-ignore
-            $ref: "#/components/schemas/FilterConditionsString",
-          },
+    {
+      type: "object",
+      description: "Filter by voucher type",
+      properties: {
+        conditions: {
+          // @ts-ignore
+          $ref: "#/components/schemas/FilterConditionsString",
         },
-      };
+      },
+    };
     // Restore previous is_referral_code filter
     openApi.components.schemas.ParameterFiltersListCampaigns.properties.is_referral_code.properties =
-      {
-        // @ts-ignore
-        $is: {
-          type: "string",
-          description: "Value is exactly this value (single value).",
-          enum: ["TRUE", "FALSE"],
-        },
-        $is_not: {
-          type: "string",
-          description: "Results omit this value (single value).",
-          enum: ["TRUE", "FALSE"],
-        },
-      };
+    {
+      // @ts-ignore
+      $is: {
+        type: "string",
+        description: "Value is exactly this value (single value).",
+        enum: ["TRUE", "FALSE"],
+      },
+      $is_not: {
+        type: "string",
+        description: "Results omit this value (single value).",
+        enum: ["TRUE", "FALSE"],
+      },
+    };
     // Remove new conditions – $contains, $not_contain from FilterConditionsString
     delete openApi.components.schemas.FilterConditionsString.properties
       .$contains;
@@ -294,21 +298,173 @@ const removePhpBreakingChanges = {
     // Restore `created_at` to POST `v1/orders/import`
     // @ts-ignore
     openApi.components.schemas.OrdersImportCreateRequestBody.items.allOf[1].properties.created_at =
-      {
-        type: "string",
-        description:
-          "Timestamp representing the date and time when the order was created. The value is shown in the ISO 8601 format.",
-        format: "date-time",
-      };
+    {
+      type: "string",
+      description:
+        "Timestamp representing the date and time when the order was created. The value is shown in the ISO 8601 format.",
+      format: "date-time",
+    };
 
     openApi.paths["/v1/vouchers"].get.parameters = openApi.paths[
       "/v1/vouchers"
     ].get.parameters.filter((e) => e.name !== "filters");
 
+    // Do not add the filters query param to GET List customers.
+    // PHP inserts it before string $contentType and rebinds positional calls.
+    openApi.paths["/v1/customers"].get.parameters = openApi.paths[
+      "/v1/customers"
+    ].get.parameters.filter((e) => e.name !== "filters");
+
+
+    // Gemini recommended so
+    const schemas = openApi.components.schemas as any;
+
+    // Make ExportCampaignTransactionsFilters faulty again
+    schemas.ExportCampaignTransactionsFilters.properties = {
+      "junction": {
+        "$ref": "#/components/schemas/Junction"
+      },
+      "created_at": {
+        "$ref": "#/components/schemas/FilterConditionsDateTime"
+      },
+      "voucher_id": {
+        "$ref": "#/components/schemas/FilterConditionsString"
+      }
+    };
+
+    // Make ParametersFiltersListCampaignTransactions faulty again
+    schemas.ParametersFiltersListCampaignTransactions.properties = {
+      "junction": {
+        "$ref": "#/components/schemas/Junction"
+      },
+      "id": {
+        "$ref": "#/components/schemas/FilterConditionsString"
+      },
+      "voucher_id": {
+        "$ref": "#/components/schemas/FilterConditionsString"
+      }
+    };
+
+    // Restore branding cockpits
+    schemas.ManagementProjectsBrandingCreateRequestBody.properties = schemas.ManagementProjectsBrandingCreateRequestBody.properties || {};
+    schemas.ManagementProjectsBrandingCreateRequestBody.properties.cockpits = {
+      "type": "object",
+      "title": "Cockpit",
+      "description": "Defines customer cockpit details.",
+      "properties": {
+        "campaigns_overview_enabled": { "type": "boolean", "default": false, "nullable": true, "description": "Enables the campaign overview for customers." },
+        "loyalty_enabled": { "type": "boolean", "default": true, "nullable": true, "description": "Enables the loyalty campaign overview for customers." },
+        "gift_cards_enabled": { "type": "boolean", "default": true, "nullable": true, "description": "Enables the gift card overview for customers." },
+        "coupons_enabled": { "type": "boolean", "default": true, "nullable": true, "description": "Enables the discount coupon overview for customers." },
+        "referrals_enabled": { "type": "boolean", "default": true, "nullable": true, "description": "Enables the referral campaign overview for customers." },
+        "theme": { "type": "string", "default": "default", "description": "Determines the color scheme of the customer cockpit.", "enum": ["blue", "dark-green", "default", "green", "grey", "orange", "purple", "red"] },
+        "use_custom_double_opt_in_redirect_url": { "type": "boolean", "default": false, "nullable": true, "description": "Enables the double opt-in option. It must be a valid URL format." },
+        "custom_double_opt_in_redirect_url": { "type": "string", "nullable": true, "description": "Defines the URL for the double opt-in consent. It must be a valid URL format." }
+      }
+    };
+
+    schemas.ManagementProjectsBranding.properties = schemas.ManagementProjectsBranding.properties || {};
+    schemas.ManagementProjectsBranding.properties.cockpits = {
+      "type": "object",
+      "title": "Cockpit",
+      "description": "Defines customer cockpit details.",
+      "properties": {
+        "campaigns_overview_enabled": { "type": "boolean", "description": "Enables the campaign overview for customers." },
+        "loyalty_enabled": { "type": "boolean", "description": "Enables the loyalty campaign overview for customers." },
+        "gift_cards_enabled": { "type": "boolean", "description": "Enables the gift card overview for customers." },
+        "coupons_enabled": { "type": "boolean", "description": "Enables the discount coupon overview for customers." },
+        "referrals_enabled": { "type": "boolean", "description": "Enables the referral campaign overview for customers." },
+        "theme": { "type": "string", "description": "Determines the color scheme of the customer cockpit.", "enum": ["blue", "dark-green", "default", "green", "grey", "orange", "purple", "red"] },
+        "use_custom_double_opt_in_redirect_url": { "type": "boolean", "description": "Enables the double opt-in option. It must be a valid URL format." },
+        "custom_double_opt_in_redirect_url": { "type": "string", "nullable": true, "description": "Defines the URL for the double opt-in consent. It must be a valid URL format." }
+      },
+      "required": [
+        "campaigns_overview_enabled",
+        "loyalty_enabled",
+        "gift_cards_enabled",
+        "coupons_enabled",
+        "referrals_enabled",
+        "theme",
+        "use_custom_double_opt_in_redirect_url",
+        "custom_double_opt_in_redirect_url"
+      ]
+    };
+
+    schemas.ManagementProjectsBrandingUpdateRequestBody.properties = schemas.ManagementProjectsBrandingUpdateRequestBody.properties || {};
+    schemas.ManagementProjectsBrandingUpdateRequestBody.properties.cockpits = {
+      "type": "object",
+      "title": "Cockpit",
+      "description": "Defines customer cockpit details.",
+      "properties": {
+        "campaigns_overview_enabled": { "type": "boolean", "description": "Indicates if the campaign overview is turned on for customers." },
+        "loyalty_enabled": { "type": "boolean", "description": "Indicates if the loyalty campaign overview is turned on for customers." },
+        "gift_cards_enabled": { "type": "boolean", "description": "Indicates if the gift card overview is turned on for customers." },
+        "coupons_enabled": { "type": "boolean", "description": "Indicates if the discount coupon overview is turned on for customers." },
+        "referrals_enabled": { "type": "boolean", "description": "Indicates if the referral campaign overview is turned on for customers." },
+        "theme": { "type": "string", "description": "Determines the color scheme of the customer cockpit.", "enum": ["orange", "green", "dark-green", "blue", "purple", "red", "grey"] },
+        "use_custom_double_opt_in_redirect_url": { "type": "boolean", "description": "Indicates if the double opt-in option is turned on." },
+        "custom_double_opt_in_redirect_url": { "type": "string", "nullable": true, "description": "Defines the URL for the double opt-in consent." }
+      }
+    };
+
+    // Compensate for an upstream typo in reference/OpenAPI.json: the
+    // ManagementProjectsWebhookBase.events enum spells four events with `aded`
+    // instead of `added` (introduced in commit feaa5138). Left untouched it
+    // renames the public EVENTS_*_ADDED constants to EVENTS_*_ADED, a breaking
+    // change for PHP consumers, so restore the correct spelling here. The root
+    // fix across every SDK is tracked in DEV-4148.
+    const webhookEvents =
+      schemas.ManagementProjectsWebhookBase?.properties?.events?.items?.enum;
+    if (Array.isArray(webhookEvents)) {
+      schemas.ManagementProjectsWebhookBase.properties.events.items.enum =
+        webhookEvents.map((event: string) =>
+          event
+            .replace(/\.balance_aded$/, ".balance_added")
+            .replace(/\.points_aded$/, ".points_added")
+            .replace(/\.pending_points\.aded$/, ".pending_points.added")
+            .replace(/\.vouchers\.aded$/, ".vouchers.added"),
+        );
+    }
+
+    // Keep importVouchersUsingCsv($file, $contentType) stable. The spec adds
+    // webhooks_enable before the generator-injected $contentType parameter,
+    // which silently shifts existing positional call sites. Drop it here so the
+    // public signature matches 5.0.4.
+    if (schemas.VouchersImportCSVRequestBody?.allOf?.[1]?.properties) {
+      delete schemas.VouchersImportCSVRequestBody.allOf[1].properties
+        .webhooks_enable;
+    }
+
+    // Restore `parameters` on SimpleReferralTier
+    schemas.SimpleReferralTier.properties.parameters = {
+      type: "object",
+      description: "Referral tier parameters",
+    };
+
+    restoreParameterOrderListValidationRulesUpdatedAt(schemas);
+    restoreValidationRuleErrorObjects(schemas);
+
     return openApi;
   },
   after: (_openApi: unknown): any => {
     let openApi: any = _openApi;
+
+    // Flattened request bodies copy minItems/maxItems from StackableValidateRedeemBase.
+    // Keep setRedeemables storing any array, as in 5.1.1.
+    for (const schemaName of [
+      "StackableValidateRedeemBase",
+      "RedemptionsRedeemRequestBody",
+      "ValidationsValidateRequestBody",
+      "ClientRedemptionsRedeemRequestBody",
+      "ClientValidationsValidateRequestBody",
+    ]) {
+      const redeemables =
+        openApi.components.schemas[schemaName]?.properties?.redeemables;
+      if (redeemables) {
+        delete redeemables.minItems;
+        delete redeemables.maxItems;
+      }
+    }
 
     [
       "ClientQualificationsCheckEligibilityResponseBody",
@@ -326,9 +482,9 @@ const removePhpBreakingChanges = {
       };
     });
     openApi.components.schemas.OrdersListResponseBody.properties.orders.items =
-      {
-        $ref: "#/components/schemas/OrderCalculated",
-      };
+    {
+      $ref: "#/components/schemas/OrderCalculated",
+    };
     openApi.components.schemas.LoyaltiesMembersPointsExpirationListResponseBody.properties.data.items =
       openApi.components.schemas.LoyaltyPointsBucket;
     openApi.components.schemas.LoyaltyCardTransaction.properties.details.properties.balance =

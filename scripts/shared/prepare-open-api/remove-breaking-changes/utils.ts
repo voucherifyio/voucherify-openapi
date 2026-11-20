@@ -1,3 +1,87 @@
+/** Ruby SDK: keep `fixed_month` / `fixed_day` from OpenAPI; only restore `period_type` default `MONTH`. */
+export const restoreLoyaltyExpirationRulesPeriodTypeDefault = (schema: {
+  properties?: {
+    period_type?: Record<string, unknown>;
+    fixed_month?: unknown;
+    fixed_day?: unknown;
+    [key: string]: unknown;
+  };
+}) => {
+  const periodType = schema?.properties?.period_type;
+  if (!periodType || typeof periodType !== "object") {
+    return;
+  }
+  schema.properties!.period_type = {
+    ...periodType,
+    default: "MONTH",
+  };
+};
+
+/**
+ * SDKs: keep `updated_at` / `-updated_at` on list validation-rules `order`.
+ * The public API no longer accepts those values; removing them from generated
+ * enums would break existing SDK callers.
+ */
+export const restoreParameterOrderListValidationRulesUpdatedAt = (
+  schemas: any,
+) => {
+  const schema = schemas?.ParameterOrderListValidationRules;
+  if (!schema || !Array.isArray(schema.enum)) {
+    return;
+  }
+  schema.enum = [
+    "created_at",
+    "-created_at",
+    "updated_at",
+    "-updated_at",
+    "name",
+    "-name",
+  ];
+};
+
+/** SDKs: keep the inline `error` object with a single `message`; the shared `ValidationRuleError` $ref renames the generated models. */
+export const restoreValidationRuleErrorObjects = (schemas: any) => {
+  const inlineError = (description: string, messageDescription: string) => ({
+    type: "object",
+    description,
+    properties: {
+      message: {
+        type: "string",
+        description: messageDescription,
+      },
+    },
+  });
+
+  if (schemas.ValidationRuleBundleRules?.additionalProperties?.properties) {
+    schemas.ValidationRuleBundleRules.additionalProperties.properties.error =
+      inlineError(
+        "**CURRENTLY UNSUPPORTED**. Contains the error message returned from API when validation / redemption fails to meet requirements of defined rule.",
+        "The error message returned from API when validation / redemption fails to meet requirements of defined rule.",
+      );
+  }
+
+  [
+    "ValidationRuleRules",
+    "ValidationRuleRules01",
+    "ValidationRuleRules02",
+    "ValidationRuleRules03",
+  ].forEach((schemaName) => {
+    if (schemas[schemaName]?.additionalProperties?.properties) {
+      schemas[schemaName].additionalProperties.properties.error = inlineError(
+        "Contains the error message returned from API when validation / redemption fails to meet requirements of defined rule.",
+        "The error message returned from API when validation / redemption fails to meet requirements of defined rule.",
+      );
+    }
+  });
+
+  if (schemas.ValidationRuleBase?.properties) {
+    schemas.ValidationRuleBase.properties.error = inlineError(
+      "Contains the error message returned from API when validation / redemption fails to meet requirements of defined rules.",
+      "The error message returned from API when validation / redemption fails to meet requirements of defined rules.",
+    );
+  }
+};
+
 export const fixOrderCalculated = (object: any) => {
   if (Array.isArray(object)) {
     return object.map((value) => fixOrderCalculated(value));

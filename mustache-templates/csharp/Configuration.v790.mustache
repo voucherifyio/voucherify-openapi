@@ -201,6 +201,8 @@ namespace {{packageName}}.Client
                 {{/apiInfo}}
             };
 
+            DebugModeEnabled = IsDebugModeEnabledInEnvironment();
+
             // Setting Timeout has side effects (forces ApiClient creation).
             Timeout = 100000;
         }
@@ -263,6 +265,11 @@ namespace {{packageName}}.Client
             get { return _useDefaultCredentials; }
             set { _useDefaultCredentials = value; }
         }
+
+        /// <summary>
+        /// Determines whether request timing diagnostics are enabled.
+        /// </summary>
+        public virtual bool DebugModeEnabled { get; set; }
 
         /// <summary>
         /// Gets or sets the default header.
@@ -679,6 +686,16 @@ namespace {{packageName}}.Client
             ApiKeyPrefix[key] = value;
         }
 
+        /// <summary>
+        /// Checks whether debug mode is enabled via the DEBUG environment variable.
+        /// </summary>
+        /// <returns><c>true</c> when DEBUG equals "true" (case-insensitive); otherwise, <c>false</c>.</returns>
+        private static bool IsDebugModeEnabledInEnvironment()
+        {
+            string debugValue = Environment.GetEnvironmentVariable("DEBUG");
+            return string.Equals(debugValue, "true", StringComparison.OrdinalIgnoreCase);
+        }
+
         #endregion Methods
 
         #region Static Members
@@ -728,6 +745,7 @@ namespace {{packageName}}.Client
                 DateTimeFormat = second.DateTimeFormat ?? first.DateTimeFormat,
                 ClientCertificates = second.ClientCertificates ?? first.ClientCertificates,
                 UseDefaultCredentials = second.UseDefaultCredentials,
+                DebugModeEnabled = second.DebugModeEnabled || first.DebugModeEnabled,
                 RemoteCertificateValidationCallback = second.RemoteCertificateValidationCallback ?? first.RemoteCertificateValidationCallback,
             };
             return config;

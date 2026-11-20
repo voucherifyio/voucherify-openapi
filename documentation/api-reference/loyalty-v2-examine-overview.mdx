@@ -1,0 +1,38 @@
+---
+title: "Examine: Overview"
+description: "Understand how the examine endpoints estimate earning opportunities and reward availability for a Loyalty v2 member without any side effects"
+keywords: ['loyalty v2', 'examine earning rules', 'examine rewards', 'dry run', 'points estimation']
+diataxis: "explanation"
+---
+
+The examine endpoints let you evaluate what a member could earn or redeem across their loyalty program memberships, without creating any transactions or otherwise changing stored data. Because they are pure dry-run operations, you can call them as often as needed to power member-facing UI, such as "ways to earn" screens or reward catalogs.
+
+## Examine earning rules
+
+The examine earning rule endpoint estimates the points and benefits a member would receive for a given scenario. You choose a trigger mode:
+- `ALL`: Evaluates every active earning rule across the member's programs at once, useful for showing all the available ways a member can earn points in a single call.
+- `SPECIFIC`: Evaluates only the earning rules tied to one event – an order being paid, a customer entering a segment, or a custom event. This mode requires the matching context object for that event (for example, order line items for `customer.order.paid`).
+
+The response lists the estimated points per card and per earning rule, plus any material or digital benefits that would be granted. Because the estimation is a single dry-run pass, it does not chain further consequences of the earned points; for example, it won't simulate a tier upgrade that itself unlocks additional points.
+
+## Examine rewards
+
+This endpoint evaluates every reward assigned to a member's active program memberships and reports whether each one can currently be obtained with each card that pays for it. You can scope the evaluation to a single membership with `member_id`.
+
+A reward appears in the response only when it resolves to a points cost and the member holds the card that pays that cost. The reward is listed under that card with one of these statuses:
+- `AVAILABLE`: The card balance covers the points cost. The reward has no unavailability reasons.
+- `UNAVAILABLE`: The response lists each reason that applies:
+  - `insufficient_balance`, with `required`, `available`, and `missing` points.
+  - `no_target_card`, with the `card_definition_id` of the card that would receive the points. This applies to a points-on-a-loyalty-card reward when the member doesn't hold that card.
+
+Rewards that are inactive, out of stock, have no cost matching the member, or have no card for their cost are left out of the response. They are not returned as `UNAVAILABLE`. To show those rewards as greyed out, read their state from the reward catalog, not from this endpoint.
+
+Use `missing` to render "points needed" messaging for rewards the member can't afford yet.
+
+## Related resources
+
+- [Loyalty v2 API: Overview](/api-reference/loyalty-v2-api-overview) for the full Loyalty v2 API map.
+- [Earning rules: Overview](/api-reference/loyalty-v2-earning-rules-overview) for how to configure rules for gaining points and benefits.
+- [Rewards: Overview](/api-reference/loyalty-v2-rewards-overview) for how to manage rewards.
+- [Members: Overview](/api-reference/loyalty-v2-members-overview) for overall member management.
+- [Integrate loyalty v2](/guides/loyalty-v2-integrate) for worked examples of both examine endpoints.

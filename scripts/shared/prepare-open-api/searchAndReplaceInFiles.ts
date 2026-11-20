@@ -59,7 +59,9 @@ const conditionalByPath = {
 }
 
 async function main(_path: string) {
-  const startDir = path.join(__dirname, "../../sdks", _path);
+  const repoRoot = path.resolve(__dirname, "../../..");
+  const startDir = path.join(repoRoot, "sdks", _path);
+  console.log({startDir})
   const extensions = [".ruby", ".php", ".java", ".md", ".py", ".cs"];
   const searchReplace = conditionalByPath[_path];
   if(!searchReplace) throw new Error(

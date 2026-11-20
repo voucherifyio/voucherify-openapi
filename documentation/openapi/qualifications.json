@@ -1,5 +1,5 @@
 {
-  "openapi": "3.0.1",
+  "openapi": "3.1.0",
   "info": {
     "title": "Voucherify API - Qualifications",
     "version": "v2018-08-01",
@@ -42,7 +42,7 @@
           "Qualifications"
         ],
         "summary": "Check Eligibility",
-        "description": "\n> 🚧 The Qualifications endpoint ignores the rules checking:\n> \n> - Limit of total redeemed discount amount per campaign\n> - Limit of total redemptions count per campaign\n> - Redemptions per customer\n> - Redemptions per customer in a campaign \n\nGenerate a list of redeemables that are applicable in the context of the customer and order.\n\nThe new qualifications method is an improved version of [Campaign Qualifications](/api-reference/campaigns/examine-campaign-qualification), [Voucher Qualifications](/api-reference/vouchers/examine-voucher-qualification) API requests. The new qualification method introduces the following improvements:\n\n- Qualification results are returned faster\n- No limit on the number of returned redeemables\n- Introduces new qualification scenarios, not available in the previous version\n\n> 👍 Scenario Guide\n>\n> Read [the dedicated guide](/guides/checking-eligibility) to learn about some use cases this endpoint can cover.\n\n## Paging \n\nThe Voucherify Qualifications API request will return to you all of the redeemables available for the customer in batches of up to 50 redeemables per page. To get the next batch of redeemables, you need to use the `starting_after` cursor.\n\nTo process of paging the redeemables works in the following manner:\n\n- You send the first API request for Qualifications without the `starting_after` parameter.\n- The response will contain a parameter named `has_more`. If the parameter's value is set to `true`, then more redeemables are available.\n- Get the value of the `created_at` parameter of the last returned redeemable. The value of this parameter will be used as a cursor to retrieve the next page of redeemables.\n- Send another API request for Qualification with the `starting_after` parameter set to the value taken from the `created_at` parameter from the last returned redeemable.\n- Voucherify will return the next page of redeemables.\n- If the `has_more` parameter is set to `true`, apply steps 3-5 to get the next page of redeemables.",
+        "description": "\n<Warning>\n\nThe Qualifications endpoint ignores the rules checking:\n\n- Limit of total redeemed discount amount per campaign\n- Limit of total redemptions count per campaign\n- Redemptions per customer\n- Redemptions per customer in a campaign\n- Total amount before discount\n\n</Warning>\n\nGenerate a list of redeemables that are applicable in the context of the customer and order.\n\nThe new qualifications method is an improved version of [Campaign Qualifications](/api-reference/campaigns/examine-campaign-qualification), [Voucher Qualifications](/api-reference/vouchers/examine-voucher-qualification) API requests. The new qualification method introduces the following improvements:\n\n- Qualification results are returned faster\n- No limit on the number of returned redeemables\n- Introduces new qualification scenarios, not available in the previous version\n\n<Tip>\n\n<Badge color=\"green\">Scenario Guide</Badge>\n\nRead [the dedicated guide](/guides/checking-eligibility) to learn about some use cases this endpoint can cover.\n\n</Tip>\n\n## Paging \n\nThe Voucherify Qualifications API request will return to you all of the redeemables available for the customer in batches of up to 50 redeemables per page. To get the next batch of redeemables, you need to use the `starting_after` cursor.\n\nTo process of paging the redeemables works in the following manner:\n\n- You send the first API request for Qualifications without the `starting_after` parameter.\n- The response will contain a parameter named `has_more`. If the parameter's value is set to `true`, then more redeemables are available.\n- Get the value of the `created_at` parameter of the last returned redeemable. The value of this parameter will be used as a cursor to retrieve the next page of redeemables.\n- Send another API request for Qualification with the `starting_after` parameter set to the value taken from the `created_at` parameter from the last returned redeemable.\n- Voucherify will return the next page of redeemables.\n- If the `has_more` parameter is set to `true`, apply steps 3-5 to get the next page of redeemables.\n\n## Caching\n\nQualification has a 5-minute cache for the returned results. If you change your campaign settings or validation rules, the changes will apply to qualification results after the cache refreshes.",
         "parameters": [],
         "security": [
           {
@@ -390,7 +390,7 @@
           },
           "metadata": {
             "type": "object",
-            "description": "A set of key/value pairs that you can send in the request body to check against redeemables requiring **redemption** metadata validation rules to be satisfied. The validation runs against rules that are defined through the [Create Validation Rules](/api-reference/validation-rules/create-validation-rules) endpoint or with the [Validation Rule Builder](https://support.voucherify.io/article/148-how-to-build-a-rule) in the the Dashboard."
+            "description": "A set of key/value pairs that you can send in the request body to check against redeemables requiring **redemption** metadata validation rules to be satisfied. The validation runs against rules that are defined through the [Create Validation Rules](/api-reference/validation-rules/create-validation-rules) endpoint or with the [Validation Rule Builder](/personalize/create-validation-rules) in the the Dashboard."
           }
         }
       },
@@ -486,8 +486,10 @@
             "maximum": 50
           },
           "starting_after": {
-            "type": "string",
-            "nullable": true,
+            "type": [
+              "string",
+              "null"
+            ],
             "example": "2021-09-08T13:52:18.227Z",
             "format": "date-time",
             "description": "Cursor used for paging."
@@ -729,8 +731,10 @@
             "description": "Unique ID assigned by Voucherify of an existing order that will be linked to the redemption of this request."
           },
           "source_id": {
-            "type": "string",
-            "nullable": true,
+            "type": [
+              "string",
+              "null"
+            ],
             "description": "Unique source ID of an existing order that will be linked to the redemption of this request."
           },
           "status": {
@@ -793,26 +797,32 @@
           },
           "created_at": {
             "type": "string",
-            "example": "2021-12-22T10:13:06.487Z",
+            "example": "2021–12-22T10:13:06.487Z",
             "description": "Timestamp representing the date and time when the order was created. The value is shown in the ISO 8601 format.",
             "format": "date-time"
           },
           "updated_at": {
-            "type": "string",
-            "nullable": true,
-            "example": "2021-12-22T10:14:45.316Z",
+            "type": [
+              "string",
+              "null"
+            ],
+            "example": "2021–12-22T10:14:45.316Z",
             "format": "date-time",
             "description": "Timestamp representing the date and time when the order was last updated in ISO 8601 format."
           },
           "customer_id": {
-            "type": "string",
-            "nullable": true,
+            "type": [
+              "string",
+              "null"
+            ],
             "description": "Unique customer identifier of the customer making the purchase. The ID is assigned by Voucherify.",
             "example": "cust_7iUa6ICKyU6gH40dBU25kQU1"
           },
           "referrer_id": {
-            "type": "string",
-            "nullable": true,
+            "type": [
+              "string",
+              "null"
+            ],
             "description": "Unique referrer ID.",
             "example": "cust_nM4jqPiaXUvQdVSA6vTRUnix"
           },
@@ -994,7 +1004,7 @@
       "StackingRules": {
         "type": "object",
         "title": "Stacking Rules",
-        "description": "Defines stacking rules for redeemables. Read more in the [Stacking Rule Documentation](https://support.voucherify.io/article/604-stacking-rules).",
+        "description": "Defines stacking rules for redeemables. Read more in the [Stacking Rule Documentation](/orchestrate/stacking-rules).",
         "properties": {
           "redeemables_limit": {
             "type": "integer",
@@ -1159,8 +1169,10 @@
             "format": "date"
           },
           "address": {
-            "type": "object",
-            "nullable": true,
+            "type": [
+              "object",
+              "null"
+            ],
             "description": "Customer's address.",
             "properties": {
               "city": {
@@ -1201,9 +1213,11 @@
         "description": "Order information.",
         "properties": {
           "source_id": {
-            "type": "string",
-            "nullable": true,
-            "description": "Unique source ID of an existing order that will be linked to the redemption of this request."
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Unique source ID of an existing order that will be linked to the redemption of this request.\n\nFor validation and redemption, if `source_id` is used with an existing order, the original order data will be used, like `items`, `amount`, and so on, not the one sent in the new request."
           },
           "status": {
             "type": "string",
@@ -1351,7 +1365,7 @@
           "rollback_date": {
             "type": "string",
             "description": "Timestamp representing the date and time when the redemption rollback was created. The value is shown in the ISO 8601 format.",
-            "example": "2023-01-31T14:18:37.150Z",
+            "example": "2023-01–31T14:18:37.150Z",
             "format": "date-time"
           },
           "related_object_type": {
@@ -2105,11 +2119,11 @@
           },
           "error": {
             "type": "object",
-            "description": "Includes additional information about the error.",
+            "description": "Includes the resolved custom validation-rule error message when one is configured.",
             "properties": {
               "message": {
                 "type": "string",
-                "description": "The message configured by the user in a validation rule."
+                "description": "Resolved custom validation-rule error message for `options.language`, falling back to the Error Message Library default language. Present only when a custom message can be resolved."
               }
             }
           }
@@ -2179,6 +2193,70 @@
           "aggregated_amount_limit": {
             "type": "integer",
             "description": "Maximum discount amount per order. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $6 maximum discount on the entire order is written as 600. This value is definable for the following discount effects:\n- `APPLY_TO_ITEMS` (each item subtotal is discounted equally)\n- `APPLY_TO_ITEMS_BY_QUANTITY` (each unit of matched products has the same discount value)"
+          },
+          "product_campaign_quantity_limit": {
+            "type": "integer",
+            "description": "Limits the number of discounted item units (product, SKU, collection) that all customers can receive in a given campaign. If a product is selected, the limit covers all discounts across all SKUs belonging to that product. If a product collection is selected, the limit covers all products/SKUs within the collection.\n\nThis limit is available on demand as part of campaign budget limits. Contact [Voucherify support](https://www.voucherify.io/contact-support) or your account manager to learn more."
+          },
+          "product_campaign_quantity_limit_formula": {
+            "type": "string",
+            "description": "Formula used to dynamically calculate the maximum units per campaign.\n\nThis limit is available on demand as part of campaign budget limits. Contact [Voucherify support](https://www.voucherify.io/contact-support) or your account manager to learn more."
+          },
+          "product_customer_campaign_quantity_limit": {
+            "type": "integer",
+            "description": "Limits the number of discounted item units (product, SKU, collection) that one customer can receive in a given campaign.\n\nThis limit is available on demand as part of campaign budget limits. Contact [Voucherify support](https://www.voucherify.io/contact-support) or your account manager to learn more."
+          },
+          "product_customer_campaign_quantity_limit_formula": {
+            "type": "string",
+            "description": "Formula used to dynamically calculate the maximum units per customer in a campaign.\n\nThis limit is available on demand as part of campaign budget limits. Contact [Voucherify support](https://www.voucherify.io/contact-support) or your account manager to learn more."
+          },
+          "product_in_collection_campaign_quantity_limit": {
+            "type": "integer",
+            "description": "Limits the number of discounted item units of a given product in a collection that all customers can receive in a given campaign.\n\nThis limit is available on demand as part of campaign budget limits. Contact [Voucherify support](https://www.voucherify.io/contact-support) or your account manager to learn more."
+          },
+          "product_in_collection_campaign_quantity_limit_formula": {
+            "type": "string",
+            "description": "Formula used to dynamically calculate the maximum units per campaign for a product in a collection.\n\nThis limit is available on demand as part of campaign budget limits. Contact [Voucherify support](https://www.voucherify.io/contact-support) or your account manager to learn more."
+          },
+          "product_in_collection_customer_campaign_quantity_limit": {
+            "type": "integer",
+            "description": "Limits the number of discounted item units of a given product in a collection that one customer can receive in a campaign.\n\nThis limit is available on demand as part of campaign budget limits. Contact [Voucherify support](https://www.voucherify.io/contact-support) or your account manager to learn more."
+          },
+          "product_in_collection_customer_campaign_quantity_limit_formula": {
+            "type": "string",
+            "description": "Formula used to dynamically calculate the maximum units per customer for a product in a collection.\n\nThis limit is available on demand as part of campaign budget limits. Contact [Voucherify support](https://www.voucherify.io/contact-support) or your account manager to learn more."
+          },
+          "product_promotion_tier_quantity_limit": {
+            "type": "integer",
+            "description": "Limits the number of discounted item units that all customers can receive in a promotion tier.\n\nThis limit is available on demand as part of campaign budget limits. Contact [Voucherify support](https://www.voucherify.io/contact-support) or your account manager to learn more."
+          },
+          "product_promotion_tier_quantity_limit_formula": {
+            "type": "string",
+            "description": "Formula used to dynamically calculate the maximum units per promotion tier.\n\nThis limit is available on demand as part of campaign budget limits. Contact [Voucherify support](https://www.voucherify.io/contact-support) or your account manager to learn more."
+          },
+          "product_customer_promotion_tier_quantity_limit": {
+            "type": "integer",
+            "description": "Limits the number of discounted item units that one customer can receive in a given promotion tier.\n\nThis limit is available on demand as part of campaign budget limits. Contact [Voucherify support](https://www.voucherify.io/contact-support) or your account manager to learn more."
+          },
+          "product_customer_promotion_tier_quantity_limit_formula": {
+            "type": "string",
+            "description": "Formula used to dynamically calculate the maximum units per customer in a promotion tier.\n\nThis limit is available on demand as part of campaign budget limits. Contact [Voucherify support](https://www.voucherify.io/contact-support) or your account manager to learn more."
+          },
+          "product_in_collection_promotion_tier_quantity_limit": {
+            "type": "integer",
+            "description": "Limits the number of discounted item units of a given product in a collection that all customers can receive in a given promotion tier.\n\nThis limit is available on demand as part of campaign budget limits. Contact [Voucherify support](https://www.voucherify.io/contact-support) or your account manager to learn more."
+          },
+          "product_in_collection_promotion_tier_quantity_limit_formula": {
+            "type": "string",
+            "description": "Formula used to dynamically calculate the maximum units per promotion tier for a product in a collection.\n\nThis limit is available on demand as part of campaign budget limits. Contact [Voucherify support](https://www.voucherify.io/contact-support) or your account manager to learn more."
+          },
+          "product_in_collection_customer_promotion_tier_quantity_limit": {
+            "type": "integer",
+            "description": "Limits the number of discounted item units of a given product in a collection that one customer can receive in a promotion tier.\n\nThis limit is available on demand as part of campaign budget limits. Contact [Voucherify support](https://www.voucherify.io/contact-support) or your account manager to learn more."
+          },
+          "product_in_collection_customer_promotion_tier_quantity_limit_formula": {
+            "type": "string",
+            "description": "Formula used to dynamically calculate the maximum units per customer in a promotion tier for a product in a collection.\n\nThis limit is available on demand as part of campaign budget limits. Contact [Voucherify support](https://www.voucherify.io/contact-support) or your account manager to learn more."
           },
           "order_item_indices": {
             "type": "array",
@@ -2603,7 +2681,8 @@
           "code",
           "points",
           "source_id"
-        ]
+        ],
+        "description": "Request body for transferring points between **legacy loyalty** cards."
       },
       "ApplicableToEffect": {
         "title": "Applicable To Effect",
@@ -2632,7 +2711,8 @@
         "enum": [
           "ADD_MISSING_ITEMS",
           "ADD_NEW_ITEMS",
-          "ADD_MANY_ITEMS"
+          "ADD_MANY_ITEMS",
+          "ADD_SAME_ITEMS"
         ],
         "type": "string"
       },

@@ -23,6 +23,13 @@ import {
   removeStoplightTag,
   snakeToCamel,
 } from "./utils";
+import { liftUnconditionalRequired } from "../openapi-version/merge-json-schema-conditionals";
+import { applySdkOpenApiVersion } from "../openapi-version/migrate";
+import {
+  documentWithoutLoyaltyV2,
+  omitLoyaltyV2Document,
+} from "../loyalty-v2/document";
+import { omitWebhooks } from "../openapi-webhooks/reachable-schemas";
 
 let openAPIContent: any = originalOpenAPIContent;
 import addMissingDefaults from "./add-missing-defaults";
@@ -33,6 +40,7 @@ import removePhpBreakingChanges from "./remove-breaking-changes/php";
 import removeJavaBreakingChanges from "./remove-breaking-changes/java";
 import removeDotnetBreakingChanges from "./remove-breaking-changes/dotnet";
 import removeJsBreakingChanges from "./remove-breaking-changes/js";
+import shortenRubySchemaTitles from "./shorten-ruby-schema-titles";
 
 const options = minimist(process.argv.slice(2));
 
@@ -47,39 +55,51 @@ type LanguageOptions = {
   };
   supportOauth?: true;
   removeAllSchemasDefaults?: true;
+  /**
+   * OpenAPI Generator builds pinned in package.json still expect 3.0.1
+   * `nullable`. Keep this true so reference/readonly-sdks stays byte-identical
+   * after reference/OpenAPI.json moves to 3.1.0.
+   */
+  downgradeTo301: boolean;
 };
 
-const supportedLanguages: {
+export const supportedLanguages: {
   [language: string]: LanguageOptions;
 } = {
   python: {
     name: "python",
     simplifyAllObjectsThatHaveAdditionalProperties: true, //MUST STAY!
     use2XX: true, //MUST STAY!
+    downgradeTo301: true, //MUST STAY!
     fixBreakingChanges: removePythonBreakingChanges,
   },
   ruby: {
     name: "ruby",
+    downgradeTo301: true, //MUST STAY!
     fixBreakingChanges: removeRubyBreakingChanges,
   },
   php: {
     name: "php",
     putNotObjectSchemasIntoObjectSchemas: true, //MUST STAY!
+    downgradeTo301: true, //MUST STAY!
     fixBreakingChanges: removePhpBreakingChanges,
   },
   java: {
     name: "java",
+    downgradeTo301: true, //MUST STAY!
     fixBreakingChanges: removeJavaBreakingChanges,
   },
   dotnet: {
     name: "dotnet",
     supportOauth: true,
     removeAllSchemasDefaults: true,
+    downgradeTo301: true, //MUST STAY!
     fixBreakingChanges: removeDotnetBreakingChanges,
   },
   js: {
     name: "js",
     supportOauth: true,
+    downgradeTo301: true, //MUST STAY!
     fixBreakingChanges: removeJsBreakingChanges,
   },
 };
@@ -113,6 +133,13 @@ const savePreparedOpenApiFile = async (lang: string, openAPI: object) => {
 };
 
 const main = async (languageOptions: LanguageOptions) => {
+  // Downgrades to 3.0.1 and folds if/then/not. See prepare-open-api/AGENTS.md.
+  openAPIContent = applySdkOpenApiVersion(
+    documentWithoutLoyaltyV2(openAPIContent, {
+      keepSdkPublishedPaths: true,
+    }),
+    languageOptions.downgradeTo301,
+  );
   const prohibited = [
     '"readOnly": true',
     '"readOnly": false',
@@ -223,9 +250,22 @@ const main = async (languageOptions: LanguageOptions) => {
     openAPIContent.components.parameters,
   );
 
+  // removeOneOf does not walk properties while allOf is present. That leftover
+  // allOf is what keeps a nullable oneOf. Lift a required-only item only after
+  // that pass, then copy $ref aliases.
+  const schemasWithRequiredLifted = Object.fromEntries(
+    Object.entries(schemas).map(([schemaName, schema]) => [
+      schemaName,
+      schema && typeof schema === "object"
+        ? liftUnconditionalRequired(schema as any)
+        : schema,
+    ]),
+  );
   const schemasWithFixedTitles: any = fixSchemasTitles(
     removeUnwantedProperties(
-      parseNullsToNullableObjects(copySchemasIfUsedAsAllOfInBase(schemas)),
+      parseNullsToNullableObjects(
+        copySchemasIfUsedAsAllOfInBase(schemasWithRequiredLifted),
+      ),
       ["title"],
     ),
   );
@@ -261,8 +301,10 @@ const main = async (languageOptions: LanguageOptions) => {
   }
 
   // Building all together
+  // Webhook operations are not part of the SDK surface. Extra schemas that
+  // only those operations reference are already dropped by removeNotUsedSchemas.
   let newOpenApiFile = cleanUpDescriptionsInEntireObject({
-    ...openAPIContent,
+    ...omitLoyaltyV2Document(omitWebhooks(openAPIContent)),
     components: {
       ...openAPIContent.components,
       schemas: fixRefUagesInAllSchemasProperties(schemasWithoutNotUsed),
@@ -276,6 +318,11 @@ const main = async (languageOptions: LanguageOptions) => {
   newOpenApiFile.components.schemas = fixSchemasTitles(
     _.cloneDeep(newOpenApiFile.components.schemas),
   );
+
+
+  if (languageOptions.name === "ruby") {
+    shortenRubySchemaTitles(newOpenApiFile.components.schemas);
+  }
 
   await savePreparedOpenApiFile(languageOptions.name, newOpenApiFile);
 };
@@ -406,7 +453,9 @@ const returnRefSchemaIfAllOfContainsOnly1Reference = (schema) => {
   if (
     schema?.allOf?.length === 1 &&
     schema.allOf[0]?.$ref &&
-    !schema.required?.length
+    !schema.required?.length &&
+    // Keep allOf + nullable: OpenAPI 3.0 ignores keywords next to a bare $ref.
+    !schema?.nullable
   ) {
     return schema.allOf[0];
   }
@@ -496,21 +545,23 @@ const fixSchemaTitle = (schema, title, schemas, skipSettingTitle?: boolean) => {
   return { title: schema.title, ..._.omit(schema, ["title"]) };
 };
 
-if (!("language" in options)) {
-  console.log(colors.red("invalid arguments, missing language parameter"));
-} else if (
-  typeof options.language !== "string" ||
-  !Object.keys(supportedLanguages).includes(options.language)
-) {
-  console.log(
-    colors.red(
-      `invalid language arguments, supported languages are ${Object.keys(
-        supportedLanguages,
-      )
-        .map((language) => `"${language}"`)
-        .join(", ")}`,
-    ),
-  );
-} else {
-  main(supportedLanguages[options.language]);
+if (require.main === module) {
+  if (!("language" in options)) {
+    console.log(colors.red("invalid arguments, missing language parameter"));
+  } else if (
+    typeof options.language !== "string" ||
+    !Object.keys(supportedLanguages).includes(options.language)
+  ) {
+    console.log(
+      colors.red(
+        `invalid language arguments, supported languages are ${Object.keys(
+          supportedLanguages,
+        )
+          .map((language) => `"${language}"`)
+          .join(", ")}`,
+      ),
+    );
+  } else {
+    main(supportedLanguages[options.language]);
+  }
 }
