@@ -5,6 +5,12 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-11-20
+
+Updated `limits.mdx` with current Business and Organization API limits in a three-column table, clarified minute and hourly limits for webhooks and for API blocking, and aligned rate-limit response header wording (`api_calls`, `bulk_api_calls`, `api_calls_cycle`, `webhook_calls`).
+
+Updated `management-api.mdx` so the Management API base URL is `https://{region}.api.voucherify.io/management/v1/`.
+
 ## 2026-11-18
 
 Updated `loyalty-v2-benefits-overview.mdx` against the Benefits endpoints. Major change: Removed the move-to-draft transition.
