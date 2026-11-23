@@ -5,6 +5,17 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-11-23
+
+Documented Areas and Stores for product collections and related cross-project transfer behavior.
+
+- Updated `changelog.mdx` with the `v20261110_k` public release notes: product collection assignments, restricted-user transfer rules for new collections, and campaign webhook payload notes.
+- Updated `areas-and-stores.mdx` with product collection visibility and assignment behavior for restricted users.
+- Updated `manage-areas-and-stores.mdx` with steps to assign product collections to areas and stores and to manage them as a restricted user.
+- Updated `prepare/product-collections.mdx` with an **Access settings** step in the create flows.
+- Updated `access-settings.mdx` so the snippet applies to campaigns and product collections.
+- Updated `campaign-copy-between-projects.mdx` with restricted-user rules when a transfer creates product collections under Areas and stores for product collections.
+
 ## 2026-11-20
 
 Updated `limits.mdx`. Removed the inline Business and Organization limit table and points readers to Voucherify Pricing for Business and Organization plans and to the Fair use policy for Business, Organization, and Enterprise plans. Clarified minute and hourly limits for webhooks and API blocking, including Enterprise accounts without plan auto-upgrade. Aligned rate-limit response header wording (`api_calls`, `bulk_api_calls`, `api_calls_cycle`, `webhook_calls`).
