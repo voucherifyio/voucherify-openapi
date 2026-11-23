@@ -132839,7 +132839,7 @@
           "Product Collections"
         ],
         "summary": "Create Product Collection",
-        "description": "This method creates a new product collection.",
+        "description": "Creates a new product collection.\n\nTo assign the collection to areas, stores, or all stores, send `access_settings` with `assign`. Assignments are available only when the Areas and Stores enterprise feature is enabled for product collections.\n\n<Note>A restricted user must assign the new collection to at least one area or store. Areas and stores that the restricted user isn't assigned to are ignored. If none are left, the request fails with a 400 error. A restricted user is a user with the Restricted user role, or with a custom role that has the Join areas and stores permission. An API key with the Restricted user role is also restricted. Users who can't join areas and stores can assign any area or store.</Note>",
         "responses": {
           "200": {
             "description": "Returns information about the newly created collection, as well as an array containing the products.",
@@ -132847,6 +132847,63 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ProductCollectionsCreateResponseBody"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Returns an error if the request data is invalid, the static collection contains products or SKUs that don't exist, a restricted user creates the collection without any area or store assignment, or the project has reached its product collection limit.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Name is not `string`": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_payload",
+                      "message": "Invalid payload",
+                      "details": "Property .name must be string",
+                      "request_id": "v-1204a5e6cb9054fc8a"
+                    }
+                  },
+                  "Incorrect `junction` property": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_payload",
+                      "message": "Invalid payload",
+                      "details": "Property .filter has wrong `junction` property. It must be one of: and, or",
+                      "request_id": "v-1204a62a891054fd04"
+                    }
+                  },
+                  "Empty `filter` object": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_payload",
+                      "message": "Invalid payload",
+                      "details": "'AUTO_UPDATE' collection must contain valid filter with 'junction' property",
+                      "request_id": "v-1204a662d6c65738b0"
+                    }
+                  },
+                  "Missing products in a static collection": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_payload",
+                      "message": "Invalid payload",
+                      "details": "Cannot create collection due to missing products: 'prod_0a41dd45dc85fcab40'",
+                      "request_id": "v-1204a6a1b2c3d4e5f6"
+                    }
+                  },
+                  "No area or store assignment left for a restricted user": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_payload",
+                      "message": "Invalid payload",
+                      "details": "The product collection should contain at least one access settings assignment",
+                      "request_id": "v-1204a6b2c3d4e5f607"
+                    }
+                  }
                 }
               }
             }
