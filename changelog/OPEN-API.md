@@ -4,6 +4,18 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-11-24
+
+Verified and updated POST `/v2/loyalties/tier-structures/{tierStructureId}/activate`.
+
+- Removed the documentation-in-progress badge.
+- Clarified the description: activation accepts only `DRAFT` or `INACTIVE`; `400` `invalid_state_transition` applies when the tier structure is already `ACTIVE`; `403` `tier_structure_assignments_limit_exceeded` when a program assigned to this tier structure already has another `DRAFT` or `ACTIVE` tier structure assigned.
+- Renamed the success response schema to `LoyaltiesTierStructuresActivateResponseBody`.
+- Added a `200` example for a `POINT_BALANCE` tier structure.
+- Corrected the `400` description to invalid state transition. Added an example for activation from `ACTIVE`.
+- Clarified the `403` description and added a `tier_structure_assignments_limit_exceeded` example.
+- Added a `404` `not_found` example for an unknown tier structure id.
+
 ## 2026-11-23
 
 Documented Areas and Stores for product collections in the Product Collections API.
