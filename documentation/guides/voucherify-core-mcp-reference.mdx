@@ -1,7 +1,7 @@
 ---
 title: "Core MCP tools and examples"
 description: "Look up Voucherify Core MCP read tools, use cases, and API usage"
-keywords: ["Voucherify Core MCP", "MCP tools", "find customer", "campaigns", "best deals", "estimate loyalty points", "use cases"]
+keywords: ["Voucherify Core MCP", "MCP tools", "find customer", "campaigns", "best deals", "estimate loyalty points", "loyalty memberships", "Loyalty v2", "use cases"]
 diataxis: "reference"
 ---
 
@@ -15,30 +15,37 @@ The tools are available under the permissions assigned to the account used to si
 
 | Tool | What it returns |
 | --- | --- |
-| `find_customer` | A customer profile retrieved by providing an email, source ID, or `cust_` ID, including loyalty points. |
+| `find_customer` | A customer's profile and metadata, found by email, source ID, or `cust_` ID. `loyalty` holds classic loyalty data. A lookup by source ID or `cust_` ID also returns [Loyalty v2](/guides/loyalty-v2-overview) programs in `loyalty_memberships`. A lookup by email returns `loyalty` without points per campaign, and `loyalty_memberships` is null. To see the programs for an email, look the customer up again with the returned ID, or use `get_loyalty_memberships`. |
 | `get_campaign` | A campaign's configuration, status, dates, and time windows. Rules assigned to the campaign are expanded. Rules on a promotion tier stay on `get_promotion_tier`. |
 | `list_campaigns` | Up to 1000 campaigns, each with ID, name, type, and creation date. Call `get_campaign` for more details like status, dates, and time windows. |
 | `get_campaign_summary` | Validation, redemption, and publication counts for one campaign, for its whole lifetime or for a date range. |
 | `get_promotion_tier` | A promotion tier and its rules. |
-| `qualifications` | Vouchers, promotions, and campaigns available to a customer identified by their source ID or Voucherify ID. |
-| `get_best_deals` | The top 5 item-level incentives for a customer and a cart. The customer is identified by their source ID or Voucherify ID. Prices are in cents. |
+| `qualifications` | Vouchers, promotions, and campaigns available to a customer identified by their source ID or Voucherify ID. A customer with only metadata is accepted as an anonymous customer. Rules that need a known customer reject it. |
+| `get_best_deals` | The top 5 item-level incentives for a customer and a cart. The customer is identified by their source ID or Voucherify ID. A customer with only metadata is accepted as an anonymous customer. Rules that need a known customer reject it. Prices are in cents. |
 | `list_products` | Products and prices. A product priced only on its SKUs has no product price and drops out of a price filter. |
 | `get_voucher` | A voucher's status, redemption count and limit, balance for a gift or loyalty card, expiration, and rules. |
-| `estimate_loyalty_points` | An estimate of points from order-paid earning rules. The customer is identified by their source ID or Voucherify ID. The order is an amount in cents, or the source ID of an existing order. |
+| `get_loyalty_memberships` | A customer's [Loyalty v2](/guides/loyalty-v2-overview) memberships. Each program has its member and cards. A card has the points balance (`points` and `pending_points`), `lifetime_bucket`, `next_expiration`, `next_activation`, and `tier_progress`. The customer is identified by their Voucherify ID, source ID, or a loyalty member ID. Classic loyalty campaigns are not included. |
+| `estimate_loyalty_points` | An estimate of the points a customer earns for an order in each Loyalty v2 program they belong to, with a breakdown per card and earning rule. It awards no points. The estimate uses the **Order paid** trigger. Earning rules that react to other events, such as custom events or entering a segment, are not evaluated. The final points can differ, for example when the customer changes tier while the order is processed. The customer is identified by their Voucherify ID, source ID, or a loyalty member ID. |
 
-<Note>
+Each tool has a display title and is marked read-only, so a client can show it in its tool list and know that it does not change data. For example, `qualifications` is titled **Check qualifications**.
+
+A tool result is capped at 100,000 characters. When a result is longer, the server trims the longest list in it and adds a note, such as `Result truncated: showing 40 of 200 items.` The note tells you to narrow the request with a filter, a smaller limit, or a specific ID.
+
+<Tip>
 
 For the best results with `get_best_deals`, set the Application rule to **Partial** in the Voucherify dashboard: **Redemptions** > **Stacking rules**. Read [Stacking rules](/orchestrate/stacking-rules).
 
 `get_best_deals` returns item-level discounts. An order-level discount, such as 10% off the order, is left out even when the cart qualifies. Use `qualifications` for those discounts.
 
+</Tip>
+
+<Note>
+
+`get_loyalty_memberships` and `estimate_loyalty_points` take an `id` and an optional `identification_type`. Set `identification_type` to `customer_id`, `customer_source_id`, or `member_id` when you know what the ID is.
+
+Without it, the tool guesses from the ID. `cust_` followed by only letters and digits is a customer ID. `lmbr_` followed by lowercase hexadecimal characters is a loyalty member ID. Anything else is a source ID, including a source ID that starts with `cust_`, such as `cust_coffee_anna`. When the API does not find a guessed customer ID or member ID, the tool tries the ID once more as a source ID.
+
 </Note>
-
-<Info>
-
-`estimate_loyalty_points` returns an estimate for order-paid earning rules. It takes no item list. When a campaign includes tiers, mappings, and several earning rules, the final calculation can differ. A customer may change tiers and earn more or fewer points.
-
-</Info>
 
 ## API usage
 
@@ -147,12 +154,14 @@ Paste a prompt into the client. The notes under each prompt are what the tools r
     Ask for a customer's profile and the incentives available to them.
 
     ```text wrap
-    Find customer tom@example.com. Show their loyalty points and tier.
+    Find customer tom@example.com. Show their loyalty tier.
 
     Then list the vouchers assigned to their wallet and any other promotions they qualify for.
     ```
 
     The agent calls `find_customer`, then `qualifications`. The customer on `qualifications` is an id or source ID.
+
+    A lookup by email does not return Loyalty v2 memberships. To see points and tiers per program, give a `cust_` ID or a source ID instead of the email, or use `get_loyalty_memberships`, as in the "Loyalty points and tiers" use case.
 
     | Scenario | What it returns |
     | --- | --- |
@@ -198,27 +207,44 @@ Paste a prompt into the client. The notes under each prompt are what the tools r
 
     `get_voucher` returns the status, redemption count and limit, balance for a gift or loyalty card, expiration, and the expanded rules when the voucher has any. The agent can then name a likely cause, such as expired, inactive, limit reached, or an unmet rule.
   </Accordion>
+  <Accordion title="Loyalty points and tiers">
+    Ask how many points a customer has and how close they are to the next tier.
+
+    ```text wrap
+    Get loyalty memberships for customer cust_aB3dE5fG7hI9.
+
+    Show the points balance and tier progress for each program.
+    ```
+
+    `get_loyalty_memberships` returns every [Loyalty v2](/guides/loyalty-v2-overview) program the customer belongs to. Each program lists its member and cards. A card has the points balance (`points` and `pending_points`), `lifetime_bucket`, `next_expiration`, `next_activation`, and `tier_progress`.
+
+    An empty `memberships` list means the customer is not a member of any program. Classic loyalty campaigns are not included. Their points are on the voucher, which `get_voucher` returns.
+
+    Give a Voucherify ID, a source ID, or a loyalty member ID. The tool guesses which one it is from the ID. If the guess is wrong, say in the prompt whether it is a customer ID, a customer source ID, or a member ID.
+  </Accordion>
   <Accordion title="Points at checkout">
-    
     <Note>
 
-    This use case is available only for [legacy loyalty campaigns](/build/loyalty-campaign-overview).
-
-    Voucherify developers work on supporting loyalty hub program (`v2/loyalties`) with this use case.
+    This use case covers [Loyalty v2](/guides/loyalty-v2-overview) programs. It does not cover [legacy loyalty campaigns](/build/loyalty-campaign-overview).
 
     </Note>
 
-    Ask how many loyalty points the order earns, next to the best discount.
+    Ask how many loyalty points an order earns, next to the best discount.
 
     ```text wrap
-    For customer source_id "customer123" with an order total of 50.00 USD,
-    estimate the points they earn with loyalty card "Loyalty-ZC4Vg".
+    For customer cust_aB3dE5fG7hI9 with an order total of 100.00 USD,
+    estimate the points they earn in each loyalty program.
+
     Also show their best deal for this order.
     ```
 
-    `estimate_loyalty_points` takes the loyalty card, a customer id or source ID, and an order. The order is an `amount` in cents, here `5000`, or the source ID of an existing order. The response includes the campaign and `points_estimation`.
+    `estimate_loyalty_points` takes the customer `id` and an order. The order is an `amount` in cents, so 100.00 USD is here converted to `10000`, or a list of `items`. Each item has a product or SKU, a `quantity`, and a `price` in cents. `initial_amount`, `discount_amount`, and `metadata` are optional. Earning rules can depend on order metadata.
 
-    The same prompt can also call `get_best_deals` for item-level deals. `estimate_loyalty_points` takes no item list.
+    The response lists the `earning_rules` that matched the order. For each active membership, it also lists the program, the member, the cards with `points_estimation` for the whole order and the breakdown per earning rule, and the benefits the order would unlock. An empty `memberships` list means the customer has no active membership in any program.
+
+    To test a rule that depends on customer metadata that is not saved yet, such as a value the customer chooses at checkout, pass `customer_metadata`. It is merged over the stored metadata for this call only. Nothing is saved.
+
+    The same prompt can also call `get_best_deals` for item-level deals.
   </Accordion>
   <Accordion title="Find products and price a cart">
     Ask for products from the catalog, then for the deals on a cart built from them.
