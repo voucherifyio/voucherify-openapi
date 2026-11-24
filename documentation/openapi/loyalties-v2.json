@@ -19428,34 +19428,87 @@
           "Tier Structures"
         ],
         "summary": "Activate tier structure",
-        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nMoves the tier structure to `ACTIVE` from `DRAFT` or `INACTIVE`. No request body. Any other status returns `400` (`invalid_state_transition`). Returns `403` (`tier_structure_assignments_limit_exceeded`) when a program already has another `DRAFT` or `ACTIVE` tier structure assigned.\n\nA successful call records [`vl.tier_structure.activated`](/api-reference/loyalty-activity/tier-structures/activated).",
+        "description": "Moves the tier structure to `ACTIVE` from `DRAFT` or `INACTIVE`. No request body. Returns `400` (`invalid_state_transition`) when the tier structure is already `ACTIVE`. Returns `403` (`tier_structure_assignments_limit_exceeded`) when a program assigned to this tier structure already has another `DRAFT` or `ACTIVE` tier structure assigned.\n\nA successful call records [`vl.tier_structure.activated`](/api-reference/loyalty-activity/tier-structures/activated).",
         "responses": {
           "200": {
             "description": "The activated tier structure.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2LoyaltiesTierStructuresActivateResponseBody"
+                  "$ref": "#/components/schemas/LoyaltiesTierStructuresActivateResponseBody"
+                },
+                "examples": {
+                  "Activated tier structure": {
+                    "value": {
+                      "id": "lts_135d5ea4a8e2d5e2c2",
+                      "name": "Tier structure 2026-11-18-01",
+                      "type": "POINT_BALANCE",
+                      "point_balance": {
+                        "card_definition_id": "lcdef_12d3ddae756b4364e9"
+                      },
+                      "point_earned": null,
+                      "expiration": {
+                        "type": "NO_RETENTION"
+                      },
+                      "downgrade": {
+                        "type": "MULTI_LEVEL",
+                        "grace_period": {
+                          "value": 1,
+                          "unit": "MONTH",
+                          "round_up": true
+                        }
+                      },
+                      "metadata": {
+                        "AnnualTierStructure": "true"
+                      },
+                      "status": "ACTIVE",
+                      "created_at": "2026-11-18T12:04:08.995Z",
+                      "updated_at": "2026-11-24T12:50:45.570Z",
+                      "object": "tier_structure"
+                    }
+                  }
                 }
               }
             }
           },
           "400": {
-            "description": "Validation error - request body or query parameters failed validation, or the operation is not allowed in the current resource state.",
+            "description": "Invalid state transition.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Tier structure already active": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_state_transition",
+                      "message": "Invalid state transition",
+                      "details": "Cannot activate tier structure from current state: 'ACTIVE'",
+                      "request_id": "v-13652350d2e6b1f78a"
+                    }
+                  }
                 }
               }
             }
           },
           "403": {
-            "description": "A program already has another draft or active tier structure assigned.",
+            "description": "A program assigned to this tier structure already has another `DRAFT` or `ACTIVE` tier structure assigned.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Tier structure assignments limit exceeded": {
+                    "value": {
+                      "code": 403,
+                      "key": "tier_structure_assignments_limit_exceeded",
+                      "message": "Cannot create more tier structure assignments for a single program",
+                      "details": "Cannot activate tier structure with id lts_135d5ea4a8e2d5e2c2 because program with id lprg_135d5ea4a8e2d5e2c2 already has an active tier structure assigned",
+                      "request_id": "v-1d4c8e2f7a9b0c3e51"
+                    }
+                  }
                 }
               }
             }
@@ -19466,6 +19519,19 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Tier structure not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find tier_structure with id lts_135d5ea4a8e2d5f2c2",
+                      "request_id": "v-136523896d9af70498",
+                      "resource_id": "lts_135d5ea4a8e2d5F2c2",
+                      "resource_type": "tier_structure"
+                    }
+                  }
                 }
               }
             }
@@ -27439,8 +27505,8 @@
           }
         ]
       },
-      "V2LoyaltiesTierStructuresActivateResponseBody": {
-        "title": "V2 Loyalties Tier Structures Activate Response Body",
+      "LoyaltiesTierStructuresActivateResponseBody": {
+        "title": "Loyalties Tier Structures Activate Response Body",
         "type": "object",
         "description": "Response body schema for **POST** `/v2/loyalties/tier-structures/{tierStructureId}/activate`.",
         "allOf": [
