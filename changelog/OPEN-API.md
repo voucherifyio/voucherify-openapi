@@ -16,6 +16,12 @@ Verified and updated POST `/v2/loyalties/tier-structures/{tierStructureId}/activ
 - Clarified the `403` description and added a `tier_structure_assignments_limit_exceeded` example.
 - Added a `404` `not_found` example for an unknown tier structure id.
 
+Updated `docs.json` navigation for Loyalty v2 draft endpoints and drafted activity events.
+
+- Removed POST `/v2/loyalties/card-definitions/{cardDefinitionId}/draft`, POST `/v2/loyalties/tier-structures/{tierStructureId}/draft`, and POST `/v2/loyalties/rewards/{rewardId}/draft` from the API reference nav.
+- Removed loyalty activity nav entries for drafted events on card definitions, earning rules, rewards, benefits, and tier structures.
+- Updated the five `drafted.mdx` loyalty activity event pages (benefits, card definitions, earning rules, rewards, tier structures) under `documentation/api-reference/loyalty-activity/`. The intros no longer link to the draft REST endpoints; the copy states that resources were moved to draft in the dashboard.
+
 ## 2026-11-23
 
 Documented Areas and Stores for product collections in the Product Collections API.
