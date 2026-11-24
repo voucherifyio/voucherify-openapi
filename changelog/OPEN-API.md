@@ -4,6 +4,32 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-11-23
+
+Documented Areas and Stores for product collections in the Product Collections API.
+
+- Generalized `AccessSettings` and its `assign` / `unassign` field descriptions so the same schema covers campaigns, product collections, and other resource types when the feature is enabled for that type.
+- Added `AccessSettingsProductCollectionAssignmentsList` and `AreaStoreProductCollectionAssignment`.
+- Updated `ProductCollectionsItem` with `access_settings_assignments` and `readonly`. Create and update request bodies accept `access_settings` via `AccessSettings`.
+- Removed `name` from the `required` array on `ProductCollectionsUpdateStaticRequestBody` so a static update can send `access_settings` only.
+- Clarified on `ProductCollectionsList` that the list response does not include `access_settings_assignments` when the feature is enabled.
+- Verified and updated GET `/v1/product-collections`.
+  - Added a restricted-user visibility note in the operation description.
+- Verified and updated POST `/v1/product-collections`.
+  - Documented `access_settings.assign` when Areas and Stores is enabled for product collections, including restricted-user rules in a callout.
+  - Added `400` with examples for validation errors, missing static products, and `invalid_payload` when a restricted user creates a collection without a remaining area or store assignment (`The product collection should contain at least one access settings assignment`).
+- Verified and updated GET `/v1/product-collections/{productCollectionId}`.
+  - Added restricted-user access rules in the description.
+  - Added `403` `forbidden` when the collection is not accessible in the caller's context. Added a `200` example with `access_settings_assignments`.
+- Verified and updated PUT `/v1/product-collections/{productCollectionId}`.
+  - Documented updatable fields and `access_settings` for static and auto-update collections, with restricted-user read-only rules in a callout.
+  - Added `403` `forbidden`. Extended `400` with a `resource_protected` example when the collection is read-only for the caller.
+- Verified and updated DELETE `/v1/product-collections/{productCollectionId}`.
+  - Documented that area and store assignments are deleted with the collection, with restricted-user rules in a callout.
+  - Added `403` `forbidden`. Extended `400` with `resource_protected` for read-only collections.
+- Verified and updated GET `/v1/product-collections/{productCollectionId}/products`.
+  - Added `403` `forbidden` for restricted users without access to the collection.
+
 ## 2026-11-19
 
 Verified and updated POST `/v2/loyalties/tier-structures` (Create tier structure).
