@@ -16209,7 +16209,7 @@
         ],
         "operationId": "listEarningRules",
         "summary": "List earning rules",
-        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nReturns a cursor-paginated list of earning rules. The same field cannot be used\nin both ascending and descending order at once\n(e.g. `order=name&order=-name` is rejected). Default order is `-created_at`;\n`id` is always appended as a tie-breaker.\n\nA successful call records no activity.",
+        "description": "Returns a cursor-paginated list of earning rules. Rules with status `DELETED` are excluded. The same field cannot be used\nin both ascending and descending order at once\n(e.g. `order=name&order=-name` is rejected). Default order is `-created_at`;\n`id` is always appended as a tie-breaker.\n\nA successful call records no activity.",
         "parameters": [
           {
             "name": "limit",
@@ -16231,7 +16231,7 @@
             "name": "order",
             "in": "query",
             "required": false,
-            "description": "Orders the results. Accepts one value or an array. Prefix a field with `-` for descending order. Defaults to `-created_at`. The same field cannot be used in both directions. Rows with the same sort value are then ordered by `id` ascending.",
+            "description": "Orders the results. Accepts one value or an array. Prefix a field with `-` for descending order. Allowed values: `-created_at`, `created_at`, `name`, `-name`. Defaults to `-created_at`. The same field cannot be used in both directions. Rows with the same sort value are then ordered by `id` ascending.",
             "explode": true,
             "schema": {
               "oneOf": [
@@ -16266,7 +16266,7 @@
             "name": "cursor",
             "in": "query",
             "required": false,
-            "description": "Continues pagination. Pass the `cursor.next` value from a previous response. Format `lcrsern_[a-f0-9]+`. The cursor matches the filters and order of that response.",
+            "description": "Continues pagination. Pass the `cursor.next` value from a previous response. Format `lcrsern_[a-f0-9]+`. The cursor matches the filters and order of that response. Cursors expire. An expired cursor returns `400` (`invalid_or_expired_cursor`). Changing `filters` or `order` between pages returns `400` (`cursor_and_query_mismatch`).",
             "schema": {
               "type": [
                 "string",
@@ -16281,7 +16281,7 @@
             "required": false,
             "style": "deepObject",
             "explode": true,
-            "description": "Filters the results. Pass a deep object, for example `filters[status][conditions][$is]=ACTIVE`. Fields combine through `junction`, which defaults to `AND`. Omit `filters` to apply no field filter.",
+            "description": "Filters the results by `id`, `name`, `status`, or `created_at`. Pass a deep object, for example `filters[status][conditions][$is]=ACTIVE`. Fields combine through `junction`, which defaults to `AND`. Omit `filters` to apply no field filter.",
             "schema": {
               "oneOf": [
                 {
@@ -16301,36 +16301,229 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/V2LoyaltiesEarningRulesListResponseBody"
+                },
+                "examples": {
+                  "List of earning rules": {
+                    "value": {
+                      "data": [
+                        {
+                          "id": "lern_133a941c44c06594cf",
+                          "name": "Updated earning rule",
+                          "status": "ACTIVE",
+                          "earnings": [
+                            {
+                              "id": "lernei_1351c417a0e179f2f0",
+                              "name": "New earning rule 02",
+                              "tier_rules": {
+                                "type": "NO_REQUIREMENTS"
+                              },
+                              "effects": [
+                                {
+                                  "type": "POINTS",
+                                  "points": {
+                                    "value": 100,
+                                    "card_definition_id": "lcdef_1331564fab0b1ce713"
+                                  }
+                                }
+                              ]
+                            }
+                          ],
+                          "trigger": {
+                            "event": "customer.order.paid"
+                          },
+                          "validity_hours": {
+                            "type": "ANY_TIME"
+                          },
+                          "start_date": null,
+                          "end_date": "2026-12-31T00:00:00.000Z",
+                          "trigger_limits": {
+                            "cooldown": {
+                              "type": "NO_COOLDOWN"
+                            },
+                            "frequency": {
+                              "type": "NO_LIMIT",
+                              "limits": []
+                            }
+                          },
+                          "earning_limits": {
+                            "global": {
+                              "type": "NO_LIMIT",
+                              "limits": []
+                            }
+                          },
+                          "metadata": {
+                            "some-value": null,
+                            "temporary_earning_rule": true
+                          },
+                          "created_at": "2026-10-22T11:30:54.857Z",
+                          "updated_at": "2026-11-09T11:45:39.728Z",
+                          "object": "earning_rule"
+                        },
+                        {
+                          "id": "lern_133a93007e0a5d2c4d",
+                          "name": "Earning rule 2026-10-22-04",
+                          "status": "DRAFT",
+                          "earnings": [
+                            {
+                              "id": "lernei_133a93007cca5d2c4c",
+                              "tier_rules": {
+                                "type": "NO_REQUIREMENTS"
+                              },
+                              "effects": [
+                                {
+                                  "type": "POINTS",
+                                  "points": {
+                                    "value": 150,
+                                    "card_definition_id": "lcdef_1329efb2af8ba6486f"
+                                  }
+                                }
+                              ]
+                            }
+                          ],
+                          "trigger": {
+                            "event": "customer.order.paid"
+                          },
+                          "error": {
+                            "message": "You don't know what's right!"
+                          },
+                          "validity_hours": {
+                            "type": "DAILY",
+                            "daily": [
+                              {
+                                "days_of_week": [
+                                  0,
+                                  5,
+                                  6
+                                ],
+                                "start_time": "15:00",
+                                "end_time": "17:30"
+                              }
+                            ]
+                          },
+                          "start_date": null,
+                          "end_date": null,
+                          "trigger_limits": {
+                            "cooldown": {
+                              "type": "FIXED_COOLDOWN",
+                              "fixed_cooldown": {
+                                "period": {
+                                  "value": 1,
+                                  "unit": "HOUR"
+                                }
+                              }
+                            },
+                            "frequency": {
+                              "type": "LIMITED",
+                              "limits": [
+                                {
+                                  "type": "TIME_BASED",
+                                  "period": {
+                                    "type": "CURRENT_PERIOD",
+                                    "current_period": {
+                                      "unit": "WEEK"
+                                    }
+                                  },
+                                  "triggers": {
+                                    "max": 2
+                                  }
+                                }
+                              ]
+                            }
+                          },
+                          "earning_limits": {
+                            "global": {
+                              "type": "NO_LIMIT",
+                              "limits": []
+                            }
+                          },
+                          "metadata": {},
+                          "created_at": "2026-10-22T11:26:04.277Z",
+                          "updated_at": null,
+                          "object": "earning_rule"
+                        }
+                      ],
+                      "cursor": {
+                        "next": "lcrsern_135ae8db62c5c29be2",
+                        "expires_at": "2026-11-16T14:22:34.315Z"
+                      },
+                      "object": "list"
+                    }
+                  }
                 }
               }
             }
           },
           "400": {
-            "description": "Validation error - request body or query parameters failed validation, or the operation is not allowed in the current resource state.",
+            "description": "Invalid query parameters, or an invalid, expired, or mismatched cursor.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Resource not found.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Invalid cursor format": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Property .cursor must match pattern \"^lcrsern_[a-f0-9]+$\"",
+                      "request_id": "v-12f9006245061134d0"
+                    }
+                  },
+                  "Cursor invalid or expired": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_or_expired_cursor",
+                      "message": "Invalid or expired cursor",
+                      "details": "The provided cursor is invalid or has expired",
+                      "request_id": "v-12f9006245061134d1"
+                    }
+                  },
+                  "Cursor does not match query": {
+                    "value": {
+                      "code": 400,
+                      "key": "cursor_and_query_mismatch",
+                      "message": "Cursor and query mismatch",
+                      "details": "The provided cursor does not match the query, either the cursor is invalid or the query has changed",
+                      "request_id": "v-12f9006245061134d2"
+                    }
+                  },
+                  "Limit too high": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Property .limit cannot be greater than 100",
+                      "request_id": "v-12f9006245061134d3"
+                    }
+                  },
+                  "Limit too low": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Property .limit cannot be lower than 1",
+                      "request_id": "v-12f9006245061134d4"
+                    }
+                  },
+                  "Unsupported order value": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Property .order must be equal to one of the allowed values [ -created_at, created_at, name, -name ]",
+                      "request_id": "v-12f9006245061134d5"
+                    }
+                  },
+                  "Conflicting order values": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Query cannot be ordered by 'created_at' and '-created_at' at the same time",
+                      "request_id": "v-12f9006245061134d6"
+                    }
+                  }
                 }
               }
             }
@@ -17091,24 +17284,95 @@
         ],
         "operationId": "deleteEarningRule",
         "summary": "Delete earning rule",
-        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nDeletes an earning rule by setting `status` to `DELETED` and returns the deleted earning rule. Returns `400` (`resource_in_use`) when a program still references the earning rule.\n\nA successful call records [`vl.earning_rule.deleted`](/api-reference/loyalty-activity/earning-rules/deleted).",
+        "description": "Deletes an earning rule by setting `status` to `DELETED` and returns the deleted earning rule. Returns `400` (`resource_in_use`) when a program still references the earning rule.\n\nA successful call records [`vl.earning_rule.deleted`](/api-reference/loyalty-activity/earning-rules/deleted).",
         "responses": {
           "200": {
             "description": "Deleted earning rule",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2LoyaltiesEarningRulesDeleteResponseBody"
+                  "$ref": "#/components/schemas/LoyaltiesEarningRulesDeleteResponseBody"
+                },
+                "examples": {
+                  "Deleted earning rule": {
+                    "value": {
+                      "id": "lern_133a8e898a959526c0",
+                      "name": "Earning rule 2026-10-22-01",
+                      "status": "DELETED",
+                      "earnings": [
+                        {
+                          "id": "lernei_133a8e8988959526bf",
+                          "tier_rules": {
+                            "type": "NO_REQUIREMENTS"
+                          },
+                          "effects": [
+                            {
+                              "type": "POINTS",
+                              "points": {
+                                "value": 150,
+                                "card_definition_id": "lcdef_1329efb2af8ba6486f"
+                              }
+                            }
+                          ]
+                        }
+                      ],
+                      "trigger": {
+                        "event": "customer.order.paid"
+                      },
+                      "error": {
+                        "message": "You don't know what's right!"
+                      },
+                      "validity_hours": {
+                        "type": "ANY_TIME"
+                      },
+                      "start_date": null,
+                      "end_date": null,
+                      "trigger_limits": {
+                        "cooldown": {
+                          "type": "NO_COOLDOWN"
+                        },
+                        "frequency": {
+                          "type": "NO_LIMIT",
+                          "limits": []
+                        }
+                      },
+                      "earning_limits": {
+                        "global": {
+                          "type": "NO_LIMIT",
+                          "limits": []
+                        }
+                      },
+                      "metadata": {},
+                      "created_at": "2026-10-22T11:06:33.894Z",
+                      "updated_at": null,
+                      "object": "earning_rule"
+                    }
+                  }
                 }
               }
             }
           },
           "400": {
-            "description": "Validation error - request body or query parameters failed validation, or the operation is not allowed in the current resource state.",
+            "description": "The earning rule is referenced by one or more programs (`resource_in_use`). When more programs reference it, `related_object_ids` ends with `\"…\"`.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Resource in use": {
+                    "value": {
+                      "code": 400,
+                      "key": "resource_in_use",
+                      "message": "Resource in use",
+                      "details": "Resource earning_rule with id lern_133a907d1aca5d2b76 is in use by programs with ids [lprg_128f58429f4c4bf7b2]",
+                      "request_id": "v-135b2cca60e4d56703",
+                      "related_object_ids": [
+                        "lprg_128f58429f4c4bf7b2"
+                      ],
+                      "related_object_type": "program"
+                    }
+                  }
                 }
               }
             }
@@ -17119,16 +17383,19 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Resource not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find earning_rule with id lern_133a907d1aca5d2b76",
+                      "request_id": "v-0c8b6b35294af6f192",
+                      "resource_id": "lern_133a907d1aca5d2b76",
+                      "resource_type": "earning_rule"
+                    }
+                  }
                 }
               }
             }
@@ -18530,13 +18797,24 @@
           "Tier Structures"
         ],
         "summary": "Create tier structure",
-        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nCreates a new tier structure. Depending on `type`, either\n`point_balance` (for `POINT_BALANCE`) or `point_earned` (for `POINT_EARNED`)\nis required and the other must be null/omitted. If `expiration` is omitted it\ndefaults to `{ \"type\": \"NO_RETENTION\" }`; if `downgrade` is omitted it defaults\nto `{ \"type\": \"NO_DOWNGRADE\" }`; if `status` is omitted it defaults to `DRAFT`.\n\nA successful call records [`vl.tier_structure.created`](/api-reference/loyalty-activity/tier-structures/created).",
+        "description": "Creates a new tier structure.\n\nDepending on `type`, either `point_balance` (for `POINT_BALANCE`) or `point_earned` (for `POINT_EARNED`) is required and the other must be `null`/omitted. If `expiration` is omitted, it defaults to `{ \"type\": \"NO_RETENTION\" }`. If `downgrade` is omitted it defaults to `{ \"type\": \"MULTI_LEVEL\" }`. If `status` is omitted, it defaults to `DRAFT`.\n\n<Note>Create tier structure endpoint sets only the general rules for loyalty tiers. Use the [Batch create, update, and remove tiers](/api-reference/tier-structures/batch-create-update-and-remove-tiers) endpoint to add tiers to the tier structure.</Note>\n\nA successful call records [`vl.tier_structure.created`](/api-reference/loyalty-activity/tier-structures/created).",
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/V2LoyaltiesTierStructuresCreateRequestBody"
+                "$ref": "#/components/schemas/LoyaltiesTierStructuresCreateRequestBody"
+              },
+              "examples": {
+                "Basic tier structure: Request": {
+                  "value": {
+                    "name": "Basic tier structure",
+                    "type": "POINT_BALANCE",
+                    "point_balance": {
+                      "card_definition_id": "lcdef_12d3ddae756b4364e9"
+                    }
+                  }
+                }
               }
             }
           }
@@ -18547,37 +18825,93 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2LoyaltiesTierStructuresCreateResponseBody"
+                  "$ref": "#/components/schemas/LoyaltiesTierStructuresCreateResponseBody"
+                },
+                "examples": {
+                  "Basic tier structure: Response": {
+                    "value": {
+                      "id": "lts_135dd7642fc630eb06",
+                      "name": "Tier structure 2026-11-18-04",
+                      "type": "POINT_BALANCE",
+                      "point_balance": {
+                        "card_definition_id": "lcdef_12d3ddae756b4364e9"
+                      },
+                      "point_earned": null,
+                      "expiration": {
+                        "type": "NO_RETENTION"
+                      },
+                      "downgrade": {
+                        "type": "MULTI_LEVEL"
+                      },
+                      "metadata": {},
+                      "status": "DRAFT",
+                      "created_at": "2026-11-18T20:51:42.399Z",
+                      "updated_at": null,
+                      "object": "tier_structure"
+                    }
+                  }
                 }
               }
             }
           },
           "400": {
-            "description": "Validation error - request body or query parameters failed validation, or the operation is not allowed in the current resource state.",
+            "description": "The request body failed validation (`invalid_payload`). `metadata` that does not match the `vl_tier_structure` metadata schema returns `metadata_validation_failed`.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Invalid payload": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_payload",
+                      "message": "Invalid payload",
+                      "details": "Payload must have required property 'name'",
+                      "request_id": "v-12c30587d84f93b9c1"
+                    }
+                  },
+                  "Metadata validation failed": {
+                    "value": {
+                      "code": 400,
+                      "key": "metadata_validation_failed",
+                      "message": "Metadata validation failed",
+                      "details": "Only defined properties are allowed",
+                      "request_id": "v-12c30587d84f93b9c2"
+                    }
+                  }
                 }
               }
             }
           },
           "404": {
-            "description": "Resource not found.",
+            "description": "Returns `not_found` when `card_definition_id` does not match a card definition, or when a `custom_activity_types` id does not match a custom event schema.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Card definition not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find card_definition with id lcdef_1234567890",
+                      "request_id": "v-12c30587d84f93b9c3",
+                      "resource_id": "lcdef_1234567890",
+                      "resource_type": "card_definition"
+                    }
+                  },
+                  "Custom event schema not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find custom_event_schemas with ids [ ms_0123456789abcdef01234567 ]",
+                      "request_id": "v-12c30587d84f93b9c4"
+                    }
+                  }
                 }
               }
             }
@@ -18801,44 +19135,79 @@
           "Tier Structures"
         ],
         "summary": "Get tier structure",
-        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nReturns a single tier structure by its ID.\n\nA successful call records no activity.",
+        "description": "Returns a single tier structure by its ID. Use the [List tiers](/api-reference/tier-structures/list-tiers) endpoint to list individual tiers added to the tier structure.\n\nA successful call records no activity.",
         "responses": {
           "200": {
             "description": "The tier structure.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2LoyaltiesTierStructuresGetResponseBody"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Validation error - request body or query parameters failed validation, or the operation is not allowed in the current resource state.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                  "$ref": "#/components/schemas/LoyaltiesTierStructuresGetResponseBody"
+                },
+                "examples": {
+                  "Tier structure": {
+                    "value": {
+                      "id": "lts_135d5ea4a8e2d5e2c2",
+                      "name": "Tier structure 2026",
+                      "type": "POINT_BALANCE",
+                      "point_balance": {
+                        "card_definition_id": "lcdef_12d3ddae756b4364e9"
+                      },
+                      "point_earned": null,
+                      "expiration": {
+                        "type": "NO_RETENTION"
+                      },
+                      "downgrade": {
+                        "type": "MULTI_LEVEL",
+                        "grace_period": {
+                          "value": 1,
+                          "unit": "MONTH",
+                          "round_up": true
+                        }
+                      },
+                      "metadata": {
+                        "AnnualTierStructure": true
+                      },
+                      "status": "DRAFT",
+                      "created_at": "2026-11-18T12:04:08.995Z",
+                      "updated_at": "2026-11-19T19:20:00.469Z",
+                      "object": "tier_structure"
+                    }
+                  }
                 }
               }
             }
           },
           "404": {
-            "description": "Resource not found.",
+            "description": "Resource not found. The tier structure does not exist, is deleted, or the id does not match `lts_[a-f0-9]+`.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Tier structure not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find tier_structure with id lts_235d5ea4a8e2d5e2c2",
+                      "request_id": "v-135f0df4fa1fc6f4bb",
+                      "resource_id": "lts_235d5ea4a8e2d5e2c2",
+                      "resource_type": "tier_structure"
+                    }
+                  },
+                  "Tier structure ID does not match pattern": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find tier_structure with id non-existent-id",
+                      "request_id": "v-135f0df4fa1fc6f4bb",
+                      "resource_id": "non-existent-id",
+                      "resource_type": "tier_structure"
+                    }
+                  }
                 }
               }
             }
@@ -19731,6 +20100,265 @@
         ]
       }
     },
+    "/v2/loyalties/tier-structures/{tierStructureId}/tiers/batch": {
+      "parameters": [
+        {
+          "name": "tierStructureId",
+          "in": "path",
+          "required": true,
+          "description": "Identifies the tier structure. Format `lts_[a-f0-9]+`.",
+          "schema": {
+            "type": "string",
+            "pattern": "^lts_[a-f0-9]+$"
+          }
+        }
+      ],
+      "post": {
+        "operationId": "batchTiers",
+        "tags": [
+          "Tier Structures"
+        ],
+        "summary": "Batch create, update, and remove tiers",
+        "description": "Creates, updates, and removes tiers in a tier structure in one transaction. Each of `create`, `update`, and `remove` accepts up to 100 items, and at least one of them must contain an item.\n\nThe batch runs in this order: remove, update, then create. If any item fails, none of the changes are saved.\n\nWhen the tier structure is in `DRAFT` status, all three actions are allowed. In any other status, `create` and `remove` are rejected, and `update` can change only `name` and `metadata`.\n\nA tier follows the tier structure's points expiration when `points_expiration.type` is `INHERIT`. Any other type overrides those rules. You can set or change that override only while the tier structure is `DRAFT`. In any other status, omit `points_expiration`.\n\nAfter the batch, tier names must be unique within the tier structure, and points ranges of tiers must not overlap. A tier that an earning rule or a reward still uses cannot be removed.\n\nA successful call returns `204` with no body. It records [`vl.tier_structure.tier.created`](/api-reference/loyalty-activity/tier-structures/tier-created) for each created tier, [`vl.tier_structure.tier.updated`](/api-reference/loyalty-activity/tier-structures/tier-updated) for each updated tier, and [`vl.tier_structure.tier.deleted`](/api-reference/loyalty-activity/tier-structures/tier-deleted) for each removed tier.",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoyaltiesTierStructuresTiersBatchRequestBody"
+              },
+              "examples": {
+                "Basic tier schema": {
+                  "value": {
+                    "create": [
+                      {
+                        "name": "Bronze tier",
+                        "qualification_rules": {
+                          "type": "POINTS",
+                          "points": {
+                            "min_value": 1,
+                            "max_value": 99
+                          }
+                        }
+                      },
+                      {
+                        "name": "Silver tier",
+                        "qualification_rules": {
+                          "type": "POINTS",
+                          "points": {
+                            "min_value": 100,
+                            "max_value": 199
+                          }
+                        }
+                      },
+                      {
+                        "name": "Gold tier",
+                        "qualification_rules": {
+                          "type": "POINTS",
+                          "points": {
+                            "min_value": 200
+                          }
+                        }
+                      }
+                    ],
+                    "update": [],
+                    "remove": []
+                  }
+                },
+                "Batch create, update, and remove tiers": {
+                  "value": {
+                    "create": [
+                      {
+                        "name": "Platinum",
+                        "qualification_rules": {
+                          "type": "POINTS",
+                          "points": {
+                            "min_value": 400,
+                            "max_value": 499
+                          }
+                        }
+                      }
+                    ],
+                    "update": [
+                      {
+                        "id": "lt_135ef23cc84630c5eb",
+                        "name": "Silver",
+                        "points_expiration": {
+                          "type": "ROLLING_EXPIRATION",
+                          "rolling_expiration": {
+                            "period": {
+                              "unit": "DAY",
+                              "value": 24
+                            }
+                          }
+                        }
+                      }
+                    ],
+                    "remove": [
+                      "lt_135ef23cc84630c5ea"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "The batch was processed. The response has no body."
+          },
+          "400": {
+            "description": "Validation error - request body or query parameters failed validation, or the operation is not allowed in the current resource state.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Invalid payload": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_payload",
+                      "message": "Invalid payload",
+                      "details": "At least one of 'create', 'update', or 'remove' properties must be provided",
+                      "request_id": "v-1d4c8e2f7a9b0c3e51"
+                    }
+                  },
+                  "Overlapping tier": {
+                    "value": {
+                      "code": 400,
+                      "key": "overlapping_tier",
+                      "message": "Overlapping tier",
+                      "details": "Tier overlaps with existing tier lt_0b7e4c2a91d3f8e650",
+                      "request_id": "v-1d4c8e2f7a9b0c3e51"
+                    }
+                  },
+                  "Resource in use": {
+                    "value": {
+                      "code": 400,
+                      "key": "resource_in_use",
+                      "message": "Resource in use",
+                      "details": "Resource tier with id lt_0b7e4c2a91d3f8e650 is in use by earning_rules with ids [lern_133a907d1aca5d2b76]",
+                      "request_id": "v-1d4c8e2f7a9b0c3e51",
+                      "related_object_ids": [
+                        "lern_133a907d1aca5d2b76"
+                      ],
+                      "related_object_type": "earning_rule"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The batch would leave more than 100 tiers in the tier structure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Tier limit exceeded": {
+                    "value": {
+                      "code": 403,
+                      "key": "tiers_per_tier_structure_limit_exceeded",
+                      "message": "Cannot create more tiers per tier structure",
+                      "details": "Cannot create more than 100 tiers per tier structure",
+                      "request_id": "v-1d4c8e2f7a9b0c3e51"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found. The tier structure, a tier named in `update` or `remove`, or a customer segment used by a tier does not exist. A tier structure id that does not match `lts_[a-f0-9]+` also returns `404`.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Tier structure not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find tier_structure with id lts_0b7e4c2a91d3f8e650",
+                      "request_id": "v-1d4c8e2f7a9b0c3e51",
+                      "resource_id": "lts_0b7e4c2a91d3f8e650",
+                      "resource_type": "tier_structure"
+                    }
+                  },
+                  "Tier structure ID does not match pattern": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find tier_structure with id tier_structure_123",
+                      "request_id": "v-1d4c8e2f7a9b0c3e51",
+                      "resource_id": "tier_structure_123",
+                      "resource_type": "tier_structure"
+                    }
+                  },
+                  "Tier not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find tier with id lt_0b7e4c2a91d3f8e650",
+                      "request_id": "v-1d4c8e2f7a9b0c3e51",
+                      "resource_id": "lt_0b7e4c2a91d3f8e650",
+                      "resource_type": "tier"
+                    }
+                  },
+                  "Segment not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find segment with id seg_0b7e4c2a91d3f8e650",
+                      "request_id": "v-1d4c8e2f7a9b0c3e51",
+                      "resource_id": "seg_0b7e4c2a91d3f8e650",
+                      "resource_type": "segment"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Internal server error": {
+                    "value": {
+                      "code": 500,
+                      "key": "api_error",
+                      "message": "Something went wrong. Don't worry, your campaigns are still safe and the Voucherify Team has been notified. Check out our Help Center and forums for help, or head back to home."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": []
+          },
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
     "/v2/loyalties/tier-structures/{tierStructureId}/activities": {
       "parameters": [
         {
@@ -19899,7 +20527,7 @@
           "Benefits"
         ],
         "summary": "List benefits",
-        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nReturns a cursor-paginated list of benefits. Supports filtering by `id`, `name`, `status`,\n`type`, and `created_at`, ordering by `created_at`, `name`, and `type` (prefix with `-` for\ndescending), and cursor-based pagination. Deleted benefits are excluded.\nMultiple filters are combined with the `junction` (`AND` by default).\nThe same field cannot be ordered both ascending and descending at the same time.\n\nA successful call records no activity.",
+        "description": "Returns a cursor-paginated list of benefits. Supports filtering by `id`, `name`, `status`, `type`, and `created_at`, ordering by `created_at`, `name`, and `type` (prefix with `-` for descending), and cursor-based pagination. Deleted benefits are excluded. Multiple filters are combined with the `junction` (`AND` by default). The same field cannot be ordered both ascending and descending at the same time.\n\nA successful call records no activity.",
         "parameters": [
           {
             "name": "limit",
@@ -19989,31 +20617,166 @@
         ],
         "responses": {
           "200": {
-            "description": "Cursor-paginated list of benefits",
+            "description": "Cursor-paginated list of benefits.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2LoyaltiesBenefitsListResponseBody"
+                  "$ref": "#/components/schemas/LoyaltiesBenefitsListResponseBody"
+                },
+                "examples": {
+                  "List of benefits": {
+                    "value": {
+                      "data": [
+                        {
+                          "id": "lben_135b3e244fc5c284c5",
+                          "name": "Benefit 2026-11-16-03",
+                          "type": "POINTS_PROPORTIONAL",
+                          "status": "DRAFT",
+                          "stock": {
+                            "type": "UNLIMITED"
+                          },
+                          "points_proportional": {
+                            "calculation_type": "ORDER_ITEMS_QUANTITY",
+                            "card_definition_id": "lcdef_1331564fab0b1ce713",
+                            "order_items": {
+                              "quantity": {
+                                "every": 3,
+                                "value": 5,
+                                "applicable_to": [
+                                  {
+                                    "type": "product",
+                                    "product": {
+                                      "id": "prod_1294cee5910e4904c3"
+                                    }
+                                  }
+                                ]
+                              }
+                            }
+                          },
+                          "created_at": "2026-11-16T20:25:11.230Z",
+                          "updated_at": null,
+                          "object": "benefit"
+                        },
+                        {
+                          "id": "lben_135b3b2b7a2d653cdd",
+                          "name": "Benefit 2026-11-16-02",
+                          "type": "POINTS",
+                          "status": "ACTIVE",
+                          "stock": {
+                            "type": "UNLIMITED"
+                          },
+                          "points": {
+                            "value": 50,
+                            "card_definition_id": "lcdef_1331564fab0b1ce713"
+                          },
+                          "created_at": "2026-11-16T20:12:12.120Z",
+                          "updated_at": null,
+                          "object": "benefit"
+                        },
+                        {
+                          "id": "lben_135b3a536505c28011",
+                          "name": "Benefit 2026-11-16-01",
+                          "type": "MATERIAL",
+                          "status": "ACTIVE",
+                          "stock": {
+                            "type": "LIMITED",
+                            "limited": {
+                              "quantity": 313
+                            }
+                          },
+                          "material": {
+                            "type": "PRODUCT",
+                            "product": {
+                              "id": "prod_128f4cd0a94c4bef25"
+                            }
+                          },
+                          "created_at": "2026-11-16T20:08:30.867Z",
+                          "updated_at": null,
+                          "object": "benefit"
+                        }
+                      ],
+                      "cursor": {
+                        "next": "lcrsben_135c9a9e680a9b9e95",
+                        "expires_at": "2026-11-17T21:57:42.368Z"
+                      },
+                      "object": "list"
+                    }
+                  }
                 }
               }
             }
           },
           "400": {
-            "description": "Validation error - request body or query parameters failed validation, or the operation is not allowed in the current resource state.",
+            "description": "Query parameters failed validation, or the cursor is invalid, expired, or does not match the query.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Resource not found.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Limit too high": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Property .limit cannot be greater than 100",
+                      "request_id": "v-135c9a9e680a9b9e01"
+                    }
+                  },
+                  "Limit too low": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Property .limit cannot be lower than 1",
+                      "request_id": "v-135c9a9e680a9b9e02"
+                    }
+                  },
+                  "Unsupported order value": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Property .order must be equal to one of the allowed values [ -created_at, created_at, name, -name, -type, type ]",
+                      "request_id": "v-135c9a9e680a9b9e03"
+                    }
+                  },
+                  "Conflicting order values": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Query cannot be ordered by 'created_at' and '-created_at' at the same time",
+                      "request_id": "v-135c9a9e680a9b9e04"
+                    }
+                  },
+                  "Invalid cursor format": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Property .cursor must match pattern \"^lcrsben_[a-f0-9]+$\"",
+                      "request_id": "v-135c9a9e680a9b9e05"
+                    }
+                  },
+                  "Cursor invalid or expired": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_or_expired_cursor",
+                      "message": "Invalid or expired cursor",
+                      "details": "The provided cursor is invalid or has expired",
+                      "request_id": "v-135c9a9e680a9b9e06"
+                    }
+                  },
+                  "Cursor does not match query": {
+                    "value": {
+                      "code": 400,
+                      "key": "cursor_and_query_mismatch",
+                      "message": "Cursor and query mismatch",
+                      "details": "The provided cursor does not match the query, either the cursor is invalid or the query has changed",
+                      "request_id": "v-135c9a9e680a9b9e07"
+                    }
+                  }
                 }
               }
             }
@@ -20054,34 +20817,209 @@
           "Benefits"
         ],
         "summary": "Create benefit",
-        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nCreates a new benefit. Exactly one type-specific configuration object (`points`,\n`points_proportional`, `material`, or `digital`) is required, matching the `type`.\nWhen `status` is omitted the benefit is created in `DRAFT` status. When `stock` is\nomitted it defaults to `{ \"type\": \"UNLIMITED\" }`.\n\nReferenced resources are validated: the card definition (for points-based types) must\nexist and - when creating with `status: ACTIVE` - must be ACTIVE (423 `resource_locked`\notherwise); the product/SKU (for `MATERIAL`) and campaign (for `DIGITAL`) must exist,\nand the campaign type must match the digital benefit type (`DISCOUNT_COUPONS` or\n`GIFT_VOUCHERS`). The benefit name must be unique per project (409 `duplicate_found`).\n\nA successful call records [`vl.benefit.created`](/api-reference/loyalty-activity/benefits/created).",
+        "description": "Creates a new benefit. Exactly one type-specific configuration object (`points`, `points_proportional`, `material`, or `digital`) is required, matching the `type`.\n\nWhen `status` is omitted the benefit is created in `DRAFT` status. When `stock` is omitted, it defaults to `{ \"type\": \"UNLIMITED\" }`.\n\nReferenced resources are validated: the card definition (for points-based types) must exist and - when creating with `status: ACTIVE` - must be ACTIVE (423 `non_active_card_definition` otherwise); the product/SKU (for `MATERIAL`) and campaign (for `DIGITAL`) must exist; the campaign type must match the digital benefit type (`DISCOUNT_COUPONS` or `GIFT_VOUCHERS`, 400 `invalid_campaign_type` otherwise); and when creating with `status: ACTIVE`, the campaign must not be a draft (423 `non_active_campaign` otherwise).\n\nA successful call records [`vl.benefit.created`](/api-reference/loyalty-activity/benefits/created).",
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/V2LoyaltiesBenefitsCreateRequestBody"
+                "$ref": "#/components/schemas/LoyaltiesBenefitsCreateRequestBody"
+              },
+              "examples": {
+                "Material benefit: Request": {
+                  "value": {
+                    "name": "Benefit 2026-11-16-01",
+                    "type": "MATERIAL",
+                    "material": {
+                      "type": "PRODUCT",
+                      "product": {
+                        "id": "prod_128f4cd0a94c4bef25"
+                      }
+                    },
+                    "stock": {
+                      "type": "LIMITED",
+                      "limited": {
+                        "quantity": 313
+                      }
+                    },
+                    "status": "ACTIVE"
+                  }
+                },
+                "Point benefit: Request": {
+                  "value": {
+                    "name": "Benefit 2026-11-16-02",
+                    "type": "POINTS",
+                    "points": {
+                      "value": 50,
+                      "card_definition_id": "lcdef_1331564fab0b1ce713"
+                    },
+                    "status": "ACTIVE"
+                  }
+                },
+                "Point proportional – order items: Request": {
+                  "value": {
+                    "name": "Benefit 2026-11-16-03",
+                    "type": "POINTS_PROPORTIONAL",
+                    "points_proportional": {
+                      "card_definition_id": "lcdef_1331564fab0b1ce713",
+                      "calculation_type": "ORDER_ITEMS_QUANTITY",
+                      "order_items": {
+                        "quantity": {
+                          "every": 3,
+                          "value": 5,
+                          "applicable_to": [
+                            {
+                              "type": "product",
+                              "product": {
+                                "id": "prod_1294cee5910e4904c3"
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    "status": "ACTIVE"
+                  }
+                }
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "The created benefit",
+            "description": "The created benefit.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/V2LoyaltiesBenefitsCreateResponseBody"
+                },
+                "examples": {
+                  "Material benefit: Response": {
+                    "value": {
+                      "id": "lben_135b378c642d653862",
+                      "name": "Benefit 2026-11-16-01",
+                      "type": "MATERIAL",
+                      "status": "ACTIVE",
+                      "stock": {
+                        "type": "LIMITED",
+                        "limited": {
+                          "quantity": 313
+                        }
+                      },
+                      "material": {
+                        "type": "PRODUCT",
+                        "product": {
+                          "id": "prod_128f4cd0a94c4bef25"
+                        }
+                      },
+                      "created_at": "2026-11-16T19:56:22.800Z",
+                      "updated_at": null,
+                      "object": "benefit"
+                    }
+                  },
+                  "Point benefit: Response": {
+                    "value": {
+                      "id": "lben_135b3b2b7a2d653cdd",
+                      "name": "Benefit 2026-11-16-02",
+                      "type": "POINTS",
+                      "status": "ACTIVE",
+                      "stock": {
+                        "type": "UNLIMITED"
+                      },
+                      "points": {
+                        "value": 50,
+                        "card_definition_id": "lcdef_1331564fab0b1ce713"
+                      },
+                      "created_at": "2026-11-16T20:12:12.120Z",
+                      "updated_at": null,
+                      "object": "benefit"
+                    }
+                  },
+                  "Point proportional – order items: Response": {
+                    "value": {
+                      "id": "lben_135b3e244fc5c284c5",
+                      "name": "Benefit 2026-11-16-03",
+                      "type": "POINTS_PROPORTIONAL",
+                      "status": "ACTIVE",
+                      "stock": {
+                        "type": "UNLIMITED"
+                      },
+                      "points_proportional": {
+                        "calculation_type": "ORDER_ITEMS_QUANTITY",
+                        "card_definition_id": "lcdef_1331564fab0b1ce713",
+                        "order_items": {
+                          "quantity": {
+                            "every": 3,
+                            "value": 5,
+                            "applicable_to": [
+                              {
+                                "type": "product",
+                                "product": {
+                                  "id": "prod_1294cee5910e4904c3"
+                                }
+                              }
+                            ]
+                          }
+                        }
+                      },
+                      "created_at": "2026-11-16T20:25:11.230Z",
+                      "updated_at": null,
+                      "object": "benefit"
+                    }
+                  }
                 }
               }
             }
           },
           "400": {
-            "description": "Validation error - request body or query parameters failed validation, or the operation is not allowed in the current resource state.",
+            "description": "The request body failed validation.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Invalid payload": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_payload",
+                      "message": "Invalid payload",
+                      "details": "Property .points_proportional must have required property 'calculation_type'",
+                      "request_id": "v-135b365e94843616bc"
+                    }
+                  },
+                  "Invalid campaign type": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_campaign_type",
+                      "message": "Invalid payload",
+                      "details": "Campaign must be of type 'DISCOUNT_COUPONS' for DISCOUNT_COUPONS benefit",
+                      "request_id": "v-135b365e94843616bc"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - a referenced resource is not accessible in the current context.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Product not accessible": {
+                    "value": {
+                      "code": 403,
+                      "key": "forbidden",
+                      "message": "Forbidden",
+                      "details": "Resource product with id prod_128f4cd0a94c4bef25 is not accessible in given context",
+                      "request_id": "v-135b38030624d57b5b",
+                      "resource_id": "prod_128f4cd0a94c4bef25",
+                      "resource_type": "product"
+                    }
+                  }
                 }
               }
             }
@@ -20092,16 +21030,52 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Product not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find product with id prod_128f4cd0a94c3bef25",
+                      "request_id": "v-135b38030624d57b5b",
+                      "resource_id": "prod_128f4cd0a94c3bef25",
+                      "resource_type": "product"
+                    }
+                  },
+                  "Card definition not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find card_definition with id lcdef_1329efb2af8ba6483f",
+                      "request_id": "v-135b365e94843616bc",
+                      "resource_id": "lcdef_1329efb2af8ba6483f",
+                      "resource_type": "card_definition"
+                    }
+                  },
+                  "SKU not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find sku with id sku_128f4cd0a94c4bef25",
+                      "request_id": "v-135b38030624d57b5b",
+                      "resource_id": "sku_128f4cd0a94c4bef25",
+                      "resource_type": "sku"
+                    }
+                  },
+                  "Campaign not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find campaign with id camp_128f4cd0a94c4bef25",
+                      "request_id": "v-135b38030624d57b5b",
+                      "resource_id": "camp_128f4cd0a94c4bef25",
+                      "resource_type": "campaign"
+                    }
+                  }
                 }
               }
             }
@@ -20112,6 +21086,26 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Non-active card definition": {
+                    "value": {
+                      "code": 423,
+                      "key": "non_active_card_definition",
+                      "message": "Cannot create benefit when card definition is not ACTIVE",
+                      "details": "Invalid card_definition status with id lcdef_1329efb2af8ba6486f",
+                      "request_id": "v-135b35dbbc843615c8"
+                    }
+                  },
+                  "Non-active campaign": {
+                    "value": {
+                      "code": 423,
+                      "key": "non_active_campaign",
+                      "message": "Cannot use a draft campaign in a digital benefit",
+                      "details": "Invalid campaign status with id camp_128f4cd0a94c4bef25",
+                      "request_id": "v-135b35dbbc843615c8"
+                    }
+                  }
                 }
               }
             }
@@ -20204,7 +21198,7 @@
             }
           },
           "404": {
-            "description": "The benefit doesn't exist. A deleted benefit is not found. Returned for any unknown benefit id, including a value that does not match `lben_[a-f0-9]+`. `key` is `not_found` and `resource_type` is `benefit`.",
+            "description": "The benefit doesn't exist. A deleted benefit is not found. Returned for any unknown benefit ID, including a value that does not match `lben_[a-f0-9]+`. `key` is `not_found` and `resource_type` is `benefit`.",
             "content": {
               "application/json": {
                 "schema": {
@@ -20262,13 +21256,29 @@
           "Benefits"
         ],
         "summary": "Update benefit",
-        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nUpdates a benefit. When the benefit is in `DRAFT` status all properties can be updated.\nWhen the benefit is not in `DRAFT` status, only `name`, `stock`, `points`, `points_proportional`, and `digital` may be updated (400 `invalid_payload`\notherwise). Referenced resources (card definition, product/SKU, campaign) are validated\nthe same way as on create; a points-based benefit can only reference an ACTIVE card\ndefinition (423 `resource_locked` otherwise). The benefit name must remain unique per\nproject (409 `duplicate_found`).\n\nA successful call records [`vl.benefit.updated`](/api-reference/loyalty-activity/benefits/updated).",
+        "description": "Updates the benefit fields in the body. The body must contain at least one of `name`, `type`, `points`, `points_proportional`, `material`, `digital`, or `stock`. This operation does not change `status`.\n\nIn `DRAFT` status, any of these fields may be sent. In `ACTIVE` status, the body may contain only `name`, `stock`, `points`, `points_proportional`, and `digital`. On an `ACTIVE` benefit, `points.card_definition_id`, `points_proportional.calculation_type`, `points_proportional.card_definition_id`, `digital.type`, and `digital.gift_vouchers.campaign_id` cannot change. `digital` cannot be sent for an `ACTIVE` `DISCOUNT_COUPONS` benefit.\n\nA `POINTS` or `POINTS_PROPORTIONAL` benefit requires an `ACTIVE` card definition in `DRAFT` and `ACTIVE` status (`423` `non_active_card_definition`). An `ACTIVE` digital benefit cannot use a `DRAFT` campaign (`423` `non_active_campaign`).\n\nA successful call records [`vl.benefit.updated`](/api-reference/loyalty-activity/benefits/updated).",
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/V2LoyaltiesBenefitsUpdateRequestBody"
+                "$ref": "#/components/schemas/LoyaltiesBenefitsUpdateRequestBody"
+              },
+              "examples": {
+                "Update active benefit": {
+                  "value": {
+                    "stock": {
+                      "type": "LIMITED",
+                      "limited": {
+                        "quantity": 333
+                      }
+                    },
+                    "points": {
+                      "value": 1,
+                      "card_definition_id": "lcdef_1331564fab0b1ce713"
+                    }
+                  }
+                }
               }
             }
           }
@@ -20279,37 +21289,168 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2LoyaltiesBenefitsUpdateResponseBody"
+                  "$ref": "#/components/schemas/LoyaltiesBenefitsUpdateResponseBody"
+                },
+                "examples": {
+                  "Updated active benefit": {
+                    "value": {
+                      "id": "lben_135b36888c45c2fb5f",
+                      "name": "Benefit 2026-11-16-02",
+                      "type": "POINTS",
+                      "status": "ACTIVE",
+                      "stock": {
+                        "type": "LIMITED",
+                        "limited": {
+                          "quantity": 333
+                        }
+                      },
+                      "points": {
+                        "value": 1,
+                        "card_definition_id": "lcdef_1331564fab0b1ce713"
+                      },
+                      "created_at": "2026-11-16T19:51:56.714Z",
+                      "updated_at": "2026-11-17T11:09:40.926Z",
+                      "object": "benefit"
+                    }
+                  }
                 }
               }
             }
           },
           "400": {
-            "description": "Validation error - request body or query parameters failed validation, or the operation is not allowed in the current resource state.",
+            "description": "The body failed validation, or the change is not allowed for the benefit's current status.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Active benefit: Invalid payload": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_payload",
+                      "message": "Invalid payload",
+                      "details": "Only [name, stock, points, points_proportional, digital] properties are allowed to be updated when benefit is in ACTIVE status",
+                      "request_id": "v-135c0b1cb1841540a3"
+                    }
+                  },
+                  "Empty body": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_payload",
+                      "message": "Invalid payload",
+                      "details": "At least one property is required",
+                      "request_id": "v-135c0b1cb1841540a4"
+                    }
+                  },
+                  "Active benefit: Immutable property": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_payload",
+                      "message": "Invalid payload",
+                      "details": "Property 'points.card_definition_id' cannot be changed when benefit is in ACTIVE status",
+                      "request_id": "v-135c0b1cb1841540a5"
+                    }
+                  },
+                  "Campaign type mismatch": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_campaign_type",
+                      "message": "Invalid payload",
+                      "details": "Campaign must be of type 'DISCOUNT_COUPONS' for DISCOUNT_COUPONS benefit",
+                      "request_id": "v-135c0b1cb1841540a6"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden. The product or SKU is not accessible in the current context.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Product not accessible": {
+                    "value": {
+                      "code": 403,
+                      "key": "forbidden",
+                      "message": "Forbidden",
+                      "details": "Resource product with id prod_128f4cd0a94c4bef25 is not accessible in given context",
+                      "request_id": "v-135b38030624d57b5b",
+                      "resource_id": "prod_128f4cd0a94c4bef25",
+                      "resource_type": "product"
+                    }
+                  }
                 }
               }
             }
           },
           "404": {
-            "description": "Resource not found.",
+            "description": "Resource not found. The benefit, or a card definition, product, SKU, or campaign referenced in the body, does not exist. A deleted benefit is not found.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Benefit not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find benefit with id lben_135b36888c45c2fb7f",
+                      "request_id": "v-135c0d7cd05f3082f9",
+                      "resource_id": "lben_135b36888c45c2fb7f",
+                      "resource_type": "benefit"
+                    }
+                  },
+                  "Card definition not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find card_definition with id lcdef_1331564fab0b1ce813",
+                      "request_id": "v-135c0e1c0ddf30843a",
+                      "resource_id": "lcdef_1331564fab0b1ce813",
+                      "resource_type": "card_definition"
+                    }
+                  },
+                  "Product not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find product with id prod_128f4cd0a94c3bef25",
+                      "request_id": "v-135b38030624d57b5b",
+                      "resource_id": "prod_128f4cd0a94c3bef25",
+                      "resource_type": "product"
+                    }
+                  },
+                  "SKU not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find sku with id sku_128f4cd0a94c4bef25",
+                      "request_id": "v-135b38030624d57b5b",
+                      "resource_id": "sku_128f4cd0a94c4bef25",
+                      "resource_type": "sku"
+                    }
+                  },
+                  "Campaign not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find campaign with id camp_128f4cd0a94c4bef25",
+                      "request_id": "v-135b38030624d57b5b",
+                      "resource_id": "camp_128f4cd0a94c4bef25",
+                      "resource_type": "campaign"
+                    }
+                  }
                 }
               }
             }
@@ -20320,6 +21461,26 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Card definition not active": {
+                    "value": {
+                      "code": 423,
+                      "key": "non_active_card_definition",
+                      "message": "Cannot update benefit when card definition is not ACTIVE",
+                      "details": "Invalid card_definition status with id lcdef_12d4fe623d45660f3e",
+                      "request_id": "v-135c0deb31c4154697"
+                    }
+                  },
+                  "Non-active campaign": {
+                    "value": {
+                      "code": 423,
+                      "key": "non_active_campaign",
+                      "message": "Cannot use a draft campaign in a digital benefit",
+                      "details": "Invalid campaign status with id camp_128f4cd0a94c4bef25",
+                      "request_id": "v-135b35dbbc843615c8"
+                    }
+                  }
                 }
               }
             }
@@ -20360,34 +21521,96 @@
           "Benefits"
         ],
         "summary": "Delete benefit",
-        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nSoft-deletes a benefit by setting `status` to `DELETED` and returns the deleted benefit. A benefit that is used by any\nearning rule cannot be deleted (400 `resource_in_use`, with `related_object_ids` and\n`related_object_type: earning_rule` in the error body).\n\nA successful call records [`vl.benefit.deleted`](/api-reference/loyalty-activity/benefits/deleted).",
+        "description": "Deletes a benefit by setting `status` to `DELETED` and returns the deleted benefit. A benefit that is used by any earning rule cannot be deleted (400 `resource_in_use`, with `related_object_ids` and `related_object_type: earning_rule` in the error body).\n\nA successful call records [`vl.benefit.deleted`](/api-reference/loyalty-activity/benefits/deleted).",
         "responses": {
           "200": {
             "description": "The deleted benefit",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2LoyaltiesBenefitsDeleteResponseBody"
+                  "$ref": "#/components/schemas/LoyaltiesBenefitsDeleteResponseBody"
+                },
+                "examples": {
+                  "Deleted benefit": {
+                    "value": {
+                      "id": "lben_135b36888c45c2fb5f",
+                      "name": "Benefit 2026-11-17-01",
+                      "type": "POINTS",
+                      "status": "DELETED",
+                      "stock": {
+                        "type": "LIMITED",
+                        "limited": {
+                          "quantity": 333
+                        }
+                      },
+                      "points": {
+                        "value": 1,
+                        "card_definition_id": "lcdef_1331564fab0b1ce713"
+                      },
+                      "created_at": "2026-11-16T19:51:56.714Z",
+                      "updated_at": "2026-11-17T11:41:34.695Z",
+                      "object": "benefit"
+                    }
+                  }
                 }
               }
             }
           },
           "400": {
-            "description": "Validation error - request body or query parameters failed validation, or the operation is not allowed in the current resource state.",
+            "description": "The benefit is used by one or more earning rules (`resource_in_use`). When more earning rules reference it, `related_object_ids` ends with `\"…\"`.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Benefit in use": {
+                    "value": {
+                      "code": 400,
+                      "key": "resource_in_use",
+                      "message": "Resource in use",
+                      "details": "Resource benefit with id lben_135b3a536505c28011 is in use by earning_rules with ids [lern_133a93007e0a5d2c4d]",
+                      "request_id": "v-135d2f2998e6b18043",
+                      "related_object_ids": [
+                        "lern_133a93007e0a5d2c4d"
+                      ],
+                      "related_object_type": "earning_rule"
+                    }
+                  }
                 }
               }
             }
           },
           "404": {
-            "description": "Resource not found.",
+            "description": "Resource not found. The benefit does not exist or is deleted. An ID that does not match `lben_[a-f0-9]+` also returns `404`.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Benefit not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find benefit with id lben_235b3a536505c28011",
+                      "request_id": "v-135d2f5f0de84dc91b",
+                      "resource_id": "lben_235b3a536505c28011",
+                      "resource_type": "benefit"
+                    }
+                  },
+                  "Malformed benefit ID": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find benefit with id benefit_123",
+                      "request_id": "v-135d2f5f0de84dc92a",
+                      "resource_id": "benefit_123",
+                      "resource_type": "benefit"
+                    }
+                  }
                 }
               }
             }
@@ -20442,34 +21665,103 @@
           "Benefits"
         ],
         "summary": "Activate benefit",
-        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nMoves a benefit from `DRAFT` to `ACTIVE` status. No request body. Only the\n`DRAFT` -> `ACTIVE` transition is allowed; activating from any other state returns\n400 `invalid_state_transition`. A points-based benefit cannot be activated when its\nconnected card definition does not exist (`non_existing_card_definition`) or is not ACTIVE (`non_active_card_definition`). A digital benefit cannot be activated when its campaign is in `DRAFT` (`non_active_campaign`). Those cases return 423 `resource_locked`.\n\nA successful call records [`vl.benefit.activated`](/api-reference/loyalty-activity/benefits/activated).",
+        "description": "Moves a benefit from `DRAFT` to `ACTIVE` status. The request has no body.\n\nRelated resources are checked before the status changes:\n- A `POINTS` benefit requires `points.card_definition_id` to be `ACTIVE`. Otherwise returns `423` `non_active_card_definition`.\n- A digital benefit cannot reference a `DRAFT` campaign. Otherwise returns `423` `non_active_campaign`.\n\nA benefit that is not `DRAFT` returns `400` `invalid_state_transition`, unless one of these checks fails first.\n\nA successful call records [`vl.benefit.activated`](/api-reference/loyalty-activity/benefits/activated).",
         "responses": {
           "200": {
             "description": "The activated benefit",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2LoyaltiesBenefitsActivateResponseBody"
+                  "$ref": "#/components/schemas/LoyaltiesBenefitsActivateResponseBody"
+                },
+                "examples": {
+                  "Activated draft benefit": {
+                    "value": {
+                      "id": "lben_135b3573186d6535ca",
+                      "name": "Benefit 2026-11-17-01",
+                      "type": "POINTS_PROPORTIONAL",
+                      "status": "ACTIVE",
+                      "stock": {
+                        "type": "UNLIMITED"
+                      },
+                      "points_proportional": {
+                        "calculation_type": "ORDER_ITEMS_QUANTITY",
+                        "card_definition_id": "lcdef_12b11d7f70809b397b",
+                        "order_items": {
+                          "quantity": {
+                            "every": 3,
+                            "value": 5,
+                            "applicable_to": [
+                              {
+                                "type": "product",
+                                "product": {
+                                  "id": "prod_1294cee5910e4904c3"
+                                }
+                              }
+                            ]
+                          }
+                        }
+                      },
+                      "created_at": "2026-11-16T19:47:12.609Z",
+                      "updated_at": "2026-11-17T19:28:02.285Z",
+                      "object": "benefit"
+                    }
+                  }
                 }
               }
             }
           },
           "400": {
-            "description": "Validation error - request body or query parameters failed validation, or the operation is not allowed in the current resource state.",
+            "description": "The benefit is not in `DRAFT` status.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Activating active benefit": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_state_transition",
+                      "message": "Invalid state transition",
+                      "details": "Cannot activate benefit from current state: 'ACTIVE'",
+                      "request_id": "v-135c7a124ae84dd68a"
+                    }
+                  }
                 }
               }
             }
           },
           "404": {
-            "description": "Resource not found.",
+            "description": "Resource not found. The benefit does not exist or is deleted. An id that does not match `lben_[a-f0-9]+` also returns `404`.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Benefit not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find benefit with id lben_135b3573186d6525ca",
+                      "request_id": "v-135c7aca80e6b190dd",
+                      "resource_id": "lben_135b3573186d6525ca",
+                      "resource_type": "benefit"
+                    }
+                  },
+                  "Benefit ID does not match pattern": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find benefit with id benefit_123",
+                      "request_id": "v-135c7aca80e6b190de",
+                      "resource_id": "benefit_123",
+                      "resource_type": "benefit"
+                    }
+                  }
                 }
               }
             }
@@ -20480,6 +21772,26 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Card definition not active": {
+                    "value": {
+                      "code": 423,
+                      "key": "non_active_card_definition",
+                      "message": "Cannot activate benefit when connected card definition is not ACTIVE",
+                      "details": "Invalid card_definition status with id lcdef_12b11d7f70809b397b",
+                      "request_id": "v-135c7a124ae84dd68b"
+                    }
+                  },
+                  "Campaign in draft": {
+                    "value": {
+                      "code": 423,
+                      "key": "non_active_campaign",
+                      "message": "Cannot use a draft campaign in a digital benefit",
+                      "details": "Invalid campaign status with id camp_128f4cd0a94c4bef25",
+                      "request_id": "v-135c7a124ae84dd68c"
+                    }
+                  }
                 }
               }
             }
@@ -20626,7 +21938,7 @@
           "Benefits"
         ],
         "summary": "List benefit activities",
-        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nReturns a cursor-paginated list of activities recorded for the benefit (created, updated,\ndeleted, activated, drafted). Returns `404` when the benefit does not exist. Supports\nfiltering by activity `id`, `type`, and `created_at`, ordering by `created_at`\n(default `-created_at`), and cursor-based pagination.\n\nA successful call records no activity.",
+        "description": "Returns a cursor-paginated list of activities recorded for the benefit (created, updated, deleted, activated, drafted). Returns `404` when the benefit does not exist. Supports filtering by activity `id`, `type`, and `created_at`, ordering by `created_at` (default `-created_at`), and cursor-based pagination.\n\nA successful call records no activity.",
         "parameters": [
           {
             "name": "limit",
@@ -20678,7 +21990,7 @@
             "name": "cursor",
             "in": "query",
             "required": false,
-            "description": "Continues pagination. Pass the `cursor.next` value from a previous response. Format `lcrsaben_[a-f0-9]+`. The cursor matches the filters and order of that response.",
+            "description": "Continues pagination. Pass the `cursor.next` value from a previous response. Format `lcrsaben_[a-f0-9]+`. The cursor matches the filters, the order, and the benefit of that response.",
             "schema": {
               "type": [
                 "string",
@@ -20712,27 +22024,221 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2LoyaltiesBenefitsActivitiesListResponseBody"
+                  "$ref": "#/components/schemas/LoyaltiesBenefitsActivitiesListResponseBody"
+                },
+                "examples": {
+                  "List benefit activities": {
+                    "value": {
+                      "data": [
+                        {
+                          "id": "laben_135c7b661cca9bf82d",
+                          "type": "vl.benefit.drafted",
+                          "data": {
+                            "benefit": {
+                              "id": "lben_135b3573186d6535ca",
+                              "name": "Benefit 2026-11-17-01",
+                              "type": "POINTS_PROPORTIONAL",
+                              "stock": {
+                                "type": "UNLIMITED"
+                              },
+                              "object": "benefit",
+                              "status": "DRAFT",
+                              "created_at": "2026-11-16T19:47:12.609Z",
+                              "updated_at": "2026-11-17T19:31:18.255Z",
+                              "points_proportional": {
+                                "order_items": {
+                                  "quantity": {
+                                    "every": 3,
+                                    "value": 5,
+                                    "applicable_to": [
+                                      {
+                                        "type": "product",
+                                        "product": {
+                                          "id": "prod_1294cee5910e4904c3"
+                                        }
+                                      }
+                                    ]
+                                  }
+                                },
+                                "calculation_type": "ORDER_ITEMS_QUANTITY",
+                                "card_definition_id": "lcdef_12b11d7f70809b397b"
+                              }
+                            }
+                          },
+                          "created_at": "2026-11-17T19:31:18.255Z",
+                          "group_id": "v-135c7b6610a6b1920c",
+                          "source": {
+                            "channel": "API",
+                            "api_key": {
+                              "name": "Primary",
+                              "app_id": "5168a5a0-c93d-4428-b93c-fdbee8700680"
+                            }
+                          },
+                          "benefit_id": "lben_135b3573186d6535ca"
+                        },
+                        {
+                          "id": "laben_135c7aa6bbd145af56",
+                          "type": "vl.benefit.activated",
+                          "data": {
+                            "benefit": {
+                              "id": "lben_135b3573186d6535ca",
+                              "name": "Benefit 2026-11-17-01",
+                              "type": "POINTS_PROPORTIONAL",
+                              "stock": {
+                                "type": "UNLIMITED"
+                              },
+                              "object": "benefit",
+                              "status": "ACTIVE",
+                              "created_at": "2026-11-16T19:47:12.609Z",
+                              "updated_at": "2026-11-17T19:28:02.285Z",
+                              "points_proportional": {
+                                "order_items": {
+                                  "quantity": {
+                                    "every": 3,
+                                    "value": 5,
+                                    "applicable_to": [
+                                      {
+                                        "type": "product",
+                                        "product": {
+                                          "id": "prod_1294cee5910e4904c3"
+                                        }
+                                      }
+                                    ]
+                                  }
+                                },
+                                "calculation_type": "ORDER_ITEMS_QUANTITY",
+                                "card_definition_id": "lcdef_12b11d7f70809b397b"
+                              }
+                            }
+                          },
+                          "created_at": "2026-11-17T19:28:02.285Z",
+                          "group_id": "v-135c7aa6b7e6b1908f",
+                          "source": {
+                            "channel": "API",
+                            "api_key": {
+                              "name": "Primary",
+                              "app_id": "5168a5a0-c93d-4428-b93c-fdbee8700680"
+                            }
+                          },
+                          "benefit_id": "lben_135b3573186d6535ca"
+                        }
+                      ],
+                      "cursor": {
+                        "next": "lcrsaben_135c8c7f798a9b8d35",
+                        "expires_at": "2026-11-17T20:56:00.678Z"
+                      },
+                      "object": "list"
+                    }
+                  }
                 }
               }
             }
           },
           "400": {
-            "description": "Validation error - request body or query parameters failed validation, or the operation is not allowed in the current resource state.",
+            "description": "Query parameters failed validation, or the cursor is invalid, expired, or does not match the query.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Limit too high": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Property .limit cannot be greater than 100",
+                      "request_id": "v-135c8c7f798a9b8d01"
+                    }
+                  },
+                  "Limit too low": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Property .limit cannot be lower than 1",
+                      "request_id": "v-135c8c7f798a9b8d02"
+                    }
+                  },
+                  "Unsupported order value": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Property .order must be equal to one of the allowed values [ created_at, -created_at ]",
+                      "request_id": "v-135c8c7f798a9b8d03"
+                    }
+                  },
+                  "Conflicting order values": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Query cannot be ordered by 'created_at' and '-created_at' at the same time",
+                      "request_id": "v-135c8c7f798a9b8d04"
+                    }
+                  },
+                  "Invalid cursor format": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Property .cursor must match pattern \"^lcrsaben_[a-f0-9]+$\"",
+                      "request_id": "v-135c8c7f798a9b8d05"
+                    }
+                  },
+                  "Cursor invalid or expired": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_or_expired_cursor",
+                      "message": "Invalid or expired cursor",
+                      "details": "The provided cursor is invalid or has expired",
+                      "request_id": "v-135c8c7f798a9b8d06"
+                    }
+                  },
+                  "Cursor does not match query": {
+                    "value": {
+                      "code": 400,
+                      "key": "cursor_and_query_mismatch",
+                      "message": "Cursor and query mismatch",
+                      "details": "The provided cursor does not match the query, either the cursor is invalid or the query has changed",
+                      "request_id": "v-135c8c7f798a9b8d07"
+                    }
+                  }
                 }
               }
             }
           },
           "404": {
-            "description": "Resource not found.",
+            "description": "Resource not found. The benefit does not exist or is deleted. An id that does not match `lben_[a-f0-9]+` also returns `404`.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Benefit not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find benefit with id lben_135b3573186d6525ca",
+                      "request_id": "v-135c8c7f798a9b8d08",
+                      "resource_id": "lben_135b3573186d6525ca",
+                      "resource_type": "benefit"
+                    }
+                  },
+                  "Malformed benefit ID": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find benefit with id benefit_123",
+                      "request_id": "v-135c8c7f798a9b8d09",
+                      "resource_id": "benefit_123",
+                      "resource_type": "benefit"
+                    }
+                  }
                 }
               }
             }
@@ -25324,7 +26830,7 @@
             ]
           },
           "name": {
-            "description": "Name filter (string type). Allowed conditions: `$is`, `$is_not`, `$contains`, `$not_contain`, `$starts_with`, `$ends_with` (single value), `$in`, `$not_in` (up to 10 values), `$has_value`, `$is_unknown`. Can be `null`.",
+            "description": "Name filter. Allowed conditions: `$is`, `$is_not`, `$contains`, `$not_contain`, `$starts_with`, `$ends_with` (single value), `$in`, `$not_in` (up to 10 values), `$has_value`, `$is_unknown`. Can be `null`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/LoyaltiesEarningRulesListRequestQueryName"
@@ -25335,7 +26841,7 @@
             ]
           },
           "status": {
-            "description": "Status filter (enum type). Allowed conditions: `$is`, `$is_not` (single value), `$in`, `$not_in` (up to 10 values). Allowed values: `ACTIVE`, `INACTIVE`, `DRAFT`. Can be `null`.",
+            "description": "Status filter. Allowed conditions: `$is`, `$is_not` (single value), `$in`, `$not_in` (up to 10 values). Allowed values: `ACTIVE`, `INACTIVE`, `DRAFT`. Can be `null`.",
             "oneOf": [
               {
                 "type": "object",
@@ -25517,8 +27023,8 @@
           }
         ]
       },
-      "V2LoyaltiesEarningRulesDeleteResponseBody": {
-        "title": "V2 Loyalties Earning Rules Delete Response Body",
+      "LoyaltiesEarningRulesDeleteResponseBody": {
+        "title": "Loyalties Earning Rules Delete Response Body",
         "type": "object",
         "description": "Response body schema for **DELETE** `/v2/loyalties/earning-rules/{earningRuleId}`.",
         "allOf": [
@@ -25785,8 +27291,8 @@
           }
         ]
       },
-      "V2LoyaltiesTierStructuresCreateRequestBody": {
-        "title": "V2 Loyalties Tier Structures Create Request Body",
+      "LoyaltiesTierStructuresCreateRequestBody": {
+        "title": "Loyalties Tier Structures Create Request Body",
         "type": "object",
         "description": "Request body schema for **POST** `/v2/loyalties/tier-structures`.",
         "allOf": [
@@ -25795,8 +27301,8 @@
           }
         ]
       },
-      "V2LoyaltiesTierStructuresCreateResponseBody": {
-        "title": "V2 Loyalties Tier Structures Create Response Body",
+      "LoyaltiesTierStructuresCreateResponseBody": {
+        "title": "Loyalties Tier Structures Create Response Body",
         "type": "object",
         "description": "Response body schema for **POST** `/v2/loyalties/tier-structures`.",
         "allOf": [
@@ -25893,8 +27399,8 @@
           }
         ]
       },
-      "V2LoyaltiesTierStructuresGetResponseBody": {
-        "title": "V2 Loyalties Tier Structures Get Response Body",
+      "LoyaltiesTierStructuresGetResponseBody": {
+        "title": "Loyalties Tier Structures Get Response Body",
         "type": "object",
         "description": "Response body schema for **GET** `/v2/loyalties/tier-structures/{tierStructureId}`.",
         "allOf": [
@@ -26023,6 +27529,16 @@
           }
         ]
       },
+      "LoyaltiesTierStructuresTiersBatchRequestBody": {
+        "title": "Loyalties Tier Structures Tiers Batch Request Body",
+        "type": "object",
+        "description": "Request body schema for **POST** `/v2/loyalties/tier-structures/{tierStructureId}/tiers/batch`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/TierBatchRequest"
+          }
+        ]
+      },
       "LoyaltiesTierStructuresActivitiesListRequestQuery": {
         "type": "object",
         "description": "Request query schema for **GET** `/v2/loyalties/tier-structures/{tierStructureId}/activities`.",
@@ -26109,7 +27625,7 @@
             ]
           },
           "id": {
-            "description": "Filter by benefit ID.\nAllowed conditions: `$is`, `$is_not`, `$in`, `$not_in`. Values must match `^lben_[a-f0-9]+$`.\n`$is`/`$is_not` accept a single value (string or 1-element array); `$in`/`$not_in`\naccept up to 100 values.",
+            "description": "Filter by benefit ID. Allowed conditions: `$is`, `$is_not`, `$in`, `$not_in`. Values must match `^lben_[a-f0-9]+$`. `$is`/`$is_not` accept a single value (string or 1-element array); `$in`/`$not_in` accept up to 100 values.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/LoyaltiesBenefitsListRequestQueryId"
@@ -26120,7 +27636,7 @@
             ]
           },
           "name": {
-            "description": "Filter by benefit name.\nAllowed conditions: `$is`, `$is_not`, `$contains`, `$not_contain`, `$starts_with`,\n`$ends_with`, `$in`, `$not_in`, `$has_value`, `$is_unknown`. `$in`/`$not_in` accept\nup to 10 values; the other value conditions accept a single value (string or\n1-element array); `$has_value`/`$is_unknown` are presence checks.",
+            "description": "Filter by benefit name. Allowed conditions: `$is`, `$is_not`, `$contains`, `$not_contain`, `$starts_with`, `$ends_with`, `$in`, `$not_in`, `$has_value`, `$is_unknown`. `$in`/`$not_in` accept up to 10 values; the other value conditions accept a single value (string or 1-element array); `$has_value`/`$is_unknown` are presence checks.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/LoyaltiesBenefitsListRequestQueryName"
@@ -26131,7 +27647,7 @@
             ]
           },
           "status": {
-            "description": "Filter by benefit status.\nAllowed conditions: `$is`, `$is_not`, `$in`, `$not_in`. Allowed values: `ACTIVE`, `DRAFT`.",
+            "description": "Filter by benefit status. Allowed conditions: `$is`, `$is_not`, `$in`, `$not_in`. Allowed values: `ACTIVE`, `DRAFT`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/LoyaltiesBenefitsListRequestQueryStatus"
@@ -26142,7 +27658,7 @@
             ]
           },
           "type": {
-            "description": "Filter by benefit type.\nAllowed conditions: `$is`, `$is_not`, `$in`, `$not_in`. Allowed values: `POINTS`,\n`POINTS_PROPORTIONAL`, `MATERIAL`, `DIGITAL`.",
+            "description": "Filter by benefit type. Allowed conditions: `$is`, `$is_not`, `$in`, `$not_in`. Allowed values: `POINTS`, `POINTS_PROPORTIONAL`, `MATERIAL`, `DIGITAL`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/LoyaltiesBenefitsListRequestQueryType"
@@ -26153,7 +27669,7 @@
             ]
           },
           "created_at": {
-            "description": "Filter by creation date.\nAllowed conditions: `$before`, `$after` (ISO 8601 date-time strings), `$is`,\n`$more_than`, `$less_than` (non-negative integers, number of days), `$has_value`,\n`$is_unknown` (presence checks).",
+            "description": "Filter by creation date. Allowed conditions: `$before`, `$after` (ISO 8601 date-time strings), `$is`, `$more_than`, `$less_than` (non-negative integers, number of days), `$has_value`, `$is_unknown` (presence checks).",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/BenefitDateFilterConditions"
@@ -26167,8 +27683,8 @@
         "additionalProperties": false,
         "title": "Loyalties Benefits List Request Query"
       },
-      "V2LoyaltiesBenefitsListResponseBody": {
-        "title": "V2 Loyalties Benefits List Response Body",
+      "LoyaltiesBenefitsListResponseBody": {
+        "title": "Loyalties Benefits List Response Body",
         "type": "object",
         "description": "Response body schema for **GET** `/v2/loyalties/benefits`.",
         "allOf": [
@@ -26177,8 +27693,8 @@
           }
         ]
       },
-      "V2LoyaltiesBenefitsCreateRequestBody": {
-        "title": "V2 Loyalties Benefits Create Request Body",
+      "LoyaltiesBenefitsCreateRequestBody": {
+        "title": "Loyalties Benefits Create Request Body",
         "type": "object",
         "description": "Request body schema for **POST** `/v2/loyalties/benefits`.",
         "allOf": [
@@ -26207,8 +27723,8 @@
           }
         ]
       },
-      "V2LoyaltiesBenefitsUpdateRequestBody": {
-        "title": "V2 Loyalties Benefits Update Request Body",
+      "LoyaltiesBenefitsUpdateRequestBody": {
+        "title": "Loyalties Benefits Update Request Body",
         "type": "object",
         "description": "Request body schema for **PUT** `/v2/loyalties/benefits/{benefitId}`.",
         "allOf": [
@@ -26217,7 +27733,7 @@
           }
         ]
       },
-      "V2LoyaltiesBenefitsUpdateResponseBody": {
+      "LoyaltiesBenefitsUpdateResponseBody": {
         "title": "V2 Loyalties Benefits Update Response Body",
         "type": "object",
         "description": "Response body schema for **PUT** `/v2/loyalties/benefits/{benefitId}`.",
@@ -26227,8 +27743,8 @@
           }
         ]
       },
-      "V2LoyaltiesBenefitsDeleteResponseBody": {
-        "title": "V2 Loyalties Benefits Delete Response Body",
+      "LoyaltiesBenefitsDeleteResponseBody": {
+        "title": "Loyalties Benefits Delete Response Body",
         "type": "object",
         "description": "Response body schema for **DELETE** `/v2/loyalties/benefits/{benefitId}`.",
         "allOf": [
@@ -26237,8 +27753,8 @@
           }
         ]
       },
-      "V2LoyaltiesBenefitsActivateResponseBody": {
-        "title": "V2 Loyalties Benefits Activate Response Body",
+      "LoyaltiesBenefitsActivateResponseBody": {
+        "title": "Loyalties Benefits Activate Response Body",
         "type": "object",
         "description": "Response body schema for **POST** `/v2/loyalties/benefits/{benefitId}/activate`.",
         "allOf": [
@@ -26277,7 +27793,7 @@
             ]
           },
           "id": {
-            "description": "Filter by activity ID.\nAllowed conditions: `$is`, `$is_not`, `$in`, `$not_in`. Values must match `^laben_[a-f0-9]+$`.\n`$is`/`$is_not` accept a single value (string or 1-element array); `$in`/`$not_in`\naccept up to 100 values.",
+            "description": "Filter by activity ID. Allowed conditions: `$is`, `$is_not`, `$in`, `$not_in`. Values must match `^laben_[a-f0-9]+$`. `$is`/`$is_not` accept a single value (string or 1-element array); `$in`/`$not_in` accept up to 100 values.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/LoyaltiesBenefitsActivitiesListRequestQueryId"
@@ -26288,7 +27804,7 @@
             ]
           },
           "type": {
-            "description": "Filter by activity type.\nAllowed conditions: `$is`, `$is_not`, `$in`, `$not_in`. Allowed values:\n`vl.benefit.created`, `vl.benefit.updated`, `vl.benefit.deleted`,\n`vl.benefit.activated`, `vl.benefit.drafted`.",
+            "description": "Filter by activity type. Allowed conditions: `$is`, `$is_not`, `$in`, `$not_in`. Allowed values: `vl.benefit.created`, `vl.benefit.updated`, `vl.benefit.deleted`, `vl.benefit.activated`, `vl.benefit.drafted`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/LoyaltiesBenefitsActivitiesListRequestQueryType"
@@ -26299,7 +27815,7 @@
             ]
           },
           "created_at": {
-            "description": "Filter by activity creation date.\nAllowed conditions: `$before`, `$after` (ISO 8601 date-time strings), `$is`,\n`$more_than`, `$less_than` (non-negative integers, number of days), `$has_value`,\n`$is_unknown` (presence checks).",
+            "description": "Filter by activity creation date. Allowed conditions: `$before`, `$after` (ISO 8601 date-time strings), `$is`, `$more_than`, `$less_than` (non-negative integers, number of days), `$has_value`, `$is_unknown` (presence checks).",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/BenefitDateFilterConditions"
@@ -26313,8 +27829,8 @@
         "additionalProperties": false,
         "title": "Loyalties Benefits Activities List Request Query"
       },
-      "V2LoyaltiesBenefitsActivitiesListResponseBody": {
-        "title": "V2 Loyalties Benefits Activities List Response Body",
+      "LoyaltiesBenefitsActivitiesListResponseBody": {
+        "title": "Loyalties Benefits Activities List Response Body",
         "type": "object",
         "description": "Response body schema for **GET** `/v2/loyalties/benefits/{benefitId}/activities`.",
         "allOf": [
@@ -31570,7 +33086,7 @@
       },
       "LoyaltiesProgramsMembersBenefitsTransactionsListRequestQueryBenefitId": {
         "type": "object",
-        "description": "ID filter conditions for benefit ids. Values must match pattern `^lben_[a-f0-9]+$`. `$is`/`$is_not` accept a single value (string or 1-element array); `$in`/`$not_in` accept a string or an array of 1-100 values.",
+        "description": "ID filter conditions for benefit IDs. Values must match pattern `^lben_[a-f0-9]+$`. `$is`/`$is_not` accept a single value (string or 1-element array); `$in`/`$not_in` accept a string or an array of 1-100 values.",
         "properties": {
           "conditions": {
             "type": "object",
@@ -34598,9 +36114,10 @@
             "enum": [
               "DRAFT",
               "ACTIVE",
-              "INACTIVE"
+              "INACTIVE",
+              "DELETED"
             ],
-            "description": "Current status. `DELETED` also exists internally but deleted rules are excluded from API reads."
+            "description": "Current status. `DELETED` is returned only by the delete operation."
           },
           "earnings": {
             "type": "array",
@@ -35137,7 +36654,7 @@
             "type": "string",
             "minLength": 1,
             "maxLength": 200,
-            "description": "Display name of the tier structure. Required."
+            "description": "Display name of the tier structure."
           },
           "type": {
             "type": "string",
@@ -35145,10 +36662,10 @@
               "POINT_BALANCE",
               "POINT_EARNED"
             ],
-            "description": "Tier qualification tracking model. `POINT_BALANCE` qualifies members by their\ncurrent point balance; `POINT_EARNED` qualifies members by points earned within\na tracking period. Required."
+            "description": "Tier qualification tracking model. `POINT_BALANCE` qualifies members by their current point balance. `POINT_EARNED` qualifies members by points earned within a tracking period."
           },
           "point_balance": {
-            "description": "Point balance tracking settings. Required (non-null) when `type` is\n`POINT_BALANCE`; must be null/omitted when `type` is `POINT_EARNED`.",
+            "description": "Point balance tracking settings. Required (non-null) when `type` is `POINT_BALANCE`. Must be `null`/omitted when `type` is `POINT_EARNED`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/TierStructurePointBalanceUpsert"
@@ -35159,7 +36676,7 @@
             ]
           },
           "point_earned": {
-            "description": "Points earned tracking settings. Required (non-null) when `type` is\n`POINT_EARNED`; must be null/omitted when `type` is `POINT_BALANCE`.",
+            "description": "Points earned tracking settings. Required (non-null) when `type` is `POINT_EARNED`. Must be `null`/omitted when `type` is `POINT_BALANCE`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/TierStructurePointEarnedUpsert"
@@ -35170,7 +36687,7 @@
             ]
           },
           "expiration": {
-            "description": "Tier membership expiration settings. If omitted, defaults to\n`{ \"type\": \"NO_RETENTION\" }`.",
+            "description": "Tier membership expiration settings. If omitted, defaults to `{ \"type\": \"NO_RETENTION\" }`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/TierStructureExpirationUpsert"
@@ -35181,7 +36698,7 @@
             ]
           },
           "downgrade": {
-            "description": "Downgrade behavior applied when tier membership expires. If omitted, defaults to\n`{ \"type\": \"NO_DOWNGRADE\" }`.",
+            "description": "Downgrade behavior applied when tier membership expires. If omitted, defaults to `{ \"type\": \"MULTI_LEVEL\" }`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/TierStructureDowngradeUpsert"
@@ -35204,6 +36721,7 @@
           },
           "status": {
             "type": "string",
+            "default": "DRAFT",
             "enum": [
               "DRAFT",
               "ACTIVE"
@@ -35269,9 +36787,6 @@
         "description": "Tier structure resource.",
         "allOf": [
           {
-            "$ref": "#/components/schemas/TierMetadataBase"
-          },
-          {
             "type": "object",
             "properties": {
               "id": {
@@ -35292,16 +36807,30 @@
                 "description": "Tier qualification tracking model."
               },
               "point_balance": {
-                "$ref": "#/components/schemas/LoyaltyV2ActivityTierStructurePointBalance",
-                "description": "Point balance tracking settings. Present only when `type` is `POINT_BALANCE`;\nomitted otherwise."
+                "description": "Point balance tracking settings. `null` when `type` is `POINT_EARNED`.",
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/LoyaltyV2ActivityTierStructurePointBalance"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
               },
               "point_earned": {
-                "$ref": "#/components/schemas/TierStructurePointEarned",
-                "description": "Points earned tracking settings. Present only when `type` is `POINT_EARNED`;\nomitted otherwise."
+                "description": "Points earned tracking settings. `null` when `type` is `POINT_BALANCE`.",
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/TierStructurePointEarned"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
               },
               "expiration": {
                 "$ref": "#/components/schemas/TierStructureExpiration",
-                "description": "Tier membership expiration settings."
+                "description": "Tier membership expiration settings. Only the sub-object matching `type` is present; the others are omitted."
               },
               "downgrade": {
                 "$ref": "#/components/schemas/TierStructureDowngrade",
@@ -35332,6 +36861,9 @@
               "status",
               "object"
             ]
+          },
+          {
+            "$ref": "#/components/schemas/TierMetadataBase"
           }
         ]
       },
@@ -36230,10 +37762,10 @@
             "type": "string",
             "minLength": 1,
             "maxLength": 200,
-            "description": "Display name of the tier. Required."
+            "description": "Display name of the tier."
           },
           "qualification_rules": {
-            "description": "Rules determining which members qualify for this tier. Required.",
+            "description": "Rules determining which members qualify for this tier.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/TierQualificationRulesUpsert"
@@ -36404,6 +37936,47 @@
                 "type": "null"
               }
             ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "TierBatchRequest": {
+        "type": "object",
+        "description": "Request body for creating, updating, and removing tiers in one batch. At least one of `create`, `update`, or `remove` must contain an item. No additional properties are allowed.",
+        "properties": {
+          "create": {
+            "description": "Tiers to create. Up to 100 items.",
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/TierBatchCreateItem"
+            },
+            "maxItems": 100
+          },
+          "update": {
+            "description": "Tiers to update. Up to 100 items. `id` is required. Omitted fields keep their current value. No additional properties are allowed. When the tier structure is not in `DRAFT` status, only `name` and `metadata` can be updated.",
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/TierBatchUpdateItem"
+            },
+            "maxItems": 100
+          },
+          "remove": {
+            "description": "IDs of the tiers to remove. Up to 100 unique IDs.",
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 100,
+            "uniqueItems": true
           }
         },
         "additionalProperties": false
@@ -37502,13 +39075,13 @@
       },
       "BenefitCreateRequest": {
         "type": "object",
-        "description": "Request body for creating a benefit. Exactly one type-specific configuration object\nis required, matching the `type`; the remaining type-specific properties must be\nomitted or `null`.",
+        "description": "Request body for creating a benefit. Exactly one type-specific configuration object is required, matching the `type`; the remaining type-specific properties must be omitted or `null`.",
         "properties": {
           "name": {
             "type": "string",
             "minLength": 1,
             "maxLength": 200,
-            "description": "Benefit name. Must be unique within the project."
+            "description": "Sets the benefit name. Required. Maximum 200 characters."
           },
           "type": {
             "type": "string",
@@ -37518,7 +39091,7 @@
               "MATERIAL",
               "DIGITAL"
             ],
-            "description": "Benefit type. Determines which configuration object is required."
+            "description": "Sets the benefit type. Required. The matching configuration object (`points`, `points_proportional`, `material`, or `digital`) is required."
           },
           "status": {
             "type": "string",
@@ -37526,7 +39099,7 @@
               "DRAFT",
               "ACTIVE"
             ],
-            "description": "Initial status of the benefit. Defaults to `DRAFT` when omitted."
+            "description": "Sets the initial status. Optional. Accepts `DRAFT` or `ACTIVE`. Defaults to `DRAFT` when omitted."
           },
           "points": {
             "description": "Fixed points configuration. Required when `type` is `POINTS`, must be null otherwise.",
@@ -37562,7 +39135,7 @@
             ]
           },
           "digital": {
-            "description": "Digital (campaign-based) configuration. Required when `type` is `DIGITAL`, must be null otherwise.",
+            "description": "Digital (campaign-based) configuration. Required when `type` is `DIGITAL`, must be `null` otherwise.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/BenefitDigital"
@@ -37573,7 +39146,7 @@
             ]
           },
           "stock": {
-            "description": "Stock configuration. Defaults to `{ \"type\": \"UNLIMITED\" }` when omitted.",
+            "description": "Sets the stock configuration. Optional. Omit it, or set it to `null`, for unlimited stock.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/BenefitStock"
@@ -37717,7 +39290,7 @@
           },
           "name": {
             "type": "string",
-            "description": "Benefit name, unique within the project."
+            "description": "Benefit name."
           },
           "type": {
             "type": "string",
@@ -37810,13 +39383,13 @@
       },
       "BenefitUpdateRequest": {
         "type": "object",
-        "description": "Request body for updating a benefit. All properties are optional; omitted properties keep\ntheir current values. When the benefit is `ACTIVE`, only `name` and `stock` may be updated.\nAfter the update, the type-specific configuration must stay consistent with the (possibly\nupdated) `type`.",
+        "description": "Request body for updating a benefit. Send at least one property. Omitted properties keep their current values. When the benefit is `ACTIVE`, the body may contain only `name`, `stock`, `points`, `points_proportional`, and `digital`.",
         "properties": {
           "name": {
             "type": "string",
             "minLength": 1,
             "maxLength": 200,
-            "description": "Benefit name. Must be unique within the project."
+            "description": "Benefit name."
           },
           "type": {
             "type": "string",
@@ -37826,7 +39399,7 @@
               "MATERIAL",
               "DIGITAL"
             ],
-            "description": "Benefit type. Determines which configuration object is required."
+            "description": "Benefit type. Determines which configuration object is required. Not accepted when the benefit is `ACTIVE`."
           },
           "points": {
             "description": "Fixed points configuration (for `type` `POINTS`).",
@@ -37851,7 +39424,7 @@
             ]
           },
           "material": {
-            "description": "Material (physical product/SKU) configuration (for `type` `MATERIAL`).",
+            "description": "Material (physical product/SKU) configuration (for `type` `MATERIAL`). Not accepted when the benefit is `ACTIVE`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/BenefitMaterial"
@@ -39930,7 +41503,7 @@
             ]
           },
           "daily": {
-            "description": "Daily validity windows. Required when `type` is `DAILY`; must be null/omitted when `type` is `ANY_TIME`.",
+            "description": "Daily validity windows. Required when `type` is `DAILY`; must be `null`/omitted when `type` is `ANY_TIME`.",
             "oneOf": [
               {
                 "type": "array",
@@ -43039,7 +44612,7 @@
       },
       "TierStructurePointBalanceUpsert": {
         "type": "object",
-        "description": "Point balance tracking settings. Members qualify for tiers based on the current\nbalance of the referenced card definition.",
+        "description": "Point balance tracking settings. Members qualify for tiers based on the current balance of the referenced card definition.",
         "properties": {
           "card_definition_id": {
             "type": "string",
@@ -43054,7 +44627,7 @@
       },
       "TierStructurePointEarnedUpsert": {
         "type": "object",
-        "description": "Points earned tracking settings. Members qualify for tiers based on points earned\non the referenced card definition within a tracking period.",
+        "description": "Points earned tracking settings. Members qualify for tiers based on points earned on the referenced card definition within a tracking period.",
         "properties": {
           "card_definition_id": {
             "type": "string",
@@ -43071,7 +44644,7 @@
               "IMMEDIATELY",
               "NEXT_TRACKING_PERIOD"
             ],
-            "description": "When a tier change resulting from earned points takes effect: `IMMEDIATELY`\nor at the start of the `NEXT_TRACKING_PERIOD`."
+            "description": "When a tier change resulting from earned points takes effect: `IMMEDIATELY` or at the start of the `NEXT_TRACKING_PERIOD`."
           }
         },
         "required": [
@@ -43083,7 +44656,7 @@
       },
       "TierStructureExpirationUpsert": {
         "type": "object",
-        "description": "Tier membership expiration settings. Exactly the sub-object matching `type` is\nrequired; the remaining sub-objects must be null/omitted.",
+        "description": "Tier membership expiration settings. Exactly the sub-object matching `type` is required; the remaining sub-objects must be `null`/omitted.",
         "properties": {
           "type": {
             "type": "string",
@@ -43093,10 +44666,10 @@
               "FIXED_DURATION",
               "CALENDAR_EXPIRATION"
             ],
-            "description": "Expiration model for tier membership. Required."
+            "description": "Expiration model for tier membership."
           },
           "fixed_duration": {
-            "description": "Fixed duration expiration settings. Required (non-null) when `type` is\n`FIXED_DURATION`; must be null/omitted otherwise.",
+            "description": "Fixed duration expiration settings. Required (non-null) when `type` is `FIXED_DURATION`; must be `null`/omitted otherwise.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/TierStructureExpirationFixedDurationUpsert"
@@ -43107,7 +44680,7 @@
             ]
           },
           "calendar_expiration": {
-            "description": "Calendar expiration settings. Required (non-null) when `type` is\n`CALENDAR_EXPIRATION`; must be null/omitted otherwise.",
+            "description": "Calendar expiration settings. Required (non-null) when `type` is `CALENDAR_EXPIRATION`. Must be `null`/omitted otherwise.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/TierStructureExpirationCalendarExpirationUpsert"
@@ -43118,7 +44691,7 @@
             ]
           },
           "sliding_expiration": {
-            "description": "Sliding expiration settings. Required (non-null) when `type` is\n`SLIDING_EXPIRATION`; must be null/omitted otherwise.",
+            "description": "Sliding expiration settings. Required (non-null) when `type` is `SLIDING_EXPIRATION`; must be `null`/omitted otherwise.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/TierStructureExpirationSlidingExpirationUpsert"
@@ -43237,7 +44810,7 @@
       },
       "TierStructureDowngradeUpsert": {
         "type": "object",
-        "description": "Downgrade settings. Controls how members are moved to lower tiers on expiration.\nWhen `type` is `NO_DOWNGRADE`, `grace_period` must be null/omitted.",
+        "description": "Downgrade settings. Controls how members are moved to lower tiers on expiration. When `type` is `NO_DOWNGRADE`, `grace_period` must be `null`/omitted.",
         "properties": {
           "type": {
             "type": "string",
@@ -43246,10 +44819,10 @@
               "SINGLE_LEVEL",
               "NO_DOWNGRADE"
             ],
-            "description": "Downgrade model. `MULTI_LEVEL` allows dropping multiple tiers at once,\n`SINGLE_LEVEL` drops one tier at a time, `NO_DOWNGRADE` disables downgrades.\nRequired."
+            "description": "Downgrade model. `MULTI_LEVEL` allows dropping multiple tiers at once, `SINGLE_LEVEL` drops one tier at a time, `NO_DOWNGRADE` disables downgrades – members can reach only higher tiers."
           },
           "grace_period": {
-            "description": "Grace period before the downgrade takes effect. Must be null/omitted when\n`type` is `NO_DOWNGRADE`.",
+            "description": "Grace period before the downgrade takes effect. Must be `null`/omitted when `type` is `NO_DOWNGRADE`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/TierStructureDowngradeGracePeriodUpsert"
@@ -43283,33 +44856,6 @@
               }
             }
           }
-        ]
-      },
-      "TierMetadataBase": {
-        "type": "object",
-        "properties": {
-          "metadata": {
-            "type": "object",
-            "description": "Free-form key/value object holding custom attributes. Defaults to `{}`."
-          },
-          "created_at": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Creation timestamp (ISO 8601)."
-          },
-          "updated_at": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "format": "date-time",
-            "description": "Last update timestamp (ISO 8601), or `null` if never updated."
-          }
-        },
-        "required": [
-          "metadata",
-          "created_at",
-          "updated_at"
         ]
       },
       "LoyaltyV2ActivityTierStructurePointBalance": {
@@ -43348,7 +44894,7 @@
       },
       "TierStructureExpiration": {
         "type": "object",
-        "description": "Tier membership expiration settings. Only the sub-object matching `type` is\npresent; the others are omitted.",
+        "description": "Tier membership expiration settings.",
         "properties": {
           "type": {
             "type": "string",
@@ -43393,9 +44939,36 @@
           }
         }
       },
+      "TierMetadataBase": {
+        "type": "object",
+        "properties": {
+          "metadata": {
+            "type": "object",
+            "description": "Free-form key/value object holding custom attributes. Defaults to `{}`."
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Creation timestamp (ISO 8601)."
+          },
+          "updated_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time",
+            "description": "Last update timestamp (ISO 8601), or `null` if never updated."
+          }
+        },
+        "required": [
+          "metadata",
+          "created_at",
+          "updated_at"
+        ]
+      },
       "TierQualificationRulesUpsert": {
         "type": "object",
-        "description": "Tier qualification rules. When `type` is `POINTS`, `points` is required and\n`segment` must be null/omitted; when `type` is `POINTS_AND_SEGMENT`, both `points`\nand `segment` are required.",
+        "description": "Tier qualification rules. When `type` is `POINTS`, `points` is required and `segment` must be `null`/omitted; when `type` is `POINTS_AND_SEGMENT`, both `points`\nand `segment` are required.",
         "properties": {
           "type": {
             "type": "string",
@@ -43403,10 +44976,10 @@
               "POINTS",
               "POINTS_AND_SEGMENT"
             ],
-            "description": "Qualification model. `POINTS` qualifies by point thresholds only;\n`POINTS_AND_SEGMENT` additionally requires membership in a customer segment.\nRequired."
+            "description": "Qualification model. `POINTS` qualifies by point thresholds only;`POINTS_AND_SEGMENT` additionally requires membership in a customer segment."
           },
           "points": {
-            "description": "Point thresholds for the tier. Required (non-null) when `type` is `POINTS`\nor `POINTS_AND_SEGMENT`.",
+            "description": "Point thresholds for the tier. Required (non-null) when `type` is `POINTS` or `POINTS_AND_SEGMENT`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/TierQualificationRulesPointsUpsert"
@@ -43417,7 +44990,7 @@
             ]
           },
           "segment": {
-            "description": "Customer segment reference. Required (non-null) when `type` is\n`POINTS_AND_SEGMENT`; must be null/omitted when `type` is `POINTS`.",
+            "description": "Customer segment reference. Required (non-null) when `type` is `POINTS_AND_SEGMENT`; must be `null`/omitted when `type` is `POINTS`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/TierQualificationRulesSegmentUpsert"
@@ -43492,7 +45065,7 @@
               "INHERIT",
               "NO_DOWNGRADE"
             ],
-            "description": "`INHERIT` uses the parent tier structure downgrade settings; `NO_DOWNGRADE`\ndisables downgrades from this tier. Required."
+            "description": "`INHERIT` uses the parent tier structure downgrade settings. `NO_DOWNGRADE` disables downgrades from this tier."
           }
         },
         "required": [
@@ -43535,6 +45108,129 @@
             "description": "Downgrade model. Omitted when the tier has no downgrade configured."
           }
         }
+      },
+      "TierBatchCreateItem": {
+        "type": "object",
+        "description": "A tier to create in a batch.",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "description": "Sets the tier name. The name must be unique in the tier structure after the batch."
+          },
+          "qualification_rules": {
+            "description": "Rules determining which members qualify for this tier.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/TierQualificationRulesUpsert"
+              }
+            ]
+          },
+          "downgrade": {
+            "description": "Tier-level downgrade behavior. If omitted, defaults to `{ \"type\": \"INHERIT\" }` (inherits the tier structure downgrade settings).",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/TierDowngradeUpsert"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "points_expiration": {
+            "description": "Points expiration for the tier. Omit it, or send `null`, to store `{ \"type\": \"INHERIT\" }`, which follows the tier structure. Any other `type` overrides those rules.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/TierPointsExpirationUpsert"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "metadata": {
+            "description": "Free-form key/value object holding custom attributes.",
+            "oneOf": [
+              {
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "name",
+          "qualification_rules"
+        ],
+        "additionalProperties": false
+      },
+      "TierBatchUpdateItem": {
+        "type": "object",
+        "description": "A tier to update in a batch. `id` is required. Omitted fields keep their current value. No additional properties are allowed. When the tier structure is not in `DRAFT` status, only `name` and `metadata` can be updated.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Identifier of the tier to update."
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "description": "Display name of the tier."
+          },
+          "qualification_rules": {
+            "description": "Rules determining which members qualify for this tier.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/TierQualificationRulesUpsert"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "downgrade": {
+            "description": "Tier-level downgrade behavior.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/TierDowngradeUpsert"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "points_expiration": {
+            "description": "Points expiration for the tier. Omit it, or send `null`, to keep the current setting. You can change it only while the tier structure is `DRAFT`.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/TierPointsExpirationUpsert"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "metadata": {
+            "description": "Free-form key/value object holding custom attributes.",
+            "oneOf": [
+              {
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "additionalProperties": false
       },
       "TierStructureActivity": {
         "type": "object",
@@ -43624,7 +45320,7 @@
           "card_definition_id": {
             "type": "string",
             "pattern": "^lcdef_[a-f0-9]+$",
-            "description": "ID of the card definition whose cards receive the points. The card definition must exist and be `ACTIVE`."
+            "description": "ID of the card definition whose cards receive the points. The card definition must exist. Creating with `status: ACTIVE`, or updating with this object, requires an `ACTIVE` card definition."
           }
         },
         "required": [
@@ -43635,7 +45331,7 @@
       },
       "BenefitPointsProportional": {
         "type": "object",
-        "description": "Proportional points effect - points are calculated from an order amount, order items, or a metadata property. Exactly one calculation source object (`order`, `customer`, `custom_event`, or `order_items`) is required, determined by `calculation_type`. In requests, the remaining source properties may be omitted or set to `null`. In responses, they are omitted.",
+        "description": "Proportional points effect. Points are calculated from an order amount, order items, or a metadata property. Exactly one calculation source object (`order`, `customer`, `custom_event`, or `order_items`) is required, determined by `calculation_type`. In requests, the remaining source properties may be omitted or set to `null`. In responses, they are omitted.",
         "properties": {
           "calculation_type": {
             "type": "string",
@@ -43649,12 +45345,12 @@
               "CUSTOMER_METADATA_VALUE",
               "CUSTOM_EVENT_METADATA_VALUE"
             ],
-            "description": "How the points are calculated:\n- `PRE_DISCOUNT_ORDER_AMOUNT` - points per every specified order amount before discounts (requires `order.amount`)\n- `POST_DISCOUNT_ORDER_AMOUNT` - points per every specified order amount after discounts (requires `order.total_amount`)\n- `PRE_DISCOUNT_ORDER_ITEMS_AMOUNT` - points per every specified amount spent on selected products before discounts (requires `order_items.amount`)\n- `POST_DISCOUNT_ORDER_ITEMS_AMOUNT` - points per every specified amount spent on selected products after discounts (requires `order_items.subtotal_amount`)\n- `ORDER_ITEMS_QUANTITY` - points per every specified quantity of selected products, excluding free items (requires `order_items.quantity`)\n- `ORDER_METADATA_VALUE` - points per every specified value in the order metadata (requires `order.metadata`)\n- `CUSTOMER_METADATA_VALUE` - points per every specified value in the customer metadata (requires `customer.metadata`)\n- `CUSTOM_EVENT_METADATA_VALUE` - points per every specified value in the custom event metadata (requires `custom_event.metadata`)"
+            "description": "How the points are calculated:\n- `PRE_DISCOUNT_ORDER_AMOUNT`: points per every specified order amount before discounts (requires `order.amount`)\n- `POST_DISCOUNT_ORDER_AMOUNT`: Points per every specified order amount after discounts (requires `order.total_amount`)\n- `PRE_DISCOUNT_ORDER_ITEMS_AMOUNT`: Points per every specified amount spent on selected products before discounts (requires `order_items.amount`)\n- `POST_DISCOUNT_ORDER_ITEMS_AMOUNT`: Points per every specified amount spent on selected products after discounts (requires `order_items.subtotal_amount`)\n- `ORDER_ITEMS_QUANTITY`: Points per every specified quantity of selected products, excluding free items (requires `order_items.quantity`)\n- `ORDER_METADATA_VALUE`: Points per every specified value in the order metadata (requires `order.metadata`)\n- `CUSTOMER_METADATA_VALUE`: Points per every specified value in the customer metadata (requires `customer.metadata`)\n- `CUSTOM_EVENT_METADATA_VALUE`: Points per every specified value in the custom event metadata (requires `custom_event.metadata`)"
           },
           "card_definition_id": {
             "type": "string",
             "pattern": "^lcdef_[a-f0-9]+$",
-            "description": "ID of the card definition whose cards receive the points. The card definition must exist and be ACTIVE."
+            "description": "ID of the card definition whose cards receive the points. The card definition must exist. Creating with `status: ACTIVE`, or updating with this object, requires an `ACTIVE` card definition."
           },
           "order": {
             "description": "Order-based calculation configuration. Required for `PRE_DISCOUNT_ORDER_AMOUNT`, `POST_DISCOUNT_ORDER_AMOUNT`, and `ORDER_METADATA_VALUE`. For other calculation types, requests may omit it or set it to `null`; responses omit it.",
@@ -44041,7 +45737,7 @@
       },
       "BenefitDigital": {
         "type": "object",
-        "description": "Digital benefit - a reward sourced from a Voucherify campaign. Exactly one of `gift_vouchers` or `discount_coupons` is required, matching the `type`. In requests, the other property may be omitted or set to `null`. In responses, it is omitted. The referenced campaign must exist and its campaign type must match the benefit's digital type.",
+        "description": "Digital benefit: Reward sourced from a Voucherify campaign. Exactly one of `gift_vouchers` or `discount_coupons` is required, matching the `type`. In requests, the other property may be omitted or set to `null`. In responses, it is omitted. The referenced campaign must exist and its campaign type must match the benefit's digital type.",
         "properties": {
           "type": {
             "type": "string",
@@ -47300,12 +48996,12 @@
       },
       "TierStructurePointEarnedPeriodUpsert": {
         "type": "object",
-        "description": "Points earned tracking period. The maximum `value` depends on `unit`: 90 for\n`DAY`, 52 for `WEEK`, 12 for `MONTH`, 5 for `YEAR`.",
+        "description": "Points earned tracking period.",
         "properties": {
           "value": {
             "type": "integer",
             "minimum": 1,
-            "description": "Length of the tracking period, expressed in `unit` units. Minimum 1. Maximum\ndepends on `unit` (DAY: 90, WEEK: 52, MONTH: 12, YEAR: 5)."
+            "description": "Length of the tracking period, expressed in `unit` units. Minimum 1. The maximum `value` depends on `unit`: 90 for `DAY`, 52 for `WEEK`, 12 for `MONTH`, 5 for `YEAR`."
           },
           "unit": {
             "type": "string",
@@ -47422,7 +49118,7 @@
             "type": "array",
             "minItems": 1,
             "maxItems": 20,
-            "description": "Calendar dates (day + month) on which tier membership expires. 1-20 items.",
+            "description": "Calendar dates (day and month) on which tier membership expires. 1 to 20 items. Each day and month pair must be unique.",
             "items": {
               "$ref": "#/components/schemas/TierStructureExpirationCalendarDateUpsert"
             }
@@ -47434,7 +49130,7 @@
         "additionalProperties": false
       },
       "TierStructureExpirationSlidingExpirationUpsert": {
-        "description": "Sliding expiration settings. Tier membership expiration slides forward on the\nconfigured member activities.",
+        "description": "Sliding expiration settings. Tier membership expiration slides forward on the configured member activities. At least one of `earning_activity`, `spending_activity`, and `custom_activity` must be `true`.",
         "allOf": [
           {
             "$ref": "#/components/schemas/TierStructureSlidingExpirationActivityBase"
@@ -47446,23 +49142,17 @@
                 "type": "array",
                 "maxItems": 10,
                 "uniqueItems": true,
-                "description": "Custom activity type names that extend the tier membership. Up to 10 unique\nitems. Defaults to an empty array when omitted.",
+                "description": "Custom event schema IDs (`ms_…`) that extend the tier membership when `custom_activity` is `true`. Send 1 to 10 unique ids. An unknown id returns `404`. When `custom_activity` is `false` or omitted, ids are ignored and the value is stored as an empty array.",
                 "items": {
                   "type": "string",
                   "minLength": 1,
-                  "description": "Custom activity type name."
+                  "pattern": "^ms_[a-zA-Z0-9]+",
+                  "description": "Custom event schema ID."
                 }
               },
               "period": {
-                "description": "Sliding period after the last qualifying activity. Required (may be null).",
-                "oneOf": [
-                  {
-                    "$ref": "#/components/schemas/TierStructureExpirationSlidingExpirationPeriodUpsert"
-                  },
-                  {
-                    "type": "null"
-                  }
-                ]
+                "$ref": "#/components/schemas/TierStructureExpirationSlidingExpirationPeriodUpsert",
+                "description": "Sliding period after the last qualifying activity."
               }
             },
             "required": [
@@ -47479,7 +49169,7 @@
           "value": {
             "type": "integer",
             "minimum": 1,
-            "description": "Length of the grace period, expressed in `unit` units. Minimum 1."
+            "description": "Length of the period, expressed in `unit` units. Minimum 1. The maximum `value` depends on `unit`: 90 for `DAY`, 12 for `MONTH`, 5 for `YEAR`."
           },
           "unit": {
             "type": "string",
@@ -47492,14 +49182,70 @@
           },
           "round_up": {
             "type": "boolean",
-            "description": "Whether the grace period end is rounded up to the end of the unit."
+            "description": "Whether the grace period end is rounded up to the end of the unit. Defaults to `false` when omitted."
           }
         },
         "required": [
           "value",
           "unit"
         ],
-        "additionalProperties": false
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "unit": {
+                  "const": "DAY"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "value": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 90
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "unit": {
+                  "const": "MONTH"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "value": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 12
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "unit": {
+                  "const": "YEAR"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "value": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 5
+                }
+              }
+            }
+          }
+        ]
       },
       "LoyaltyV2ActivityTierStructurePointEarnedPeriod": {
         "type": "object",
@@ -47555,10 +49301,10 @@
             "properties": {
               "custom_activity_types": {
                 "type": "array",
-                "description": "Custom activity type names that extend the tier membership.",
+                "description": "Custom event schema IDs that extend the tier membership.",
                 "items": {
                   "type": "string",
-                  "description": "Custom activity type name."
+                  "description": "Custom event schema ID."
                 }
               },
               "period": {
@@ -47575,7 +49321,7 @@
         "properties": {
           "value": {
             "type": "integer",
-            "description": "Length of the grace period, expressed in `unit` units."
+            "description": "Length of the period, expressed in `unit` units. Minimum 1. The maximum `value` depends on `unit`: 90 for `DAY`, 12 for `MONTH`, 5 for `YEAR`."
           },
           "unit": {
             "type": "string",
@@ -47594,13 +49340,13 @@
       },
       "TierQualificationRulesPointsUpsert": {
         "type": "object",
-        "description": "Point thresholds for tier qualification. Values must be non-negative numbers\nbetween 0 and 1,000,000,000.",
+        "description": "Point thresholds for tier qualification. Values must be non-negative numbers between 0 and 1,000,000,000.",
         "properties": {
           "min_value": {
             "type": "number",
             "minimum": 0,
             "maximum": 1000000000,
-            "description": "Minimum number of points required to qualify for the tier. Required."
+            "description": "Minimum number of points required to qualify for the tier."
           },
           "max_value": {
             "type": "number",
@@ -47652,6 +49398,181 @@
             "description": "Unique identifier of the customer segment."
           }
         }
+      },
+      "TierPointsExpirationUpsert": {
+        "type": "object",
+        "description": "Points expiration for a tier. `INHERIT` follows the tier structure's points expiration. Any other `type` overrides it, and you can set or change that override only while the tier structure is `DRAFT`. `type` decides which nested object is required. Nested objects that do not match `type` must be `null` or omitted.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "INHERIT",
+              "NO_EXPIRATION",
+              "ROLLING_EXPIRATION",
+              "CALENDAR_EXPIRATION",
+              "SLIDING_EXPIRATION"
+            ],
+            "description": "Points expiration type. `INHERIT` uses the parent tier structure settings."
+          },
+          "rolling_expiration": {
+            "description": "Required when `type` is `ROLLING_EXPIRATION`.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/TierPointsExpirationRollingExpirationUpsert"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "calendar_expiration": {
+            "description": "Required when `type` is `CALENDAR_EXPIRATION`.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/TierPointsExpirationCalendarExpirationUpsert"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "sliding_expiration": {
+            "description": "Required when `type` is `SLIDING_EXPIRATION`.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/TierPointsExpirationSlidingExpirationUpsert"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "INHERIT"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "rolling_expiration": {
+                  "type": "null"
+                },
+                "calendar_expiration": {
+                  "type": "null"
+                },
+                "sliding_expiration": {
+                  "type": "null"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "NO_EXPIRATION"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "rolling_expiration": {
+                  "type": "null"
+                },
+                "calendar_expiration": {
+                  "type": "null"
+                },
+                "sliding_expiration": {
+                  "type": "null"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "ROLLING_EXPIRATION"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "rolling_expiration"
+              ],
+              "properties": {
+                "rolling_expiration": {
+                  "$ref": "#/components/schemas/TierPointsExpirationRollingExpirationUpsert"
+                },
+                "calendar_expiration": {
+                  "type": "null"
+                },
+                "sliding_expiration": {
+                  "type": "null"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "CALENDAR_EXPIRATION"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "calendar_expiration"
+              ],
+              "properties": {
+                "rolling_expiration": {
+                  "type": "null"
+                },
+                "calendar_expiration": {
+                  "$ref": "#/components/schemas/TierPointsExpirationCalendarExpirationUpsert"
+                },
+                "sliding_expiration": {
+                  "type": "null"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "SLIDING_EXPIRATION"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "sliding_expiration"
+              ],
+              "properties": {
+                "rolling_expiration": {
+                  "type": "null"
+                },
+                "calendar_expiration": {
+                  "type": "null"
+                },
+                "sliding_expiration": {
+                  "$ref": "#/components/schemas/TierPointsExpirationSlidingExpirationUpsert"
+                }
+              }
+            }
+          }
+        ]
       },
       "TierStructureActivityData": {
         "type": "object",
@@ -47906,7 +49827,7 @@
             "type": "integer",
             "minimum": 0,
             "maximum": 9007199254740991,
-            "description": "Available Remaining stock quantity. For responses, updates with each benefit purchase."
+            "description": "Remaining stock quantity. On create, this is the starting quantity. Each benefit purchase decreases it by one."
           }
         },
         "required": [
@@ -48150,7 +50071,7 @@
               "NO_COOLDOWN",
               "FIXED_COOLDOWN"
             ],
-            "description": "Cooldown type. `NO_COOLDOWN` requires `fixed_cooldown` to be null/omitted. `FIXED_COOLDOWN` requires `fixed_cooldown`."
+            "description": "Cooldown type. `NO_COOLDOWN` requires `fixed_cooldown` to be `null`/omitted. `FIXED_COOLDOWN` requires `fixed_cooldown`."
           },
           "fixed_cooldown": {
             "description": "Fixed cooldown details. Required when `type` is `FIXED_COOLDOWN`; must be null when `type` is `NO_COOLDOWN`.",
@@ -49501,7 +51422,7 @@
       },
       "CardDefinitionPointsExpirationRollingExpirationPeriodInput": {
         "type": "object",
-        "description": "Rolling expiration period. The maximum `value` depends on `unit`:\n1-90 for `DAY`, 1-12 for `MONTH`, 1-5 for `YEAR` (enforced via if/then conditions).",
+        "description": "Rolling expiration period. The maximum `value` depends on `unit`:\n1-90 for `DAY`, 1–12 for `MONTH`, 1-5 for `YEAR` (enforced via if/then conditions).",
         "properties": {
           "unit": {
             "type": "string",
@@ -49527,7 +51448,7 @@
       },
       "CardDefinitionPointsExpirationRollingExpirationRoundingInput": {
         "type": "object",
-        "description": "Rounding of the rolling expiration date. When `type` is `END_OF_PARTICULAR_MONTH`,\n`value` (month number 1-12) is required; for all other types `value` must be null/absent.",
+        "description": "Rounding of the rolling expiration date. When `type` is `END_OF_PARTICULAR_MONTH`,\n`value` (month number 1–12) is required; for all other types `value` must be null/absent.",
         "properties": {
           "type": {
             "type": "string",
@@ -49547,7 +51468,7 @@
             ],
             "minimum": 1,
             "maximum": 12,
-            "description": "Month number (1-12). Required when `type` is `END_OF_PARTICULAR_MONTH`, must be null otherwise."
+            "description": "Month number (1–12). Required when `type` is `END_OF_PARTICULAR_MONTH`, must be null otherwise."
           }
         },
         "required": [
@@ -49569,7 +51490,7 @@
             "type": "integer",
             "minimum": 1,
             "maximum": 12,
-            "description": "Month number (1-12)."
+            "description": "Month number (1–12)."
           }
         },
         "required": [
@@ -49596,7 +51517,7 @@
         }
       },
       "CardDefinitionPointsExpirationSlidingExpirationPeriodInput": {
-        "description": "Sliding expiration period. The maximum `value` depends on `unit`:\n1-90 for `DAY`, 1-12 for `MONTH`, 1-1 for `YEAR` (enforced via if/then conditions).",
+        "description": "Sliding expiration period. The maximum `value` depends on `unit`:\n1-90 for `DAY`, 1–12 for `MONTH`, 1-1 for `YEAR` (enforced via if/then conditions).",
         "allOf": [
           {
             "$ref": "#/components/schemas/CardDefinitionPeriodInput"
@@ -49605,7 +51526,7 @@
         "unevaluatedProperties": false
       },
       "CardDefinitionPendingPointsPeriodBasedPeriodInput": {
-        "description": "Pending period. The maximum `value` depends on `unit`:\n1-90 for `DAY`, 1-12 for `MONTH`, 1-1 for `YEAR` (enforced via if/then conditions).",
+        "description": "Pending period. The maximum `value` depends on `unit`:\n1-90 for `DAY`, 1–12 for `MONTH`, 1-1 for `YEAR` (enforced via if/then conditions).",
         "allOf": [
           {
             "$ref": "#/components/schemas/CardDefinitionPeriodInput"
@@ -49614,7 +51535,7 @@
         "unevaluatedProperties": false
       },
       "CardDefinitionPendingPointsEventBasedCancelPeriodInput": {
-        "description": "Period after which non-activated pending points are cancelled. The maximum `value`\ndepends on `unit`: 1-90 for `DAY`, 1-12 for `MONTH`, 1-1 for `YEAR`\n(enforced via if/then conditions).",
+        "description": "Period after which non-activated pending points are cancelled. The maximum `value`\ndepends on `unit`: 1-90 for `DAY`, 1–12 for `MONTH`, 1-1 for `YEAR`\n(enforced via if/then conditions).",
         "allOf": [
           {
             "$ref": "#/components/schemas/CardDefinitionPeriodInput"
@@ -49927,7 +51848,7 @@
             "type": "integer",
             "minimum": 1,
             "maximum": 12,
-            "description": "Month number (1-12). Only present when `type` is `END_OF_PARTICULAR_MONTH`."
+            "description": "Month number (1–12). Only present when `type` is `END_OF_PARTICULAR_MONTH`."
           }
         },
         "required": [
@@ -49948,7 +51869,7 @@
             "type": "integer",
             "minimum": 1,
             "maximum": 12,
-            "description": "Month number (1-12)."
+            "description": "Month number (1–12)."
           }
         },
         "required": [
@@ -50975,7 +52896,7 @@
           "value": {
             "type": "integer",
             "minimum": 1,
-            "description": "Length of the expiration period, expressed in `unit` units. Minimum 1."
+            "description": "Length of the period, expressed in `unit` units. Minimum 1. The maximum `value` depends on `unit`: 90 for `DAY`, 12 for `MONTH`, 5 for `YEAR`."
           },
           "unit": {
             "type": "string",
@@ -50991,23 +52912,79 @@
           "value",
           "unit"
         ],
-        "additionalProperties": false
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "unit": {
+                  "const": "DAY"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "value": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 90
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "unit": {
+                  "const": "MONTH"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "value": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 12
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "unit": {
+                  "const": "YEAR"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "value": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 5
+                }
+              }
+            }
+          }
+        ]
       },
       "TierStructureExpirationCalendarDateUpsert": {
         "type": "object",
-        "description": "A recurring calendar date. The maximum `day` depends on `month`: 29 for February\n(month 2), 30 for April/June/September/November (months 4, 6, 9, 11), and 31 for\nthe remaining months.",
+        "description": "Recurring calendar date on which tier membership expires, at the start of that day (00:00 in the project timezone). The maximum `day` depends on `month`: 29 for February (month 2), 30 for April/June/September/November (months 4, 6, 9, 11), and 31 for the remaining months",
         "properties": {
           "day": {
             "type": "integer",
             "minimum": 1,
             "maximum": 31,
-            "description": "Day of the month (1-31). Maximum depends on `month`: February allows up to 29;\nApril, June, September and November allow up to 30; other months allow up to 31."
+            "description": "Day of the month (1–31). Maximum depends on `month`: February allows up to 29; April, June, September and November allow up to 30; other months allow up to 31."
           },
           "month": {
             "type": "integer",
             "minimum": 1,
             "maximum": 12,
-            "description": "Month of the year (1-12)."
+            "description": "Month of the year (1–12)."
           }
         },
         "additionalProperties": false,
@@ -51092,15 +53069,15 @@
         "properties": {
           "earning_activity": {
             "type": "boolean",
-            "description": "Whether point earning activity extends the tier membership."
+            "description": "Whether point earning activity extends the tier membership. Defaults to `false` when omitted."
           },
           "spending_activity": {
             "type": "boolean",
-            "description": "Whether point spending activity extends the tier membership."
+            "description": "Whether point spending activity extends the tier membership. Defaults to `false` when omitted."
           },
           "custom_activity": {
             "type": "boolean",
-            "description": "Whether custom activities extend the tier membership."
+            "description": "Whether custom activities extend the tier membership. Defaults to `false` when omitted."
           }
         }
       },
@@ -51111,7 +53088,7 @@
           "value": {
             "type": "integer",
             "minimum": 1,
-            "description": "Length of the sliding period, expressed in `unit` units. Minimum 1."
+            "description": "Length of the period, expressed in `unit` units. Minimum 1. The maximum `value` depends on `unit`: 90 for `DAY`, 12 for `MONTH`, 5 for `YEAR`."
           },
           "unit": {
             "type": "string",
@@ -51127,15 +53104,71 @@
           "value",
           "unit"
         ],
-        "additionalProperties": false
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "unit": {
+                  "const": "DAY"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "value": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 90
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "unit": {
+                  "const": "MONTH"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "value": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 12
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "unit": {
+                  "const": "YEAR"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "value": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 5
+                }
+              }
+            }
+          }
+        ]
       },
       "LoyaltyV2ActivityTierStructureExpirationPeriod": {
         "type": "object",
-        "description": "Expiration period. The same shape is used for fixed duration and sliding\nexpiration periods.",
+        "description": "Expiration period. The same shape is used for fixed duration and sliding expiration periods.",
         "properties": {
           "value": {
             "type": "integer",
-            "description": "Length of the period, expressed in `unit` units."
+            "description": "Length of the period, expressed in `unit` units. Minimum 1. The maximum `value` depends on `unit`: 90 for `DAY`, 12 for `MONTH`, 5 for `YEAR`."
           },
           "unit": {
             "type": "string",
@@ -51156,19 +53189,162 @@
             "type": "integer",
             "minimum": 1,
             "maximum": 31,
-            "description": "Day of the month (1-31)."
+            "description": "Day of the month (1–31)."
           },
           "month": {
             "type": "integer",
             "minimum": 1,
             "maximum": 12,
-            "description": "Month of the year (1-12)."
+            "description": "Month of the year (1–12)."
           }
         }
       },
+      "TierPointsExpirationRollingExpirationUpsert": {
+        "type": "object",
+        "description": "Rolling points expiration. `period` is required.",
+        "properties": {
+          "period": {
+            "$ref": "#/components/schemas/TierPointsExpirationRollingPeriodUpsert"
+          },
+          "rounding": {
+            "description": "Rounding of the expiration date. Optional.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/TierPointsExpirationRollingRoundingUpsert"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "period"
+        ],
+        "additionalProperties": false
+      },
+      "TierPointsExpirationCalendarExpirationUpsert": {
+        "type": "object",
+        "description": "Calendar points expiration.",
+        "properties": {
+          "expiration_dates": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TierPointsExpirationCalendarDateUpsert"
+            },
+            "minItems": 1,
+            "maxItems": 20,
+            "description": "Dates on which points expire. 1 to 20 dates."
+          }
+        },
+        "required": [
+          "expiration_dates"
+        ],
+        "additionalProperties": false
+      },
+      "TierPointsExpirationSlidingExpirationUpsert": {
+        "type": "object",
+        "description": "Sliding points expiration. `period` is required. At least one of `earning_activity`, `spending_activity`, or `custom_activity` must be `true`.",
+        "properties": {
+          "earning_activity": {
+            "type": "boolean",
+            "description": "Whether earning activity extends the expiration."
+          },
+          "spending_activity": {
+            "type": "boolean",
+            "description": "Whether spending activity extends the expiration."
+          },
+          "custom_activity": {
+            "type": "boolean",
+            "description": "Whether the custom activity types extend the expiration."
+          },
+          "custom_activity_types": {
+            "description": "Custom activity types. Required when `custom_activity` is `true`. Up to 10 unique values.",
+            "oneOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "period": {
+            "$ref": "#/components/schemas/TierPointsExpirationSlidingPeriodUpsert"
+          }
+        },
+        "required": [
+          "period"
+        ],
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "anyOf": [
+              {
+                "required": [
+                  "earning_activity"
+                ],
+                "properties": {
+                  "earning_activity": {
+                    "const": true
+                  }
+                }
+              },
+              {
+                "required": [
+                  "spending_activity"
+                ],
+                "properties": {
+                  "spending_activity": {
+                    "const": true
+                  }
+                }
+              },
+              {
+                "required": [
+                  "custom_activity"
+                ],
+                "properties": {
+                  "custom_activity": {
+                    "const": true
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "if": {
+              "properties": {
+                "custom_activity": {
+                  "const": true
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "custom_activity_types"
+              ],
+              "properties": {
+                "custom_activity_types": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "minItems": 1,
+                  "maxItems": 10,
+                  "uniqueItems": true
+                }
+              }
+            }
+          }
+        ]
+      },
       "LoyaltyV2ActivityBenefitPointsProportionalEvery": {
         "type": "object",
-        "description": "Ratio definition - `value` points for every `every` units.",
+        "description": "Ratio definition. `value` points for every `every` units.",
         "properties": {
           "every": {
             "type": "integer",
@@ -51191,7 +53367,7 @@
       },
       "LoyaltyV2ActivityBenefitPointsProportionalMetadata": {
         "type": "object",
-        "description": "Metadata-based ratio definition - `value` points for every `every` units of the metadata property.",
+        "description": "Metadata-based ratio definition. `value` points for every `every` units of the metadata property.",
         "properties": {
           "every": {
             "type": "integer",
@@ -52630,6 +54806,293 @@
         },
         "additionalProperties": false
       },
+      "TierPointsExpirationRollingPeriodUpsert": {
+        "type": "object",
+        "description": "Rolling expiration period. The maximum `value` depends on `unit`: 90 for `DAY`, 12 for `MONTH`, 5 for `YEAR`.",
+        "properties": {
+          "unit": {
+            "type": "string",
+            "enum": [
+              "DAY",
+              "MONTH",
+              "YEAR"
+            ],
+            "description": "Period unit."
+          },
+          "value": {
+            "type": "integer",
+            "description": "Length of the period, expressed in `unit` units. Minimum 1. The maximum `value` depends on `unit`: 90 for `DAY`, 12 for `MONTH`, 5 for `YEAR`."
+          }
+        },
+        "required": [
+          "unit",
+          "value"
+        ],
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "unit": {
+                  "const": "DAY"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "value": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 90
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "unit": {
+                  "const": "MONTH"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "value": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 12
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "unit": {
+                  "const": "YEAR"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "value": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 5
+                }
+              }
+            }
+          }
+        ]
+      },
+      "TierPointsExpirationRollingRoundingUpsert": {
+        "type": "object",
+        "description": "Rounding of the rolling expiration date.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "END_OF_MONTH",
+              "END_OF_QUARTER",
+              "END_OF_HALF_YEAR",
+              "END_OF_YEAR",
+              "END_OF_PARTICULAR_MONTH"
+            ],
+            "description": "Rounding type."
+          },
+          "value": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 1,
+            "maximum": 12,
+            "description": "Month from 1 to 12. Required when `type` is `END_OF_PARTICULAR_MONTH`. Otherwise `null`."
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "END_OF_PARTICULAR_MONTH"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "value"
+              ],
+              "properties": {
+                "value": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 12
+                }
+              }
+            },
+            "else": {
+              "properties": {
+                "value": {
+                  "type": "null"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "TierPointsExpirationCalendarDateUpsert": {
+        "type": "object",
+        "description": "A calendar date on which points expire.",
+        "properties": {
+          "day": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 31,
+            "description": "Day of the month."
+          },
+          "month": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 12,
+            "description": "Month."
+          }
+        },
+        "required": [
+          "day",
+          "month"
+        ],
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "month": {
+                  "const": 2
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "day": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 29
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "month": {
+                  "enum": [
+                    4,
+                    6,
+                    9,
+                    11
+                  ]
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "day": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 30
+                }
+              }
+            }
+          }
+        ]
+      },
+      "TierPointsExpirationSlidingPeriodUpsert": {
+        "type": "object",
+        "description": "Sliding expiration period. The maximum `value` depends on `unit`.",
+        "properties": {
+          "value": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Number of units."
+          },
+          "unit": {
+            "type": "string",
+            "enum": [
+              "DAY",
+              "MONTH",
+              "YEAR"
+            ],
+            "description": "Period unit."
+          }
+        },
+        "required": [
+          "value",
+          "unit"
+        ],
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "unit": {
+                  "const": "DAY"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "value": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 90
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "unit": {
+                  "const": "MONTH"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "value": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 12
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "unit": {
+                  "const": "YEAR"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "value": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 1
+                }
+              }
+            }
+          }
+        ]
+      },
       "BenefitPointsProportionalApplicableTo": {
         "type": "object",
         "description": "A single applicability rule. Exactly one of `product`, `sku`, or `products_collection` is required, matching the `type`. In requests, the other two may be omitted or set to `null`. In responses, they are omitted.",
@@ -53787,7 +56250,7 @@
       },
       "LoyaltyV2ActivityEarningRuleEffectPointsExpirationRollingExpirationRounding": {
         "type": "object",
-        "description": "`value` is the month (1-12). Required when `type` is `END_OF_PARTICULAR_MONTH`. Absent for other rounding types.",
+        "description": "`value` is the month (1–12). Required when `type` is `END_OF_PARTICULAR_MONTH`. Absent for other rounding types.",
         "properties": {
           "type": {
             "type": "string",
@@ -53801,7 +56264,7 @@
             "description": "Rounding type."
           },
           "value": {
-            "description": "Month number (1-12). Present only when `type` is `END_OF_PARTICULAR_MONTH`.",
+            "description": "Month number (1–12). Present only when `type` is `END_OF_PARTICULAR_MONTH`.",
             "oneOf": [
               {
                 "type": "integer",
@@ -53874,13 +56337,13 @@
             "type": "integer",
             "minimum": 1,
             "maximum": 31,
-            "description": "Day of month (1-31; validated against the month length)."
+            "description": "Day of month (1–31; validated against the month length)."
           },
           "month": {
             "type": "integer",
             "minimum": 1,
             "maximum": 12,
-            "description": "Month number (1-12)."
+            "description": "Month number (1–12)."
           }
         },
         "additionalProperties": false,

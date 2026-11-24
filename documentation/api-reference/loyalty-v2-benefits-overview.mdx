@@ -21,19 +21,26 @@ Like rewards, benefits can be limited in quantity through a `stock` configuratio
 
 ## Referenced resources
 
-Depending on its type, a benefit references other resources: A card definition for points-based benefits, or a product/SKU/campaign for material and digital benefits. These references are validated on create and update; for example, a points-based benefit can only be activated if its connected card definition is itself `ACTIVE`.
+A benefit references another resource, depending on its type. A points benefit references a card definition. A material benefit references a product or SKU. A digital benefit references a campaign, and the campaign type must match `DISCOUNT_COUPONS` or `GIFT_VOUCHERS`.
+
+Create checks that the referenced resource exists. Creating an `ACTIVE` points benefit requires an `ACTIVE` card definition. Creating an `ACTIVE` digital benefit requires a campaign that is not `DRAFT`.
+
+An update of a `POINTS` or `POINTS_PROPORTIONAL` benefit requires an `ACTIVE` card definition, whether the benefit is `DRAFT` or `ACTIVE`. An `ACTIVE` digital benefit cannot use a `DRAFT` campaign.
+
+[Activate benefit](/api-reference/benefits/activate-benefit) checks related resources before the status changes. A `POINTS` benefit requires an `ACTIVE` card definition. A digital benefit cannot reference a `DRAFT` campaign.
 
 ## Lifecycle
 
-A benefit is created in `DRAFT` status by default, and only moves between `DRAFT` and `ACTIVE` through the activate and draft endpoints. There is no `INACTIVE` state. While in `DRAFT`, every property can be updated; once `ACTIVE`, only `name` and `stock` can still be changed.
+A benefit is created as `DRAFT` unless `status` is set to `ACTIVE`. There is no `INACTIVE` status. Update does not change `status`. A `DRAFT` benefit becomes `ACTIVE` through [Activate benefit](/api-reference/benefits/activate-benefit).
 
-Two safeguards protect benefits that are already wired into your program:
-- A benefit that's referenced by any earning rule can't be deleted until that reference is removed.
-- A benefit connected to an active earning rule can't be moved back to `DRAFT`.
+While the benefit is `DRAFT`, `name`, `type`, the type-specific object, and `stock` can change. Once it is `ACTIVE`, an update may send only `name`, `stock`, `points`, `points_proportional`, and `digital`. On an `ACTIVE` benefit, `points.card_definition_id`, `points_proportional.calculation_type`, `points_proportional.card_definition_id`, `digital.type`, and `digital.gift_vouchers.campaign_id` cannot change. `type` and `material` are not accepted. `digital` cannot be sent for an `ACTIVE` discount-coupon benefit.
+
+[Delete benefit](/api-reference/benefits/delete-benefit) sets `status` to `DELETED` and returns that benefit. A benefit that any earning rule uses cannot be deleted until that reference is removed. List calls do not return a deleted benefit.
 
 ## Related resources
 
 - [Loyalty v2 API: Overview](/api-reference/loyalty-v2-api-overview) for the full Loyalty v2 API map.
+- [Benefits activity: Overview](/api-reference/benefits-activity-overview) for the events recorded when a benefit is created, changed, or activated.
 - [Earning Rules overview](/api-reference/loyalty-v2-earning-rules-overview) for how benefits are triggered.
 - [Rewards overview](/api-reference/loyalty-v2-rewards-overview) for the point-redeemable counterpart to benefits.
 - [Create benefits](/build/create-benefits) for the dashboard perspective on configuring benefits.

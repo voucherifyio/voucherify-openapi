@@ -4,6 +4,137 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-11-23
+
+Documented Areas and Stores for product collections in the Product Collections API.
+
+- Generalized `AccessSettings` and its `assign` / `unassign` field descriptions so the same schema covers campaigns, product collections, and other resource types when the feature is enabled for that type.
+- Added `AccessSettingsProductCollectionAssignmentsList` and `AreaStoreProductCollectionAssignment`.
+- Updated `ProductCollectionsItem` with `access_settings_assignments` and `readonly`. Create and update request bodies accept `access_settings` via `AccessSettings`.
+- Removed `name` from the `required` array on `ProductCollectionsUpdateStaticRequestBody` so a static update can send `access_settings` only.
+- Clarified on `ProductCollectionsList` that the list response does not include `access_settings_assignments` when the feature is enabled.
+- Verified and updated GET `/v1/product-collections`.
+  - Added a restricted-user visibility note in the operation description.
+- Verified and updated POST `/v1/product-collections`.
+  - Documented `access_settings.assign` when Areas and Stores is enabled for product collections, including restricted-user rules in a callout.
+  - Added `400` with examples for validation errors, missing static products, and `invalid_payload` when a restricted user creates a collection without a remaining area or store assignment (`The product collection should contain at least one access settings assignment`).
+- Verified and updated GET `/v1/product-collections/{productCollectionId}`.
+  - Added restricted-user access rules in the description.
+  - Added `403` `forbidden` when the collection is not accessible in the caller's context. Added a `200` example with `access_settings_assignments`.
+- Verified and updated PUT `/v1/product-collections/{productCollectionId}`.
+  - Documented updatable fields and `access_settings` for static and auto-update collections, with restricted-user read-only rules in a callout.
+  - Added `403` `forbidden`. Extended `400` with a `resource_protected` example when the collection is read-only for the caller.
+- Verified and updated DELETE `/v1/product-collections/{productCollectionId}`.
+  - Documented that area and store assignments are deleted with the collection, with restricted-user rules in a callout.
+  - Added `403` `forbidden`. Extended `400` with `resource_protected` for read-only collections.
+- Verified and updated GET `/v1/product-collections/{productCollectionId}/products`.
+  - Added `403` `forbidden` for restricted users without access to the collection.
+
+## 2026-11-19
+
+Verified and updated POST `/v2/loyalties/tier-structures` (Create tier structure).
+
+- Corrected defaults in the description: omitted `expiration` is `NO_RETENTION`, omitted `downgrade` is `MULTI_LEVEL`, omitted `status` is `DRAFT`.
+- Renamed the request schema to `LoyaltiesTierStructuresCreateRequestBody`. Added request and `200` examples for a minimal `POINT_BALANCE` create.
+- Removed the `409` response; this operation does not return a conflict.
+- Corrected the `400` description to body validation (`invalid_payload`) and optional `metadata_validation_failed` for the `vl_tier_structure` metadata schema. Added examples.
+- Clarified `404`: missing `card_definition_id` or an unknown `custom_activity_types` custom event schema id. Added examples; the multi-schema case has no `resource_id`.
+- Documented create request rules on shared tier-structure schemas: period `value` caps of 90 for `DAY`, 12 for `MONTH`, and 5 for `YEAR` on fixed-duration, sliding, and downgrade grace periods; sliding `period` is required and cannot be `null`; at least one of `earning_activity`, `spending_activity`, and `custom_activity` must be `true` (omitted flags default to `false`); `custom_activity_types` are custom event schema ids (`ms_…`); calendar `calendar_dates` must be unique; recurring calendar expiry is at the start of that day in the project timezone (`TierStructureExpirationCalendarDateUpsert`).
+
+Verified and updated GET `/v2/loyalties/tier-structures/{tierStructureId}`.
+
+- Renamed the response schema to `LoyaltiesTierStructuresGetResponseBody`.
+- Removed the `400` and `409` responses; this operation has no body or query and does not return a conflict.
+- Clarified `404`: the tier structure does not exist, is deleted, or the id does not match `lts_[a-f0-9]+`. Added examples for an unknown id and a pattern mismatch.
+- Added a `200` example for a `POINT_BALANCE` tier structure with `point_earned` set to `null`.
+- On shared schema `TierStructure`, documented that `point_balance` is `null` when `type` is `POINT_EARNED` and `point_earned` is `null` when `type` is `POINT_BALANCE` wherever `TierStructure` is returned.
+
+Documented POST `/v2/loyalties/tier-structures/{tierStructureId}/tiers/batch`.
+
+- Added request body `LoyaltiesTierStructuresTiersBatchRequestBody` (`TierBatchRequest`): optional `create`, `update`, and `remove` arrays, each up to 100 items, with at least one non-empty. `remove` is a unique list of tier ids. Create and update item schemas are `TierBatchCreateItem` and `TierBatchUpdateItem` (`id` required on update).
+- Documented processing order (remove, then update, then create), `204` with no body on success, and tier structure `DRAFT` rules: full batch in `DRAFT`; outside `DRAFT`, `create` and `remove` are rejected and `update` accepts only `name` and `metadata`.
+- Added tier-level `points_expiration` on batch create and update via `TierPointsExpirationUpsert` and nested upsert schemas. Overrides are allowed only while the tier structure is `DRAFT`; `INHERIT` follows the structure. Omit `points_expiration`, or send `null`, to store `INHERIT` on create or to keep the current value on update. Rolling period maxima are 90 for `DAY`, 12 for `MONTH`, and 5 for `YEAR`; sliding maxima are 90, 12, and 1; calendar `expiration_dates` allow 1–20 dates; sliding expiration requires at least one activity flag.
+- Clarified post-batch rules: tier names must be unique in the structure; qualification point ranges must not overlap; a tier referenced by an earning rule or a reward cannot be removed.
+- Added `400` examples for `invalid_payload`, `overlapping_tier`, and `resource_in_use` (`related_object_type` `earning_rule` or `reward`). Added `403` `tiers_per_tier_structure_limit_exceeded`. Added `404` examples for unknown `tier_structure`, a path id that does not match `lts_[a-f0-9]+`, unknown `tier`, and unknown `segment`.
+- Added request examples for tier create-only and combined create, update, and remove. Linked tier structure tier activities in the operation description. Listed the endpoint in `docs.json`.
+
+## 2026-11-18
+
+Removed POST `/v2/loyalties/tier-structures/{tierStructureId}/tiers` from `docs.json`. It's going to be superseded by POST `/v2/loyalties/tier-structures/{tierStructureId}/tiers/batch` (to be documented).
+
+Removed POST `/v2/loyalties/benefits/{benefitId}/draft` from `docs.json`. It's not to be shown for the time being.
+
+Verified and updated DELETE `/v2/loyalties/benefits/{benefitId}`. Removed the documentation-in-progress badge.
+
+- Corrected the `400` description. This operation has no body or query. The cause is a benefit that an earning rule uses (`resource_in_use`). Documented that `related_object_ids` ends with `"…"` when more earning rules reference the benefit.
+- Clarified `404`: the benefit does not exist, is deleted, or the id does not match `lben_[a-f0-9]+`. Added a `Malformed benefit ID` example.
+- Added a `200` example and a `400` `resource_in_use` example.
+- Renamed the response schema to `LoyaltiesBenefitsDeleteResponseBody`.
+
+## 2026-11-17
+
+Verified and updated PUT `/v2/loyalties/benefits/{benefitId}`.
+
+- Clarified that the body must include at least one of `name`, `type`, `points`, `points_proportional`, `material`, `digital`, or `stock`, and that this operation does not change `status`. In `DRAFT`, any of these fields may be sent. In `ACTIVE`, only `name`, `stock`, `points`, `points_proportional`, and `digital` are accepted.
+- Documented immutable fields on an `ACTIVE` benefit: `points.card_definition_id`, `points_proportional.calculation_type`, `points_proportional.card_definition_id`, `digital.type`, and `digital.gift_vouchers.campaign_id`. `digital` cannot be sent for an `ACTIVE` `DISCOUNT_COUPONS` benefit. `type` and `material` are not accepted when the benefit is `ACTIVE`.
+- Clarified that a `POINTS` or `POINTS_PROPORTIONAL` benefit requires an `ACTIVE` card definition on both `DRAFT` and `ACTIVE` updates (`423` `non_active_card_definition`), not only when the benefit is `ACTIVE`. An `ACTIVE` digital benefit cannot use a `DRAFT` campaign (`423` `non_active_campaign`).
+- Corrected the `400` description (body validation and status rules, not query parameters). Added `400` examples for an empty body, an immutable property on an `ACTIVE` benefit, the `ACTIVE` allow-list violation, and `invalid_campaign_type`.
+- Added `403` `forbidden` when a material product or SKU exists but is not accessible in the caller's context.
+- Fixed `404` examples so they sit under `application/json`. Added `not_found` examples for product, SKU, and campaign. Clarified that a deleted benefit is not found.
+- Removed the `409` response. Benefit names are not required to be unique within the project.
+- Added request and `200` examples for updating an `ACTIVE` points benefit. Renamed the request schema to `LoyaltiesBenefitsUpdateRequestBody`.
+
+Verified and updated POST `/v2/loyalties/benefits/{benefitId}/activate`. Removed the documentation-in-progress badge.
+
+- Clarified that related-resource checks run before the status change. A `POINTS` benefit requires `points.card_definition_id` to be `ACTIVE` (`423` `non_active_card_definition`). A digital benefit cannot reference a `DRAFT` campaign (`423` `non_active_campaign`). A benefit that is not `DRAFT` returns `400` `invalid_state_transition` when those checks pass.
+- Removed `non_existing_card_definition` and `resource_locked` from the description. A missing card definition is not a response of this operation. The card-definition check applies to `POINTS` and `points.card_definition_id`.
+- Corrected the `400` description. This operation has no body and no query. The cause is a benefit that is not `DRAFT`.
+- Clarified `404`: the benefit does not exist, is deleted, or the id does not match `lben_[a-f0-9]+`.
+- Added a `200` example, a `400` `invalid_state_transition` example, `404` examples for an unknown id and a pattern mismatch, and `423` examples for `non_active_card_definition` and `non_active_campaign`.
+- Renamed the response schema to `LoyaltiesBenefitsActivateResponseBody`.
+
+Verified and updated GET `/v2/loyalties/benefits/{benefitId}/activities`. Removed the documentation-in-progress badge.
+
+- Clarified that the cursor matches the filters, the order, and the benefit of the previous response. A cursor from another benefit, or a page whose filters or order changed, returns `400` `cursor_and_query_mismatch`.
+- Corrected the `400` description. This operation has no body. The causes are query validation and cursor errors.
+- Added `400` examples for a limit above 100 or below 1, an unsupported `order`, `created_at` together with `-created_at`, a cursor that does not match `^lcrsaben_[a-f0-9]+$`, `invalid_or_expired_cursor`, and `cursor_and_query_mismatch`.
+- Clarified `404`: the benefit does not exist, is deleted, or the id does not match `lben_[a-f0-9]+`. Added examples for an unknown id and a pattern mismatch.
+- Added a `200` example. Renamed the response schema to `LoyaltiesBenefitsActivitiesListResponseBody`.
+
+Verified and updated GET `/v2/loyalties/benefits`.
+
+- Corrected the `400` description. The list has no resource state, so the causes are query validation and cursor errors.
+- Added `400` examples for a limit above 100 or below 1, an unsupported `order`, `created_at` together with `-created_at`, a cursor that does not match `^lcrsben_[a-f0-9]+$`, `invalid_or_expired_cursor`, and `cursor_and_query_mismatch`.
+
+## 2026-11-16
+
+Verified and updated GET `/v2/loyalties/earning-rules`.
+
+- Clarified that rules with status `DELETED` are excluded from the list.
+- Documented `order` allowed values (`-created_at`, `created_at`, `name`, `-name`), cursor expiry, and `400` errors `invalid_or_expired_cursor` and `cursor_and_query_mismatch` when filters or order change between pages.
+- Named filterable fields on `filters`: `id`, `name`, `status`, and `created_at`. Tightened name and status filter descriptions on `LoyaltiesEarningRulesListRequestQuery`.
+- Corrected the `400` description for query and cursor validation. Removed `404` and `409` responses.
+- Added `400` examples for invalid cursor pattern (`^lcrsern_[a-f0-9]+$`), limit above 100 or below 1, unsupported or conflicting `order`, expired cursor, and cursor/query mismatch.
+- Added `DELETED` to the `EarningRuleResponse.status` enum. The description notes that only the delete operation returns it. The enum is shared with other earning-rule responses.
+
+Verified and updated DELETE `/v2/loyalties/earning-rules/{earningRuleId}`.
+
+- Added `DELETED` to `EarningRuleResponse.status` so the `200` example validates.
+- Added a `404` `not_found` example with `resource_id` and `resource_type`. Removed the `409` response, which the endpoint never returns.
+- Replaced the `400` boilerplate description with the `resource_in_use` cause. Documented that `related_object_ids` ends with `"…"` when more programs reference the rule.
+- Renamed the response schema to `LoyaltiesEarningRulesDeleteResponseBody`, because the formula name was free.
+
+Verified and updated POST `/v2/loyalties/benefits`. Removed the documentation-in-progress badge.
+
+- Clarified that exactly one of `points`, `points_proportional`, `material`, or `digital` is required, matching `type`. Omitted `status` creates the benefit as `DRAFT`. Omitted `stock`, or `stock: null`, stores unlimited stock.
+- Clarified `card_definition_id`. The card definition must exist. It must be `ACTIVE` when creating with `status: ACTIVE`, or when an update sends the points object. A `DRAFT` create accepts a card definition that is not `ACTIVE`.
+- Documented `400` `invalid_campaign_type` when a digital benefit's campaign type does not match `DISCOUNT_COUPONS` or `GIFT_VOUCHERS`, and `423` `non_active_campaign` when an `ACTIVE` create references a draft campaign.
+- Corrected the inactive card definition error to `423` `non_active_card_definition`. Removed the `409` response. The name is not rejected as a duplicate.
+- Added `403` `forbidden` when the product on a `SKU` material benefit is not accessible in the caller's context.
+- Added request and `200` examples, plus `400`, `403`, `404`, and `423` examples. `404` covers a missing product, card definition, SKU, or campaign.
+- Renamed the request schema to `LoyaltiesBenefitsCreateRequestBody`.
+- Removed "unique within the project" from `Benefit.name`. Clarified `LoyaltyV2ActivityBenefitStockLimited.quantity`: on create it is the starting quantity, and each purchase decreases it by one.
+
 ## 2026-11-13
 
 Documented `LOYALTY_POINTS` rewards that credit a `v2/loyalties` (loyalty hub) card from a referral tier.
@@ -249,8 +380,8 @@ Shared copied Loyalty v2 schemas. Repeated fields now live on one schema, and ea
 
 ## 2026-10-07
 
-- Published `reference/OpenAPI.json` as OpenAPI 3.1.0 (DEV-4255). Nullable fields use a `null` type (`type` array, or `anyOf` of a schema and `null`) instead of `nullable: true`.
-- Moved webhook operations from `reference/OpenAPIWebhooks.json` into `reference/OpenAPI.json` and removed the separate file (DEV-4256). Webhook payload schemas that match API objects now reference those shared schemas.
+- Published `reference/OpenAPI.json` as OpenAPI 3.1.0. Nullable fields use a `null` type (`type` array, or `anyOf` of a schema and `null`) instead of `nullable: true`.
+- Moved webhook operations from `reference/OpenAPIWebhooks.json` into `reference/OpenAPI.json` and removed the separate file. Webhook payload schemas that match API objects now reference those shared schemas.
 - Documented `parameters` on `SimpleReferralTier`: `event_type`, `segment.id`, `custom_event.id`, and `distribution.id`.
 
 ## 2026-09-28

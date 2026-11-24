@@ -5,6 +5,77 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-11-23
+
+Documented Areas and Stores for product collections and related cross-project transfer behavior.
+
+- Updated `changelog.mdx` with the `v20261110_k` public release notes: product collection assignments, restricted-user transfer rules for new collections, and campaign webhook payload notes.
+- Updated `areas-and-stores.mdx` with product collection visibility and assignment behavior for restricted users.
+- Updated `manage-areas-and-stores.mdx` with steps to assign product collections to areas and stores and to manage them as a restricted user.
+- Updated `prepare/product-collections.mdx` with an **Access settings** step in the create flows.
+- Updated `access-settings.mdx` so the snippet applies to campaigns and product collections.
+- Updated `campaign-copy-between-projects.mdx` with restricted-user rules when a transfer creates product collections under Areas and stores for product collections.
+
+## 2026-11-20
+
+Updated `limits.mdx`. Removed the inline Business and Organization limit table and points readers to Voucherify Pricing for Business and Organization plans and to the Fair use policy for Business, Organization, and Enterprise plans. Clarified minute and hourly limits for webhooks and API blocking, including Enterprise accounts without plan auto-upgrade. Aligned rate-limit response header wording (`api_calls`, `bulk_api_calls`, `api_calls_cycle`, `webhook_calls`).
+
+Updated `management-api.mdx` so the Management API base URL is `https://{region}.api.voucherify.io/management/v1/`.
+Added `free-shipping.mdx`, a dashboard tutorial under **Discount campaigns**. It walks through one **Discount coupons** campaign that applies **Product discount** > **New price** to the built-in **Shipping** product and to a dynamic collection that excludes **Shipping** by name, including a 5% item price via `ORDER_ITEM_PRICE * 0.95`. The page covers Demo Shop validation and **Related topics** accordions for validation rules, dynamic formulas, cart promotions, and stacking rules. Listed the page in `docs.json`.
+
+## 2026-11-18
+
+Updated `loyalty-v2-benefits-overview.mdx` against the Benefits endpoints. Major change: Removed the move-to-draft transition.
+
+Added explanation overview pages for each **Loyalty activity** group. Each page lists the events in that group and links to Workflows, Workflows webhooks, and the matching Loyalty v2 API overview.
+
+- Added `programs-activity-overview.mdx`
+- Added `card-definitions-activity-overview.mdx`
+- Added `earning-rules-activity-overview.mdx`
+- Added `rewards-activity-overview.mdx`
+- Added `benefits-activity-overview.mdx`
+- Added `tier-structures-activity-overview.mdx`
+- Added `members-activity-overview.mdx`
+- Added `cards-activity-overview.mdx`
+
+Updated Loyalty v2 API overviews so **Related resources** links to the matching activity overview. `loyalty-v2-members-overview.mdx` also links to `cards-activity-overview.mdx`.
+
+- Updated `loyalty-v2-programs-overview.mdx`
+- Updated `loyalty-v2-card-definitions-overview.mdx`
+- Updated `loyalty-v2-earning-rules-overview.mdx`
+- Updated `loyalty-v2-rewards-overview.mdx`
+- Updated `loyalty-v2-benefits-overview.mdx`
+- Updated `loyalty-v2-tier-structures-overview.mdx`
+- Updated `loyalty-v2-members-overview.mdx`
+
+Clarified `loyalty-v2-examine-overview.mdx` for `POST /v2/loyalties/examine/rewards`. The response lists a reward only when it resolves to a points cost and the member holds the paying card. `UNAVAILABLE` reasons are only `insufficient_balance` (with `required`, `available`, `missing`) and `no_target_card`. Inactive, out-of-stock, no-matching-cost, and no-card rewards are omitted rather than returned as unavailable.
+
+## 2026-11-17
+
+Updated `loyalty-v2-members-overview.mdx` against the member and membership operations.
+
+- The program must be `ACTIVE` and inside its validity window. A card is created for every assigned card definition. A batch returns before entries are checked, skips a failed entry, and skips entries past the loyalty members plan limit.
+- Create defaults to `ACTIVE`. Metadata merges, `null` clears it, and the payload is checked against the `vl_member` schema. Delete sets `status` to `DELETED`. The customer can join again under a new member ID.
+- Point adjustments, pending changes, and expirations are accepted as `PENDING`. A `0` adjustment creates no transaction. A pending bucket must still be pending and dated after the current project day.
+- Reward purchase and pay with points default to `202` with a `PENDING` transaction. A dry run returns `200` and stores nothing. Refunding an `APPROVED` purchase gives the returned points a new expiration date.
+- Tier history covers joins, leaves, upgrades, downgrades, expiration changes, and evaluation refreshes. `tier_progress` appears only on Get program membership when the card has a tier. `identification_type` is `customer_id` (default), `customer_source_id`, or `member_id`.
+
+## 2026-11-16
+
+Documented Loyalty hub points as a referral reward, separate from legacy loyalty points and from rewards that members buy in the Loyalty hub
+
+- Updated `create-referral-campaign.mdx` so referees can receive **Loyalty Hub - Points on loyalty card** (search an existing loyalty-points reward, create one, edit it, and change it after the campaign is saved) and referrers can receive **Points on loyalty card (loyalty hub)**. The validation rule step includes that referee reward.
+- Updated `referral-campaign-overview.mdx` so rewards can be legacy loyalty or Loyalty hub points. Referee Loyalty hub points are credited to the chosen point wallet and shown on the member card as **Referee earned**.
+- Updated `create-rewards.mdx` with **Points on loyalty card (loyalty hub)**: **Loyalty program**, **Point wallet**, **Points**, and **If the customer is not a program member** (**Create member** or **Don't create member**). This reward is not used in a legacy loyalty campaign.
+
+Updated `loyalty-v2-earning-rules-overview.mdx` so earnings inside one rule are alternatives, not a stack.
+
+- The first earning that passes is applied, and later earnings are skipped, including ones that would also pass. An earning with no tier requirement and no conditions passes immediately. The winning earning runs all of its effects. Other earning rules on the program are evaluated separately.
+- Documented earning limits, and that a points-effect expiration override must be `NO_EXPIRATION` or the same type as the card definition.
+- Create accepts `DRAFT` or `ACTIVE`. After the rule leaves `DRAFT`, the trigger is locked. Earnings, including conditions and tier requirements, can still be replaced.
+- Delete sets `status` to `DELETED` and returns that rule. List and activity calls do not return it.
+- Removed the move-to-draft transition.
+
 ## 2026-11-13
 
 Split the Voucherify Core MCP guide into an explanation, connection how-tos, and a tool reference. Documented the hosted remote server for Europe, the United States, and Asia, including Cursor setup, Claude Code and Codex sign-in, and the Codex `invalid_redirect_uri` callback failure. API calls from the hosted server stay in the same billing period.
@@ -13,14 +84,15 @@ Split the Voucherify Core MCP guide into an explanation, connection how-tos, and
 - Added `connect-voucherify-core-mcp.mdx` for the hosted server
 - Added `install-voucherify-core-mcp.mdx` for the local `uvx` package
 - Added `voucherify-core-mcp-reference.mdx` with the read tools, prompt examples, and API usage warning
+
 ## 2026-11-10
 
 Added the v20261101_l release note to `changelog.mdx`.
 
 Documented Loyalty hub analytics and the daily tasks report.
 
-- Updated `performance-analytics.mdx` with **Loyalty hub analytics and performance**. The program **Analytics** page lists card transactions, pending points, expiring points, and reward purchases, and those lists can be exported to CSV (DOC-1499 / DEV-4231). **Performance** is a separate tab on the program, on each earning rule, and on each reward.
-- Updated `loyalty-v2-reports-overview.mdx` so program reports include **Daily tasks**: a daily breakdown of finished nightly tasks, with no all-time summary (DOC-1497 / DEV-3326).
+- Updated `performance-analytics.mdx` with **Loyalty hub analytics and performance**. The program **Analytics** page lists card transactions, pending points, expiring points, and reward purchases, and those lists can be exported to CSV. **Performance** is a separate tab on the program, on each earning rule, and on each reward.
+- Updated `loyalty-v2-reports-overview.mdx` so program reports include **Daily tasks**: a daily breakdown of finished nightly tasks, with no all-time summary.
 ## 2026-11-06
 
 Clarified Loyalty v2 point-wallet **Return policy** versus reward purchase refunds: return policy settings can be saved but are not applied on order cancel or refund yet; reward refunds use the reward **Refundable** setting and a separate API path.
@@ -115,7 +187,7 @@ Updated `loyalty-v2-reports-overview.mdx` so the earning-rule daily report link 
 
 ## 2026-10-08
 
-Updated Workflows articles for versions, unfinished drafts, publish confirmation, step IDs, overlapping triggers, and designer shortcuts (DEV-4328 / DEV-4329 / DEV-4334 / DEV-4341 / DEV-4348 / DEV-4465 / DEV-4467 / DEV-4512).
+Updated Workflows articles for versions, unfinished drafts, publish confirmation, step IDs, overlapping triggers, and designer shortcuts.
 
 - Updated `workflow-options-limits.mdx` with the **Versions** list, the limit of 100 published versions, save rules for an unfinished draft, confirmation before publish and status changes, and identifier prefixes and suffixes. Overlapping loyalty triggers are in an agent-only visibility block.
 - Updated `build-workflows.mdx` with the save and publish steps, a restore-version procedure, confirmation for **Activate** and **Deactivate**, and a shortcut tip.

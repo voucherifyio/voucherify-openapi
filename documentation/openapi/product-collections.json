@@ -42,7 +42,7 @@
           "Product Collections"
         ],
         "summary": "List Product Collections",
-        "description": "This method returns a list of product collections.",
+        "description": "This method returns a list of product collections.\n\n<Note>A restricted user sees only the product collections assigned to their areas and stores. A restricted user is a user with the Restricted user role, or with a custom role that has the Join areas and stores permission. An API key with the Restricted user role is also restricted.</Note>",
         "parameters": [
           {
             "$ref": "#/components/parameters/limit"
@@ -249,7 +249,7 @@
           "Product Collections"
         ],
         "summary": "Create Product Collection",
-        "description": "This method creates a new product collection.",
+        "description": "Creates a new product collection.\n\nTo assign the collection to areas, stores, or all stores, send `access_settings` with `assign`. Assignments are available only when the Areas and Stores enterprise feature is enabled for product collections.\n\n<Note>A restricted user must assign the new collection to at least one area or store. Areas and stores that the restricted user isn't assigned to are ignored. If none are left, the request fails with a 400 error. A restricted user is a user with the Restricted user role, or with a custom role that has the Join areas and stores permission. An API key with the Restricted user role is also restricted. Users who can't join areas and stores can assign any area or store.</Note>",
         "responses": {
           "200": {
             "description": "Returns information about the newly created collection, as well as an array containing the products.",
@@ -257,6 +257,63 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ProductCollectionsCreateResponseBody"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Returns an error if the request data is invalid, the static collection contains products or SKUs that don't exist, a restricted user creates the collection without any area or store assignment, or the project has reached its product collection limit.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Name is not `string`": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_payload",
+                      "message": "Invalid payload",
+                      "details": "Property .name must be string",
+                      "request_id": "v-1204a5e6cb9054fc8a"
+                    }
+                  },
+                  "Incorrect `junction` property": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_payload",
+                      "message": "Invalid payload",
+                      "details": "Property .filter has wrong `junction` property. It must be one of: and, or",
+                      "request_id": "v-1204a62a891054fd04"
+                    }
+                  },
+                  "Empty `filter` object": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_payload",
+                      "message": "Invalid payload",
+                      "details": "'AUTO_UPDATE' collection must contain valid filter with 'junction' property",
+                      "request_id": "v-1204a662d6c65738b0"
+                    }
+                  },
+                  "Missing products in a static collection": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_payload",
+                      "message": "Invalid payload",
+                      "details": "Cannot create collection due to missing products: 'prod_0a41dd45dc85fcab40'",
+                      "request_id": "v-1204a6a1b2c3d4e5f6"
+                    }
+                  },
+                  "No area or store assignment left for a restricted user": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_payload",
+                      "message": "Invalid payload",
+                      "details": "The product collection should contain at least one access settings assignment",
+                      "request_id": "v-1204a6b2c3d4e5f607"
+                    }
+                  }
                 }
               }
             }
@@ -342,7 +399,7 @@
           "Product Collections"
         ],
         "summary": "Get Product Collection",
-        "description": "Retrieves the product collection.",
+        "description": "Retrieves the product collection.\n\n<Note>If the Areas and Stores enterprise feature is enabled for product collections, a restricted user receives a forbidden error when the product collection is not assigned to their areas and stores. Contact [Voucherify Sales](https://www.voucherify.io/contact-sales) to learn more.</Note>",
         "parameters": [],
         "security": [
           {
@@ -402,6 +459,71 @@
                       "created_at": "2022-02-28T11:42:12.484Z",
                       "object": "products_collection"
                     }
+                  },
+                  "Dynamic with access settings assignments": {
+                    "value": {
+                      "id": "pc_c1FGttniVdrojmCfNsBGuayg",
+                      "name": "Access settings: Adventure",
+                      "type": "AUTO_UPDATE",
+                      "filter": {
+                        "junction": "AND",
+                        "name": {
+                          "conditions": {
+                            "$starts_with": [
+                              "Adventure"
+                            ]
+                          }
+                        }
+                      },
+                      "readonly": true,
+                      "created_at": "2026-11-23T13:41:04.111Z",
+                      "updated_at": "2026-11-23T13:44:40.181Z",
+                      "object": "products_collection",
+                      "access_settings_assignments": {
+                        "object": "list",
+                        "data_ref": "data",
+                        "data": [
+                          {
+                            "id": "arspca_1363e4c67da62a6ac4",
+                            "area_id": "ar_0ea6cd7b781b8f857f",
+                            "area_store_id": "ars_0ea6cff1461b8f8917",
+                            "created_at": "2026-11-23T13:41:04.119Z",
+                            "object": "area_store_product_collection_assignment"
+                          },
+                          {
+                            "id": "arspca_1363e599806323dda2",
+                            "area_id": "ar_0ea6cd7b781b8f857f",
+                            "area_store_id": "ars_0ea6cfe9f75f0e1aa8",
+                            "created_at": "2026-11-23T13:44:40.193Z",
+                            "object": "area_store_product_collection_assignment"
+                          }
+                        ],
+                        "total": 2
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Returns an error if the restricted user is missing the access to an area or a store to which the product collection with this ID has been assigned.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "code": 403,
+                      "key": "forbidden",
+                      "message": "Forbidden",
+                      "details": "Resource products_collection with id pc_c1FGttniVdrojmCfNsBGuayg is not accessible in given context",
+                      "request_id": "v-13641c67326817e5d7",
+                      "resource_id": "pc_c1FGttniVdrojmCfNsBGuayg",
+                      "resource_type": "products_collection"
+                    }
                   }
                 }
               }
@@ -438,7 +560,7 @@
           "Product Collections"
         ],
         "summary": "Update Product Collection",
-        "description": "Updates the product collection.\n\nFor `STATIC` collections, you can update only the `name`.\n\nFor `AUTO_UPDATE` collections, you can update its `name` and `filters`.",
+        "description": "Updates the product collection.\n\nFor `STATIC` collections, you can update only the `name` and `access_settings`.\n\nFor `AUTO_UPDATE` collections, you can update its `name`, `filters`, and `access_settings`.\n\n<Note>If the Areas and Stores enterprise feature is enabled for product collections, you can send `access_settings` to assign or unassign areas and stores. A restricted user can't update a product collection that is read-only for them or that is not assigned to their areas and stores. Contact [Voucherify Sales](https://www.voucherify.io/contact-sales) to learn more.</Note>",
         "parameters": [],
         "security": [
           {
@@ -558,7 +680,7 @@
             }
           },
           "400": {
-            "description": "Returns an error if the data is invalid.",
+            "description": "Returns an error if the data is invalid, or if the restricted user can only read the product collection because it is read-only for them.",
             "content": {
               "application/json": {
                 "schema": {
@@ -590,6 +712,40 @@
                       "message": "Invalid payload",
                       "details": "'AUTO_UPDATE' collection must contain valid filter with 'junction' property",
                       "request_id": "v-1204a662d6c65738b0"
+                    }
+                  },
+                  "Read-only product collection": {
+                    "value": {
+                      "code": 400,
+                      "key": "resource_protected",
+                      "message": "Resource is protected",
+                      "details": "Resource products_collection with id pc_c1FGttniVdrojmCfNsBGuayg is protected and cannot be modified",
+                      "request_id": "v-13641c67326817e5d8",
+                      "resource_id": "pc_c1FGttniVdrojmCfNsBGuayg",
+                      "resource_type": "products_collection"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Returns an error if the restricted user is missing the access to an area or a store to which the product collection with this ID has been assigned.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "code": 403,
+                      "key": "forbidden",
+                      "message": "Forbidden",
+                      "details": "Resource products_collection with id pc_c1FGttniVdrojmCfNsBGuayg is not accessible in given context",
+                      "request_id": "v-13641c67326817e5d7",
+                      "resource_id": "pc_c1FGttniVdrojmCfNsBGuayg",
+                      "resource_type": "products_collection"
                     }
                   }
                 }
@@ -627,7 +783,7 @@
           "Product Collections"
         ],
         "summary": "Delete Product Collection",
-        "description": "Deletes a product collection.\n\n<Warning>This endpoint performs database-heavy operations. It is not designed for highly frequent use.</Warning>",
+        "description": "Deletes a product collection.\n\n<Note>If the Areas and Stores enterprise feature is enabled for product collections, the area and store assignments of the product collection are deleted with it. A restricted user can't delete a product collection that is read-only for them or that is not assigned to their areas and stores. Contact [Voucherify Sales](https://www.voucherify.io/contact-sales) to learn more.</Note>\n\n<Warning>This endpoint performs database-heavy operations. It is not designed for highly frequent use.</Warning>",
         "parameters": [],
         "security": [
           {
@@ -646,7 +802,7 @@
             "description": "Returns no content if deletion is successful."
           },
           "400": {
-            "description": "Returns an error indicating that the product collection with given ID is in use by other resources.",
+            "description": "Returns an error indicating that the product collection with given ID is in use by other resources, or that it is read-only for the restricted user.",
             "content": {
               "application/json": {
                 "schema": {
@@ -664,6 +820,40 @@
                         "val_9TB89AjZeVEJ"
                       ],
                       "related_object_type": "validation_rules"
+                    }
+                  },
+                  "Read-only product collection": {
+                    "value": {
+                      "code": 400,
+                      "key": "resource_protected",
+                      "message": "Resource is protected",
+                      "details": "Resource products_collection with id pc_c1FGttniVdrojmCfNsBGuayg is protected and cannot be modified",
+                      "request_id": "v-13641c67326817e5d8",
+                      "resource_id": "pc_c1FGttniVdrojmCfNsBGuayg",
+                      "resource_type": "products_collection"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Returns an error if the restricted user is missing the access to an area or a store to which the product collection with this ID has been assigned.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "code": 403,
+                      "key": "forbidden",
+                      "message": "Forbidden",
+                      "details": "Resource products_collection with id pc_c1FGttniVdrojmCfNsBGuayg is not accessible in given context",
+                      "request_id": "v-13641c67326817e5d7",
+                      "resource_id": "pc_c1FGttniVdrojmCfNsBGuayg",
+                      "resource_type": "products_collection"
                     }
                   }
                 }
@@ -892,6 +1082,29 @@
               }
             }
           },
+          "403": {
+            "description": "Returns an error if the restricted user is missing the access to an area or a store to which the product collection with this ID has been assigned.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "code": 403,
+                      "key": "forbidden",
+                      "message": "Forbidden",
+                      "details": "Resource products_collection with id pc_c1FGttniVdrojmCfNsBGuayg is not accessible in given context",
+                      "request_id": "v-13641c67326817e5d7",
+                      "resource_id": "pc_c1FGttniVdrojmCfNsBGuayg",
+                      "resource_type": "products_collection"
+                    }
+                  }
+                }
+              }
+            }
+          },
           "404": {
             "description": "Returns an error when requesting a product collection that has been deleted or does not exist.",
             "content": {
@@ -978,28 +1191,6 @@
           }
         ]
       },
-      "ProductCollectionsCreateRequestBody": {
-        "title": "Product Collections Create Request Body",
-        "description": "Request body schema for **POST** `v1/product-collections`.",
-        "oneOf": [
-          {
-            "$ref": "#/components/schemas/ProductCollectionsCreateStaticRequestBody"
-          },
-          {
-            "$ref": "#/components/schemas/ProductCollectionsCreateDynamicRequestBody"
-          }
-        ]
-      },
-      "ProductCollectionsGetResponseBody": {
-        "type": "object",
-        "title": "Product Collections Get Response Body",
-        "description": "Response body schema for **GET** `v1/product-collections/{productCollectionId}`.",
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/ProductCollectionsItem"
-          }
-        ]
-      },
       "Error": {
         "title": "Error Object",
         "type": "object",
@@ -1050,6 +1241,28 @@
         "required": [
           "code",
           "message"
+        ]
+      },
+      "ProductCollectionsCreateRequestBody": {
+        "title": "Product Collections Create Request Body",
+        "description": "Request body schema for **POST** `v1/product-collections`.",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/ProductCollectionsCreateStaticRequestBody"
+          },
+          {
+            "$ref": "#/components/schemas/ProductCollectionsCreateDynamicRequestBody"
+          }
+        ]
+      },
+      "ProductCollectionsGetResponseBody": {
+        "type": "object",
+        "title": "Product Collections Get Response Body",
+        "description": "Response body schema for **GET** `v1/product-collections/{productCollectionId}`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ProductCollectionsItem"
+          }
         ]
       },
       "ParameterProductCollectionId": {
@@ -1178,7 +1391,7 @@
             ]
           },
           "data": {
-            "description": "A dictionary that contains an array of product collections and their details.",
+            "description": "A dictionary that contains an array of product collections and their details.\n\n<Note>If the Areas and Stores enterprise feature is enabled for product collections, this list does not return `access_settings_assignments`. To get the areas and stores to which a product collection is assigned, use [GET Product Collection](/api-reference/product-collections/get-product-collection). Contact [Voucherify Sales](https://www.voucherify.io/contact-sales) to learn more.</Note>",
             "type": "array",
             "items": {
               "title": "Product Collections List Data Item",
@@ -1276,9 +1489,16 @@
           },
           "created_at": {
             "type": "string",
-            "example": "2021-12-09T12:51:29.898Z",
+            "example": "2021–12-09T12:51:29.898Z",
             "description": "Timestamp representing the date and time when the product collection was created. The value is shown in the ISO 8601 format.",
             "format": "date-time"
+          },
+          "readonly": {
+            "type": "boolean",
+            "description": "Indicates whether the product collection can only be read by the caller in the Areas and Stores enterprise feature. Returned only when area and store visibility rules apply to the caller. A read-only product collection can't be updated or deleted."
+          },
+          "access_settings_assignments": {
+            "$ref": "#/components/schemas/AccessSettingsProductCollectionAssignmentsList"
           },
           "object": {
             "type": "string",
@@ -1342,6 +1562,9 @@
                 "object"
               ]
             }
+          },
+          "access_settings": {
+            "$ref": "#/components/schemas/AccessSettings"
           }
         },
         "required": [
@@ -1385,6 +1608,9 @@
               ],
               "description": "Valid keys: `id`, `product_id`, `source_id`, `name`, `price`, `object`, `attributes`, `image_url`, `skus`, `created_at`, `updated_at` and `metadata.*`"
             }
+          },
+          "access_settings": {
+            "$ref": "#/components/schemas/AccessSettings"
           }
         },
         "required": [
@@ -1401,11 +1627,11 @@
           "name": {
             "type": "string",
             "description": "Unique user-defined product collection name."
+          },
+          "access_settings": {
+            "$ref": "#/components/schemas/AccessSettings"
           }
-        },
-        "required": [
-          "name"
-        ]
+        }
       },
       "ProductCollectionsUpdateDynamicRequestBody": {
         "title": "Product Collections Update Dynamic (Auto Update) Request Body",
@@ -1432,6 +1658,9 @@
                 }
               ]
             }
+          },
+          "access_settings": {
+            "$ref": "#/components/schemas/AccessSettings"
           }
         }
       },
@@ -1502,6 +1731,108 @@
                 "$ref": "#/components/schemas/FiltersCondition"
               }
             ]
+          }
+        }
+      },
+      "AccessSettingsProductCollectionAssignmentsList": {
+        "title": "Access Settings Product Collection Assignments List",
+        "type": "object",
+        "description": "Lists all assignments of the product collection to areas and stores. The create, update, and get product collection endpoints return this object.\n\n**NOTE**: This object is returned only if the Areas and Stores enterprise feature is enabled for product collections. Contact [Voucherify Sales](https://www.voucherify.io/contact-sales) to learn more.",
+        "properties": {
+          "object": {
+            "type": "string",
+            "default": "list",
+            "description": "The type of the object represented by JSON. Default is `list`. This object stores information about product collection assignments to areas and stores",
+            "enum": [
+              "list"
+            ]
+          },
+          "data_ref": {
+            "type": "string",
+            "default": "data",
+            "description": "Identifies the name of the attribute that contains the array of product collection assignments.",
+            "enum": [
+              "data"
+            ]
+          },
+          "data": {
+            "type": "array",
+            "description": "Contains an array of product collection assignments.",
+            "items": {
+              "$ref": "#/components/schemas/AreaStoreProductCollectionAssignment"
+            }
+          },
+          "total": {
+            "type": "integer",
+            "description": "Total number of areas and stores to which the product collection is assigned.",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "object",
+          "data_ref",
+          "data",
+          "total"
+        ]
+      },
+      "AccessSettings": {
+        "type": "object",
+        "title": "Access Settings",
+        "description": "Assigns or unassigns an area or store to the resource, for example a campaign or a product collection.\n\n<Note>This object can be sent if the Areas and Stores enterprise feature is enabled for the given resource type. Contact [Voucherify Sales](https://www.voucherify.io/contact-sales) to learn more.</Note>",
+        "properties": {
+          "assign": {
+            "type": "object",
+            "description": "Assigns the resource to an area or a store. Provide the area and/or store IDs in the respective arrays. If a resource changes assignments between areas or stores, unassign it from the area. For example, if a resource is assigned to Area-01, but it must be now assigned to Store-01 within this area, you have to unassign the resource from Area-01 and assign to Store-01 only.\n\nIf you want to assign the resource to stores only, you do not have to send the area ID.",
+            "properties": {
+              "areas_ids": {
+                "type": "array",
+                "description": "List all area IDs to which the resource will be assigned.",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "area_stores_ids": {
+                "type": "array",
+                "description": "List all store IDs to which the resource will be assigned.",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "area_all_stores_ids": {
+                "type": "array",
+                "description": "List all area IDs where the resource is assigned to all stores in the area. This assignment is not equal to the assignment to all `area_stores_ids` listed separately.",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "unassign": {
+            "type": "object",
+            "description": "Unassigns the resource from an area or a store. Provide the area and/or store IDs in the respective arrays. If a resource changes assignments between areas or stores, unassign it first. For example, if a resource is assigned to Area-01, but it must be now assigned to Store-01 within this area, you have to unassign the resource from Area-01 and assigned to Store-01 only.\n\nIf you want to assign the resource to stores only, you do not have to send the area ID.",
+            "properties": {
+              "areas_ids": {
+                "type": "array",
+                "description": "List all area IDs from which the resource will be unassigned.",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "area_stores_ids": {
+                "type": "array",
+                "description": "List all store IDs from which the resource will be unassigned.",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "area_all_stores_ids": {
+                "type": "array",
+                "description": "List all area IDs where the resource will be unassigned from all stores in the area. This unassignment is not equal to the unassignment from all `area_stores_ids` listed separately.",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
           }
         }
       },
@@ -1685,6 +2016,54 @@
             "$ref": "#/components/schemas/Any"
           }
         }
+      },
+      "AreaStoreProductCollectionAssignment": {
+        "title": "Areas and Stores Product Collection Assignment",
+        "type": "object",
+        "description": "An object representing an assignment of a product collection to an area or store.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier of the product collection assignment."
+          },
+          "area_id": {
+            "type": "string",
+            "description": "Unique identifier of the area to which the product collection is assigned.",
+            "example": "ar_0ea6cd7b781b8f857f"
+          },
+          "all_stores": {
+            "type": "boolean",
+            "description": "Determines if the product collection is assigned to all of the stores in the area, i.e. if an area ID is passed in the `access_settings.assign.area_all_stores_ids` in the request."
+          },
+          "area_store_id": {
+            "type": "string",
+            "description": "Unique identifier of the store to which the product collection is assigned. Not returned when the product collection is assigned to the whole area or to all stores in the area."
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp representing the date and time when the assignment was created. The value is shown in the ISO 8601 format."
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp representing the date and time when the assignment was last updated. The value is shown in the ISO 8601 format."
+          },
+          "object": {
+            "type": "string",
+            "default": "area_store_product_collection_assignment",
+            "description": "The type of the object represented by JSON.",
+            "enum": [
+              "area_store_product_collection_assignment"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "area_id",
+          "created_at",
+          "object"
+        ]
       },
       "Sku": {
         "title": "SKU Object",
