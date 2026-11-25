@@ -5,6 +5,13 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-11-25
+
+Updated `create-account.mdx` with post-sign-up registration verification.
+
+- Clarified that Voucherify verifies new registrations, the process can take up to 24 hours, and a confirmation email is sent after verification.
+- Replaced the immediate verification-email wording. The support link for users who do not receive mail is unchanged.
+
 ## 2026-11-23
 
 Documented Areas and Stores for product collections and related cross-project transfer behavior.
