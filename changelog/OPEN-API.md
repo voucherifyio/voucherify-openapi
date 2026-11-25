@@ -20,6 +20,10 @@ Updated shared tier response and loyalty activity schemas.
 - Added required `points_expiration` on `Tier` and on `LoyaltyV2ActivityTier` (tier create, update, delete, and list events), using new response schemas `TierPointsExpiration` and nested `TierPointsExpirationRollingExpiration`, `TierPointsExpirationCalendarExpiration`, and `TierPointsExpirationSlidingExpiration`. Documented `if`/`then` rules matching tier write validation: nested objects follow `type`; rolling and sliding period maxima; calendar `day` limits by `month`; sliding `custom_activity_types` when `custom_activity` is `true`; rounding `value` for `END_OF_PARTICULAR_MONTH`.
 - Merged `LoyaltyV2ActivityTierQualificationRules` into `TierQualificationRules` (same shape for API and events). Documented `POINTS` vs `POINTS_AND_SEGMENT` on the response schema.
 
+Removed DELETE `/v2/loyalties/tier-structures/{tierStructureId}/tiers/{tierId}` from `docs.json` as it is handled by POST `/v2/loyalties/tier-structures/{tierStructureId}/tiers/batch`.
+
+Skipped verification of PUT `/v2/loyalties/tier-structures/{tierStructureId}/tiers/{tierId}` as it is handled by POST `/v2/loyalties/tier-structures/{tierStructureId}/tiers/batch`.
+
 ## 2026-11-24
 
 Verified and updated POST `/v2/loyalties/tier-structures/{tierStructureId}/activate`.
