@@ -15,10 +15,21 @@ Verified and updated GET `/v2/loyalties/tier-structures/{tierStructureId}/tiers`
 - Clarified the `400` description for query validation or an invalid, expired, or mismatched cursor. Added examples for `invalid_query_params` (cursor pattern, `limit` bounds, unsupported or conflicting `order`), `invalid_or_expired_cursor`, and `cursor_and_query_mismatch`.
 - Clarified the `404` description and added examples for an unknown tier structure (`not_found`, `resource_type` `tier_structure`) and a path id that does not match `lts_[a-f0-9]+`.
 
+Verified and updated GET `/v2/loyalties/tier-structures/{tierStructureId}/activities`.
+
+- Removed the documentation-in-progress badge. Linked loyalty activity events and Workflows in the operation description.
+- Clarified cursor pagination: format `lcrsats_[a-f0-9]+`, and a cursor works only with the same tier structure, order, and filters as the request that returned it.
+- Renamed the `200` response schema to `LoyaltiesTierStructuresActivitiesListResponseBody` (replacing `V2LoyaltiesTierStructuresActivitiesListResponseBody`).
+- Added a `200` example listing tier structure activation and deactivation activities with `USER_PORTAL` and `API` sources.
+- Clarified the `400` description for query validation or an invalid, expired, or mismatched cursor. Added examples for `invalid_query_params` (cursor pattern, `limit` bounds, unsupported or conflicting `order`), `invalid_or_expired_cursor`, and `cursor_and_query_mismatch`.
+- Clarified the `404` description and added examples for an unknown tier structure (`not_found`, `resource_type` `tier_structure`) and a path id that does not match `lts_[a-f0-9]+`.
+
 Updated shared tier response and loyalty activity schemas.
 
 - Added required `points_expiration` on `Tier` and on `LoyaltyV2ActivityTier` (tier create, update, delete, and list events), using new response schemas `TierPointsExpiration` and nested `TierPointsExpirationRollingExpiration`, `TierPointsExpirationCalendarExpiration`, and `TierPointsExpirationSlidingExpiration`. Documented `if`/`then` rules matching tier write validation: nested objects follow `type`; rolling and sliding period maxima; calendar `day` limits by `month`; sliding `custom_activity_types` when `custom_activity` is `true`; rounding `value` for `END_OF_PARTICULAR_MONTH`.
 - Merged `LoyaltyV2ActivityTierQualificationRules` into `TierQualificationRules` (same shape for API and events). Documented `POINTS` vs `POINTS_AND_SEGMENT` on the response schema.
+- Replaced per-resource activity source schemas (`ProgramActivitySource`, `CardDefinitionActivitySource`, `EarningRuleActivitySource`, `TierStructureActivitySource`, `BenefitActivitySource`, `RewardActivitySource`, and their nested user or API key types) with shared `ActivitySource`, `ActivitySourceUser`, and `ActivitySourceApiKey` on program, card definition, earning rule, tier structure, benefit, reward, and card activities.
+- On `TierStructureActivityData`, typed `program` as `LoyaltyV2Program` and `program_tier_structure` as `LoyaltyV2ActivityProgramTierStructure` for assignment and unassignment activities.
 
 Removed DELETE `/v2/loyalties/tier-structures/{tierStructureId}/tiers/{tierId}` from `docs.json` as it is handled by POST `/v2/loyalties/tier-structures/{tierStructureId}/tiers/batch`.
 
