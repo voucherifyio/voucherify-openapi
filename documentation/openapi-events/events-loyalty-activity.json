@@ -2006,12 +2006,16 @@
             "description": "Display name of the tier."
           },
           "qualification_rules": {
-            "$ref": "#/components/schemas/LoyaltyV2ActivityTierQualificationRules",
+            "$ref": "#/components/schemas/TierQualificationRules",
             "description": "Rules determining which members qualify for this tier."
           },
           "downgrade": {
             "$ref": "#/components/schemas/LoyaltyV2ActivityTierDowngrade",
-            "description": "Tier-level downgrade behavior. Always present; when the tier has no downgrade\nconfigured, an empty object (no `type`) is returned."
+            "description": "Tier-level downgrade behavior. Always present; when the tier has no downgrade configured, an empty object (no `type`) is returned."
+          },
+          "points_expiration": {
+            "$ref": "#/components/schemas/TierPointsExpiration",
+            "description": "Points expiration for the tier. Always present. `INHERIT` follows the tier structure's points expiration setting."
           },
           "metadata": {
             "type": "object",
@@ -3558,9 +3562,9 @@
           }
         ]
       },
-      "LoyaltyV2ActivityTierQualificationRules": {
+      "TierQualificationRules": {
         "type": "object",
-        "description": "Tier qualification rules.",
+        "description": "Tier qualification rules. `points` is returned for both types. `segment` is returned only when `type` is `POINTS_AND_SEGMENT`. For `POINTS` it is `null` or omitted.",
         "properties": {
           "type": {
             "type": "string",
@@ -3572,13 +3576,63 @@
           },
           "points": {
             "$ref": "#/components/schemas/LoyaltyV2ActivityTierQualificationRulesPoints",
-            "description": "Point thresholds for the tier. Omitted when not configured."
+            "description": "Point thresholds for the tier. Present for both `POINTS` and `POINTS_AND_SEGMENT`."
           },
           "segment": {
             "$ref": "#/components/schemas/LoyaltyV2ActivityTierQualificationRulesSegment",
             "description": "Customer segment reference. Present only when `type` is `POINTS_AND_SEGMENT`."
           }
-        }
+        },
+        "required": [
+          "type"
+        ],
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "POINTS"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "points"
+              ],
+              "properties": {
+                "points": {
+                  "$ref": "#/components/schemas/LoyaltyV2ActivityTierQualificationRulesPoints"
+                },
+                "segment": {
+                  "type": "null"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "POINTS_AND_SEGMENT"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "points",
+                "segment"
+              ],
+              "properties": {
+                "points": {
+                  "$ref": "#/components/schemas/LoyaltyV2ActivityTierQualificationRulesPoints"
+                },
+                "segment": {
+                  "$ref": "#/components/schemas/LoyaltyV2ActivityTierQualificationRulesSegment"
+                }
+              }
+            }
+          }
+        ]
       },
       "LoyaltyV2ActivityTierDowngrade": {
         "type": "object",
@@ -3593,6 +3647,159 @@
             "description": "Downgrade model. Omitted when the tier has no downgrade configured."
           }
         }
+      },
+      "TierPointsExpiration": {
+        "type": "object",
+        "description": "Points expiration for a tier. `INHERIT` follows the tier structure's points expiration setting. `type` decides which nested object is present: `ROLLING_EXPIRATION` returns `rolling_expiration`, `CALENDAR_EXPIRATION` returns `calendar_expiration`, `SLIDING_EXPIRATION` returns `sliding_expiration`. For `INHERIT` and `NO_EXPIRATION` none of them is returned. Nested objects that do not match `type` are `null` or omitted.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "INHERIT",
+              "NO_EXPIRATION",
+              "ROLLING_EXPIRATION",
+              "CALENDAR_EXPIRATION",
+              "SLIDING_EXPIRATION"
+            ],
+            "description": "Points expiration type."
+          },
+          "rolling_expiration": {
+            "$ref": "#/components/schemas/TierPointsExpirationRollingExpiration",
+            "description": "Rolling expiration configuration. Only present when `type` is `ROLLING_EXPIRATION`."
+          },
+          "calendar_expiration": {
+            "$ref": "#/components/schemas/TierPointsExpirationCalendarExpiration",
+            "description": "Calendar expiration configuration. Only present when `type` is `CALENDAR_EXPIRATION`."
+          },
+          "sliding_expiration": {
+            "$ref": "#/components/schemas/TierPointsExpirationSlidingExpiration",
+            "description": "Sliding expiration configuration. Only present when `type` is `SLIDING_EXPIRATION`."
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "INHERIT"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "rolling_expiration": {
+                  "type": "null"
+                },
+                "calendar_expiration": {
+                  "type": "null"
+                },
+                "sliding_expiration": {
+                  "type": "null"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "NO_EXPIRATION"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "rolling_expiration": {
+                  "type": "null"
+                },
+                "calendar_expiration": {
+                  "type": "null"
+                },
+                "sliding_expiration": {
+                  "type": "null"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "ROLLING_EXPIRATION"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "rolling_expiration"
+              ],
+              "properties": {
+                "rolling_expiration": {
+                  "$ref": "#/components/schemas/TierPointsExpirationRollingExpiration"
+                },
+                "calendar_expiration": {
+                  "type": "null"
+                },
+                "sliding_expiration": {
+                  "type": "null"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "CALENDAR_EXPIRATION"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "calendar_expiration"
+              ],
+              "properties": {
+                "rolling_expiration": {
+                  "type": "null"
+                },
+                "calendar_expiration": {
+                  "$ref": "#/components/schemas/TierPointsExpirationCalendarExpiration"
+                },
+                "sliding_expiration": {
+                  "type": "null"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "SLIDING_EXPIRATION"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "sliding_expiration"
+              ],
+              "properties": {
+                "rolling_expiration": {
+                  "type": "null"
+                },
+                "calendar_expiration": {
+                  "type": "null"
+                },
+                "sliding_expiration": {
+                  "$ref": "#/components/schemas/TierPointsExpirationSlidingExpiration"
+                }
+              }
+            }
+          }
+        ]
       },
       "LoyaltyV2CardLifetimePoints": {
         "title": "Loyalty Card Lifetime Points",
@@ -5078,6 +5285,151 @@
           }
         }
       },
+      "TierPointsExpirationRollingExpiration": {
+        "type": "object",
+        "description": "Rolling points expiration.",
+        "properties": {
+          "period": {
+            "$ref": "#/components/schemas/TierPointsExpirationRollingPeriod",
+            "description": "Length of the period after which points expire."
+          },
+          "rounding": {
+            "description": "Rounding of the expiration date. `null` or omitted when no rounding is set.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/TierPointsExpirationRollingRounding"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "period"
+        ]
+      },
+      "TierPointsExpirationCalendarExpiration": {
+        "type": "object",
+        "description": "Calendar points expiration.",
+        "properties": {
+          "expiration_dates": {
+            "type": "array",
+            "description": "List of calendar dates on which points expire.",
+            "items": {
+              "$ref": "#/components/schemas/TierPointsExpirationCalendarDate"
+            }
+          }
+        },
+        "required": [
+          "expiration_dates"
+        ]
+      },
+      "TierPointsExpirationSlidingExpiration": {
+        "type": "object",
+        "description": "Sliding points expiration. Activity of the enabled kinds extends the expiration. At least one of `earning_activity`, `spending_activity`, or `custom_activity` is `true`. `custom_activity_types` lists 1 to 10 unique custom event schema IDs when `custom_activity` is `true`, and is empty otherwise.",
+        "properties": {
+          "earning_activity": {
+            "type": "boolean",
+            "description": "Whether earning activity extends the expiration."
+          },
+          "spending_activity": {
+            "type": "boolean",
+            "description": "Whether spending activity extends the expiration."
+          },
+          "custom_activity": {
+            "type": "boolean",
+            "description": "Whether the custom activity types extend the expiration."
+          },
+          "custom_activity_types": {
+            "type": "array",
+            "description": "List of custom event schema IDs that extend the expiration. Empty when `custom_activity` is `false`.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "period": {
+            "$ref": "#/components/schemas/TierPointsExpirationSlidingPeriod",
+            "description": "Length of the period after which points expire without activity."
+          }
+        },
+        "required": [
+          "earning_activity",
+          "spending_activity",
+          "custom_activity",
+          "custom_activity_types",
+          "period"
+        ],
+        "allOf": [
+          {
+            "anyOf": [
+              {
+                "required": [
+                  "earning_activity"
+                ],
+                "properties": {
+                  "earning_activity": {
+                    "const": true
+                  }
+                }
+              },
+              {
+                "required": [
+                  "spending_activity"
+                ],
+                "properties": {
+                  "spending_activity": {
+                    "const": true
+                  }
+                }
+              },
+              {
+                "required": [
+                  "custom_activity"
+                ],
+                "properties": {
+                  "custom_activity": {
+                    "const": true
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "if": {
+              "properties": {
+                "custom_activity": {
+                  "const": true
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "custom_activity_types": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "minItems": 1,
+                  "maxItems": 10,
+                  "uniqueItems": true
+                }
+              }
+            },
+            "else": {
+              "properties": {
+                "custom_activity_types": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "maxItems": 0
+                }
+              }
+            }
+          }
+        ]
+      },
       "LoyaltyV2ActivityCardDefinitionPeriod": {
         "type": "object",
         "description": "A period expressed as a value and unit.",
@@ -6118,6 +6470,288 @@
           "applicable_to"
         ],
         "additionalProperties": false
+      },
+      "TierPointsExpirationRollingPeriod": {
+        "type": "object",
+        "description": "Rolling expiration period. The maximum `value` depends on `unit`: 90 for `DAY`, 12 for `MONTH`, 5 for `YEAR`.",
+        "properties": {
+          "unit": {
+            "type": "string",
+            "enum": [
+              "DAY",
+              "MONTH",
+              "YEAR"
+            ],
+            "description": "Period unit."
+          },
+          "value": {
+            "type": "integer",
+            "description": "Length of the period, expressed in `unit` units.",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "unit",
+          "value"
+        ],
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "unit": {
+                  "const": "DAY"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "value": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 90
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "unit": {
+                  "const": "MONTH"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "value": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 12
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "unit": {
+                  "const": "YEAR"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "value": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 5
+                }
+              }
+            }
+          }
+        ]
+      },
+      "TierPointsExpirationRollingRounding": {
+        "type": "object",
+        "description": "Rounding of the rolling expiration date.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "END_OF_MONTH",
+              "END_OF_QUARTER",
+              "END_OF_HALF_YEAR",
+              "END_OF_YEAR",
+              "END_OF_PARTICULAR_MONTH"
+            ],
+            "description": "Rounding type."
+          },
+          "value": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "Month from 1 to 12. Present only when `type` is `END_OF_PARTICULAR_MONTH`. Otherwise `null` or omitted."
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "END_OF_PARTICULAR_MONTH"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "value"
+              ],
+              "properties": {
+                "value": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 12
+                }
+              }
+            },
+            "else": {
+              "properties": {
+                "value": {
+                  "type": "null"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "TierPointsExpirationCalendarDate": {
+        "type": "object",
+        "description": "A calendar date on which points expire. The maximum `day` depends on `month`: 29 for month 2, 30 for months 4, 6, 9 and 11, 31 otherwise.",
+        "properties": {
+          "day": {
+            "type": "integer",
+            "description": "Day of the month.",
+            "minimum": 1,
+            "maximum": 31
+          },
+          "month": {
+            "type": "integer",
+            "description": "Month, from 1 to 12.",
+            "minimum": 1,
+            "maximum": 12
+          }
+        },
+        "required": [
+          "day",
+          "month"
+        ],
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "month": {
+                  "const": 2
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "day": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 29
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "month": {
+                  "enum": [
+                    4,
+                    6,
+                    9,
+                    11
+                  ]
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "day": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 30
+                }
+              }
+            }
+          }
+        ]
+      },
+      "TierPointsExpirationSlidingPeriod": {
+        "type": "object",
+        "description": "Sliding expiration period. The maximum `value` depends on `unit`: 90 for `DAY`, 12 for `MONTH`, 1 for `YEAR`.",
+        "properties": {
+          "value": {
+            "type": "integer",
+            "description": "Number of units.",
+            "minimum": 1
+          },
+          "unit": {
+            "type": "string",
+            "enum": [
+              "DAY",
+              "MONTH",
+              "YEAR"
+            ],
+            "description": "Period unit."
+          }
+        },
+        "required": [
+          "value",
+          "unit"
+        ],
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "unit": {
+                  "const": "DAY"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "value": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 90
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "unit": {
+                  "const": "MONTH"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "value": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 12
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "unit": {
+                  "const": "YEAR"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "value": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 1
+                }
+              }
+            }
+          }
+        ]
       },
       "LoyaltyV2ActivityCardDefinitionLimitTimeBasedPeriod": {
         "type": "object",

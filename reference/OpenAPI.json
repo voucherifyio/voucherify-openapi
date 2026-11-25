@@ -66549,28 +66549,6 @@
           }
         }
       },
-      "LoyaltyV2ActivityTierQualificationRules": {
-        "type": "object",
-        "description": "Tier qualification rules.",
-        "properties": {
-          "type": {
-            "type": "string",
-            "enum": [
-              "POINTS",
-              "POINTS_AND_SEGMENT"
-            ],
-            "description": "Qualification model."
-          },
-          "points": {
-            "$ref": "#/components/schemas/LoyaltyV2ActivityTierQualificationRulesPoints",
-            "description": "Point thresholds for the tier. Omitted when not configured."
-          },
-          "segment": {
-            "$ref": "#/components/schemas/LoyaltyV2ActivityTierQualificationRulesSegment",
-            "description": "Customer segment reference. Present only when `type` is `POINTS_AND_SEGMENT`."
-          }
-        }
-      },
       "LoyaltyV2ActivityTierDowngrade": {
         "type": "object",
         "description": "Tier-level downgrade behavior.",
@@ -66604,12 +66582,16 @@
             "description": "Display name of the tier."
           },
           "qualification_rules": {
-            "$ref": "#/components/schemas/LoyaltyV2ActivityTierQualificationRules",
+            "$ref": "#/components/schemas/TierQualificationRules",
             "description": "Rules determining which members qualify for this tier."
           },
           "downgrade": {
             "$ref": "#/components/schemas/LoyaltyV2ActivityTierDowngrade",
-            "description": "Tier-level downgrade behavior. Always present; when the tier has no downgrade\nconfigured, an empty object (no `type`) is returned."
+            "description": "Tier-level downgrade behavior. Always present; when the tier has no downgrade configured, an empty object (no `type`) is returned."
+          },
+          "points_expiration": {
+            "$ref": "#/components/schemas/TierPointsExpiration",
+            "description": "Points expiration for the tier. Always present. `INHERIT` follows the tier structure's points expiration setting."
           },
           "metadata": {
             "type": "object",
@@ -84301,7 +84283,7 @@
                 "type": "array",
                 "maxItems": 10,
                 "uniqueItems": true,
-                "description": "Custom event schema IDs (`ms_…`) that extend the tier membership when `custom_activity` is `true`. Send 1 to 10 unique ids. An unknown id returns `404`. When `custom_activity` is `false` or omitted, ids are ignored and the value is stored as an empty array.",
+                "description": "Custom event schema IDs (`ms_…`) that extend the tier membership when `custom_activity` is `true`. Send 1 to 10 unique IDs. An unknown id returns `404`. When `custom_activity` is `false` or omitted, IDs are ignored and the value is stored as an empty array.",
                 "items": {
                   "type": "string",
                   "minLength": 1,
@@ -85179,12 +85161,589 @@
           }
         ]
       },
+      "TierPointsExpiration": {
+        "type": "object",
+        "description": "Points expiration for a tier. `INHERIT` follows the tier structure's points expiration setting. `type` decides which nested object is present: `ROLLING_EXPIRATION` returns `rolling_expiration`, `CALENDAR_EXPIRATION` returns `calendar_expiration`, `SLIDING_EXPIRATION` returns `sliding_expiration`. For `INHERIT` and `NO_EXPIRATION` none of them is returned. Nested objects that do not match `type` are `null` or omitted.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "INHERIT",
+              "NO_EXPIRATION",
+              "ROLLING_EXPIRATION",
+              "CALENDAR_EXPIRATION",
+              "SLIDING_EXPIRATION"
+            ],
+            "description": "Points expiration type."
+          },
+          "rolling_expiration": {
+            "$ref": "#/components/schemas/TierPointsExpirationRollingExpiration",
+            "description": "Rolling expiration configuration. Only present when `type` is `ROLLING_EXPIRATION`."
+          },
+          "calendar_expiration": {
+            "$ref": "#/components/schemas/TierPointsExpirationCalendarExpiration",
+            "description": "Calendar expiration configuration. Only present when `type` is `CALENDAR_EXPIRATION`."
+          },
+          "sliding_expiration": {
+            "$ref": "#/components/schemas/TierPointsExpirationSlidingExpiration",
+            "description": "Sliding expiration configuration. Only present when `type` is `SLIDING_EXPIRATION`."
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "INHERIT"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "rolling_expiration": {
+                  "type": "null"
+                },
+                "calendar_expiration": {
+                  "type": "null"
+                },
+                "sliding_expiration": {
+                  "type": "null"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "NO_EXPIRATION"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "rolling_expiration": {
+                  "type": "null"
+                },
+                "calendar_expiration": {
+                  "type": "null"
+                },
+                "sliding_expiration": {
+                  "type": "null"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "ROLLING_EXPIRATION"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "rolling_expiration"
+              ],
+              "properties": {
+                "rolling_expiration": {
+                  "$ref": "#/components/schemas/TierPointsExpirationRollingExpiration"
+                },
+                "calendar_expiration": {
+                  "type": "null"
+                },
+                "sliding_expiration": {
+                  "type": "null"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "CALENDAR_EXPIRATION"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "calendar_expiration"
+              ],
+              "properties": {
+                "rolling_expiration": {
+                  "type": "null"
+                },
+                "calendar_expiration": {
+                  "$ref": "#/components/schemas/TierPointsExpirationCalendarExpiration"
+                },
+                "sliding_expiration": {
+                  "type": "null"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "SLIDING_EXPIRATION"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "sliding_expiration"
+              ],
+              "properties": {
+                "rolling_expiration": {
+                  "type": "null"
+                },
+                "calendar_expiration": {
+                  "type": "null"
+                },
+                "sliding_expiration": {
+                  "$ref": "#/components/schemas/TierPointsExpirationSlidingExpiration"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "TierPointsExpirationRollingExpiration": {
+        "type": "object",
+        "description": "Rolling points expiration.",
+        "properties": {
+          "period": {
+            "$ref": "#/components/schemas/TierPointsExpirationRollingPeriod",
+            "description": "Length of the period after which points expire."
+          },
+          "rounding": {
+            "description": "Rounding of the expiration date. `null` or omitted when no rounding is set.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/TierPointsExpirationRollingRounding"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "period"
+        ]
+      },
+      "TierPointsExpirationRollingPeriod": {
+        "type": "object",
+        "description": "Rolling expiration period. The maximum `value` depends on `unit`: 90 for `DAY`, 12 for `MONTH`, 5 for `YEAR`.",
+        "properties": {
+          "unit": {
+            "type": "string",
+            "enum": [
+              "DAY",
+              "MONTH",
+              "YEAR"
+            ],
+            "description": "Period unit."
+          },
+          "value": {
+            "type": "integer",
+            "description": "Length of the period, expressed in `unit` units.",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "unit",
+          "value"
+        ],
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "unit": {
+                  "const": "DAY"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "value": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 90
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "unit": {
+                  "const": "MONTH"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "value": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 12
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "unit": {
+                  "const": "YEAR"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "value": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 5
+                }
+              }
+            }
+          }
+        ]
+      },
+      "TierPointsExpirationRollingRounding": {
+        "type": "object",
+        "description": "Rounding of the rolling expiration date.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "END_OF_MONTH",
+              "END_OF_QUARTER",
+              "END_OF_HALF_YEAR",
+              "END_OF_YEAR",
+              "END_OF_PARTICULAR_MONTH"
+            ],
+            "description": "Rounding type."
+          },
+          "value": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "Month from 1 to 12. Present only when `type` is `END_OF_PARTICULAR_MONTH`. Otherwise `null` or omitted."
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "END_OF_PARTICULAR_MONTH"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "value"
+              ],
+              "properties": {
+                "value": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 12
+                }
+              }
+            },
+            "else": {
+              "properties": {
+                "value": {
+                  "type": "null"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "TierPointsExpirationCalendarExpiration": {
+        "type": "object",
+        "description": "Calendar points expiration.",
+        "properties": {
+          "expiration_dates": {
+            "type": "array",
+            "description": "List of calendar dates on which points expire.",
+            "items": {
+              "$ref": "#/components/schemas/TierPointsExpirationCalendarDate"
+            }
+          }
+        },
+        "required": [
+          "expiration_dates"
+        ]
+      },
+      "TierPointsExpirationCalendarDate": {
+        "type": "object",
+        "description": "A calendar date on which points expire. The maximum `day` depends on `month`: 29 for month 2, 30 for months 4, 6, 9 and 11, 31 otherwise.",
+        "properties": {
+          "day": {
+            "type": "integer",
+            "description": "Day of the month.",
+            "minimum": 1,
+            "maximum": 31
+          },
+          "month": {
+            "type": "integer",
+            "description": "Month, from 1 to 12.",
+            "minimum": 1,
+            "maximum": 12
+          }
+        },
+        "required": [
+          "day",
+          "month"
+        ],
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "month": {
+                  "const": 2
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "day": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 29
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "month": {
+                  "enum": [
+                    4,
+                    6,
+                    9,
+                    11
+                  ]
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "day": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 30
+                }
+              }
+            }
+          }
+        ]
+      },
+      "TierPointsExpirationSlidingExpiration": {
+        "type": "object",
+        "description": "Sliding points expiration. Activity of the enabled kinds extends the expiration. At least one of `earning_activity`, `spending_activity`, or `custom_activity` is `true`. `custom_activity_types` lists 1 to 10 unique custom event schema IDs when `custom_activity` is `true`, and is empty otherwise.",
+        "properties": {
+          "earning_activity": {
+            "type": "boolean",
+            "description": "Whether earning activity extends the expiration."
+          },
+          "spending_activity": {
+            "type": "boolean",
+            "description": "Whether spending activity extends the expiration."
+          },
+          "custom_activity": {
+            "type": "boolean",
+            "description": "Whether the custom activity types extend the expiration."
+          },
+          "custom_activity_types": {
+            "type": "array",
+            "description": "List of custom event schema IDs that extend the expiration. Empty when `custom_activity` is `false`.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "period": {
+            "$ref": "#/components/schemas/TierPointsExpirationSlidingPeriod",
+            "description": "Length of the period after which points expire without activity."
+          }
+        },
+        "required": [
+          "earning_activity",
+          "spending_activity",
+          "custom_activity",
+          "custom_activity_types",
+          "period"
+        ],
+        "allOf": [
+          {
+            "anyOf": [
+              {
+                "required": [
+                  "earning_activity"
+                ],
+                "properties": {
+                  "earning_activity": {
+                    "const": true
+                  }
+                }
+              },
+              {
+                "required": [
+                  "spending_activity"
+                ],
+                "properties": {
+                  "spending_activity": {
+                    "const": true
+                  }
+                }
+              },
+              {
+                "required": [
+                  "custom_activity"
+                ],
+                "properties": {
+                  "custom_activity": {
+                    "const": true
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "if": {
+              "properties": {
+                "custom_activity": {
+                  "const": true
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "custom_activity_types": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "minItems": 1,
+                  "maxItems": 10,
+                  "uniqueItems": true
+                }
+              }
+            },
+            "else": {
+              "properties": {
+                "custom_activity_types": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "maxItems": 0
+                }
+              }
+            }
+          }
+        ]
+      },
+      "TierPointsExpirationSlidingPeriod": {
+        "type": "object",
+        "description": "Sliding expiration period. The maximum `value` depends on `unit`: 90 for `DAY`, 12 for `MONTH`, 1 for `YEAR`.",
+        "properties": {
+          "value": {
+            "type": "integer",
+            "description": "Number of units.",
+            "minimum": 1
+          },
+          "unit": {
+            "type": "string",
+            "enum": [
+              "DAY",
+              "MONTH",
+              "YEAR"
+            ],
+            "description": "Period unit."
+          }
+        },
+        "required": [
+          "value",
+          "unit"
+        ],
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "unit": {
+                  "const": "DAY"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "value": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 90
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "unit": {
+                  "const": "MONTH"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "value": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 12
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "unit": {
+                  "const": "YEAR"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "value": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 1
+                }
+              }
+            }
+          }
+        ]
+      },
       "Tier": {
         "description": "Tier resource.",
         "allOf": [
-          {
-            "$ref": "#/components/schemas/TierMetadataBase"
-          },
           {
             "type": "object",
             "properties": {
@@ -85208,7 +85767,11 @@
               },
               "downgrade": {
                 "$ref": "#/components/schemas/LoyaltyV2ActivityTierDowngrade",
-                "description": "Tier-level downgrade behavior. Always present; when the tier has no downgrade\nconfigured, an empty object (no `type`) is returned."
+                "description": "Tier-level downgrade behavior. Always present; when the tier has no downgrade configured, an empty object (no `type`) is returned."
+              },
+              "points_expiration": {
+                "$ref": "#/components/schemas/TierPointsExpiration",
+                "description": "Points expiration for the tier. Always present. `INHERIT` follows the tier structure's points expiration setting."
               },
               "object": {
                 "type": "string",
@@ -85221,14 +85784,18 @@
               "tier_structure_id",
               "name",
               "downgrade",
+              "points_expiration",
               "object"
             ]
+          },
+          {
+            "$ref": "#/components/schemas/TierMetadataBase"
           }
         ]
       },
       "TierQualificationRules": {
         "type": "object",
-        "description": "Tier qualification rules.",
+        "description": "Tier qualification rules. `points` is returned for both types. `segment` is returned only when `type` is `POINTS_AND_SEGMENT`. For `POINTS` it is `null` or omitted.",
         "properties": {
           "type": {
             "type": "string",
@@ -85240,16 +85807,66 @@
           },
           "points": {
             "$ref": "#/components/schemas/LoyaltyV2ActivityTierQualificationRulesPoints",
-            "description": "Point thresholds for the tier. Omitted when not configured."
+            "description": "Point thresholds for the tier. Present for both `POINTS` and `POINTS_AND_SEGMENT`."
           },
           "segment": {
             "$ref": "#/components/schemas/LoyaltyV2ActivityTierQualificationRulesSegment",
             "description": "Customer segment reference. Present only when `type` is `POINTS_AND_SEGMENT`."
           }
-        }
+        },
+        "required": [
+          "type"
+        ],
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "POINTS"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "points"
+              ],
+              "properties": {
+                "points": {
+                  "$ref": "#/components/schemas/LoyaltyV2ActivityTierQualificationRulesPoints"
+                },
+                "segment": {
+                  "type": "null"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "POINTS_AND_SEGMENT"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "points",
+                "segment"
+              ],
+              "properties": {
+                "points": {
+                  "$ref": "#/components/schemas/LoyaltyV2ActivityTierQualificationRulesPoints"
+                },
+                "segment": {
+                  "$ref": "#/components/schemas/LoyaltyV2ActivityTierQualificationRulesSegment"
+                }
+              }
+            }
+          }
+        ]
       },
-      "V2LoyaltiesTierStructuresTiersListResponseBody": {
-        "title": "V2 Loyalties Tier Structures Tiers List Response Body",
+      "LoyaltiesTierStructuresTiersListResponseBody": {
+        "title": "Loyalties Tier Structures Tiers List Response Body",
         "type": "object",
         "description": "Response body schema for **GET** `/v2/loyalties/tier-structures/{tierStructureId}/tiers`.",
         "allOf": [
@@ -85270,7 +85887,7 @@
             }
           },
           "cursor": {
-            "description": "Pagination cursor for fetching the next page, or `null` when there are no more\nresults.",
+            "description": "Pagination cursor for fetching the next page, or `null` when there are no more results.",
             "oneOf": [
               {
                 "type": "object",
@@ -168645,7 +169262,7 @@
           "LV2-Tier Structures"
         ],
         "summary": "List tiers",
-        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nReturns a cursor-paginated list of tiers belonging to the tier structure. This\nendpoint does not support a `filters` parameter. The same field cannot be requested\nin both ascending and descending order at once. Default order is `-created_at`.\n\nA successful call records no activity.",
+        "description": "Returns a cursor-paginated list of tiers belonging to the tier structure.\n\nThis endpoint does not support a `filters` parameter. The same field cannot be requested in both ascending and descending order at once. Default order is `-created_at`.\n\nA successful call records no activity.",
         "parameters": [
           {
             "name": "limit",
@@ -168701,7 +169318,7 @@
             "name": "cursor",
             "in": "query",
             "required": false,
-            "description": "Continues pagination. Pass the `cursor.next` value from a previous response. Format `lcrst_[a-f0-9]+`. The cursor matches the filters and order of that response.",
+            "description": "Continues pagination. Pass the `cursor.next` value from a previous response. Format `lcrst_[a-f0-9]+`. A cursor works only with the same tier structure, order, and filters as the request that returned it.",
             "schema": {
               "type": [
                 "string",
@@ -168717,17 +169334,139 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2LoyaltiesTierStructuresTiersListResponseBody"
+                  "$ref": "#/components/schemas/LoyaltiesTierStructuresTiersListResponseBody"
+                },
+                "examples": {
+                  "Tier structure tiers": {
+                    "value": {
+                      "data": [
+                        {
+                          "id": "lt_135ef23cc84630c5ea",
+                          "tier_structure_id": "lts_135d5ea4a8e2d5e2c2",
+                          "name": "Bronze",
+                          "qualification_rules": {
+                            "type": "POINTS",
+                            "points": {
+                              "min_value": 1,
+                              "max_value": 99
+                            }
+                          },
+                          "downgrade": {
+                            "type": "INHERIT"
+                          },
+                          "points_expiration": {
+                            "type": "INHERIT"
+                          },
+                          "metadata": {},
+                          "created_at": "2026-11-19T17:27:28.801Z",
+                          "updated_at": "2026-11-19T19:20:00.651Z",
+                          "object": "tier"
+                        },
+                        {
+                          "id": "lt_135ef23cc84630c5ec",
+                          "tier_structure_id": "lts_135d5ea4a8e2d5e2c2",
+                          "name": "Gold",
+                          "qualification_rules": {
+                            "type": "POINTS",
+                            "points": {
+                              "min_value": 299,
+                              "max_value": 399
+                            }
+                          },
+                          "downgrade": {
+                            "type": "INHERIT"
+                          },
+                          "points_expiration": {
+                            "type": "INHERIT"
+                          },
+                          "metadata": {},
+                          "created_at": "2026-11-19T17:27:28.801Z",
+                          "updated_at": "2026-11-19T19:20:00.651Z",
+                          "object": "tier"
+                        }
+                      ],
+                      "cursor": {
+                        "next": "lcrst_1366b7bb10d98a45d6",
+                        "expires_at": "2026-11-25T18:29:42.532Z"
+                      },
+                      "object": "list"
+                    }
+                  }
                 }
               }
             }
           },
           "400": {
-            "description": "Validation error - request body or query parameters failed validation, or the operation is not allowed in the current resource state.",
+            "description": "Validation error - query parameters failed validation, or the cursor is invalid, expired, or does not match the query.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Cursor does not match the pattern": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Property .cursor must match pattern \"^lcrst_[a-f0-9]+$\"",
+                      "request_id": "v-1f0c2a9e7b4d3c6a10"
+                    }
+                  },
+                  "Limit too high": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Property .limit cannot be greater than 100",
+                      "request_id": "v-1f0c2a9e7b4d3c6a11"
+                    }
+                  },
+                  "Limit too low": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Property .limit cannot be lower than 1",
+                      "request_id": "v-1f0c2a9e7b4d3c6a12"
+                    }
+                  },
+                  "Unsupported order value": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Property .order must be equal to one of the allowed values [ -created_at, -name, created_at, name ]",
+                      "request_id": "v-1f0c2a9e7b4d3c6a13"
+                    }
+                  },
+                  "Conflicting order values": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Query cannot be ordered by 'created_at' and '-created_at' at the same time",
+                      "request_id": "v-1f0c2a9e7b4d3c6a14"
+                    }
+                  },
+                  "Cursor invalid or expired": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_or_expired_cursor",
+                      "message": "Invalid or expired cursor",
+                      "details": "The provided cursor is invalid or has expired",
+                      "request_id": "v-1f0c2a9e7b4d3c6a15"
+                    }
+                  },
+                  "Cursor does not match query": {
+                    "value": {
+                      "code": 400,
+                      "key": "cursor_and_query_mismatch",
+                      "message": "Cursor and query mismatch",
+                      "details": "The provided cursor does not match the query, either the cursor is invalid or the query has changed",
+                      "request_id": "v-1f0c2a9e7b4d3c6a16"
+                    }
+                  }
                 }
               }
             }
@@ -168738,6 +169477,30 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Tier structure not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find tier_structure with id lts_9c41e7b0d2a35f8e61",
+                      "request_id": "v-1a7f3c9e0b5d28e4f6",
+                      "resource_id": "lts_9c41e7b0d2a35f8e61",
+                      "resource_type": "tier_structure"
+                    }
+                  },
+                  "Tier structure id does not match the pattern": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find tier_structure with id lts_135d5eg4a8e2d5e2c2",
+                      "request_id": "v-1366b7e1c5e9732853",
+                      "resource_id": "lts_135d5eg4a8e2d5e2c2",
+                      "resource_type": "tier_structure"
+                    }
+                  }
                 }
               }
             }
