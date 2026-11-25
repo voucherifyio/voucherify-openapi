@@ -4,6 +4,22 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-11-25
+
+Verified and updated GET `/v2/loyalties/tier-structures/{tierStructureId}/tiers`.
+
+- Removed the documentation-in-progress badge.
+- Clarified cursor pagination: format `lcrst_[a-f0-9]+`, and a cursor works only with the same tier structure, order, and filters as the request that returned it.
+- Renamed the `200` response schema to `LoyaltiesTierStructuresTiersListResponseBody` (replacing `V2LoyaltiesTierStructuresTiersListResponseBody`).
+- Added a `200` example listing two tiers with `points_expiration`.
+- Clarified the `400` description for query validation or an invalid, expired, or mismatched cursor. Added examples for `invalid_query_params` (cursor pattern, `limit` bounds, unsupported or conflicting `order`), `invalid_or_expired_cursor`, and `cursor_and_query_mismatch`.
+- Clarified the `404` description and added examples for an unknown tier structure (`not_found`, `resource_type` `tier_structure`) and a path id that does not match `lts_[a-f0-9]+`.
+
+Updated shared tier response and loyalty activity schemas.
+
+- Added required `points_expiration` on `Tier` and on `LoyaltyV2ActivityTier` (tier create, update, delete, and list events), using new response schemas `TierPointsExpiration` and nested `TierPointsExpirationRollingExpiration`, `TierPointsExpirationCalendarExpiration`, and `TierPointsExpirationSlidingExpiration`. Documented `if`/`then` rules matching tier write validation: nested objects follow `type`; rolling and sliding period maxima; calendar `day` limits by `month`; sliding `custom_activity_types` when `custom_activity` is `true`; rounding `value` for `END_OF_PARTICULAR_MONTH`.
+- Merged `LoyaltyV2ActivityTierQualificationRules` into `TierQualificationRules` (same shape for API and events). Documented `POINTS` vs `POINTS_AND_SEGMENT` on the response schema.
+
 ## 2026-11-24
 
 Verified and updated POST `/v2/loyalties/tier-structures/{tierStructureId}/activate`.
