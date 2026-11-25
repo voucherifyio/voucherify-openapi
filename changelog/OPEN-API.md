@@ -6,6 +6,16 @@ Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
 ## 2026-11-25
 
+Verified and updated GET `/v2/loyalties/tier-structures`.
+
+- Removed the documentation-in-progress badge.
+- Clarified that the list does not include nested tiers; linked [List tiers](/api-reference/tier-structures/list-tiers).
+- Renamed the `200` response schema to `LoyaltiesTierStructuresListResponseBody` (replacing `V2LoyaltiesTierStructuresListResponseBody`).
+- Added a `200` example listing tier structures with `POINT_BALANCE` and `POINT_EARNED` types.
+- Removed the unreachable `404` and `409` responses.
+- Clarified the `400` description for query validation or an invalid, expired, or mismatched cursor. Added examples for `invalid_query_params` (cursor pattern `^lcrsts_[a-f0-9]+$`, `limit` bounds, unsupported or conflicting `order`), `invalid_or_expired_cursor`, and `cursor_and_query_mismatch`.
+- Clarified on the list `filters.status` field and on `LoyaltiesTierStructuresListRequestQueryStatus` that filtering by `DELETED` returns no results.
+
 Verified and updated GET `/v2/loyalties/tier-structures/{tierStructureId}/tiers`.
 
 - Removed the documentation-in-progress badge.
