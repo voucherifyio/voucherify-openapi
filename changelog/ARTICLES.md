@@ -5,6 +5,15 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-11-26
+
+Updated `loyalty-v2-tier-structures-overview.mdx` against the tier structure endpoints and the public Tier structures API reference navigation.
+
+- Default downgrade is `MULTI_LEVEL` (`NO_RETENTION` for expiration is unchanged).
+- Documented list tiers and batch create, update, and remove tiers as the public tier-management path (not per-tier create or delete endpoints).
+- Clarified `INHERIT` downgrade, `points_expiration` overrides while the structure is `DRAFT`, and batch behavior in `DRAFT` vs `ACTIVE`.
+- Lifecycle: create as `DRAFT`, activate to `ACTIVE`; removed the move-back-to-draft transition; delete sets `DELETED`, `resource_in_use` when referenced, and unassign references before delete.
+
 ## 2026-11-25
 
 Updated `create-account.mdx` with post-sign-up registration verification.
