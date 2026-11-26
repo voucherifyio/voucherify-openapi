@@ -4,6 +4,106 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-11-26
+
+Verified and updated DELETE `/v2/loyalties/tier-structures/{tierStructureId}`.
+
+- Removed the documentation-in-progress badge.
+- Clarified soft-delete: removes tiers and sets the tier structure `status` to `DELETED`.
+- Renamed the `200` response schema to `LoyaltiesTierStructuresDeleteResponseBody` (replacing `V2LoyaltiesTierStructuresDeleteResponseBody`).
+- Added a `200` example for a deleted `POINT_BALANCE` tier structure.
+- Removed the unreachable `409` response.
+- Clarified the `400` description for `resource_in_use` when a program, earning rule, or reward still references the tier structure (checks run in that order). Added examples for `related_object_type` `program`, `earning_rule`, and `reward`.
+- Clarified in the operation description that program, earning rule, and reward references must be removed before delete succeeds.
+- Clarified the `404` description and added `not_found` examples for an unknown tier structure and a path id that does not match `lts_[a-f0-9]+`.
+
+Clarified on GET `/v2/loyalties/tier-structures/{tierStructureId}` that the `404` description uses `ID` for the path identifier pattern.
+
+## 2026-11-25
+
+Verified and updated GET `/v2/loyalties/tier-structures`.
+
+- Removed the documentation-in-progress badge.
+- Clarified that the list does not include nested tiers; linked [List tiers](/api-reference/tier-structures/list-tiers).
+- Renamed the `200` response schema to `LoyaltiesTierStructuresListResponseBody` (replacing `V2LoyaltiesTierStructuresListResponseBody`).
+- Added a `200` example listing tier structures with `POINT_BALANCE` and `POINT_EARNED` types.
+- Removed the unreachable `404` and `409` responses.
+- Clarified the `400` description for query validation or an invalid, expired, or mismatched cursor. Added examples for `invalid_query_params` (cursor pattern `^lcrsts_[a-f0-9]+$`, `limit` bounds, unsupported or conflicting `order`), `invalid_or_expired_cursor`, and `cursor_and_query_mismatch`.
+- Clarified on the list `filters.status` field and on `LoyaltiesTierStructuresListRequestQueryStatus` that filtering by `DELETED` returns no results.
+
+Verified and updated GET `/v2/loyalties/tier-structures/{tierStructureId}/tiers`.
+
+- Removed the documentation-in-progress badge.
+- Clarified cursor pagination: format `lcrst_[a-f0-9]+`, and a cursor works only with the same tier structure, order, and filters as the request that returned it.
+- Renamed the `200` response schema to `LoyaltiesTierStructuresTiersListResponseBody` (replacing `V2LoyaltiesTierStructuresTiersListResponseBody`).
+- Added a `200` example listing two tiers with `points_expiration`.
+- Clarified the `400` description for query validation or an invalid, expired, or mismatched cursor. Added examples for `invalid_query_params` (cursor pattern, `limit` bounds, unsupported or conflicting `order`), `invalid_or_expired_cursor`, and `cursor_and_query_mismatch`.
+- Clarified the `404` description and added examples for an unknown tier structure (`not_found`, `resource_type` `tier_structure`) and a path id that does not match `lts_[a-f0-9]+`.
+
+Verified and updated GET `/v2/loyalties/tier-structures/{tierStructureId}/activities`.
+
+- Removed the documentation-in-progress badge. Linked loyalty activity events and Workflows in the operation description.
+- Clarified cursor pagination: format `lcrsats_[a-f0-9]+`, and a cursor works only with the same tier structure, order, and filters as the request that returned it.
+- Renamed the `200` response schema to `LoyaltiesTierStructuresActivitiesListResponseBody` (replacing `V2LoyaltiesTierStructuresActivitiesListResponseBody`).
+- Added a `200` example listing tier structure activation and deactivation activities with `USER_PORTAL` and `API` sources.
+- Clarified the `400` description for query validation or an invalid, expired, or mismatched cursor. Added examples for `invalid_query_params` (cursor pattern, `limit` bounds, unsupported or conflicting `order`), `invalid_or_expired_cursor`, and `cursor_and_query_mismatch`.
+- Clarified the `404` description and added examples for an unknown tier structure (`not_found`, `resource_type` `tier_structure`) and a path id that does not match `lts_[a-f0-9]+`.
+
+Updated shared tier response and loyalty activity schemas.
+
+- Added required `points_expiration` on `Tier` and on `LoyaltyV2ActivityTier` (tier create, update, delete, and list events), using new response schemas `TierPointsExpiration` and nested `TierPointsExpirationRollingExpiration`, `TierPointsExpirationCalendarExpiration`, and `TierPointsExpirationSlidingExpiration`. Documented `if`/`then` rules matching tier write validation: nested objects follow `type`; rolling and sliding period maxima; calendar `day` limits by `month`; sliding `custom_activity_types` when `custom_activity` is `true`; rounding `value` for `END_OF_PARTICULAR_MONTH`.
+- Merged `LoyaltyV2ActivityTierQualificationRules` into `TierQualificationRules` (same shape for API and events). Documented `POINTS` vs `POINTS_AND_SEGMENT` on the response schema.
+- Replaced per-resource activity source schemas (`ProgramActivitySource`, `CardDefinitionActivitySource`, `EarningRuleActivitySource`, `TierStructureActivitySource`, `BenefitActivitySource`, `RewardActivitySource`, and their nested user or API key types) with shared `ActivitySource`, `ActivitySourceUser`, and `ActivitySourceApiKey` on program, card definition, earning rule, tier structure, benefit, reward, and card activities.
+- On `TierStructureActivityData`, typed `program` as `LoyaltyV2Program` and `program_tier_structure` as `LoyaltyV2ActivityProgramTierStructure` for assignment and unassignment activities.
+
+Removed DELETE `/v2/loyalties/tier-structures/{tierStructureId}/tiers/{tierId}` from `docs.json` as it is handled by POST `/v2/loyalties/tier-structures/{tierStructureId}/tiers/batch`.
+
+Skipped verification of PUT `/v2/loyalties/tier-structures/{tierStructureId}/tiers/{tierId}` as it is handled by POST `/v2/loyalties/tier-structures/{tierStructureId}/tiers/batch`.
+
+## 2026-11-24
+
+Verified and updated POST `/v2/loyalties/tier-structures/{tierStructureId}/activate`.
+
+- Removed the documentation-in-progress badge.
+- Clarified the description: activation accepts only `DRAFT` or `INACTIVE`; `400` `invalid_state_transition` applies when the tier structure is already `ACTIVE`; `403` `tier_structure_assignments_limit_exceeded` when a program assigned to this tier structure already has another `DRAFT` or `ACTIVE` tier structure assigned.
+- Renamed the success response schema to `LoyaltiesTierStructuresActivateResponseBody`.
+- Added a `200` example for a `POINT_BALANCE` tier structure.
+- Corrected the `400` description to invalid state transition. Added an example for activation from `ACTIVE`.
+- Clarified the `403` description and added a `tier_structure_assignments_limit_exceeded` example.
+- Added a `404` `not_found` example for an unknown tier structure id.
+
+Updated `docs.json` navigation for Loyalty v2 draft endpoints and drafted activity events.
+
+- Removed POST `/v2/loyalties/card-definitions/{cardDefinitionId}/draft`, POST `/v2/loyalties/tier-structures/{tierStructureId}/draft`, and POST `/v2/loyalties/rewards/{rewardId}/draft` from the API reference nav.
+- Removed loyalty activity nav entries for drafted events on card definitions, earning rules, rewards, benefits, and tier structures.
+- Updated the five `drafted.mdx` loyalty activity event pages (benefits, card definitions, earning rules, rewards, tier structures) under `documentation/api-reference/loyalty-activity/`. The intros no longer link to the draft REST endpoints; the copy states that resources were moved to draft in the dashboard.
+
+## 2026-11-23
+
+Documented Areas and Stores for product collections in the Product Collections API.
+
+- Generalized `AccessSettings` and its `assign` / `unassign` field descriptions so the same schema covers campaigns, product collections, and other resource types when the feature is enabled for that type.
+- Added `AccessSettingsProductCollectionAssignmentsList` and `AreaStoreProductCollectionAssignment`.
+- Updated `ProductCollectionsItem` with `access_settings_assignments` and `readonly`. Create and update request bodies accept `access_settings` via `AccessSettings`.
+- Removed `name` from the `required` array on `ProductCollectionsUpdateStaticRequestBody` so a static update can send `access_settings` only.
+- Clarified on `ProductCollectionsList` that the list response does not include `access_settings_assignments` when the feature is enabled.
+- Verified and updated GET `/v1/product-collections`.
+  - Added a restricted-user visibility note in the operation description.
+- Verified and updated POST `/v1/product-collections`.
+  - Documented `access_settings.assign` when Areas and Stores is enabled for product collections, including restricted-user rules in a callout.
+  - Added `400` with examples for validation errors, missing static products, and `invalid_payload` when a restricted user creates a collection without a remaining area or store assignment (`The product collection should contain at least one access settings assignment`).
+- Verified and updated GET `/v1/product-collections/{productCollectionId}`.
+  - Added restricted-user access rules in the description.
+  - Added `403` `forbidden` when the collection is not accessible in the caller's context. Added a `200` example with `access_settings_assignments`.
+- Verified and updated PUT `/v1/product-collections/{productCollectionId}`.
+  - Documented updatable fields and `access_settings` for static and auto-update collections, with restricted-user read-only rules in a callout.
+  - Added `403` `forbidden`. Extended `400` with a `resource_protected` example when the collection is read-only for the caller.
+- Verified and updated DELETE `/v1/product-collections/{productCollectionId}`.
+  - Documented that area and store assignments are deleted with the collection, with restricted-user rules in a callout.
+  - Added `403` `forbidden`. Extended `400` with `resource_protected` for read-only collections.
+- Verified and updated GET `/v1/product-collections/{productCollectionId}/products`.
+  - Added `403` `forbidden` for restricted users without access to the collection.
+
 ## 2026-11-19
 
 Verified and updated POST `/v2/loyalties/tier-structures` (Create tier structure).
