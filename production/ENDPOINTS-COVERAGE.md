@@ -494,8 +494,8 @@
 ## LV2-Rewards
 | endpoint                                    | method | summary                   | is supported                         | is deprecated |
 | ------------------------------------------- | ------ | ------------------------- | ------------------------------------ | ------------- |
-| /v2/loyalties/rewards                       | get    | List rewards v2           |                                      |               |
-| /v2/loyalties/rewards                       | post   | Create a reward           |                                      |               |
+| /v2/loyalties/rewards                       | get    | List rewards              |                                      |               |
+| /v2/loyalties/rewards                       | post   | Create reward             |                                      |               |
 | /v2/loyalties/rewards/{rewardId}            | get    | Get reward by ID          | <font color='green'>supported</font> |               |
 | /v2/loyalties/rewards/{rewardId}            | put    | Update a reward           |                                      |               |
 | /v2/loyalties/rewards/{rewardId}            | delete | Delete a reward           |                                      |               |

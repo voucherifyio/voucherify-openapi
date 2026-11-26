@@ -63892,14 +63892,13 @@
           },
           "end_time": {
             "type": "string",
-            "description": "Window end time in `HH:mm` format.",
+            "description": "Window end time in `HH:mm` format. Omitted when unset.",
             "example": "17:00"
           }
         },
         "required": [
           "days_of_week",
-          "start_time",
-          "end_time"
+          "start_time"
         ]
       },
       "LoyaltyV2ActivityRewardValidityHoursResponse": {
@@ -89945,7 +89944,7 @@
               "DRAFT",
               "ACTIVE"
             ],
-            "description": "Initial status of the reward. Defaults to `DRAFT` behavior when omitted."
+            "description": "Initial status of the reward. Defaults to `DRAFT` when omitted."
           },
           "validity_hours": {
             "description": "Hours during which the reward can be purchased. Defaults to `{\"type\": \"ANY_TIME\"}` when omitted or `null`.",
@@ -89986,7 +89985,7 @@
             ]
           },
           "digital": {
-            "description": "Digital reward definition. Required when `type` is DIGITAL. Must be `null` when `type` is MATERIAL.",
+            "description": "Digital reward definition. Required when `type` is `DIGITAL`. Must be `null` when `type` is `MATERIAL`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/RewardDigitalRequest"
@@ -90497,7 +90496,7 @@
       },
       "RewardDigitalLoyaltyCardPointsRequest": {
         "type": "object",
-        "description": "Loyalty card points digital reward configuration.",
+        "description": "Loyalty card points digital reward configuration. The `card_definition_id` must differ from every `card_definition_id` in `costs[].spending` (source and target card definitions must be different).",
         "properties": {
           "points": {
             "type": "integer",
@@ -90508,7 +90507,7 @@
           "card_definition_id": {
             "type": "string",
             "pattern": "^lcdef_[a-f0-9]+$",
-            "description": "Unique identifier of the card definition to credit points to, prefixed with `lcdef_`."
+            "description": "Unique identifier of the card definition to credit points to, prefixed with `lcdef_`. Must differ from every spending `card_definition_id` in `costs`."
           }
         },
         "required": [
@@ -90613,14 +90612,13 @@
           },
           "end_time": {
             "type": "string",
-            "description": "Window end time in `HH:mm` format.",
+            "description": "Optional. Window end time in `HH:mm` format. Omit when the window has no end.",
             "example": "17:00"
           }
         },
         "required": [
           "days_of_week",
-          "start_time",
-          "end_time"
+          "start_time"
         ],
         "additionalProperties": false
       },
@@ -172824,7 +172822,7 @@
         "tags": [
           "LV2-Rewards"
         ],
-        "summary": "List rewards v2",
+        "summary": "List rewards",
         "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nReturns a cursor-paginated list of rewards. Results can be filtered by id, name,\ntype and created_at, and ordered by created_at or name (ascending or descending).\nThe same field cannot be ordered both ascending and descending at the same time.\n\nA successful call records no activity.",
         "parameters": [
           {
@@ -172968,14 +172966,17 @@
           {
             "bearerAuth": []
           }
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/rewards/list-rewards-v2"
+        }
       },
       "post": {
         "operationId": "createReward",
         "tags": [
           "LV2-Rewards"
         ],
-        "summary": "Create a reward",
+        "summary": "Create reward",
         "description": "Creates a new reward.\n\n`name`, `type` and `costs` are required. When `type` is `MATERIAL` the `material` object is required and `digital` must be `null`; when `type` is `DIGITAL`, the `digital` object is required and `material` must be `null`.\n\nThe reward can be created directly in `DRAFT` (default) or `ACTIVE` status.\n\nWhen `validity_hours` is not provided it defaults to `{ \"type\": \"ANY_TIME\" }`.\n\nA successful call records [`vl.reward.created`](/api-reference/loyalty-activity/rewards/created).",
         "requestBody": {
           "required": true,
@@ -173126,21 +173127,187 @@
             }
           },
           "400": {
-            "description": "Validation error - request body or query parameters failed validation, or the operation is not allowed in the current resource state.",
+            "description": "Validation error — request body failed validation, or a related campaign or tier relation is invalid.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Invalid payload": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_payload",
+                      "message": "Invalid payload",
+                      "details": "Property .type must be equal to one of the allowed values [ MATERIAL, DIGITAL ]",
+                      "request_id": "v-12f90062450611349b"
+                    }
+                  },
+                  "Missing digital block": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_payload",
+                      "message": "Invalid payload",
+                      "details": "Payload must have required property 'digital'",
+                      "request_id": "v-12f90062450611349b"
+                    }
+                  },
+                  "Source and target card definition must differ": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_payload",
+                      "message": "Invalid payload",
+                      "details": "Source and target card definition must be different",
+                      "request_id": "v-12f90062450611349b"
+                    }
+                  },
+                  "Invalid hours": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_hours",
+                      "message": "Invalid Validity Hours",
+                      "details": "Property 'start_time' is not before 'end_time'",
+                      "request_id": "v-12f90062450611349b"
+                    }
+                  },
+                  "Invalid campaign type": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_campaign_type",
+                      "message": "Invalid payload",
+                      "details": "Campaign must be of type 'DISCOUNT_COUPONS' for DISCOUNT_COUPONS reward",
+                      "request_id": "v-12f90062450611349b"
+                    }
+                  },
+                  "Invalid tier structure relation": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_tier_structure_relation",
+                      "message": "Invalid payload",
+                      "details": "Tier 'ltier_12cad1abefa2311e10' does not belong to tier structure 'ltstr_12cad1abefa2311e11'",
+                      "request_id": "v-12f90062450611349b"
+                    }
+                  },
+                  "Invalid rules definition": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_rules_definition",
+                      "message": "Invalid Rules Definition",
+                      "details": "Rule 'order.amount' must have conditions",
+                      "request_id": "v-12f90062450611349b"
+                    }
+                  }
                 }
               }
             }
           },
           "404": {
-            "description": "Resource not found.",
+            "description": "A referenced product, SKU, campaign, card definition, tier, or tier structure was not found.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Campaign not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find campaign with id camp_non_existing",
+                      "request_id": "v-12f90062450611349b",
+                      "resource_id": "camp_non_existing",
+                      "resource_type": "campaign"
+                    }
+                  },
+                  "Product not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find product with id prod_128f4cd0a94c3bef25",
+                      "request_id": "v-12f90062450611349b",
+                      "resource_id": "prod_128f4cd0a94c3bef25",
+                      "resource_type": "product"
+                    }
+                  },
+                  "SKU not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find sku with id sku_128f4cd0a94c4bef25",
+                      "request_id": "v-12f90062450611349b",
+                      "resource_id": "sku_128f4cd0a94c4bef25",
+                      "resource_type": "sku"
+                    }
+                  },
+                  "Card definitions not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find card_definitions with ids [ lcdef_non_existing ]",
+                      "request_id": "v-12f90062450611349b"
+                    }
+                  },
+                  "Tier structure not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find tier_structures with ids [ ltstr_non_existing ]",
+                      "request_id": "v-12f90062450611349b"
+                    }
+                  },
+                  "Tier not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find tiers with ids [ ltier_non_existing ]",
+                      "request_id": "v-12f90062450611349b"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "423": {
+            "description": "Resource locked — creating an `ACTIVE` reward requires related card definitions and tier structures to be `ACTIVE`, and digital campaign-backed rewards reject a draft campaign.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Non-active card definition": {
+                    "value": {
+                      "code": 423,
+                      "key": "non_active_card_definition",
+                      "message": "Cannot use non-active card definition in reward costs",
+                      "details": "Invalid card_definition status with id lcdef_1329efb2af8ba6486f",
+                      "request_id": "v-12f90062450611349b"
+                    }
+                  },
+                  "Non-active campaign": {
+                    "value": {
+                      "code": 423,
+                      "key": "non_active_campaign",
+                      "message": "Cannot use a draft campaign in a digital reward",
+                      "details": "Invalid campaign status with id camp_128f4cd0a94c4bef25",
+                      "request_id": "v-12f90062450611349b"
+                    }
+                  },
+                  "Non-active tier structure": {
+                    "value": {
+                      "code": 423,
+                      "key": "non_active_tier_structure",
+                      "message": "Cannot use non-active tier structure in reward tier rules",
+                      "details": "Invalid tier_structure status with id ltstr_12cad1abefa2311e11",
+                      "request_id": "v-12f90062450611349b"
+                    }
+                  }
                 }
               }
             }
@@ -173173,7 +173340,10 @@
           {
             "bearerAuth": []
           }
-        ]
+        ],
+        "x-mint": {
+          "href": "/api-reference/rewards/create-reward-v2"
+        }
       }
     },
     "/v2/loyalties/rewards/{rewardId}": {
