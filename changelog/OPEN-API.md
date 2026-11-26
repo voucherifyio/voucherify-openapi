@@ -6,6 +6,21 @@ Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
 ## 2026-11-26
 
+Verified and updated POST `/v2/loyalties/rewards`.
+
+- Renamed the operation summary to **Create reward** and pinned the docs URL with `x-mint.href` `/api-reference/rewards/create-reward-v2` (v1 **Create Reward** keeps `/api-reference/rewards/create-reward`).
+- Added operation wrappers `LoyaltiesRewardsCreateRequestBody` and `LoyaltiesRewardsCreateResponseBody` (replacing `V2LoyaltiesRewardsCreateRequestBody` and `V2LoyaltiesRewardsCreateResponseBody`).
+- Documented create validation on `RewardCreateRequest` with `if`/`then` for `MATERIAL` vs `DIGITAL`, and tightened nested reward cost, material, digital, validity, refund, and purchase-limit schemas.
+- Replaced `patternProperties` on `RewardCostRulesRequest`, `RewardCostRuleConditionsRequest`, and related activity mirrors with named operator properties so Mintlify can render condition fields.
+- Documented that `LOYALTY_CARD_POINTS` `card_definition_id` must differ from every spending `card_definition_id` in `costs`.
+- Made `end_time` optional on `RewardValidityDailyHoursRequest` and on `LoyaltyV2ActivityRewardValidityDailyHoursResponse` (`days_of_week` and `start_time` remain required).
+- Removed the unreachable `409` response. Added `423` for `non_active_card_definition`, `non_active_campaign`, and `non_active_tier_structure` when `status` is `ACTIVE`. Added `400` and `404` examples for reachable validation and not-found keys.
+- Added a Mintlify redirect from `/api-reference/rewards/create-a-reward` to `/api-reference/rewards/create-reward-v2` in `docs.json`.
+
+Updated GET `/v2/loyalties/rewards`.
+
+- Renamed the operation summary to **List rewards** and pinned the docs URL with `x-mint.href` `/api-reference/rewards/list-rewards-v2`.
+
 Verified and updated DELETE `/v2/loyalties/tier-structures/{tierStructureId}`.
 
 - Removed the documentation-in-progress badge.
