@@ -51054,7 +51054,7 @@
           },
           "segment": {
             "type": "object",
-            "description": "Contains the id of a customer segment. Required for the `customer.segment.entered` option in `event`.",
+            "description": "Contains the ID of a customer segment. Required for the `customer.segment.entered` option in `event`.",
             "properties": {
               "id": {
                 "type": "string",
@@ -55037,7 +55037,7 @@
           },
           "segment": {
             "type": "object",
-            "description": "Contains the id of a customer segment. Required for the `customer.segment.entered` option in event.",
+            "description": "Contains the ID of a customer segment. Required for the `customer.segment.entered` option in event.",
             "properties": {
               "id": {
                 "type": "string",
@@ -80426,7 +80426,7 @@
               "earnings": {
                 "type": "array",
                 "minItems": 1,
-                "description": "Replaces the earning list. An item whose `id` matches a stored `lernei_` id replaces that item. An omitted `id`, or an `id` that is not on this rule, creates an item and the server assigns the id. Items left out of the array are removed. At least one item.",
+                "description": "Replaces the earning list. An item whose `id` matches a stored `lernei_` id replaces that item. An omitted `id`, or an `id` that is not on this rule, creates an item and the server assigns the ID. Items left out of the array are removed. At least one item.",
                 "items": {
                   "$ref": "#/components/schemas/EarningRuleEarningUpdate"
                 }
@@ -84673,8 +84673,8 @@
           }
         ]
       },
-      "V2LoyaltiesTierStructuresDeleteResponseBody": {
-        "title": "V2 Loyalties Tier Structures Delete Response Body",
+      "LoyaltiesTierStructuresDeleteResponseBody": {
+        "title": "Loyalties Tier Structures Delete Response Body",
         "type": "object",
         "description": "Response body schema for **DELETE** `/v2/loyalties/tier-structures/{tierStructureId}`.",
         "allOf": [
@@ -168420,7 +168420,7 @@
             }
           },
           "404": {
-            "description": "Resource not found. The tier structure does not exist, is deleted, or the id does not match `lts_[a-f0-9]+`.",
+            "description": "Resource not found. The tier structure does not exist, is deleted, or the ID does not match `lts_[a-f0-9]+`.",
             "content": {
               "application/json": {
                 "schema": {
@@ -168577,44 +168577,123 @@
           "LV2-Tier Structures"
         ],
         "summary": "Delete tier structure",
-        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nDeletes a tier structure by deleting its tiers and setting `status` to `DELETED`, then returns the deleted tier structure. Returns `400` (`resource_in_use`) when a program, earning rule, or reward still references the tier structure.\n\nA successful call records [`vl.tier_structure.deleted`](/api-reference/loyalty-activity/tier-structures/deleted).",
+        "description": "Deletes a tier structure and its tiers. Sets status to `DELETED`.\n\nReturns the deleted tier structure. Returns `400` (`resource_in_use`) when a program, earning rule, or reward still references the tier structure.\n\nA successful call records [`vl.tier_structure.deleted`](/api-reference/loyalty-activity/tier-structures/deleted).",
         "responses": {
           "200": {
             "description": "The deleted tier structure.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2LoyaltiesTierStructuresDeleteResponseBody"
+                  "$ref": "#/components/schemas/LoyaltiesTierStructuresDeleteResponseBody"
+                },
+                "examples": {
+                  "Deleted tier structure": {
+                    "value": {
+                      "id": "lts_135dd7642fc630eb06",
+                      "name": "Tier structure 2026-11-18-04",
+                      "type": "POINT_BALANCE",
+                      "point_balance": {
+                        "card_definition_id": "lcdef_1331564fab0b1ce713"
+                      },
+                      "point_earned": null,
+                      "expiration": {
+                        "type": "NO_RETENTION"
+                      },
+                      "downgrade": {
+                        "type": "MULTI_LEVEL"
+                      },
+                      "metadata": {},
+                      "status": "DELETED",
+                      "created_at": "2026-11-18T20:51:42.399Z",
+                      "updated_at": "2026-11-19T18:58:07.692Z",
+                      "object": "tier_structure"
+                    }
+                  }
                 }
               }
             }
           },
           "400": {
-            "description": "Validation error - request body or query parameters failed validation, or the operation is not allowed in the current resource state.",
+            "description": "The tier structure is referenced by one or more programs, earning rules, or rewards (`resource_in_use`). Checks run in that order. When more related objects reference it, `related_object_ids` ends with `\"…\"`.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Tier structure in use by program": {
+                    "value": {
+                      "code": 400,
+                      "key": "resource_in_use",
+                      "message": "Resource in use",
+                      "details": "Resource tier_structure with id lts_12b1206bbf517c56be is in use by programs with ids [lprg_12b117fa1fc09b32af]",
+                      "request_id": "v-1367a255f7a97372fc",
+                      "related_object_ids": [
+                        "lprg_12b117fa1fc09b32af"
+                      ],
+                      "related_object_type": "program"
+                    }
+                  },
+                  "Tier structure in use by earning rule": {
+                    "value": {
+                      "code": 400,
+                      "key": "resource_in_use",
+                      "message": "Resource in use",
+                      "details": "Resource tier_structure with id lts_12b1206bbf517c56be is in use by earning_rules with ids [lern_12b1206bbf517c56be]",
+                      "request_id": "v-1367a255f7a97372fc",
+                      "related_object_ids": [
+                        "lern_12b1206bbf517c56be"
+                      ],
+                      "related_object_type": "earning_rule"
+                    }
+                  },
+                  "Tier structure in use by reward": {
+                    "value": {
+                      "code": 400,
+                      "key": "resource_in_use",
+                      "message": "Resource in use",
+                      "details": "Resource tier_structure with id lts_12b1206bbf517c56be is in use by rewards with ids [lrew_12b1206bbf517c56be]",
+                      "request_id": "v-1367a255f7a97372fc",
+                      "related_object_ids": [
+                        "lrew_12b1206bbf517c56be"
+                      ],
+                      "related_object_type": "reward"
+                    }
+                  }
                 }
               }
             }
           },
           "404": {
-            "description": "Resource not found.",
+            "description": "Resource not found. The tier structure does not exist, is deleted, or the ID does not match `lts_[a-f0-9]+`.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Tier structure not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find tier_structure with id lts_13b1206bbf517c56be",
+                      "request_id": "v-1367a2758269737340",
+                      "resource_id": "lts_13b1206bbf517c56be",
+                      "resource_type": "tier_structure"
+                    }
+                  },
+                  "Tier structure ID does not match pattern": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find tier_structure with id non-existent-id",
+                      "request_id": "v-1367a2758269737340",
+                      "resource_id": "non-existent-id",
+                      "resource_type": "tier_structure"
+                    }
+                  }
                 }
               }
             }
