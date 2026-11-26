@@ -14,6 +14,7 @@ Verified and updated DELETE `/v2/loyalties/tier-structures/{tierStructureId}`.
 - Added a `200` example for a deleted `POINT_BALANCE` tier structure.
 - Removed the unreachable `409` response.
 - Clarified the `400` description for `resource_in_use` when a program, earning rule, or reward still references the tier structure (checks run in that order). Added examples for `related_object_type` `program`, `earning_rule`, and `reward`.
+- Clarified in the operation description that program, earning rule, and reward references must be removed before delete succeeds.
 - Clarified the `404` description and added `not_found` examples for an unknown tier structure and a path id that does not match `lts_[a-f0-9]+`.
 
 Clarified on GET `/v2/loyalties/tier-structures/{tierStructureId}` that the `404` description uses `ID` for the path identifier pattern.
