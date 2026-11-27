@@ -4,6 +4,23 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2026-11-27
+
+Verified and updated PUT `/v2/loyalties/tier-structures/{tierStructureId}`.
+
+- Removed the documentation-in-progress badge.
+- Clarified merge semantics: the body must include at least one effective field; `metadata: null` clears metadata to `{}`; object `metadata` is shallow-merged; `null` on `expiration`, `downgrade`, or a tracking block is treated as omitted and does not clear that section.
+- Renamed the request and response wrappers to `LoyaltiesTierStructuresUpdateRequestBody` and `LoyaltiesTierStructuresUpdateResponseBody` (replacing `V2LoyaltiesTierStructuresUpdateRequestBody` and `V2LoyaltiesTierStructuresUpdateResponseBody`).
+- Updated `TierStructureUpdateRequest` field descriptions to match handler behavior and status-based restrictions on non-`DRAFT` tier structures.
+- Added request examples for a draft full update and an active `name`/`metadata`-only update. Added a `200` example for an updated active tier structure.
+- Removed the unreachable `409` response.
+- Clarified the `400` description for `invalid_payload`, non-`DRAFT` restricted fields, and `metadata_validation_failed`. Added a `400` example for an empty body (`At least one property is required`) and retained `invalid_payload` examples for `ACTIVE` and `INACTIVE` updates.
+- Clarified the `404` description and added `not_found` examples for an unknown tier structure, a path id that does not match `lts_[a-f0-9]+`, an unknown `card_definition_id`, and unknown `custom_activity_types` ids.
+
+Updated `TierStructureExpirationSlidingExpirationUpsert` for tier structure writes.
+
+- Clarified `custom_activity_types`: non-empty strings (conventionally `ms_…`); removed the OpenAPI-only `pattern` on items so the spec matches AJV validation before lookup.
+
 ## 2026-11-26
 
 Verified and updated POST `/v2/loyalties/rewards`.
