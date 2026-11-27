@@ -19385,13 +19385,50 @@
           "Tier Structures"
         ],
         "summary": "Update tier structure",
-        "description": "\n<Info>\n\n<Badge color=\"gray\">Documentation in progress</Badge>\n\nThis documentation is in progress. The parameters, fields, request and response bodies, and other data may be subject to change. If you need more information or you want to share feedback, contact [Voucherify support](https://www.voucherify.io/contact-support) or your Technical Account Manager.\n\n</Info>\n\nUpdates a tier structure. All properties are optional; provided\nvalues are merged with the existing tier structure. When `type` is provided as\n`POINT_EARNED`, `point_earned` is required and `point_balance` must be null; when\n`type` is `POINT_BALANCE`, `point_balance` is required and `point_earned` must be null.\nWhen the tier structure is not in `DRAFT` status, only `name` and `metadata` may be\nupdated; attempting to update other properties results in a validation error.\n\nA successful call records [`vl.tier_structure.updated`](/api-reference/loyalty-activity/tier-structures/updated).",
+        "description": "Updates a tier structure.\n\nAll properties are optional and the body must include at least one effective field. Skipped properties are left unchanged. `metadata: null` clears metadata to `{}`. An object `metadata` is shallow-merged with the existing metadata. `null` on `expiration`, `downgrade`, or a tracking block is treated as omitted and does not clear that section. When `type` is provided as `POINT_EARNED`, `point_earned` is required and `point_balance` must be `null`. When `type` is `POINT_BALANCE`, `point_balance` is required and `point_earned` must be `null`. When the tier structure is not in `DRAFT` status, only `name` and `metadata` can be updated; other properties return `400` (`invalid_payload`).\n\nA successful call records [`vl.tier_structure.updated`](/api-reference/loyalty-activity/tier-structures/updated).",
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/V2LoyaltiesTierStructuresUpdateRequestBody"
+                "$ref": "#/components/schemas/LoyaltiesTierStructuresUpdateRequestBody"
+              },
+              "examples": {
+                "Update draft tier structure": {
+                  "value": {
+                    "name": "Tier structure 2026-11-27-02",
+                    "type": "POINT_BALANCE",
+                    "point_balance": {
+                      "card_definition_id": "lcdef_12d3ddae756b4364e9"
+                    },
+                    "point_earned": null,
+                    "expiration": {
+                      "type": "CALENDAR_EXPIRATION",
+                      "calendar_expiration": {
+                        "calendar_dates": [
+                          {
+                            "day": 31,
+                            "month": 12
+                          }
+                        ]
+                      }
+                    },
+                    "downgrade": {
+                      "type": "NO_DOWNGRADE"
+                    },
+                    "metadata": {
+                      "Annual": true
+                    }
+                  }
+                },
+                "Update active tier structure": {
+                  "value": {
+                    "name": "Tier structure 2026-11-27-02",
+                    "metadata": {
+                      "Annual": true
+                    }
+                  }
+                }
               }
             }
           }
@@ -19402,37 +19439,131 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/V2LoyaltiesTierStructuresUpdateResponseBody"
+                  "$ref": "#/components/schemas/LoyaltiesTierStructuresUpdateResponseBody"
+                },
+                "examples": {
+                  "Updated active tier structure": {
+                    "value": {
+                      "id": "lts_135d5ea4a8e2d5e2c2",
+                      "name": "Tier structure 2026-11-27-01",
+                      "type": "POINT_BALANCE",
+                      "point_balance": {
+                        "card_definition_id": "lcdef_12d3ddae756b4364e9"
+                      },
+                      "point_earned": null,
+                      "expiration": {
+                        "type": "NO_RETENTION"
+                      },
+                      "downgrade": {
+                        "type": "MULTI_LEVEL",
+                        "grace_period": {
+                          "value": 1,
+                          "unit": "MONTH",
+                          "round_up": true
+                        }
+                      },
+                      "metadata": {
+                        "Annual": true
+                      },
+                      "status": "ACTIVE",
+                      "created_at": "2026-11-18T12:04:08.995Z",
+                      "updated_at": "2026-11-27T11:46:55.865Z",
+                      "object": "tier_structure"
+                    }
+                  }
                 }
               }
             }
           },
           "400": {
-            "description": "Validation error - request body or query parameters failed validation, or the operation is not allowed in the current resource state.",
+            "description": "Request body failed validation (`invalid_payload`), or the update is not allowed for the current status. `metadata` that does not match the `vl_tier_structure` metadata schema returns `metadata_validation_failed`.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "At least one property is required": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_payload",
+                      "message": "Invalid payload",
+                      "details": "At least one property is required",
+                      "request_id": "v-1368f0d608930cd16f"
+                    }
+                  },
+                  "Updating active tier structure": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_payload",
+                      "message": "Invalid payload",
+                      "details": "Only [name, metadata] properties are allowed to be updated when tier structure is in ACTIVE status",
+                      "request_id": "v-1368f0d608930cd170"
+                    }
+                  },
+                  "Updating inactive tier structure": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_payload",
+                      "message": "Invalid payload",
+                      "details": "Only [name, metadata] properties are allowed to be updated when tier structure is in INACTIVE status",
+                      "request_id": "v-1368f0ad7c530cd118"
+                    }
+                  }
                 }
               }
             }
           },
           "404": {
-            "description": "Resource not found.",
+            "description": "Returns `not_found` when the tier structure does not exist, is deleted, or the ID does not match `lts_[a-f0-9]+` (`resource_type` `tier_structure`). Also returns `not_found` when a sent `card_definition_id` does not match a card definition, or when a `custom_activity_types` id does not match a custom event schema.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Conflict - e.g. duplicate resource or invalid state transition.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Tier structure not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find tier_structure with id lts_235d5ea4a8e2d5e2c2",
+                      "request_id": "v-135f0df4fa1fc6f4bb",
+                      "resource_id": "lts_235d5ea4a8e2d5e2c2",
+                      "resource_type": "tier_structure"
+                    }
+                  },
+                  "Tier structure ID does not match pattern": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find tier_structure with id non-existent-id",
+                      "request_id": "v-135f0df4fa1fc6f4bb",
+                      "resource_id": "non-existent-id",
+                      "resource_type": "tier_structure"
+                    }
+                  },
+                  "Card definition not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find card_definition with id lcdef_000000000000dead",
+                      "request_id": "v-1368f0d608930cd171",
+                      "resource_id": "lcdef_000000000000dead",
+                      "resource_type": "card_definition"
+                    }
+                  },
+                  "Custom event schema not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find custom_event_schemas with ids [ ms_0123456789abcdef01234567 ]",
+                      "request_id": "v-1368f0d608930cd172"
+                    }
+                  }
                 }
               }
             }
@@ -28228,8 +28359,8 @@
           }
         ]
       },
-      "V2LoyaltiesTierStructuresUpdateRequestBody": {
-        "title": "V2 Loyalties Tier Structures Update Request Body",
+      "LoyaltiesTierStructuresUpdateRequestBody": {
+        "title": "Loyalties Tier Structures Update Request Body",
         "type": "object",
         "description": "Request body schema for **PUT** `/v2/loyalties/tier-structures/{tierStructureId}`.",
         "allOf": [
@@ -28238,8 +28369,8 @@
           }
         ]
       },
-      "V2LoyaltiesTierStructuresUpdateResponseBody": {
-        "title": "V2 Loyalties Tier Structures Update Response Body",
+      "LoyaltiesTierStructuresUpdateResponseBody": {
+        "title": "Loyalties Tier Structures Update Response Body",
         "type": "object",
         "description": "Response body schema for **PUT** `/v2/loyalties/tier-structures/{tierStructureId}`.",
         "allOf": [
@@ -38447,13 +38578,13 @@
       },
       "TierStructureUpdateRequest": {
         "type": "object",
-        "description": "Request body for updating a tier structure. All properties are optional; no\nadditional properties are allowed. When the tier structure is not in `DRAFT`\nstatus, only `name` and `metadata` may be updated.",
+        "description": "Request body for updating a tier structure. All properties are optional; no additional properties are allowed. The body must include at least one effective field. Skipped properties are left unchanged. `metadata: null` clears metadata to `{}`. `null` on `expiration`, `downgrade`, or a tracking block is treated as omitted. When `type` is sent, send the matching tracking block and set the other to `null`. When the tier structure is not in `DRAFT` status, only `name` and `metadata` can be updated.",
         "properties": {
           "name": {
             "type": "string",
             "minLength": 1,
             "maxLength": 200,
-            "description": "Display name of the tier structure."
+            "description": "Sets the display name of the tier structure."
           },
           "type": {
             "type": "string",
@@ -38461,10 +38592,10 @@
               "POINT_BALANCE",
               "POINT_EARNED"
             ],
-            "description": "Tier qualification tracking model. If provided, the matching tracking settings\nobject (`point_balance` or `point_earned`) becomes required."
+            "description": "Sets the tier qualification tracking model. When provided, the matching tracking settings object (`point_balance` or `point_earned`) becomes required."
           },
           "point_balance": {
-            "description": "Point balance tracking settings. Required (non-null) when `type` is provided as\n`POINT_BALANCE`. Must be `null` when `type` is provided as `POINT_EARNED`.",
+            "description": "Sets point balance tracking settings. Required (non-null) when `type` is provided as `POINT_BALANCE`. Must be `null` when `type` is provided as `POINT_EARNED`. Without a `type` change, `null` is treated as omitted.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/TierStructurePointBalanceUpsert"
@@ -38475,7 +38606,7 @@
             ]
           },
           "point_earned": {
-            "description": "Points earned tracking settings. Required (non-null) when `type` is provided as\n`POINT_EARNED`. Must be `null` when `type` is provided as `POINT_BALANCE`.",
+            "description": "Sets points earned tracking settings. Required (non-null) when `type` is provided as `POINT_EARNED`. Must be `null` when `type` is provided as `POINT_BALANCE`. Without a `type` change, `null` is treated as omitted.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/TierStructurePointEarnedUpsert"
@@ -38486,7 +38617,7 @@
             ]
           },
           "expiration": {
-            "description": "Tier membership expiration settings.",
+            "description": "Sets tier membership expiration settings. `null` is treated as omitted and does not clear expiration.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/TierStructureExpirationUpsert"
@@ -38497,7 +38628,7 @@
             ]
           },
           "downgrade": {
-            "description": "Downgrade behavior applied when tier membership expires.",
+            "description": "Sets downgrade behavior applied when tier membership expires. `null` is treated as omitted and does not clear downgrade.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/TierStructureDowngradeUpsert"
@@ -38508,7 +38639,7 @@
             ]
           },
           "metadata": {
-            "description": "Free-form key/value object holding custom attributes.",
+            "description": "Sets free-form key/value custom attributes. An object is shallow-merged with existing metadata. `null` clears metadata to `{}`.",
             "oneOf": [
               {
                 "type": "object"
@@ -50220,12 +50351,11 @@
                 "type": "array",
                 "maxItems": 10,
                 "uniqueItems": true,
-                "description": "Custom event schema IDs (`ms_…`) that extend the tier membership when `custom_activity` is `true`. Send 1 to 10 unique IDs. An unknown id returns `404`. When `custom_activity` is `false` or omitted, IDs are ignored and the value is stored as an empty array.",
+                "description": "Custom event schema IDs that extend the tier membership when `custom_activity` is `true`. Send 1 to 10 unique non-empty strings. Stored IDs use the `ms_…` form. An unknown id returns `404`. When `custom_activity` is `false` or omitted, IDs are ignored and the value is stored as an empty array.",
                 "items": {
                   "type": "string",
                   "minLength": 1,
-                  "pattern": "^ms_[a-zA-Z0-9]+",
-                  "description": "Custom event schema ID."
+                  "description": "Custom event schema ID. Conventionally `ms_…`."
                 }
               },
               "period": {
